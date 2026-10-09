@@ -52,7 +52,7 @@ class Stimulus:
 
 def basic(s):
     s.stage('len');s.cfg(0)
-    for n in [1,16,17,18,255,256,257,511,512,513,1470,1471]+[s.rng.randrange(1,1472) for _ in range(32)]:
+    for n in [1,16,17,18,255,256,257,511,512,513,1025,1470,1471]+[s.rng.randrange(1,1472) for _ in range(32)]:
         s.msg(0,n);s.drain()
     s.stage('nets')
     for vl,nets,vlid in ((0,1,0),(1,2,65535),(2,3,s.rng.randrange(1,65535))):
@@ -226,7 +226,7 @@ def check(test, folder):
             p=line.split();wire=bytes.fromhex(p[3]);start=int(p[1]);count=int(p[2])
             expect(p[0]==net and len(wire)==count and p[3]==p[3].lower(),'G1 capture format')
             expect(wire[:8]==PREAMBLE and 64<=len(wire)-8<=1518 and fcs(wire[8:-4])==wire[-4:],f'G1 wire {net} {start}')
-            captures.append(dict(net=net,start=start,end=start+count*8,wire=wire,epoch=bisect.bisect_right(resets,start)))
+            captures.append(dict(net=net,start=start,end=start+count,wire=wire,epoch=bisect.bisect_right(resets,start)))
     captures.sort(key=lambda f:(f['start'],f['net']))
     groups=[]
     for f in captures:
@@ -256,8 +256,6 @@ def check(test, folder):
         sn[vlkey]=1 if n_sn==255 else n_sn+1;ident[ep]=(n_ident+1)&65535
         previous_vl=last_vl.get(vlkey)
         due=m['cycle'] if previous_vl is None else previous_vl['start']+words[1]
-        np=now_points[bisect.bisect_right([p[0] for p in now_points],due)-1]
-        due+=(-(np[1]+due-np[0]))&7
         m['due']=due
         if previous_vl:expect(group['start']-previous_vl['start']>=words[1],f'G6 BAG message {m["index"]}')
         group['previous']=previous if previous and previous['epoch']==ep else None
@@ -309,7 +307,7 @@ def check(test, folder):
     for group in groups:
         m=group.get('message')
         if not m:continue
-        S=group['start'];A=m['cycle'];T=m['due'];prev=group['previous'];L=max(T,prev['end']+96 if prev else T)
+        S=group['start'];A=m['cycle'];T=m['due'];prev=group['previous'];L=max(T,prev['end']+12 if prev else T)
         expect(S>=L,f'G7 early message {m["index"]}: S={S} L={L}')
         competing=[]
         for other in messages:
@@ -350,11 +348,10 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
     def now_at(cycle):
         pos=bisect.bisect_right([p[0] for p in now_points],cycle)-1
         c,n=now_points[pos];return (n+cycle-c)&0xffffffff
-    for g in groups:expect(now_at(g['start'])%8==0,'frame starts at byte boundary')
     if test=='tb_tx_basic':
         expect(set(stages)=={'len','nets','ports','pause','wrap','userid'},'basic stages')
         lengths=[m['n'] for m in ms('len')]
-        expect(set((1,16,17,18,255,256,257,511,512,513,1470,1471))<=set(lengths) and len(lengths)>=42,'len matrix')
+        expect(set((1,16,17,18,255,256,257,511,512,513,1025,1470,1471))<=set(lengths) and len(lengths)>=42,'len matrix')
         for a,b in zip(ms('len'),ms('len')[1:]):expect(a['frame'] is not None and a['frame']['end']<b['cycle'],'len: drain individually')
         nets=ms('nets');expect({(m['words'][0]>>1)&3 for m in nets}=={1,2,3},'nets A/B/AB')
         expect({0,65535}<={m['words'][2] for m in nets} and len({m['words'][2] for m in nets})==3,'nets VLID matrix')
@@ -375,7 +372,7 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
         expect(set(short)=={800,672,400},'short BAG values')
         for value,frames in short.items():
             expect(len(frames)>=20 and all(m['message']['n']<=17 for m in frames),'short count/length')
-            for a,b in zip(frames,frames[1:]):expect(b['start']-a['start']==max(value,672),'short exact spacing')
+            for a,b in zip(frames,frames[1:]):expect(b['start']-a['start']==max(value,84),'short exact spacing')
         late=collections.defaultdict(list)
         for f in fs('late'):late[f['epoch']].append(f)
         offsets=[]
@@ -395,9 +392,9 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
         expect(set(stages)=={'burst128','rr3','late_x','early_x','mix'},'multi stages')
         burst=fs('burst128');expect(len(burst)==129 and burst[0]['message']['n']==1471,'burst count/blocker')
         expect(len({f['message']['vl'] for f in burst[1:]})==128 and all(f['message']['n']<=32 for f in burst[1:]),'burst all VLs')
-        for a,b in zip(burst,burst[1:]):expect(b['start']-a['end']==96,'burst exact IFG')
+        for a,b in zip(burst,burst[1:]):expect(b['start']-a['end']==12,'burst exact IFG')
         rr=fs('rr3');expect(len(rr)==61 and rr[0]['message']['n']==1471,'rr3 count/blocker')
-        for a,b in zip(rr[1:],rr[2:]):expect(b['start']-a['start']==672,'rr3 exact spacing')
+        for a,b in zip(rr[1:],rr[2:]):expect(b['start']-a['start']==84,'rr3 exact spacing')
         for i in range(3,len(rr[1:])-8):expect(len({f['message']['vl'] for f in rr[1:][i:i+3]})==3,'rr3 round robin')
         for stage in ('late_x','early_x'):
             msgs=ms(stage);frames=fs(stage);x=msgs[0]['vl'] if msgs else -1
@@ -406,8 +403,8 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
             if len(xf)==3 and len(yf)==1:
                 y=yf[0];expect(y['message']['cycle']==xf[0]['start']+100000-(3000 if stage=='late_x' else 60),stage+' arrival')
                 if stage=='late_x':
-                    expect(y['start']-y['message']['cycle']<=100 and xf[1]['start']==y['end']+96,stage+' Y then X')
-                else:expect(xf[1]['start']==xf[0]['start']+100000 and y['start']==xf[1]['end']+96,stage+' X then Y')
+                    expect(y['start']-y['message']['cycle']<=100 and xf[1]['start']==y['end']+12,stage+' Y then X')
+                else:expect(xf[1]['start']==xf[0]['start']+100000 and y['start']==xf[1]['end']+12,stage+' X then Y')
                 expect(xf[2]['start']==xf[1]['start']+100000,stage+' subsequent BAG from actual start')
         mix=ms('mix');expect(len(mix)>=1500 and len({m['vl'] for m in mix})==128,'mix coverage')
         values={m['vl']:m['words'][1] for m in mix}

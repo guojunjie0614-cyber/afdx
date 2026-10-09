@@ -3,7 +3,7 @@
 // 页池、配置表和各队列的RAM读写口分配保持独立。
 // 发送核心外壳：配置清表、六张共享 RAM 与各端口唯一主人连接。
 module afdx_tx_core #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 8, LOOKAHEAD = 512) (
+    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, LOOKAHEAD = 512) (
     input wire clk, reset,
     input wire [31:0] now,
     input wire byte_en,

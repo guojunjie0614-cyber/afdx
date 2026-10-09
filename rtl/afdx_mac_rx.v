@@ -1,5 +1,5 @@
 // 识别前导/SFD、检查帧长与FCS，输出去掉FCS的帧字节。
-// 输入慢线字节及节拍，输出帧开始、内容、结束和检查结果。
+// 输入逐拍GMII字节，输出帧开始、内容、结束和检查结果。
 // 保留末尾四字节用于FCS判定；错误帧仍由结束状态通知上层。
 module afdx_mac_rx (
     input wire clk, reset,
@@ -14,7 +14,6 @@ module afdx_mac_rx (
     reg [7:0] data_q;
     reg valid_q, armed;
     reg [1:0] state;
-    reg [2:0] phase;
     reg [10:0] length;
     reg [31:0] crc;
     // 四字节延迟寄存器，不是逐VL存储；剥离末尾FCS。
@@ -27,7 +26,6 @@ module afdx_mac_rx (
         if (reset) begin
             state <= IDLE;
             armed <= 0;
-            phase <= 0;
             length <= 0;
             crc <= 32'hffffffff;
             delay0 <= 0;
@@ -48,17 +46,15 @@ module afdx_mac_rx (
             if (state == IDLE) begin
                 if (! valid_q) armed <= 1;
                 else if (armed) begin
-                    state <= PREAMBLE;
+                    state <= data_q == 8'hd5 ? FRAME : data_q == 8'h55 ? PREAMBLE : BAD_PRE;
                     armed <= 0;
-                    phase <= 0;
                     length <= 0;
                     crc <= 32'hffffffff;
                 end
             end
             else begin
-                phase <= phase + 1'b1;
-                // 加上输入寄存延迟，在线路字节的第5个周期取样，之后每8拍一次。
-                if (phase == 2) begin
+                // 输入先寄存，随后逐拍处理；末尾四字节只用于FCS。
+                begin
                     if (! valid_q) begin
                         f_end <= 1;
                         state <= IDLE;

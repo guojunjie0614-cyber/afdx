@@ -1,5 +1,5 @@
-// 把帧内容装成含前导、SFD和FCS的以太网慢线帧。
-// 上游提供帧字节和尾标志，byte_en驱动每八拍一次的发送节拍。
+// 把帧内容装成含前导、SFD和FCS的以太网GMII帧。
+// 上游提供帧字节和尾标志，byte_en驱动逐拍的发送节拍。
 // 按前导、内容、FCS、帧间隔推进；FCS按低字节在前输出。
 module afdx_mac_tx (
     input wire clk, reset, byte_en,
@@ -25,7 +25,7 @@ module afdx_mac_tx (
     always @(posedge clk) begin
         if (reset) begin
             state <= GAP;
-            gap_left <= 96;
+            gap_left <= 12;
             pre_index <= 0;
             fcs_index <= 0;
             en_a <= 0;
@@ -133,8 +133,8 @@ module afdx_mac_tx (
                             tx_valid_b <= 0;
                             tx_eof <= 1;
                             state <= discard_tail ? DRAIN : GAP;
-                            // 此拍已经开始第一个空闲周期，余下95拍后到第12个字节边界。
-                            gap_left <= 95;
+                            // 此拍已经开始第一个空闲周期，余下11拍后满足12拍帧间隔。
+                            gap_left <= 11;
                         end
                         else begin
                             fcs_index <= fcs_index + 1'b1;

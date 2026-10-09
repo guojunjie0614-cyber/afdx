@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module line_monitor #(parameter NET="A", FILE_NAME="dump_a.txt", MIN_GAP=96,
+module line_monitor #(parameter NET="A", FILE_NAME="dump_a.txt", MIN_GAP=12,
                       SAMPLE_DELAY=1, IGNORE_RESET_TAIL=0)(
     input wire clk, reset,
     input wire [7:0] data,
@@ -27,14 +27,14 @@ module line_monitor #(parameter NET="A", FILE_NAME="dump_a.txt", MIN_GAP=96,
                 end
                 active=1;start_cycle=cycle;active_cycles=0;count=0;
             end
-            if (active_cycles%8==0) begin bytes[count]=data;count=count+1;end
+            if (active_cycles%1==0) begin bytes[count]=data;count=count+1;end
             else if (data!==bytes[count-1]) begin
                 errors=errors+1;
                 if(errors<10)$display("[MONITOR_FAIL] %s unstable byte at %0d",NET,cycle);
             end
             active_cycles=active_cycles+1;
         end else if (active) begin
-            if (active_cycles%8!=0) begin errors=errors+1;$display("[MONITOR_FAIL] fractional byte");end
+            if (active_cycles%1!=0) begin errors=errors+1;$display("[MONITOR_FAIL] fractional byte");end
             $fwrite(fd,"%s %0d %0d ",NET,start_cycle,count);
             for(i=0;i<count;i=i+1)$fwrite(fd,"%02x",bytes[i]);
             $fwrite(fd,"\n");$fflush(fd);

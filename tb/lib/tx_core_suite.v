@@ -1,9 +1,9 @@
 `timescale 1ns/1ps
 // 共用端口级骨架。激励文件只描述操作；events 记录实际发生的握手与脉冲。
-module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=8,LOOKAHEAD=512);
+module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512);
     reg clk=0;always #4 clk=~clk;
     reg reset=1;reg [31:0] now=0;
-    wire byte_en=now[2:0]==7;
+    wire byte_en=1'b1;
     reg m_valid=0,m_last=0,m_port_en=0,cfg_we=0;
     reg [7:0] m_data=0;reg [6:0] m_vl=0;reg [15:0] m_sport=0,m_dport=0,user_id=16'h1234;
     reg [9:0] cfg_addr=0;reg [31:0] cfg_wdata=0;

@@ -10,7 +10,7 @@ module mac_tx_suite #(parameter LOOP=0, TEST_NAME="tb_mac_tx");
         afdx_timebase clock_unit(clk,reset,now,byte_en,now_c);
     end else begin:test_source
         always @(posedge clk)if(reset)test_phase<=0;else test_phase<=test_phase+1'b1;
-        assign byte_en=(test_phase==7);
+        assign byte_en=1'b1;
         assign now=0;assign now_c=0;
     end endgenerate
     reg s_valid=0,s_last=0,s_en_a=0,s_en_b=0;
@@ -67,7 +67,7 @@ module mac_tx_suite #(parameter LOOP=0, TEST_NAME="tb_mac_tx");
         end else begin
             if(LOOP)begin
                 check(now===prior_now+1'b1,"timebase increment");
-                check(byte_en===(now[2:0]==7),"timebase byte enable");
+                check(byte_en===1'b1,"timebase byte enable");
                 check(now_c===now[27:12],"coarse time");prior_now=now;
             end
             check(!(tx_sof && prev_sof) && !(tx_eof && prev_eof) && !(tx_underrun && prev_under),"pulses one cycle");
@@ -75,25 +75,25 @@ module mac_tx_suite #(parameter LOOP=0, TEST_NAME="tb_mac_tx");
             if(tx_sof)begin
                 check(!active,"no overlapping frames");frame=frame+1;sof_count=sof_count+1;
                 check(frame<count,"no extra frame");check(be_before,"SOF on byte boundary");
-                check(cycle-last_reset>=96,"reset to SOF at least 96 clocks");
-                if(LOOP)check(now[2:0]==0,"SOF aligned to now");
+                check(cycle-last_reset>=12,"reset to SOF at least 12 clocks");
+                if(LOOP)check(byte_en,"SOF on native clock");
                 if(last_eof>=0)begin
-                    check(cycle-last_eof>=96,"minimum IFG");
+                    check(cycle-last_eof>=12,"minimum IFG");
                     if(delay_cycles[frame]==0 && under[frame-1]<0)begin
-                        check(cycle-last_eof==96,"queued exact IFG");
-                        if(length[frame-1]==60)check(cycle-last_start==672,"minimum frame start spacing");
+                        check(cycle-last_eof==12,"queued exact IFG");
+                        if(length[frame-1]==60)check(cycle-last_start==84,"minimum frame start spacing");
                     end
                 end
                 active=1;start_cycle=cycle;last_start=cycle;under_count=0;
             end
             if(tx_underrun)begin check(active && under[frame]>=0,"expected underrun");under_count=under_count+1;end
             if(tx_eof)begin
-                check(active,"EOF for active frame");check(cycle-start_cycle==wire_length[frame]*8,"wire frame duration");
+                check(active,"EOF for active frame");check(cycle-start_cycle==wire_length[frame],"wire frame duration");
                 check(under_count==(under[frame]>=0 ? 1:0),"one underrun or none");
                 active=0;last_eof=cycle;eof_count=eof_count+1;
             end
             if(active)begin
-                offset=(cycle-start_cycle)/8;
+                offset=(cycle-start_cycle);
                 check(offset<wire_length[frame],"no extra wire byte");
                 check(va===ena[frame][0] && vb===enb[frame][0],"network enable sampled per frame");
                 check(da===(ena[frame] ? wire_a[wire_base[frame]+offset] : 8'b0),"A wire byte");

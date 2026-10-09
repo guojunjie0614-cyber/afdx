@@ -15,7 +15,7 @@ module line_driver(input wire clk, output reg [7:0] data, output reg valid);
             valid=0;data=idle_data;
             repeat(idle_cycles) @(negedge clk);
             for(index=0;index<length;index=index+1)begin
-                valid=1;data=bytes[index];repeat(8)@(negedge clk);
+                valid=1;data=bytes[index];@(negedge clk);
             end
             valid=0;data=idle_data;
         end

@@ -53,7 +53,7 @@ class Scenario:
         start=max(self.t,self.ends[net]+gap,self.last_config+17,self.init_at+64) if when is None else when
         assert start>=self.ends[net]+8,(net,start,self.ends[net])
         offset=len(self.payload);self.payload.extend(wire);self.frames[net].append((start,offset,len(wire)))
-        self.ends[net]=start+8*len(wire)
+        self.ends[net]=start+len(wire)
         if advance:self.t=max(self.t,self.ends[net]+gap)
         return start,self.ends[net]-1
     def pair(self,*,n=1,vlid=1000,sn=0,delay=200,first='A',when=None):
@@ -285,7 +285,7 @@ def check(test,folder):
     for netname in ('A','B'):
         for line in (folder/f'dump_{netname.lower()}.txt').read_text().splitlines():
             p=line.split();start=int(p[1]);length=int(p[2]);wire=bytes.fromhex(p[3]);expect(p[0]==netname and len(wire)==length and p[3]==p[3].lower(),'capture format')
-            f=dict(start=start,end=start+8*length-1,wire=wire,net=netname,epoch=bisect.bisect_right(resets,start),used=False)
+            f=dict(start=start,end=start+length-1,wire=wire,net=netname,epoch=bisect.bisect_right(resets,start),used=False)
             f.update(decode(wire));frames.append(f)
     frames.sort(key=lambda f:(f['end'],f['net']))
     # H2 的近同时帧允许交换：从结果/D的先后识别实际选择，再按协议验证该顺序。
@@ -339,7 +339,7 @@ def check(test,folder):
         f['optional_reset']=following_reset if optional else None
         category=f['category'];allowed={category}
         if category=='good':
-            begin=f['start']+8*(f['prefix']+46)
+            begin=f['start']+f['prefix']+46
             used_min=min(occupancy(netname,t,True) for t in range(begin+1,begin+17))
             used_max=max(occupancy(netname,t,False) for t in range(begin+1,begin+17))
             capacity=1<<params['RX_RING_AW'];allowed=set()

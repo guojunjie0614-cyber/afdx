@@ -1,10 +1,10 @@
-// 双网AFDX端系统顶层，连接收发核心、GMII适配、配置总线及三种服务。
+// 双网AFDX端系统顶层，连接原生收发核心、GMII、配置总线及三种服务。
 // 外部为125 MHz GMII；应用口交付UDP载荷，cfg_*读写配置和统计。
 // 同一时钟域；服务与应用按整条消息共享核心，错误通过ev_*输出。
-// 125 MHz 官方 GMII 外壳：核心慢线经独立适配器连接引脚。
+// 125 MHz 官方 GMII 外壳：收发核心逐拍直连引脚。
 module AFDX_top #(
     parameter TX_PAGE_AW = 8,
-    parameter TX_OFF_AW = 8,
+    parameter TX_OFF_AW = 9,
     parameter LOOKAHEAD = 512,
     parameter RX_RING_AW = 12,
     parameter RX_DQ_AW = 4,
@@ -49,16 +49,8 @@ module AFDX_top #(
     wire [9:0] tx_cfg_addr;
     wire [15:0] rx_cfg_addr;
     wire [31:0] tx_cfg_wdata, rx_cfg_wdata;
-    wire [7:0] slow_tx_data_a, slow_tx_data_b, slow_rx_data_a, slow_rx_data_b;
-    wire slow_tx_valid_a, slow_tx_valid_b, slow_rx_valid_a, slow_rx_valid_b;
-    afdx_gmii_tx gmii_tx_a (.clk(clk), .reset(reset), .slow_data(slow_tx_data_a), .slow_valid(slow_tx_valid_a),
-        .tx_data(tx_data), .tx_valid(tx_valid));
-    afdx_gmii_tx gmii_tx_b (.clk(clk), .reset(reset), .slow_data(slow_tx_data_b), .slow_valid(slow_tx_valid_b),
-        .tx_data(tx_data_b), .tx_valid(tx_valid_b));
-    afdx_gmii_rx #(.GMII_RX_AW(GMII_RX_AW)) gmii_rx_a (.clk(clk), .reset(reset), .enable(tx_ready), .rx_data(rx_data),
-        .rx_valid(rx_valid), .slow_data(slow_rx_data_a), .slow_valid(slow_rx_valid_a), .gdrop(ev_gdrop[0]));
-    afdx_gmii_rx #(.GMII_RX_AW(GMII_RX_AW)) gmii_rx_b (.clk(clk), .reset(reset), .enable(tx_ready), .rx_data(rx_data_b),
-        .rx_valid(rx_valid_b), .slow_data(slow_rx_data_b), .slow_valid(slow_rx_valid_b), .gdrop(ev_gdrop[1]));
+    // 原生 GMII 直接连接核心；兼容的适配丢弃事件口固定为零。
+    assign ev_gdrop = 2'b00;
     wire m_valid, m_ready, m_last, m_port_en;
     wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data;
     wire [6:0] m_vl, rtc_tx_vl;
@@ -140,12 +132,12 @@ module AFDX_top #(
     afdx_tx_core #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD)) tx_core (.clk(clk), .reset(reset),
         .now(now), .byte_en(byte_en), .m_valid(m_valid), .m_ready(m_ready), .m_data(m_data), .m_last(m_last), .m_vl(m_vl),
         .m_port_en(m_port_en), .m_sport(m_sport), .m_dport(m_dport), .cfg_we(tx_cfg_we), .cfg_addr(tx_cfg_addr),
-        .cfg_wdata(tx_cfg_wdata), .user_id(user_id), .tx_data_a(slow_tx_data_a), .tx_valid_a(slow_tx_valid_a),
-        .tx_data_b(slow_tx_data_b), .tx_valid_b(slow_tx_valid_b), .init_done(tx_initialized), .ev_accept(ev_tx[0]),
+        .cfg_wdata(tx_cfg_wdata), .user_id(user_id), .tx_data_a(tx_data), .tx_valid_a(tx_valid),
+        .tx_data_b(tx_data_b), .tx_valid_b(tx_valid_b), .init_done(tx_initialized), .ev_accept(ev_tx[0]),
         .ev_drop_dis(ev_tx[1]), .ev_drop_full(ev_tx[2]), .ev_drop_long(ev_tx[3]), .ev_drop_nopage(ev_tx[4]),
         .ev_tx_a(ev_tx[5]), .ev_tx_b(ev_tx[6]), .cfg_ok(tx_cfg_ok));
     afdx_rx_core #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) rx_core (.clk(clk), .reset(reset), .now_c(now_c),
-        .rx_data_a(slow_rx_data_a), .rx_valid_a(slow_rx_valid_a), .rx_data_b(slow_rx_data_b), .rx_valid_b(slow_rx_valid_b),
+        .rx_data_a(rx_data), .rx_valid_a(rx_valid), .rx_data_b(rx_data_b), .rx_valid_b(rx_valid_b),
         .cfg_map_we(rx_map_we), .cfg_cfg_we(rx_cfg_we), .cfg_addr(rx_cfg_addr), .cfg_wdata(rx_cfg_wdata), .d_valid(d_valid),
         .d_data(d_data), .d_last(d_last), .d_vl(d_vl), .d_sport(d_sport), .d_dport(d_dport), .d_net(d_net),
         .init_done(rx_initialized), .ev_a(ev_a), .ev_b(ev_b), .ev_rm_drop(ev_rm_drop), .ev_deliver(ev_deliver),

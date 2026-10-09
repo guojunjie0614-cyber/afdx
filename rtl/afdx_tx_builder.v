@@ -3,7 +3,7 @@
 // 头部校验和及RAM读取分拍处理，授权与实际发送分开。
 // 下一帧顺序准备校验和；活动帧由移位帧头、载荷预读和补零状态发送。
 module afdx_tx_builder #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 8) (
+    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
     input wire clk, reset,
     input wire [31:0] now,
     input wire [15:0] user_id,
@@ -41,9 +41,25 @@ module afdx_tx_builder #(
     reg [1:0] part;
     reg [5:0] header_index;
     reg [4:0] padding_left;
-    reg [7:0] fetch_page, next_page, read_byte;
-    reg [TX_OFF_AW - 1:0] fetch_offset;
+    reg [7:0] fetch_page, next_page, payload_qr, pnext_qr;
+    reg [10:0] fetch_left;
+    // 八项字节FIFO及四项归还FIFO是小寄存器组，不是逐VL存储。
+    reg [63:0] payload_fifo;
+    reg [2:0] fifo_wr, fifo_rd;
+    reg [3:0] fifo_count;
+    reg issue_end;
+    reg [7:0] issue_page, return_page0, return_page1;
+    reg [1:0] return_pipe;
+    reg [31:0] return_fifo;
+    reg [1:0] return_wr, return_rd;
+    reg [2:0] return_count;
     reg [1:0] payload_pipe, pnext_pipe;
+    wire fifo_push = payload_pipe[1];
+    wire fifo_pop = s_valid && s_ready && ! s_last &&
+        ((part == 0 && header_index == 41) || (part == 1 && payload_index < active_len));
+    wire return_push = payload_pipe[1] && return_pipe[1];
+    wire return_pop = (! ret_valid || ret_ready) && return_count != 0;
+    reg [TX_OFF_AW - 1:0] fetch_offset;
     reg complete_a, complete_b, bad;
     assign grant_ready = ! pending;
     always @(posedge clk) begin
@@ -97,7 +113,10 @@ module afdx_tx_builder #(
             fetch_page <= 0;
             fetch_offset <= 0;
             next_page <= 0;
-            read_byte <= 0;
+            payload_qr <= 0; pnext_qr <= 0; fetch_left <= 0;
+            payload_fifo <= 0; fifo_wr <= 0; fifo_rd <= 0; fifo_count <= 0;
+            issue_end <= 0; issue_page <= 0; return_page0 <= 0; return_page1 <= 0;
+            return_pipe <= 0; return_fifo <= 0; return_wr <= 0; return_rd <= 0; return_count <= 0;
             payload_pipe <= 0;
             pnext_pipe <= 0;
             complete_a <= 0;
@@ -116,9 +135,49 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
             payload_pipe <= { payload_pipe[0], payload_re };
             pnext_pipe <= { pnext_pipe[0], pnext_re };
-            if (payload_pipe[1]) read_byte <= payload_q;
-            if (pnext_pipe[1]) next_page <= pnext_q;
-            if (ret_valid && ret_ready) ret_valid <= 0;
+            // RAM输出先寄存，响应标记与数据同拍进入FIFO。
+            payload_qr <= payload_q; pnext_qr <= pnext_q;
+            return_pipe <= { return_pipe[0], payload_re && issue_end };
+            return_page0 <= issue_page; return_page1 <= return_page0;
+            if (pnext_pipe[1]) next_page <= pnext_qr;
+            if (fifo_push) begin
+                payload_fifo[{fifo_wr,3'b0} +: 8] <= payload_qr;
+                fifo_wr <= fifo_wr + 1'b1;
+            end
+            if (fifo_pop) fifo_rd <= fifo_rd + 1'b1;
+            case ({fifo_push,fifo_pop})
+                2'b10: fifo_count <= fifo_count + 1'b1;
+                2'b01: fifo_count <= fifo_count - 1'b1;
+                default:;
+            endcase
+            // 归还可连续两拍到达，排队后用寄存器保持到接收确认。
+            if (return_push) begin
+                return_fifo[{return_wr,3'b0} +: 8] <= return_page1;
+                return_wr <= return_wr + 1'b1;
+            end
+            if (return_pop) begin
+                ret_valid <= 1;
+                ret_page <= return_fifo[{return_rd,3'b0} +: 8];
+                return_rd <= return_rd + 1'b1;
+            end else if (ret_valid && ret_ready) ret_valid <= 0;
+            case ({return_push,return_pop})
+                2'b10: return_count <= return_count + 1'b1;
+                2'b01: return_count <= return_count - 1'b1;
+                default:;
+            endcase
+            // 最多三项RAM请求在途，水位5保证八项FIFO不满且逐拍供数。
+            if (stream_active && fetch_left != 0 && fifo_count < 5) begin
+                payload_re <= 1;
+                payload_ra <= { fetch_page[TX_PAGE_AW-1:0], fetch_offset };
+                issue_page <= fetch_page;
+                issue_end <= fetch_left == 1 || (& fetch_offset);
+                fetch_left <= fetch_left - 1'b1;
+                if (& fetch_offset) begin
+                    fetch_page <= next_page;
+                    fetch_offset <= 0;
+                    pnext_re <= 1; pnext_ra <= next_page;
+                end else fetch_offset <= fetch_offset + 1'b1;
+            end
             if (grant_valid && grant_ready) begin
                 pending <= 1;
                 prepared <= 0;
@@ -163,7 +222,7 @@ module afdx_tx_builder #(
                 endcase
             end
             // now 经寄存器和减法两级；提前四个计数单位判断，让 s_valid 在 T-1 可见。
-            // 非整字节 T 仍由 MAC 的 byte_en 向上取整，不能提早一个字节。
+            // GMII逐拍起帧；输入与SOF各级寄存延迟保持四拍提前量。
             if (pending && prepared && ! stream_active && (! p_timed || ! time_difference[31] || time_difference >= 32'hfffffffc)) begin
                 stream_active <= 1;
                 s_valid <= 1;
@@ -181,8 +240,8 @@ module afdx_tx_builder #(
                 payload_index <= 0;
                 fetch_page <= p_page;
                 fetch_offset <= 0;
-                payload_re <= 1;
-                payload_ra <= { p_page[TX_PAGE_AW - 1:0], { TX_OFF_AW { 1'b0 } } };
+                fetch_left <= p_len;
+                fifo_wr <= 0; fifo_rd <= 0; fifo_count <= 0;
                 pnext_re <= 1;
                 pnext_ra <= p_page;
             end
@@ -215,31 +274,9 @@ module afdx_tx_builder #(
                 end
                 else if (part == 0 || (part == 1 && payload_index < active_len)) begin
                     part <= 1;
-                    s_data_a <= read_byte;
-                    s_data_b <= read_byte;
+                    s_data_a <= payload_fifo[{fifo_rd,3'b0} +: 8];
+                    s_data_b <= payload_fifo[{fifo_rd,3'b0} +: 8];
                     payload_index <= payload_index + 1'b1;
-                    if (payload_index + 1'b1 == active_len) begin
-                        // 最后一字节已复制到输出寄存器，整条消息的末页可以归还。
-                        ret_valid <= 1;
-                        ret_page <= fetch_page;
-                    end
-                    else if (& fetch_offset) begin
-                        // 最后字节和下一页指针都已捕获，才归还本页并转入下一页。
-                        ret_valid <= 1;
-                        ret_page <= fetch_page;
-                        fetch_page <= next_page;
-                        fetch_offset <= 0;
-                        payload_re <= 1;
-                        payload_ra <= { next_page[TX_PAGE_AW - 1:0], { TX_OFF_AW { 1'b0 } } };
-                        pnext_re <= 1;
-                        pnext_ra <= next_page;
-                    end
-                    else begin
-                        fetch_offset <= fetch_offset + 1'b1;
-                        payload_re <= 1;
-                        payload_ra <= { fetch_page[TX_PAGE_AW - 1:0], fetch_offset + { { (TX_OFF_AW - 1) { 1'b0 } },
-                            1'b1 } };
-                    end
                 end
                 else if (part == 1) begin
                     if (active_len < 17) begin

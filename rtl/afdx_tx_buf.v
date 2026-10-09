@@ -3,7 +3,7 @@
 // 先检查VL/长度/队列容量；整条消息成功收完才提交描述。
 // 接收状态：首字节暂存、取页、连续写入、登记、回滚、清尾、结果脉冲。
 module afdx_tx_buf #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 8) (
+    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
     input wire clk, reset, init_done,
     input wire m_valid,
     output wire m_ready,

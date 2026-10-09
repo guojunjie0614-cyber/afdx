@@ -192,13 +192,15 @@ module afdx_rx_parse #(
                 arrival <= now_c;
                 end_overflow <= overflow;
                 end_alloc <= has_payload;
-                end_bad <= header_bad || ! n_ok || ip_final[15:0] != 16'hffff || ip_len != ip_expected || f_len != expected_len || (udp_check != 0 && udp_final[15:0] != 16'hffff);
+                end_bad <= header_bad || ! n_ok || ip_final[15:0] != 16'hffff || ip_len != ip_expected || f_len != expected_len;
                 end_desc <= { vlid, sn, sport, dport, n[10:0], frame_begin[RX_RING_AW - 1:0], now_c };
                 desc_finish <= trial;
                 finish_phase <= 1;
             end
             else if (finish_phase != 0) begin
                 finish_phase <= finish_phase + 1'b1;
+                // 连续字节下，末载荷的UDP折叠在帧尾后下一拍才全部有效。
+                if (finish_phase == 1 && udp_check != 0 && udp_final[15:0] != 16'hffff) end_bad <= 1;
                 if (finish_phase == 2) begin
                     finish_phase <= 0;
                     if (err_saved == 1) ev <= 8'h02;

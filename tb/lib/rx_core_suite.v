@@ -66,8 +66,8 @@ module rx_core_suite #(parameter NAME="tb_rx_basic",RX_RING_AW=12,RX_DQ_AW=4);
                 end
                 "Z":begin
                     reset=1;reset_release=next_cycle+4;base_now=arg_value;base_cycle=reset_release;step=arg_step;now_c=base_now;
-                    if(ia<count_a && starts_a[ia]<next_cycle && starts_a[ia]+8*lengths_a[ia]>next_cycle)ia=ia+1;
-                    if(ib<count_b && starts_b[ib]<next_cycle && starts_b[ib]+8*lengths_b[ib]>next_cycle)ib=ib+1;
+                    if(ia<count_a && starts_a[ia]<next_cycle && starts_a[ia]+lengths_a[ia]>next_cycle)ia=ia+1;
+                    if(ib<count_b && starts_b[ib]<next_cycle && starts_b[ib]+lengths_b[ib]>next_cycle)ib=ib+1;
                 end
                 "K":begin base_now=now_c;base_cycle=next_cycle;step=arg_step;$fwrite(ef,"K %0d %04x %0d\n",next_cycle,now_c,step);end
                 "B":begin check(d_valid && delivery_active,"reset while delivery active");check(rx_valid_b,"reset while B frame active");end
@@ -76,11 +76,11 @@ module rx_core_suite #(parameter NAME="tb_rx_basic",RX_RING_AW=12,RX_DQ_AW=4);
             read_command;
         end
         rx_valid_a=0;rx_valid_b=0;rx_data_a=(cycle*17)&255;rx_data_b=(cycle*29)&255;
-        while(ia<count_a && next_cycle>=starts_a[ia]+8*lengths_a[ia])ia=ia+1;
-        while(ib<count_b && next_cycle>=starts_b[ib]+8*lengths_b[ib])ib=ib+1;
+        while(ia<count_a && next_cycle>=starts_a[ia]+lengths_a[ia])ia=ia+1;
+        while(ib<count_b && next_cycle>=starts_b[ib]+lengths_b[ib])ib=ib+1;
         if(!reset)begin
-            if(ia<count_a && next_cycle>=starts_a[ia])begin rx_valid_a=1;rx_data_a=wire_bytes[offsets_a[ia]+(next_cycle-starts_a[ia])/8];end
-            if(ib<count_b && next_cycle>=starts_b[ib])begin rx_valid_b=1;rx_data_b=wire_bytes[offsets_b[ib]+(next_cycle-starts_b[ib])/8];end
+            if(ia<count_a && next_cycle>=starts_a[ia])begin rx_valid_a=1;rx_data_a=wire_bytes[offsets_a[ia]+(next_cycle-starts_a[ia])];end
+            if(ib<count_b && next_cycle>=starts_b[ib])begin rx_valid_b=1;rx_data_b=wire_bytes[offsets_b[ib]+(next_cycle-starts_b[ib])];end
         end
     end
     always @(posedge clk)begin
