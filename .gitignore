@@ -1,0 +1,12 @@
+/out/
+/.obsidian/
+
+# eLinx GUI generated outputs; keep project source and project-local defaults.
+/elinx/*.qpf
+/elinx/*.qsf
+/elinx/*.pr/
+/elinx/*.runs/
+/elinx/db/
+/elinx/incremental_db/
+/elinx/hierarchy.xml
+/elinx/log4cpp.property

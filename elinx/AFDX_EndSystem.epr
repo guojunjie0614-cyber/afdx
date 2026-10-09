@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Product Version: eLinx v1.0.0.0-->
+<!--								-->
+<!--Copyright 2017-2024 eHiWay, Inc. All Rights Reserved.-->
+<Project Path="/AFDX_EndSystem.epr">
+    <!-- Keep AFDX_EndSystem_assignment_defaults.qdf beside this project for RAM inference settings. -->
+    <Configuration>
+        <Option Name="ActiveSimSet" Val="sim_1"/>
+        <Option Name="Project Type" Val="RTL"/>
+        <Option Name="SimulationTopModule" Val="AFDX_top"/>
+        <Option Name="Win_Version" Val="x86"/>
+    </Configuration>
+    <FileSets>
+        <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+            <File Path="/../rtl/afdx_615a.v"/>
+            <File Path="/../rtl/afdx_cfg.v"/>
+            <File Path="/../rtl/afdx_crc32_d8.v"/>
+            <File Path="/../rtl/afdx_gmii_rx.v"/>
+            <File Path="/../rtl/afdx_gmii_tx.v"/>
+            <File Path="/../rtl/afdx_mac_rx.v"/>
+            <File Path="/../rtl/afdx_mac_tx.v"/>
+            <File Path="/../rtl/afdx_ntp_fraction.v"/>
+            <File Path="/../rtl/afdx_ram_sdp.v"/>
+            <File Path="/../rtl/afdx_rtc.v"/>
+            <File Path="/../rtl/afdx_rx_core.v"/>
+            <File Path="/../rtl/afdx_rx_deliver.v"/>
+            <File Path="/../rtl/afdx_rx_engine.v"/>
+            <File Path="/../rtl/afdx_rx_parse.v"/>
+            <File Path="/../rtl/afdx_snmp.v"/>
+            <File Path="/../rtl/afdx_svc.v"/>
+            <File Path="/../rtl/afdx_timebase.v"/>
+            <File Path="/../rtl/AFDX_top.v"/>
+            <File Path="/../rtl/afdx_tx_buf.v"/>
+            <File Path="/../rtl/afdx_tx_builder.v"/>
+            <File Path="/../rtl/afdx_tx_core.v"/>
+            <File Path="/../rtl/afdx_tx_engine.v"/>
+            <File Path="/../rtl/afdx_tx_free.v"/>
+        </FileSet>
+        <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+            <File Path="/constraints.edc"/>
+            <Config>
+                <Option Name="TargetConstrsFile" Val="/constraints.edc"/>
+            </Config>
+        </FileSet>
+        <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+            <Config>
+                <Option Name="TargetSimulationsFile" Val=""/>
+            </Config>
+        </FileSet>
+    </FileSets>
+    <Runs>
+        <Run Id="synth_1" Type="Synthesis" SrcSet="sources_1" ConstrsSet="constrs_1" State="current" Parent="" Configuration="">
+            <Option Id="Compilation Flow">Classic Flow</Option>
+            <Option Id="Device">EQ6HL130</Option>
+            <Option Id="LanguageVersion">VERILOG_2001</Option>
+            <!-- eLinx stores this enum as 0=Balanced, 1=Speed, 2=Area. -->
+            <Option Id="OptimizationTechnique">1</Option>
+            <Option Id="OutOfDate">1</Option>
+            <Option Id="Package">CSG484_H</Option>
+            <Option Id="Series">eHiChip6</Option>
+            <Option Id="TargetLanguage">VERILOG</Option>
+            <Option Id="TopModule">AFDX_top</Option>
+        </Run>
+        <Run Id="imple_1" Type="Implementation" SrcSet="sources_1" ConstrsSet="constrs_1" State="current" Parent="" Configuration="" SynthRun="synth_1">
+            <Option Id="Compilation Flow">Classic Flow</Option>
+            <Option Id="Device">EQ6HL130</Option>
+            <Option Id="LanguageVersion">VERILOG_2001</Option>
+            <Option Id="Package">CSG484_H</Option>
+            <Option Id="Series">eHiChip6</Option>
+            <Option Id="TargetLanguage">VERILOG</Option>
+        </Run>
+    </Runs>
+    <PRFlow>
+        <PartitionDefs/>
+        <PRConfigurations/>
+    </PRFlow>
+</Project>
