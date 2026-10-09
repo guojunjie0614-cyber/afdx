@@ -14,20 +14,22 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     max_us=max(values)*0.008 if values else None,
                     mean_us=sum(values)*0.008/len(values) if values else None)
     result={}
-    required={'light_d0','light_d257','throughput_d0','throughput_d257','duplex_d0','duplex_d257'}
-    expect(required<={name for _,name in marks},'L8 six zero/fixed-delay light/uni/duplex phases')
+    required={'light_d0','light_d257','throughput_d0','throughput_d257','duplex_d0','duplex_d257','limit_d0'}
+    expect(required<={name for _,name in marks},'T14 light/uni/duplex and near-limit phases')
     for k,(stage_start,stage) in enumerate(marks):
         if stage not in required:continue
         stage_end=marks[k+1][0] if k+1<len(marks) else 1<<62
-        throughput=stage.startswith(('throughput','duplex'))
-        directions=(1,2) if stage.startswith(('duplex','light')) else (1,)
+        near_limit=stage.startswith('limit')
+        throughput=stage.startswith(('throughput','duplex','limit'))
+        directions=(1,2) if stage.startswith(('duplex','light','limit')) else (1,)
+        bag=123040 if near_limit else 125000
         if throughput:
             window=windows.get(stage,{})
             expect(set(window)=={'begin','end'},'L8 explicit measurement window '+stage)
             begin,end=window.get('begin',stage_start),window.get('end',stage_start)
             duration=end-begin
             expect(duration>=2500000,'L8 at least 20ms stable window '+stage)
-            expect(begin-stage_start>=250000,'L8 two BAG warmup rounds '+stage)
+            expect(begin-stage_start>=2*bag,'L8 two BAG warmup rounds '+stage)
         else:
             begin,end=stage_start,stage_end;duration=None
         stage_result=dict(window=[begin,end] if throughput else None,
@@ -41,11 +43,11 @@ def measure(sysrows,endpoints,gmii,samples,expect):
             expect(all(len(m['deliveries'])==1 for m in all_messages),'L8 every accepted message delivered exactly once '+stage)
             expect(all((m['words'][0]&7)==7 for m in all_messages),'L8 both networks enabled '+stage)
             if throughput:
-                expect({m['vl'] for m in selected}==set(range(9)) and all(m['n']==1471 and m['words'][1]==125000 for m in selected),
-                       'L8 nine full payload VLs with 1ms BAG '+stage)
-                for vl in range(9):
+                expect({m['vl'] for m in selected}==set(range(10)) and all(m['n']==1471 and m['words'][1]==bag for m in selected),
+                       'T14 ten full payload VLs with configured BAG '+stage)
+                for vl in range(10):
                     mm=[m for m in all_messages if m['vl']==vl]
-                    expect(len(mm)>=23 and all(b['cycle']-a['cycle']==125000 for a,b in zip(mm,mm[1:])),
+                    expect(len(mm)>=23 and all(b['cycle']-a['cycle']==bag for a,b in zip(mm,mm[1:])),
                            f'L8 one submission per BAG ES{source_number} VL{vl} {stage}')
             else:
                 expect(len({m['vl'] for m in all_messages})==1,'L8 light load one VL '+stage)
@@ -67,11 +69,13 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     rates=dict(frame_bytes=frame_bytes,payload_bytes=payload_bytes,
                                frame_mbps=frame_bytes*1000/duration,payload_mbps=payload_bytes*1000/duration)
                     metrics['gmii'][net]=rates
-                    expect(rates['payload_mbps']>=100,f'L8 ES{source_number} {net} GMII UDP throughput >=100Mbps {stage}')
+                    if not near_limit:
+                        expect(rates['payload_mbps']>=110,f'T14 ES{source_number} {net} GMII UDP throughput >=110Mbps {stage}')
                 ds=[d for m in all_messages for d in m['deliveries']]
                 payload=sum(overlap(d['cycle'],d['cycle']+d['n'],begin,end) for d in ds)
                 metrics['delivered_payload_bytes']=payload;metrics['delivered_mbps']=payload*1000/duration
-                expect(metrics['delivered_mbps']>=100,'L8 delivery throughput >=100Mbps '+stage)
+                if not near_limit:
+                    expect(metrics['delivered_mbps']>=110,'T14 delivery throughput >=110Mbps '+stage)
                 count_d=sum(begin<=d['cycle']<end for d in ds)
                 count_rm=sum(begin<=t<end for t in destination['pulses']['rm_drop'])
                 expect(count_rm==count_d,'L8 window rm_drop equals delivered messages '+stage)
@@ -91,9 +95,12 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                 bag_wait=max(0,previous['start']+m['words'][1]-m['cycle']) if previous else 0
                 tx.append(tx_value);rx.append(rx_value);e2e.append(total);bags.append(bag_wait)
                 tx_adjusted.append(tx_value-bag_wait);e2e_adjusted.append(total-bag_wait)
-                expect(0<rx_value<=250000,'L8 receive last-byte latency <=2ms '+stage)
-                expect(0<tx_value-(bag_wait if throughput else 0)<=250000,'L8 TX latency <=2ms after BAG allowance '+stage)
-                expect(0<total-(bag_wait if throughput else 0)<=250000,'L8 end-to-end latency <=2ms after BAG allowance '+stage)
+                if not near_limit:
+                    expect(0<rx_value<=250000,'L8 receive last-byte latency <=2ms '+stage)
+                    expect(0<tx_value-(bag_wait if throughput else 0)<=250000,'L8 TX latency <=2ms after BAG allowance '+stage)
+                    expect(0<total-(bag_wait if throughput else 0)<=250000,'L8 end-to-end latency <=2ms after BAG allowance '+stage)
+                    if throughput:
+                        expect(0<total<=250000,'T14 raw end-to-end latency <=2ms '+stage)
             metrics.update(T_tx=stats(tx),T_rx=stats(rx),T_e2e_link_removed=stats(e2e),
                 T_tx_BAG_removed=stats(tx_adjusted),T_e2e_BAG_and_link_removed=stats(e2e_adjusted),BAG_wait=stats(bags))
             intervals=[];schedule_errors=[];light_groups={}

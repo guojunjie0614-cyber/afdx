@@ -113,31 +113,31 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
   else es2.send_payload(which,probe_n,0,16'h1234,16'h4321,off);
   drain;
  end endtask
- // 每方向9条VL错开提交，绝对调度不把应用调用耗时加进BAG。
+ // 每方向10条VL错开提交，绝对调度不把应用调用耗时加进BAG。
  task automatic perf_sender;
- input integer who,rounds,base,off;
+ input integer who,rounds,base,period,off;
  integer r,v,target;
  begin
-  for(r=0;r<rounds;r=r+1)for(v=0;v<9;v=v+1)begin
-   target=base+r*125000+v*13888;
+  for(r=0;r<rounds;r=r+1)for(v=0;v<10;v=v+1)begin
+   target=base+r*period+v*(period/10);
    while(cycle<target)tick;
    check(cycle==target,"performance submission slot not missed");
-   if(who==1)es1.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*9+v)*1471);
-   else es2.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*9+v)*1471);
+   if(who==1)es1.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*10+v)*1471);
+   else es2.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*10+v)*1471);
   end
  end endtask
  task perf_traffic;
- input integer directions,rounds,off1,off2;
+ input integer directions,rounds,period,off1,off2;
  integer base;
  begin
   base=cycle+10;
   fork
-   perf_sender(1,rounds,base,off1);
-   begin if(directions==2)perf_sender(2,rounds,base,off2);end
+   perf_sender(1,rounds,base,period,off1);
+   begin if(directions==2)perf_sender(2,rounds,base,period,off2);end
    begin
-    while(cycle<base+250000)tick;
+    while(cycle<base+2*period)tick;
     $fwrite(sf,"F %0d begin %0s\n",cycle,stage_name);
-    while(cycle<base+rounds*125000)tick;
+    while(cycle<base+rounds*period)tick;
     $fwrite(sf,"F %0d end %0s\n",cycle,stage_name);
    end
   join
@@ -204,7 +204,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
     "B":begin rc=$fscanf(cf,"%d %d %d %d",vl,n,offset,count);fork es1.send_payload(vl,n,0,16'h1234,16'h4321,offset);es2.send_payload(vl,n,0,16'h1234,16'h4321,count);join end
     "X":begin rc=$fscanf(cf,"%h %h %h %h %h %h %h %d %d %d",w0,w1,w2,w3,w4,w5,rxword,live_n,live_offset,live_count);live_rewrite;end
     "Y":begin rc=$fscanf(cf,"%d %d %h %d %d",es,vl,value,n,offset);change_live(es,vl,value,n,offset);end
-    "F":begin rc=$fscanf(cf,"%d %d %d %d",es,count,offset,live_offset);perf_traffic(es,count,offset,live_offset);end
+    "F":begin rc=$fscanf(cf,"%d %d %d %d %d",es,count,delay,offset,live_offset);perf_traffic(es,count,delay,offset,live_offset);end
     "K":begin rc=$fscanf(cf,"%d %d %d %d %d",n,count,delay,offset,live_offset);light_traffic(n,count,delay,offset,live_offset);end
     "L":begin rc=$fscanf(cf,"%d %d",link,delay);set_delay(link,delay);end
     "A":begin rc=$fscanf(cf,"%d %d %d %d %d",link,frame,mode,byte_index,mask);action(link,frame,mode,byte_index,mask);end

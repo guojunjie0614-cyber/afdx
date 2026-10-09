@@ -181,7 +181,8 @@ def sim(options):
             if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=[0-9]+",value):raise ValueError("Invalid parameter "+value)
             parameters.append("-g"+value)
         f.result["parameters"]=options.param
-        sim_budget=18000 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
+        # 加载后卸载使五功能场景达到约70万拍；网表预算8小时，仍受Deadline截断。
+        sim_budget=28800 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
         log=f.job("simulation",[MS/"vsim.exe","-c",options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
         rows=re.findall(r"\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)[^\r\n]*",log)
         if not rows:raise RuntimeError("Test [RESULT] absent")

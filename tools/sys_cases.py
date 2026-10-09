@@ -220,19 +220,22 @@ def perf(s):
             for link in range(4):s.frames[link]+=8
             s.emit('D');s.emit('W 150003')
         s.counts()
-    for delay in (0,257):
-        for directions in (1,2):
-            s.stage(('throughput' if directions==1 else 'duplex')+f'_d{delay}')
-            for link in range(4):s.emit(f'L {link} {delay}')
-            for es in range(1,directions+1):
-                for vl in range(9):s.config(es,vl,maximum=1471,bag=125000)
-            offsets=[]
-            for es in range(1,directions+1):
-                offsets.append(s.blob(b''.join(s.data(1471) for _ in range(23*9))))
-                for net in range(2):s.frames[(es-1)*2+net]+=23*9
-            if directions==1:offsets.append(0)
-            s.emit(f'F {directions} 23 {offsets[0]} {offsets[1]}')
-            s.emit('D');s.counts()
+    phases=[(('throughput' if directions==1 else 'duplex')+f'_d{delay}',delay,directions,125000)
+            for delay in (0,257) for directions in (1,2)]
+    # 1526个线上字节加12字节帧间隔，慢线每字节8拍；十帧恰好一轮。
+    phases.append(('limit_d0',0,2,10*(1526+12)*8))
+    for name,delay,directions,bag in phases:
+        s.stage(name)
+        for link in range(4):s.emit(f'L {link} {delay}')
+        for es in range(1,directions+1):
+            for vl in range(10):s.config(es,vl,maximum=1471,bag=bag)
+        offsets=[]
+        for es in range(1,directions+1):
+            offsets.append(s.blob(b''.join(s.data(1471) for _ in range(23*10))))
+            for net in range(2):s.frames[(es-1)*2+net]+=23*10
+        if directions==1:offsets.append(0)
+        s.emit(f'F {directions} 23 {bag} {offsets[0]} {offsets[1]}')
+        s.emit('D');s.counts()
 
 
 def generate(test,seed,out):
