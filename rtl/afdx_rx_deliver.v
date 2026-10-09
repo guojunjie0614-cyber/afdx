@@ -3,10 +3,10 @@
 // 读口和预取流水线归本模块；交付结束后更新已释放的环形地址。
 // 交付状态：两拍选择队头、连续发出同步RAM读请求、三级数据流水、末字节后再取。
 module afdx_rx_deliver #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 4) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
     input wire clk, reset,
     input wire [RX_DQ_AW:0] dq_count,
-    input wire [16 * (RX_RING_AW + 56) - 1:0] dq_entries,
+    input wire [32 * (RX_RING_AW + 56) - 1:0] dq_entries,
     output reg dq_pop,
     output reg ring_a_re, ring_b_re,
     output reg [RX_RING_AW - 1:0] ring_a_ra, ring_b_ra,
@@ -20,10 +20,10 @@ module afdx_rx_deliver #(
     output reg d_net);
     localparam DQ_WIDTH = RX_RING_AW + 56;
     reg [RX_DQ_AW - 1:0] rd_ptr;
-    wire [3:0] read_index = rd_ptr;
+    wire [4:0] read_index = rd_ptr;
     reg [1:0] head_phase;
-    reg head_bank;
-    reg [DQ_WIDTH - 1:0] group0, group1, dq_data;
+    reg [1:0] head_bank;
+    reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
     reg dq_req, dq_valid;
     reg issuing;
     reg [10:0] left;
@@ -39,6 +39,8 @@ module afdx_rx_deliver #(
             head_bank <= 0;
             group0 <= 0;
             group1 <= 0;
+            group2 <= 0;
+            group3 <= 0;
             dq_data <= 0;
             ring_a_re <= 0;
             ring_b_re <= 0;
@@ -65,46 +67,67 @@ module afdx_rx_deliver #(
             dq_pop <= 0;
             case (head_phase)
                 0 : if (dq_req && dq_count != 0) begin
-                    // 16项寄存器组先各八选一，下一拍二选一；只由本模块读。
+                    // 32 项寄存器组先各八选一，下一拍四选一；最短帧跟随长帧时仍可排队。
                     case (read_index[2:0])
                         0 : begin
                             group0 <= dq_entries[1 * DQ_WIDTH - 1:0 * DQ_WIDTH];
                             group1 <= dq_entries[9 * DQ_WIDTH - 1:8 * DQ_WIDTH];
+                            group2 <= dq_entries[17 * DQ_WIDTH - 1:16 * DQ_WIDTH];
+                            group3 <= dq_entries[25 * DQ_WIDTH - 1:24 * DQ_WIDTH];
                         end
                         1 : begin
                             group0 <= dq_entries[2 * DQ_WIDTH - 1:1 * DQ_WIDTH];
                             group1 <= dq_entries[10 * DQ_WIDTH - 1:9 * DQ_WIDTH];
+                            group2 <= dq_entries[18 * DQ_WIDTH - 1:17 * DQ_WIDTH];
+                            group3 <= dq_entries[26 * DQ_WIDTH - 1:25 * DQ_WIDTH];
                         end
                         2 : begin
                             group0 <= dq_entries[3 * DQ_WIDTH - 1:2 * DQ_WIDTH];
                             group1 <= dq_entries[11 * DQ_WIDTH - 1:10 * DQ_WIDTH];
+                            group2 <= dq_entries[19 * DQ_WIDTH - 1:18 * DQ_WIDTH];
+                            group3 <= dq_entries[27 * DQ_WIDTH - 1:26 * DQ_WIDTH];
                         end
                         3 : begin
                             group0 <= dq_entries[4 * DQ_WIDTH - 1:3 * DQ_WIDTH];
                             group1 <= dq_entries[12 * DQ_WIDTH - 1:11 * DQ_WIDTH];
+                            group2 <= dq_entries[20 * DQ_WIDTH - 1:19 * DQ_WIDTH];
+                            group3 <= dq_entries[28 * DQ_WIDTH - 1:27 * DQ_WIDTH];
                         end
                         4 : begin
                             group0 <= dq_entries[5 * DQ_WIDTH - 1:4 * DQ_WIDTH];
                             group1 <= dq_entries[13 * DQ_WIDTH - 1:12 * DQ_WIDTH];
+                            group2 <= dq_entries[21 * DQ_WIDTH - 1:20 * DQ_WIDTH];
+                            group3 <= dq_entries[29 * DQ_WIDTH - 1:28 * DQ_WIDTH];
                         end
                         5 : begin
                             group0 <= dq_entries[6 * DQ_WIDTH - 1:5 * DQ_WIDTH];
                             group1 <= dq_entries[14 * DQ_WIDTH - 1:13 * DQ_WIDTH];
+                            group2 <= dq_entries[22 * DQ_WIDTH - 1:21 * DQ_WIDTH];
+                            group3 <= dq_entries[30 * DQ_WIDTH - 1:29 * DQ_WIDTH];
                         end
                         6 : begin
                             group0 <= dq_entries[7 * DQ_WIDTH - 1:6 * DQ_WIDTH];
                             group1 <= dq_entries[15 * DQ_WIDTH - 1:14 * DQ_WIDTH];
+                            group2 <= dq_entries[23 * DQ_WIDTH - 1:22 * DQ_WIDTH];
+                            group3 <= dq_entries[31 * DQ_WIDTH - 1:30 * DQ_WIDTH];
                         end
                         7 : begin
                             group0 <= dq_entries[8 * DQ_WIDTH - 1:7 * DQ_WIDTH];
                             group1 <= dq_entries[16 * DQ_WIDTH - 1:15 * DQ_WIDTH];
+                            group2 <= dq_entries[24 * DQ_WIDTH - 1:23 * DQ_WIDTH];
+                            group3 <= dq_entries[32 * DQ_WIDTH - 1:31 * DQ_WIDTH];
                         end
                     endcase
-                    head_bank <= read_index[3];
+                    head_bank <= read_index[4:3];
                     head_phase <= 1;
                 end
                 1 : begin
-                    dq_data <= head_bank ? group1 : group0;
+                    case (head_bank)
+                        0 : dq_data <= group0;
+                        1 : dq_data <= group1;
+                        2 : dq_data <= group2;
+                        3 : dq_data <= group3;
+                    endcase
                     dq_valid <= 1;
                     dq_pop <= 1;
                     rd_ptr <= rd_ptr + 1'b1;

@@ -3,7 +3,7 @@
 // 各网独立缓存，只有完好帧描述进入共享完整性/冗余判定。
 // 接收外壳：并行清映射/配置表，连接双网 MAC/解析器、唯一状态引擎和交付流水。
 module afdx_rx_core #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 4) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
     input wire clk, reset,
     input wire [15:0] now_c,
     input wire [7:0] rx_data_a,
@@ -50,11 +50,11 @@ module afdx_rx_core #(
     wire [RX_DQ_AW - 1:0] dq_wa;
     wire [RX_DQ_AW:0] dq_count;
     wire [DQ_WIDTH - 1:0] dq_wd;
-    wire [16 * DQ_WIDTH - 1:0] dq_entries;
-    // rx_dq 是最多16项的小寄存器组：引擎写口、交付模块读口，均不作 RAM 推断。
+    wire [32 * DQ_WIDTH - 1:0] dq_entries;
+    // rx_dq 是最多32项的小寄存器组：引擎写口、交付模块读口，均不作 RAM 推断。
     genvar i;
     generate
-        for (i = 0; i < 16; i = i + 1) begin : queue_slot
+        for (i = 0; i < 32; i = i + 1) begin : queue_slot
             if (i < (1 << RX_DQ_AW)) begin : present
                 reg [DQ_WIDTH - 1:0] entry;
                 always @(posedge clk) if (dq_we && dq_wa == i) entry <= dq_wd;

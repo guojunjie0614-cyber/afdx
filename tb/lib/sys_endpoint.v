@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // 系统端点骨架：只观察 AFDX_top 端口，所有记录统一在时钟沿 NBA 前取样。
 module sys_endpoint #(
-    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=8,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=4,GMII_RX_AW=12
+    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,GMII_RX_AW=12
 )(
     input wire clk,reset,
     input wire [7:0] rd_a,
@@ -66,21 +66,21 @@ module sys_endpoint #(
     assign mon_ta_errors=0;assign mon_tb_errors=0;assign mon_ra_errors=0;assign mon_rb_errors=0;
 `else
     // T6唯一的内部观测例外：四条核心边界慢线。
-    assign slow_td_a=dut.slow_tx_data_a;assign slow_tv_a=dut.slow_tx_valid_a;
-    assign slow_td_b=dut.slow_tx_data_b;assign slow_tv_b=dut.slow_tx_valid_b;
-    assign slow_rd_a=dut.slow_rx_data_a;assign slow_rv_a=dut.slow_rx_valid_a;
-    assign slow_rd_b=dut.slow_rx_data_b;assign slow_rv_b=dut.slow_rx_valid_b;
+    assign slow_td_a=td_a;assign slow_tv_a=tv_a;
+    assign slow_td_b=td_b;assign slow_tv_b=tv_b;
+    assign slow_rd_a=rd_a;assign slow_rv_a=rv_a;
+    assign slow_rd_b=rd_b;assign slow_rv_b=rv_b;
     line_monitor #(.NET("A"),.FILE_NAME(ES==1 ? "es1_tx/dump_a.txt" : "es2_tx/dump_a.txt"),
-        .MIN_GAP(96),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
+        .MIN_GAP(12),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
         mon_ta(clk,reset,slow_td_a,slow_tv_a,mon_ta_errors,mon_ta_frames);
     line_monitor #(.NET("B"),.FILE_NAME(ES==1 ? "es1_tx/dump_b.txt" : "es2_tx/dump_b.txt"),
-        .MIN_GAP(96),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
+        .MIN_GAP(12),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
         mon_tb(clk,reset,slow_td_b,slow_tv_b,mon_tb_errors,mon_tb_frames);
     line_monitor #(.NET("A"),.FILE_NAME(ES==1 ? "es1_rx/dump_a.txt" : "es2_rx/dump_a.txt"),
-        .MIN_GAP(16),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
+        .MIN_GAP(12),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
         mon_ra(clk,reset,slow_rd_a,slow_rv_a,mon_ra_errors,mon_ra_frames);
     line_monitor #(.NET("B"),.FILE_NAME(ES==1 ? "es1_rx/dump_b.txt" : "es2_rx/dump_b.txt"),
-        .MIN_GAP(16),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
+        .MIN_GAP(12),.SAMPLE_DELAY(0),.IGNORE_RESET_TAIL(1))
         mon_rb(clk,reset,slow_rd_b,slow_rv_b,mon_rb_errors,mon_rb_frames);
 `endif
     wire [31:0] gm_ta_errors,gm_tb_errors,gm_ra_errors,gm_rb_errors;
@@ -95,7 +95,7 @@ module sys_endpoint #(
         gm_rb(clk,reset,rd_b,rv_b,gm_rb_errors,gm_rb_frames);
     wire line_activity=tv_a||tv_b||rv_a||rv_b||slow_tv_a||slow_tv_b||slow_rv_a||slow_rv_b;
 
-    reg [7:0] stimulus[0:3999999],message_bytes[0:8191],delivered_bytes[0:4095];
+    reg [7:0] stimulus[0:31999999],message_bytes[0:8191],delivered_bytes[0:4095];
     reg [31:0] expected_count[0:26],cfg_shadow[0:1023];
     reg [15:0] user_shadow=0;
     integer tf,rf,cycle=0,release_cycle=0,quiet_since=0,last_wire_end=-100000;

@@ -41,8 +41,9 @@ def coverage(test, sysrows, endpoints, expected, writes, reads, samples, expect)
         seen = {COUNTERS[r['addr']] for r in reads if r['addr'] in COUNTERS and r['value']}
         expect({'a_fcs', 'b_fcs', 'a_len', 'b_len', 'a_hdr', 'b_hdr', 'a_unk', 'b_unk',
                 'a_cfg', 'b_cfg', 'a_ic', 'b_ic', 'rm_drop'} <= seen, 'fault counters observed nonzero')
-        expect({'gdrop_a','gdrop_b'}<=stages and {'a_gdrop','b_gdrop'}<=seen,
-               'fault both adapter overflow counters observed nonzero')
+        expect({'gdrop_a','gdrop_b'}<=stages and all(pulses[n]==0 for n in ('a_gdrop','b_gdrop')) and
+               endpoints[2]['pulse_stages']['gdrop_a']['a_len']==10 and endpoints[2]['pulse_stages']['gdrop_b']['b_len']==13,
+               'fault original overflow stimuli rejected as native bad-length frames on both networks')
         for stage in ('ip_hdr', 'udp_hdr'):
             expect(stage in stages, 'fault distinct '+stage+' phase')
             for number, ep in endpoints.items():
@@ -104,7 +105,7 @@ def coverage(test, sysrows, endpoints, expected, writes, reads, samples, expect)
         used = {d['idx'] for d in endpoints[2]['deliveries']}
         expect(len(used) >= 256 and {0,4095} <= used, 'load receive indices cover 0/4095 plus 254')
         small = [m for m in es1 if ((m['words'][0]>>9)&2047)==153]
-        expect(len({m['vl'] for m in small}) >= 16 and any(m['w_limit']==33160 for m in small), 'load 16 by 153 P7 window')
+        expect(len({m['vl'] for m in small}) >= 16 and any(m['w_limit']==8520 for m in small), 'load 16 by 153 P7 window')
         expect(all(pulses[n] for n in ('drop_dis','drop_full','drop_long','drop_nopage')), 'load all TX rejection classes')
         expect(any(r['addr']==0x40 and r['value']>300 for r in reads), 'load accept counter exceeds 300')
         a = endpoints[1]['tx']; b = endpoints[2]['tx']

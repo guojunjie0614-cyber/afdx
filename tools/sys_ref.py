@@ -42,7 +42,7 @@ def captures(folder, expect):
             netname, start, count, raw = p
             wire = bytes.fromhex(raw)
             expect(netname == net and len(wire) == int(count) and raw == raw.lower(), 'S3 capture format')
-            result.append(dict(net=net, start=int(start), end=int(start)+8*int(count), wire=wire))
+            result.append(dict(net=net, start=int(start), end=int(start)+int(count), wire=wire))
     return sorted(result, key=lambda f: (f['start'], f['net']))
 
 
@@ -92,7 +92,7 @@ def endpoint(folder, number, expect):
         elif p[0] == 'M':
             vl, n, pen = map(int, p[2:5]); body = bytes.fromhex(p[7])
             words = [cfg.get(vl*8+w, 0) for w in range(6)]
-            limit = 5000 + sum((20+47+max((cfg.get(v*8, 0)>>9)&2047, 17))*8
+            limit = 5000 + sum((20+47+max((cfg.get(v*8, 0)>>9)&2047, 17))
                               for v in range(128) if cfg.get(v*8, 0)&1 and cfg.get(v*8, 0)&6)
             m = dict(index=len(messages), es=number, cycle=c, epoch=epoch,
                      stage=stage, vl=vl, n=n, pen=pen, sport=int(p[5], 16),
@@ -223,16 +223,16 @@ def reconstruct_links(sysrows, endpoints, expect):
                     continue
                 f = tx[number-1]
                 expect(f['end'] <= c and start >= c, 'S3 replay after complete capture')
-                transformed.append(dict(net=net, start=start, end=start+8*len(f['wire']), wire=f['wire'],
+                transformed.append(dict(net=net, start=start, end=start+len(f['wire']), wire=f['wire'],
                     source=f, link=link, number=number, original=False, mode='replay', message=f.get('message')))
             elif p[0] == 'J':
                 start, count = int(p[3]), int(p[4]); wire = bytes.fromhex(p[5])
                 expect(len(wire) == count and start >= c and p[5] == p[5].lower(), 'S3 insertion format')
-                transformed.append(dict(net=net, start=start, end=start+8*count, wire=wire,
+                transformed.append(dict(net=net, start=start, end=start+count, wire=wire,
                     source=None, link=link, original=False, mode='insert', message=None))
         transformed.sort(key=lambda f: f['start'])
         for a, b in zip(transformed, transformed[1:]):
-            expect(b['start']-a['end'] >= 96, f'S3 link {link} output gap')
+            expect(b['start']-a['end'] >= 12, f'S3 link {link} output gap')
         # A receive monitor ignores the entire physical segment intersecting reset.
         intervals = list(zip(destination['resets'], destination['releases']))
         retained = [f for f in transformed if not any(f['start'] < r and f['end'] > z for z, r in intervals)]

@@ -4,7 +4,7 @@
 // 公共引擎：清状态表、查映射/配置、完整性、冗余判定、写回；空闲时逐项老化。
 // 只驱动 rx_dq 写口及项数；读口、读指针和两级选择均归 rx_deliver。
 module afdx_rx_engine #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 4) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
     input wire clk, reset, enable,
     input wire [15:0] now_c,
     output reg initialized,

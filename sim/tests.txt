@@ -30,3 +30,5 @@ tb_sys_rtc
 tb_sys_snmp
 tb_sys_snmp_settrap
 tb_sys_615a
+tb_gbe_burst|COUNT=77
+tb_gbe_burst|COUNT=81

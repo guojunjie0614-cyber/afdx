@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // 双端口级系统平台。命令来自独立参考工具，观测不穿透 DUT。
-module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
- LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=4,GMII_RX_AW=12);
+module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
+ LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,GMII_RX_AW=12,LINK_FRAMES=2048);
  reg clk=0;always #4 clk=~clk;
  reg reset1=1,reset2=1;
  integer sf,cf,pf,rc,cycle=0,checks=0,errors=0,quiet=0;
@@ -12,11 +12,11 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
  es1(clk,reset1,r1a,i1a,r1b,i1b,sf,t1a,v1a,t1b,v1b,ready1,c1,e1);
  sys_endpoint #(2,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW,GMII_RX_AW)
  es2(clk,reset2,r2a,i2a,r2b,i2b,sf,t2a,v2a,t2b,v2b,ready2,c2,e2);
- link_model #(.LINK_ID(0)) l0(clk,reset1,t1a,v1a,r2a,i2a,sf,l0e);
- link_model #(.LINK_ID(1)) l1(clk,reset1,t1b,v1b,r2b,i2b,sf,l1e);
- link_model #(.LINK_ID(2)) l2(clk,reset2,t2a,v2a,r1a,i1a,sf,l2e);
- link_model #(.LINK_ID(3)) l3(clk,reset2,t2b,v2b,r1b,i1b,sf,l3e);
- reg [7:0] stimulus[0:3999999];
+ link_model #(.LINK_ID(0),.MAX_FRAMES(LINK_FRAMES)) l0(clk,reset1,t1a,v1a,r2a,i2a,sf,l0e);
+ link_model #(.LINK_ID(1),.MAX_FRAMES(LINK_FRAMES)) l1(clk,reset1,t1b,v1b,r2b,i2b,sf,l1e);
+ link_model #(.LINK_ID(2),.MAX_FRAMES(LINK_FRAMES)) l2(clk,reset2,t2a,v2a,r1a,i1a,sf,l2e);
+ link_model #(.LINK_ID(3),.MAX_FRAMES(LINK_FRAMES)) l3(clk,reset2,t2b,v2b,r1b,i1b,sf,l3e);
+ reg [7:0] stimulus[0:31999999];
  reg [16383:0] injected;
  reg [8*40-1:0] command,stage_name;
  reg [31:0] addr,value,sp,dp;
@@ -32,7 +32,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
      es1.ev_tx||es2.ev_tx||es1.ev_a||es1.ev_b||es2.ev_a||es2.ev_b||
      es1.ev_rm_drop||es2.ev_rm_drop||es1.ev_deliver||es2.ev_deliver||
      es1.ev_gdrop||es2.ev_gdrop||es1.line_activity||es2.line_activity)quiet=cycle;
-  if(cycle>30000000 || errors+e1+e2+l0e+l1e+l2e+l3e>100)begin
+  if(cycle>50000000 || errors+e1+e2+l0e+l1e+l2e+l3e>100)begin
    $display("[RESULT] %0s FAIL checks=%0d errors=%0d",NAME,checks+c1+c2,errors+e1+e2+l0e+l1e+l2e+l3e+1);$finish;
   end
  end
@@ -113,27 +113,27 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
   else es2.send_payload(which,probe_n,0,16'h1234,16'h4321,off);
   drain;
  end endtask
- // 每方向10条VL错开提交，绝对调度不把应用调用耗时加进BAG。
+ // 10/77/81 条 VL 均匀错开提交，绝对调度不把应用调用耗时加进 BAG。
  task automatic perf_sender;
- input integer who,rounds,base,period,off;
+ input integer who,rounds,base,period,vls,off;
  integer r,v,target;
  begin
-  for(r=0;r<rounds;r=r+1)for(v=0;v<10;v=v+1)begin
-   target=base+r*period+v*(period/10);
+  for(r=0;r<rounds;r=r+1)for(v=0;v<vls;v=v+1)begin
+   target=base+r*period+(v*period)/vls;
    while(cycle<target)tick;
    check(cycle==target,"performance submission slot not missed");
-   if(who==1)es1.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*10+v)*1471);
-   else es2.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*10+v)*1471);
+   if(who==1)es1.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*vls+v)*1471);
+   else es2.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*vls+v)*1471);
   end
  end endtask
  task perf_traffic;
- input integer directions,rounds,period,off1,off2;
+ input integer directions,rounds,period,vls,off1,off2;
  integer base;
  begin
   base=cycle+10;
   fork
-   perf_sender(1,rounds,base,period,off1);
-   begin if(directions==2)perf_sender(2,rounds,base,period,off2);end
+   perf_sender(1,rounds,base,period,vls,off1);
+   begin if(directions==2)perf_sender(2,rounds,base,period,vls,off2);end
    begin
     while(cycle<base+2*period)tick;
     $fwrite(sf,"F %0d begin %0s\n",cycle,stage_name);
@@ -180,7 +180,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
   pf=$fopen("vectors/sys_payload.count","r");rc=$fscanf(pf,"%d",total);$fclose(pf);
   $readmemh("vectors/sys_payload.hex",stimulus,0,total-1);
   $fwrite(sf,"G 0 TX_PAGE_AW %0d\nG 0 TX_OFF_AW %0d\nG 0 LOOKAHEAD %0d\nG 0 RX_RING_AW %0d\nG 0 RX_DQ_AW %0d\n",TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW);
-  $fwrite(sf,"G 0 GMII_RX_AW %0d\nG 0 CLOCK_NS 8\nG 0 GMII_TX_DELAY 10688\nG 0 GMII_RX_REPLAY_R 16\n",GMII_RX_AW);
+  $fwrite(sf,"G 0 GMII_RX_AW %0d\nG 0 CLOCK_NS 8\nG 0 GMII_TX_DELAY 0\nG 0 GMII_RX_REPLAY_R 0\n",GMII_RX_AW);
   #2;set_delay(0,13001);set_delay(1,13001);set_delay(2,13001);set_delay(3,13001);
   repeat(4)tick;@(negedge clk);reset1=0;
   repeat(13)tick;@(negedge clk);reset2=0;
@@ -204,7 +204,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=8,
     "B":begin rc=$fscanf(cf,"%d %d %d %d",vl,n,offset,count);fork es1.send_payload(vl,n,0,16'h1234,16'h4321,offset);es2.send_payload(vl,n,0,16'h1234,16'h4321,count);join end
     "X":begin rc=$fscanf(cf,"%h %h %h %h %h %h %h %d %d %d",w0,w1,w2,w3,w4,w5,rxword,live_n,live_offset,live_count);live_rewrite;end
     "Y":begin rc=$fscanf(cf,"%d %d %h %d %d",es,vl,value,n,offset);change_live(es,vl,value,n,offset);end
-    "F":begin rc=$fscanf(cf,"%d %d %d %d %d",es,count,delay,offset,live_offset);perf_traffic(es,count,delay,offset,live_offset);end
+    "F":begin rc=$fscanf(cf,"%d %d %d %d %d %d",es,count,delay,vl,offset,live_offset);perf_traffic(es,count,delay,vl,offset,live_offset);end
     "K":begin rc=$fscanf(cf,"%d %d %d %d %d",n,count,delay,offset,live_offset);light_traffic(n,count,delay,offset,live_offset);end
     "L":begin rc=$fscanf(cf,"%d %d",link,delay);set_delay(link,delay);end
     "A":begin rc=$fscanf(cf,"%d %d %d %d %d",link,frame,mode,byte_index,mask);action(link,frame,mode,byte_index,mask);end

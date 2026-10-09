@@ -139,7 +139,7 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
     elif test=='tb_rx_load':
         require(('load',));fs=stages['load']
         for net in ('A','B'):
-            subset=[f for f in fs if f['net']==net];expect(len(subset)>=1500,'load '+net+' frame count');gaps(subset,96)
+            subset=[f for f in fs if f['net']==net];expect(len(subset)>=1500,'load '+net+' frame count');expect(all(b['start']-a['end']-1==7*len(a['wire'])+96 for a,b in zip(subset,subset[1:])), 'load original offered schedule')
         expect(not any(f.get('observed_category')=='ovf' or f.get('result','').endswith('_ovf') for f in fs),'load no overflow')
         expect(either<=len(fs)/100,'load either <=1%')
         expect({(f.get('control',0)>>3)&3 for f in fs if 'control' in f}==set(range(4)),'load IC/RM modes')
@@ -170,7 +170,7 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
         expect([f.get('result') for f in fs]==['deliver','deliver','deliver','b_ovf','rm_drop','rm_drop','deliver','deliver'],'queue rollback decisions')
         expect(fs[-1]['net']=='B' and fs[-1]['sn']==6 and fs[-1]['n']==1,'queue overflow still updates PSN')
         if len(fs)==8:
-            e=fs[0]['end'];expect(16<=fs[1]['end']-e<=100 and fs[2]['end']-e>600 and fs[3]['end']-e<=1300,'queue overlap alignment');gaps(fs[1:4],8)
+            e=fs[0]['end'];expect(16<=fs[1]['end']-e<=100 and fs[2]['end']-e>140 and fs[3]['end']-e<=230,'queue overlap alignment');gaps(fs[1:4],8)
     elif test=='tb_rx_net':
         require(('net',));expect(max(c for c,_,_ in rows)<=200000 and max(f['end'] for f in frames)<=200000,'net cycle budget')
         outcomes('net',{'deliver':7,'rm_drop':5,'fcs':1,'hdr':1,'a_ic':1,'b_cfg':1,'a_unk':1})

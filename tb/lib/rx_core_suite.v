@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // 绝对周期激励，两网独立播放；只观察外壳端口，D 行在整条交付完成后写出。
-module rx_core_suite #(parameter NAME="tb_rx_basic",RX_RING_AW=12,RX_DQ_AW=4);
+module rx_core_suite #(parameter NAME="tb_rx_basic",RX_RING_AW=12,RX_DQ_AW=5);
     reg clk=0;always #4 clk=~clk;
     reg reset=1;reg [15:0] now_c=0;
     reg [7:0] rx_data_a=0,rx_data_b=0;reg rx_valid_a=0,rx_valid_b=0;

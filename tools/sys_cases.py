@@ -147,10 +147,12 @@ def load(s):
     s.config(1,125,en=0);s.msg(1,125,drain=True)
     s.config(1,126,maximum=1);s.msg(1,126,18,drain=True)
     s.config(1,127,qmax=0);s.msg(1,127,drain=True)
-    s.emit('D');s.config(1,0,bag=100000,maximum=1471,qmax=63)
-    s.msg(1,0,1,drain=True)
-    for k in range(48):s.msg(1,0,1471)
-    s.msg(1,0,1024);s.msg(1,0,1);s.emit('D');s.counts()
+    s.emit('D')
+    s.emit('W 250000') # 先结束先前配置的 BAG，页耗尽批次使用新的整形间隔。
+    for vl in (0,1):s.config(1,vl,bag=250000,maximum=1471,qmax=63);s.msg(1,vl,1,drain=True)
+    # 256 个 512 B 页：85 条长消息占 255 页，下一条中途失败须归还；最后一页仍可使用。
+    for k in range(85):s.msg(1,k%2,1471)
+    s.msg(1,0,1471);s.msg(1,0,512);s.msg(1,0,1);s.emit('D');s.counts()
 
 
 def cfg(s):
@@ -220,22 +222,23 @@ def perf(s):
             for link in range(4):s.frames[link]+=8
             s.emit('D');s.emit('W 150003')
         s.counts()
-    phases=[(('throughput' if directions==1 else 'duplex')+f'_d{delay}',delay,directions,125000)
+    phases=[(('throughput' if directions==1 else 'duplex')+f'_d{delay}',delay,directions,10)
             for delay in (0,257) for directions in (1,2)]
-    # 1526个线上字节加12字节帧间隔，慢线每字节8拍；十帧恰好一轮。
-    phases.append(('limit_d0',0,2,10*(1526+12)*8))
-    for name,delay,directions,bag in phases:
+    phases += [(f'gbe{vls}_d{delay}',delay,2,vls) for vls in (77,81) for delay in (0,257)]
+    for name,delay,directions,vls in phases:
         s.stage(name)
+        s.emit('W 125000') # 工况间静默一个 BAG，旧 VL 的发送相位先到期，再测新的固定负载。
         for link in range(4):s.emit(f'L {link} {delay}')
         for es in range(1,directions+1):
-            for vl in range(10):s.config(es,vl,maximum=1471,bag=bag)
+            for vl in range(vls):s.config(es,vl,maximum=1471,bag=125000)
         offsets=[]
         for es in range(1,directions+1):
-            offsets.append(s.blob(b''.join(s.data(1471) for _ in range(23*10))))
-            for net in range(2):s.frames[(es-1)*2+net]+=23*10
+            offsets.append(s.blob(b''.join(s.data(1471) for _ in range(23*vls))))
+            for net in range(2):s.frames[(es-1)*2+net]+=23*vls
         if directions==1:offsets.append(0)
-        s.emit(f'F {directions} 23 {bag} {offsets[0]} {offsets[1]}')
+        s.emit(f'F {directions} 23 125000 {vls} {offsets[0]} {offsets[1]}')
         s.emit('D');s.counts()
+
 
 
 def generate(test,seed,out):

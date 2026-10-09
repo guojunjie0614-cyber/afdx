@@ -1,8 +1,7 @@
-"""Independent GMII X1--X4 reconstruction, using public records only.
+"""Native GMII X1--X4 reconstruction, using public records only.
 
-All frame ends are the first low cycle.  M1 admission is derived exclusively
-from the GMII bytes, reset/enable records and the documented byte-release rule;
-observed slow captures or gdrop pulses never decide admission.
+All frame ends are the first low cycle. Native core and GMII captures must
+match exactly; reset-intersecting physical segments are excluded by monitors.
 """
 import bisect
 from pathlib import Path
@@ -22,56 +21,11 @@ def tx_capture_survives(start,length,resets,delay):
 
 
 def model_channel(incoming, ep, net, capacity, delay, expect):
-    schedules=[];expected=[];drops=[];starts=[];prefix=[]
-    allocated=0;epoch=None;previous_end=-1;peak=0;max_wait=0;clean_peak=0;clean_wait=0
-    def released(t):
-        k=bisect.bisect_right(starts,t)-1
-        if k<0:return 0
-        f=schedules[k]
-        return prefix[k]+min(len(f['wire']),(t-f['start'])//8+1)
-    for f in sorted(incoming,key=lambda f:f['start']):
-        s,e,n=f['start'],f['end'],len(f['wire'])
-        zindex=bisect.bisect_right(ep['resets'],s)
-        if zindex!=epoch:
-            epoch=zindex;schedules=[];starts=[];prefix=[];allocated=0;previous_end=-1
-        last_reset=ep['resets'][zindex-1] if zindex else -1
-        next_reset=ep['resets'][zindex] if zindex<len(ep['resets']) else 1<<62
-        ready=any(last_reset<i<=s for i in ep['inits'])
-        if not ready:
-            continue
-        interrupted=e>=next_reset
-        visible=min(n,max(0,next_reset-s)) if interrupted else n
-        if not visible:continue
-        # During a continuous GMII frame at most one byte can be released per
-        # cycle, so occupancy after each input byte is monotonic nondecreasing.
-        def occupancy(j):return allocated+j-released(s+j-1)
-        final=occupancy(visible)
-        if final>capacity:
-            lo,hi=1,visible
-            while lo<hi:
-                mid=(lo+hi)//2
-                if occupancy(mid)>capacity:hi=mid
-                else:lo=mid+1
-            rejected=s+lo-1
-            if rejected+1<next_reset:
-                drops.append(dict(cycle=rejected+1,frame=f,byte=lo-1))
-            peak=max(peak,capacity)
-            # Trial allocation rolls back; previously committed bytes remain.
-            continue
-        peak=max(peak,final)
-        if interrupted:continue
-        replay_start=max(e+delay,previous_end+16) if previous_end>=0 else e+delay
-        wait=replay_start-(e+delay);max_wait=max(max_wait,wait)
-        replay=dict(f,gmii_start=s,gmii_end=e,start=replay_start,end=replay_start+8*n,queue_wait=wait)
-        clean=f.get('original') and f.get('mode')=='pass'
-        if clean:
-            clean_peak=max(clean_peak,final);clean_wait=max(clean_wait,wait)
-        prefix.append(allocated);starts.append(replay_start);schedules.append(replay)
-        allocated+=n;previous_end=replay['end']
-        if replay['end']<next_reset:
-            expected.append(replay)
-    return expected,drops,dict(max_occupancy=peak,max_queue_wait=max_wait,
-        clean_max_occupancy=clean_peak,clean_max_queue_wait=clean_wait,accepted=len(expected),dropped=len(drops))
+    intervals=list(zip(ep['resets'],ep['releases']))
+    expected=[dict(f,gmii_start=f['start'],gmii_end=f['end'],queue_wait=0)
+              for f in incoming if not any(f['start']<r and f['end']>=z for z,r in intervals)]
+    return expected,[],dict(max_occupancy=0,max_queue_wait=0,
+        clean_max_occupancy=0,clean_max_queue_wait=0,accepted=len(expected),dropped=0)
 
 
 def prepare(test, folder, endpoints, sysrows):
@@ -83,10 +37,10 @@ def prepare(test, folder, endpoints, sysrows):
             errors+=1
             if len(diagnostics)<40:diagnostics.append(label)
     params={p[2]:int(p[3]) for _,_,p in sysrows if p[0]=='G'}
-    for key,value in (('CLOCK_NS',8),('GMII_TX_DELAY',10688),('GMII_RX_REPLAY_R',16)):
+    for key,value in (('CLOCK_NS',8),('GMII_TX_DELAY',0),('GMII_RX_REPLAY_R',0)):
         expect(params.get(key)==value,'X declared '+key)
-    tx_delay=params.get('GMII_TX_DELAY',10688);rx_delay=params.get('GMII_RX_REPLAY_R',16)
-    capacity=1<<params.get('GMII_RX_AW',12)
+    tx_delay=params.get('GMII_TX_DELAY',0);rx_delay=params.get('GMII_RX_REPLAY_R',0)
+    capacity=0
     for es,ep in endpoints.items():
         ep['gmii_tx']=[];ep['gmii_rx']=[]
         for net in ('A','B'):
@@ -162,15 +116,15 @@ def prepare(test, folder, endpoints, sysrows):
         for a,b in zip(actual,retained):expect(a['start']==b['start'] and a['wire']==b['wire'],f'X3 link {link} bytes/start {b["start"]}')
         replay,dropped,stats=model_channel(incoming,destination,net,capacity,rx_delay,expect)
         self_spaced=all(f.get('original') for f in incoming) and all(
-            b['start']-a['start']>=8*len(a['wire'])+96 for a,b in zip(incoming,incoming[1:]))
+            b['start']-a['start']>=len(a['wire'])+12 for a,b in zip(incoming,incoming[1:]))
         stats['self_spaced_input']=self_spaced
         if self_spaced and capacity>=4096:
             expect(not dropped and stats['max_queue_wait']<=1374 and stats['max_occupancy']<=3054,
-                   f'X4 ES{es} {net} self-source backlog and capacity bounds')
+                   f'X4 ES{es} {net} native source has no adapter backlog')
         observed=sorted((f for f in destination['rx'] if f['net']==net),key=lambda f:f['start'])
         expect(len(observed)==len(replay),f'X4 ES{es} {net} replay frame count expected={len(replay)} got={len(observed)}')
         for a,b in zip(observed,replay):
-            expect(a['start']==b['start'] and a['wire']==b['wire'],f'X4 ES{es} {net} M1 replay S={b["start"]}')
+            expect(a['start']==b['start'] and a['wire']==b['wire'],f'X4 ES{es} {net} direct input S={b["start"]}')
         pulses=[c for c,_,p in sysrows if p[0]=='E' and int(p[2])==es and p[3]==net.lower()+'_gdrop']
         expect(pulses==[d['cycle'] for d in dropped],f'X4 ES{es} {net} exact gdrop cycles expected={[d["cycle"] for d in dropped]} got={pulses}')
         expected[es].extend(replay);statistics[f'es{es}_{net.lower()}']=stats

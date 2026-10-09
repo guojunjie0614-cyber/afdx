@@ -157,7 +157,7 @@ def sim(options):
         defines=["+define+PROBE_P2"] if "probe_p2_array" in replaced else []
         if "AFDX_top" in replaced:
             defines.append("+define+SYS_TOP_NETLIST")
-            defaults={"TX_PAGE_AW":"8","TX_OFF_AW":"9","LOOKAHEAD":"512","RX_RING_AW":"12","RX_DQ_AW":"4","GMII_RX_AW":"12"}
+            defaults={"TX_PAGE_AW":"8","TX_OFF_AW":"9","LOOKAHEAD":"512","RX_RING_AW":"12","RX_DQ_AW":"5","GMII_RX_AW":"12"}
             if any(defaults.get(value.partition('=')[0])!=value.partition('=')[2] for value in options.param):
                 raise ValueError("AFDX_top mapped netlist has fixed default parameters")
             candidates=sorted((ROOT/"out/sim"/options.test).glob("*/summary.json"),reverse=True)
@@ -171,7 +171,7 @@ def sim(options):
                 raise ValueError("afdx_tx_core mapped netlist has fixed default parameters; use RTL for alternate parameters")
         if "afdx_rx_core" in replaced:
             defines.append("+define+RX_CORE_NETLIST")
-            defaults={"RX_RING_AW":"12","RX_DQ_AW":"4"}
+            defaults={"RX_RING_AW":"12","RX_DQ_AW":"5"}
             if any(defaults.get(value.partition('=')[0])!=value.partition('=')[2] for value in options.param):
                 raise ValueError("afdx_rx_core mapped netlist has fixed default parameters")
         compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],120)

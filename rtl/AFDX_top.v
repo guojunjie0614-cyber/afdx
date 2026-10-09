@@ -7,7 +7,7 @@ module AFDX_top #(
     parameter TX_OFF_AW = 9,
     parameter LOOKAHEAD = 512,
     parameter RX_RING_AW = 12,
-    parameter RX_DQ_AW = 4,
+    parameter RX_DQ_AW = 5,
     parameter GMII_RX_AW = 12) (
     input wire clk, reset,
     output wire [7:0] tx_data,

@@ -118,7 +118,7 @@ def multi(s):
     for _ in range(20):
         for vl in range(3):s.msg(vl)
     s.drain()
-    for stage,length,arrival in (('late_x',1471,97000),('early_x',1,99940)):
+    for stage,length,arrival in (('late_x',1471,99000),('early_x',1,99940)):
         s.stage(stage);s.cfg(0,bag=100000);s.cfg(1,bag=1000)
         s.msg(0);s.drain();s.msg(0);s.msg(0)
         # 连续写入最长消息：首字节到末字节相差 1470 + 六次取页各六拍。
@@ -363,7 +363,7 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
         for name in stages:all_accept(name)
     elif test=='tb_tx_bag':
         expect(set(stages)=={'exact','odd','short','late','queue','nowwrap','jump','flood','reset'},'bag stages')
-        spacing('exact',100000,50);spacing('odd',100008,10);spacing('queue',20000,8);spacing('nowwrap',20000,10);spacing('flood',20000,5)
+        spacing('exact',100000,50);spacing('odd',100003,10);spacing('queue',20000,8);spacing('nowwrap',20000,10);spacing('flood',20000,5)
         for stage in ('exact','odd'):
             frames=fs(stage)
             for a,b in zip(frames,frames[1:]):expect(b['message']['cycle']<=a['start']+b['message']['words'][1]-2000,f'{stage}: early arrival')
@@ -394,14 +394,17 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
         expect(len({f['message']['vl'] for f in burst[1:]})==128 and all(f['message']['n']<=32 for f in burst[1:]),'burst all VLs')
         for a,b in zip(burst,burst[1:]):expect(b['start']-a['end']==12,'burst exact IFG')
         rr=fs('rr3');expect(len(rr)==61 and rr[0]['message']['n']==1471,'rr3 count/blocker')
-        for a,b in zip(rr[1:],rr[2:]):expect(b['start']-a['start']==84,'rr3 exact spacing')
+        for a,b in zip(rr[1:],rr[2:]):expect(b['start']-a['start']>=84,'rr3 native minimum slot')
+        for vl in range(3):
+            vv=[f for f in rr[1:] if f['message']['vl']==vl]
+            for a,b in zip(vv,vv[1:]):expect(b['start']-a['start']>=400,'rr3 preserves each VL BAG')
         for i in range(3,len(rr[1:])-8):expect(len({f['message']['vl'] for f in rr[1:][i:i+3]})==3,'rr3 round robin')
         for stage in ('late_x','early_x'):
             msgs=ms(stage);frames=fs(stage);x=msgs[0]['vl'] if msgs else -1
             xf=[f for f in frames if f['message']['vl']==x];yf=[f for f in frames if f['message']['vl']!=x]
             expect(len(xf)==3 and len(yf)==1,stage+' shape')
             if len(xf)==3 and len(yf)==1:
-                y=yf[0];expect(y['message']['cycle']==xf[0]['start']+100000-(3000 if stage=='late_x' else 60),stage+' arrival')
+                y=yf[0];expect(y['message']['cycle']==xf[0]['start']+100000-(1000 if stage=='late_x' else 60),stage+' arrival')
                 if stage=='late_x':
                     expect(y['start']-y['message']['cycle']<=100 and xf[1]['start']==y['end']+12,stage+' Y then X')
                 else:expect(xf[1]['start']==xf[0]['start']+100000 and y['start']==xf[1]['end']+12,stage+' X then Y')

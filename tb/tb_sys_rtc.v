@@ -15,13 +15,13 @@ module tb_sys_rtc;
     wire fraction_done;wire [31:0] fraction_result;
     afdx_ntp_fraction fraction_probe(clk,reset,fraction_start,fraction_inverse,fraction_input,fraction_done,fraction_result);
     integer fraction_fd,fraction_rc,fraction_cases=0;reg [31:0] expected_ns,expected_fraction;
-    integer cycle=0,checks=0,errors=0,fd,phase,loaded_max=0;
+    integer cycle=0,checks=0,errors=0,fd,phase,loaded_max=0,gbe_max=0,gbe_base;
     reg [63:0] time1,time2,previous_time;
     reg signed [63:0] difference;
     integer previous_cycle;
     always @(posedge clk)begin
         cycle=cycle+1;
-        if(cycle>6000000 || errors+errors1+errors2>30)begin
+        if(cycle>7000000 || errors+errors1+errors2>30)begin
             $display("[RESULT] tb_sys_rtc FAIL checks=%0d errors=%0d",checks+checks1+checks2,errors+errors1+errors2+1);$finish;
         end
     end
@@ -55,7 +55,8 @@ module tb_sys_rtc;
                 check(current==last_count+1,"one completed synchronization");last_count=current;
                 measure();absolute=difference<0 ? -difference : difference;
                 if(!loaded)check(absolute<=40,"idle clock error <= 40 ns");
-                if(loaded && absolute>loaded_max)loaded_max=absolute;
+                if(loaded==1 && absolute>loaded_max)loaded_max=absolute;
+                if(loaded==2 && absolute>gbe_max)gbe_max=absolute;
                 if(slave==1)begin es1.read_cfg(18'h86,os);es1.read_cfg(18'h87,on);end
                 else begin es2.read_cfg(18'h86,os);es2.read_cfg(18'h87,on);end
                 check(on<1000000000,"reported offset normalized");
@@ -130,6 +131,21 @@ module tb_sys_rtc;
         $fwrite(fd,"U 40 40 %0d %0d %0d\n",es1.received,es2.received,loaded_max);
         idle_case(4,1,1);
         idle_case(5,1,0);
+        // 77 条用户 VL 每条 BAG 1 ms，并在两个方向实测 RTC 与用户数据共存。
+        phase=6;es1.configure_gbe();es2.configure_gbe();
+        es1.write_cfg(18'h80,3);es2.write_cfg(18'h80,1);gbe_base=cycle+100;
+        fork
+            es1.gbe_traffic(gbe_base);
+            es2.gbe_traffic(gbe_base);
+            observe(2,40,2);
+        join
+        es1.write_cfg(18'h80,0);es2.write_cfg(18'h80,0);
+        repeat(100000)@(negedge clk);
+        check(es1.received==40+23*77 && es2.received==40+23*77,"all full-load user messages delivered once");
+        check(gbe_max<=39364,"900 Mbps RTC error no worse than T14");
+        $fwrite(fd,"G %0d %0d %0d %0d %0d\n",gbe_base+250000,gbe_base+23*125000,es1.received,es2.received,gbe_max);
+        $fwrite(fd,"A 1 %0d %0d\nA 2 %0d %0d\n",es1.max_source_lateness,es1.max_source_duration,es2.max_source_lateness,es2.max_source_duration);
+        $display("[RTC_GBE] delivered=%0d/%0d max_difference_ns=%0d",es1.received-40,es2.received-40,gbe_max);
         check(fraction_finished && fraction_cases==72,"all independent conversion vectors checked");
         check(gmerr1==0 && gmerr2==0,"SNTP GMII framing");
         $fwrite(fd,"F %0d\n",fraction_cases);$fclose(fd);
@@ -144,17 +160,17 @@ module rtc_test_endpoint #(parameter ES=1)(
     output wire [7:0] ta,output wire tva,output wire [7:0] tb,output wire tvb,output wire ready,
     output reg [31:0] checks=0,errors=0
 );
-    reg m_valid=0,m_last=0;reg [7:0] m_data=0;wire m_ready;
+    reg m_valid=0,m_last=0;reg [7:0] m_data=0;reg [6:0] m_vl=1;wire m_ready;
     wire d_valid,d_last,d_net;wire [7:0] d_data;wire [11:0] d_vl;wire [15:0] d_sp,d_dp;
     reg wr=0,rd=0;reg [17:0] address=0;reg [31:0] wdata=0;
     wire [31:0] rdata;wire rvalid,bready;
     wire [6:0] ev_tx;wire [7:0] ev_a,ev_b;wire [1:0] gdrop;wire rm_drop,deliver;
-    integer received=0,byte_index=0;
+    integer received=0,byte_index=0,gbe_mode=0,max_source_lateness=0,max_source_duration=0;
     reg [7:0] expected_byte;
     AFDX_top dut(
         .clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
         .tx_data_b(tb),.tx_valid_b(tvb),.rx_data_b(rb),.rx_valid_b(rvb),
-        .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(7'd1),
+        .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
         .app_tx_port_en(1'b0),.app_tx_sport(16'd0),.app_tx_dport(16'd0),
         .app_rx_valid(d_valid),.app_rx_data(d_data),.app_rx_last(d_last),.app_rx_vl(d_vl),
         .app_rx_sport(d_sp),.app_rx_port(d_dp),.app_rx_net(d_net),
@@ -169,7 +185,7 @@ module rtc_test_endpoint #(parameter ES=1)(
         if(|ev_tx[4:1] || |ev_a[7:1] || |ev_b[7:1] || |gdrop)check(0,"unexpected drop/error pulse");
         if(d_valid)begin
             expected_byte=byte_index+received*19+(3-ES)*37;
-            check(d_dp==4001 && d_sp==3001 && d_vl==1,"RTC hidden from application and user metadata intact");
+            check(d_dp==4001 && d_sp==3001 && d_vl==(gbe_mode ? 1+(received-40)%77 : 1),"RTC hidden from application and user metadata intact");
             check(d_data==expected_byte,"application bytes and ordering intact");
             byte_index=byte_index+1;
             if(d_last)begin check(byte_index==1471,"complete application message");received=received+1;byte_index=0;end
@@ -212,6 +228,39 @@ module rtc_test_endpoint #(parameter ES=1)(
                 write_cfg(18'h20000+v,maximum*131072+20*32+31);
             end
             write_cfg(18'h81,62500);write_cfg(18'h82,0);write_cfg(18'h83,123);
+        end
+    endtask
+    task configure_gbe;
+        integer v,vlid,peer_vlid;
+        begin
+            for(v=1;v<=77;v=v+1)begin
+                vlid=ES*100+v;peer_vlid=(3-ES)*100+v;
+                write_cfg(18'h1000+v*8,1471*512+63*8+7);write_cfg(18'h1001+v*8,125000);
+                write_cfg(18'h1002+v*8,vlid);write_cfg(18'h1003+v*8,32'h0a000001+ES);
+                write_cfg(18'h1004+v*8,32'he0e00000+vlid);write_cfg(18'h1005+v*8,32'h0bb90fa1);
+                write_cfg(18'h10000+peer_vlid,4096+v);write_cfg(18'h20000+v,1471*131072+20*32+31);
+            end
+            gbe_mode=1;
+        end
+    endtask
+    task gbe_traffic;
+        input integer base;
+        integer r,v,j,target,timeout;
+        reg taken;
+        begin
+            for(r=0;r<23;r=r+1)for(v=0;v<77;v=v+1)begin
+                target=base+r*125000+(v*125000)/77;
+                while(tb_sys_rtc.cycle<target)@(negedge clk);
+                // 服务正在提交时应用必须遵守 ready；用实际吞吐判定负载，记录提交等待。
+                if(tb_sys_rtc.cycle-target>max_source_lateness)max_source_lateness=tb_sys_rtc.cycle-target;
+                m_vl=v+1;timeout=tb_sys_rtc.cycle;
+                for(j=0;j<1471;j=j+1)begin
+                    @(negedge clk);m_valid=1;m_last=(j==1470);m_data=j+(40+r*77+v)*19+ES*37;taken=0;
+                    while(!taken)begin @(posedge clk);taken=m_ready;#1;end
+                end
+                m_valid=0;m_last=0;
+                if(tb_sys_rtc.cycle-timeout>max_source_duration)max_source_duration=tb_sys_rtc.cycle-timeout;
+            end
         end
     endtask
     task traffic;

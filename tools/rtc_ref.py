@@ -31,18 +31,22 @@ def check(folder):
         nonlocal checks
         checks+=1
         if not ok:raise AssertionError(why)
-    frames=[];idle=[];loaded=[];conversions=0
+    frames=[];idle=[];loaded=[];gbe=[];window=None;user_frames={1:[],2:[]};source_timing={};conversions=0
     for line in (folder/'rtc_results.txt').read_text().splitlines():
         f=line.split()
         if f[0]=='S':
-            phase=int(f[1]);difference=abs(int(f[4]));(loaded if phase==3 else idle).append(difference)
-            if phase!=3:ck(difference<=40,'every idle synchronization is within 40 ns')
+            phase=int(f[1]);difference=abs(int(f[4]));(loaded if phase==3 else gbe if phase==6 else idle).append(difference)
+            if phase not in (3,6):ck(difference<=16,'idle synchronization no worse than T14 16 ns')
         elif f[0]=='H':ck(abs(int(f[2]))<=40,'clock hold after sync stops')
         elif f[0]=='U':ck(f[1:5]==['40','40','40','40'],'user delivery exactly once each way')
+        elif f[0]=='G':
+            window=list(map(int,f[1:3]));ck(f[3:5]==['1811','1811'],'77-VL user delivery exactly once each way')
+        elif f[0]=='A':source_timing[f'es{f[1]}']=dict(max_lateness_cycles=int(f[2]),max_message_cycles=int(f[3]))
         elif f[0]=='F':conversions=int(f[1]);ck(conversions==72,'forward/reverse conversion vector count')
     for es in (1,2):
         for cycle,eth,sp,dp,payload in udp_frames(folder/f'rtc_es{es}_gmii.txt'):
             if (sp,dp)==(123,123):frames.append((cycle,es,eth,payload))
+            elif (sp,dp)==(3001,4001):user_frames[es].append((cycle,len(payload)))
     frames.sort();requests={};responses=[];decoded=[];pair=None
     for cycle,es,eth,payload in frames:
         d=decode(payload);decoded.append(dict(cycle=cycle,es=es,**d))
@@ -69,6 +73,13 @@ def check(folder):
                ((30,999999000),(1000,999980000),(1007,200000000),(991,700000000)),'Reference timestamp is configured clock update')
             if pair is None:pair=[(request[0],request[1]),(cycle,eth)]
     ck(len(responses)>=28 and len(idle)==20 and len(loaded)==8,'all RTC test phases captured')
+    ck(len(gbe)==40 and max(gbe)<=39364 and max(loaded)<=39364,'RTC under full load no worse than T14 39364 ns')
+    ck(window is not None and window[1]-window[0]>=2500000,'RTC full-load stable measurement window >=20ms')
+    rates={}
+    for es,packets in user_frames.items():
+        payload_bytes=sum(max(0,min(c+50+n,window[1])-max(c+50,window[0])) for c,n in packets)
+        rates[f'es{es}']=payload_bytes*1000/(window[1]-window[0])
+        ck(rates[f'es{es}']>=900,'RTC simultaneous user throughput >=900Mbps')
     ck(pair is not None,'request/reply PCAP pair exists')
     pcap=bytearray(struct.pack('<IHHIIII',0xa1b23c4d,2,4,0,0,65535,1))
     for cycle,eth in pair:
@@ -81,7 +92,7 @@ def check(folder):
     ck([x['mode'] for x in pcap_decoded]==[3,4],'PCAP standard client and server decode')
     ck(pcap_decoded[0]['transmit']==pcap_decoded[1]['originate'],'PCAP Originate exact echo')
     summary=dict(items=checks,errors=0,idle_max_ns=max(idle),loaded_max_ns=max(loaded),idle_syncs=len(idle),
-                 loaded_syncs=len(loaded),fraction_vectors=conversions,ntp_frames=len(frames),responses=len(responses),
+                 loaded_syncs=len(loaded),gbe_syncs=len(gbe),gbe_max_ns=max(gbe),gbe_mbps=rates,gbe_window=window,source_timing=source_timing,fraction_vectors=conversions,ntp_frames=len(frames),responses=len(responses),
                  pcap_packets=pcap_decoded,decoder='RFC 4330 48-byte NTP header, Python struct')
     (folder/'ntp_decode.json').write_text(json.dumps(decoded,indent=2)+'\n')
     (folder/'check_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
