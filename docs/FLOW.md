@@ -57,18 +57,23 @@ RTC 测试经公开端口自检，并由 `rtc_ref.py` 核对记录及标准 SNTP
 ## 网表入口
 
 `sim/tests_netlist.txt` 为 8 项；每行是“测试名|综合顶层列表[|参数列表]”。以下综合准备其所需网表；网表回归复用 `out/latest_<顶层>.json`，检查网表和综合输入摘要，源码变更后须重新综合。
+完整顶层网表单项实测超过一小时，应显式传入整批截止时间；下面以五小时为例，实际使用时按任务预算设置。默认仿真和时序选项不变。
 
 ```powershell
 $flowNetTops=@('afdx_timebase','afdx_mac_tx','afdx_mac_rx','probe_p1_2048x8','probe_p2_array','afdx_tx_core','afdx_rx_core','AFDX_top')
-foreach($top in $flowNetTops){ & $flowShell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top $top -Sta }
-& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist
+$flowNetDeadline=(Get-Date).AddHours(5).ToString('o')
+foreach($top in $flowNetTops){ & $flowShell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top $top -Sta -Deadline $flowNetDeadline }
+& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist -Deadline $flowNetDeadline
 $flowNets=@('afdx_timebase','afdx_mac_tx','afdx_mac_rx') | ForEach-Object { Join-Path ((Get-Content "out/latest_$_.json" -Raw | ConvertFrom-Json).folder) 'netlist.v' }
-& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_mac_loop -Netlist ($flowNets -join ',')
+& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_mac_loop -Netlist ($flowNets -join ',') -Deadline $flowNetDeadline
+& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Deadline $flowNetDeadline
+$flowTopNet=Join-Path ((Get-Content out/latest_AFDX_top.json -Raw | ConvertFrom-Json).folder) 'netlist.v'
+& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Netlist $flowTopNet -Deadline $flowNetDeadline
 ```
 
 网表适配使用 `tools/fix_lut_mask.py`，补全 LUT 字面量、算术进位参数和模型缺省输入；仅写仿真副本，保留原网表和厂商模型。
 `tb_sys_net` 的双端顶层网表自动使用 `SYS_TOP_NETLIST`，关闭内部慢线抓包，选择最近通过的同名 RTL 记录，逐字节比较 8 份 GMII、2 份 D 行及 `sys_events.txt`，只打印外部 CHECK。运行前须已有当前版本通过的 RTL `tb_sys_net`。
-整顶层五功能网表的历史验收见 `docs/PROBE_T10.md`，输入版本和覆盖范围以该摘要为准。
+当前T20网表验收见 `docs/PROBE_T20.md`：清单8/8和完整五功能全部通过，五功能含615A加载后卸载；新版本RTL参考记录及逐字节比对路径见摘要。上面的五功能命令先生成本版本RTL参考，再用整顶层网表验证；本轮按T17的两条队列并行执行，最多同时两个仿真。
 
 ## 手工核对与抓包转换
 
