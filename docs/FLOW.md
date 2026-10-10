@@ -43,7 +43,7 @@ $flowPython=if($env:AFDX_PYTHON){$env:AFDX_PYTHON}else{(Get-Command python -Erro
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-RTL 清单 `sim/tests.txt` 为 32 项（含两种 `tb_tx_basic` 参数组合以及 `tb_sys_615a`）；每行是“测试名”或“测试名|参数1=值,参数2=值”。
+RTL 清单 `sim/tests.txt` 为 34 项（含两种 `tb_tx_basic` 参数组合、`tb_sys_615a`，以及 `tb_gbe_burst` 的 `COUNT=77`、`COUNT=81` 两项集中释放测试）；每行是“测试名”或“测试名|参数1=值,参数2=值”。
 `run.ps1` 自动生成独立向量、编译 `tb/lib/`，并按网表模块名排除同名 RTL；支持逗号分隔的多个原始 `netlist.v`。
 `afdx_tx_core`、`afdx_rx_core` 和 `AFDX_top` 的综合网表固定为默认参数，入口拒绝不匹配参数；备用分页和两个小容量溢出测试使用 RTL 的 `-Param` 验证。
 输出入口为 `out/sim`、`out/net`、`out/synth`，每次创建新目录。`summary.json` 保存输入摘要和结果，`tool_metrics.json` 保存原生命令、退出码、耗时和内存峰值，`active_job.json` 保存当前作业和精确进程身份。

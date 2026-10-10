@@ -42,7 +42,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-五功能入口覆盖双向用户数据、冗余/完整性检查、SNMP Get、RTC 同步、615A 先加载再卸载，输出在 `out/modelsim/`。全回归是 `sim/tests.txt` 的 32 项，输出在 `out/regress/` 和 `out/sim/`；更多单项、参数和网表命令见 [FLOW](docs/FLOW.md)。
+五功能入口覆盖双向用户数据、冗余/完整性检查、SNMP Get、RTC 同步、615A 先加载再卸载，输出在 `out/modelsim/`。全回归是 `sim/tests.txt` 的 34 项，输出在 `out/regress/` 和 `out/sim/`；更多单项、参数和网表命令见 [FLOW](docs/FLOW.md)。
 图形综合：在 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点 Run Synthesis。保持 `AFDX_EndSystem_assignment_defaults.qdf` 与工程相邻，使用 Speed 设置和 `constraints.edc`；器件 EQ6HL130、封装 CSG484_H。
 
 ## 从哪里读起
@@ -81,7 +81,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_to
 ## 协作约定
 
 - 从 `c3-gbe` 拉自己的开发分支，例如 `git checkout c3-gbe` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `c3-gbe`。`c3` 是 117.68 Mbps 回退版本。
-- 合并前运行 `sim/regress.ps1`，32 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
+- 合并前运行 `sim/regress.ps1`，34 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机当前版本脚本整顶层综合工具耗时 113.593 秒，完整五功能综合网表仿真 4243.657 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。
 - 图形界面保存会改写 `elinx/AFDX_EndSystem.epr` 的注释和 OutOfDate 状态。只有增删源文件时才提交 epr；其余改动不提交，先确认没有自己的源文件清单变更，再用 `git checkout -- elinx/AFDX_EndSystem.epr` 恢复。
