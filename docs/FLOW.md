@@ -92,6 +92,32 @@ $flowMac=(Get-Content out/latest_tb_mac_loop.json -Raw | ConvertFrom-Json).folde
 
 `tb_mac_loop` 自动把 `dump_a.txt`、`dump_b.txt` 转为按每周期 8 ns 的纳秒时间戳 pcap，并要求坏帧为 0；原始抓包保留字节数、周期号和完整线上字节。
 
+## 官方 .vo 生成与仿真（T21）
+
+教程见 [ref 中的原始 docx](../ref/vqm文件和.vo文件生成与使用20230605.docx)。UG102使用手册位于 `$env:ELINX_HOME/UG102_eLinx_Design_Suite_User_Guide_ehiway_v2024.9.pdf`；本机ref副本被Git忽略。相关内容为4.3、4.4、第6章Floor Planning、第7章Timing及第11章Simulation。
+
+1. 在 `out/` 的独立工程副本中使用当前RTL、工程默认qdf和8 ns约束；本轮复用T18生成的qsf及报告配置并重定向路径，其他机器按教程建立工程。副本qsf增加 `set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim (Verilog)"`。
+2. 在副本elinx目录依次调用安装目录 `bin/Passkey/bin/quartus_map.exe --read_settings_files=on --write_settings_files=off AFDX_EndSystem`，再用 `quartus_cdb.exe AFDX_EndSystem -c AFDX_EndSystem --vqm=<副本synth_1/AFDX_EndSystem.vqm>` 导出。
+3. 副本imple_1的run.psf设 `set_global_assignment -name SDF_FILE_GENERATE 1`，等效勾选Generate SDF File。使用安装目录原始run_pack.tcl/run_pack、run_route.tcl/run_route、run_timing_report.tcl/run_tming_report；Implementation.exe的cwd必须是安装目录bin/shell/bin，log4cpp.property和所有输出指向副本。
+4. 3.0.7实际输出为副本 `AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.vo` 和 `.sdo`。模块已为AFDX_top；复制成AFDX_top.vo用于仿真，只注释 `initial $sdf_annotate("AFDX_EndSystem.sdo");` 这一行。保留该行且带上同目录.sdo则为延迟回标。
+5. 仿真库必须与ModelSim版本匹配；不匹配时按手册11.4，用 `vlib elinx_local` 建本地库，再用 `vlog -work elinx_local -vlog01compat <库源码>` 编译。T21用SE-64 2020.4重编译安装目录 `Simulation/verilog/` 的220model.v、elinx_atoms.v、elinx_mf.v，没有改厂商模型。
+6. 按原入口先取得同版本RTL的tb_net_services参考。新仿真目录调用 `tools/net_services_ref.py vectors --dir <目录>`；编译.vo、tb/lib/*.v和tb_net_services.v，带 `+define+SYS_TOP_NETLIST` 与 `+incdir+<tb/lib>`，不再编译RTL的AFDX_top。
+7. T21实际命令为 `vsim -c -t 1ps -L elinx_local tb_net_services -wlf simulation.wlf -do "do run.do"`；run.do执行run -all，以RESULT/CHECK判定，退出0不能代替PASS。完成后用 `tools/net_services_ref.py check --dir <目录> --rtl-reference <同激励RTL目录>` 逐字节比对外部记录，失败时记录首个差异和未到达的阶段。
+
+本机临时驱动入口（脚本和证据在out，不随仓库分发）：第一条另建新Label；后两条复跑本轮保存的baseline，固定读取该目录，不使用新Label。
+
+```powershell
+$voDeadline=(Get-Date).AddHours(5).ToString("o")
+powershell -NoProfile -ExecutionPolicy Bypass -File out/t21/run_stage.ps1 -Mode baseline -Label repro_new -Deadline $voDeadline
+powershell -NoProfile -ExecutionPolicy Bypass -File out/t21/run_stage.ps1 -Mode functional -Deadline $voDeadline
+powershell -NoProfile -ExecutionPolicy Bypass -File out/t21/run_stage.ps1 -Mode sdf -Deadline $voDeadline
+```
+
+`.vqm`是可再综合/装箱的映射网表；现有综合后仿真入口使用映射后转换的netlist.v和厂商单元模型。`.vo`来自布局布线之后；关闭SDF回标仅检查该网表的功能，保留回标才包含导出的连线及单元延迟。
+Max Fanout Limit限制综合扇出；qsf用MAX_FANOUT实例约束。Packing Strategy权衡布通率与资源，Standard为VPACKFULL classic，Compact为full。Performance Explore遍历安装目录common.ini预置参数并择优，使用原生run_route_smart_explore_run.tcl；它要求将同一VQM复制到每个候选的imple_1目录。
+T21实测：当前默认54.443 MHz；扇出32为50.756、128为50.774 MHz；Compact为50.317 MHz；Performance Explore为54.520 MHz（完成17/20候选）。仓库默认选项保持不变，完整对照见 [PROBE_T21](PROBE_T21.md)。
+T21的.vo生成成功，未回标五功能仿真失败（发送状态RAM输入/输出位序与源库不匹配，六份外部记录不一致）；带延迟结果为未通过（建立时间违规，记录后结束）。这些结果单独记录，不计为已通过的综合网表验证或物理时序签核。
+
 ## 布局布线现状
 
 历史流程能走完并导出资源和 checkpoint，但布线延迟导入报版本错误，未拿到有效布线后时序；详见 `docs/PROBE_T6.md`。`elinx/implement.tcl` 保留供统一工具的 `impl` 分支读取，布局布线包装脚本已移除。

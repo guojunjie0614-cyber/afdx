@@ -10,3 +10,6 @@
 /elinx/incremental_db/
 /elinx/hierarchy.xml
 /elinx/log4cpp.property
+
+# The eLinx user guide is available in the tool installation.
+/ref/UG102_eLinx_Design_Suite_User_Guide_ehiway_v2024.9.pdf
