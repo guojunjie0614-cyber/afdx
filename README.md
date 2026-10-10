@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-本仓库是中科亿海微赛题的 C3 端系统实现，顶层为 `AFDX_top`，双网 GMII 使用单时钟 125 MHz。当前 `c3-gbe` 在原生千兆核心上补充 T20 冗余逆序去重与 RTC 超时重发；`c3`（`b5bf270d`）保留为 117.68 Mbps 的回退版本。可手工开发，不需要 AI 助手。
+本仓库是中科亿海微赛题的 C3 端系统实现，顶层为 `AFDX_top`，双网 GMII 使用单时钟 125 MHz。当前 `master` 在原生千兆核心上补充 T20 冗余逆序去重与 RTC 超时重发；`c3`（`b5bf270d`）保留为 117.68 Mbps 的回退版本。可手工开发，不需要 AI 助手。
 
 ## 目录
 
@@ -80,7 +80,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_to
 
 ## 协作约定
 
-- 从 `c3-gbe` 拉自己的开发分支，例如 `git checkout c3-gbe` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `c3-gbe`。`c3` 是 117.68 Mbps 回退版本。
+- 从 `master` 拉自己的开发分支，例如 `git checkout master` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `master`。`c3` 是 117.68 Mbps 回退版本。
 - 合并前运行 `sim/regress.ps1`，37 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机 T20 整顶层综合工具耗时 112.282 秒，完整五功能综合网表仿真 3717.625 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。

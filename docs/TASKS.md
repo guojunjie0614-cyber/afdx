@@ -7,7 +7,7 @@
 
 用户 2026-10-09 决定：C3 今后只在干净分支上开发，旧分支冻结留档。本节与下面的旧规则不一致时，以本节为准。
 
-- **工作目录和分支。** 目录 `E:\2026_Embedded_FPGA\worktrees\active\c3_github`，当前分支 `c3-gbe`（团队 GitHub 仓库的 `master` 与它相同；`c3` 是 117.68 Mbps 的回退版本）。仓库根目录就是原来的 `schemes/scheme_c3/`：下面旧记录里写的 `schemes/scheme_c3/rtl` 现在是 `rtl`，其余目录同理。
+- **工作目录和分支。** 目录 `E:\2026_Embedded_FPGA\worktrees\active\c3_github`，当前版本在团队 GitHub 仓库的 `master`（本机工作区里对应的本地分支名仍是 `c3-gbe`，推送时写 `c3-gbe:master`）；`c3` 是 117.68 Mbps 的回退版本。仓库根目录就是原来的 `schemes/scheme_c3/`：下面旧记录里写的 `schemes/scheme_c3/rtl` 现在是 `rtl`，其余目录同理。
 - **旧分支留档。** `explore/c3-20261007`（目录 `worktrees\active\c3`）不再提交、不删除。旧记录引用的证据（`out/` 下的日志、抓包、波形）留在那里，没有随仓库上传。设计文档和测试报告的草稿用户审核未通过，也留在那里，不迁移、不参考；交付阶段在本分支重写。
 - **提交。** 提交身份由 Claude 在派发消息里给出，逐次提交指定，不改全局 git 配置。提交说明仍以 `c3 <内容>:` 开头。推送只在用户明确同意后做。
 - **软件路径不写死。** 脚本通过环境变量 `MODELSIM_HOME`、`ELINX_HOME`、`AFDX_PYTHON` 或 PATH 找工具，见根目录 `README.md`。新写的脚本照此办理。
