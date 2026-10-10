@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-本仓库是中科亿海微赛题的 C3 端系统实现，顶层为 `AFDX_top`，双网 GMII 使用单时钟 125 MHz。当前 `c3-gbe` 为收发核心每周期一个字节的原生千兆版本，RTL 定稿 `2e03d0a7`；`c3`（`b5bf270d`）保留为 117.68 Mbps 的回退版本。可手工开发，不需要 AI 助手。
+本仓库是中科亿海微赛题的 C3 端系统实现，顶层为 `AFDX_top`，双网 GMII 使用单时钟 125 MHz。当前 `c3-gbe` 在原生千兆核心上补充 T20 冗余逆序去重与 RTC 超时重发；`c3`（`b5bf270d`）保留为 117.68 Mbps 的回退版本。可手工开发，不需要 AI 助手。
 
 ## 目录
 
@@ -42,7 +42,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-五功能入口覆盖双向用户数据、冗余/完整性检查、SNMP Get、RTC 同步、615A 先加载再卸载，输出在 `out/modelsim/`。全回归是 `sim/tests.txt` 的 34 项，输出在 `out/regress/` 和 `out/sim/`；更多单项、参数和网表命令见 [FLOW](docs/FLOW.md)。
+五功能入口覆盖双向用户数据、冗余/完整性检查、SNMP Get、RTC 同步、615A 先加载再卸载，输出在 `out/modelsim/`。全回归是 `sim/tests.txt` 的 37 项，含冗余跨粗刻度相位、RTC 重发恢复及 Originate 反例，输出在 `out/regress/` 和 `out/sim/`；更多单项、参数和网表命令见 [FLOW](docs/FLOW.md)。
 图形综合：在 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点 Run Synthesis。保持 `AFDX_EndSystem_assignment_defaults.qdf` 与工程相邻，使用 Speed 设置和 `constraints.edc`；器件 EQ6HL130、封装 CSG484_H。
 
 ## 从哪里读起
@@ -81,7 +81,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_to
 ## 协作约定
 
 - 从 `c3-gbe` 拉自己的开发分支，例如 `git checkout c3-gbe` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `c3-gbe`。`c3` 是 117.68 Mbps 回退版本。
-- 合并前运行 `sim/regress.ps1`，34 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
+- 合并前运行 `sim/regress.ps1`，37 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机当前版本脚本整顶层综合工具耗时 113.593 秒，完整五功能综合网表仿真 4243.657 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。
 - 图形界面保存会改写 `elinx/AFDX_EndSystem.epr` 的注释和 OutOfDate 状态。只有增删源文件时才提交 epr；其余改动不提交，先确认没有自己的源文件清单变更，再用 `git checkout -- elinx/AFDX_EndSystem.epr` 恢复。
@@ -93,7 +93,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_to
 
 已实现用户发送、用户接收、SNMP 网络管理、615A 加卸载、RTC 同步；收发含双网冗余、VL/BAG 调度、序号和完整性检查，组播目的 IP 为 224.224 加 VLID。
 SNMP 支持 v1/v2c Get、GetNext、Set 与 v2c Trap，一次一个变量绑定；RTC 使用标准 SNTP。615A 目标端支持 A3/A4（默认 A4）、单头文件/单数据文件上传至 8 KiB RAM、介质定义卸载 `MEMORY.BIN`，TFTP 请求端口默认 59；LCI/LNO 初始化请求返回状态 1002。
-验收数字见 [PROBE_T16](docs/PROBE_T16.md) 和 [PROBE_T17](docs/PROBE_T17.md)：RTL 原有 32 项及新增两项集中释放测试全部通过（34/34），RESULT 合计 1185754960、CHECK 合计 2305789；默认综合网表清单 8/8，整顶层五功能网表 1123 检查、65 项独立核对，六份外部记录与本卡重新生成的同激励 RTL 完全一致，含 615A 加载后卸载。独立 ModelSim do 入口本卡未重跑。
+T16/T17 历史验收见 [PROBE_T16](docs/PROBE_T16.md) 和 [PROBE_T17](docs/PROBE_T17.md)：当时 RTL 34/34，RESULT 合计 1185754960、CHECK 合计 2305789；默认综合网表清单 8/8，整顶层五功能网表 1123 检查、65 项独立核对，六份外部记录与同激励 RTL 完全一致，含 615A 加载后卸载。独立 ModelSim do 入口当时未重跑。
 定稿 RTL 重新综合 29917 逻辑单元、783 未装箱 RAM 切片，8 ns setup 裕量 +2.749 ns、hold -0.068 ns；器件 EQ6HL130/CSG484_H。RAM 切片为映射统计，不当作装箱后物理块数；图形界面综合未对本版本重跑。
 技术指标为 T16 RTL 实测，A/B 双网每方向、每网单算，冗余份不叠加：1471 字节 UDP 载荷、BAG=125000 周期（1 ms），77 条 VL 双向每方向 906.136 Mbps，81 条 VL 953.208 Mbps，10 条 VL 117.680 Mbps；0/257 周期链路延迟两组均通过，发送口与去重交付口一致，零丢失、零乱序、零异常脉冲。
 T16 固定错开提交且没有服务报文争用的稳定窗口最大端到端时延 24.408 µs（应用末字节至交付末字节，只扣固定链路延迟），最大发送时延 0.248 µs；满载发送抖动 0 µs。轻载 1/17/18/1471/511 字节同长度组的发送及端到端抖动均为 0 µs，最大发送时延 0.296 µs、端到端 24.400 µs。77 条 VL 满载叠加 RTC 的最大对时误差 10788 ns（10.788 µs），为空载及用户流量下的共同理想时钟仿真结果。

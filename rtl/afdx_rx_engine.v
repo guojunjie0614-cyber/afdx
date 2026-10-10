@@ -34,7 +34,7 @@ module afdx_rx_engine #(
     assign cfg_ok = enable && (op == IDLE || op == AGE) && ! desc_a_valid && ! desc_b_valid;
     reg [3:0] phase;
     reg [11:0] init_ptr, age_ptr, op_idx;
-    reg init_flush, op_net, state_changed, deliver_allowed;
+    reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
     reg [RX_RING_AW + 82:0] current_desc;
     reg [12:0] saved_map;
     reg [31:0] saved_cfg;
@@ -83,6 +83,7 @@ module afdx_rx_engine #(
             init_ptr <= 0;
             init_flush <= 0;
             age_ptr <= 0;
+            age_pending <= 0;
             op_idx <= 0;
             op_net <= 0;
             take_a <= 0;
@@ -123,6 +124,8 @@ module afdx_rx_engine #(
         else begin
             now_q <= now_c;
             now_previous <= now_c;
+            // 忙时保留老化请求；只有检查完成才推进扫描位置。
+            if (now_c != now_previous) age_pending <= 1;
             take_a <= 0;
             take_b <= 0;
             resolve_a <= 0;
@@ -163,11 +166,10 @@ module afdx_rx_engine #(
                         op <= FRAME;
                         phase <= 0;
                     end
-                    else if (now_c != now_previous) begin
+                    else if (age_pending || now_c != now_previous) begin
                         state_re <= 1;
                         state_ra <= age_ptr;
                         op_idx <= age_ptr;
-                        age_ptr <= age_ptr + 1'b1;
                         age_time <= now_c;
                         op <= AGE;
                         phase <= 0;
@@ -202,6 +204,8 @@ module afdx_rx_engine #(
                             raw_distance <= { 1'b0, sn } - { 1'b0, saved_state[23:16] };
                         end
                         6 : begin
+                            // 老化保证记录小于半圈；反向处理的另一份仍按实际间隔比较。
+                            if (elapsed[15]) elapsed <= -elapsed;
                             second_sn <= next_sn == 255 ? 8'd1 : next_sn + 1'b1;
                             forward_distance <= raw_distance[8] ? raw_distance + 9'd255 : raw_distance;
                         end
@@ -268,7 +272,7 @@ module afdx_rx_engine #(
                     endcase
                 end
                 AGE : begin
-                    // 每步只读一项；帧描述出现即让路，错过的粗时钟变化不补做。
+                    // 帧描述出现即让路，未完成的同一项在下一空闲段重试。
                     if (desc_a_valid || desc_b_valid) op <= IDLE;
                     else begin
                         phase <= phase + 1'b1;
@@ -276,6 +280,8 @@ module afdx_rx_engine #(
                             1 : saved_state <= state_q;
                             2 : elapsed <= age_time - saved_state[15:0];
                             3 : begin
+                                age_ptr <= age_ptr + 1'b1;
+                                age_pending <= now_c != now_previous;
                                 if (saved_state[24] && elapsed > 16'h4000) begin
                                     state_we <= 1;
                                     state_wa <= op_idx;

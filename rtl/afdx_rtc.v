@@ -246,7 +246,8 @@ module afdx_rtc (
                     echo_frac <= rx_packet[31:0];
                     reply_pending <= 1;
                 end
-                else if (! master && waiting && rx_packet[378:376] == 4 && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
+                // 重发尚未发完时，新时间戳仍在更新，旧回应不得进入校时。
+                else if (! master && waiting && tx_state == 0 && rx_packet[378:376] == 4 && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
                     server_receive_sec <= rx_packet[127:96] - NTP_EPOCH;
                     server_transmit_sec <= rx_packet[63:32] - NTP_EPOCH;
                     calc_state <= 10;
@@ -338,7 +339,8 @@ module afdx_rtc (
                         reply_pending <= 0;
                         tx_state <= 1;
                     end
-                    else if (! master && ! waiting && countdown == 0) begin
+                    // 周期到期重发；接收完成或校时计算中不覆盖本次时间戳。
+                    else if (! master && countdown == 0 && calc_state == 0 && ! rx_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;
