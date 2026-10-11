@@ -16,8 +16,8 @@
 
 ## 软件准备
 
-自行安装 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4、Python 3.10 或更新版本。本机验证使用 Python 3.12.7 和 Windows PowerShell 5.1，不需要 PowerShell 7。
-五功能 do 文件只需要 ModelSim；脚本入口还需要 Python，全回归依赖 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
+基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含五功能、突发排队和 RTC 指标，不依赖 Python。
+完整 37 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随仓库分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；本机未单独验证非管理员会话。当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
@@ -30,21 +30,40 @@
 
 内存变量按 GiB（1024³ 字节）计，接受非负数，在启动脚本前设置；8 GB 电脑可按实际情况降低阈值，例如 `$env:AFDX_MEM_FLOOR_GB='1'; $env:AFDX_MEM_LIMIT_GB='4'`。这两项不影响独立 ModelSim do 入口；超时保护仍生效，运行器只处理自己启动的进程树。
 
-## 仿真和综合入口
+## 评委快速上手
 
-以下命令均在仓库根目录执行，先按上表设置安装路径或 PATH。在 ModelSim Transcript 窗口也可先 `cd` 到仓库根目录，再执行 `do sim/run_services.do`；结束显示 `MODELSIM ENTRY PASS`，GUI 保留波形。
+先看 [ARCH](docs/ARCH.md) 第 1、2 节及 `rtl/AFDX_top.v` 的端口注释，再运行下面前三条命令；均在仓库根目录执行，先按上表设置 ModelSim 安装目录或 PATH。最后两条用于已安装 Python 依赖后的完整回归和综合估算。
 
 ```powershell
 $simExe=if($env:MODELSIM_HOME){Join-Path $env:MODELSIM_HOME 'vsim.exe'}else{(Get-Command vsim.exe -ErrorAction Stop).Source}
 New-Item -ItemType Directory -Force out | Out-Null
-& $simExe -c -l out/startup.log -do 'do sim/run_services.do'
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_ram_sdp
+& $simExe -c -l out/startup.log -do 'do sim/run_judge.do'
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-五功能入口覆盖双向用户数据、冗余/完整性检查、SNMP Get、RTC 同步、615A 先加载再卸载，输出在 `out/modelsim/`。全回归是 `sim/tests.txt` 的 37 项，含冗余跨粗刻度相位、RTC 重发恢复及 Originate 反例，输出在 `out/regress/` 和 `out/sim/`；更多单项、参数和网表命令见 [FLOW](docs/FLOW.md)。
-图形综合：在 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点 Run Synthesis。保持 `AFDX_EndSystem_assignment_defaults.qdf` 与工程相邻，使用 Speed 设置和 `constraints.edc`；器件 EQ6HL130、封装 CSG484_H。
+纯 ModelSim 入口依次跑五功能、77/81 条 VL 突发和完整 RTC 用例，结束须见 `JUDGE ENTRY PASS cases=4`，每项须为 `PASS errors=0`；编译或自检失败打印 `JUDGE ENTRY FAIL` 并返回非零退出码。结果与指标写入 `out/modelsim/judge_<时间>_<进程>/result.txt`，原始日志在各用例子目录。它使用随仓库提供的固定向量，不调用 Python；完整回归还增加独立报文/周期参考检查。
+五功能覆盖双向用户数据、冗余/完整性、SNMP Get、RTC、615A 先加载再卸载。只看五功能波形时，可在 ModelSim Transcript 中先 `cd` 到仓库根目录，再执行 `do sim/run_services.do`，看到 `MODELSIM ENTRY PASS` 后 GUI 保留波形。全回归为 `sim/tests.txt` 的 37 项，输出在 `out/regress/` 和 `out/sim/`；更多参数见 [FLOW](docs/FLOW.md)。
+图形综合不依赖 Python：在 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点 Run Synthesis。保持 `AFDX_EndSystem_assignment_defaults.qdf` 与工程相邻，使用 Speed 设置和 `constraints.edc`；器件 EQ6HL130、封装 CSG484_H。工程包含全部 23 个 RTL 文件，使用相对路径；干净副本的命令行综合用于验证源文件可编译，不能替代 GUI 点击验证。
+
+综合后五功能仿真使用上面命令生成的 `netlist.v`，先运行同版本 RTL 作为外部记录参考，再运行综合网表（此脚本入口需要 Python；可能耗时一小时以上）：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services
+$topNet=Join-Path ((Get-Content out/latest_AFDX_top.json -Raw | ConvertFrom-Json).folder) 'netlist.v'
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Netlist $topNet -Deadline ((Get-Date).AddHours(3).ToString('o'))
+```
+
+须同时看到 `[RESULT] tb_net_services PASS` 和 `[CHECK]` 通过；外部记录与同激励 RTL 比较，原网表和厂商模型不改。完整 8 项网表清单的准备命令见 [FLOW 的网表入口](docs/FLOW.md#网表入口)。布局布线导出的 `.vo` 与此综合网表入口不同，已知限制见 FLOW 的官方 `.vo` 一节，不能混作通过证据。
+
+| 指标与工况 | 测试和输出行 |
+|---|---|
+| 77/81 条 VL 同时释放的队列清空时间 | `tb_gbe_burst` 的 `[BURST_SUMMARY]`；do 入口输出 `JUDGE METRIC burst_vls=... queue_clear_us=...`，预期 959.272/1008.488 µs，81 条越过 1 ms 是边界用例的预期结果。 |
+| 空载、用户流量及 77 VL 满载 RTC 误差 | `tb_sys_rtc` 的 `[RTC_SYNC]`、`[RTC_LOAD]`、`[RTC_GBE]`；do 入口汇总 `JUDGE METRIC rtc_...`，空载/77 VL 为 0/10788 ns。 |
+| 稳态吞吐、端到端时延、发送抖动 | `sim/run.ps1 -Test tb_sys_perf` 的 `[METRIC] tb_sys_perf`，77 VL 两种链路工况每方向为 906.136 Mbps、24.408 µs、0 µs；原数据在 `check_summary.json` 的 `reports.system.performance`。 |
+| 五功能完整性 | `tb_net_services` 的六行 `[FUNCTION]`（加、卸载分列）和最后 `[RESULT]`；零错误才通过。 |
+
+突发清空时间从统一释放时刻起算；稳态端到端时延从应用末字节到交付末字节，只扣固定链路延迟，两种口径不能互换。RTC 使用共同理想时钟；这些 RTL 测量及综合估算均不等于布局布线时序签核。
 
 ## 从哪里读起
 

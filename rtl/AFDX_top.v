@@ -9,15 +9,15 @@ module AFDX_top #(
     parameter RX_RING_AW = 12,
     parameter RX_DQ_AW = 5,
     parameter GMII_RX_AW = 12) (
-    // clk 为工作时钟，reset 为同步高有效复位。
-    input wire clk, reset,
     // 官方 A 网端口：tx_* 输出 GMII，rx_* 输入 GMII；tx_ready 是初始化完成指示，rx_ready 为模板保留口。
-    output wire [7:0] tx_data,
-    output wire tx_valid,
-    input wire [7:0] rx_data,
-    input wire rx_valid,
-    output reg tx_ready,
-    input wire rx_ready,
+    input wire clk,             // 时钟信号：125 MHz 单时钟域。
+    input wire reset,           // 复位信号：同步高有效。
+    output wire [7:0] tx_data,   // 发送数据：A 网 GMII 每拍一字节。
+    input wire [7:0] rx_data,    // 接收数据：A 网 GMII 每拍一字节。
+    output wire tx_valid,       // 发送数据有效指示：帧内连续有效。
+    input wire rx_valid,        // 接收数据有效指示：帧内连续有效。
+    output wire tx_ready,       // 发送数据准备好指示：收发核心均已初始化。
+    input wire rx_ready,        // 接收数据准备好指示：模板保留，当前 GMII 无反压。
     // 扩展 B 网端口：与 A 网相同的逐拍 GMII 字节/帧有效信号。
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
@@ -49,6 +49,9 @@ module AFDX_top #(
     output wire [7:0] ev_a, ev_b,
     output wire ev_rm_drop, ev_deliver,
     output wire [1:0] ev_gdrop);
+    // 输出线网保留原来的寄存周期；不增加握手或组合判定级。
+    reg tx_ready_q;
+    assign tx_ready = tx_ready_q;
     // 计时与初始化：now/now_c 分别用于发送 BAG 和接收冗余；两个核心独立清表后统一开放服务。
     wire [31:0] now;
     wire [15:0] now_c, user_id;
@@ -136,8 +139,8 @@ module AFDX_top #(
         .app_rx_valid(app_rx_valid), .app_rx_data(app_rx_data), .app_rx_last(app_rx_last), .app_rx_vl(app_rx_vl),
         .app_rx_sport(app_rx_sport), .app_rx_dport(app_rx_port), .app_rx_net(app_rx_net));
     always @(posedge clk) begin
-        if (reset) tx_ready <= 0;
-        else tx_ready <= tx_initialized && rx_initialized;
+        if (reset) tx_ready_q <= 0;
+        else tx_ready_q <= tx_initialized && rx_initialized;
     end
     // 原生双网收发与表配置：GMII 直连核心，不经过保留的慢线适配器。
     afdx_timebase timebase (.clk(clk), .reset(reset), .now(now), .byte_en(byte_en), .now_c(now_c));
