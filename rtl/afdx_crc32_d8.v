@@ -1,14 +1,15 @@
-// 按一个字节更新以太网反射CRC32。
-// 输入当前CRC状态和8位数据，输出处理该字节后的CRC状态。
-// 纯组合逻辑；初值、取反及线上字节顺序由MAC模块负责。
-// Ethernet反射CRC；不在此模块取反，发送端决定正常或错误FCS。
+// 本模块根据一个新字节更新以太网校验值。
+// 收发模块提供上一校验值和当前字节，本模块返回新的校验值。
+// 本模块用于赛题要求的帧错误检测。
+// CRC（Cyclic Redundancy Check，循环冗余校验）用于发现数据错误。
 module afdx_crc32_d8 (
-    // crc 为前一字节后的余数，data 为当前线上字节。
+    // crc 是处理上一字节后的余数，data 是本次要处理的字节。
     input wire [31:0] crc,
     input wire [7:0] data,
-    // next_crc 为八次反射移位后的余数；不含初始装载和最终取反。
+    // next_crc 是处理完这八个数据位后的余数。
     output reg [31:0] next_crc);
-    // IEEE 802.3 FCS 的反射多项式为 0xedb88320；此处没有时序状态。
+    // 按 IEEE 802.3 使用反射多项式 0xedb88320。
+    // 收发模块负责设置初值和最终取反。
     integer bit_index;
     always @ * begin
         next_crc = crc ^ { 24'b0, data };

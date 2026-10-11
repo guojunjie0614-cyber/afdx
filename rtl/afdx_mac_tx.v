@@ -1,30 +1,36 @@
-// 把帧内容装成含前导、SFD和FCS的以太网GMII帧。
-// 上游提供帧字节和尾标志，byte_en驱动逐拍的发送节拍。
-// 按前导、内容、FCS、帧间隔推进；FCS按低字节在前输出。
+// 本模块给帧内容添加前导码和校验值，再发到两路以太网。
+// afdx_tx_builder 提供帧内容，本模块逐字节输出到线路。
+// 本模块用于赛题的以太网发送，并保证两帧之间的空闲时间。
+// FCS（Frame Check Sequence，帧校验序列）用于让接收方检查帧内容。
 module afdx_mac_tx (
-    // clk/reset 为同步控制；byte_en 决定取数和输出节拍，原生 GMII 顶层逐拍有效。
+    // byte_en 为高时推进一个字节，当前顶层每拍都为高。
     input wire clk, reset, byte_en,
-    // s_valid/s_ready 握手输入帧内容；s_last 为最后的序号字节，s_en_a/b 选择发送网络。
+    // s_valid 和 s_ready 同为高时接收一个帧内容字节。
+    // s_last 标记最后的序号字节，s_en_a/b 选择发送网络。
     input wire s_valid,
     output wire s_ready,
-    // s_data_a/b 为两网帧内容，允许源 MAC 网络标识不同。
+    // s_data_a/b 分别提供两网帧内容，以便使用不同的源网络标识。
     input wire [7:0] s_data_a, s_data_b,
     input wire s_last, s_en_a, s_en_b,
-    // tx_sof/tx_eof 标记首前导/帧结束；tx_underrun 表示发送中断粮，输出故意错误的 FCS。
+    // tx_sof 标记首个前导字节，tx_eof 标记帧结束。
+    // 发送途中缺少字节时，tx_underrun 变高并发送错误校验值。
     output reg tx_sof, tx_eof, tx_underrun,
-    // tx_data_a/b、tx_valid_a/b 为含前导、SFD、FCS 的线路输出。
+    // tx_valid_a/b 为高时，tx_data_a/b 是对应网络本拍发送的字节。
     output reg [7:0] tx_data_a,
     output reg tx_valid_a,
     output reg [7:0] tx_data_b,
     output reg tx_valid_b);
     localparam GAP = 3'd0, PREAMBLE = 3'd1, DATA = 3'd2, FCS = 3'd3, DRAIN = 3'd4;
-    // pre_index/fcs_index 标记前导和 FCS 字节；gap_left 保证 12 拍帧间隔。
+    // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
+    // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
     reg [1:0] fcs_index;
     reg [6:0] gap_left;
-    // en_a/b 锁存当前帧目的网络；discard_tail 记住断粮后还需清掉的上游残帧。
+    // en_a/b 保存本帧使用的网络。
+    // discard_tail 表示发送中途缺字节后，还要丢弃上游剩余内容。
     reg en_a, en_b, last_byte, discard_tail;
-    // 两网独立累积 CRC；正常帧取反后低字节先发，断粮帧不取反。
+    // 两网分别计算帧校验值，正常时取反并先发低字节。
+    // 发送途中缺字节时故意不取反，让接收方发现错误。
     reg [31:0] crc_a, crc_b, fcs_a, fcs_b;
     wire [31:0] next_a, next_b;
     afdx_crc32_d8 update_a (crc_a, s_data_a, next_a);
@@ -57,9 +63,9 @@ module afdx_mac_tx (
             tx_eof <= 0;
             tx_underrun <= 0;
             if (gap_left != 0) gap_left <= gap_left - 1'b1;
-            // DRAIN 丢弃上游尾部，握手到 s_last 后回 GAP；防止残帧被当作新帧。
+            // DRAIN：丢弃上游剩余字节，末字节握手后转 GAP。
             if (state == DRAIN) begin
-                // 清尾也在字节边界取数，所有非复位状态转换保持byte_en节拍。
+                // 丢弃剩余字节也只在 byte_en 为高时进行。
                 if (byte_en && s_valid && s_last) begin
                     state <= GAP;
                     discard_tail <= 0;
@@ -67,7 +73,7 @@ module afdx_mac_tx (
             end
             else if (byte_en) begin
                 case (state)
-                    // GAP：帧间隔结束且首字节就绪，锁存网络并开始前导。
+                    // GAP：空闲间隔已满且首字节就绪时，保存网络选择并转 PREAMBLE。
                     GAP : if (gap_left == 0 && s_valid) begin
                         en_a <= s_en_a;
                         en_b <= s_en_b;
@@ -83,7 +89,7 @@ module afdx_mac_tx (
                         state <= PREAMBLE;
                         tx_sof <= 1;
                     end
-                    // PREAMBLE：发完七个 0x55 和 SFD 后取首内容字节；断粮转错误 FCS。
+                    // PREAMBLE：发完前导码后转 DATA；上游缺字节时转 FCS。
                     PREAMBLE : begin
                         if (pre_index < 7) begin
                             pre_index <= pre_index + 1'b1;
@@ -109,7 +115,7 @@ module afdx_mac_tx (
                             fcs_b <= { 8'b0, crc_b[31:8] };
                         end
                     end
-                    // DATA：每个有效节拍取内容；前拍已取末字节或发生断粮时转 FCS。
+                    // DATA：逐字节发送内容，末字节或上游缺字节时转 FCS。
                     DATA : begin
                         if (last_byte || ! s_valid) begin
                             state <= FCS;
@@ -137,7 +143,7 @@ module afdx_mac_tx (
                             last_byte <= s_last;
                         end
                     end
-                    // FCS：依次输出四字节；随后回 GAP，若断粮则转 DRAIN 清尾。
+                    // FCS：发完四字节校验值，正常转 GAP，缺字节时转 DRAIN。
                     FCS : begin
                         if (fcs_index == 3) begin
                             tx_data_a <= 0;
@@ -146,7 +152,7 @@ module afdx_mac_tx (
                             tx_valid_b <= 0;
                             tx_eof <= 1;
                             state <= discard_tail ? DRAIN : GAP;
-                            // 此拍已经开始第一个空闲周期，余下11拍后满足12拍帧间隔。
+                            // 本拍已是第一个空闲周期，再等 11 拍即可满足帧间隔。
                             gap_left <= 11;
                         end
                         else begin

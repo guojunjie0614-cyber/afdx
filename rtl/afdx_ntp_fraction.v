@@ -1,22 +1,26 @@
-// 在纳秒与NTP的32位二进制小数之间转换。
-// start启动一次转换，inverse选择方向，done指示result有效。
-// 分多轮移位和加减完成，不使用单拍乘除法器。
-// 纳秒/二进制小数互换：32轮，每轮两拍；每拍只有一级32位加减，无乘除法器。
+// 本模块把纳秒与网络时间戳的小数部分互相换算。
+// afdx_rtc 提供待换算的数值，并在 done 有效时取走结果。
+// 本模块用于赛题的时钟同步。
+// NTP（Network Time Protocol，网络时间协议）用 32 位小数表示不足一秒的时间。
 module afdx_ntp_fraction (
-    // clk/reset 控制同步运算；start 仅在空闲采样，to_nanoseconds=1 表示 NTP 小数转纳秒。
+    // 空闲时 start 为高才启动换算。
+    // to_nanoseconds 为高表示小数转纳秒，为低表示纳秒转小数。
     input wire clk, reset, start, to_nanoseconds,
-    // value 为输入数值；done 单拍有效时 result 为换算结果。
+    // value 提供输入值，done 为高的一拍表示 result 有效。
     input wire [31:0] value,
     output reg done,
     output reg [31:0] result);
-    // state=0 等待 start；1 计算试商/乘积部分和；2 移位提交，32 轮结束回 0。
+    // state=0：等待 start，为高时保存输入并转 1。
+    // state=1：完成本轮加减，下一拍转 2。
+    // state=2：移位并保存结果；未满 32 轮转 1，完成后转 0。
     reg [1:0] state;
     reg inverse;
     reg [4:0] bit_count;
-    // remainder 保存部分余数，work 保存待处理位或商，trial 隔开加减和移位路径。
+    // remainder 保存余数，work 保存待处理位或计算出的商。
+    // trial 保存本轮加减结果，供下一拍移位使用。
     reg [30:0] remainder;
     reg [31:0] work, trial;
-    // RFC 4330 时间戳小数换算；逆向的半位余数用于最终四舍五入。
+    // 换算按 RFC 4330 的时间戳格式进行，小数转纳秒时四舍五入。
     always @(posedge clk) begin
         if (reset) begin
             state <= 0;
@@ -53,7 +57,7 @@ module afdx_ntp_fraction (
                         work <= { work[30:0], ! trial[31] };
                     end
                     if (bit_count == 31) begin
-                        // 小数转纳秒四舍五入；自发的整纳秒时间戳往返无偏差。
+                        // 小数转纳秒时，根据最低位对结果四舍五入。
                         result <= inverse ? { 1'b0, trial[31:1] } + { 31'b0, trial[0] } : { work[30:0], ! trial[31] };
                         done <= 1;
                         state <= 0;

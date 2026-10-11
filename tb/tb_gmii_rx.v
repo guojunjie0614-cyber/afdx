@@ -1,7 +1,8 @@
-// 验证独立 GMII 接收适配器的整帧缓存、满环丢弃、复位与慢线重放；不代表当前顶层的原生 GMII 吞吐。
-// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 本测试检查独立的千兆接收适配器。
+// 它检查整帧缓存、缓存满时丢帧，以及复位后能否恢复接收。
+// 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
-// 只看端口的字节环参考模型：先释放本拍慢线首字节，再接收本拍GMII字节。
+// 参考模型先释放本拍读出的空间，再接收本拍线路字节。
 module tb_gmii_rx #(parameter GMII_RX_AW=12);
     localparam CAPACITY=1<<GMII_RX_AW;
     localparam R=16;

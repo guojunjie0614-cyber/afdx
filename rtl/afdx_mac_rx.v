@@ -1,34 +1,45 @@
-// 识别前导/SFD、检查帧长与FCS，输出去掉FCS的帧字节。
-// 输入逐拍GMII字节，输出帧开始、内容、结束和检查结果。
-// 保留末尾四字节用于FCS判定；错误帧仍由结束状态通知上层。
+// 本模块从以太网字节流中找出帧，并检查帧长和校验值。
+// 输入来自线路，去掉校验值后的内容交给 afdx_rx_parse。
+// 本模块用于赛题的以太网接收和错误检测。
 module afdx_mac_rx (
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
-    // rx_data/rx_valid 为 GMII：帧内每拍一字节，valid 下降表示帧结束。
+    // rx_valid 为高时，rx_data 是线路本拍收到的字节。
+    // rx_valid 拉低表示帧已结束。
     input wire [7:0] rx_data,
     input wire rx_valid,
-    // m_valid/m_data 输出去 FCS 的帧内容；m_first 标记目的 MAC 首字节。
+    // m_valid 为高时，m_data 是去掉校验值后的帧内容。
+    // m_first 标记目的以太网地址的首字节。
     output reg m_valid,
     output reg [7:0] m_data,
     output reg m_first, f_end,
-    // f_end 单拍报告检查结果；f_err=0/1/2/3 分别为通过/FCS错/长度错/前导错，f_len 含 FCS。
+    // f_end 为高时，f_err 和 f_len 给出本帧检查结果。
+    // f_err=0 表示通过。
+    // f_err=1 表示校验值错误。
+    // f_err=2 表示长度错误。
+    // f_err=3 表示前导码错误。
+    // f_len 包含末尾四字节校验值。
     output reg [1:0] f_err,
     output reg [10:0] f_len);
-    // IDLE 等待先空闲再起帧；0x55 进入 PREAMBLE，0xd5 进入 FRAME，其余进入 BAD_PRE。
-    // PREAMBLE 遇 SFD 转 FRAME，非法字节转 BAD_PRE；FRAME/BAD_PRE 均在线路变空闲时回 IDLE。
+    // IDLE：先等线路空闲，再按首字节转 PREAMBLE、FRAME 或 BAD_PRE。
+    // PREAMBLE：遇帧起始定界符转 FRAME，遇非法字节转 BAD_PRE。
+    // FRAME：接收内容，线路空闲时报告结果并转 IDLE。
+    // BAD_PRE：丢弃错误前导码后的内容，线路空闲时转 IDLE。
     localparam IDLE = 2'd0, PREAMBLE = 2'd1, FRAME = 2'd2, BAD_PRE = 2'd3;
-    // data_q/valid_q 对齐输入；armed 防止把复位时的残帧误认为新帧。
+    // data_q/valid_q 将数据与有效标记一起延迟一拍。
+    // armed 要求复位后先看到线路空闲，避免从半帧开始接收。
     reg [7:0] data_q;
     reg valid_q, armed;
     reg [1:0] state;
-    // length 从目的 MAC 开始计数并饱和；crc 含收到的四字节 FCS，用固定余数判断。
+    // length 从目的以太网地址开始计数，到上限后不再增加。
+    // crc 连同收到的校验字节一起计算，再与固定余数比较。
     reg [10:0] length;
     reg [31:0] crc;
-    // 四字节延迟寄存器，不是逐VL存储；剥离末尾FCS。
+    // 末尾四个字节只参与校验，不作为帧内容输出。
     reg [7:0] delay0, delay1, delay2, delay3;
     wire [31:0] next_crc;
     afdx_crc32_d8 update_crc (crc, data_q, next_crc);
-    // 线路解析与结束检查：错误只在 f_end 定案，上层在此之前暂存载荷。
+    // 帧结束时才确定检查结果，解析器在此前暂存数据。
     always @(posedge clk) begin
         data_q <= rx_data;
         valid_q <= rx_valid;
@@ -62,7 +73,7 @@ module afdx_mac_rx (
                 end
             end
             else begin
-                // 输入先寄存，随后逐拍处理；末尾四字节只用于FCS。
+                // 输入先寄存再逐拍处理，最后四个字节用于帧校验。
                 begin
                     if (! valid_q) begin
                         f_end <= 1;

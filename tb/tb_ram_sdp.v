@@ -1,5 +1,6 @@
-// 验证四种 RAM 宽度/深度的写入、同步读延迟和禁读保持；对应载荷及 VL 表的基础存储契约。
-// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 本测试检查四种宽度和深度的存储器。
+// 它核对写入数据、同步读取延迟，以及读使能为低时输出是否保持。
+// 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
 module ram_sdp_case #(parameter WIDTH=8,DEPTH=2048,AW=11)(
  input wire clk,output reg done,output reg [31:0] checks,errors

@@ -1,5 +1,6 @@
-// MAC 共用测试主体：从 vectors 取消息，观察两网组帧；LOOP 还检查接收解帧，最终按 errors 输出 RESULT。
-// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
+// 本模块读取测试输入，检查以太网发送结果。
+// 闭环模式还把发送结果交给接收模块，并核对解出的内容。
+// 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
 module mac_tx_suite #(parameter LOOP=0, TEST_NAME="tb_mac_tx");
     reg clk=0,reset=1;

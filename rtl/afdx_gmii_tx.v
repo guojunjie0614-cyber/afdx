@@ -1,21 +1,24 @@
-// 将核心慢线字节转成帧内连续valid的GMII输出。
-// 输入核心的慢线data/valid；输出每拍一字节的GMII帧。
-// 固定起始偏移D=10688拍；数据RAM、描述队列和预取队列独立推进。
-// 慢线每八拍一字节，GMII 每拍一字节；每帧 SOF 保持相同的固定延迟。
+// 本模块把每八拍一个字节的输入转换为连续的千兆以太网输出。
+// 输入来自低速发送核心，输出每拍发送一个字节。
+// 这是一个备用的速率转换模块，只有发送核心每八拍出一个字节时才需要它。
+// 当前发送核心每拍出一个字节，所以 AFDX_top 没有例化本模块。
+// tb_gmii_tx 单独测试本模块，检查每帧首字节固定延后 10688 拍。
 module afdx_gmii_tx (
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
-    // slow_data/valid 为每八拍一字节的慢线输入，帧内 valid 连续；本适配器不接入当前原生 GMII 顶层。
+    // slow_valid 在帧内持续为高，slow_data 每八拍提供一个新字节。
     input wire [7:0] slow_data,
     input wire slow_valid,
-    // tx_data/valid 为每拍一字节的 GMII 输出，起帧相对输入延迟固定。
+    // tx_valid 为高时，tx_data 每拍输出一个字节。
+    // 首字节比输入首字节固定延后 10688 拍。
     output reg [7:0] tx_data,
     output reg tx_valid);
-    // 保留前一字节以便写入 last：最坏可用时间 S+8*k+13。
-    // ceil64(7*1525+13)=10688；G2 的变异入口是此常量。
+    // 先保留上一字节，看到下一拍输入后才能确定它是否为帧尾。
+    // 固定延迟按最长帧的缓存时间向上取 64 的整数倍，得到 10688 拍。
     localparam TX_DELAY = 10688;
     localparam DATA_AW = 11, DATA_DEPTH = 2048, DUE_DEPTH = 16;
-    // clock_count 给每帧生成发送截止点；input_active/byte_phase 捕获慢线字节并给尾字节加 last。
+    // clock_count 用于确定本帧应从哪一拍开始输出。
+    // input_active/byte_phase 判断何时保存字节和末字节标记。
     reg [31:0] clock_count;
     reg input_active;
     reg [2:0] byte_phase;
@@ -26,24 +29,28 @@ module afdx_gmii_tx (
     reg [DATA_AW - 1:0] data_wa, data_ra;
     reg [8:0] data_wd;
     wire [8:0] data_q;
-    // 字节环同时区分已写、已发读请求和已释放位置，避免预取阶段重复计入空闲空间。
+    // 缓存分别记录写入、发出读请求和释放的位置，避免重复计算空闲空间。
     reg [DATA_AW:0] write_ptr, read_issue_ptr, read_release_ptr;
     wire [DATA_AW:0] occupied = write_ptr - read_release_ptr;
     afdx_ram_sdp #(.WIDTH(9), .DEPTH(DATA_DEPTH)) bytes_ram (clk, data_we, data_wa, data_wd, data_re, data_ra, data_q);
-    // 最多16个尚未开始输出的帧；开始时出队，输出中的帧由 sending 独立保存。
+    // 队列最多容纳 16 个尚未开始输出的帧。
+    // 输出开始后，sending 单独记录当前帧的进度。
     reg due_we, due_re;
     reg [3:0] due_wa, due_ra, due_write_ptr, due_read_ptr;
     reg [31:0] due_wd;
     wire [31:0] due_q;
     reg [4:0] due_count;
-    // due_phase=0 发队头读请求，1 等 RAM，2 锁存 head_due 后回 0；到期且未发送时 launch_frame。
+    // due_phase=0：发出队首时间的读请求，然后转 1。
+    // due_phase=1：等待同步读取，然后转 2。
+    // due_phase=2：保存读结果，然后转 0。
+    // 时间已到且当前未发送时，launch_frame 启动下一帧。
     reg [1:0] due_phase;
     reg head_valid;
     reg [31:0] head_due;
     reg sending;
     wire launch_frame = head_valid && ! sending && clock_count == head_due;
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(DUE_DEPTH)) due_ram (clk, due_we, due_wa, due_wd, due_re, due_ra, due_q);
-    // 四项寄存器预取队列，保留跨帧预取的数据，不另推断 RAM。
+    // 四个寄存器提前保存读出的字节，跨帧时保留尚未使用的数据。
     reg [8:0] prefetch0, prefetch1, prefetch2, prefetch3;
     reg [1:0] prefetch_write, prefetch_read;
     reg [2:0] prefetch_count;
@@ -96,14 +103,14 @@ module afdx_gmii_tx (
             due_re <= 0;
             tx_data <= 0;
             tx_valid <= 0;
-            // 输入缓存与定时描述：新帧登记截止点，上一字节延迟保存以识别真实帧尾。
+            // 新帧登记规定的输出时间，输入字节延迟保存以确定帧尾。
             if (frame_start) begin
                 input_active <= 1;
                 byte_phase <= 0;
                 held_byte <= slow_data;
                 due_we <= 1;
                 due_wa <= due_write_ptr;
-                // 本沿装输出寄存器，端口在下一可观察周期 S+D 开始有效。
+                // 本拍写输出寄存器，下一可观察周期 S+D 才出现首字节。
                 due_wd <= clock_count + TX_DELAY - 1;
                 due_write_ptr <= due_write_ptr + 1'b1;
             end
@@ -124,7 +131,7 @@ module afdx_gmii_tx (
                 data_wd <= { ! slow_valid, held_byte };
                 write_ptr <= write_ptr + 1'b1;
             end
-            // 写指针提前一拍公布，但本拍装读口后再过一拍才读 RAM，避免同拍同址。
+            // 读请求比写入晚到存储器一拍，避免同拍读取刚写的地址。
             data_re <= request_word;
             if (request_word) begin
                 data_ra <= read_issue_ptr[DATA_AW - 1:0];
@@ -146,7 +153,7 @@ module afdx_gmii_tx (
                 2'b01 : prefetch_count <= prefetch_count - 1'b1;
                 default :;
             endcase
-            // 发送阶段：launch_frame 启动，sending 持续逐拍输出，取到 last 后停止。
+            // launch_frame 启动一帧，随后每拍输出一字节，读到 last 时停止。
             if (pop_word) begin
                 tx_data <= front_word[7:0];
                 tx_valid <= 1;

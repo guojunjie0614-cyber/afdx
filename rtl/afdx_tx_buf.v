@@ -1,28 +1,30 @@
-// 接收应用消息，按页写入发送载荷RAM并形成消息描述。
-// m_*为输入握手；页申请、描述队列及丢弃事件接发送外壳。
-// 先检查VL/长度/队列容量；整条消息成功收完才提交描述。
-// 接收状态：首字节暂存、取页、连续写入、登记、回滚、清尾、结果脉冲。
+// 本模块接收应用消息，把消息分成若干页存入发送缓存。
+// 页是发送缓存的分配单位，每页 2^TX_OFF_AW 字节，默认 512 字节。
+// afdx_svc 提供字节，整条消息存好后通知 afdx_tx_engine 排队。
+// 本模块用于赛题的发送缓存，接收失败时归还本条消息占用的页。
 module afdx_tx_buf #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
-    // clk/reset 为同步控制；init_done 后才允许接收新消息。
+    // init_done 为高时才允许接收新消息。
     input wire clk, reset, init_done,
-    // m_valid/m_ready 传送 m_data，m_last 结束消息；m_vl 是发送表的 7 位索引。
+    // m_valid 和 m_ready 同为高时接收 m_data，m_last 标记末字节。
+    // m_vl 是发送配置表的 7 位索引。
     input wire m_valid,
     output wire m_ready,
     input wire [7:0] m_data,
     input wire m_last,
     input wire [6:0] m_vl,
-    // m_port_en=1 时使用本消息 m_sport/m_dport，否则由 VL 配置提供 UDP 端口。
+    // m_port_en 为高时使用本消息的端口，否则使用配置中的端口。
     input wire m_port_en,
     input wire [15:0] m_sport, m_dport,
-    // pop_* 从空闲池申请页，ret_* 握手归还失败消息已占用的页。
+    // pop_* 申请一个空闲页，ret_* 归还接收失败的消息所占用的页。
     output reg pop_req,
     input wire pop_ready, pop_ack, pop_ok,
     input wire [7:0] pop_page,
     output reg ret_valid,
     output reg [7:0] ret_page,
     input wire ret_ready,
-    // payload_* 写载荷字节；pnext_* 链接同一消息的页；desc_* 在首页保存长度和 UDP 端口。
+    // payload_* 写消息字节，pnext_* 保存同一消息的下一页。
+    // desc_* 在首页对应位置保存消息长度和端口。
     output reg payload_we,
     output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_wa,
     output reg [7:0] payload_wd,
@@ -32,24 +34,27 @@ module afdx_tx_buf #(
     output reg desc_we,
     output reg [TX_PAGE_AW - 1:0] desc_wa,
     output reg [43:0] desc_wd,
-    // enq_* 提交完整消息；enq_ack/result 返回接纳或禁用、队满、过长等原因。
+    // 整条消息存好后，enq_* 请求加入发送队列。
+    // enq_ack 为高时，enq_result 给出接纳或拒绝的原因。
     output reg enq_valid,
     output reg [6:0] enq_vl,
     output reg [7:0] enq_head,
     output reg [10:0] enq_len,
     input wire enq_ack,
     input wire [2:0] enq_result,
-    // ev_* 为一拍结果事件：成功、VL 禁用、队满、过长、无空闲页。
+    // ev_* 每次输出一个结果脉冲，表示接纳或本次拒绝原因。
     output reg ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
     localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
         EVENT = 9;
     reg [3:0] state;
-    // 一条消息最多六页；这是消息暂存寄存器，不是逐 VL 状态表。
-    // 显式六项，防止 eLinx 把带输出寄存器的小数组也推成额外 RAM。
+    // 一条消息最多占六页，六个寄存器保存这些页号。
+    // 显式列出六个寄存器，避免综合工具为小数组额外分配存储块。
     reg [7:0] page0, page1, page2, page3, page4, page5;
-    // used/returned 记录本消息占用和已归还页数；reason 保持最终事件分类。
+    // used/returned 分别统计本条消息已占用和已归还的页数。
+    // reason 保存本次接收结果。
     reg [2:0] used, returned, reason;
-    // held_data/held_last 暂存跨页首字节；boundary 表示上一页写满，ended 表示已见消息尾。
+    // held_data/held_last 保存等待新页时的第一个字节。
+    // boundary 表示上一页已满，ended 表示已收到消息末字节。
     reg [7:0] current_page, held_data;
     reg [TX_OFF_AW - 1:0] offset;
     reg boundary, ended, held_last, port_en;
@@ -108,7 +113,7 @@ module afdx_tx_buf #(
             ev_drop_long <= 0;
             ev_drop_nopage <= 0;
             case (state)
-                // IDLE：握手首字节并保存消息元数据，进入 ALLOC。
+                // IDLE：接收并保存首字节，握手后转 ALLOC。
                 IDLE : if (m_valid && m_ready) begin
                     enq_vl <= m_vl;
                     port_en <= m_port_en;
@@ -124,12 +129,12 @@ module afdx_tx_buf #(
                     boundary <= 0;
                     state <= ALLOC;
                 end
-                // ALLOC：发起一次取页请求，转 WAIT_PAGE 等返回。
+                // ALLOC：发出页申请，下一拍转 WAIT_PAGE。
                 ALLOC : begin
                     pop_req <= 1;
                     state <= WAIT_PAGE;
                 end
-                // WAIT_PAGE：页申请成功则链接并写暂存字节，按尾标志转 DESC/RECV；无页则 RETURN。
+                // WAIT_PAGE：取得页后写首字节，再转 RECV 或 DESC；无页转 RETURN。
                 WAIT_PAGE : begin
                     if (pop_req && pop_ready) pop_req <= 0;
                     if (pop_ack) begin
@@ -165,7 +170,7 @@ module afdx_tx_buf #(
                         end
                     end
                 end
-                // RECV：连续写载荷；跨页转 ALLOC，收到尾转 DESC，超过 1471 字节转 RETURN。
+                // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
                 RECV : if (m_valid && m_ready) begin
                     ended <= m_last;
                     if (enq_len == 1471) begin
@@ -190,19 +195,19 @@ module afdx_tx_buf #(
                         end
                     end
                 end
-                // DESC：把完整消息长度及端口写入首页描述，随后 ENQUEUE。
+                // DESC：保存消息长度和端口，下一拍转 ENQUEUE。
                 DESC : begin
                     desc_we <= 1;
                     desc_wa <= enq_head;
                     desc_wd <= { enq_len, port_en, sport, dport };
                     state <= ENQUEUE;
                 end
-                // ENQUEUE：保持入队请求，转 REPLY 等调度器判定。
+                // ENQUEUE：提交入队请求，下一拍转 REPLY。
                 ENQUEUE : begin
                     enq_valid <= 1;
                     state <= REPLY;
                 end
-                // REPLY：接纳后转 EVENT；拒绝则先 RETURN 回滚。
+                // REPLY：等待调度结果，接纳转 EVENT，拒绝转 RETURN。
                 REPLY : if (enq_ack) begin
                     enq_valid <= 0;
                     reason <= enq_result;
@@ -212,9 +217,10 @@ module afdx_tx_buf #(
                         state <= RETURN;
                     end
                 end
-                // RETURN：逐页握手归还；归还完成后，已见尾转 EVENT，否则 DRAIN。
+                // RETURN：逐页归还空间，完成后按消息是否结束转 EVENT 或 DRAIN。
                 RETURN : begin
-                    // 先逐页归还再清尾；故障原因保持第一次遇到的接收错误。
+                    // 先归还已经占用的页，再丢弃尚未接收完的字节。
+                    // reason 保持第一次出现的错误原因。
                     if (! ret_valid && returned < used) begin
                         ret_valid <= 1;
                         case (returned)
@@ -233,9 +239,9 @@ module afdx_tx_buf #(
                     end
                     if (returned == used) state <= ended ? EVENT : DRAIN;
                 end
-                // DRAIN：继续接收并丢弃，遇最后字节后发结果。
+                // DRAIN：继续接收但不保存字节，收到末字节后转 EVENT。
                 DRAIN : if (m_valid && m_ready && m_last) state <= EVENT;
-                // EVENT：只发一个分类脉冲，再回 IDLE。
+                // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
                 EVENT : begin
                     case (reason)
                         0 : ev_accept <= 1;

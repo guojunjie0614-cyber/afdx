@@ -1,26 +1,27 @@
-// 按发送描述读取载荷并构造以太网/IPv4/UDP帧。
-// 调度授权给出VL、SN和载荷页；输出字节流交给MAC发送。
-// 头部校验和及RAM读取分拍处理，授权与实际发送分开。
-// 下一帧顺序准备校验和；活动帧由移位帧头、载荷预读和补零状态发送。
+// 本模块读取用户数据，在前面加上以太网头、IPv4 头和 UDP 头，组成一帧。
+// afdx_tx_engine 给出要发送的消息，组好的字节交给 afdx_mac_tx。
+// 本模块用于赛题的发送组帧，也把实际发送时间返回调度器。
 module afdx_tx_builder #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
-    // now/user_id 为起发计时和源 MAC 端系统编号。
+    // now 提供当前周期数，user_id 提供源以太网地址中的端系统编号。
     input wire [31:0] now,
     input wire [15:0] user_id,
-    // grant_valid/ready 接受整帧授权；grant_a/b 选网络，grant_timed/time 指定最早起发时刻。
+    // grant_valid 和 grant_ready 同为高时接收一条待发送消息。
+    // grant_a/b 选择网络，grant_timed/time 给出最早发送时刻。
     output wire grant_ready,
     input wire grant_valid, grant_a, grant_b, grant_timed,
-    // grant_src/dst、vlid、sport/dport、len、sn、page 提供 IPv4/UDP 字段和载荷链首页。
+    // grant_* 给出本帧的地址、端口、长度、序号和数据首页。
     input wire [31:0] grant_time, grant_src, grant_dst,
     input wire [15:0] grant_vlid, grant_sport, grant_dport,
     input wire [10:0] grant_len,
     input wire [7:0] grant_sn, grant_page,
-    // start_valid/t_start 把 MAC 实际起帧反馈给 BAG 调度器。
+    // start_valid 为高时，t_start 报告线路实际发送首字节的周期。
     output reg start_valid,
     output reg [31:0] t_start,
-    // payload_* 读载荷；pnext_* 读下一页；ret_* 在最后一次取数完成后归还对应页。
+    // payload_* 读消息字节，pnext_* 读同一消息的下一页。
+    // 读完一页后，通过 ret_* 归还这一页。
     output reg payload_re,
     output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_ra,
     input wire [7:0] payload_q,
@@ -30,32 +31,50 @@ module afdx_tx_builder #(
     output reg ret_valid,
     output reg [7:0] ret_page,
     input wire ret_ready,
-    // s_* 为给 MAC 的双网内容流；tx_sof/eof/underrun 为 MAC 反馈，ev_tx_a/b 只计正常完成帧。
+    // s_* 把两网的帧内容交给以太网发送模块。
+    // tx_sof/eof 分别报告帧开始和结束，tx_underrun 表示中途缺字节。
+    // ev_tx_a/b 只统计正常发送完成的帧。
     output reg s_valid,
     input wire s_ready,
     output reg [7:0] s_data_a, s_data_b,
     output reg s_last, s_en_a, s_en_b,
     input wire tx_sof, tx_eof, tx_underrun,
     output reg ev_tx_a, ev_tx_b);
-    // pending/prepared 保存下一授权；stream_active 保存当前在发送的帧，两者可重叠。
+    // pending/prepared 记录下一条消息的准备进度。
+    // stream_active 为高表示当前帧正在发送，两者可以同时推进。
     reg pending, prepared, stream_active, p_a, p_b, p_timed;
-    // prep=0 算长度，1–6 累加 IPv4 头字段，7–8 回卷进位，9 取反后置 prepared。
+    // prep 用十拍算出 IPv4 头校验和，每拍只做一次加法。
+    // prep=0：计算 IPv4 和 UDP 的长度字段，下一拍转 1。
+    // prep=1：加上 IPv4 总长度字段，下一拍转 2。
+    // prep=2：加上 IPv4 标识字段，下一拍转 3。
+    // prep=3：加上源 IP 地址的高 16 位，下一拍转 4。
+    // prep=4：加上源 IP 地址的低 16 位，下一拍转 5。
+    // prep=5：加上目的 IP 地址的高 16 位，下一拍转 6。
+    // prep=6：加上目的 IP 地址的低 16 位，下一拍转 7。
+    // prep=7：把进位加回低 16 位，下一拍转 8。
+    // prep=8：再处理一次进位，下一拍转 9。
+    // prep=9：取反得到校验和，置 prepared 后等待发送。
     reg [3:0] prep;
     reg [31:0] p_time, p_src, p_dst, now_q, time_difference;
     reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ident, ip_length, udp_length, checksum;
     reg [10:0] p_len, active_len, payload_index;
     reg [7:0] p_sn, p_page, active_sn;
     reg [19:0] sum;
-    // 42 字节 Ethernet/IPv4/UDP 头移位输出；两网只在源 MAC 网络标识处不同。
+    // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
+    // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
     reg [335:0] header;
-    // part=0 帧头，1 UDP 载荷，2 短帧补零，3 ARINC 664 P7 序号；仅在 MAC 握手时推进。
+    // part=0：发送协议头，完成后转 1。
+    // part=1：发送用户数据，完成后按帧长转 2 或 3。
+    // part=2：补零直到满足最小帧长，然后转 3。
+    // part=3：发送一字节序号（Sequence Number，SN），握手后结束本帧。
     reg [1:0] part;
     reg [5:0] header_index;
     reg [4:0] padding_left;
-    // fetch_page/offset/left 逐字节预读页链；payload_pipe 和 pnext_pipe 对齐同步 RAM 返回。
+    // fetch_page/offset/left 记录下一字节的位置和剩余数量。
+    // payload_pipe 和 pnext_pipe 标记同步存储器读结果何时有效。
     reg [7:0] fetch_page, next_page, payload_qr, pnext_qr;
     reg [10:0] fetch_left;
-    // 八项字节FIFO及四项归还FIFO是小寄存器组，不是逐VL存储。
+    // 字节队列有八项，归还页号的队列有四项，都使用寄存器。
     reg [63:0] payload_fifo;
     reg [2:0] fifo_wr, fifo_rd;
     reg [3:0] fifo_count;
@@ -147,7 +166,7 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
             payload_pipe <= { payload_pipe[0], payload_re };
             pnext_pipe <= { pnext_pipe[0], pnext_re };
-            // RAM输出先寄存，响应标记与数据同拍进入FIFO。
+            // 存储器读结果先寄存，再与有效标记一起写入字节队列。
             payload_qr <= payload_q; pnext_qr <= pnext_q;
             return_pipe <= { return_pipe[0], payload_re && issue_end };
             return_page0 <= issue_page; return_page1 <= return_page0;
@@ -162,7 +181,7 @@ module afdx_tx_builder #(
                 2'b01: fifo_count <= fifo_count - 1'b1;
                 default:;
             endcase
-            // 归还可连续两拍到达，排队后用寄存器保持到接收确认。
+            // 连续到达的页号先排队，再逐项保持到归还握手完成。
             if (return_push) begin
                 return_fifo[{return_wr,3'b0} +: 8] <= return_page1;
                 return_wr <= return_wr + 1'b1;
@@ -177,7 +196,7 @@ module afdx_tx_builder #(
                 2'b01: return_count <= return_count - 1'b1;
                 default:;
             endcase
-            // 最多三项RAM请求在途，水位5保证八项FIFO不满且逐拍供数。
+            // 最多同时等待三个读结果，队列剩五项时就暂停发出新读请求。
             if (stream_active && fetch_left != 0 && fifo_count < 5) begin
                 payload_re <= 1;
                 payload_ra <= { fetch_page[TX_PAGE_AW-1:0], fetch_offset };
@@ -216,6 +235,8 @@ module afdx_tx_builder #(
                     0 : begin
                         ip_length <= p_len + 16'd28;
                         udp_length <= p_len + 16'd8;
+                        // 校验和从两个固定字段之和开始累加：
+                        // 0x4500（版本 4、头长 20 字节）加 0x0111（生存时间 1、协议号 17 即 UDP）。
                         sum <= 20'h04611;
                     end
                     1 : sum <= sum + ip_length;
@@ -233,14 +254,15 @@ module afdx_tx_builder #(
                     default :;
                 endcase
             end
-            // now 经寄存器和减法两级；提前四个计数单位判断，让 s_valid 在 T-1 可见。
-            // GMII逐拍起帧；输入与SOF各级寄存延迟保持四拍提前量。
+            // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
             if (pending && prepared && ! stream_active && (! p_timed || ! time_difference[31] || time_difference >= 32'hfffffffc)) begin
                 stream_active <= 1;
                 s_valid <= 1;
                 s_last <= 0;
                 s_en_a <= p_a;
                 s_en_b <= p_b;
+                // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
+                // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
                 header <= { 32'h03000000, p_vlid, 24'h020000, p_user, 8'h20, 16'h0800, 16'h4500, ip_length, p_ident,
                     16'h0000, 16'h0111, checksum, p_src, p_dst, p_sport, p_dport, udp_length, 16'h0000 };
                 s_data_a <= 8'h03;
@@ -258,7 +280,7 @@ module afdx_tx_builder #(
                 pnext_ra <= p_page;
             end
             if (tx_sof) begin
-                // 此拍读到的 now 与 tx_sof 同属第一个前导字节；下一帧槽在此释放。
+                // 首个前导字节发送时，记录实际时间并允许接收下一条消息。
                 start_valid <= 1;
                 t_start <= now;
                 pending <= 0;
@@ -272,7 +294,7 @@ module afdx_tx_builder #(
                 ev_tx_a <= complete_a;
                 ev_tx_b <= complete_b;
             end
-            // 内容发送：帧头耗尽转载荷，载荷结束按最小帧长补零，最后发送一次 SN 并撤销 s_valid。
+            // 帧头和用户数据发完后，短帧补零，最后发送序号并结束。
             if (s_valid && s_ready) begin
                 if (s_last) begin
                     s_valid <= 0;
@@ -283,6 +305,7 @@ module afdx_tx_builder #(
                     header <= header << 8;
                     header_index <= header_index + 1'b1;
                     s_data_a <= header[327:320];
+                    // B 网把源 MAC 地址里的网络标识换成 0x40，其余字节与 A 网相同。
                     s_data_b <= header_index == 10 ? 8'h40 : header[327:320];
                 end
                 else if (part == 0 || (part == 1 && payload_index < active_len)) begin

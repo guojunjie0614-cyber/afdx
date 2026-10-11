@@ -12,7 +12,7 @@ eLinx 脚本优先使用 `ELINX_HOME` 指定的安装根目录下 `bin/shell/bin
 
 ## 五功能与 RTL 运行
 
-评委无 Python 入口为 `do sim/run_judge.do`（先 `cd` 到仓库根目录）：串行完成五功能、77/81 VL 突发和 RTC 自检，打印 `JUDGE ENTRY PASS cases=4` 或 FAIL；`out/modelsim/judge_<时间>_<进程>/result.txt` 汇总实际队列时延和 RTC 误差。固定 RTC 小数向量位于 `sim/vectors/judge/fractions.txt`，来自 `tools/rtc_ref.py` 的 72 项整数参考，运行入口不调用生成器。该入口不包含 Python 独立报文检查和完整吞吐矩阵，完整验收仍用下面的回归脚本。`sim/run.ps1` 在性能/RTC 独立检查通过后追加 `[METRIC]` 行，数值直接读取本次 `check_summary.json`。
+评委无 Python 入口为 `do sim/run_judge.do`（先 `cd` 到仓库根目录）：串行完成五功能、77/81 VL 突发、RTC 自检和 77 VL 吞吐测试，打印 `JUDGE ENTRY PASS cases=5` 或 FAIL；`out/modelsim/judge_<时间>_<进程>/result.txt` 汇总实际队列时延和 RTC 误差。固定 RTC 小数向量位于 `sim/vectors/judge/fractions.txt`，来自 `tools/rtc_ref.py` 的 72 项整数参考，运行入口不调用生成器。该入口不包含 Python 独立报文检查和完整吞吐矩阵，完整验收仍用下面的回归脚本。`sim/run.ps1` 在性能/RTC 独立检查通过后追加 `[METRIC]` 行，数值直接读取本次 `check_summary.json`。
 
 五功能 do 文件只需 ModelSim：在 Transcript 窗口先 `cd` 到仓库根目录，再运行 `do sim/run_services.do`；命令行方式如下。
 

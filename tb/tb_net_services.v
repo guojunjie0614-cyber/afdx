@@ -1,7 +1,8 @@
-// 验证完整双端顶层五功能：双网收发、完整性/冗余、RTC、SNMP、615A 上传及随后卸载；只经公开端口检查。
-// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 本测试通过两个完整端系统的公开端口检查赛题的五项功能。
+// 它检查用户收发、网络管理（SNMP）、时钟同步（RTC），以及按 ARINC 615A 加载后再卸载文件。
+// 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
-// 双端完整顶层的最小五功能验收；仅访问公开GMII、应用口、配置口和事件口。
+// 本测试只通过线路、应用、配置和事件端口检查结果。
 module tb_net_services;
     reg clk=0,reset=1;always #4 clk=~clk;
     wire [7:0] a12,b12,a21,b21;wire va12,vb12,va21,vb21,ready1,ready2;

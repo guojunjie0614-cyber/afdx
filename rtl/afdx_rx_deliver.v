@@ -1,21 +1,23 @@
-// 按已接纳的描述读取接收环形缓冲，连续交付UDP载荷。
-// 描述队列给出来源、地址及元数据；d_*为无反压应用输出。
-// 读口和预取流水线归本模块；交付结束后更新已释放的环形地址。
-// 交付状态：两拍选择队头、连续发出同步RAM读请求、三级数据流水、末字节后再取。
+// 本模块把检查通过的消息从接收缓存逐字节读出。
+// afdx_rx_engine 提供消息位置，读出的内容交给 afdx_svc。
+// 本模块完成赛题的接收消息交付，并释放已读完的缓存空间。
 module afdx_rx_deliver #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
-    // dq_count/entries 提供最多 32 项描述；dq_pop 只在队头已锁存后发一拍。
+    // dq_count 表示等待交付的消息数，dq_entries 保存这些消息的信息。
+    // 保存队首消息后，dq_pop 输出一拍，通知队列移除该项。
     input wire [RX_DQ_AW:0] dq_count,
     input wire [32 * (RX_RING_AW + 56) - 1:0] dq_entries,
     output reg dq_pop,
-    // ring_a/b_* 读取选中网络的载荷 RAM；read_ptr_a/b 通知解析器哪些字节已释放。
+    // ring_a/b_* 从选中网络的缓存读字节。
+    // read_ptr_a/b 通知解析器哪些空间已读完，可以重新使用。
     output reg ring_a_re, ring_b_re,
     output reg [RX_RING_AW - 1:0] ring_a_ra, ring_b_ra,
     input wire [7:0] ring_a_q, ring_b_q,
     output reg [RX_RING_AW:0] read_ptr_a, read_ptr_b,
-    // d_* 为无反压载荷流，last 为末字节；vl/sport/dport/net 在整条消息期间保持。
+    // d_valid 为高时，接收方必须取走本拍 d_data，d_last 标记末字节。
+    // 虚拟链路索引、端口和来源网络在整条消息期间保持不变。
     output reg d_valid,
     output reg [7:0] d_data,
     output reg d_last,
@@ -23,15 +25,19 @@ module afdx_rx_deliver #(
     output reg [15:0] d_sport, d_dport,
     output reg d_net);
     localparam DQ_WIDTH = RX_RING_AW + 56;
-    // rd_ptr 指向交付队头；head_bank 和 group0–3 把 32 选 1 拆成两级。
+    // rd_ptr 指向下一条消息。
+    // 消息信息分两级选择，以减少一拍内的选择层数。
     reg [RX_DQ_AW - 1:0] rd_ptr;
     wire [4:0] read_index = rd_ptr;
-    // head_phase=0 等非空并做组内选择，1 选组并出队，2 等消费者撤销 dq_req 后回 0。
+    // head_phase=0：有消息且收到读请求时选择组内项，然后转 1。
+    // head_phase=1：选出完整队首信息并移除该项，然后转 2。
+    // head_phase=2：等待 dq_req 撤销，然后转 0。
     reg [1:0] head_phase;
     reg [1:0] head_bank;
     reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
     reg dq_req, dq_valid;
-    // issuing/left 管理连续 RAM 读；valid_pipe/last_pipe 与三级数据返回对齐。
+    // issuing/left 控制连续读取和剩余字节数。
+    // valid_pipe/last_pipe 将有效与末字节标记对齐到读出数据。
     reg issuing;
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
@@ -74,7 +80,7 @@ module afdx_rx_deliver #(
             dq_pop <= 0;
             case (head_phase)
                 0 : if (dq_req && dq_count != 0) begin
-                    // 32 项寄存器组先各八选一，下一拍四选一；最短帧跟随长帧时仍可排队。
+                    // 先在四组内分别选一项，下一拍再从四组结果中选出一项。
                     case (read_index[2:0])
                         0 : begin
                             group0 <= dq_entries[1 * DQ_WIDTH - 1:0 * DQ_WIDTH];
@@ -147,7 +153,7 @@ module afdx_rx_deliver #(
             ring_b_re <= 0;
             valid_pipe <= { valid_pipe[1:0], 1'b0 };
             last_pipe <= { last_pipe[1:0], 1'b0 };
-            // RAM输出先各自寄存，再作两选一；读指针在RAM实际读取那拍前进。
+            // 两网读结果分别寄存后再选一路，实际读出时推进读指针。
             data_a <= ring_a_q;
             data_b <= ring_b_q;
             if (ring_a_re) read_ptr_a <= read_ptr_a + 1'b1;
@@ -156,7 +162,7 @@ module afdx_rx_deliver #(
             d_last <= valid_pipe[2] && last_pipe[2];
             if (valid_pipe[2]) d_data <= d_net ? data_b : data_a;
             if (valid_pipe[2] && last_pipe[2]) dq_req <= 1;
-            // 接纳描述后逐拍读载荷；发出末字节后才允许取下一描述，保持消息元数据稳定。
+            // 接纳消息信息后，每拍读一个字节，发完末字节后才取下一条消息。
             if (dq_valid && dq_req) begin
                 dq_req <= 0;
                 d_net <= dq_data[RX_RING_AW + 55];

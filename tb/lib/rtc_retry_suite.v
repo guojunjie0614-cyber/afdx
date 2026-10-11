@@ -1,7 +1,8 @@
-// SNTP 共用恢复/反例主体：公开端口丢回应或注入 Originate，检查错误回应不校时、正确请求可恢复。
-// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
+// 本模块丢弃时钟同步回应，或注入请求时间错误的回应。
+// 它检查错误回应不能校时，合法请求和回应能恢复同步。
+// 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
-// 真实主从模块经公开服务端口连接；反例独立组包，既有正常系统误差测试仍保留。
+// 主从模块通过服务端口相连，错误回应由测试单独构造。
 module rtc_retry_suite #(parameter NAME="tb_rtc_recovery", NEGATIVE=0);
     reg clk=0,reset=1;always #4 clk=~clk;
     reg sw=0,mw=0,pass_reply=0,inject=0,iv=0,il=0;

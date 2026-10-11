@@ -1,8 +1,8 @@
-// 冗余状态老化探针：公开 now_c 加速且在忙时变化，检查老化仍能推进；done/checks/errors 归入跨刻度测试。
-// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
+// 本模块在接收引擎忙时推进时间，检查旧的重复帧记录仍会失效。
+// 它把完成标记和错误数交给跨计时边界测试。
+// 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
-// 独立引擎端口试验：每128拍一粗刻度，每次变化都落在帧处理期间。
-// 加速的是公开 now_c 输入，帧描述平均间隔128拍仍比双网最短帧负载稀疏。
+// 测试每 128 拍推进一次输入时间，让变化发生在帧处理期间。
 module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,errors=0);
     reg reset=1;reg [15:0] now_c=0;reg [94:0] desc=0;reg valid=0;
     wire init,take,resolve,commit,mre,cre,sre,swe,dwe,rm,deliver,ok;

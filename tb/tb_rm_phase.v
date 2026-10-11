@@ -1,7 +1,8 @@
-// 验证双网同 VL 同 SN 在粗计时跨界和不同处理次序下只交付一次；含忙时老化推进的独立探针。
-// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 本测试让双网的同序号帧跨过粗计时边界，并交换处理顺序。
+// 两份帧应只交付一次，旧的重复帧记录也应按时失效。
+// 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
-// 双网真实帧，粗时间来自原 timebase；只读内部状态统计忙时覆盖，不驱动内部信号。
+// 帧使用真实以太网格式；内部状态只用于统计测试覆盖情况。
 module tb_rm_phase;
     reg clk=0,reset=1;always #4 clk=~clk;
     wire [31:0] ticks;wire [15:0] coarse;wire byte_en;

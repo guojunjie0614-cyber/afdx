@@ -1,5 +1,6 @@
-// MAC 线路观察器：记录帧字节/时间并检查间隔；外层测试与独立帧检查器共同判定。
-// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
+// 本模块记录以太网帧的字节和发送时间，并检查帧间隔。
+// 外层测试读取错误数，参考检查器另行核对记录中的帧内容。
+// 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
 module line_monitor #(parameter NET="A", FILE_NAME="dump_a.txt", MIN_GAP=12,
                       SAMPLE_DELAY=1, IGNORE_RESET_TAIL=0)(

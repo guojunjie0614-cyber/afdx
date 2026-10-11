@@ -1,7 +1,8 @@
-// 双端系统共用主体：读取外部命令/链路向量并记录线路、交付和事件；外层 RESULT 与 Python 独立模型均须通过。
-// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
+// 本模块按测试文件驱动两个端系统和四条单向网络连接。
+// 它记录线路字节、消息交付和事件，由外层测试与参考检查器核对。
+// 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
-// 双端口级系统平台。命令来自独立参考工具，观测不穿透 DUT。
+// 测试指令只描述公开端口操作，不访问被测模块的内部状态。
 module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
  LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,GMII_RX_AW=12,LINK_FRAMES=2048);
  reg clk=0;always #4 clk=~clk;

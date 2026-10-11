@@ -1,14 +1,18 @@
-// 轮询发送VL并按BAG、提前查看窗口及等待授权选择消息。
-// 读取VL配置/状态和消息描述，向组帧器发出授权。
-// 已授权但未起发的VL保持pending，防止同一VL重复授权。
-// 唯一 VL 状态表主人：清表、起始确认、入队、授权和两拍一个地址的扫描。
+// 本模块是发送调度器，它轮流检查每条虚拟链路的消息队列。
+// 虚拟链路（Virtual Link，VL）用于给一组消息分配带宽。
+// 模块通知 afdx_tx_builder 组帧，实现赛题的发送整形功能。
+// BAG（Bandwidth Allocation Gap）是带宽分配间隔。
+// 同一条 VL 相邻两帧的发送起点至少相隔一个 BAG。
+// 队列有消息且满足时间条件时，模块才允许这条消息开始发送。
 module afdx_tx_engine #(
     parameter TX_PAGE_AW = 8, LOOKAHEAD = 512) (
-    // clk/reset 为同步控制；enable 允许调度，now 为周期计时，initialized 表示状态清表完成。
+    // enable 为高时允许调度，now 给出当前周期数。
+    // initialized 为高表示状态表已初始化完成。
     input wire clk, reset, enable,
     input wire [31:0] now,
     output reg initialized,
-    // cfg_* 只读 VL 配置；state_* 独占 VL 队列、序号和 BAG 时间状态的读写。
+    // cfg_* 读取当前虚拟链路的配置。
+    // state_* 读写队列长度、序号和下一次允许发送的时间。
     output reg cfg_re,
     output reg [9:0] cfg_ra,
     input wire [31:0] cfg_q,
@@ -16,7 +20,8 @@ module afdx_tx_engine #(
     output reg [6:0] state_wa, state_ra,
     output reg [62:0] state_wd,
     input wire [62:0] state_q,
-    // mnext_* 连接同一 VL 的消息首页；desc_* 读取队头消息长度和端口。
+    // mnext_* 记录同一虚拟链路中下一条消息的首页。
+    // desc_* 读取队首消息的长度和端口。
     output reg mnext_we, mnext_re,
     output reg [TX_PAGE_AW - 1:0] mnext_wa, mnext_ra,
     output reg [7:0] mnext_wd,
@@ -24,17 +29,19 @@ module afdx_tx_engine #(
     output reg desc_re,
     output reg [TX_PAGE_AW - 1:0] desc_ra,
     input wire [43:0] desc_q,
-    // enq_* 提交已收完消息，enq_ack/result 报告是否入队及拒绝原因。
+    // enq_valid 提交一条已存好的消息。
+    // enq_ack 为高时，enq_result 给出接纳或拒绝结果。
     input wire enq_valid,
     input wire [6:0] enq_vl,
     input wire [7:0] enq_head,
     input wire [10:0] enq_len,
     output reg enq_ack,
     output reg [2:0] enq_result,
-    // start_valid/t_start 确认实际首前导时刻，用于更新该 VL 下一 BAG 到期时间。
+    // start_valid 为高时，t_start 是首个前导字节的实际发送周期。
     input wire start_valid,
     input wire [31:0] t_start,
-    // grant_* 向组帧器交付网络、发出时刻、地址、端口、长度、SN 和首页。
+    // grant_valid 为高时，把选中消息的信息交给组帧模块。
+    // grant_ready 表示组帧模块可以接收下一条消息。
     input wire grant_ready,
     output reg grant_valid,
     output reg grant_a, grant_b, grant_timed,
@@ -43,30 +50,43 @@ module afdx_tx_engine #(
     output reg [31:0] grant_src, grant_dst,
     output reg [10:0] grant_len,
     output reg [7:0] grant_sn, grant_page,
-    // cfg_ok 表示当前无冲突的配置写窗口，由外壳与 cfg_we 联合使用。
+    // cfg_ok 为高时，发送核心可以写入外部配置。
     output wire cfg_ok);
     localparam INIT = 0, IDLE = 1, ENQ = 2, GRANT = 3, START = 4;
-    // op 管理互斥的表操作；phase 按同步 RAM 的读延迟推进一次操作。
+    // op 选择本次表操作，phase 记录操作进行到哪一拍。
     reg [2:0] op;
     reg [3:0] phase;
-    // scan_issue/commit 跟踪轮询流水；candidate 是候选 VL，pend_vl 是已授权但尚未起帧的 VL。
+    // scan_issue 是下一条要检查的虚拟链路，scan_commit 是已检查的位置。
+    // candidate_vl 保存候选项，pend_vl 保存已选中但尚未发送的项。
     reg [6:0] init_ptr, scan_issue, scan_commit, op_vl, candidate_vl, pend_vl;
     reg init_flush, candidate, pend_valid, ack_pending, enq_seen, scan_phase;
     reg [31:0] now_q, ack_time, pend_bag, new_time, difference, soon_difference;
     reg [7:0] op_head;
     reg [10:0] op_len;
-    // 状态位：62=定时有效，61:30=下次起发时间，29:22=SN，21:16=队长，15:8=头，7:0=尾。
+    // saved_state[62] 表示下一次发送时间有效。
+    // saved_state[61:30] 保存下一次允许发送的周期。
+    // saved_state[29:22] 保存下一帧的序号。
+    // saved_state[21:16] 保存排队消息数。
+    // saved_state[15:8] 保存队首消息的首页。
+    // saved_state[7:0] 保存队尾消息的首页。
     reg [62:0] saved_state;
     reg [43:0] saved_desc;
     reg [7:0] saved_next;
-    // 六个字仅暂存当前授权的配置，不是逐 VL 的寄存器表。
+    // words 暂存当前选中虚拟链路的六个配置字。
+    // 配置字 0 的 [0] 是使能位，[1] 和 [2] 分别允许从 A 网和 B 网发送。
+    // 配置字 0 的 [8:3] 是最多排队的消息数，[19:9] 是允许的最大消息长度（字节）。
     reg [31:0] words[0:5];
     reg [4:0] scan_valid;
     reg [6:0] scan_vl0, scan_vl1, scan_vl2, scan_vl3, scan_vl4;
+    // 轮询分几拍完成：scan_vl0 到 scan_vl4 是各拍正在检查的虚拟链路编号，
+    // scan_s0 到 scan_s2 是读出的状态逐拍传递的副本。
+    // scan_d 是当前时间减去下次允许发送时间的差，scan_soon 再加上 LOOKAHEAD。
+    // scan_soon 的最高位为 0，表示这条虚拟链路已到期或即将到期。
     reg [62:0] scan_s0, scan_s1, scan_s2;
     reg [31:0] scan_d, scan_soon;
     reg scan_due;
-    // quota 在扫描和新消息入队之间分配机会；ack_pending 保存实际起帧通知。
+    // quota 限制连续扫描次数，让新消息也能及时加入队列。
+    // ack_pending 表示还有一个实际发送时间需要写回。
     reg [4:0] quota;
     wire want_enq = enq_valid && ! enq_seen && (candidate || quota >= 16);
     wire want_grant = candidate && grant_ready && ! pend_valid;
@@ -74,7 +94,7 @@ module afdx_tx_engine #(
     wire scanning = enable && op == IDLE && ! candidate && ! ack_pending && ! want_enq;
     task invalidate_scan;
         begin
-            // 打断时所有在途结果作废，回到第一条尚未完成判断的 VL。
+            // 操作被打断后，从第一条尚未完成检查的虚拟链路重新扫描。
             scan_valid <= 0;
             scan_issue <= scan_commit;
             scan_phase <= 0;
@@ -181,7 +201,8 @@ module afdx_tx_engine #(
                 scan_soon <= scan_d + LOOKAHEAD;
                 scan_due <= ! scan_d[31];
             end
-            // ARINC 664 P7 带宽分配间隔（BAG）：只挑选已有消息且到期或进入 LOOKAHEAD 的 VL。
+            // 模块只选择有排队消息且已到期或即将到期的虚拟链路。
+            // LOOKAHEAD 指定提前准备组帧的周期数，实际发送仍要等到期。
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
                 if (quota < 16) quota <= quota + 1'b1;
@@ -198,9 +219,9 @@ module afdx_tx_engine #(
                     state_wd <= { 1'b0, scan_s2[61:0] };
                 end
             end
-            // 表操作仲裁：实际起帧确认优先，其次入队/授权；打断时丢弃在途扫描结果。
+            // 先处理实际发送时间，再处理入队和选帧请求。
             case (op)
-                // INIT：逐项清 128 个 VL 状态，最后写入落地后转 IDLE。
+                // INIT：初始化全部状态，最后一次写入完成后转 IDLE。
                 INIT : begin
                     if (! init_flush) begin
                         state_we <= 1;
@@ -214,7 +235,7 @@ module afdx_tx_engine #(
                         op <= IDLE;
                     end
                 end
-                // IDLE：等待使能；按优先级转 START/ENQ/GRANT，否则每两拍发一个扫描读。
+                // IDLE：按请求转 START、ENQ 或 GRANT；无请求时轮询队列。
                 IDLE : if (enable) begin
                     if (ack_pending) begin
                         invalidate_scan;
@@ -261,7 +282,12 @@ module afdx_tx_engine #(
                         end
                     end
                 end
-                // ENQ：phase 1 取配置/状态，2–3 算到期窗口，4 检查限制、接链并返回 IDLE。
+                // ENQ：检查配置并把消息加入队尾，返回结果后转 IDLE。
+                // phase=1：保存配置和状态，下一拍转 2。
+                // phase=2：计算距到期时间的差，下一拍转 3。
+                // phase=3：检查是否已进入提前准备范围，下一拍转 4。
+                // phase=4：接纳或拒绝消息，随后主状态转 IDLE。
+                // enq_result 为 1 表示虚拟链路未启用，为 2 表示队列已满，为 3 表示消息过长。
                 ENQ : begin
                     phase <= phase + 1'b1;
                     case (phase)
@@ -297,7 +323,15 @@ module afdx_tx_engine #(
                         default :;
                     endcase
                 end
-                // GRANT：phase 0–6 读六个配置字及队头描述，7 授权并出队，锁住该 VL 后回 IDLE。
+                // GRANT：读取配置和队首消息，通知组帧模块后转 IDLE。
+                // phase=0：启动后续配置字读取，下一拍转 1。
+                // phase=1：保存配置字 0 和队列状态，下一拍转 2。
+                // phase=2：保存配置字 1 并读队首消息，下一拍转 3。
+                // phase=3：保存配置字 2，下一拍转 4。
+                // phase=4：保存配置字 3 和消息信息，下一拍转 5。
+                // phase=5：保存配置字 4，下一拍转 6。
+                // phase=6：保存配置字 5，下一拍转 7。
+                // phase=7：发出发送许可并移除队首，主状态转 IDLE。
                 GRANT : begin
                     phase <= phase + 1'b1;
                     if (phase < 5) begin
@@ -342,7 +376,7 @@ module afdx_tx_engine #(
                             state_wa <= op_vl;
                             state_wd <= { saved_state[62:30], saved_state[29:22] == 255 ? 8'd1 : saved_state[29:22] + 8'd1,
                                 saved_state[21:16] - 6'd1, saved_next, saved_state[7:0] };
-                            // 授权到实际起帧之间禁止再次选中同一 VL。
+                            // 当前消息开始发送前，同一虚拟链路不能再次被选中。
                             pend_valid <= 1;
                             pend_vl <= op_vl;
                             pend_bag <= words[1];
@@ -352,7 +386,9 @@ module afdx_tx_engine #(
                         default :;
                     endcase
                 end
-                // START：phase 1 取状态，2 写入实际起发时间+BAG 并解除 pending，回 IDLE。
+                // START：按实际发送时间更新下一次到期时间，然后转 IDLE。
+                // phase=1：保存当前状态，下一拍转 2。
+                // phase=2：写入下一次允许发送时间，主状态转 IDLE。
                 START : begin
                     phase <= phase + 1'b1;
                     case (phase)

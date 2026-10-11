@@ -1,49 +1,64 @@
-// 解析MAC帧、校验IPv4/UDP头并暂存UDP载荷。
-// 接MAC帧字节/结束状态；输出完好描述和本网上的分类事件。
-// 坏帧由本模块撤销暂写位置；帧结束到完好描述的延迟固定。
-// 每网解析：按字节累计字段/校验和；固定三拍收尾；好帧等待引擎提交或回退。
-// 坏帧由本模块分类和回退，不占用公共查表引擎。
+// 本模块检查收到的以太网头、IPv4 头和 UDP 头，并暂存用户数据。
+// afdx_mac_rx 提供帧内容和校验结果，完整帧的信息交给接收引擎。
+// 本模块对应赛题的接收协议检查，检查失败时释放本帧暂占的空间。
 module afdx_rx_parse #(
     parameter RX_RING_AW = 12) (
-    // clk/reset 为同步控制；enable 限定新帧接收，rx_valid 用于识别真实线路起帧。
+    // enable 为高时允许接收新帧，rx_valid 标记线路有数据。
     input wire clk, reset, enable, rx_valid,
-    // now_c 在 f_end 锁存为到达时刻，供双网冗余比较。
+    // f_end 有效时记录 now_c，作为比较两网到达时间的依据。
     input wire [15:0] now_c,
-    // m_valid/m_first/m_data 为 MAC 去 FCS 内容；f_end/f_err/f_len 在帧结束报告检查结果。
+    // m_valid 为高时，m_data 是已去掉帧校验值的内容。
+    // m_first 标记首字节，f_end 有效时 f_err/f_len 给出检查结果。
     input wire m_valid, m_first,
     input wire [7:0] m_data,
     input wire f_end,
     input wire [1:0] f_err,
     input wire [10:0] f_len,
-    // read_ptr 表示交付器已释放位置；ring_* 暂写本帧 UDP 载荷。
+    // read_ptr 指向已读完的位置，ring_* 暂存本帧用户数据。
     input wire [RX_RING_AW:0] read_ptr,
     output reg ring_we,
     output reg [RX_RING_AW - 1:0] ring_wa,
     output reg [7:0] ring_wd,
-    // desc_valid/data 提交候选描述，desc_take 表示引擎已取走；resolve_valid/commit 决定提交或回退。
+    // desc_valid 为高时提交完整帧信息，desc_take 表示引擎已取走。
+    // resolve_valid 为高时，commit 决定保留还是释放本帧数据。
     output reg desc_valid,
     output reg [RX_RING_AW + 82:0] desc_data,
     input wire desc_take,
     input wire resolve_valid, resolve_commit,
-    // ev 位 0/1/2/3/7 分别为完好/FCS/长度或前导/协议头/载荷环溢出事件。
+    // ev[0] 表示帧校验通过。
+    // ev[1] 表示帧校验值错误。
+    // ev[2] 表示长度或前导码错误。
+    // ev[3] 表示协议头错误。
+    // ev[7] 表示用户数据缓存已满。
     output reg [7:0] ev);
     localparam [RX_RING_AW:0] CAPACITY = (1 << RX_RING_AW);
-    // committed 是已接纳尾指针，trial 是本帧暂写位置；frame_begin 支持失败回滚，desc_finish 保存待提交尾。
+    // committed 指向已接纳数据的末端，trial 指向本帧暂存位置。
+    // frame_begin 记录本帧起点，失败时写位置退回这里。
+    // desc_finish 保存等待引擎确认的帧末位置。
     reg [RX_RING_AW:0] committed, trial, frame_begin, desc_finish;
     wire [RX_RING_AW:0] occupied = committed - read_ptr;
     reg prev_line, allowed, overflow, header_bad, n_ok, has_payload;
-    // position 从目的 MAC 首字节起算；VLID 位于 4–5，IPv4 位于 14–33，UDP 头位于 34–41。
+    // position 从目的以太网地址的首字节开始计数。
+    // 第 4–5 字节保存虚拟链路编号。
+    // 第 14–33 字节是 IPv4 头。
+    // 第 34–41 字节是 UDP 头。
     reg [10:0] position;
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
-    // IPv4 头和 UDP 伪首部/数据分别累加；两级折叠进位后与 0xffff 比较，UDP 校验字段为零则不验。
+    // IPv4 头校验和与 UDP 校验和分别累加。
+    // 两次处理进位后，结果应为 0xffff。
+    // UDP 校验和字段为零表示发送方没有计算，此时跳过这项检查。
     reg [19:0] ip_sum;
     reg [25:0] udp_sum;
     reg [16:0] ip_fold, ip_final, udp_fold, udp_final;
-    // length_phase=0 空闲；读到 UDP 长度后 1 算载荷/IP 长度，2 算 SN 位置与所需空间后回 0。
+    // length_phase=0：等到报文长度字段，收到后转 1。
+    // length_phase=1：计算用户数据和网络报文长度，然后转 2。
+    // length_phase=2：计算序号位置与所需缓存空间，然后转 0。
     reg [2:0] length_phase;
-    // finish_phase=0 等帧尾；1 等末载荷校验和稳定，2 分类事件/发布描述后回 0。
+    // finish_phase=0：等待帧结束，收到后转 1。
+    // finish_phase=1：等待末字节校验和稳定，然后转 2。
+    // finish_phase=2：报告错误或提交完整帧信息，然后转 0。
     reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
     reg [15:0] arrival;
@@ -106,7 +121,7 @@ module afdx_rx_parse #(
             end
             if (! enable) allowed <= 0;
             if (desc_take) desc_valid <= 0;
-            // 引擎的决定在下一帧载荷到来前返回；只有提交改变有效写指针。
+            // 只有引擎决定接纳本帧后，才更新有效数据的末端指针。
             if (resolve_valid) begin
                 if (resolve_commit) committed <= desc_finish;
                 else trial <= committed;
@@ -132,7 +147,8 @@ module afdx_rx_parse #(
                 end
                 default :;
             endcase
-            // 协议字段校验：固定 IPv4 IHL=5、UDP、无分片；ARINC 序号位于补零之后，不计入 UDP 长度。
+            // 本模块只接受不带选项的 20 字节 IPv4 头和未分片的 UDP 报文。
+            // 一字节序号位于帧的最后（补零之后），不计入 UDP 长度。
             if (m_valid && allowed) begin
                 if (m_first) begin
                     position <= 1;
@@ -178,7 +194,7 @@ module afdx_rx_parse #(
                         if (position[0]) udp_sum <= udp_sum + { high_byte, m_data };
                         else if (position == end_data - 1'b1) udp_sum <= udp_sum + { m_data, 8'b0 };
                         if (position == 42) begin
-                            // 第42字节到达的这一拍，用完整容量与当前读指针比较空间。
+                            // 第 42 字节到达时，检查缓存剩余空间能否容纳本帧用户数据。
                             frame_begin <= committed;
                             has_payload <= 1;
                             overflow <= n > CAPACITY || occupied > space_limit;
@@ -199,7 +215,9 @@ module afdx_rx_parse #(
                     if (n_ok && position == sn_position) sn <= m_data;
                 end
             end
-            // 收尾快照：描述依次为 VLID、SN、源/目的端口、载荷长度、环起点、到达粗时间。
+            // 帧信息包含虚拟链路编号和序号。
+            // 源端口和目的端口随帧信息一起交给接收引擎。
+            // 帧信息还包含用户数据长度、缓存起点和到达时间。
             if (f_end && allowed) begin
                 err_saved <= f_err;
                 arrival <= now_c;
@@ -212,7 +230,7 @@ module afdx_rx_parse #(
             end
             else if (finish_phase != 0) begin
                 finish_phase <= finish_phase + 1'b1;
-                // 连续字节下，末载荷的UDP折叠在帧尾后下一拍才全部有效。
+                // 连续收字节时，末字节校验和要到帧尾后的下一拍才稳定。
                 if (finish_phase == 1 && udp_check != 0 && udp_final[15:0] != 16'hffff) end_bad <= 1;
                 if (finish_phase == 2) begin
                     finish_phase <= 0;
@@ -225,7 +243,8 @@ module afdx_rx_parse #(
                         desc_valid <= 1;
                         desc_data <= end_desc;
                     end
-                    // 不完好帧在这里本地回退；无载荷的前导错误不触碰在途好帧。
+                    // 坏帧在这里释放暂占空间。
+                    // 没有用户数据的前导码错误，不影响尚待判定的完整帧。
                     if ((err_saved != 0 || end_bad || end_overflow) && end_alloc) trial <= frame_begin;
                 end
             end

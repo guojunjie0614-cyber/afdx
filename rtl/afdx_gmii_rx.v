@@ -1,27 +1,31 @@
-// 缓存完整GMII帧，再以核心每八拍一字节的节拍重放。
-// GMII输入无反压；慢线输出连接接收核心，gdrop报告整帧丢弃。
-// 写满即撤销本帧并丢到帧尾；仅完整有效帧进入重放描述队列。
-// GMII整帧缓存后重放。空间在慢线字节首次可见的周期释放。
+// 本模块先存下一整帧，再按每八拍一个字节读出。
+// 输入来自千兆以太网，输出供低速接收核心使用。
+// 这是一个备用的速率转换模块，只有接收核心每八拍收一个字节时才需要它。
+// 当前接收核心每拍收一个字节，所以 AFDX_top 没有例化本模块。
+// tb_gmii_rx 单独测试本模块，检查缓存满时的丢帧处理和读出顺序。
 module afdx_gmii_rx #(
     parameter GMII_RX_AW = 12) (
-    // clk 为工作时钟，reset 同步复位；enable 只决定是否接纳新帧。
+    // reset 为高时同步复位，enable 决定是否接收新帧。
     input wire clk,
     input wire reset,
     input wire enable,
-    // rx_data/valid 为无反压 GMII 输入；本适配器不接入当前原生 GMII 顶层。
+    // rx_valid 为高时，rx_data 是线路本拍收到的字节。
+    // 线路发送方不会等待本模块就绪。
     input wire [7:0] rx_data,
     input wire rx_valid,
-    // slow_data/valid 按每八拍一字节重放整帧，gdrop 单拍报告因字节环满而丢弃。
+    // slow_valid 为高时，slow_data 每八拍换一个字节。
+    // 缓存满而丢弃整帧时，gdrop 输出一拍脉冲。
     output reg [7:0] slow_data,
     output reg slow_valid,
     output reg gdrop);
     localparam CAPACITY = 1 << GMII_RX_AW;
     localparam DESC_WIDTH = 2 * GMII_RX_AW + 33;
     localparam [31:0] R = 32'd16;
-    // tick 生成帧结束后的重放截止点；wait_low 防止复位后从半帧开始接收。
+    // tick 记录时间，wait_low 要求复位后先看到线路空闲。
     reg [31:0] tick;
     reg input_active, input_discard, wait_low;
-    // write_ptr/read_ptr 计算字节环占用；frame_start 用于满环时回滚当前未提交帧。
+    // write_ptr/read_ptr 用于计算缓存占用，frame_start 保存本帧起点。
+    // 本帧存不下时，写位置退回 frame_start。
     reg [GMII_RX_AW:0] write_ptr, read_ptr, frame_start, frame_length;
     wire [GMII_RX_AW:0] occupied = write_ptr - read_ptr;
     reg byte_we, byte_re;
@@ -30,7 +34,7 @@ module afdx_gmii_rx #(
     wire [7:0] byte_rdata;
     reg byte_rvalid, byte_pending, byte_valid;
     reg [7:0] byte_q;
-    // 一帧至少有一个字节；与字节环等深的描述队列不会先满。
+    // 每帧至少占一个字节，因此与字节缓存等深的消息队列不会先满。
     reg [GMII_RX_AW:0] desc_write_ptr, desc_read_ptr;
     reg desc_we, desc_re;
     reg [GMII_RX_AW - 1:0] desc_wa, desc_ra;
@@ -42,7 +46,8 @@ module afdx_gmii_rx #(
     reg [4:0] gap_count;
     reg [GMII_RX_AW - 1:0] head_start, active_address;
     reg [GMII_RX_AW:0] head_length, remaining;
-    // phase=0–7 是慢线一字节的八拍；到 7 取下一字节，remaining=0 则结束并等待间隔。
+    // phase 从 0 数到 7，表示一个输出字节保持的八拍。
+    // phase=7 时取下一字节，remaining=0 时结束本帧。
     reg [2:0] phase;
     wire due = ! ((tick - head_deadline) & 32'h80000000) && gap_count == 0;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(CAPACITY)) bytes_ram (.clk(clk), .write_enable(byte_we), .write_address(byte_wa),
@@ -100,7 +105,7 @@ module afdx_gmii_rx #(
             desc_re <= 0;
             gdrop <= 0;
             if (gap_count != 0) gap_count <= gap_count - 1'b1;
-            // 复位时线路可能正在帧中，必须先看到低电平再认新帧。
+            // 复位后先等 rx_valid 拉低，再接收新帧，避免收到半帧。
             if (wait_low) begin
                 if (! rx_valid) wait_low <= 0;
             end
@@ -126,7 +131,7 @@ module afdx_gmii_rx #(
                 end
                 else if (! input_discard) begin
                     if (occupied == CAPACITY) begin
-                        // 未完整的尾帧尚未进入描述队列，回退不会碰已交出的帧。
+                        // 失败的帧尚未提交，释放它不会影响已经排队的完整帧。
                         input_discard <= 1;
                         write_ptr <= frame_start;
                         gdrop <= 1;
@@ -145,12 +150,12 @@ module afdx_gmii_rx #(
                 if (! input_discard) begin
                     desc_we <= 1;
                     desc_wa <= desc_write_ptr[GMII_RX_AW - 1:0];
-                    // 本拍E存到RAM，启动寄存器于E+R-1置位，外部E+R可见。
+                    // 若帧尾在 E 拍写入，读出过程会在 E+R 拍对外开始有效。
                     desc_wdata <= { tick + (R - 32'd1), frame_length, frame_start[GMII_RX_AW - 1:0] };
                     desc_write_ptr <= desc_write_ptr + 1'b1;
                 end
             end
-            // 两张RAM的输出分别直接进入寄存器，再供后级使用。
+            // 两块存储器的读结果先分别寄存，再交给后级选择。
             desc_rvalid <= desc_re;
             desc_qvalid <= desc_rvalid;
             if (desc_rvalid) desc_q <= desc_rdata;
@@ -173,7 +178,7 @@ module afdx_gmii_rx #(
                 byte_valid <= 1;
                 byte_pending <= 0;
             end
-            // 重放控制：等待描述、首字节和截止点均就绪才起帧；随后每八拍释放一字节。
+            // 完整帧信息、首字节和规定时间都就绪后，才开始每八拍读一个字节。
             if (! slow_valid) begin
                 if (head_valid && ! byte_valid && ! byte_pending) begin
                     byte_re <= 1;
@@ -201,7 +206,7 @@ module afdx_gmii_rx #(
                 if (remaining == 0) begin
                     slow_valid <= 0;
                     slow_data <= 0;
-                    // 饱和倒计时不会因长时间空闲后的32位计时回绕重新阻塞。
+                    // 倒计时减到零就停止，避免空闲过久后因计数回绕而重新等待。
                     gap_count <= 15;
                 end
                 else begin

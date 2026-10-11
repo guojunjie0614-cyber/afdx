@@ -1,7 +1,8 @@
-// 验证两个真实端系统的 RTC 无负载和负载同步误差、秒边界与用户交付；RTC_SYNC/RTC_LOAD/RTC_GBE 输出误差。
-// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 本测试检查两个端系统在空载和有用户流量时的时钟同步。
+// 它记录每次同步误差，并检查秒边界和用户数据交付。
+// 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
-// 两个真实GMII端系统；只经公开配置口读时钟，经应用口核对用户交付。
+// 测试从配置口读取时钟，从应用口核对用户数据。
 module tb_sys_rtc;
     reg clk=0,reset=1;
     always #4 clk=~clk;

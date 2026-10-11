@@ -32,38 +32,56 @@
 
 ## 评委快速上手
 
-先看 [ARCH](docs/ARCH.md) 第 1、2 节及 `rtl/AFDX_top.v` 的端口注释，再运行下面前三条命令；均在仓库根目录执行，先按上表设置 ModelSim 安装目录或 PATH。最后两条用于已安装 Python 依赖后的完整回归和综合估算。
+先走不需要 Python 的步骤 1、2。测试会自动建立工作库和输入文件，不必先做综合。
 
-```powershell
-$simExe=if($env:MODELSIM_HOME){Join-Path $env:MODELSIM_HOME 'vsim.exe'}else{(Get-Command vsim.exe -ErrorAction Stop).Source}
-New-Item -ItemType Directory -Force out | Out-Null
-& $simExe -c -l out/startup.log -do 'do sim/run_judge.do'
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
-```
+1. 在 ModelSim 的 Transcript 窗口进入仓库根目录，把下面的占位文字换成实际目录。
 
-纯 ModelSim 入口依次跑五功能、77/81 条 VL 突发和完整 RTC 用例，结束须见 `JUDGE ENTRY PASS cases=4`，每项须为 `PASS errors=0`；编译或自检失败打印 `JUDGE ENTRY FAIL` 并返回非零退出码。结果与指标写入 `out/modelsim/judge_<时间>_<进程>/result.txt`，原始日志在各用例子目录。它使用随仓库提供的固定向量，不调用 Python；完整回归还增加独立报文/周期参考检查。
-五功能覆盖双向用户数据、冗余/完整性、SNMP Get、RTC、615A 先加载再卸载。只看五功能波形时，可在 ModelSim Transcript 中先 `cd` 到仓库根目录，再执行 `do sim/run_services.do`，看到 `MODELSIM ENTRY PASS` 后 GUI 保留波形。全回归为 `sim/tests.txt` 的 37 项，输出在 `out/regress/` 和 `out/sim/`；更多参数见 [FLOW](docs/FLOW.md)。
-图形综合不依赖 Python：在 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点 Run Synthesis。保持 `AFDX_EndSystem_assignment_defaults.qdf` 与工程相邻，使用 Speed 设置和 `constraints.edc`；器件 EQ6HL130、封装 CSG484_H。工程包含全部 23 个 RTL 文件，使用相对路径；干净副本的命令行综合用于验证源文件可编译，不能替代 GUI 点击验证。
+   ```tcl
+   cd {仓库所在目录}
+   ```
 
-综合后五功能仿真使用上面命令生成的 `netlist.v`，先运行同版本 RTL 作为外部记录参考，再运行综合网表（此脚本入口需要 Python；可能耗时一小时以上）：
+   预期：命令不报错，当前目录中能找到 `rtl`、`tb` 和 `sim`。
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services
-$topNet=Join-Path ((Get-Content out/latest_AFDX_top.json -Raw | ConvertFrom-Json).folder) 'netlist.v'
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Netlist $topNet -Deadline ((Get-Date).AddHours(3).ToString('o'))
-```
+2. 运行五功能、突发排队、时钟同步和吞吐测试。
 
-须同时看到 `[RESULT] tb_net_services PASS` 和 `[CHECK]` 通过；外部记录与同激励 RTL 比较，原网表和厂商模型不改。完整 8 项网表清单的准备命令见 [FLOW 的网表入口](docs/FLOW.md#网表入口)。布局布线导出的 `.vo` 与此综合网表入口不同，已知限制见 FLOW 的官方 `.vo` 一节，不能混作通过证据。
+   ```tcl
+   do sim/run_judge.do
+   ```
 
-| 指标与工况 | 测试和输出行 |
+   预期：五个用例都打印 `JUDGE CASE PASS`，最后打印 `JUDGE ENTRY PASS cases=5`；中途失败会打印 `JUDGE ENTRY FAIL`。
+
+   指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
+
+下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一仓库根目录。
+
+3. 运行全部 37 项测试，参考检查器会另行核对报文和周期记录。
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
+   ```
+
+   预期：末尾表格中的 37 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+
+4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
+   ```
+
+   预期：综合和时序分析成功，`out/latest_AFDX_top.json` 给出资源数、时序裕量和网表目录。
+
+也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。工程默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。网表仿真需要先综合，完整命令见 [FLOW 的网表入口](docs/FLOW.md#网表入口)。
+
+| 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
-| 77/81 条 VL 同时释放的队列清空时间 | `tb_gbe_burst` 的 `[BURST_SUMMARY]`；do 入口输出 `JUDGE METRIC burst_vls=... queue_clear_us=...`，预期 959.272/1008.488 µs，81 条越过 1 ms 是边界用例的预期结果。 |
-| 空载、用户流量及 77 VL 满载 RTC 误差 | `tb_sys_rtc` 的 `[RTC_SYNC]`、`[RTC_LOAD]`、`[RTC_GBE]`；do 入口汇总 `JUDGE METRIC rtc_...`，空载/77 VL 为 0/10788 ns。 |
-| 稳态吞吐、端到端时延、发送抖动 | `sim/run.ps1 -Test tb_sys_perf` 的 `[METRIC] tb_sys_perf`，77 VL 两种链路工况每方向为 906.136 Mbps、24.408 µs、0 µs；原数据在 `check_summary.json` 的 `reports.system.performance`。 |
-| 五功能完整性 | `tb_net_services` 的六行 `[FUNCTION]`（加、卸载分列）和最后 `[RESULT]`；零错误才通过。 |
+| 77 条虚拟链路的吞吐、最大端到端时延和发送抖动 | do 入口打印 `JUDGE METRIC tb_sys_perf`。链路延迟为 0 或 257 拍时，两个方向分别为 **906.136 Mbps、24.408 µs、0 µs**；两网冗余副本不相加。Python 入口 `sim/run.ps1 -Test tb_sys_perf` 应得到相同结果。 |
+| 77/81 条虚拟链路同时提交消息后，队列全部发完的时间 | `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 **959.272/1008.488 µs**；81 条的用例特意检查超过 1 ms 的边界。 |
+| 时钟同步误差 | `JUDGE METRIC rtc_...` 给出最大误差；空载为 **0 ns**，普通用户流量和 77 条虚拟链路满载时均为 **10788 ns**。 |
+| 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
 
-突发清空时间从统一释放时刻起算；稳态端到端时延从应用末字节到交付末字节，只扣固定链路延迟，两种口径不能互换。RTC 使用共同理想时钟；这些 RTL 测量及综合估算均不等于布局布线时序签核。
+吞吐测试先运行两个带宽间隔，再测量 21 ms 内交付的用户字节数。端到端时延从应用提交末字节算到对端交付末字节，只扣除设定的线路延迟。发送抖动表示同一虚拟链路相邻两帧的发送间隔偏离 1 ms 的程度。
+
+队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上是仿真测量；综合时序也尚未计入布局布线延迟，不能当作上板或物理时序结果。
 
 ## 从哪里读起
 

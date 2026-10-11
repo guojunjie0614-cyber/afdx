@@ -1,39 +1,42 @@
-// 发送核心外壳，连接消息缓冲、VL调度、组帧和页回收。
-// m_*接收应用/服务消息；配置口设置VL，双网输出慢线帧。
-// 页池、配置表和各队列的RAM读写口分配保持独立。
-// 发送核心外壳：配置清表、六张共享 RAM 与各端口唯一主人连接。
+// 本模块连接发送缓存、发送调度、组帧和以太网发送模块。
+// 它从 afdx_svc 接收消息，再输出到两路以太网。
+// 本模块对应赛题的发送、带宽控制和双网冗余发送功能。
 module afdx_tx_core #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, LOOKAHEAD = 512) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
-    // now/byte_en 连接时基；当前顶层 byte_en 逐拍有效，输出为原生 GMII。
+    // now 提供周期数，当前顶层将 byte_en 每拍置为有效。
     input wire [31:0] now,
     input wire byte_en,
-    // m_* 传送完整 UDP 消息；valid/ready 为字节握手，last 为消息尾，vl 为配置表索引。
+    // m_valid 和 m_ready 同为高时接收一个用户字节。
+    // m_last 标记消息末字节，m_vl 指定发送配置索引。
     input wire m_valid,
     output wire m_ready,
     input wire [7:0] m_data,
     input wire m_last,
     input wire [6:0] m_vl,
-    // m_port_en 选择消息自带 sport/dport 或 VL 默认端口。
+    // m_port_en 为高时使用消息自带端口，否则使用虚拟链路配置。
     input wire m_port_en,
     input wire [15:0] m_sport, m_dport,
-    // cfg_* 写 128 个 VL、每 VL 八字的配置表；cfg_ok 为可写窗口，user_id 为源 MAC 编号。
+    // cfg_* 写入 128 条虚拟链路的配置，每项占八个字。
+    // cfg_ok 为高时允许写入，user_id 设置源以太网地址中的端系统编号。
     input wire cfg_we,
     input wire [9:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     input wire [15:0] user_id,
-    // tx_data_a/b、tx_valid_a/b 是双网线路；init_done 表示配置表、状态表、空闲池均已初始化。
+    // 对应 valid 为高时，tx_data_a/b 是两网本拍发送的字节。
+    // 配置表、状态表和空闲页队列都初始化完成后，init_done 才变高。
     output wire [7:0] tx_data_a,
     output wire tx_valid_a,
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
     output reg init_done,
-    // ev_* 依次报告接纳、各类丢弃和两网正常发完帧；事件均为单拍。
+    // ev_* 用单拍脉冲报告消息接纳、丢弃原因和两网发送完成。
     output wire ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage, ev_tx_a, ev_tx_b,
     output wire cfg_ok);
     localparam PAGES = (1 << TX_PAGE_AW), PAYLOAD_DEPTH = (1 << (TX_PAGE_AW + TX_OFF_AW));
-    // init_addr 顺序清配置表，init_flush 等最后写入；初始化结束后写口归外部配置。
+    // init_addr 逐项将配置表置零，init_flush 等待最后一次写入完成。
+    // 初始化完成后，外部配置使用这个写口。
     reg cfg_write, init_flush, cfg_initialized;
     reg [9:0] cfg_write_addr, init_addr;
     reg [31:0] cfg_write_data;
@@ -63,7 +66,7 @@ module afdx_tx_core #(
     wire [7:0] grant_sn, grant_page;
     wire s_valid, s_ready, s_last, s_en_a, s_en_b, tx_sof, tx_eof, tx_underrun;
     wire [7:0] s_data_a, s_data_b;
-    // 初始化屏障：三个子资源全部就绪后才接受消息和配置。
+    // 配置表、调度状态和空闲页队列全部就绪后，才接收消息和配置。
     always @(posedge clk) begin
         if (reset) begin
             cfg_write <= 0;
@@ -94,7 +97,10 @@ module afdx_tx_core #(
             if (cfg_initialized && free_initialized && engine_initialized) init_done <= 1;
         end
     end
-    // 共享存储：cfg=VL 静态配置，state=队列/SN/BAG，mnext=消息链，desc=消息元数据。
+    // cfg 保存各虚拟链路的配置。
+    // state 保存队列位置、序号和发送时间。
+    // mnext 记录同一虚拟链路的下一条消息。
+    // desc 保存消息长度和端口。
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(1024)) tx_cfg (clk, cfg_write, cfg_write_addr, cfg_write_data, cfg_read, cfg_read_addr,
         cfg_data);
     afdx_ram_sdp #(.WIDTH(63), .DEPTH(128)) tx_state (clk, state_write, state_write_addr, state_write_data, state_read,
@@ -103,12 +109,12 @@ module afdx_tx_core #(
         mnext_read_addr, mnext_data);
     afdx_ram_sdp #(.WIDTH(44), .DEPTH(PAGES)) tx_desc (clk, desc_write, desc_write_addr, desc_write_data, desc_read,
         desc_read_addr, desc_data);
-    // pnext 连接同一消息的载荷页；payload 保存字节，各表仅有一个明确的写口主人。
+    // pnext 记录同一消息的下一页，payload 保存消息字节。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_pnext (clk, pnext_write, pnext_write_addr, pnext_write_data, pnext_read,
         pnext_read_addr, pnext_data);
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAYLOAD_DEPTH)) tx_payload (clk, payload_write, payload_write_addr, payload_write_data,
         payload_read, payload_read_addr, payload_data);
-    // 数据路径：空闲池供页 → 消息缓冲入队 → VL 调度授权 → 组帧/MAC 发送并归还页。
+    // 消息先存入空闲页，再由调度器选择，组帧模块发送后归还页。
     afdx_tx_free #(.TX_PAGE_AW(TX_PAGE_AW)) free_pages (clk, reset, free_initialized, pop_req, pop_ready, pop_ack, pop_ok,
         pop_page, ret1_valid, ret1_page, ret1_ready, ret2_valid, ret2_page, ret2_ready);
     afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) buffer (clk, reset, init_done, m_valid, m_ready, m_data,
