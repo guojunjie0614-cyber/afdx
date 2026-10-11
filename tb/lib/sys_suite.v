@@ -1,3 +1,5 @@
+// 双端系统共用主体：读取外部命令/链路向量并记录线路、交付和事件；外层 RESULT 与 Python 独立模型均须通过。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 // 双端口级系统平台。命令来自独立参考工具，观测不穿透 DUT。
 module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,

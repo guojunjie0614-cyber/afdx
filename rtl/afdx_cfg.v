@@ -3,29 +3,38 @@
 // 配置读分两拍返回；计数器在采样边沿读取此前已累计的事件。
 // 配置总线：表写保持到核心握手，读出用两级选择，统计只由对应脉冲累加。
 module afdx_cfg (
+    // clk/reset 为同步控制；tx_ready 表示收发核心均已初始化。
     input wire clk, reset, tx_ready,
+    // cfg_wr/ready 完成写请求；cfg_rd 发起读，cfg_rvalid/rdata 两拍返回，不用于读回配置表 RAM。
     input wire cfg_wr, cfg_rd,
     input wire [17:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
+    // user_id 为源 MAC 端系统编号；tx/rx_cfg_ok 指示各核心允许写表。
     output reg [15:0] user_id,
     input wire tx_cfg_ok, rx_cfg_ok,
+    // tx_cfg_* 写发送 VL 表；rx_map_we 写 VLID 映射，rx_cfg_we 写接收 VL 参数。
     output reg tx_cfg_we,
     output reg [9:0] tx_cfg_addr,
     output reg [31:0] tx_cfg_wdata,
     output reg rx_map_we, rx_cfg_we,
     output reg [15:0] rx_cfg_addr,
     output reg [31:0] rx_cfg_wdata,
+    // ev_tx[0:6] 依次累计接纳/禁用/队满/过长/无页/A发完/B发完。
     input wire [6:0] ev_tx,
+    // ev_a/b[0:7] 依次累计完好/FCS/长度/协议头/未知VL/配置/完整性/溢出。
     input wire [7:0] ev_a, ev_b,
+    // ev_rm_drop/deliver/gdrop 为冗余丢弃、接纳和适配器丢弃；服务 rdata/count 接对应寄存器读值。
     input wire ev_rm_drop, ev_deliver,
     input wire [1:0] ev_gdrop,
     input wire [31:0] rtc_rdata, rtc_sync_count,
     input wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data);
+    // 地址译码：0x00400–0x007ff 为发送表，0x10000–0x1ffff 为映射表，0x20000–0x20fff 为接收表。
     wire select_tx = (cfg_addr[17:10] == 8'b00000100);
     wire select_map = (cfg_addr[17:16] == 2'b01);
     wire select_rx = (cfg_addr[17:12] == 6'b100000);
+    // read_valid/read_select 对齐两拍读响应；read_loader 区分共享服务地址组内的数据源。
     reg read_valid;
     reg [2:0] read_select;
     reg [1:0] read_loader;
@@ -88,6 +97,7 @@ module afdx_cfg (
             count_b_gdrop <= 0;
         end
         else begin
+            // 事件统计：只累加公开单拍事件，复位清零；读取不清计数。
             if (ev_tx[0]) count_accept <= count_accept + 32'd1;
             if (ev_tx[1]) count_drop_dis <= count_drop_dis + 32'd1;
             if (ev_tx[2]) count_drop_full <= count_drop_full + 32'd1;
@@ -129,6 +139,7 @@ module afdx_cfg (
             rx_cfg_addr <= 0;
             rx_cfg_wdata <= 0;
         end
+        // 写握手状态由 tx_cfg_we/rx_map_we/rx_cfg_we 表示：待核心接收时保持地址/数据并拉低 ready。
         else if (! tx_ready) begin
             cfg_ready <= 0;
             tx_cfg_we <= 0;
@@ -185,6 +196,7 @@ module afdx_cfg (
         end
         else begin
             // 沿 t 快照旧寄存器值：含 t-1 以前的脉冲，不包含 t 的脉冲。
+            // 读流水：第一拍选择并快照各组，第二拍按延迟选择码输出；不存在独立读状态机。
             read_valid <= cfg_rd;
             case (cfg_addr)
                 18'h00000 : read_regs <= 32'hc3110000;

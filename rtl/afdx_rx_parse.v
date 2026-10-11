@@ -5,34 +5,45 @@
 // 坏帧由本模块分类和回退，不占用公共查表引擎。
 module afdx_rx_parse #(
     parameter RX_RING_AW = 12) (
+    // clk/reset 为同步控制；enable 限定新帧接收，rx_valid 用于识别真实线路起帧。
     input wire clk, reset, enable, rx_valid,
+    // now_c 在 f_end 锁存为到达时刻，供双网冗余比较。
     input wire [15:0] now_c,
+    // m_valid/m_first/m_data 为 MAC 去 FCS 内容；f_end/f_err/f_len 在帧结束报告检查结果。
     input wire m_valid, m_first,
     input wire [7:0] m_data,
     input wire f_end,
     input wire [1:0] f_err,
     input wire [10:0] f_len,
+    // read_ptr 表示交付器已释放位置；ring_* 暂写本帧 UDP 载荷。
     input wire [RX_RING_AW:0] read_ptr,
     output reg ring_we,
     output reg [RX_RING_AW - 1:0] ring_wa,
     output reg [7:0] ring_wd,
+    // desc_valid/data 提交候选描述，desc_take 表示引擎已取走；resolve_valid/commit 决定提交或回退。
     output reg desc_valid,
     output reg [RX_RING_AW + 82:0] desc_data,
     input wire desc_take,
     input wire resolve_valid, resolve_commit,
+    // ev 位 0/1/2/3/7 分别为完好/FCS/长度或前导/协议头/载荷环溢出事件。
     output reg [7:0] ev);
     localparam [RX_RING_AW:0] CAPACITY = (1 << RX_RING_AW);
+    // committed 是已接纳尾指针，trial 是本帧暂写位置；frame_begin 支持失败回滚，desc_finish 保存待提交尾。
     reg [RX_RING_AW:0] committed, trial, frame_begin, desc_finish;
     wire [RX_RING_AW:0] occupied = committed - read_ptr;
     reg prev_line, allowed, overflow, header_bad, n_ok, has_payload;
+    // position 从目的 MAC 首字节起算；VLID 位于 4–5，IPv4 位于 14–33，UDP 头位于 34–41。
     reg [10:0] position;
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
+    // IPv4 头和 UDP 伪首部/数据分别累加；两级折叠进位后与 0xffff 比较，UDP 校验字段为零则不验。
     reg [19:0] ip_sum;
     reg [25:0] udp_sum;
     reg [16:0] ip_fold, ip_final, udp_fold, udp_final;
+    // length_phase=0 空闲；读到 UDP 长度后 1 算载荷/IP 长度，2 算 SN 位置与所需空间后回 0。
     reg [2:0] length_phase;
+    // finish_phase=0 等帧尾；1 等末载荷校验和稳定，2 分类事件/发布描述后回 0。
     reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
     reg [15:0] arrival;
@@ -121,6 +132,7 @@ module afdx_rx_parse #(
                 end
                 default :;
             endcase
+            // 协议字段校验：固定 IPv4 IHL=5、UDP、无分片；ARINC 序号位于补零之后，不计入 UDP 长度。
             if (m_valid && allowed) begin
                 if (m_first) begin
                     position <= 1;
@@ -187,6 +199,7 @@ module afdx_rx_parse #(
                     if (n_ok && position == sn_position) sn <= m_data;
                 end
             end
+            // 收尾快照：描述依次为 VLID、SN、源/目的端口、载荷长度、环起点、到达粗时间。
             if (f_end && allowed) begin
                 err_saved <= f_err;
                 arrival <= now_c;

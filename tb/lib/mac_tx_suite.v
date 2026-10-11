@@ -1,3 +1,5 @@
+// MAC 共用测试主体：从 vectors 取消息，观察两网组帧；LOOP 还检查接收解帧，最终按 errors 输出 RESULT。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 module mac_tx_suite #(parameter LOOP=0, TEST_NAME="tb_mac_tx");
     reg clk=0,reset=1;

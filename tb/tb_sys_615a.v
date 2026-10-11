@@ -1,3 +1,6 @@
+// 验证双端完整 615A 加卸载流程、文件 CRC/元数据错误、TFTP 丢包重试和公开口 RAM 读回。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 完整回归还要求 sim 运行器的独立参考检查通过；所需 vectors 由该运行器准备。
 `timescale 1ns/1ps
 module tb_sys_615a;
     reg clk=0,reset=1;always #4 clk=~clk;

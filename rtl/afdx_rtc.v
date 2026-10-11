@@ -3,18 +3,22 @@
 // 首字节采样四时间戳；分数换算、偏差计算和归一化分拍完成。
 // RFC 4330 SNTPv4：48字节，四时间戳算法和首字节采样点不变。
 module afdx_rtc (
+    // clk/reset 为同步控制，enable 为核心就绪；本地时钟以每拍 8 ns 自由运行。
     input wire clk, reset, enable,
+    // cfg_* 配置角色/周期/VL/端口或装载时间；读秒同时快照纳秒，sync_count 累计成功校时。
     input wire cfg_we, cfg_re,
     input wire [3:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
     output reg [31:0] sync_count,
+    // tx_* 以 valid/ready 发送 48 字节 NTP，tx_last 为末字节；tx_vl/port 选择服务通道。
     output reg tx_valid,
     input wire tx_ready,
     output reg [7:0] tx_data,
     output reg tx_last,
     output wire [6:0] tx_vl,
     output wire [15:0] tx_port,
+    // rx_* 接无反压 UDP 载荷，rx_claim 按配置端口认领，满 48 字节才产生 rx_done。
     input wire rx_valid,
     input wire [7:0] rx_data,
     input wire rx_last,
@@ -22,10 +26,12 @@ module afdx_rtc (
     output wire rx_claim);
     localparam NTP_EPOCH = 32'd3155673600;
     // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
+    // active 是配置使能，master 选择服务端；period/countdown 控制客户端请求周期。
     reg active, master;
     reg [31:0] period, load_sec, load_ns;
     reg [6:0] vl;
     reg [15:0] port_number;
+    // seconds/nanoseconds 是本地时间；offset_sec/ns 保存最近校正量，snapshot_ns 保证分两次读的一致性。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
@@ -38,12 +44,17 @@ module afdx_rtc (
     reg rx_busy, rx_done;
     reg [5:0] rx_index;
     reg [31:0] received_sec, received_ns;
+    // RFC 4330 四时间戳：req=T1，server_receive=T2，server_transmit=T3，received=T4；以服务首字节采样。
     reg [31:0] req_sec, req_ns, echo_sec, echo_frac;
     reg [31:0] server_receive_sec, server_receive_ns, server_transmit_sec, server_transmit_ns;
+    // waiting 表示客户端存在请求；reply_pending 为服务端待答复，echo_* 原样回送 Originate 字段。
     reg waiting, reply_pending, tx_reply;
     reg [31:0] countdown, tx_word, tx_word_low, tx_word_high;
     reg [5:0] tx_index;
+    // tx_state=0 等周期/回应；1 选字段组，2 选字，3 选字节置 valid，4 等握手后取下一字节或回 0。
     reg [2:0] tx_state;
+    // calc_state=0 空闲；10/11 启动并等待 T2 小数解码，12/13 解码 T3，14 计算两段时间差。
+    // 2 相加，3 除二，4 加奇数秒的半秒，5 归一化偏差，6 加到本地时间，7 再归一化，8 补偿流水时间，9 应用并回 0。
     reg [3:0] calc_state;
     reg signed [31:0] diff_sec1, diff_sec2, diff_ns1, diff_ns2, sum_sec, sum_ns;
     reg signed [31:0] correction_sec, correction_ns;
@@ -76,6 +87,7 @@ module afdx_rtc (
         else begin
             encode_tx_start <= 0;
             encode_rx_start <= 0;
+            // 发送/接收采样后并行换算 NTP 32 位二进制小数，避免在报文移位路径上做乘除法。
             if (first_tx) begin
                 stamp_tx_sec <= seconds + NTP_EPOCH;
                 encode_tx_value <= nanoseconds;
@@ -113,6 +125,7 @@ module afdx_rtc (
             cfg_rdata <= 0;
         end
         else begin
+            // 控制寄存器：0 角色/使能/装载，1 周期，2 VL，3 端口，4 秒，5 纳秒。
             if (cfg_we) case (cfg_addr)
                 0 : begin
                     active <= cfg_wdata[0];
@@ -146,6 +159,7 @@ module afdx_rtc (
             seconds <= 0;
             nanoseconds <= 0;
         end
+        // 时钟更新优先级：配置装载、同步校正、正常每拍递增；秒边界用纳秒进位处理。
         else if (load_time) begin
             seconds <= load_sec;
             nanoseconds <= load_ns;
@@ -239,6 +253,7 @@ module afdx_rtc (
                 else rx_index <= rx_index + 6'd1;
                 if (rx_last && rx_index == 47) rx_done <= 1;
             end
+            // 先检查 SNTP 版本和模式；从端只接收等待中且 Originate 与当前请求 Transmit 完全相同的回应。
             if (rx_done && rx_packet[381:379] == 4) begin
                 if (master && rx_packet[378:376] == 3) begin
                     // Originate逐位复制请求的Transmit，不做纳秒往返换算。
@@ -253,6 +268,7 @@ module afdx_rtc (
                     calc_state <= 10;
                 end
             end
+            // 偏差为 ((T2-T1)+(T3-T4))/2；整数秒和纳秒分开运算并归一化。
             case (calc_state)
                 10 : begin
                     decode_value <= rx_packet[95:64];
@@ -329,6 +345,7 @@ module afdx_rtc (
                     calc_state <= 0;
                 end
             endcase
+            // 报文发送：服务端优先发待回应；客户端到期重发，校时/完整收包期间不覆盖本次时间戳。
             case (tx_state)
                 0 : begin
                     tx_valid <= 0;

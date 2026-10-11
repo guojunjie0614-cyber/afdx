@@ -1,3 +1,5 @@
+// 线路激励器：按外层命令发送字节和帧边界，供 MAC 正常/异常用例使用；自身不独立判 PASS。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 module line_driver(input wire clk, output reg [7:0] data, output reg valid);
     reg [7:0] bytes [0:4095];

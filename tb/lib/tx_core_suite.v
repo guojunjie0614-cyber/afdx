@@ -1,3 +1,5 @@
+// 发送核心共用主体：从操作向量执行入队和配置，记录真实握手、事件、双网帧；外层 RESULT 与独立模型均须通过。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 // 共用端口级骨架。激励文件只描述操作；events 记录实际发生的握手与脉冲。
 module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512);

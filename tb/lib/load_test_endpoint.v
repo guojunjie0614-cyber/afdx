@@ -1,3 +1,5 @@
+// 615A 系统端点：经公开配置/应用口收发报文和检查加载区；checks/errors 由加卸载测试汇总。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
     input wire clk,reset,input wire [7:0] ra,input wire rva,input wire [7:0] rb,input wire rvb,

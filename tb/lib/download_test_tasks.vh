@@ -1,3 +1,5 @@
+// 615A 加载端模型：经公开应用口请求卸载、丢 ACK 和不支持文件；比较接收字节/状态并累计到外层测试。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 // 公开端口上的615A加载端模型；正常/丢ACK/无此文件，不访问目标内部状态。
 reg [7:0] dl_reference[0:8191], dl_received[0:8191], dl_packet[0:1023];
 integer dl_result_fd, dl_length, dl_sp, dl_dp, dl_op, dl_bn;

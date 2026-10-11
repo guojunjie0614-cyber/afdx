@@ -1,3 +1,5 @@
+// 验证独立 GMII 接收适配器的整帧缓存、满环丢弃、复位与慢线重放；不代表当前顶层的原生 GMII 吞吐。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
 `timescale 1ns/1ps
 // 只看端口的字节环参考模型：先释放本拍慢线首字节，再接收本拍GMII字节。
 module tb_gmii_rx #(parameter GMII_RX_AW=12);

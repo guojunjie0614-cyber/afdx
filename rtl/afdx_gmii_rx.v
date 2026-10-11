@@ -4,19 +4,24 @@
 // GMII整帧缓存后重放。空间在慢线字节首次可见的周期释放。
 module afdx_gmii_rx #(
     parameter GMII_RX_AW = 12) (
+    // clk 为工作时钟，reset 同步复位；enable 只决定是否接纳新帧。
     input wire clk,
     input wire reset,
     input wire enable,
+    // rx_data/valid 为无反压 GMII 输入；本适配器不接入当前原生 GMII 顶层。
     input wire [7:0] rx_data,
     input wire rx_valid,
+    // slow_data/valid 按每八拍一字节重放整帧，gdrop 单拍报告因字节环满而丢弃。
     output reg [7:0] slow_data,
     output reg slow_valid,
     output reg gdrop);
     localparam CAPACITY = 1 << GMII_RX_AW;
     localparam DESC_WIDTH = 2 * GMII_RX_AW + 33;
     localparam [31:0] R = 32'd16;
+    // tick 生成帧结束后的重放截止点；wait_low 防止复位后从半帧开始接收。
     reg [31:0] tick;
     reg input_active, input_discard, wait_low;
+    // write_ptr/read_ptr 计算字节环占用；frame_start 用于满环时回滚当前未提交帧。
     reg [GMII_RX_AW:0] write_ptr, read_ptr, frame_start, frame_length;
     wire [GMII_RX_AW:0] occupied = write_ptr - read_ptr;
     reg byte_we, byte_re;
@@ -37,6 +42,7 @@ module afdx_gmii_rx #(
     reg [4:0] gap_count;
     reg [GMII_RX_AW - 1:0] head_start, active_address;
     reg [GMII_RX_AW:0] head_length, remaining;
+    // phase=0–7 是慢线一字节的八拍；到 7 取下一字节，remaining=0 则结束并等待间隔。
     reg [2:0] phase;
     wire due = ! ((tick - head_deadline) & 32'h80000000) && gap_count == 0;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(CAPACITY)) bytes_ram (.clk(clk), .write_enable(byte_we), .write_address(byte_wa),
@@ -167,6 +173,7 @@ module afdx_gmii_rx #(
                 byte_valid <= 1;
                 byte_pending <= 0;
             end
+            // 重放控制：等待描述、首字节和截止点均就绪才起帧；随后每八拍释放一字节。
             if (! slow_valid) begin
                 if (head_valid && ! byte_valid && ! byte_pending) begin
                     byte_re <= 1;

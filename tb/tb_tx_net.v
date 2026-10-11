@@ -1,3 +1,6 @@
+// 验证发送核心代表性消息和调度序列；用于 RTL/综合网表的线路与事件对照。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 完整回归还要求 sim 运行器的独立参考检查通过；所需 vectors 由该运行器准备。
 `timescale 1ns/1ps
 module tb_tx_net #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512);
     tx_core_suite #(.NAME("tb_tx_net"),.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),.LOOKAHEAD(LOOKAHEAD)) suite();

@@ -1,3 +1,5 @@
+// 验证原生千兆双网突发队列；COUNT=77/81 对照 1 ms 排队边界，检查逐字节载荷、长度、元数据和每 VL 仅交付一次。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
 `timescale 1ns/1ps
 // 先在原生收发核心间预装队列，再统一打开 MAC；释放时延与应用提交时延分开记录。
 module tb_gbe_burst #(parameter COUNT=77);

@@ -4,14 +4,18 @@
 // 交付状态：两拍选择队头、连续发出同步RAM读请求、三级数据流水、末字节后再取。
 module afdx_rx_deliver #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // dq_count/entries 提供最多 32 项描述；dq_pop 只在队头已锁存后发一拍。
     input wire [RX_DQ_AW:0] dq_count,
     input wire [32 * (RX_RING_AW + 56) - 1:0] dq_entries,
     output reg dq_pop,
+    // ring_a/b_* 读取选中网络的载荷 RAM；read_ptr_a/b 通知解析器哪些字节已释放。
     output reg ring_a_re, ring_b_re,
     output reg [RX_RING_AW - 1:0] ring_a_ra, ring_b_ra,
     input wire [7:0] ring_a_q, ring_b_q,
     output reg [RX_RING_AW:0] read_ptr_a, read_ptr_b,
+    // d_* 为无反压载荷流，last 为末字节；vl/sport/dport/net 在整条消息期间保持。
     output reg d_valid,
     output reg [7:0] d_data,
     output reg d_last,
@@ -19,12 +23,15 @@ module afdx_rx_deliver #(
     output reg [15:0] d_sport, d_dport,
     output reg d_net);
     localparam DQ_WIDTH = RX_RING_AW + 56;
+    // rd_ptr 指向交付队头；head_bank 和 group0–3 把 32 选 1 拆成两级。
     reg [RX_DQ_AW - 1:0] rd_ptr;
     wire [4:0] read_index = rd_ptr;
+    // head_phase=0 等非空并做组内选择，1 选组并出队，2 等消费者撤销 dq_req 后回 0。
     reg [1:0] head_phase;
     reg [1:0] head_bank;
     reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
     reg dq_req, dq_valid;
+    // issuing/left 管理连续 RAM 读；valid_pipe/last_pipe 与三级数据返回对齐。
     reg issuing;
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
@@ -149,6 +156,7 @@ module afdx_rx_deliver #(
             d_last <= valid_pipe[2] && last_pipe[2];
             if (valid_pipe[2]) d_data <= d_net ? data_b : data_a;
             if (valid_pipe[2] && last_pipe[2]) dq_req <= 1;
+            // 接纳描述后逐拍读载荷；发出末字节后才允许取下一描述，保持消息元数据稳定。
             if (dq_valid && dq_req) begin
                 dq_req <= 0;
                 d_net <= dq_data[RX_RING_AW + 55];

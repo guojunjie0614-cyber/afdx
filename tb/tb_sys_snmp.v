@@ -1,3 +1,6 @@
+// 验证 SNMP v1/v2c Get/GetNext、community 和 BER 边界，以及 MIB 快照与配置寄存器一致性。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 完整回归还要求 sim 运行器的独立参考检查通过；所需 vectors 由该运行器准备。
 `timescale 1ns/1ps
 // 双端GMII系统；管理端走普通应用口，代理和配置采样只通过顶层公开接口。
 module tb_sys_snmp;

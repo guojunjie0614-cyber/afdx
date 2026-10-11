@@ -4,9 +4,11 @@
 // 唯一 VL 状态表主人：清表、起始确认、入队、授权和两拍一个地址的扫描。
 module afdx_tx_engine #(
     parameter TX_PAGE_AW = 8, LOOKAHEAD = 512) (
+    // clk/reset 为同步控制；enable 允许调度，now 为周期计时，initialized 表示状态清表完成。
     input wire clk, reset, enable,
     input wire [31:0] now,
     output reg initialized,
+    // cfg_* 只读 VL 配置；state_* 独占 VL 队列、序号和 BAG 时间状态的读写。
     output reg cfg_re,
     output reg [9:0] cfg_ra,
     input wire [31:0] cfg_q,
@@ -14,6 +16,7 @@ module afdx_tx_engine #(
     output reg [6:0] state_wa, state_ra,
     output reg [62:0] state_wd,
     input wire [62:0] state_q,
+    // mnext_* 连接同一 VL 的消息首页；desc_* 读取队头消息长度和端口。
     output reg mnext_we, mnext_re,
     output reg [TX_PAGE_AW - 1:0] mnext_wa, mnext_ra,
     output reg [7:0] mnext_wd,
@@ -21,14 +24,17 @@ module afdx_tx_engine #(
     output reg desc_re,
     output reg [TX_PAGE_AW - 1:0] desc_ra,
     input wire [43:0] desc_q,
+    // enq_* 提交已收完消息，enq_ack/result 报告是否入队及拒绝原因。
     input wire enq_valid,
     input wire [6:0] enq_vl,
     input wire [7:0] enq_head,
     input wire [10:0] enq_len,
     output reg enq_ack,
     output reg [2:0] enq_result,
+    // start_valid/t_start 确认实际首前导时刻，用于更新该 VL 下一 BAG 到期时间。
     input wire start_valid,
     input wire [31:0] t_start,
+    // grant_* 向组帧器交付网络、发出时刻、地址、端口、长度、SN 和首页。
     input wire grant_ready,
     output reg grant_valid,
     output reg grant_a, grant_b, grant_timed,
@@ -37,15 +43,19 @@ module afdx_tx_engine #(
     output reg [31:0] grant_src, grant_dst,
     output reg [10:0] grant_len,
     output reg [7:0] grant_sn, grant_page,
+    // cfg_ok 表示当前无冲突的配置写窗口，由外壳与 cfg_we 联合使用。
     output wire cfg_ok);
     localparam INIT = 0, IDLE = 1, ENQ = 2, GRANT = 3, START = 4;
+    // op 管理互斥的表操作；phase 按同步 RAM 的读延迟推进一次操作。
     reg [2:0] op;
     reg [3:0] phase;
+    // scan_issue/commit 跟踪轮询流水；candidate 是候选 VL，pend_vl 是已授权但尚未起帧的 VL。
     reg [6:0] init_ptr, scan_issue, scan_commit, op_vl, candidate_vl, pend_vl;
     reg init_flush, candidate, pend_valid, ack_pending, enq_seen, scan_phase;
     reg [31:0] now_q, ack_time, pend_bag, new_time, difference, soon_difference;
     reg [7:0] op_head;
     reg [10:0] op_len;
+    // 状态位：62=定时有效，61:30=下次起发时间，29:22=SN，21:16=队长，15:8=头，7:0=尾。
     reg [62:0] saved_state;
     reg [43:0] saved_desc;
     reg [7:0] saved_next;
@@ -56,6 +66,7 @@ module afdx_tx_engine #(
     reg [62:0] scan_s0, scan_s1, scan_s2;
     reg [31:0] scan_d, scan_soon;
     reg scan_due;
+    // quota 在扫描和新消息入队之间分配机会；ack_pending 保存实际起帧通知。
     reg [4:0] quota;
     wire want_enq = enq_valid && ! enq_seen && (candidate || quota >= 16);
     wire want_grant = candidate && grant_ready && ! pend_valid;
@@ -170,6 +181,7 @@ module afdx_tx_engine #(
                 scan_soon <= scan_d + LOOKAHEAD;
                 scan_due <= ! scan_d[31];
             end
+            // ARINC 664 P7 带宽分配间隔（BAG）：只挑选已有消息且到期或进入 LOOKAHEAD 的 VL。
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
                 if (quota < 16) quota <= quota + 1'b1;
@@ -186,7 +198,9 @@ module afdx_tx_engine #(
                     state_wd <= { 1'b0, scan_s2[61:0] };
                 end
             end
+            // 表操作仲裁：实际起帧确认优先，其次入队/授权；打断时丢弃在途扫描结果。
             case (op)
+                // INIT：逐项清 128 个 VL 状态，最后写入落地后转 IDLE。
                 INIT : begin
                     if (! init_flush) begin
                         state_we <= 1;
@@ -200,6 +214,7 @@ module afdx_tx_engine #(
                         op <= IDLE;
                     end
                 end
+                // IDLE：等待使能；按优先级转 START/ENQ/GRANT，否则每两拍发一个扫描读。
                 IDLE : if (enable) begin
                     if (ack_pending) begin
                         invalidate_scan;
@@ -246,6 +261,7 @@ module afdx_tx_engine #(
                         end
                     end
                 end
+                // ENQ：phase 1 取配置/状态，2–3 算到期窗口，4 检查限制、接链并返回 IDLE。
                 ENQ : begin
                     phase <= phase + 1'b1;
                     case (phase)
@@ -281,6 +297,7 @@ module afdx_tx_engine #(
                         default :;
                     endcase
                 end
+                // GRANT：phase 0–6 读六个配置字及队头描述，7 授权并出队，锁住该 VL 后回 IDLE。
                 GRANT : begin
                     phase <= phase + 1'b1;
                     if (phase < 5) begin
@@ -335,6 +352,7 @@ module afdx_tx_engine #(
                         default :;
                     endcase
                 end
+                // START：phase 1 取状态，2 写入实际起发时间+BAG 并解除 pending，回 IDLE。
                 START : begin
                     phase <= phase + 1'b1;
                     case (phase)

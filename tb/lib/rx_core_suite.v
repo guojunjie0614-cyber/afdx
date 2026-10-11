@@ -1,3 +1,5 @@
+// 接收核心共用主体：按绝对周期播放双网向量，记录完整 D 行和分类事件；Verilog 与独立参考器共同判定。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 // 绝对周期激励，两网独立播放；只观察外壳端口，D 行在整条交付完成后写出。
 module rx_core_suite #(parameter NAME="tb_rx_basic",RX_RING_AW=12,RX_DQ_AW=5);

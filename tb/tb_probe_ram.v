@@ -1,3 +1,5 @@
+// 验证 eLinx 小/大 RAM 推断探针的读写时序与数据；作为综合网表仿真的存储基础检查。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
 `timescale 1ns/1ps
 module tb_probe_ram;
 `ifdef PROBE_P2

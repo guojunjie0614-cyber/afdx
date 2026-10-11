@@ -1,3 +1,5 @@
+// SNTP 共用恢复/反例主体：公开端口丢回应或注入 Originate，检查错误回应不校时、正确请求可恢复。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 // 真实主从模块经公开服务端口连接；反例独立组包，既有正常系统误差测试仍保留。
 module rtc_retry_suite #(parameter NAME="tb_rtc_recovery", NEGATIVE=0);

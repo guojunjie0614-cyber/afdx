@@ -4,17 +4,23 @@
 // 下一帧顺序准备校验和；活动帧由移位帧头、载荷预读和补零状态发送。
 module afdx_tx_builder #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // now/user_id 为起发计时和源 MAC 端系统编号。
     input wire [31:0] now,
     input wire [15:0] user_id,
+    // grant_valid/ready 接受整帧授权；grant_a/b 选网络，grant_timed/time 指定最早起发时刻。
     output wire grant_ready,
     input wire grant_valid, grant_a, grant_b, grant_timed,
+    // grant_src/dst、vlid、sport/dport、len、sn、page 提供 IPv4/UDP 字段和载荷链首页。
     input wire [31:0] grant_time, grant_src, grant_dst,
     input wire [15:0] grant_vlid, grant_sport, grant_dport,
     input wire [10:0] grant_len,
     input wire [7:0] grant_sn, grant_page,
+    // start_valid/t_start 把 MAC 实际起帧反馈给 BAG 调度器。
     output reg start_valid,
     output reg [31:0] t_start,
+    // payload_* 读载荷；pnext_* 读下一页；ret_* 在最后一次取数完成后归还对应页。
     output reg payload_re,
     output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_ra,
     input wire [7:0] payload_q,
@@ -24,23 +30,29 @@ module afdx_tx_builder #(
     output reg ret_valid,
     output reg [7:0] ret_page,
     input wire ret_ready,
+    // s_* 为给 MAC 的双网内容流；tx_sof/eof/underrun 为 MAC 反馈，ev_tx_a/b 只计正常完成帧。
     output reg s_valid,
     input wire s_ready,
     output reg [7:0] s_data_a, s_data_b,
     output reg s_last, s_en_a, s_en_b,
     input wire tx_sof, tx_eof, tx_underrun,
     output reg ev_tx_a, ev_tx_b);
+    // pending/prepared 保存下一授权；stream_active 保存当前在发送的帧，两者可重叠。
     reg pending, prepared, stream_active, p_a, p_b, p_timed;
+    // prep=0 算长度，1–6 累加 IPv4 头字段，7–8 回卷进位，9 取反后置 prepared。
     reg [3:0] prep;
     reg [31:0] p_time, p_src, p_dst, now_q, time_difference;
     reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ident, ip_length, udp_length, checksum;
     reg [10:0] p_len, active_len, payload_index;
     reg [7:0] p_sn, p_page, active_sn;
     reg [19:0] sum;
+    // 42 字节 Ethernet/IPv4/UDP 头移位输出；两网只在源 MAC 网络标识处不同。
     reg [335:0] header;
+    // part=0 帧头，1 UDP 载荷，2 短帧补零，3 ARINC 664 P7 序号；仅在 MAC 握手时推进。
     reg [1:0] part;
     reg [5:0] header_index;
     reg [4:0] padding_left;
+    // fetch_page/offset/left 逐字节预读页链；payload_pipe 和 pnext_pipe 对齐同步 RAM 返回。
     reg [7:0] fetch_page, next_page, payload_qr, pnext_qr;
     reg [10:0] fetch_left;
     // 八项字节FIFO及四项归还FIFO是小寄存器组，不是逐VL存储。
@@ -260,6 +272,7 @@ module afdx_tx_builder #(
                 ev_tx_a <= complete_a;
                 ev_tx_b <= complete_b;
             end
+            // 内容发送：帧头耗尽转载荷，载荷结束按最小帧长补零，最后发送一次 SN 并撤销 s_valid。
             if (s_valid && s_ready) begin
                 if (s_last) begin
                     s_valid <= 0;

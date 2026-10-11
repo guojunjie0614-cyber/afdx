@@ -1,3 +1,5 @@
+// SNMP 系统端点：经应用口发管理报文、经配置口取预期值；checks/errors 由 SNMP 顶层测试汇总。
+// 对应外层用例的赛题功能；本文件不构成独立验收入口，错误必须由调用者汇总。
 `timescale 1ns/1ps
 module snmp_test_endpoint #(parameter ES=1)(
     input wire clk,reset,input wire [7:0] ra,input wire rva,input wire [7:0] rb,input wire rvb,

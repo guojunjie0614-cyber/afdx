@@ -4,12 +4,16 @@
 // 空闲页 FIFO：装表、同步取页、返回。两个返回同时到时优先 builder。
 module afdx_tx_free #(
     parameter TX_PAGE_AW = 8) (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // init_done 表示全部页号已写入空闲 FIFO。
     output reg init_done,
+    // pop_req/pop_ready 接受分配请求；pop_ack 返回结果，pop_ok=1 时 pop_page 有效。
     input wire pop_req,
     output wire pop_ready,
     output reg pop_ack, pop_ok,
     output reg [7:0] pop_page,
+    // ret1_* 接收组帧器归还的页；ret2_* 接收消息缓冲回滚的页，均以 valid/ready 握手。
     input wire ret1_valid,
     input wire [7:0] ret1_page,
     output wire ret1_ready,
@@ -17,11 +21,13 @@ module afdx_tx_free #(
     input wire [7:0] ret2_page,
     output wire ret2_ready);
     localparam PAGES = (1 << TX_PAGE_AW);
+    // rd_ptr/wr_ptr 管理空闲页号队列，init_ptr 逐项装入；count 为可分配页数。
     reg [TX_PAGE_AW - 1:0] rd_ptr, wr_ptr, init_ptr, ra, wa;
     reg [TX_PAGE_AW:0] count;
     reg we, re, init_flush;
     reg [7:0] wd, captured;
     wire [7:0] q;
+    // phase=0 接受请求；1 等同步读；2 锁存页号；3 发 pop_ack 后回 0；空队列在 0 直接回失败。
     reg [2:0] phase;
     // 每个返回口一项输入寄存器；唯一 RAM 写口始终先处理口 1。
     reg ret1_pending, ret2_pending;
@@ -59,6 +65,7 @@ module afdx_tx_free #(
             we <= 0;
             re <= 0;
             pop_ack <= 0;
+            // 初始化逐拍写入全部页号，init_flush 等最后一次 RAM 写入生效。
             if (! init_done) begin
                 if (! init_flush) begin
                     we <= 1;
@@ -81,6 +88,7 @@ module afdx_tx_free #(
                     ret2_pending <= 1;
                     ret2_saved <= ret2_page;
                 end
+                // 分配和归还同时发生时项数不变；两个归还口先各自暂存，再共用 RAM 写口。
                 case ({ put, take && count != 0 })
                     2'b10 : count <= count + 1'b1;
                     2'b01 : count <= count - 1'b1;

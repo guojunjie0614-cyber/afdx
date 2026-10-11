@@ -5,12 +5,15 @@
 // 只驱动 rx_dq 写口及项数；读口、读指针和两级选择均归 rx_deliver。
 module afdx_rx_engine #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+    // clk/reset 为同步控制；enable 开放处理，now_c 用于老化，initialized 表示状态清表完成。
     input wire clk, reset, enable,
     input wire [15:0] now_c,
     output reg initialized,
+    // desc_a/b_* 是完好帧候选；take 取走描述，resolve/commit 通知解析器提交或回滚载荷。
     input wire desc_a_valid, desc_b_valid,
     input wire [RX_RING_AW + 82:0] desc_a, desc_b,
     output reg take_a, take_b, resolve_a, resolve_b, commit_a, commit_b,
+    // map_* 查 VLID 映射；cfg_* 查接收限制；state_* 独占该 VL 的完整性和冗余状态。
     output reg map_re,
     output reg [15:0] map_ra,
     input wire [12:0] map_q,
@@ -21,24 +24,30 @@ module afdx_rx_engine #(
     output reg [11:0] state_ra, state_wa,
     output reg [43:0] state_wd,
     input wire [43:0] state_q,
+    // dq_pop 由交付器出队；dq_we/wa/wd 写交付描述，dq_count 为已落地项数。
     input wire dq_pop,
     output reg dq_we,
     output reg [RX_DQ_AW - 1:0] dq_wa,
     output reg [RX_RING_AW + 55:0] dq_wd,
     output reg [RX_DQ_AW:0] dq_count,
+    // ev_a/b 报未知 VL、配置拒绝、完整性失败或队满；ev_rm_drop/ev_deliver 区分冗余丢弃和交付接纳。
     output reg [7:0] ev_a, ev_b,
     output reg ev_rm_drop, ev_deliver,
+    // cfg_ok 仅在无待处理帧且空闲/老化时允许写配置。
     output wire cfg_ok);
     localparam INIT = 0, IDLE = 1, FRAME = 2, AGE = 3, DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 56;
     reg [1:0] op;
     assign cfg_ok = enable && (op == IDLE || op == AGE) && ! desc_a_valid && ! desc_b_valid;
+    // phase 把查表、检查、队列写入和状态写回分拍；op_idx 固定一次操作的 VL。
     reg [3:0] phase;
     reg [11:0] init_ptr, age_ptr, op_idx;
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
     reg [RX_RING_AW + 82:0] current_desc;
     reg [12:0] saved_map;
     reg [31:0] saved_cfg;
+    // 状态位：42/41:34=A 网 PSN 有效/序号，33/32:25=B 网；24=RM 有效，23:16=交付 SN，15:0=到达时间。
     reg [43:0] saved_state;
+    // age_ptr 轮询老化，age_pending 保留忙时请求；elapsed 是两份帧到达粗时间的模差。
     reg [15:0] now_q, now_previous, age_time, elapsed;
     reg [7:0] next_sn, second_sn;
     reg [8:0] raw_distance, forward_distance;
@@ -49,6 +58,7 @@ module afdx_rx_engine #(
     wire [7:0] psn = op_net ? saved_state[32:25] : saved_state[41:34];
     wire psn_valid = op_net ? saved_state[33] : saved_state[42];
     reg [RX_DQ_AW - 1:0] wr_ptr;
+    // 只在判定通过且交付队列有空位时写描述；队满不更新已交付 SN。
     wire dq_put = op == FRAME && phase == 9 && deliver_allowed && dq_count < DQ_DEPTH;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
@@ -140,7 +150,9 @@ module afdx_rx_engine #(
             ev_b <= 0;
             ev_rm_drop <= 0;
             ev_deliver <= 0;
+            // ARINC 664 P7：先做各网独立完整性检查，再对合并后的交付序列做冗余选择。
             case (op)
+                // INIT：清 4096 项接收状态，最后写完成后进入 IDLE。
                 INIT : if (! init_flush) begin
                     state_we <= 1;
                     state_wa <= init_ptr;
@@ -152,6 +164,7 @@ module afdx_rx_engine #(
                     initialized <= 1;
                     op <= IDLE;
                 end
+                // IDLE：有帧先转 FRAME（同拍先 A）；无帧且需老化时转 AGE。
                 IDLE : if (enable) begin
                     if (desc_a_valid || desc_b_valid) begin
                         // 同拍描述先 A；老化最多占六拍，小于允许不定先后的16拍窗口。
@@ -175,6 +188,7 @@ module afdx_rx_engine #(
                         phase <= 0;
                     end
                 end
+                // FRAME：phase 1–4 查映射/配置/状态，5–8 检查，9 入队，10 写回，11 报结果并回 IDLE。
                 FRAME : begin
                     phase <= phase + 1'b1;
                     case (phase)
@@ -209,6 +223,7 @@ module afdx_rx_engine #(
                             second_sn <= next_sn == 255 ? 8'd1 : next_sn + 1'b1;
                             forward_distance <= raw_distance[8] ? raw_distance + 9'd255 : raw_distance;
                         end
+                        // 完整性检查：接受复位 SN=0、下一 SN 或隔一个 SN；当前网 PSN 随检查更新。
                         7 : if (saved_cfg[3]) begin
                             state_changed <= 1;
                             if (op_net) begin
@@ -224,6 +239,7 @@ module afdx_rx_engine #(
                                 phase <= 10;
                             end
                         end
+                        // 冗余选择：超 SkewMax/无有效记录时接纳；窗口内同 SN 丢弃，其余按模 255 前向距离判定。
                         8 : begin
                             if (! saved_cfg[4] || ! saved_state[24] || elapsed > saved_cfg[16:5]) deliver_allowed <= 1;
                             else if (sn == saved_state[23:16]) deliver_allowed <= 0;
@@ -271,6 +287,7 @@ module afdx_rx_engine #(
                         default :;
                     endcase
                 end
+                // AGE：phase 1 取状态，2 算年龄，3 清过期 RM 有效位并推进一项；新帧到来立即让路。
                 AGE : begin
                     // 帧描述出现即让路，未完成的同一项在下一空闲段重试。
                     if (desc_a_valid || desc_b_valid) op <= IDLE;

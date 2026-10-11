@@ -1,3 +1,6 @@
+// 验证 SNMP user_id Set、拒绝非法写、写后读回及冷启动/认证失败 v2c Trap。
+// 通过条件：全部自检完成且最终 [RESULT] 为 PASS、errors=0；超时或任一不一致均失败。
+// 完整回归还要求 sim 运行器的独立参考检查通过；所需 vectors 由该运行器准备。
 `timescale 1ns/1ps
 module tb_sys_snmp_settrap;
     reg clk=0,reset=1;always #4 clk=~clk;

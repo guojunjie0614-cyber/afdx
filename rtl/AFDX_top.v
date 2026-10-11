@@ -9,17 +9,21 @@ module AFDX_top #(
     parameter RX_RING_AW = 12,
     parameter RX_DQ_AW = 5,
     parameter GMII_RX_AW = 12) (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // 官方 A 网端口：tx_* 输出 GMII，rx_* 输入 GMII；tx_ready 是初始化完成指示，rx_ready 为模板保留口。
     output wire [7:0] tx_data,
     output wire tx_valid,
     input wire [7:0] rx_data,
     input wire rx_valid,
     output reg tx_ready,
     input wire rx_ready,
+    // 扩展 B 网端口：与 A 网相同的逐拍 GMII 字节/帧有效信号。
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
     input wire [7:0] rx_data_b,
     input wire rx_valid_b,
+    // 应用发送：valid/ready 按字节握手，last 为消息尾，vl 为发送表索引；port_en 选择消息端口或 VL 默认端口。
     input wire app_tx_valid,
     output wire app_tx_ready,
     input wire [7:0] app_tx_data,
@@ -27,21 +31,25 @@ module AFDX_top #(
     input wire [6:0] app_tx_vl,
     input wire app_tx_port_en,
     input wire [15:0] app_tx_sport, app_tx_dport,
+    // 应用接收：无反压 UDP 载荷，last 为消息尾，vl 为映射后索引；port/sport/net 为目的端口/源端口/来源网络。
     output wire app_rx_valid,
     output wire [7:0] app_rx_data,
     output wire app_rx_last,
     output wire [11:0] app_rx_vl,
     output wire [15:0] app_rx_port, app_rx_sport,
     output wire app_rx_net,
+    // 配置与统计：wr/ready 完成写握手，rd 发起读，rvalid/rdata 两拍返回；地址按 32 位字索引。
     input wire cfg_wr, cfg_rd,
     input wire [17:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output wire [31:0] cfg_rdata,
     output wire cfg_rvalid, cfg_ready,
+    // 事件输出：tx 为发送分类，a/b 为分网接收分类，rm_drop/deliver 为冗余丢弃/接纳，gdrop 为兼容口。
     output wire [6:0] ev_tx,
     output wire [7:0] ev_a, ev_b,
     output wire ev_rm_drop, ev_deliver,
     output wire [1:0] ev_gdrop);
+    // 计时与初始化：now/now_c 分别用于发送 BAG 和接收冗余；两个核心独立清表后统一开放服务。
     wire [31:0] now;
     wire [15:0] now_c, user_id;
     wire byte_en, tx_initialized, rx_initialized;
@@ -72,6 +80,7 @@ module AFDX_top #(
     wire [15:0] load_tx_sport, load_tx_dport;
     wire [31:0] load_rdata, load_extra_data;
     wire bus_rd, bus_wr, bus_rvalid;
+    // 主机和 SNMP 共用配置读数据；两个两拍标记流水分别返回各自的读有效。
     reg [1:0] host_read_pipe, snmp_read_pipe;
     // 主机优先；同地址读合并为同一拍快照，分别返回各自的valid。
     assign snmp_mib_ready = ! cfg_wr && (! cfg_rd || (! snmp_mib_wr && cfg_addr == snmp_mib_addr)) && (! snmp_mib_wr || cfg_ready);
@@ -91,6 +100,7 @@ module AFDX_top #(
             snmp_read_pipe <= { snmp_read_pipe[0], snmp_grant && snmp_mib_rd };
         end
     end
+    // 服务实例：RTC 占 0x80 组，SNMP 占 0x90/0x98/0xa0 组，615A 占 0xb0/0xb8 组。
     wire rtc_select = (bus_addr[17:4] == 14'h0008);
     afdx_615a loader (.clk(clk), .reset(reset), .enable(tx_ready),
         .cfg_we(cfg_wr && cfg_ready && bus_addr[17:4] == 14'h000b), .cfg_addr(bus_addr[7:0]), .cfg_wdata(cfg_wdata),
@@ -111,6 +121,7 @@ module AFDX_top #(
         .sync_count(rtc_sync_count), .tx_valid(rtc_tx_valid), .tx_ready(svc_tx_ready[0]), .tx_data(rtc_tx_data),
         .tx_last(rtc_tx_last), .tx_vl(rtc_tx_vl), .tx_port(rtc_port), .rx_valid(svc_rx_valid), .rx_data(svc_rx_data),
         .rx_last(svc_rx_last), .rx_port(svc_rx_port), .rx_claim(rtc_claim));
+    // 消息仲裁：发送按整消息轮询，接收按 UDP 端口认领；服务不穿透收发核心的内部状态。
     afdx_svc service_channel (.clk(clk), .reset(reset), .app_tx_valid(app_tx_valid), .app_tx_ready(app_tx_ready),
         .app_tx_data(app_tx_data), .app_tx_last(app_tx_last), .app_tx_vl(app_tx_vl), .app_tx_port_en(app_tx_port_en),
         .app_tx_sport(app_tx_sport), .app_tx_dport(app_tx_dport), .svc_tx_valid({ load_tx_valid, snmp_tx_valid,
@@ -128,6 +139,7 @@ module AFDX_top #(
         if (reset) tx_ready <= 0;
         else tx_ready <= tx_initialized && rx_initialized;
     end
+    // 原生双网收发与表配置：GMII 直连核心，不经过保留的慢线适配器。
     afdx_timebase timebase (.clk(clk), .reset(reset), .now(now), .byte_en(byte_en), .now_c(now_c));
     afdx_tx_core #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD)) tx_core (.clk(clk), .reset(reset),
         .now(now), .byte_en(byte_en), .m_valid(m_valid), .m_ready(m_ready), .m_data(m_data), .m_last(m_last), .m_vl(m_vl),

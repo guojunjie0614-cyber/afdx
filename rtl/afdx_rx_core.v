@@ -4,25 +4,31 @@
 // 接收外壳：并行清映射/配置表，连接双网 MAC/解析器、唯一状态引擎和交付流水。
 module afdx_rx_core #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // now_c 为粗时间；rx_data_a/b、rx_valid_a/b 接双网原生 GMII。
     input wire [15:0] now_c,
     input wire [7:0] rx_data_a,
     input wire rx_valid_a,
     input wire [7:0] rx_data_b,
     input wire rx_valid_b,
+    // cfg_map_we 写 VLID→索引映射，cfg_cfg_we 写接收 VL 参数；cfg_ok 为无冲突写窗口。
     input wire cfg_map_we, cfg_cfg_we,
     input wire [15:0] cfg_addr,
     input wire [31:0] cfg_wdata,
+    // d_* 无反压交付 UDP 载荷；last 为末字节，vl 为映射后索引，sport/dport/net 为来源信息。
     output wire d_valid,
     output wire [7:0] d_data,
     output wire d_last,
     output wire [11:0] d_vl,
     output wire [15:0] d_sport, d_dport,
     output wire d_net,
+    // init_done 等待映射/配置/状态全部清表；ev_a/b 分网分类，ev_rm_drop 为冗余丢弃，ev_deliver 为接纳。
     output reg init_done,
     output reg [7:0] ev_a, ev_b,
     output reg ev_rm_drop, ev_deliver,
     output wire cfg_ok);
+    // clear_addr 扫 65536 项映射，并同时清前 4096 项配置；flush_init 等写入落地。
     reg map_we, cfg_we, flush_init;
     reg [15:0] clear_addr, map_wa;
     reg [11:0] cfg_wa;
@@ -65,6 +71,7 @@ module afdx_rx_core #(
             end
         end
     endgenerate
+    // 清表与配置写复用：只有初始化结束且 cfg_ok 才把外部写入送到对应 RAM。
     always @(posedge clk) begin
         if (reset) begin
             init_done <= 0;
@@ -113,11 +120,14 @@ module afdx_rx_core #(
             ev_deliver <= engine_deliver;
         end
     end
+    // map 保存有效位和 12 位索引；cfg 保存网络/完整性/冗余开关及长度、SkewMax；state 保存各 VL 运行状态。
     afdx_ram_sdp #(.WIDTH(13), .DEPTH(65536)) rx_map (clk, map_we, map_wa, map_wd, map_re, map_ra, map_q);
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (clk, cfg_we, cfg_wa, cfg_wd, cfg_re, cfg_ra, cfg_q);
     afdx_ram_sdp #(.WIDTH(44), .DEPTH(4096)) rx_state (clk, state_we, state_wa, state_wd, state_re, state_ra, state_q);
+    // A/B 各自载荷环：解析器暂写，判定成功才提交；交付器只读已提交描述。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (clk, ra_we, ra_wa, ra_wd, ra_re, ra_ra, ra_q);
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (clk, rb_we, rb_wa, rb_wd, rb_re, rb_ra, rb_q);
+    // 接收路径：独立 MAC/FCS 检查与解析 → 共享完整性/冗余判定 → 单路交付。
     afdx_mac_rx mac_a (clk, reset, rx_data_a, rx_valid_a, ma_valid, ma_data, ma_first, fa_end, fa_err, fa_len);
     afdx_mac_rx mac_b (clk, reset, rx_data_b, rx_valid_b, mb_valid, mb_data, mb_first, fb_end, fb_err, fb_len);
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_a (clk, reset, init_done, rx_valid_a, now_c, ma_valid, ma_first, ma_data,

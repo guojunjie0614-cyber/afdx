@@ -3,15 +3,19 @@
 // 固定起始偏移D=10688拍；数据RAM、描述队列和预取队列独立推进。
 // 慢线每八拍一字节，GMII 每拍一字节；每帧 SOF 保持相同的固定延迟。
 module afdx_gmii_tx (
+    // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+    // slow_data/valid 为每八拍一字节的慢线输入，帧内 valid 连续；本适配器不接入当前原生 GMII 顶层。
     input wire [7:0] slow_data,
     input wire slow_valid,
+    // tx_data/valid 为每拍一字节的 GMII 输出，起帧相对输入延迟固定。
     output reg [7:0] tx_data,
     output reg tx_valid);
     // 保留前一字节以便写入 last：最坏可用时间 S+8*k+13。
     // ceil64(7*1525+13)=10688；G2 的变异入口是此常量。
     localparam TX_DELAY = 10688;
     localparam DATA_AW = 11, DATA_DEPTH = 2048, DUE_DEPTH = 16;
+    // clock_count 给每帧生成发送截止点；input_active/byte_phase 捕获慢线字节并给尾字节加 last。
     reg [31:0] clock_count;
     reg input_active;
     reg [2:0] byte_phase;
@@ -22,6 +26,7 @@ module afdx_gmii_tx (
     reg [DATA_AW - 1:0] data_wa, data_ra;
     reg [8:0] data_wd;
     wire [8:0] data_q;
+    // 字节环同时区分已写、已发读请求和已释放位置，避免预取阶段重复计入空闲空间。
     reg [DATA_AW:0] write_ptr, read_issue_ptr, read_release_ptr;
     wire [DATA_AW:0] occupied = write_ptr - read_release_ptr;
     afdx_ram_sdp #(.WIDTH(9), .DEPTH(DATA_DEPTH)) bytes_ram (clk, data_we, data_wa, data_wd, data_re, data_ra, data_q);
@@ -31,6 +36,7 @@ module afdx_gmii_tx (
     reg [31:0] due_wd;
     wire [31:0] due_q;
     reg [4:0] due_count;
+    // due_phase=0 发队头读请求，1 等 RAM，2 锁存 head_due 后回 0；到期且未发送时 launch_frame。
     reg [1:0] due_phase;
     reg head_valid;
     reg [31:0] head_due;
@@ -90,6 +96,7 @@ module afdx_gmii_tx (
             due_re <= 0;
             tx_data <= 0;
             tx_valid <= 0;
+            // 输入缓存与定时描述：新帧登记截止点，上一字节延迟保存以识别真实帧尾。
             if (frame_start) begin
                 input_active <= 1;
                 byte_phase <= 0;
@@ -139,6 +146,7 @@ module afdx_gmii_tx (
                 2'b01 : prefetch_count <= prefetch_count - 1'b1;
                 default :;
             endcase
+            // 发送阶段：launch_frame 启动，sending 持续逐拍输出，取到 last 后停止。
             if (pop_word) begin
                 tx_data <= front_word[7:0];
                 tx_valid <= 1;
