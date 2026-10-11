@@ -30,7 +30,7 @@ module afdx_cfg (
     input wire [1:0] ev_gdrop,
     input wire [31:0] rtc_rdata, rtc_sync_count,
     input wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data);
-    // 地址译码：0x00400–0x007ff 为发送表，0x10000–0x1ffff 为映射表，0x20000–0x20fff 为接收表。
+    // 地址译码：0x01000–0x013ff 为发送表，0x10000–0x1ffff 为映射表，0x20000–0x20fff 为接收表。
     wire select_tx = (cfg_addr[17:10] == 8'b00000100);
     wire select_map = (cfg_addr[17:16] == 2'b01);
     wire select_rx = (cfg_addr[17:12] == 6'b100000);
