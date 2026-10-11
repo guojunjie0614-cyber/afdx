@@ -33,6 +33,7 @@
 ## 评委快速上手
 
 先走不需要 Python 的步骤 1、2。测试会自动建立工作库和输入文件，不必先做综合。
+仓库路径不要含中文或空格。本次实测 ModelSim 2020.4 在中文路径下无法创建工作库，在带空格的路径下无法载入仿真；入口会提前提示更换目录。
 
 1. 在 ModelSim 的 Transcript 窗口进入仓库根目录，把下面的占位文字换成实际目录。
 
@@ -50,7 +51,33 @@
 
    预期：五个用例都打印 `JUDGE CASE PASS`，最后打印 `JUDGE ENTRY PASS cases=5`；中途失败会打印 `JUDGE ENTRY FAIL`。
 
+   Warning 只计数和提示，Error、Fatal 或测试打印的 FAIL 会判失败。成功和失败都会回到仓库根目录，恢复原来的 Transcript 记录设置；可直接重新运行这条命令。
+
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
+
+本次五用例实测如下（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
+
+| 用例 | 实测耗时（秒） |
+|---|---:|
+| 五功能（`services`） | 2.388 |
+| 77 条虚拟链路突发（`burst77`） | 2.189 |
+| 81 条虚拟链路突发（`burst81`） | 2.219 |
+| 时钟同步（`rtc`） | 48.082 |
+| 吞吐、时延和抖动（`performance`） | 430.901 |
+| 合计 | 486.455 |
+
+本次在 `out/` 下生成约 **0.57 GiB（579.1 MiB）** 的工作库、输入、波形和记录。每次运行使用新目录，并保留以前的结果。
+
+下面是这次运行的五行用例结果和总结果：
+
+```text
+JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.388
+JUDGE CASE PASS burst77 checks=643550 errors=0 warnings=0 elapsed_s=2.189
+JUDGE CASE PASS burst81 checks=673498 errors=0 warnings=0 elapsed_s=2.219
+JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=48.082
+JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=430.901
+JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
+```
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一仓库根目录。
 
@@ -80,6 +107,8 @@
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
 
 吞吐测试先运行两个带宽间隔，再测量 21 ms 内交付的用户字节数。端到端时延从应用提交末字节算到对端交付末字节，只扣除设定的线路延迟。发送抖动表示同一虚拟链路相邻两帧的发送间隔偏离 1 ms 的程度。
+
+`JUDGE REQUIREMENT` 对照赛题门限并打印余量：吞吐至少 100 Mbps、最大端到端时延至多 2000 µs、抖动至多 50 µs。`JUDGE BASELINE` 另行检查是否仍为 906.136 Mbps、24.408 µs、0 µs；门限不达标和基线不一致会分别标出 FAIL。
 
 队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上是仿真测量；综合时序也尚未计入布局布线延迟，不能当作上板或物理时序结果。
 

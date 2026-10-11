@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 编译并执行C3端口测试；原始输出保存在out/sim。
 .PARAMETER Test

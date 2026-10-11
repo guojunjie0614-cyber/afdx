@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 RTL回归；-Netlist按tests_netlist.txt的测试|综合顶层列表，复用out/latest_<顶层>.json对应网表。
 .PARAMETER Netlist

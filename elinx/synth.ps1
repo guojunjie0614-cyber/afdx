@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 C3 EQ6HL130/CSG484_H原生综合，-Sta额外执行125MHz未布局时序估算。
 .PARAMETER Top
