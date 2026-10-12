@@ -44,6 +44,11 @@ module afdx_tx_buf #(
     input wire [2:0] enq_result,
     // ev_* 每次输出一个结果脉冲，表示接纳或本次拒绝原因。
     output reg ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
+    localparam ENQ_ACCEPTED = 0;
+    localparam ENQ_DISABLED = 1;
+    localparam ENQ_FULL = 2;
+    localparam ENQ_TOO_LONG = 3;
+    localparam ENQ_NO_PAGE = 4;
     localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
         EVENT = 9;
     reg [3:0] state;
@@ -87,7 +92,7 @@ module afdx_tx_buf #(
             enq_len <= 0;
             used <= 0;
             returned <= 0;
-            reason <= 0;
+            reason <= ENQ_ACCEPTED;
             current_page <= 0;
             held_data <= 0;
             offset <= 0;
@@ -125,7 +130,7 @@ module afdx_tx_buf #(
                     enq_len <= 1;
                     used <= 0;
                     returned <= 0;
-                    reason <= 0;
+                    reason <= ENQ_ACCEPTED;
                     boundary <= 0;
                     state <= ALLOC;
                 end
@@ -139,7 +144,7 @@ module afdx_tx_buf #(
                     if (pop_req && pop_ready) pop_req <= 0;
                     if (pop_ack) begin
                         if (! pop_ok) begin
-                            reason <= 4;
+                            reason <= ENQ_NO_PAGE;
                             returned <= 0;
                             state <= RETURN;
                         end
@@ -174,7 +179,7 @@ module afdx_tx_buf #(
                 RECV : if (m_valid && m_ready) begin
                     ended <= m_last;
                     if (enq_len == 1471) begin
-                        reason <= 3;
+                        reason <= ENQ_TOO_LONG;
                         returned <= 0;
                         state <= RETURN;
                     end
@@ -211,7 +216,7 @@ module afdx_tx_buf #(
                 REPLY : if (enq_ack) begin
                     enq_valid <= 0;
                     reason <= enq_result;
-                    if (enq_result == 0) state <= EVENT;
+                    if (enq_result == ENQ_ACCEPTED) state <= EVENT;
                     else begin
                         returned <= 0;
                         state <= RETURN;
@@ -244,11 +249,11 @@ module afdx_tx_buf #(
                 // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
                 EVENT : begin
                     case (reason)
-                        0 : ev_accept <= 1;
-                        1 : ev_drop_dis <= 1;
-                        2 : ev_drop_full <= 1;
-                        3 : ev_drop_long <= 1;
-                        4 : ev_drop_nopage <= 1;
+                        ENQ_ACCEPTED : ev_accept <= 1;
+                        ENQ_DISABLED : ev_drop_dis <= 1;
+                        ENQ_FULL : ev_drop_full <= 1;
+                        ENQ_TOO_LONG : ev_drop_long <= 1;
+                        ENQ_NO_PAGE : ev_drop_nopage <= 1;
                         default :;
                     endcase
                     state <= IDLE;

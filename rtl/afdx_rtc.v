@@ -28,6 +28,20 @@ module afdx_rtc (
     input wire rx_last,
     input wire [15:0] rx_port,
     output wire rx_claim);
+    localparam CALC_IDLE = 0;
+    localparam CALC_START_T2 = 10;
+    localparam CALC_WAIT_T2 = 11;
+    localparam CALC_START_T3 = 12;
+    localparam CALC_WAIT_T3 = 13;
+    localparam CALC_DIFFERENCES = 14;
+    localparam CALC_SUM = 2;
+    localparam CALC_HALF = 3;
+    localparam CALC_HALF_SECOND = 4;
+    localparam CALC_NORMALIZE_OFFSET = 5;
+    localparam CALC_ADD_OFFSET = 6;
+    localparam CALC_NORMALIZE_TIME = 7;
+    localparam CALC_LATENCY = 8;
+    localparam CALC_APPLY = 9;
     localparam NTP_EPOCH = 32'd3155673600;
     // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
     // active 表示服务已启用，master 为高表示本机是服务端。
@@ -228,7 +242,7 @@ module afdx_rtc (
             seconds <= load_sec;
             nanoseconds <= load_ns;
         end
-        else if (calc_state == 9) begin
+        else if (calc_state == CALC_APPLY) begin
             if (adjusted_ns >= 1000000000) begin
                 seconds <= adjusted_sec + 32'd1;
                 nanoseconds <= adjusted_ns - 32'd1000000000;
@@ -274,7 +288,7 @@ module afdx_rtc (
             waiting <= 0;
             reply_pending <= 0;
             countdown <= 0;
-            calc_state <= 0;
+            calc_state <= CALC_IDLE;
             diff_sec1 <= 0;
             diff_sec2 <= 0;
             diff_ns1 <= 0;
@@ -299,7 +313,7 @@ module afdx_rtc (
             waiting <= 0;
             reply_pending <= 0;
             countdown <= 0;
-            calc_state <= 0;
+            calc_state <= CALC_IDLE;
             decode_start <= 0;
         end
         else begin
@@ -331,53 +345,53 @@ module afdx_rtc (
                     && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
                     server_receive_sec <= rx_packet[127:96] - NTP_EPOCH;
                     server_transmit_sec <= rx_packet[63:32] - NTP_EPOCH;
-                    calc_state <= 10;
+                    calc_state <= CALC_START_T2;
                 end
             end
             // 时钟偏差为 ((T2-T1)+(T3-T4))/2。
             // 秒和纳秒分开计算，再处理借位和进位。
             case (calc_state)
-                10 : begin
+                CALC_START_T2 : begin
                     decode_value <= rx_packet[95:64];
                     decode_start <= 1;
-                    calc_state <= 11;
+                    calc_state <= CALC_WAIT_T2;
                 end
-                11 : if (decode_done) begin
+                CALC_WAIT_T2 : if (decode_done) begin
                     server_receive_ns <= decode_result;
-                    calc_state <= 12;
+                    calc_state <= CALC_START_T3;
                 end
-                12 : begin
+                CALC_START_T3 : begin
                     decode_value <= rx_packet[31:0];
                     decode_start <= 1;
-                    calc_state <= 13;
+                    calc_state <= CALC_WAIT_T3;
                 end
-                13 : if (decode_done) begin
+                CALC_WAIT_T3 : if (decode_done) begin
                     server_transmit_ns <= decode_result;
-                    calc_state <= 14;
+                    calc_state <= CALC_DIFFERENCES;
                 end
-                14 : begin
+                CALC_DIFFERENCES : begin
                     diff_sec1 <= $signed (server_receive_sec) - $signed (req_sec);
                     diff_ns1 <= $signed (server_receive_ns) - $signed (req_ns);
                     diff_sec2 <= $signed (server_transmit_sec) - $signed (received_sec);
                     diff_ns2 <= $signed (server_transmit_ns) - $signed (received_ns);
-                    calc_state <= 2;
+                    calc_state <= CALC_SUM;
                 end
-                2 : begin
+                CALC_SUM : begin
                     sum_sec <= diff_sec1 + diff_sec2;
                     sum_ns <= diff_ns1 + diff_ns2;
-                    calc_state <= 3;
+                    calc_state <= CALC_HALF;
                 end
-                3 : begin
+                CALC_HALF : begin
                     correction_sec <= sum_sec >>> 1;
                     correction_ns <= sum_ns >>> 1;
                     second_odd <= sum_sec[0];
-                    calc_state <= 4;
+                    calc_state <= CALC_HALF_SECOND;
                 end
-                4 : begin
+                CALC_HALF_SECOND : begin
                     correction_ns <= correction_ns + (second_odd ? 32'sd500000000 : 32'sd0);
-                    calc_state <= 5;
+                    calc_state <= CALC_NORMALIZE_OFFSET;
                 end
-                5 : begin
+                CALC_NORMALIZE_OFFSET : begin
                     if (correction_ns < 0) begin
                         correction_ns <= correction_ns + 32'sd1000000000;
                         correction_sec <= correction_sec - 32'sd1;
@@ -386,30 +400,30 @@ module afdx_rtc (
                         correction_ns <= correction_ns - 32'sd1000000000;
                         correction_sec <= correction_sec + 32'sd1;
                     end
-                    calc_state <= 6;
+                    calc_state <= CALC_ADD_OFFSET;
                 end
-                6 : begin
+                CALC_ADD_OFFSET : begin
                     adjusted_sec <= seconds + correction_sec;
                     adjusted_ns <= nanoseconds + correction_ns;
-                    calc_state <= 7;
+                    calc_state <= CALC_NORMALIZE_TIME;
                 end
-                7 : begin
+                CALC_NORMALIZE_TIME : begin
                     if (adjusted_ns >= 1000000000) begin
                         adjusted_ns <= adjusted_ns - 32'd1000000000;
                         adjusted_sec <= adjusted_sec + 32'd1;
                     end
-                    calc_state <= 8;
+                    calc_state <= CALC_LATENCY;
                 end
-                8 : begin
+                CALC_LATENCY : begin
                     adjusted_ns <= adjusted_ns + 32'd32;
-                    calc_state <= 9;
+                    calc_state <= CALC_APPLY;
                 end
-                9 : begin
+                CALC_APPLY : begin
                     offset_sec <= correction_sec;
                     offset_ns <= correction_ns;
                     sync_count <= sync_count + 32'd1;
                     waiting <= 0;
-                    calc_state <= 0;
+                    calc_state <= CALC_IDLE;
                 end
             endcase
             // 服务端发送待答复的报文，客户端在请求周期到期时重发。
@@ -424,7 +438,7 @@ module afdx_rtc (
                         tx_state <= 1;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if (! master && countdown == 0 && calc_state == 0 && ! rx_done) begin
+                    else if (! master && countdown == 0 && calc_state == CALC_IDLE && ! rx_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;

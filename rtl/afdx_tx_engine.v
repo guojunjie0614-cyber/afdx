@@ -52,6 +52,10 @@ module afdx_tx_engine #(
     output reg [7:0] grant_sn, grant_page,
     // cfg_ok 为高时，发送核心可以写入外部配置。
     output wire cfg_ok);
+    localparam ENQ_ACCEPTED = 0;
+    localparam ENQ_DISABLED = 1;
+    localparam ENQ_FULL = 2;
+    localparam ENQ_TOO_LONG = 3;
     localparam INIT = 0, IDLE = 1, ENQ = 2, GRANT = 3, START = 4;
     // op 选择本次表操作，phase 记录操作进行到哪一拍。
     reg [2:0] op;
@@ -124,7 +128,7 @@ module afdx_tx_engine #(
             desc_re <= 0;
             desc_ra <= 0;
             enq_ack <= 0;
-            enq_result <= 0;
+            enq_result <= ENQ_ACCEPTED;
             grant_valid <= 0;
             grant_a <= 0;
             grant_b <= 0;
@@ -302,11 +306,11 @@ module afdx_tx_engine #(
                         4 : begin
                             enq_ack <= 1;
                             op <= IDLE;
-                            if (! words[0] [0] || words[0] [2:1] == 0) enq_result <= 1;
-                            else if (op_len > words[0] [19:9]) enq_result <= 3;
-                            else if (saved_state[21:16] >= words[0] [8:3]) enq_result <= 2;
+                            if (! words[0] [0] || words[0] [2:1] == 0) enq_result <= ENQ_DISABLED;
+                            else if (op_len > words[0] [19:9]) enq_result <= ENQ_TOO_LONG;
+                            else if (saved_state[21:16] >= words[0] [8:3]) enq_result <= ENQ_FULL;
                             else begin
-                                enq_result <= 0;
+                                enq_result <= ENQ_ACCEPTED;
                                 state_we <= 1;
                                 state_wa <= op_vl;
                                 state_wd <= { saved_state[62:22], saved_state[21:16] + 6'd1,

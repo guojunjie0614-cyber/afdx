@@ -41,6 +41,17 @@ module afdx_rx_engine #(
     output reg ev_rm_drop, ev_deliver,
     // cfg_ok 为高时允许外部写配置，此时没有等待处理的帧。
     output wire cfg_ok);
+    localparam RX_ACCEPTED = 0;
+    localparam RX_UNMAPPED = 1;
+    localparam RX_CONFIG_REJECT = 2;
+    localparam RX_BAD_SEQUENCE = 3;
+    localparam RX_DUPLICATE = 4;
+    localparam RX_QUEUE_FULL = 5;
+    localparam EV_NONE = 0;
+    localparam EV_UNMAPPED = 8'h10;
+    localparam EV_CONFIG_REJECT = 8'h20;
+    localparam EV_BAD_SEQUENCE = 8'h40;
+    localparam EV_QUEUE_FULL = 8'h80;
     localparam INIT = 0, IDLE = 1, FRAME = 2, AGE = 3, DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 56;
     reg [1:0] op;
     assign cfg_ok = enable && (op == IDLE || op == AGE) && ! desc_a_valid && ! desc_b_valid;
@@ -144,9 +155,9 @@ module afdx_rx_engine #(
             second_sn <= 0;
             raw_distance <= 0;
             forward_distance <= 0;
-            result <= 0;
-            ev_a <= 0;
-            ev_b <= 0;
+            result <= RX_ACCEPTED;
+            ev_a <= EV_NONE;
+            ev_b <= EV_NONE;
             ev_rm_drop <= 0;
             ev_deliver <= 0;
         end
@@ -165,8 +176,8 @@ module afdx_rx_engine #(
             cfg_re <= 0;
             state_re <= 0;
             state_we <= 0;
-            ev_a <= 0;
-            ev_b <= 0;
+            ev_a <= EV_NONE;
+            ev_b <= EV_NONE;
             ev_rm_drop <= 0;
             ev_deliver <= 0;
             // 按 ARINC 664 P7，先检查各网序号，再去掉双网重复帧。
@@ -225,7 +236,7 @@ module afdx_rx_engine #(
                     case (phase)
                         1 : saved_map <= map_q;
                         2 : if (! saved_map[12]) begin
-                            result <= 1;
+                            result <= RX_UNMAPPED;
                             phase <= 11;
                         end
                         else begin
@@ -242,7 +253,7 @@ module afdx_rx_engine #(
                         5 : begin
                             if (! saved_cfg[0] || ! (op_net ? saved_cfg[2] : saved_cfg[1])
                                 || length > saved_cfg[27:17]) begin
-                                result <= 2;
+                                result <= RX_CONFIG_REJECT;
                                 phase <= 11;
                             end
                             next_sn <= psn == 255 ? 8'd1 : psn + 1'b1;
@@ -269,7 +280,7 @@ module afdx_rx_engine #(
                                 saved_state[41:34] <= sn;
                             end
                             if (psn_valid && sn != 0 && sn != next_sn && sn != second_sn) begin
-                                result <= 3;
+                                result <= RX_BAD_SEQUENCE;
                                 phase <= 10;
                             end
                         end
@@ -283,10 +294,10 @@ module afdx_rx_engine #(
                             else deliver_allowed <= forward_distance >= 1 && forward_distance <= 127;
                         end
                         9 : begin
-                            if (! deliver_allowed) result <= 4;
-                            else if (dq_count == DQ_DEPTH) result <= 5;
+                            if (! deliver_allowed) result <= RX_DUPLICATE;
+                            else if (dq_count == DQ_DEPTH) result <= RX_QUEUE_FULL;
                             else begin
-                                result <= 0;
+                                result <= RX_ACCEPTED;
                                 if (saved_cfg[4]) begin
                                     saved_state[24] <= 1;
                                     saved_state[23:16] <= sn;
@@ -303,19 +314,19 @@ module afdx_rx_engine #(
                         11 : begin
                             resolve_a <= ! op_net;
                             resolve_b <= op_net;
-                            commit_a <= ! op_net && result == 0;
-                            commit_b <= op_net && result == 0;
+                            commit_a <= ! op_net && result == RX_ACCEPTED;
+                            commit_b <= op_net && result == RX_ACCEPTED;
                             case (result)
-                                0 : ev_deliver <= 1;
-                                1 : if (op_net) ev_b <= 8'h10;
-                                else ev_a <= 8'h10;
-                                2 : if (op_net) ev_b <= 8'h20;
-                                else ev_a <= 8'h20;
-                                3 : if (op_net) ev_b <= 8'h40;
-                                else ev_a <= 8'h40;
-                                4 : ev_rm_drop <= 1;
-                                5 : if (op_net) ev_b <= 8'h80;
-                                else ev_a <= 8'h80;
+                                RX_ACCEPTED : ev_deliver <= 1;
+                                RX_UNMAPPED : if (op_net) ev_b <= EV_UNMAPPED;
+                                else ev_a <= EV_UNMAPPED;
+                                RX_CONFIG_REJECT : if (op_net) ev_b <= EV_CONFIG_REJECT;
+                                else ev_a <= EV_CONFIG_REJECT;
+                                RX_BAD_SEQUENCE : if (op_net) ev_b <= EV_BAD_SEQUENCE;
+                                else ev_a <= EV_BAD_SEQUENCE;
+                                RX_DUPLICATE : ev_rm_drop <= 1;
+                                RX_QUEUE_FULL : if (op_net) ev_b <= EV_QUEUE_FULL;
+                                else ev_a <= EV_QUEUE_FULL;
                                 default :;
                             endcase
                             op <= IDLE;

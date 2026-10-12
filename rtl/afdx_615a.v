@@ -27,19 +27,94 @@ module afdx_615a (
     input wire rx_last,
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
-    localparam IDLE = 0, WAIT_PACKET = 1, DISPATCH = 2, NAME = 3, NAME_BYTE = 4, MODE = 5, MODE_BYTE = 6,
-        REQUEST_OK = 7,
-        FETCH = 8, FETCH_WAIT = 9, FETCH_CAPTURE = 10, FETCH_DONE = 11, NUMBER = 12, NUMBER_BYTE = 13, BUILD = 14,
-            EMIT = 15,
-        BUILD_FLUSH = 16, TX_ADDR = 17, TX_WAIT = 18, TX_CAPTURE = 19, TX_SEND = 20, START_LUS = 21, RATIO_SCALE = 22,
-        RATIO_SUB = 23, RATIO_DEC = 24, LUS_WRQ = 25, LUS_DATA = 26, LUS_DONE = 27, ACK_MAIN = 28, DATA_COPY = 29,
-        DATA_BYTE = 30, DATA_END = 31, LUR_START = 32, LUR_LENGTH = 33, LUR_VERSION = 34, LUR_COUNT = 35, LUR_HLEN = 36,
-        LUR_PLEN = 37, LUR_READY = 38, RRQ_HEADER = 39, HEADER_START = 40, HEADER_LENGTH = 41, HEADER_VERSION = 42,
-        HEADER_PTR = 43, HEADER_CRC = 44, HEADER_CRC_BYTE = 45, HEADER_CRC_EXPECT = 46, HEADER_CRC_CHECK = 47,
-        HEADER_COUNT = 48, HEADER_NLEN = 49, HEADER_PLEN = 50, HEADER_SIZE = 51, HEADER_DCRC = 52, HEADER_READY = 53,
-        RRQ_DATA = 54, DATA_CHECK = 55, DATA_SUCCESS = 56, FAILURE = 57, FAILURE_SENT = 58, DONE = 59, BUILD_PREP = 60,
-        LUR_OFFSETS = 61, LNR_USER = 62, LNR_NAME = 63, LNR_BYTE = 64, LNR_READY = 65,
-        DL_WRQ = 66, DL_BLOCK = 67, DL_SIZE = 68, DL_ACK = 69, DENY_SEND = 70, HEADER_PTR_CHECK = 71;
+    // 这些状态接收并检查请求。
+    localparam REASON_NONE = 0;
+    localparam REASON_DESCRIPTION = 1;
+    localparam REASON_LENGTH = 2;
+    localparam REASON_CHECKSUM = 3;
+    localparam REASON_TFTP_ERROR = 4;
+    localparam REASON_RETRY_LIMIT = 5;
+    localparam IDLE = 0;
+    localparam WAIT_PACKET = 1;
+    localparam DISPATCH = 2;
+    localparam NAME = 3;
+    localparam NAME_BYTE = 4;
+    localparam MODE = 5;
+    localparam MODE_BYTE = 6;
+    localparam REQUEST_OK = 7;
+    localparam DENY_SEND = 70;
+    // 这些状态从存储器读取字节或数字。
+    localparam FETCH = 8;
+    localparam FETCH_WAIT = 9;
+    localparam FETCH_CAPTURE = 10;
+    localparam FETCH_DONE = 11;
+    localparam NUMBER = 12;
+    localparam NUMBER_BYTE = 13;
+    // 这些状态构造并发送报文。
+    localparam BUILD = 14;
+    localparam BUILD_PREP = 60;
+    localparam EMIT = 15;
+    localparam BUILD_FLUSH = 16;
+    localparam TX_ADDR = 17;
+    localparam TX_WAIT = 18;
+    localparam TX_CAPTURE = 19;
+    localparam TX_SEND = 20;
+    localparam ACK_MAIN = 28;
+    // 这些状态计算进度并报告加载状态。
+    localparam START_LUS = 21;
+    localparam RATIO_SCALE = 22;
+    localparam RATIO_SUB = 23;
+    localparam RATIO_DEC = 24;
+    localparam LUS_WRQ = 25;
+    localparam LUS_DATA = 26;
+    localparam LUS_DONE = 27;
+    // 这些状态接收并保存文件内容。
+    localparam DATA_COPY = 29;
+    localparam DATA_BYTE = 30;
+    localparam DATA_END = 31;
+    // 这些状态检查上传请求列表。
+    localparam LUR_START = 32;
+    localparam LUR_LENGTH = 33;
+    localparam LUR_VERSION = 34;
+    localparam LUR_COUNT = 35;
+    localparam LUR_HLEN = 36;
+    localparam LUR_PLEN = 37;
+    localparam LUR_OFFSETS = 61;
+    localparam LUR_READY = 38;
+    // 这些状态获取并检查头文件。
+    localparam RRQ_HEADER = 39;
+    localparam HEADER_START = 40;
+    localparam HEADER_LENGTH = 41;
+    localparam HEADER_VERSION = 42;
+    localparam HEADER_PTR = 43;
+    localparam HEADER_PTR_CHECK = 71;
+    localparam HEADER_CRC = 44;
+    localparam HEADER_CRC_BYTE = 45;
+    localparam HEADER_CRC_EXPECT = 46;
+    localparam HEADER_CRC_CHECK = 47;
+    localparam HEADER_COUNT = 48;
+    localparam HEADER_NLEN = 49;
+    localparam HEADER_PLEN = 50;
+    localparam HEADER_SIZE = 51;
+    localparam HEADER_DCRC = 52;
+    localparam HEADER_READY = 53;
+    // 这些状态获取并校验数据文件。
+    localparam RRQ_DATA = 54;
+    localparam DATA_CHECK = 55;
+    localparam DATA_SUCCESS = 56;
+    // 这些状态检查卸载请求并传送加载区内容。
+    localparam LNR_USER = 62;
+    localparam LNR_NAME = 63;
+    localparam LNR_BYTE = 64;
+    localparam LNR_READY = 65;
+    localparam DL_WRQ = 66;
+    localparam DL_BLOCK = 67;
+    localparam DL_SIZE = 68;
+    localparam DL_ACK = 69;
+    // 这些状态报告失败或结束本次操作。
+    localparam FAILURE = 57;
+    localparam FAILURE_SENT = 58;
+    localparam DONE = 59;
     // state 记录当前文件处理步骤，HEADER_CRC_EXPECT 是未使用的编码。
     // wait_kind 记录当前等待哪一种确认或文件，packet_type 选择待发报文。
     localparam WK_LUI_ACK = 0, WK_LUR = 1, WK_DATA = 2, WK_LUS_ACK0 = 3, WK_LUS_ACK1 = 4,
@@ -266,7 +341,7 @@ module afdx_615a (
     function [7:0] description;
         input [3:0] p;
         begin
-            if (reason == 0) description = 0;
+            if (reason == REASON_NONE) description = 0;
             else case (p)
                 0 : description = "F";
                 1 : description = "A";
@@ -381,7 +456,7 @@ module afdx_615a (
             configured <= 0;
             tx_vl <= 0;
             status <= 0;
-            reason <= 0;
+            reason <= REASON_NONE;
             state <= IDLE;
             main_tid <= 16'h8000;
             status_tid <= 16'h9000;
@@ -562,11 +637,11 @@ module afdx_615a (
                         timer <= 0;
                         if (retries == retry_limit) begin
                             if (wait_kind == WK_LUS_ACK0 || wait_kind == WK_LUS_ACK1) begin
-                                reason <= 5;
+                                reason <= REASON_RETRY_LIMIT;
                                 status <= 3;
                                 state <= DONE;
                             end
-                            else fail (5);
+                            else fail (REASON_RETRY_LIMIT);
                         end
                         else begin
                             retries <= retries + 1'b1;
@@ -586,9 +661,9 @@ module afdx_615a (
                         name_pos <= 0;
                         state <= NAME;
                     end
-                    else if (rx_op == 5 && peer_dp == main_tid) fail (4);
+                    else if (rx_op == 5 && peer_dp == main_tid) fail (REASON_TFTP_ERROR);
                     else if (rx_op == 5 && peer_dp == status_tid) begin
-                        reason <= 4;
+                        reason <= REASON_TFTP_ERROR;
                         status <= 3;
                         state <= DONE;
                     end
@@ -645,7 +720,7 @@ module afdx_615a (
                 end
                 else if (byte_value != target_name (name_pos, request_write ? "R" : request_download ? "D" : "I",
                     request_download)) begin
-                    reason <= 1;
+                    reason <= REASON_DESCRIPTION;
                     make_packet (PK_ERROR, 11, tid_sequence, peer_sp, IDLE);
                 end
                 else if (name_pos == 11) begin
@@ -661,7 +736,7 @@ module afdx_615a (
                 // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
                 MODE_BYTE : if ((byte_value | 8'h20) != (octet_byte (name_pos) | 8'h20) || (name_pos == 5
                     && byte_value != 0)) begin
-                    reason <= 4;
+                    reason <= REASON_TFTP_ERROR;
                     make_packet (PK_ERROR, 11, tid_sequence, peer_sp, IDLE);
                     // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
                 end
@@ -700,7 +775,7 @@ module afdx_615a (
                     end
                     else if (! request_write) begin
                         status <= 1;
-                        reason <= 0;
+                        reason <= REASON_NONE;
                         download_mode <= request_download;
                         main_peer <= peer_sp;
                         main_tid <= tid_sequence;
@@ -717,7 +792,7 @@ module afdx_615a (
                         make_packet (PK_LUI, 13, tid_sequence, peer_sp, WAIT_PACKET);
                     end
                     else begin
-                        reason <= 4;
+                        reason <= REASON_TFTP_ERROR;
                         make_packet (PK_ERROR, 11, tid_sequence, peer_sp, IDLE);
                     end
                 end
@@ -816,7 +891,7 @@ module afdx_615a (
                         endcase
                         PK_ERROR : case (packet_pos)
                             1 : build_value <= 5;
-                            3 : build_value <= reason == 1 ? 1 : reason == 4 ? 4 : 0;
+                            3 : build_value <= reason == REASON_DESCRIPTION ? 1 : reason == REASON_TFTP_ERROR ? 4 : 0;
                             default : if (packet_pos >= 4) build_value <= description (packet_pos - 4);
                         endcase
                         PK_LUS_WRQ : begin
@@ -997,7 +1072,7 @@ module afdx_615a (
                 // DATA_BYTE：保存一个文件字节并更新校验，再转 DATA_COPY。
                 DATA_BYTE : begin
                     if (file_kind == 0) begin
-                        if (metadata_size >= 512) fail (2);
+                        if (metadata_size >= 512) fail (REASON_LENGTH);
                         else begin
                             lur_we <= 1;
                             lur_wa <= metadata_size[8:0];
@@ -1007,7 +1082,7 @@ module afdx_615a (
                         end
                     end
                     else if (file_kind == 1) begin
-                        if (metadata_size >= 2048) fail (2);
+                        if (metadata_size >= 2048) fail (REASON_LENGTH);
                         else begin
                             hdr_we <= 1;
                             hdr_wa <= metadata_size[10:0];
@@ -1017,7 +1092,7 @@ module afdx_615a (
                         end
                     end
                     else begin
-                        if (loaded >= 8192) fail (2);
+                        if (loaded >= 8192) fail (REASON_LENGTH);
                         else begin
                             load_we <= 1;
                             load_wa <= loaded[12:0];
@@ -1057,23 +1132,23 @@ module afdx_615a (
                 // LUR_START：读取加载列表总长，然后转 LUR_LENGTH。
                 LUR_START : get_number (1, 0, 4, LUR_LENGTH);
                 // LUR_LENGTH：核对总长，通过后读取协议版本，否则报告失败。
-                LUR_LENGTH : if (number != metadata_size) fail (1);
+                LUR_LENGTH : if (number != metadata_size) fail (REASON_DESCRIPTION);
                 else get_number (1, 4, 2, LUR_VERSION);
                 // LUR_VERSION：检查 A3/A4 版本，通过后读取文件数量，否则报告失败。
-                LUR_VERSION : if (number != 16'h4133 && number != 16'h4134) fail (1);
+                LUR_VERSION : if (number != 16'h4133 && number != 16'h4134) fail (REASON_DESCRIPTION);
                 else get_number (1, 6, 2, LUR_COUNT);
                 // LUR_COUNT：检查文件数量为一，通过后读取文件名长度，否则报告失败。
-                LUR_COUNT : if (number != 1) fail (1);
+                LUR_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
                 else get_byte (1, 8, LUR_HLEN);
                 // LUR_HLEN：检查文件名长度，加载时继续读件号，卸载时转 LNR_USER。
-                LUR_HLEN : if (byte_value < 2 || byte_value > 64) fail (1);
+                LUR_HLEN : if (byte_value < 2 || byte_value > 64) fail (REASON_DESCRIPTION);
                 else begin
                     header_name_len <= byte_value[6:0];
                     header_name_addr <= 9;
                     get_byte (1, 11'd9 + byte_value, download_mode ? LNR_USER : LUR_PLEN);
                 end
                 // LUR_PLEN：检查件号长度，通过后转 LUR_OFFSETS，否则报告失败。
-                LUR_PLEN : if (byte_value < 2 || byte_value > 64) fail (1);
+                LUR_PLEN : if (byte_value < 2 || byte_value > 64) fail (REASON_DESCRIPTION);
                 else begin
                     part_len <= byte_value[6:0];
                     part_addr <= 10 + header_name_len;
@@ -1102,13 +1177,14 @@ module afdx_615a (
                     lus_tail_pos <= 10'd33 + header_name_len;
                     lus_packet_len <= 10'd44 + header_name_len;
                     scan_pos <= 0;
-                    if (metadata_size != 12'd10 + header_name_len + byte_value || header_name_len != 11) fail(1);
+                    if (metadata_size != 12'd10 + header_name_len + byte_value || header_name_len != 11)
+                        fail(REASON_DESCRIPTION);
                     else state <= LNR_NAME;
                 end
                 // LNR_NAME：读取卸载文件名的下一字节，然后转 LNR_BYTE。
                 LNR_NAME : get_byte(1, 13'd9 + scan_pos, LNR_BYTE);
                 // LNR_BYTE：核对 MEMORY.BIN，完全匹配后转 LNR_READY，否则报告失败。
-                LNR_BYTE : if (byte_value != memory_name(scan_pos[6:0])) fail(1);
+                LNR_BYTE : if (byte_value != memory_name(scan_pos[6:0])) fail(REASON_DESCRIPTION);
                 else if (scan_pos == 10) state <= LNR_READY;
                 else begin scan_pos <= scan_pos + 1'b1; state <= LNR_NAME; end
                 // LNR_READY：报告卸载列表已接受，状态获确认后转 DL_WRQ。
@@ -1167,10 +1243,10 @@ module afdx_615a (
                 // HEADER_START：读取头文件字数，然后转 HEADER_LENGTH。
                 HEADER_START : get_number (2, 0, 4, HEADER_LENGTH);
                 // HEADER_LENGTH：核对字数与实际长度，通过后读取格式版本。
-                HEADER_LENGTH : if ((number << 1) != metadata_size || metadata_size < 32) fail (1);
+                HEADER_LENGTH : if ((number << 1) != metadata_size || metadata_size < 32) fail (REASON_DESCRIPTION);
                 else get_number (2, 4, 2, HEADER_VERSION);
                 // HEADER_VERSION：检查版本为 0x8002，通过后读取数据文件指针。
-                HEADER_VERSION : if (number != 16'h8002) fail (1);
+                HEADER_VERSION : if (number != 16'h8002) fail (REASON_DESCRIPTION);
                 else get_number (2, 14, 4, HEADER_PTR);
                 // HEADER_PTR：检查指针范围并保存结果，然后转 HEADER_PTR_CHECK。
                 HEADER_PTR : begin
@@ -1179,7 +1255,7 @@ module afdx_615a (
                     state <= HEADER_PTR_CHECK;
                 end
                 // HEADER_PTR_CHECK：合法时开始 HEADER_CRC，否则报告失败。
-                HEADER_PTR_CHECK : if (!header_pointer_ok) fail (1);
+                HEADER_PTR_CHECK : if (!header_pointer_ok) fail (REASON_DESCRIPTION);
                 else begin
                     header_pointer <= number[10:0] << 1;
                     header_crc <= 16'hffff;
@@ -1196,20 +1272,20 @@ module afdx_615a (
                     state <= HEADER_CRC;
                 end
                 // HEADER_CRC_CHECK：核对头文件校验值，通过后读取数据文件数量。
-                HEADER_CRC_CHECK : if (number != header_crc) fail (3);
+                HEADER_CRC_CHECK : if (number != header_crc) fail (REASON_CHECKSUM);
                 else get_number (2, header_pointer, 2, HEADER_COUNT);
                 // HEADER_COUNT：要求只有一个数据文件，通过后读取文件名长度。
-                HEADER_COUNT : if (number != 1) fail (1);
+                HEADER_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
                 else get_number (2, header_pointer + 4, 2, HEADER_NLEN);
                 // HEADER_NLEN：检查文件名长度，通过后定位件号字段。
-                HEADER_NLEN : if (number == 0 || number > 63) fail (1);
+                HEADER_NLEN : if (number == 0 || number > 63) fail (REASON_DESCRIPTION);
                 else begin
                     data_name_len <= number[6:0];
                     data_name_addr <= header_pointer + 6;
                     get_number (2, header_pointer + 6 + ((number + 1) & 32'hfffffffe), 2, HEADER_PLEN);
                 end
                 // HEADER_PLEN：检查件号长度并处理偶数字节对齐，然后转 HEADER_SIZE。
-                HEADER_PLEN : if (number > 64) fail (1);
+                HEADER_PLEN : if (number > 64) fail (REASON_DESCRIPTION);
                 else begin
                     scan_pos <= fetch_addr + ((number + 1) & 32'hfffffffe);
                     state <= HEADER_SIZE;
@@ -1217,7 +1293,7 @@ module afdx_615a (
                 // HEADER_SIZE：读取数据文件的字数，然后转 HEADER_DCRC。
                 HEADER_SIZE : get_number (2, scan_pos, 4, HEADER_DCRC);
                 // HEADER_DCRC：检查数据量不超过 8 KiB，通过后读取预期校验值。
-                HEADER_DCRC : if (number == 0 || number > 4096) fail (2);
+                HEADER_DCRC : if (number == 0 || number > 4096) fail (REASON_LENGTH);
                 else begin
                     file_size <= number[12:0] << 1;
                     get_number (2, scan_pos + 4, 2, HEADER_READY);
@@ -1242,8 +1318,8 @@ module afdx_615a (
                     make_packet (PK_RRQ, data_name_len + 9, tid_sequence, request_port, WAIT_PACKET);
                 end
                 // DATA_CHECK：核对文件大小和校验值，通过并确认末块后转 DATA_SUCCESS。
-                DATA_CHECK : if (loaded != file_size) fail (2);
-                else if (data_crc != expected_crc) fail (3);
+                DATA_CHECK : if (loaded != file_size) fail (REASON_LENGTH);
+                else if (data_crc != expected_crc) fail (REASON_CHECKSUM);
                 else begin
                     ack_return <= DATA_SUCCESS;
                     state <= ACK_MAIN;
@@ -1267,7 +1343,7 @@ module afdx_615a (
                 end
                 // DONE：保存最终结果，然后转 IDLE 等待下一次操作。
                 DONE : begin
-                    status <= reason == 0 ? 2 : 3;
+                    status <= reason == REASON_NONE ? 2 : 3;
                     state <= IDLE;
                     wait_kind <= WK_LUR;
                 end
