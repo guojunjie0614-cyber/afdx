@@ -43,9 +43,7 @@ module afdx_tx_free #(
     assign ret1_ready = init_done && ! ret1_pending;
     assign ret2_ready = init_done && ! ret2_pending;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(we),
         .write_address(wa),
         .write_data(wd),

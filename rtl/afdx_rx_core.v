@@ -130,9 +130,7 @@ module afdx_rx_core #(
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
     afdx_ram_sdp #(.WIDTH(13), .DEPTH(65536)) rx_map (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(map_we),
         .write_address(map_wa),
         .write_data(map_wd),
@@ -141,9 +139,7 @@ module afdx_rx_core #(
         .read_data(map_q)
     );
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(cfg_we),
         .write_address(cfg_wa),
         .write_data(cfg_wd),
@@ -152,9 +148,7 @@ module afdx_rx_core #(
         .read_data(cfg_q)
     );
     afdx_ram_sdp #(.WIDTH(44), .DEPTH(4096)) rx_state (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(state_we),
         .write_address(state_wa),
         .write_data(state_wd),
@@ -164,9 +158,7 @@ module afdx_rx_core #(
     );
     // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(ra_we),
         .write_address(ra_wa),
         .write_data(ra_wd),
@@ -175,9 +167,7 @@ module afdx_rx_core #(
         .read_data(ra_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(rb_we),
         .write_address(rb_wa),
         .write_data(rb_wd),
@@ -187,10 +177,10 @@ module afdx_rx_core #(
     );
     // 每网先检查并解析帧，再共用一个引擎检查序号和重复帧。
     afdx_mac_rx mac_a (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .rx_data(rx_data_a),
         .rx_valid(rx_valid_a),
         .m_valid(ma_valid),
@@ -201,10 +191,10 @@ module afdx_rx_core #(
         .f_len(fa_len)
     );
     afdx_mac_rx mac_b (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .rx_data(rx_data_b),
         .rx_valid(rx_valid_b),
         .m_valid(mb_valid),
@@ -215,13 +205,13 @@ module afdx_rx_core #(
         .f_len(fb_len)
     );
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_a (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now_c(now_c),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .enable(init_done),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .rx_valid(rx_valid_a),
         .m_valid(ma_valid),
         .m_first(ma_first),
@@ -241,13 +231,13 @@ module afdx_rx_core #(
         .ev(parse_ev_a)
     );
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_b (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now_c(now_c),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .enable(init_done),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .rx_valid(rx_valid_b),
         .m_valid(mb_valid),
         .m_first(mb_first),
@@ -267,18 +257,18 @@ module afdx_rx_core #(
         .ev(parse_ev_b)
     );
     afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) engine (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now_c(now_c),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .enable(init_done),
         .initialized(engine_initialized),
         .cfg_re(cfg_re),
         .cfg_ra(cfg_ra),
         .cfg_q(cfg_q),
         .cfg_ok(cfg_ok),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .desc_a_valid(da_valid),
         .desc_b_valid(db_valid),
         .desc_a(desc_a),
@@ -303,17 +293,17 @@ module afdx_rx_core #(
         .dq_wa(dq_wa),
         .dq_wd(dq_wd),
         .dq_count(dq_count),
-        // 这些端口用于事件。
+        // 事件
         .ev_a(engine_ev_a),
         .ev_b(engine_ev_b),
         .ev_rm_drop(engine_rm),
         .ev_deliver(engine_deliver)
     );
     afdx_rx_deliver #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) deliver (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .dq_count(dq_count),
         .dq_entries(dq_entries),
         .dq_pop(dq_pop),

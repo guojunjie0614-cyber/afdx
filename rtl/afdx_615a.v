@@ -206,9 +206,7 @@ module afdx_615a (
     // header_ram 保存头文件，容量为 2 KiB。
     // load_ram 保存加载数据，容量为 8 KiB。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_rx (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(rx_we),
         .write_address(rx_wa),
         .write_data(rx_wd),
@@ -217,9 +215,7 @@ module afdx_615a (
         .read_data(rx_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(tx_we),
         .write_address(tx_wa),
         .write_data(tx_wd),
@@ -228,9 +224,7 @@ module afdx_615a (
         .read_data(tx_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(lur_we),
         .write_address(lur_wa),
         .write_data(lur_wd),
@@ -239,9 +233,7 @@ module afdx_615a (
         .read_data(lur_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(hdr_we),
         .write_address(hdr_wa),
         .write_data(hdr_wd),
@@ -250,9 +242,7 @@ module afdx_615a (
         .read_data(hdr_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(load_we),
         .write_address(load_wa),
         .write_data(load_wd),

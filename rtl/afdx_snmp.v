@@ -99,9 +99,7 @@ module afdx_snmp (
     // 两个 256 字节存储器分别保存请求和回应。
     // 即使发送暂停，请求内容仍可用于生成错误回应。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) request_ram (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(req_we),
         .write_address(req_wa),
         .write_data(req_wdata),
@@ -110,9 +108,7 @@ module afdx_snmp (
         .read_data(req_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) response_ram (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(out_we),
         .write_address(out_wa),
         .write_data(out_wdata),

@@ -39,7 +39,6 @@ module afdx_mac_rx (
     reg [7:0] delay0, delay1, delay2, delay3;
     wire [31:0] next_crc;
     afdx_crc32_d8 update_crc (
-        // 这些端口用于数据和握手。
         .crc(crc),
         .data(data_q),
         .next_crc(next_crc)

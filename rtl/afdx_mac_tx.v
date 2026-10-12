@@ -34,13 +34,11 @@ module afdx_mac_tx (
     reg [31:0] crc_a, crc_b, fcs_a, fcs_b;
     wire [31:0] next_a, next_b;
     afdx_crc32_d8 update_a (
-        // 这些端口用于数据和握手。
         .crc(crc_a),
         .data(s_data_a),
         .next_crc(next_a)
     );
     afdx_crc32_d8 update_b (
-        // 这些端口用于数据和握手。
         .crc(crc_b),
         .data(s_data_b),
         .next_crc(next_b)

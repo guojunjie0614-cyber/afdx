@@ -102,9 +102,7 @@ module afdx_tx_core #(
     // mnext 记录同一虚拟链路的下一条消息。
     // desc 保存消息长度和端口。
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(1024)) tx_cfg (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(cfg_write),
         .write_address(cfg_write_addr),
         .write_data(cfg_write_data),
@@ -113,9 +111,7 @@ module afdx_tx_core #(
         .read_data(cfg_data)
     );
     afdx_ram_sdp #(.WIDTH(63), .DEPTH(128)) tx_state (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(state_write),
         .write_address(state_write_addr),
         .write_data(state_write_data),
@@ -124,9 +120,7 @@ module afdx_tx_core #(
         .read_data(state_data)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_mnext (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(mnext_write),
         .write_address(mnext_write_addr),
         .write_data(mnext_write_data),
@@ -135,9 +129,7 @@ module afdx_tx_core #(
         .read_data(mnext_data)
     );
     afdx_ram_sdp #(.WIDTH(44), .DEPTH(PAGES)) tx_desc (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(desc_write),
         .write_address(desc_write_addr),
         .write_data(desc_write_data),
@@ -147,9 +139,7 @@ module afdx_tx_core #(
     );
     // pnext 记录同一消息的下一页，payload 保存消息字节。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_pnext (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(pnext_write),
         .write_address(pnext_write_addr),
         .write_data(pnext_write_data),
@@ -158,9 +148,7 @@ module afdx_tx_core #(
         .read_data(pnext_data)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAYLOAD_DEPTH)) tx_payload (
-        // 这些端口用于时钟和复位。
         .clk(clk),
-        // 这些端口用于数据和握手。
         .write_enable(payload_write),
         .write_address(payload_write_addr),
         .write_data(payload_write_data),
@@ -170,12 +158,12 @@ module afdx_tx_core #(
     );
     // 消息先存入空闲页，再由调度器选择，组帧模块发送后归还页。
     afdx_tx_free #(.TX_PAGE_AW(TX_PAGE_AW)) free_pages (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .init_done(free_initialized),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .pop_req(pop_req),
         .pop_ready(pop_ready),
         .pop_ack(pop_ack),
@@ -189,12 +177,12 @@ module afdx_tx_core #(
         .ret2_ready(ret2_ready)
     );
     afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) buffer (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .init_done(init_done),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .m_valid(m_valid),
         .m_ready(m_ready),
         .m_data(m_data),
@@ -226,7 +214,7 @@ module afdx_tx_core #(
         .enq_len(enq_len),
         .enq_ack(enq_ack),
         .enq_result(enq_result),
-        // 这些端口用于事件。
+        // 事件
         .ev_accept(ev_accept),
         .ev_drop_dis(ev_drop_dis),
         .ev_drop_full(ev_drop_full),
@@ -234,18 +222,18 @@ module afdx_tx_core #(
         .ev_drop_nopage(ev_drop_nopage)
     );
     afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD)) engine (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now(now),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .enable(init_done),
         .initialized(engine_initialized),
         .cfg_re(cfg_read),
         .cfg_ra(cfg_read_addr),
         .cfg_q(cfg_data),
         .cfg_ok(cfg_ok),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .state_we(state_write),
         .state_re(state_read),
         .state_wa(state_write_addr),
@@ -285,13 +273,13 @@ module afdx_tx_core #(
         .grant_page(grant_page)
     );
     afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) builder (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now(now),
-        // 这些端口用于配置和初始化。
+        // 配置和初始化
         .user_id(user_id),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .grant_ready(grant_ready),
         .grant_valid(grant_valid),
         .grant_a(grant_a),
@@ -327,16 +315,16 @@ module afdx_tx_core #(
         .tx_sof(tx_sof),
         .tx_eof(tx_eof),
         .tx_underrun(tx_underrun),
-        // 这些端口用于事件。
+        // 事件
         .ev_tx_a(ev_tx_a),
         .ev_tx_b(ev_tx_b)
     );
     afdx_mac_tx mac (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
         .byte_en(byte_en),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .s_valid(s_valid),
         .s_ready(s_ready),
         .s_data_a(s_data_a),

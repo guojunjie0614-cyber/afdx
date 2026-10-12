@@ -110,10 +110,10 @@ module afdx_rtc (
     wire first_tx = active && enable && tx_state == 4 && tx_ready && tx_index == 0;
     wire first_rx = active && enable && rx_valid && rx_claim && ! rx_busy;
     afdx_ntp_fraction encode_tx (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .start(encode_tx_start),
         .to_nanoseconds(1'b0),
         .value(encode_tx_value),
@@ -121,10 +121,10 @@ module afdx_rtc (
         .result(encode_tx_result)
     );
     afdx_ntp_fraction encode_rx (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .start(encode_rx_start),
         .to_nanoseconds(1'b0),
         .value(encode_rx_value),
@@ -132,10 +132,10 @@ module afdx_rtc (
         .result(encode_rx_result)
     );
     afdx_ntp_fraction decode_rx (
-        // 这些端口用于时钟和复位。
+        // 时钟和复位
         .clk(clk),
         .reset(reset),
-        // 这些端口用于数据和握手。
+        // 数据和握手
         .start(decode_start),
         .to_nanoseconds(1'b1),
         .value(decode_value),
