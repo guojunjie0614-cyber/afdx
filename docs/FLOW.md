@@ -12,7 +12,7 @@ eLinx 脚本优先使用 `ELINX_HOME` 指定的安装根目录下 `bin/shell/bin
 
 ## 五功能与 RTL 运行
 
-评委无 Python 入口为 `do sim/run_judge.do`（先 `cd` 到仓库根目录）：串行完成五功能、77/81 VL 突发、RTC 自检和 77 VL 吞吐测试，打印 `JUDGE ENTRY PASS cases=5` 或 FAIL；`out/modelsim/judge_<时间>_<进程>/result.txt` 汇总实际队列时延和 RTC 误差。固定 RTC 小数向量位于 `sim/vectors/judge/fractions.txt`，来自 `tools/rtc_ref.py` 的 72 项整数参考，运行入口不调用生成器。该入口不包含 Python 独立报文检查和完整吞吐矩阵，完整验收仍用下面的回归脚本。`sim/run.ps1` 在性能/RTC 独立检查通过后追加 `[METRIC]` 行，数值直接读取本次 `check_summary.json`。
+评委无 Python 入口为 `do sim/run_judge.do`（先 `cd` 到仓库根目录）：串行完成五功能、128/4096 VL 容量、SNMP Get/GetNext/Set/Trap、77/81 VL 突发、RTC 自检和 77 VL 吞吐测试，打印 `JUDGE ENTRY PASS cases=7` 或 FAIL；`out/modelsim/judge_<时间>_<进程>/result.txt` 汇总实际队列时延和 RTC 误差。固定 RTC 小数向量位于 `sim/vectors/judge/fractions.txt`，来自 `tools/rtc_ref.py` 的 72 项整数参考，运行入口不调用生成器。该入口不包含 Python 独立报文检查和完整吞吐矩阵，完整验收仍用下面的回归脚本。`sim/run.ps1` 在性能/RTC 独立检查通过后追加 `[METRIC]` 行，数值直接读取本次 `check_summary.json`。
 
 五功能 do 文件只需 ModelSim：在 Transcript 窗口先 `cd` 到仓库根目录，再运行 `do sim/run_services.do`；命令行方式如下。
 
@@ -43,7 +43,7 @@ $flowPython=if($env:AFDX_PYTHON){$env:AFDX_PYTHON}else{(Get-Command python -Erro
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-RTL 清单 `sim/tests.txt` 为 35 项（原37项删去两个未用于顶层的 GMII 适配器测试）；每行是“测试名”或“测试名|参数1=值,参数2=值”。原有两种 `tb_tx_basic` 参数组合和 `tb_gbe_burst` 的 `COUNT=77`、`COUNT=81` 均保留。
+RTL 清单 `sim/tests.txt` 为 37 项（原37项删去两个未用于顶层的 GMII 适配器测试，加入 `tb_judge_capacity` 和 `tb_judge_snmp`）；每行是“测试名”或“测试名|参数1=值,参数2=值”。原有两种 `tb_tx_basic` 参数组合和 `tb_gbe_burst` 的 `COUNT=77`、`COUNT=81` 均保留。
 三个新增用例可用 `sim/run.ps1 -Test <测试名>` 单独运行：冗余用例经真实MAC检查双网0–20拍错开、粗边界前后相位、忙时处理及SkewMax=0窗口外行为，并加速公开粗时间输入检查持续负载老化；RTC两项分别检查丢回应/主从使能顺序恢复，以及错误/过期Originate和跨请求周期的校时计算。
 `run.ps1` 自动生成独立向量、编译 `tb/lib/`，并按网表模块名排除同名 RTL；支持逗号分隔的多个原始 `netlist.v`。
 `afdx_tx_core`、`afdx_rx_core` 和 `AFDX_top` 的综合网表固定为默认参数，入口拒绝不匹配参数；备用分页和两个小容量溢出测试使用 RTL 的 `-Param` 验证。

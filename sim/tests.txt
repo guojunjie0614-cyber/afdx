@@ -33,3 +33,5 @@ tb_gbe_burst|COUNT=81
 tb_rm_phase
 tb_rtc_recovery
 tb_rtc_originate
+tb_judge_capacity
+tb_judge_snmp

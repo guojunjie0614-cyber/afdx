@@ -17,7 +17,7 @@
 ## 软件准备
 
 基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含五功能、突发排队和 RTC 指标，不依赖 Python。
-完整 35 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
+完整 37 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随仓库分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；本机未单独验证非管理员会话。当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
@@ -43,19 +43,19 @@
 
    预期：命令不报错，当前目录中能找到 `rtl`、`tb` 和 `sim`。
 
-2. 运行五功能、突发排队、时钟同步和吞吐测试。
+2. 运行五功能、容量、网络管理、突发排队、时钟同步和吞吐测试。
 
    ```tcl
    do sim/run_judge.do
    ```
 
-   预期：五个用例都打印 `JUDGE CASE PASS`，最后打印 `JUDGE ENTRY PASS cases=5`；中途失败会打印 `JUDGE ENTRY FAIL`。
+   预期：七个用例都打印 `JUDGE CASE PASS`，最后打印 `JUDGE ENTRY PASS cases=7`；中途失败会打印 `JUDGE ENTRY FAIL`。
 
    Warning 只计数和提示，Error、Fatal 或测试打印的 FAIL 会判失败。成功和失败都会回到仓库根目录，恢复原来的 Transcript 记录设置；可直接重新运行这条命令。
 
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
 
-本次五用例实测如下（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
+新增容量和网络管理用例；下面保留上一轮五用例的实测记录（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
 
 | 用例 | 实测耗时（秒） |
 |---|---:|
@@ -68,7 +68,7 @@
 
 本次在 `out/` 下生成约 **0.57 GiB（579.1 MiB）** 的工作库、输入、波形和记录。每次运行使用新目录，并保留以前的结果。
 
-下面是这次运行的五行用例结果和总结果：
+下面是上一轮五用例的运行记录：
 
 ```text
 JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.388
@@ -81,13 +81,13 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一仓库根目录。
 
-3. 运行全部 35 项测试，参考检查器会另行核对报文和周期记录。
+3. 运行全部 37 项测试，参考检查器会另行核对报文和周期记录。
 
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
    ```
 
-   预期：末尾表格中的 35 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+   预期：末尾表格中的 37 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -146,7 +146,7 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 ## 协作约定
 
 - 从 `master` 拉自己的开发分支，例如 `git checkout master` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `master`。`c3` 是 117.68 Mbps 回退版本。
-- 合并前运行 `sim/regress.ps1`，35 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
+- 合并前运行 `sim/regress.ps1`，37 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机 T20 整顶层综合工具耗时 112.282 秒，完整五功能综合网表仿真 3717.625 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。
 - 图形界面保存会改写 `elinx/AFDX_EndSystem.epr` 的注释和 OutOfDate 状态。只有增删源文件时才提交 epr；其余改动不提交，先确认没有自己的源文件清单变更，再用 `git checkout -- elinx/AFDX_EndSystem.epr` 恢复。

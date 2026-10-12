@@ -121,7 +121,7 @@ proc judge_main {root} {
     transcript file [file join $output compile.log]
     transcript on
     set sources [concat [lsort [glob [file join $root rtl *.v]]] [lsort [glob [file join $root tb lib *.v]]]]
-    foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf} {lappend sources [file join $root tb ${test}.v]}
+    foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
     set failed [catch {
         vlog -modelsimini $ini -work work -vlog01compat +incdir+[file join $root tb lib] {*}$sources
     } message options]
@@ -133,6 +133,8 @@ proc judge_main {root} {
     set summary {}
     foreach {label test parameters} {
         services tb_net_services {}
+        capacity tb_judge_capacity {}
+        snmp tb_judge_snmp {}
         burst77 tb_gbe_burst {-gCOUNT=77}
         burst81 tb_gbe_burst {-gCOUNT=81}
         rtc tb_sys_rtc {}
@@ -166,7 +168,7 @@ set judge_seconds [expr {([clock milliseconds]-$judge_started)/1000.0}]
 if {$judge_failed} {
     set judge_result "JUDGE ENTRY FAIL: $judge_message"
 } else {
-    set judge_result [format {JUDGE ENTRY PASS cases=5 warnings=%d elapsed_s=%.3f output_mib=%.1f} $judge_warnings $judge_seconds [expr {[judge_bytes $judge_output]/1048576.0}]]
+    set judge_result [format {JUDGE ENTRY PASS cases=7 warnings=%d elapsed_s=%.3f output_mib=%.1f} $judge_warnings $judge_seconds [expr {[judge_bytes $judge_output]/1048576.0}]]
 }
 puts $judge_result
 if {$judge_output ne "" && [file isdirectory $judge_output]} {
