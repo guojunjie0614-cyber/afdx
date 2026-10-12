@@ -1547,6 +1547,25 @@ T16 验收通过，RTL 以 `2e03d0a7` 为定稿。本卡在 `c3-gbe` 上做，�
 
 **状态**：2026-10-12 验收通过（Codex 提交 `b80119ec`）。原因确认：计数经端口连线稍后才更新。三个评委测试和 `tb_net_services` 等在汇总前等 1 ns；默认与 `-voptargs=+acc` 下检查数一致（9238、49924、699），改错试验修前误报 PASS、修后报 FAIL；`tb_net_services` 在 `+acc` 下由 1122 变为完整的 1123。回归 38/38、评委入口 7/7，指标不变。`rtl/` 和 `.epr` 未动。待用户在界面再点一次确认 9238。未推送。
 
+## T26：仿真界面综合出来的网表（摸底，不改设计）
+
+**依据**：赛题 PDF 第 6 页“本赛题全部通过 eLinx 软件进行编译及仿真”；答疑 R46“综合后仿真即可”“评测会用到参赛者的 Testbench”。两份文件都没有规定界面还是命令行，但评委最可能在界面里操作。
+
+**现状**：手册 UG102 第 3.1.3 节和第 11 章里，界面只有 Run Behavioral Simulation 和 Run Post-Implementation Simulation 两个仿真入口，没有综合后仿真。后者走 `.vo`，T21 已查明 18/36 位 RAM 写数据位序的导出问题。我们已通过的综合后仿真用的是命令行 `eLinx_synthesis.exe` 生成的网表，界面综合出来的网表没有仿过。用户 2026-10-12 14:00 在界面对当前源码跑了 Run Synthesis，网表是 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`（原语为 `stratix_lcell`、`stratix_ram_block`）。
+
+**做什么**
+
+1. 用 ModelSim 仿这份界面网表：以它代替 RTL 的 `AFDX_top`，跑 `tb_elinx`。单元模型用 eLinx 自带的（界面行为仿真时它拷进 `elinx/AFDX_EndSystem.sim/sim_1/behav` 的 `stratix_atoms.v` 等，或安装目录 `Simulation` 下的库），不用命令行流程转换出来的网表和模型。先把 `.vqm` 复制到 `out/t26` 再用，记下它的摘要和时间，确认它晚于最后一次 `rtl/` 提交。
+2. 第 1 步通过后，再用同一份网表跑五功能 `tb_net_services`，外部记录与同激励 RTL 比对。时间不够就只报第 1 步，并给出估计耗时。
+3. 通过的话加一个评委能复现的入口：前提是已在界面点过 Run Synthesis，然后一条 ModelSim 命令读 `synth_1` 下的 `.vqm` 跑 `tb_elinx`，打印 PASS 或 FAIL；README 的 eLinx 一节加几行步骤和实跑结果。
+4. 不通过的话，定位到是网表、单元模型还是测试的问题，写清证据，不硬修、不绕过。
+
+**不做**：不改 `rtl/`、不改 eLinx 工程文件和 `runs` 目录里的东西、不重新综合、不推送。
+
+**交付**：`docs/PROBE_T26.md` 不超过 25 行；提交说明以 `T26:` 开头；做完工作区干净。限时 300 分钟。
+
+**状态**：2026-10-12 已派发。
+
 ## 协议版本的依据（写设计文档时照此说明）
 
 - AFDX：ARINC 664P7（2005）原文，已逐条核对。最新版 664P7-1（2009）未拿到；赛题和答疑未指定版本（R47、R12）。用户 2026-10-08 定：按 2005 版，不再追。

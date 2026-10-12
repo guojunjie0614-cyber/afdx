@@ -1,0 +1,22 @@
+# T26：界面综合网表仿真摸底
+
+- 结论：原始界面 VQM 与随附单元模型的默认使能约定不匹配，`tb_elinx` 未取得 PASS；没有修改设计、网表或模型来绕过问题。
+- 基线为 `18077f31`；最后一次 RTL 提交为 `b312cdd1`，时间为 2026-10-12 12:41:44 +08:00。
+- 网表来自 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`，文件头时间 2026-10-12 14:00:26，修改时间 14:00:28，晚于上述 RTL 提交。
+- 网表大小 31,925,970 字节；SHA256 为 `3d98d1b93be02287d2a058ec349dd745a3e368e361ea923def7ae9de181c57eb`。
+- 网表及五份模型先复制到 `out/t26/input/`；模型来自界面生成的 `AFDX_EndSystem.sim/sim_1/behav/`，逐字节等同安装目录 `Simulation/elinx_lib/` 的同名文件，没有使用转换模型。
+- 在隔离运行目录执行 `vlog -vlog01compat AFDX_EndSystem.vqm 220model.v altera_mf.v altera_primitives.v stratix_atoms.v stratixiv_atoms.v judge_endpoint.v tb_elinx.v`，编译错误和警告均为 0。
+- 执行 `vsim -c -t 1ps work.tb_elinx -wlf simulation.wlf -do "do run.do"`，其中 `run.do` 执行 `run -all`；展开产生 588886 条未接端口警告（vopt-2685：33384；vopt-2718：555502），没有展开错误。
+- 主仿真运行 2589.656 秒后，因下述原因已确定而主动终止；退出码 15 来自终止操作，没有得到测试最终 PASS 或 FAIL，不能把它记为测试超时。
+- 静态统计：13869 个使用寄存器输出的 `stratix_lcell` 中，4422 个未连接 `ena`；完整网表共 32846 个 `stratix_lcell` 和 538 个 `stratix_ram_block`。
+- 直接证据：副本网表第 38379 行的 `afdx_timebase:timebase|byte_en~I` 实例没有 `.ena(...)`。
+- 原样 `stratix_atoms.v:996` 将 `ena` 声明为普通输入，第 1012–1013 行只给其他输入默认上拉；第 907 行要求 `iena === 1'b1` 才更新寄存器，悬空的 `z` 不满足条件。
+- RTL 对照：`rtl/afdx_timebase.v:23` 在复位结束后令 `byte_en=1`；`rtl/afdx_mac_tx.v:46,83` 的接收就绪和状态推进都依赖它，为 0 时发送无法正常推进。
+- 原样整网表加 `-voptargs=+acc` 短程观测：在 `cycle=16/32、reset=0` 时，两个端系统均为 `byte_en=0、ena=z、dffin=1、regout=0`；观察命令正常退出，码为 0。
+- 独立单元实验提取同一实例：原样实例得到 `ena=z、D=1、Q=0`，仅在诊断对照实例连接 `ena=1` 后 `Q=1`，同激励 RTL 也为 1；这个连接没有应用到整网表。
+- 因而问题已定位到网表与模型的未接使能输入约定，发生在测试汇总之前，不是检查计数漏更新；本次证据不能据此判定 RTL 功能错误。
+- 第一步未通过，未运行五功能 `tb_net_services` 及其 RTL 外部记录比对，也未增加声称通过的评委入口或 README 步骤。
+- 原始运行记录：`out/t26/step1.json` 指向含编译命令、日志和耗时的运行目录；主动终止依据见 `out/t26/step1_stop.json`。
+- 因果复现：`out/t26/enable_probe.json` 和 `out/t26/top_observation.json` 保存原生命令、运行目录及上述输出；前者目录中可重跑 `vsim -c -t 1ps -voptargs=+acc work.tb_enable_probe -do "do run.do"`。
+- 来源和保护校验见 `out/t26/initial.json`、`model_source_check.json`、`register_pin_audit.json`、`final_integrity.json`；155 个已有受版本控制文件、原始网表及模型未变，任务卡原样保留。
+- 未重新综合，未改 RTL、工程文件和 runs 文件，未推送；本次提交只含任务卡和本报告。
