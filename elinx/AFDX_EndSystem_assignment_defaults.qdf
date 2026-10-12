@@ -1,0 +1,5 @@
+# eLinx project-local defaults. The GUI recreates .qsf on each Run Synthesis.
+# Keep this file beside AFDX_EndSystem.epr; no tool installation change is needed.
+# The front-end surrogate Stratix device must not limit EQ6HL130 RAM inference.
+set_global_assignment -name SYNTH_RESOURCE_AWARE_INFERENCE_FOR_BLOCK_RAM Off -family Stratix
+set_global_assignment -name ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION On

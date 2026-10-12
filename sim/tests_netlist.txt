@@ -1,0 +1,8 @@
+tb_mac_tx|afdx_mac_tx
+tb_mac_rx|afdx_mac_rx
+tb_mac_loop|afdx_timebase,afdx_mac_tx,afdx_mac_rx
+tb_probe_ram|probe_p1_2048x8
+tb_probe_ram|probe_p2_array
+tb_tx_net|afdx_tx_core
+tb_rx_net|afdx_rx_core
+tb_sys_net|AFDX_top
