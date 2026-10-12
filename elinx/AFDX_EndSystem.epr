@@ -3,7 +3,6 @@
 <!--								-->
 <!--Copyright 2017-2024 eHiWay, Inc. All Rights Reserved.-->
 <Project Path="/AFDX_EndSystem.epr">
-    <!-- Keep AFDX_EndSystem_assignment_defaults.qdf beside this project for RAM inference settings. -->
     <Configuration>
         <Option Name="ActiveSimSet" Val="sim_1"/>
         <Option Name="Project Type" Val="RTL"/>
@@ -52,10 +51,10 @@
         <Run Id="synth_1" Type="Synthesis" SrcSet="sources_1" ConstrsSet="constrs_1" State="current" Parent="" Configuration="">
             <Option Id="Compilation Flow">Classic Flow</Option>
             <Option Id="Device">EQ6HL130</Option>
+            <Option Id="IPRepositories"></Option>
             <Option Id="LanguageVersion">VERILOG_2001</Option>
-            <!-- eLinx stores this enum as 0=Balanced, 1=Speed, 2=Area. -->
             <Option Id="OptimizationTechnique">1</Option>
-            <Option Id="OutOfDate">1</Option>
+            <Option Id="OutOfDate">0</Option>
             <Option Id="Package">CSG484_H</Option>
             <Option Id="Series">eHiChip6</Option>
             <Option Id="TargetLanguage">VERILOG</Option>
@@ -63,11 +62,9 @@
         </Run>
         <Run Id="imple_1" Type="Implementation" SrcSet="sources_1" ConstrsSet="constrs_1" State="current" Parent="" Configuration="" SynthRun="synth_1">
             <Option Id="Compilation Flow">Classic Flow</Option>
-            <Option Id="Device">EQ6HL130</Option>
-            <Option Id="LanguageVersion">VERILOG_2001</Option>
-            <Option Id="Package">CSG484_H</Option>
-            <Option Id="Series">eHiChip6</Option>
-            <Option Id="TargetLanguage">VERILOG</Option>
+            <Option Id="Manufacturer"></Option>
+            <Option Id="ManufacturerSeries"></Option>
+            <Option Id="OutOfDate"></Option>
         </Run>
     </Runs>
     <PRFlow>
