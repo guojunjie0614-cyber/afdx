@@ -16,8 +16,8 @@
 
 ## 软件准备
 
-基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含五功能、突发排队和 RTC 指标，不依赖 Python。
-完整 37 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
+基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含下面列出的七个用例，不依赖 Python。
+完整 38 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随仓库分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；本机未单独验证非管理员会话。当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
@@ -55,39 +55,43 @@
 
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
 
-新增容量和网络管理用例；下面保留上一轮五用例的实测记录（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
+本次七用例实测如下（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
 
 | 用例 | 实测耗时（秒） |
 |---|---:|
-| 五功能（`services`） | 2.388 |
-| 77 条虚拟链路突发（`burst77`） | 2.189 |
-| 81 条虚拟链路突发（`burst81`） | 2.219 |
-| 时钟同步（`rtc`） | 48.082 |
-| 吞吐、时延和抖动（`performance`） | 430.901 |
-| 合计 | 486.455 |
+| 五功能（`services`） | 2.199 |
+| 128 条发送 / 4096 条接收配置（`capacity`） | 2.477 |
+| 网络管理报文字段核对（`snmp`） | 5.670 |
+| 77 条虚拟链路突发（`burst77`） | 2.420 |
+| 81 条虚拟链路突发（`burst81`） | 2.454 |
+| 时钟同步（`rtc`） | 51.122 |
+| 吞吐、时延和抖动（`performance`） | 457.380 |
+| 合计 | 524.347 |
 
-本次在 `out/` 下生成约 **0.57 GiB（579.1 MiB）** 的工作库、输入、波形和记录。每次运行使用新目录，并保留以前的结果。
+本次在 `out/` 下生成约 **0.57 GiB（579.3 MiB）** 的工作库、输入、波形和记录。每次运行使用新目录，并保留以前的结果。
 
-下面是上一轮五用例的运行记录：
+下面是这次运行的七行用例结果和总结果：
 
 ```text
-JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.388
-JUDGE CASE PASS burst77 checks=643550 errors=0 warnings=0 elapsed_s=2.189
-JUDGE CASE PASS burst81 checks=673498 errors=0 warnings=0 elapsed_s=2.219
-JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=48.082
-JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=430.901
-JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
+JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.199
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=2.477
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=5.670
+JUDGE CASE PASS burst77 checks=643550 errors=0 warnings=0 elapsed_s=2.420
+JUDGE CASE PASS burst81 checks=673498 errors=0 warnings=0 elapsed_s=2.454
+JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=51.122
+JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=457.380
+JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 ```
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一仓库根目录。
 
-3. 运行全部 37 项测试，参考检查器会另行核对报文和周期记录。
+3. 运行全部 38 项测试，参考检查器会另行核对报文和周期记录。
 
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
    ```
 
-   预期：末尾表格中的 37 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+   预期：末尾表格中的 38 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -105,12 +109,23 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 | 77/81 条虚拟链路同时提交消息后，队列全部发完的时间 | `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 **959.272/1008.488 µs**；81 条的用例特意检查超过 1 ms 的边界。 |
 | 时钟同步误差 | `JUDGE METRIC rtc_...` 给出最大误差；空载为 **0 ns**，普通用户流量和 77 条虚拟链路满载时均为 **10788 ns**。 |
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
+| 虚拟链路容量 | `capacity` 每端配置 4096 条接收虚拟链路，并逐字节验证索引 0、4095 和中间 126 项。每端全部 128 条发送虚拟链路都发出消息，对端每条只交付一次。 |
+| 网络管理（SNMP，Simple Network Management Protocol） | `snmp` 检查 Get、GetNext、Set 的请求号回显、错误码为 0、返回值与配置口寄存器一致；Trap 检查错误码为 0、启动通知类型和运行时间寄存器。 |
 
 吞吐测试先运行两个带宽间隔，再测量 21 ms 内交付的用户字节数。端到端时延从应用提交末字节算到对端交付末字节，只扣除设定的线路延迟。发送抖动表示同一虚拟链路相邻两帧的发送间隔偏离 1 ms 的程度。
 
 `JUDGE REQUIREMENT` 对照赛题门限并打印余量：吞吐至少 100 Mbps、最大端到端时延至多 2000 µs、抖动至多 50 µs。`JUDGE BASELINE` 另行检查是否仍为 906.136 Mbps、24.408 µs、0 µs；门限不达标和基线不一致会分别标出 FAIL。
 
+`tb_gbe_burst` 的突发指标在发送核心的消息输入口和接收核心的消息交付口之间测量。顶层将这两路核心直接接到 GMII，没有另加适配缓存或流水延迟。
 队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上是仿真测量；综合时序也尚未计入布局布线延迟，不能当作上板或物理时序结果。
+
+## 从 eLinx 界面运行自检
+
+1. 用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，在 Settings → Tool Settings → 3rd Party Simulators 设置 ModelSim 的安装目录。该目录应包含 `modelsim.exe`。
+2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
+3. 点击 Flow → Run Behavioral Simulation。ModelSim 会运行两个端系统经双网互发 1、64、1471 字节消息的自检；预期依次看到三条 `[ELINX_MESSAGE] ... both_directions=PASS`，最后是 `[RESULT] tb_elinx PASS checks=9238 errors=0`。测试不需要 Python、输入文件或额外的 include 路径和宏。
+
+此入口已按工程列出的文件在 ModelSim 中编译并运行通过，仿真时间约 2.56 ms；eLinx 界面点击由用户随后验证。
 
 ## 从哪里读起
 
@@ -146,7 +161,7 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 ## 协作约定
 
 - 从 `master` 拉自己的开发分支，例如 `git checkout master` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `master`。`c3` 是 117.68 Mbps 回退版本。
-- 合并前运行 `sim/regress.ps1`，37 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
+- 合并前运行 `sim/regress.ps1`，38 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机 T20 整顶层综合工具耗时 112.282 秒，完整五功能综合网表仿真 3717.625 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。
 - 图形界面保存会改写 `elinx/AFDX_EndSystem.epr` 的注释和 OutOfDate 状态。只有增删源文件时才提交 epr；其余改动不提交，先确认没有自己的源文件清单变更，再用 `git checkout -- elinx/AFDX_EndSystem.epr` 恢复。

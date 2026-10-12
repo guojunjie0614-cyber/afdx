@@ -7,7 +7,7 @@
     <Configuration>
         <Option Name="ActiveSimSet" Val="sim_1"/>
         <Option Name="Project Type" Val="RTL"/>
-        <Option Name="SimulationTopModule" Val="AFDX_top"/>
+        <Option Name="SimulationTopModule" Val="tb_elinx"/>
         <Option Name="Win_Version" Val="x86"/>
     </Configuration>
     <FileSets>
@@ -41,8 +41,10 @@
             </Config>
         </FileSet>
         <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+            <File Path="/../tb/lib/judge_endpoint.v"/>
+            <File Path="/../tb/tb_elinx.v"/>
             <Config>
-                <Option Name="TargetSimulationsFile" Val=""/>
+                <Option Name="TargetSimulationsFile" Val="/../tb/tb_elinx.v"/>
             </Config>
         </FileSet>
     </FileSets>
