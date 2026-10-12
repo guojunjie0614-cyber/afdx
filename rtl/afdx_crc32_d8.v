@@ -13,7 +13,8 @@ module afdx_crc32_d8 (
     integer bit_index;
     always @ * begin
         next_crc = crc ^ { 24'b0, data };
-        for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) if (next_crc[0]) next_crc = (next_crc >> 1) ^ 32'hedb88320;
+        for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) if (next_crc[0]) next_crc = (next_crc >> 1) ^
+            32'hedb88320;
         else next_crc = next_crc >> 1;
     end
 endmodule

@@ -129,23 +129,208 @@ module afdx_rx_core #(
     // map 保存有效位和 12 位配置索引。
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
-    afdx_ram_sdp #(.WIDTH(13), .DEPTH(65536)) rx_map (clk, map_we, map_wa, map_wd, map_re, map_ra, map_q);
-    afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (clk, cfg_we, cfg_wa, cfg_wd, cfg_re, cfg_ra, cfg_q);
-    afdx_ram_sdp #(.WIDTH(44), .DEPTH(4096)) rx_state (clk, state_we, state_wa, state_wd, state_re, state_ra, state_q);
+    afdx_ram_sdp #(.WIDTH(13), .DEPTH(65536)) rx_map (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(map_we),
+        .write_address(map_wa),
+        .write_data(map_wd),
+        .read_enable(map_re),
+        .read_address(map_ra),
+        .read_data(map_q)
+    );
+    afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(cfg_we),
+        .write_address(cfg_wa),
+        .write_data(cfg_wd),
+        .read_enable(cfg_re),
+        .read_address(cfg_ra),
+        .read_data(cfg_q)
+    );
+    afdx_ram_sdp #(.WIDTH(44), .DEPTH(4096)) rx_state (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(state_we),
+        .write_address(state_wa),
+        .write_data(state_wd),
+        .read_enable(state_re),
+        .read_address(state_ra),
+        .read_data(state_q)
+    );
     // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (clk, ra_we, ra_wa, ra_wd, ra_re, ra_ra, ra_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (clk, rb_we, rb_wa, rb_wd, rb_re, rb_ra, rb_q);
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(ra_we),
+        .write_address(ra_wa),
+        .write_data(ra_wd),
+        .read_enable(ra_re),
+        .read_address(ra_ra),
+        .read_data(ra_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(rb_we),
+        .write_address(rb_wa),
+        .write_data(rb_wd),
+        .read_enable(rb_re),
+        .read_address(rb_ra),
+        .read_data(rb_q)
+    );
     // 每网先检查并解析帧，再共用一个引擎检查序号和重复帧。
-    afdx_mac_rx mac_a (clk, reset, rx_data_a, rx_valid_a, ma_valid, ma_data, ma_first, fa_end, fa_err, fa_len);
-    afdx_mac_rx mac_b (clk, reset, rx_data_b, rx_valid_b, mb_valid, mb_data, mb_first, fb_end, fb_err, fb_len);
-    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_a (clk, reset, init_done, rx_valid_a, now_c, ma_valid, ma_first, ma_data,
-        fa_end, fa_err, fa_len, ptr_a, ra_we, ra_wa, ra_wd, da_valid, desc_a, take_a, resolve_a, commit_a, parse_ev_a);
-    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_b (clk, reset, init_done, rx_valid_b, now_c, mb_valid, mb_first, mb_data,
-        fb_end, fb_err, fb_len, ptr_b, rb_we, rb_wa, rb_wd, db_valid, desc_b, take_b, resolve_b, commit_b, parse_ev_b);
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) engine (clk, reset, init_done, now_c, engine_initialized,
-        da_valid, db_valid, desc_a, desc_b, take_a, take_b, resolve_a, resolve_b, commit_a, commit_b, map_re, map_ra, map_q,
-        cfg_re, cfg_ra, cfg_q, state_re, state_we, state_ra, state_wa, state_wd, state_q, dq_pop, dq_we, dq_wa, dq_wd,
-        dq_count, engine_ev_a, engine_ev_b, engine_rm, engine_deliver, cfg_ok);
-    afdx_rx_deliver #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) deliver (clk, reset, dq_count, dq_entries, dq_pop, ra_re,
-        rb_re, ra_ra, rb_ra, ra_q, rb_q, ptr_a, ptr_b, d_valid, d_data, d_last, d_vl, d_sport, d_dport, d_net);
+    afdx_mac_rx mac_a (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .rx_data(rx_data_a),
+        .rx_valid(rx_valid_a),
+        .m_valid(ma_valid),
+        .m_data(ma_data),
+        .m_first(ma_first),
+        .f_end(fa_end),
+        .f_err(fa_err),
+        .f_len(fa_len)
+    );
+    afdx_mac_rx mac_b (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .rx_data(rx_data_b),
+        .rx_valid(rx_valid_b),
+        .m_valid(mb_valid),
+        .m_data(mb_data),
+        .m_first(mb_first),
+        .f_end(fb_end),
+        .f_err(fb_err),
+        .f_len(fb_len)
+    );
+    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_a (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .now_c(now_c),
+        // 这些端口用于配置和初始化。
+        .enable(init_done),
+        // 这些端口用于数据和握手。
+        .rx_valid(rx_valid_a),
+        .m_valid(ma_valid),
+        .m_first(ma_first),
+        .m_data(ma_data),
+        .f_end(fa_end),
+        .f_err(fa_err),
+        .f_len(fa_len),
+        .read_ptr(ptr_a),
+        .ring_we(ra_we),
+        .ring_wa(ra_wa),
+        .ring_wd(ra_wd),
+        .desc_valid(da_valid),
+        .desc_data(desc_a),
+        .desc_take(take_a),
+        .resolve_valid(resolve_a),
+        .resolve_commit(commit_a),
+        .ev(parse_ev_a)
+    );
+    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_b (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .now_c(now_c),
+        // 这些端口用于配置和初始化。
+        .enable(init_done),
+        // 这些端口用于数据和握手。
+        .rx_valid(rx_valid_b),
+        .m_valid(mb_valid),
+        .m_first(mb_first),
+        .m_data(mb_data),
+        .f_end(fb_end),
+        .f_err(fb_err),
+        .f_len(fb_len),
+        .read_ptr(ptr_b),
+        .ring_we(rb_we),
+        .ring_wa(rb_wa),
+        .ring_wd(rb_wd),
+        .desc_valid(db_valid),
+        .desc_data(desc_b),
+        .desc_take(take_b),
+        .resolve_valid(resolve_b),
+        .resolve_commit(commit_b),
+        .ev(parse_ev_b)
+    );
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) engine (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .now_c(now_c),
+        // 这些端口用于配置和初始化。
+        .enable(init_done),
+        .initialized(engine_initialized),
+        .cfg_re(cfg_re),
+        .cfg_ra(cfg_ra),
+        .cfg_q(cfg_q),
+        .cfg_ok(cfg_ok),
+        // 这些端口用于数据和握手。
+        .desc_a_valid(da_valid),
+        .desc_b_valid(db_valid),
+        .desc_a(desc_a),
+        .desc_b(desc_b),
+        .take_a(take_a),
+        .take_b(take_b),
+        .resolve_a(resolve_a),
+        .resolve_b(resolve_b),
+        .commit_a(commit_a),
+        .commit_b(commit_b),
+        .map_re(map_re),
+        .map_ra(map_ra),
+        .map_q(map_q),
+        .state_re(state_re),
+        .state_we(state_we),
+        .state_ra(state_ra),
+        .state_wa(state_wa),
+        .state_wd(state_wd),
+        .state_q(state_q),
+        .dq_pop(dq_pop),
+        .dq_we(dq_we),
+        .dq_wa(dq_wa),
+        .dq_wd(dq_wd),
+        .dq_count(dq_count),
+        // 这些端口用于事件。
+        .ev_a(engine_ev_a),
+        .ev_b(engine_ev_b),
+        .ev_rm_drop(engine_rm),
+        .ev_deliver(engine_deliver)
+    );
+    afdx_rx_deliver #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) deliver (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .dq_count(dq_count),
+        .dq_entries(dq_entries),
+        .dq_pop(dq_pop),
+        .ring_a_re(ra_re),
+        .ring_b_re(rb_re),
+        .ring_a_ra(ra_ra),
+        .ring_b_ra(rb_ra),
+        .ring_a_q(ra_q),
+        .ring_b_q(rb_q),
+        .read_ptr_a(ptr_a),
+        .read_ptr_b(ptr_b),
+        .d_valid(d_valid),
+        .d_data(d_data),
+        .d_last(d_last),
+        .d_vl(d_vl),
+        .d_sport(d_sport),
+        .d_dport(d_dport),
+        .d_net(d_net)
+    );
 endmodule

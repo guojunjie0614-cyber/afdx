@@ -33,9 +33,20 @@ module afdx_mac_tx (
     // 发送途中缺字节时故意不取反，让接收方发现错误。
     reg [31:0] crc_a, crc_b, fcs_a, fcs_b;
     wire [31:0] next_a, next_b;
-    afdx_crc32_d8 update_a (crc_a, s_data_a, next_a);
-    afdx_crc32_d8 update_b (crc_b, s_data_b, next_b);
-    assign s_ready = byte_en && ((state == PREAMBLE && pre_index == 7) || (state == DATA && ! last_byte) || state == DRAIN);
+    afdx_crc32_d8 update_a (
+        // 这些端口用于数据和握手。
+        .crc(crc_a),
+        .data(s_data_a),
+        .next_crc(next_a)
+    );
+    afdx_crc32_d8 update_b (
+        // 这些端口用于数据和握手。
+        .crc(crc_b),
+        .data(s_data_b),
+        .next_crc(next_b)
+    );
+    assign s_ready = byte_en && ((state == PREAMBLE && pre_index == 7) || (state == DATA && ! last_byte)
+        || state == DRAIN);
     always @(posedge clk) begin
         if (reset) begin
             state <= GAP;

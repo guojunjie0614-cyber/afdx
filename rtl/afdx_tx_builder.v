@@ -255,7 +255,8 @@ module afdx_tx_builder #(
                 endcase
             end
             // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
-            if (pending && prepared && ! stream_active && (! p_timed || ! time_difference[31] || time_difference >= 32'hfffffffc)) begin
+            if (pending && prepared && ! stream_active && (! p_timed || ! time_difference[31]
+                || time_difference >= 32'hfffffffc)) begin
                 stream_active <= 1;
                 s_valid <= 1;
                 s_last <= 0;

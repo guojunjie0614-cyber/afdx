@@ -95,9 +95,39 @@ module afdx_rtc (
     reg [31:0] stamp_tx_sec, stamp_tx_frac, stamp_rx_sec, stamp_rx_frac, reference_sec, reference_frac;
     wire first_tx = active && enable && tx_state == 4 && tx_ready && tx_index == 0;
     wire first_rx = active && enable && rx_valid && rx_claim && ! rx_busy;
-    afdx_ntp_fraction encode_tx (clk, reset, encode_tx_start, 1'b0, encode_tx_value, encode_tx_done, encode_tx_result);
-    afdx_ntp_fraction encode_rx (clk, reset, encode_rx_start, 1'b0, encode_rx_value, encode_rx_done, encode_rx_result);
-    afdx_ntp_fraction decode_rx (clk, reset, decode_start, 1'b1, decode_value, decode_done, decode_result);
+    afdx_ntp_fraction encode_tx (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .start(encode_tx_start),
+        .to_nanoseconds(1'b0),
+        .value(encode_tx_value),
+        .done(encode_tx_done),
+        .result(encode_tx_result)
+    );
+    afdx_ntp_fraction encode_rx (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .start(encode_rx_start),
+        .to_nanoseconds(1'b0),
+        .value(encode_rx_value),
+        .done(encode_rx_done),
+        .result(encode_rx_result)
+    );
+    afdx_ntp_fraction decode_rx (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于数据和握手。
+        .start(decode_start),
+        .to_nanoseconds(1'b1),
+        .value(decode_value),
+        .done(decode_done),
+        .result(decode_result)
+    );
     always @(posedge clk) begin
         if (reset) begin
             encode_tx_start <= 0;
@@ -297,7 +327,8 @@ module afdx_rtc (
                     reply_pending <= 1;
                 end
                 // 重发报文还未发完时，不接受旧请求的回应。
-                else if (! master && waiting && tx_state == 0 && rx_packet[378:376] == 4 && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
+                else if (! master && waiting && tx_state == 0 && rx_packet[378:376] == 4
+                    && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
                     server_receive_sec <= rx_packet[127:96] - NTP_EPOCH;
                     server_transmit_sec <= rx_packet[63:32] - NTP_EPOCH;
                     calc_state <= 10;

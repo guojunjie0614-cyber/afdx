@@ -6,7 +6,16 @@ module afdx_ram_sdp #(
     parameter WIDTH = 8,
     parameter DEPTH = 2048) (clk, write_enable, write_address, write_data, read_enable, read_address, read_data);
     // 地址宽度由容量计算，至少保留一位。
-    localparam AW = DEPTH <= 2 ? 1 : DEPTH <= 4 ? 2 : DEPTH <= 8 ? 3 : DEPTH <= 16 ? 4 : DEPTH <= 32 ? 5 : DEPTH <= 64 ? 6 : DEPTH <= 128 ? 7 : DEPTH <= 256 ? 8 : DEPTH <= 512 ? 9 : DEPTH <= 1024 ? 10 : DEPTH <= 2048 ? 11 : DEPTH <= 4096 ? 12 : DEPTH <= 8192 ? 13 : DEPTH <= 16384 ? 14 : DEPTH <= 32768 ? 15 : DEPTH <= 65536 ? 16 : DEPTH <= 131072 ? 17 : DEPTH <= 262144 ? 18 : DEPTH <= 524288 ? 19 : DEPTH <= 1048576 ? 20 : DEPTH <= 2097152 ? 21 : DEPTH <= 4194304 ? 22 : DEPTH <= 8388608 ? 23 : DEPTH <= 16777216 ? 24 : DEPTH <= 33554432 ? 25 : DEPTH <= 67108864 ? 26 : DEPTH <= 134217728 ? 27 : DEPTH <= 268435456 ? 28 : DEPTH <= 536870912 ? 29 : DEPTH <= 1073741824 ? 30 : 31;
+    function integer address_width;
+        input integer depth;
+        integer bit_index;
+        begin
+            address_width = 1;
+            for (bit_index = 1; bit_index < 31; bit_index = bit_index + 1)
+                if (depth > (1 << bit_index)) address_width = bit_index + 1;
+        end
+    endfunction
+    localparam AW = address_width(DEPTH);
     // 读写共用一个时钟，地址按存储字编号。
     input wire clk;
     // write_enable 为高时，把 write_data 写入 write_address。
@@ -25,7 +34,8 @@ module afdx_ram_sdp #(
     // 调用方不能依赖同一拍读写同一地址时的读值。
 `ifndef SYNTHESIS
     // 仿真发现同拍同址读写时报告错误。
-    always @(posedge clk) if (write_enable && read_enable && write_address == read_address) $display ("** Error: [RAMCOLL] %m time=%0t address=%0d",
+    always @(posedge clk) if (write_enable && read_enable
+        && write_address == read_address) $display ("** Error: [RAMCOLL] %m time=%0t address=%0d",
         $time, write_address);
 `endif
 endmodule

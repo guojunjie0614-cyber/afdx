@@ -98,7 +98,8 @@ module AFDX_top #(
     // 各自的读有效标记延后两拍，与返回数据对齐。
     reg [1:0] host_read_pipe, snmp_read_pipe;
     // 主机优先读取；两者读同一地址时，共用本次读取结果。
-    assign snmp_mib_ready = ! cfg_wr && (! cfg_rd || (! snmp_mib_wr && cfg_addr == snmp_mib_addr)) && (! snmp_mib_wr || cfg_ready);
+    assign snmp_mib_ready = ! cfg_wr && (! cfg_rd || (! snmp_mib_wr && cfg_addr == snmp_mib_addr))
+        && (! snmp_mib_wr || cfg_ready);
     assign snmp_grant = (snmp_mib_rd || snmp_mib_wr) && snmp_mib_ready;
     assign bus_addr = snmp_grant ? snmp_mib_addr : cfg_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
@@ -147,7 +148,8 @@ module AFDX_top #(
         .svc_tx_last({ load_tx_last, snmp_tx_last, rtc_tx_last }), .svc_tx_vl({ load_tx_vl, snmp_tx_vl, rtc_tx_vl }),
         .svc_tx_port_en(3'b111), .svc_tx_sport({ load_tx_sport, 16'd161, rtc_port }), .svc_tx_dport({ load_tx_dport,
         snmp_tx_dport, rtc_port }), .m_valid(m_valid), .m_ready(m_ready), .m_data(m_data), .m_last(m_last), .m_vl(m_vl),
-        .m_port_en(m_port_en), .m_sport(m_sport), .m_dport(m_dport), .d_valid(d_valid), .d_data(d_data), .d_last(d_last),
+        .m_port_en(m_port_en), .m_sport(m_sport), .m_dport(m_dport), .d_valid(d_valid), .d_data(d_data),
+            .d_last(d_last),
         .d_vl(d_vl), .d_sport(d_sport), .d_dport(d_dport), .d_net(d_net), .svc_rx_claim({ load_claim, snmp_claim,
         rtc_claim }), .svc_rx_valid(svc_rx_valid), .svc_rx_data(svc_rx_data), .svc_rx_last(svc_rx_last),
         .svc_rx_vl(), .svc_rx_sport(svc_rx_sport), .svc_rx_dport(svc_rx_port), .svc_rx_net(),
@@ -159,8 +161,10 @@ module AFDX_top #(
     end
     // 双网收发核心直接连接线路，每拍处理一个字节。
     afdx_timebase timebase (.clk(clk), .reset(reset), .now(now), .byte_en(byte_en), .now_c(now_c));
-    afdx_tx_core #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD)) tx_core (.clk(clk), .reset(reset),
-        .now(now), .byte_en(byte_en), .m_valid(m_valid), .m_ready(m_ready), .m_data(m_data), .m_last(m_last), .m_vl(m_vl),
+    afdx_tx_core #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD)) tx_core (.clk(clk),
+        .reset(reset),
+        .now(now), .byte_en(byte_en), .m_valid(m_valid), .m_ready(m_ready), .m_data(m_data), .m_last(m_last),
+            .m_vl(m_vl),
         .m_port_en(m_port_en), .m_sport(m_sport), .m_dport(m_dport), .cfg_we(tx_cfg_we), .cfg_addr(tx_cfg_addr),
         .cfg_wdata(tx_cfg_wdata), .user_id(user_id), .tx_data_a(tx_data), .tx_valid_a(tx_valid),
         .tx_data_b(tx_data_b), .tx_valid_b(tx_valid_b), .init_done(tx_initialized), .ev_accept(ev_tx[0]),
@@ -168,11 +172,13 @@ module AFDX_top #(
         .ev_tx_a(ev_tx[5]), .ev_tx_b(ev_tx[6]), .cfg_ok(tx_cfg_ok));
     afdx_rx_core #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) rx_core (.clk(clk), .reset(reset), .now_c(now_c),
         .rx_data_a(rx_data), .rx_valid_a(rx_valid), .rx_data_b(rx_data_b), .rx_valid_b(rx_valid_b),
-        .cfg_map_we(rx_map_we), .cfg_cfg_we(rx_cfg_we), .cfg_addr(rx_cfg_addr), .cfg_wdata(rx_cfg_wdata), .d_valid(d_valid),
+        .cfg_map_we(rx_map_we), .cfg_cfg_we(rx_cfg_we), .cfg_addr(rx_cfg_addr), .cfg_wdata(rx_cfg_wdata),
+            .d_valid(d_valid),
         .d_data(d_data), .d_last(d_last), .d_vl(d_vl), .d_sport(d_sport), .d_dport(d_dport), .d_net(d_net),
         .init_done(rx_initialized), .ev_a(ev_a), .ev_b(ev_b), .ev_rm_drop(ev_rm_drop), .ev_deliver(ev_deliver),
         .cfg_ok(rx_cfg_ok));
-    afdx_cfg cfg_regs (.clk(clk), .reset(reset), .tx_ready(tx_ready), .cfg_wr(bus_wr), .cfg_rd(bus_rd), .cfg_addr(bus_addr),
+    afdx_cfg cfg_regs (.clk(clk), .reset(reset), .tx_ready(tx_ready), .cfg_wr(bus_wr), .cfg_rd(bus_rd),
+        .cfg_addr(bus_addr),
         .cfg_wdata(bus_wdata), .cfg_ready(cfg_ready), .cfg_rvalid(), .cfg_rdata(cfg_rdata), .user_id(user_id),
         .tx_cfg_ok(tx_cfg_ok), .rx_cfg_ok(rx_cfg_ok), .tx_cfg_we(tx_cfg_we), .tx_cfg_addr(tx_cfg_addr),
         .tx_cfg_wdata(tx_cfg_wdata), .rx_map_we(rx_map_we), .rx_cfg_we(rx_cfg_we), .rx_cfg_addr(rx_cfg_addr),

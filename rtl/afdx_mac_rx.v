@@ -38,7 +38,12 @@ module afdx_mac_rx (
     // 末尾四个字节只参与校验，不作为帧内容输出。
     reg [7:0] delay0, delay1, delay2, delay3;
     wire [31:0] next_crc;
-    afdx_crc32_d8 update_crc (crc, data_q, next_crc);
+    afdx_crc32_d8 update_crc (
+        // 这些端口用于数据和握手。
+        .crc(crc),
+        .data(data_q),
+        .next_crc(next_crc)
+    );
     // 帧结束时才确定检查结果，解析器在此前暂存数据。
     always @(posedge clk) begin
         data_q <= rx_data;

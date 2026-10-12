@@ -27,8 +27,10 @@ module afdx_615a (
     input wire rx_last,
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
-    localparam IDLE = 0, WAIT_PACKET = 1, DISPATCH = 2, NAME = 3, NAME_BYTE = 4, MODE = 5, MODE_BYTE = 6, REQUEST_OK = 7,
-        FETCH = 8, FETCH_WAIT = 9, FETCH_CAPTURE = 10, FETCH_DONE = 11, NUMBER = 12, NUMBER_BYTE = 13, BUILD = 14, EMIT = 15,
+    localparam IDLE = 0, WAIT_PACKET = 1, DISPATCH = 2, NAME = 3, NAME_BYTE = 4, MODE = 5, MODE_BYTE = 6,
+        REQUEST_OK = 7,
+        FETCH = 8, FETCH_WAIT = 9, FETCH_CAPTURE = 10, FETCH_DONE = 11, NUMBER = 12, NUMBER_BYTE = 13, BUILD = 14,
+            EMIT = 15,
         BUILD_FLUSH = 16, TX_ADDR = 17, TX_WAIT = 18, TX_CAPTURE = 19, TX_SEND = 20, START_LUS = 21, RATIO_SCALE = 22,
         RATIO_SUB = 23, RATIO_DEC = 24, LUS_WRQ = 25, LUS_DATA = 26, LUS_DONE = 27, ACK_MAIN = 28, DATA_COPY = 29,
         DATA_BYTE = 30, DATA_END = 31, LUR_START = 32, LUR_LENGTH = 33, LUR_VERSION = 34, LUR_COUNT = 35, LUR_HLEN = 36,
@@ -128,12 +130,63 @@ module afdx_615a (
     // lur_ram 保存请求列表，容量为 512 字节。
     // header_ram 保存头文件，容量为 2 KiB。
     // load_ram 保存加载数据，容量为 8 KiB。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_rx (clk, rx_we, rx_wa, rx_wd, rx_re, rx_ra, rx_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (clk, tx_we, tx_wa, tx_wd, tx_re, tx_ra, tx_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (clk, lur_we, lur_wa, lur_wd, lur_re, lur_ra, lur_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (clk, hdr_we, hdr_wa, hdr_wd, hdr_re, hdr_ra, hdr_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (clk, load_we, load_wa, load_wd, load_re, load_ra, load_q);
-    assign rx_claim = enable && configured && (rx_dport == request_port || rx_dport == main_tid || rx_dport == status_tid || rx_dport == deny_tid);
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_rx (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(rx_we),
+        .write_address(rx_wa),
+        .write_data(rx_wd),
+        .read_enable(rx_re),
+        .read_address(rx_ra),
+        .read_data(rx_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(tx_we),
+        .write_address(tx_wa),
+        .write_data(tx_wd),
+        .read_enable(tx_re),
+        .read_address(tx_ra),
+        .read_data(tx_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(lur_we),
+        .write_address(lur_wa),
+        .write_data(lur_wd),
+        .read_enable(lur_re),
+        .read_address(lur_ra),
+        .read_data(lur_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(hdr_we),
+        .write_address(hdr_wa),
+        .write_data(hdr_wd),
+        .read_enable(hdr_re),
+        .read_address(hdr_ra),
+        .read_data(hdr_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(load_we),
+        .write_address(load_wa),
+        .write_data(load_wd),
+        .read_enable(load_re),
+        .read_address(load_ra),
+        .read_data(load_q)
+    );
+    assign rx_claim = enable && configured && (rx_dport == request_port || rx_dport == main_tid
+        || rx_dport == status_tid || rx_dport == deny_tid);
     function [15:0] crc16;
         input [15:0] old;
         input [7:0] value;
@@ -466,7 +519,8 @@ module afdx_615a (
                 8'hb8 : if (status != 1 && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
                 8'hb9 : if (status != 1 && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
                 8'hba : if (status != 1) retry_limit <= cfg_wdata[7:0];
-                8'hbb : if (status != 1 && (cfg_wdata[15:0] == 16'h4133 || cfg_wdata[15:0] == 16'h4134)) protocol_a4 <= cfg_wdata[15:0] == 16'h4134;
+                8'hbb : if (status != 1 && (cfg_wdata[15:0] == 16'h4133
+                    || cfg_wdata[15:0] == 16'h4134)) protocol_a4 <= cfg_wdata[15:0] == 16'h4134;
             endcase
             case (cfg_addr[2:0])
                 0 : cfg_rdata <= { 31'b0, configured };
@@ -538,7 +592,8 @@ module afdx_615a (
                         status <= 3;
                         state <= DONE;
                     end
-                    else if (wait_kind == WK_LUI_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == 4 && rx_block == 1) begin
+                    else if (wait_kind == WK_LUI_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == 4
+                        && rx_block == 1) begin
                         lus_status <= 1;
                         lus_return <= LUS_DONE;
                         state <= START_LUS;
@@ -547,14 +602,17 @@ module afdx_615a (
                         status_peer <= peer_sp;
                         state <= LUS_DATA;
                     end
-                    else if (wait_kind == WK_LUS_ACK1 && peer_dp == status_tid && peer_sp == status_peer && rx_op == 4 && rx_block == 1) state <= lus_return;
+                    else if (wait_kind == WK_LUS_ACK1 && peer_dp == status_tid && peer_sp == status_peer
+                        && rx_op == 4 && rx_block == 1) state <= lus_return;
                     else if (wait_kind == WK_DL_ACK0 && peer_dp == main_tid && rx_op == 4 && rx_block == 0) begin
                         main_peer <= peer_sp;
                         block_number <= 1;
                         state <= DL_BLOCK;
                     end
-                    else if (wait_kind == WK_DL_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == 4 && rx_block == block_number) state <= DL_ACK;
-                    else if (wait_kind == WK_DATA && peer_dp == main_tid && rx_op == 3 && (main_peer == 0 || peer_sp == main_peer)) begin
+                    else if (wait_kind == WK_DL_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == 4
+                        && rx_block == block_number) state <= DL_ACK;
+                    else if (wait_kind == WK_DATA && peer_dp == main_tid && rx_op == 3 && (main_peer == 0
+                        || peer_sp == main_peer)) begin
                         main_peer <= peer_sp;
                         if (rx_block == block_number && rx_length >= 4 && rx_length <= 516) begin
                             copy_len <= rx_length - 4;
@@ -573,7 +631,8 @@ module afdx_615a (
                 // NAME：读取文件名的下一字节，然后转 NAME_BYTE。
                 NAME : get_byte (0, { 6'b0, name_pos } + 11'd2, NAME_BYTE);
                 // NAME_BYTE：识别操作文件名，名字读完后转 MODE，非法名字返回错误。
-                NAME_BYTE : if (name_pos == 9 && (byte_value == "U" || byte_value == "N" || (!request_write && byte_value == "C"))) begin
+                NAME_BYTE : if (name_pos == 9 && (byte_value == "U" || byte_value == "N" || (!request_write
+                    && byte_value == "C"))) begin
                     request_download <= byte_value == "N";
                     request_unsupported <= byte_value == "C";
                     name_pos <= name_pos + 1'b1;
@@ -584,7 +643,8 @@ module afdx_615a (
                     name_pos <= name_pos + 1'b1;
                     state <= NAME;
                 end
-                else if (byte_value != target_name (name_pos, request_write ? "R" : request_download ? "D" : "I", request_download)) begin
+                else if (byte_value != target_name (name_pos, request_write ? "R" : request_download ? "D" : "I",
+                    request_download)) begin
                     reason <= 1;
                     make_packet (PK_ERROR, 11, tid_sequence, peer_sp, IDLE);
                 end
@@ -599,7 +659,8 @@ module afdx_615a (
                 // MODE：读取传输模式的下一字节，然后转 MODE_BYTE。
                 MODE : get_byte (0, { 6'b0, name_pos } + 11'd14, MODE_BYTE);
                 // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
-                MODE_BYTE : if ((byte_value | 8'h20) != (octet_byte (name_pos) | 8'h20) || (name_pos == 5 && byte_value != 0)) begin
+                MODE_BYTE : if ((byte_value | 8'h20) != (octet_byte (name_pos) | 8'h20) || (name_pos == 5
+                    && byte_value != 0)) begin
                     reason <= 4;
                     make_packet (PK_ERROR, 11, tid_sequence, peer_sp, IDLE);
                     // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
@@ -611,7 +672,8 @@ module afdx_615a (
                 end
                 // REQUEST_OK：接受请求后启动文件流程，无法接受时转 DENY_SEND。
                 REQUEST_OK : begin
-                    if (request_unsupported || (!request_write && status == 1) || (request_write && status == 1 && request_download != download_mode) ||
+                    if (request_unsupported || (!request_write && status == 1) || (request_write && status == 1
+                        && request_download != download_mode) ||
                         (!request_write && request_download && available_size == 0)) begin
                         // 信息操作和操作员定义卸载返回状态 1002，不启动后续传输。
                         deny_unsupported <= request_unsupported;
@@ -759,7 +821,8 @@ module afdx_615a (
                         endcase
                         PK_LUS_WRQ : begin
                             if (packet_pos == 1) build_value <= 2;
-                            else if (packet_pos >= 2 && packet_pos < 14) build_value <= target_name (packet_pos - 2, "S", download_mode);
+                            else if (packet_pos >= 2 && packet_pos < 14) build_value <= target_name (packet_pos - 2,
+                                "S", download_mode);
                             else if (packet_pos >= 14) build_value <= octet_byte (packet_pos - 14);
                         end
                         PK_RRQ : begin
@@ -796,13 +859,16 @@ module afdx_615a (
                                 31 : build_value <= manifest;
                                 32 : build_value <= header_name_len;
                                 default : begin
-                                    if (packet_pos >= 13 && packet_pos <= 20) build_value <= description (packet_pos - 13);
+                                    if (packet_pos >= 13
+                                        && packet_pos <= 20) build_value <= description (packet_pos - 13);
                                     else if (packet_pos >= 33 && packet_pos < lus_partlen_pos) get_byte (1,
                                         header_name_addr + head_index, EMIT);
                                     else if (!download_mode && packet_pos == lus_partlen_pos) build_value <= part_len;
-                                    else if (!download_mode && packet_pos >= lus_part_pos && packet_pos < lus_tail_pos) get_byte (1,
+                                    else if (!download_mode && packet_pos >= lus_part_pos
+                                        && packet_pos < lus_tail_pos) get_byte (1,
                                         part_addr + part_index, EMIT);
-                                    else if (download_mode && packet_pos >= 33 && packet_pos >= lus_tail_pos) case (tail_index)
+                                    else if (download_mode && packet_pos >= 33
+                                        && packet_pos >= lus_tail_pos) case (tail_index)
                                         0: build_value <= lus_status == 16'h1003 ? 8'h10 : 0;
                                         1: build_value <= lus_status == 16'h1003 ? 7 : lus_status[7:0];
                                         2: build_value <= 8;
@@ -1068,7 +1134,8 @@ module afdx_615a (
                 DL_SIZE : begin
                     copy_len <= dl_remaining >= 512 ? 512 : dl_remaining[10:0];
                     wait_kind <= WK_DL_ACK;
-                    make_packet(PK_DL_DATA, dl_remaining >= 512 ? 516 : dl_remaining[9:0] + 10'd4, main_tid, main_peer, WAIT_PACKET);
+                    make_packet(PK_DL_DATA, dl_remaining >= 512 ? 516 : dl_remaining[9:0] + 10'd4, main_tid,
+                        main_peer, WAIT_PACKET);
                 end
                 // DL_ACK：更新已确认字节数，未完转 DL_BLOCK，完成则发送成功状态。
                 DL_ACK : begin

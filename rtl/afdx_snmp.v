@@ -36,8 +36,10 @@ module afdx_snmp (
     output wire rx_claim);
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
     localparam IDLE = 0, CAPTURE = 1, START = 2, FETCH0 = 3, FETCH1 = 4, FETCH2 = 5, FETCH3 = 6, TAG = 7, LENGTH = 8,
-        LONG_LENGTH = 9, DISPATCH = 10, VERSION = 11, COMMUNITY = 12, INTEGER_VALUE = 13, LOOK_START = 14, LOOK_COMPARE = 15,
-        LOOK_NEXT = 16, FOUND = 17, MISSING = 18, MIB_REQUEST = 19, MIB_WAIT = 20, VALUE_PREP = 21, LEN1 = 22, LEN2 = 23,
+        LONG_LENGTH = 9, DISPATCH = 10, VERSION = 11, COMMUNITY = 12, INTEGER_VALUE = 13, LOOK_START = 14,
+            LOOK_COMPARE = 15,
+        LOOK_NEXT = 16, FOUND = 17, MISSING = 18, MIB_REQUEST = 19, MIB_WAIT = 20, VALUE_PREP = 21, LEN1 = 22,
+            LEN2 = 23,
         LEN3 = 24, LEN4 = 25, BUILD = 26, COPY_COMM = 27, COPY_OID = 28, TX_FLUSH = 29, TX_ADDR = 30, TX_WAIT1 = 31,
         TX_WAIT2 = 32, TX_SEND = 33, SET_VALUE = 34, SET_CHECK = 35, SET_WRITE = 36, SET_ERROR = 37, COPY_VALUE = 38,
         TRAP_INIT = 39, TRAP_COMM0 = 40, TRAP_COMM1 = 41, TRAP_WORD = 42, TRAP_BYTE = 43;
@@ -96,8 +98,28 @@ module afdx_snmp (
     reg [4:0] part, part_pos;
     // 两个 256 字节存储器分别保存请求和回应。
     // 即使发送暂停，请求内容仍可用于生成错误回应。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) request_ram (clk, req_we, req_wa, req_wdata, req_re, req_ra, req_q);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) response_ram (clk, out_we, out_wa, out_wdata, out_re, out_ra, out_q);
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) request_ram (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(req_we),
+        .write_address(req_wa),
+        .write_data(req_wdata),
+        .read_enable(req_re),
+        .read_address(req_ra),
+        .read_data(req_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) response_ram (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(out_we),
+        .write_address(out_wa),
+        .write_data(out_wdata),
+        .read_enable(out_re),
+        .read_address(out_ra),
+        .read_data(out_q)
+    );
     assign rx_claim = configured && rx_dport == 161;
     assign tx_vl = response_vl;
     assign tx_dport = response_port;
@@ -510,7 +532,9 @@ module afdx_snmp (
                             fetch (TAG);
                         end
                         else state <= IDLE;
-                        10 : if (((get_set && field_length <= 16) || (tag_value == 5 && field_length == 0)) && cursor + field_length == binding_end && binding_end == list_end && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length) begin
+                        10 : if (((get_set && field_length <= 16) || (tag_value == 5 && field_length == 0))
+                            && cursor + field_length == binding_end && binding_end == list_end
+                            && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length) begin
                             set_value_start <= cursor[7:0];
                             set_value_tag <= tag_value;
                             set_value_length <= field_length[7:0];
@@ -700,7 +724,8 @@ module afdx_snmp (
                         value_shift <= 0;
                     end
                     else begin
-                        value_tag <= object_index == 1 ? 8'h43 : (object_index >= 2 && object_index <= 4 ? 8'h42 : 8'h41);
+                        value_tag <= object_index == 1 ? 8'h43 : (object_index >= 2
+                            && object_index <= 4 ? 8'h42 : 8'h41);
                         if (value_number[31]) begin
                             value_length <= 5;
                             value_shift <= value_number;

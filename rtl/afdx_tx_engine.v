@@ -100,6 +100,8 @@ module afdx_tx_engine #(
             scan_phase <= 0;
         end
     endtask
+    wire scan_eligible = scan_s2[21:16] != 0 && (! scan_s2[62] || ! scan_soon[31]) && ! (pend_valid
+        && scan_vl4 == pend_vl);
     always @(posedge clk) begin
         if (reset) begin
             op <= INIT;
@@ -206,7 +208,7 @@ module afdx_tx_engine #(
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
                 if (quota < 16) quota <= quota + 1'b1;
-                if (scan_s2[21:16] != 0 && (! scan_s2[62] || ! scan_soon[31]) && ! (pend_valid && scan_vl4 == pend_vl)) begin
+                if (scan_eligible) begin
                     candidate <= 1;
                     candidate_vl <= scan_vl4;
                     scan_valid <= 0;
@@ -273,7 +275,7 @@ module afdx_tx_engine #(
                     end
                     else if (! candidate) begin
                         scan_phase <= ! scan_phase;
-                        if (! scan_phase && ! (scan_valid[4] && scan_s2[21:16] != 0 && (! scan_s2[62] || ! scan_soon[31]) && ! (pend_valid && scan_vl4 == pend_vl))) begin
+                        if (! scan_phase && ! (scan_valid[4] && scan_eligible)) begin
                             state_re <= 1;
                             state_ra <= scan_issue;
                             scan_vl0 <= scan_issue;
@@ -314,7 +316,8 @@ module afdx_tx_engine #(
                                     mnext_wa <= saved_state[7:0];
                                     mnext_wd <= op_head;
                                 end
-                                if (! candidate && ! (pend_valid && op_vl == pend_vl) && (! saved_state[62] || ! soon_difference[31])) begin
+                                if (! candidate && ! (pend_valid && op_vl == pend_vl) && (! saved_state[62]
+                                    || ! soon_difference[31])) begin
                                     candidate <= 1;
                                     candidate_vl <= op_vl;
                                 end
@@ -374,7 +377,8 @@ module afdx_tx_engine #(
                             grant_time <= saved_state[61:30];
                             state_we <= 1;
                             state_wa <= op_vl;
-                            state_wd <= { saved_state[62:30], saved_state[29:22] == 255 ? 8'd1 : saved_state[29:22] + 8'd1,
+                            state_wd <= { saved_state[62:30],
+                                saved_state[29:22] == 255 ? 8'd1 : saved_state[29:22] + 8'd1,
                                 saved_state[21:16] - 6'd1, saved_next, saved_state[7:0] };
                             // 当前消息开始发送前，同一虚拟链路不能再次被选中。
                             pend_valid <= 1;

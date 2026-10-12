@@ -101,38 +101,255 @@ module afdx_tx_core #(
     // state 保存队列位置、序号和发送时间。
     // mnext 记录同一虚拟链路的下一条消息。
     // desc 保存消息长度和端口。
-    afdx_ram_sdp #(.WIDTH(32), .DEPTH(1024)) tx_cfg (clk, cfg_write, cfg_write_addr, cfg_write_data, cfg_read, cfg_read_addr,
-        cfg_data);
-    afdx_ram_sdp #(.WIDTH(63), .DEPTH(128)) tx_state (clk, state_write, state_write_addr, state_write_data, state_read,
-        state_read_addr, state_data);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_mnext (clk, mnext_write, mnext_write_addr, mnext_write_data, mnext_read,
-        mnext_read_addr, mnext_data);
-    afdx_ram_sdp #(.WIDTH(44), .DEPTH(PAGES)) tx_desc (clk, desc_write, desc_write_addr, desc_write_data, desc_read,
-        desc_read_addr, desc_data);
+    afdx_ram_sdp #(.WIDTH(32), .DEPTH(1024)) tx_cfg (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(cfg_write),
+        .write_address(cfg_write_addr),
+        .write_data(cfg_write_data),
+        .read_enable(cfg_read),
+        .read_address(cfg_read_addr),
+        .read_data(cfg_data)
+    );
+    afdx_ram_sdp #(.WIDTH(63), .DEPTH(128)) tx_state (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(state_write),
+        .write_address(state_write_addr),
+        .write_data(state_write_data),
+        .read_enable(state_read),
+        .read_address(state_read_addr),
+        .read_data(state_data)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_mnext (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(mnext_write),
+        .write_address(mnext_write_addr),
+        .write_data(mnext_write_data),
+        .read_enable(mnext_read),
+        .read_address(mnext_read_addr),
+        .read_data(mnext_data)
+    );
+    afdx_ram_sdp #(.WIDTH(44), .DEPTH(PAGES)) tx_desc (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(desc_write),
+        .write_address(desc_write_addr),
+        .write_data(desc_write_data),
+        .read_enable(desc_read),
+        .read_address(desc_read_addr),
+        .read_data(desc_data)
+    );
     // pnext 记录同一消息的下一页，payload 保存消息字节。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_pnext (clk, pnext_write, pnext_write_addr, pnext_write_data, pnext_read,
-        pnext_read_addr, pnext_data);
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAYLOAD_DEPTH)) tx_payload (clk, payload_write, payload_write_addr, payload_write_data,
-        payload_read, payload_read_addr, payload_data);
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_pnext (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(pnext_write),
+        .write_address(pnext_write_addr),
+        .write_data(pnext_write_data),
+        .read_enable(pnext_read),
+        .read_address(pnext_read_addr),
+        .read_data(pnext_data)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAYLOAD_DEPTH)) tx_payload (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(payload_write),
+        .write_address(payload_write_addr),
+        .write_data(payload_write_data),
+        .read_enable(payload_read),
+        .read_address(payload_read_addr),
+        .read_data(payload_data)
+    );
     // 消息先存入空闲页，再由调度器选择，组帧模块发送后归还页。
-    afdx_tx_free #(.TX_PAGE_AW(TX_PAGE_AW)) free_pages (clk, reset, free_initialized, pop_req, pop_ready, pop_ack, pop_ok,
-        pop_page, ret1_valid, ret1_page, ret1_ready, ret2_valid, ret2_page, ret2_ready);
-    afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) buffer (clk, reset, init_done, m_valid, m_ready, m_data,
-        m_last, m_vl, m_port_en, m_sport, m_dport, pop_req, pop_ready, pop_ack, pop_ok, pop_page, ret2_valid, ret2_page,
-        ret2_ready, payload_write, payload_write_addr, payload_write_data, pnext_write, pnext_write_addr, pnext_write_data,
-        desc_write, desc_write_addr, desc_write_data, enq_valid, enq_vl, enq_head, enq_len, enq_ack, enq_result, ev_accept,
-        ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
-    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD)) engine (clk, reset, init_done, now, engine_initialized,
-        cfg_read, cfg_read_addr, cfg_data, state_write, state_read, state_write_addr, state_read_addr, state_write_data,
-        state_data, mnext_write, mnext_read, mnext_write_addr, mnext_read_addr, mnext_write_data, mnext_data, desc_read,
-        desc_read_addr, desc_data, enq_valid, enq_vl, enq_head, enq_len, enq_ack, enq_result, start_valid, t_start,
-        grant_ready, grant_valid, grant_a, grant_b, grant_timed, grant_time, grant_vlid, grant_sport, grant_dport, grant_src,
-        grant_dst, grant_len, grant_sn, grant_page, cfg_ok);
-    afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) builder (clk, reset, now, user_id, grant_ready,
-        grant_valid, grant_a, grant_b, grant_timed, grant_time, grant_src, grant_dst, grant_vlid, grant_sport, grant_dport,
-        grant_len, grant_sn, grant_page, start_valid, t_start, payload_read, payload_read_addr, payload_data, pnext_read,
-        pnext_read_addr, pnext_data, ret1_valid, ret1_page, ret1_ready, s_valid, s_ready, s_data_a, s_data_b, s_last, s_en_a,
-        s_en_b, tx_sof, tx_eof, tx_underrun, ev_tx_a, ev_tx_b);
-    afdx_mac_tx mac (clk, reset, byte_en, s_valid, s_ready, s_data_a, s_data_b, s_last, s_en_a, s_en_b, tx_sof, tx_eof,
-        tx_underrun, tx_data_a, tx_valid_a, tx_data_b, tx_valid_b);
+    afdx_tx_free #(.TX_PAGE_AW(TX_PAGE_AW)) free_pages (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于配置和初始化。
+        .init_done(free_initialized),
+        // 这些端口用于数据和握手。
+        .pop_req(pop_req),
+        .pop_ready(pop_ready),
+        .pop_ack(pop_ack),
+        .pop_ok(pop_ok),
+        .pop_page(pop_page),
+        .ret1_valid(ret1_valid),
+        .ret1_page(ret1_page),
+        .ret1_ready(ret1_ready),
+        .ret2_valid(ret2_valid),
+        .ret2_page(ret2_page),
+        .ret2_ready(ret2_ready)
+    );
+    afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) buffer (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        // 这些端口用于配置和初始化。
+        .init_done(init_done),
+        // 这些端口用于数据和握手。
+        .m_valid(m_valid),
+        .m_ready(m_ready),
+        .m_data(m_data),
+        .m_last(m_last),
+        .m_vl(m_vl),
+        .m_port_en(m_port_en),
+        .m_sport(m_sport),
+        .m_dport(m_dport),
+        .pop_req(pop_req),
+        .pop_ready(pop_ready),
+        .pop_ack(pop_ack),
+        .pop_ok(pop_ok),
+        .pop_page(pop_page),
+        .ret_valid(ret2_valid),
+        .ret_page(ret2_page),
+        .ret_ready(ret2_ready),
+        .payload_we(payload_write),
+        .payload_wa(payload_write_addr),
+        .payload_wd(payload_write_data),
+        .pnext_we(pnext_write),
+        .pnext_wa(pnext_write_addr),
+        .pnext_wd(pnext_write_data),
+        .desc_we(desc_write),
+        .desc_wa(desc_write_addr),
+        .desc_wd(desc_write_data),
+        .enq_valid(enq_valid),
+        .enq_vl(enq_vl),
+        .enq_head(enq_head),
+        .enq_len(enq_len),
+        .enq_ack(enq_ack),
+        .enq_result(enq_result),
+        // 这些端口用于事件。
+        .ev_accept(ev_accept),
+        .ev_drop_dis(ev_drop_dis),
+        .ev_drop_full(ev_drop_full),
+        .ev_drop_long(ev_drop_long),
+        .ev_drop_nopage(ev_drop_nopage)
+    );
+    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD)) engine (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .now(now),
+        // 这些端口用于配置和初始化。
+        .enable(init_done),
+        .initialized(engine_initialized),
+        .cfg_re(cfg_read),
+        .cfg_ra(cfg_read_addr),
+        .cfg_q(cfg_data),
+        .cfg_ok(cfg_ok),
+        // 这些端口用于数据和握手。
+        .state_we(state_write),
+        .state_re(state_read),
+        .state_wa(state_write_addr),
+        .state_ra(state_read_addr),
+        .state_wd(state_write_data),
+        .state_q(state_data),
+        .mnext_we(mnext_write),
+        .mnext_re(mnext_read),
+        .mnext_wa(mnext_write_addr),
+        .mnext_ra(mnext_read_addr),
+        .mnext_wd(mnext_write_data),
+        .mnext_q(mnext_data),
+        .desc_re(desc_read),
+        .desc_ra(desc_read_addr),
+        .desc_q(desc_data),
+        .enq_valid(enq_valid),
+        .enq_vl(enq_vl),
+        .enq_head(enq_head),
+        .enq_len(enq_len),
+        .enq_ack(enq_ack),
+        .enq_result(enq_result),
+        .start_valid(start_valid),
+        .t_start(t_start),
+        .grant_ready(grant_ready),
+        .grant_valid(grant_valid),
+        .grant_a(grant_a),
+        .grant_b(grant_b),
+        .grant_timed(grant_timed),
+        .grant_time(grant_time),
+        .grant_vlid(grant_vlid),
+        .grant_sport(grant_sport),
+        .grant_dport(grant_dport),
+        .grant_src(grant_src),
+        .grant_dst(grant_dst),
+        .grant_len(grant_len),
+        .grant_sn(grant_sn),
+        .grant_page(grant_page)
+    );
+    afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) builder (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .now(now),
+        // 这些端口用于配置和初始化。
+        .user_id(user_id),
+        // 这些端口用于数据和握手。
+        .grant_ready(grant_ready),
+        .grant_valid(grant_valid),
+        .grant_a(grant_a),
+        .grant_b(grant_b),
+        .grant_timed(grant_timed),
+        .grant_time(grant_time),
+        .grant_src(grant_src),
+        .grant_dst(grant_dst),
+        .grant_vlid(grant_vlid),
+        .grant_sport(grant_sport),
+        .grant_dport(grant_dport),
+        .grant_len(grant_len),
+        .grant_sn(grant_sn),
+        .grant_page(grant_page),
+        .start_valid(start_valid),
+        .t_start(t_start),
+        .payload_re(payload_read),
+        .payload_ra(payload_read_addr),
+        .payload_q(payload_data),
+        .pnext_re(pnext_read),
+        .pnext_ra(pnext_read_addr),
+        .pnext_q(pnext_data),
+        .ret_valid(ret1_valid),
+        .ret_page(ret1_page),
+        .ret_ready(ret1_ready),
+        .s_valid(s_valid),
+        .s_ready(s_ready),
+        .s_data_a(s_data_a),
+        .s_data_b(s_data_b),
+        .s_last(s_last),
+        .s_en_a(s_en_a),
+        .s_en_b(s_en_b),
+        .tx_sof(tx_sof),
+        .tx_eof(tx_eof),
+        .tx_underrun(tx_underrun),
+        // 这些端口用于事件。
+        .ev_tx_a(ev_tx_a),
+        .ev_tx_b(ev_tx_b)
+    );
+    afdx_mac_tx mac (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        .reset(reset),
+        .byte_en(byte_en),
+        // 这些端口用于数据和握手。
+        .s_valid(s_valid),
+        .s_ready(s_ready),
+        .s_data_a(s_data_a),
+        .s_data_b(s_data_b),
+        .s_last(s_last),
+        .s_en_a(s_en_a),
+        .s_en_b(s_en_b),
+        .tx_sof(tx_sof),
+        .tx_eof(tx_eof),
+        .tx_underrun(tx_underrun),
+        .tx_data_a(tx_data_a),
+        .tx_valid_a(tx_valid_a),
+        .tx_data_b(tx_data_b),
+        .tx_valid_b(tx_valid_b)
+    );
 endmodule

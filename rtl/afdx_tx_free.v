@@ -42,7 +42,17 @@ module afdx_tx_free #(
     assign pop_ready = init_done && phase == 0;
     assign ret1_ready = init_done && ! ret1_pending;
     assign ret2_ready = init_done && ! ret2_pending;
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (clk, we, wa, wd, re, ra, q);
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
+        // 这些端口用于时钟和复位。
+        .clk(clk),
+        // 这些端口用于数据和握手。
+        .write_enable(we),
+        .write_address(wa),
+        .write_data(wd),
+        .read_enable(re),
+        .read_address(ra),
+        .read_data(q)
+    );
     always @(posedge clk) begin
         if (reset) begin
             init_done <= 0;

@@ -189,7 +189,8 @@ module afdx_rx_engine #(
                         // 两网同时提交时先处理 A 网。
                         op_net <= ! desc_a_valid;
                         current_desc <= desc_a_valid ? desc_a : desc_b;
-                        map_ra <= desc_a_valid ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67] : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
+                        map_ra <= desc_a_valid ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67] : desc_b[RX_RING_AW +
+                            82:RX_RING_AW + 67];
                         map_re <= 1;
                         take_a <= desc_a_valid;
                         take_b <= ! desc_a_valid;
@@ -239,7 +240,8 @@ module afdx_rx_engine #(
                             saved_state <= state_q;
                         end
                         5 : begin
-                            if (! saved_cfg[0] || ! (op_net ? saved_cfg[2] : saved_cfg[1]) || length > saved_cfg[27:17]) begin
+                            if (! saved_cfg[0] || ! (op_net ? saved_cfg[2] : saved_cfg[1])
+                                || length > saved_cfg[27:17]) begin
                                 result <= 2;
                                 phase <= 11;
                             end
