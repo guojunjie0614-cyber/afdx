@@ -23,8 +23,6 @@ tb_sys_cfg
 tb_sys_reset
 tb_sys_ovf|RX_RING_AW=9
 tb_sys_net
-tb_gmii_tx
-tb_gmii_rx
 tb_sys_perf
 tb_sys_rtc
 tb_sys_snmp

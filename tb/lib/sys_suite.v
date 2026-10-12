@@ -4,16 +4,16 @@
 `timescale 1ns/1ps
 // 测试指令只描述公开端口操作，不访问被测模块的内部状态。
 module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
- LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,GMII_RX_AW=12,LINK_FRAMES=2048);
+ LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,LINK_FRAMES=2048);
  reg clk=0;always #4 clk=~clk;
  reg reset1=1,reset2=1;
  integer sf,cf,pf,rc,cycle=0,checks=0,errors=0,quiet=0;
  wire [7:0] t1a,t1b,t2a,t2b,r1a,r1b,r2a,r2b;
  wire v1a,v1b,v2a,v2b,i1a,i1b,i2a,i2b,ready1,ready2;
  wire [31:0] c1,c2,e1,e2,l0e,l1e,l2e,l3e;
- sys_endpoint #(1,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW,GMII_RX_AW)
+ sys_endpoint #(1,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW)
  es1(clk,reset1,r1a,i1a,r1b,i1b,sf,t1a,v1a,t1b,v1b,ready1,c1,e1);
- sys_endpoint #(2,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW,GMII_RX_AW)
+ sys_endpoint #(2,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW)
  es2(clk,reset2,r2a,i2a,r2b,i2b,sf,t2a,v2a,t2b,v2b,ready2,c2,e2);
  link_model #(.LINK_ID(0),.MAX_FRAMES(LINK_FRAMES)) l0(clk,reset1,t1a,v1a,r2a,i2a,sf,l0e);
  link_model #(.LINK_ID(1),.MAX_FRAMES(LINK_FRAMES)) l1(clk,reset1,t1b,v1b,r2b,i2b,sf,l1e);
@@ -183,7 +183,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
   pf=$fopen("vectors/sys_payload.count","r");rc=$fscanf(pf,"%d",total);$fclose(pf);
   $readmemh("vectors/sys_payload.hex",stimulus,0,total-1);
   $fwrite(sf,"G 0 TX_PAGE_AW %0d\nG 0 TX_OFF_AW %0d\nG 0 LOOKAHEAD %0d\nG 0 RX_RING_AW %0d\nG 0 RX_DQ_AW %0d\n",TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW);
-  $fwrite(sf,"G 0 GMII_RX_AW %0d\nG 0 CLOCK_NS 8\nG 0 GMII_TX_DELAY 0\nG 0 GMII_RX_REPLAY_R 0\n",GMII_RX_AW);
+  $fwrite(sf,"G 0 CLOCK_NS 8\nG 0 GMII_TX_DELAY 0\nG 0 GMII_RX_REPLAY_R 0\n");
   #2;set_delay(0,13001);set_delay(1,13001);set_delay(2,13001);set_delay(3,13001);
   repeat(4)tick;@(negedge clk);reset1=0;
   repeat(13)tick;@(negedge clk);reset2=0;

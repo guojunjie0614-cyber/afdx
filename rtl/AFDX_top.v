@@ -8,8 +8,7 @@ module AFDX_top #(
     parameter TX_OFF_AW = 9,
     parameter LOOKAHEAD = 512,
     parameter RX_RING_AW = 12,
-    parameter RX_DQ_AW = 5,
-    parameter GMII_RX_AW = 12) (
+    parameter RX_DQ_AW = 5) (
     // 下面八个端口与赛题模板一致，其中的数据口连接 A 网。
     // A 网和 B 网是互为备份的两路以太网，同一帧在两路上各发一份。
     input wire clk,             // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
@@ -78,8 +77,8 @@ module AFDX_top #(
     wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data;
     wire [6:0] m_vl, rtc_tx_vl;
     wire [15:0] m_sport, m_dport, d_sport, d_dport, rtc_port, svc_rx_port, svc_rx_sport;
-    wire d_valid, d_last, d_net, rtc_tx_valid, rtc_tx_last, rtc_claim, svc_rx_valid, svc_rx_last, svc_rx_net;
-    wire [11:0] d_vl, svc_rx_vl;
+    wire d_valid, d_last, d_net, rtc_tx_valid, rtc_tx_last, rtc_claim, svc_rx_valid, svc_rx_last;
+    wire [11:0] d_vl;
     wire [2:0] svc_tx_ready;
     wire [31:0] rtc_rdata, rtc_sync_count;
     wire snmp_tx_valid, snmp_tx_last, snmp_claim, snmp_mib_rd, snmp_mib_wr, snmp_mib_ready, snmp_grant;
@@ -94,7 +93,7 @@ module AFDX_top #(
     wire [6:0] load_tx_vl;
     wire [15:0] load_tx_sport, load_tx_dport;
     wire [31:0] load_rdata, load_extra_data;
-    wire bus_rd, bus_wr, bus_rvalid;
+    wire bus_rd, bus_wr;
     // 主机和网络管理服务共用配置读口。
     // 各自的读有效标记延后两拍，与返回数据对齐。
     reg [1:0] host_read_pipe, snmp_read_pipe;
@@ -151,7 +150,7 @@ module AFDX_top #(
         .m_port_en(m_port_en), .m_sport(m_sport), .m_dport(m_dport), .d_valid(d_valid), .d_data(d_data), .d_last(d_last),
         .d_vl(d_vl), .d_sport(d_sport), .d_dport(d_dport), .d_net(d_net), .svc_rx_claim({ load_claim, snmp_claim,
         rtc_claim }), .svc_rx_valid(svc_rx_valid), .svc_rx_data(svc_rx_data), .svc_rx_last(svc_rx_last),
-        .svc_rx_vl(svc_rx_vl), .svc_rx_sport(svc_rx_sport), .svc_rx_dport(svc_rx_port), .svc_rx_net(svc_rx_net),
+        .svc_rx_vl(), .svc_rx_sport(svc_rx_sport), .svc_rx_dport(svc_rx_port), .svc_rx_net(),
         .app_rx_valid(app_rx_valid), .app_rx_data(app_rx_data), .app_rx_last(app_rx_last), .app_rx_vl(app_rx_vl),
         .app_rx_sport(app_rx_sport), .app_rx_dport(app_rx_port), .app_rx_net(app_rx_net));
     always @(posedge clk) begin
@@ -174,7 +173,7 @@ module AFDX_top #(
         .init_done(rx_initialized), .ev_a(ev_a), .ev_b(ev_b), .ev_rm_drop(ev_rm_drop), .ev_deliver(ev_deliver),
         .cfg_ok(rx_cfg_ok));
     afdx_cfg cfg_regs (.clk(clk), .reset(reset), .tx_ready(tx_ready), .cfg_wr(bus_wr), .cfg_rd(bus_rd), .cfg_addr(bus_addr),
-        .cfg_wdata(bus_wdata), .cfg_ready(cfg_ready), .cfg_rvalid(bus_rvalid), .cfg_rdata(cfg_rdata), .user_id(user_id),
+        .cfg_wdata(bus_wdata), .cfg_ready(cfg_ready), .cfg_rvalid(), .cfg_rdata(cfg_rdata), .user_id(user_id),
         .tx_cfg_ok(tx_cfg_ok), .rx_cfg_ok(rx_cfg_ok), .tx_cfg_we(tx_cfg_we), .tx_cfg_addr(tx_cfg_addr),
         .tx_cfg_wdata(tx_cfg_wdata), .rx_map_we(rx_map_we), .rx_cfg_we(rx_cfg_we), .rx_cfg_addr(rx_cfg_addr),
         .rx_cfg_wdata(rx_cfg_wdata), .ev_tx(ev_tx), .ev_a(ev_a), .ev_b(ev_b), .ev_rm_drop(ev_rm_drop),

@@ -4,7 +4,7 @@
 `timescale 1ns/1ps
 // 所有端口值在时钟上升沿、非阻塞赋值更新前采样。
 module sys_endpoint #(
-    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,GMII_RX_AW=12
+    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5
 )(
     input wire clk,reset,
     input wire [7:0] rd_a,
@@ -46,7 +46,7 @@ module sys_endpoint #(
     AFDX_top dut(
 `else
     AFDX_top #(.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),.LOOKAHEAD(LOOKAHEAD),
-        .RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW),.GMII_RX_AW(GMII_RX_AW)) dut(
+        .RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW)) dut(
 `endif
         .clk(clk),.reset(reset),.tx_data(td_a),.tx_valid(tv_a),.rx_data(rd_a),.rx_valid(rv_a),
         .tx_ready(tx_ready),.rx_ready(1'b0),.tx_data_b(td_b),.tx_valid_b(tv_b),.rx_data_b(rd_b),.rx_valid_b(rv_b),

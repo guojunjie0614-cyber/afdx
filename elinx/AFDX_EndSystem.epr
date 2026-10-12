@@ -15,8 +15,6 @@
             <File Path="/../rtl/afdx_615a.v"/>
             <File Path="/../rtl/afdx_cfg.v"/>
             <File Path="/../rtl/afdx_crc32_d8.v"/>
-            <File Path="/../rtl/afdx_gmii_rx.v"/>
-            <File Path="/../rtl/afdx_gmii_tx.v"/>
             <File Path="/../rtl/afdx_mac_rx.v"/>
             <File Path="/../rtl/afdx_mac_tx.v"/>
             <File Path="/../rtl/afdx_ntp_fraction.v"/>

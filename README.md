@@ -4,7 +4,7 @@
 
 ## 目录
 
-- `rtl/`：端系统、原生字节收发核心、配置总线和服务模块；旧 GMII 速率适配器仅保留独立模块测试。
+- `rtl/`：端系统、原生字节收发核心、配置总线和服务模块。
 - `tb/`：自检测试平台；`sim/`：ModelSim do 文件、回归入口及固定向量。
 - `tools/`：Python 参考模型、独立检查器和工具运行脚本。
 - `elinx/`：图形工程、工程默认设置、8 ns 约束及命令行入口。
@@ -17,7 +17,7 @@
 ## 软件准备
 
 基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含五功能、突发排队和 RTC 指标，不依赖 Python。
-完整 37 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
+完整 35 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随仓库分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；本机未单独验证非管理员会话。当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
@@ -81,13 +81,13 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一仓库根目录。
 
-3. 运行全部 37 项测试，参考检查器会另行核对报文和周期记录。
+3. 运行全部 35 项测试，参考检查器会另行核对报文和周期记录。
 
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
    ```
 
-   预期：末尾表格中的 37 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+   预期：末尾表格中的 35 项都为 `PASS`；本次汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -129,8 +129,6 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 | `afdx_tx_builder.v` | 读取负载，组成 Ethernet、IPv4、UDP 和序号字节流。 | 3、5.4 |
 | `afdx_tx_free.v` | 管理空闲页及链表，回收发送或放弃的消息页。 | 5.2 |
 | `afdx_mac_tx.v` | 每拍输出一个 GMII 字节，加入前导、SFD、FCS 和 12 拍帧间隔。 | 5.5 |
-| `afdx_gmii_tx.v` | 历史发送速率适配器，保留独立模块测试，顶层不再使用。 | 14.1 |
-| `afdx_gmii_rx.v` | 历史接收速率适配器，保留独立模块测试，顶层不再使用。 | 14.2 |
 | `afdx_mac_rx.v` | 检查前导、长度、FCS，输出去掉 FCS 的帧内容及类别脉冲。 | 6.2 |
 | `afdx_rx_core.v` | 连接双网 MAC、解析器、共享接收引擎及应用交付。 | 6.6 |
 | `afdx_rx_parse.v` | 检查报文头并暂存负载，坏帧回退，仅提交完好帧描述。 | 6.3 |
@@ -148,7 +146,7 @@ JUDGE ENTRY PASS cases=5 warnings=0 elapsed_s=486.455 output_mib=579.1
 ## 协作约定
 
 - 从 `master` 拉自己的开发分支，例如 `git checkout master` 后 `git checkout -b feature/your-work`；完成后提交并合并回 `master`。`c3` 是 117.68 Mbps 回退版本。
-- 合并前运行 `sim/regress.ps1`，37 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
+- 合并前运行 `sim/regress.ps1`，35 项全过；改了影响综合的代码，再运行 `elinx/synth.ps1 -Top AFDX_top -Sta`，检查 8 ns setup 裕量（当前门槛 2.0 ns）。
 - 本机 T20 整顶层综合工具耗时 112.282 秒，完整五功能综合网表仿真 3717.625 秒。旧 117.68 Mbps 版本的五功能 do 入口 10.281 秒、全回归 729.172 秒、图形界面综合约 23 分钟仅为历史参考；电脑、并行负载和工具许可会改变耗时。
 - 不提交 `out/`、eLinx 图形界面生成物及 `.obsidian/` 本机笔记配置；工程 `.qdf` 和约束是源文件，需要保留。
 - 图形界面保存会改写 `elinx/AFDX_EndSystem.epr` 的注释和 OutOfDate 状态。只有增删源文件时才提交 epr；其余改动不提交，先确认没有自己的源文件清单变更，再用 `git checkout -- elinx/AFDX_EndSystem.epr` 恢复。

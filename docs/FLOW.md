@@ -31,8 +31,6 @@ $flowPython=if($env:AFDX_PYTHON){$env:AFDX_PYTHON}else{(Get-Command python -Erro
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_mac_tx -Seed 20261007
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_tx_basic -Param TX_PAGE_AW=5,TX_OFF_AW=11
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_rx_ovf_ring -Param RX_RING_AW=9
-& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_gmii_tx
-& $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_gmii_rx
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_perf
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_snmp_settrap
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_snmp
@@ -45,7 +43,7 @@ $flowPython=if($env:AFDX_PYTHON){$env:AFDX_PYTHON}else{(Get-Command python -Erro
 & $flowShell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta
 ```
 
-RTL 清单 `sim/tests.txt` 为 37 项（原34项及 `tb_rm_phase`、`tb_rtc_recovery`、`tb_rtc_originate`）；每行是“测试名”或“测试名|参数1=值,参数2=值”。原有两种 `tb_tx_basic` 参数组合和 `tb_gbe_burst` 的 `COUNT=77`、`COUNT=81` 均保留。
+RTL 清单 `sim/tests.txt` 为 35 项（原37项删去两个未用于顶层的 GMII 适配器测试）；每行是“测试名”或“测试名|参数1=值,参数2=值”。原有两种 `tb_tx_basic` 参数组合和 `tb_gbe_burst` 的 `COUNT=77`、`COUNT=81` 均保留。
 三个新增用例可用 `sim/run.ps1 -Test <测试名>` 单独运行：冗余用例经真实MAC检查双网0–20拍错开、粗边界前后相位、忙时处理及SkewMax=0窗口外行为，并加速公开粗时间输入检查持续负载老化；RTC两项分别检查丢回应/主从使能顺序恢复，以及错误/过期Originate和跨请求周期的校时计算。
 `run.ps1` 自动生成独立向量、编译 `tb/lib/`，并按网表模块名排除同名 RTL；支持逗号分隔的多个原始 `netlist.v`。
 `afdx_tx_core`、`afdx_rx_core` 和 `AFDX_top` 的综合网表固定为默认参数，入口拒绝不匹配参数；备用分页和两个小容量溢出测试使用 RTL 的 `-Param` 验证。
