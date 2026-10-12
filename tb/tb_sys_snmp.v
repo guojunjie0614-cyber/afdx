@@ -19,6 +19,7 @@ module tb_sys_snmp;
     always @(posedge clk)begin
         cycle=cycle+1;
         if(cycle>18000000 || errors+errors1+errors2>20)begin
+            #1;
             $display("[RESULT] tb_sys_snmp FAIL checks=%0d errors=%0d",checks+checks1+checks2,errors+errors1+errors2+1);$finish;
         end
     end

@@ -21,6 +21,8 @@ module tb_elinx;
     always @(posedge clk) begin
         cycle = cycle + 1;
         if (cycle > 1000000 || errors1 + errors2 > 20) begin
+            // 等检查计数传到端口后，再汇总结果。
+            #1;
             $display("[RESULT] tb_elinx FAIL checks=%0d errors=%0d",
                 checks1 + checks2, errors1 + errors2 + 1);
             $finish;
@@ -52,6 +54,8 @@ module tb_elinx;
             "three complete messages and exactly one delivery per redundant pair");
         es1.check(es1.frames_a == 3 && es1.frames_b == 3, "both transmit networks carry all messages");
         es2.check(es2.frames_a == 3 && es2.frames_b == 3, "both transmit networks carry all messages");
+        // 等检查计数传到端口后，再汇总结果。
+        #1;
         $display("[RESULT] tb_elinx %0s checks=%0d errors=%0d",
             errors1 + errors2 == 0 ? "PASS" : "FAIL", checks1 + checks2, errors1 + errors2);
         $finish;

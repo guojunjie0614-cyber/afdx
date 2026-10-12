@@ -29,6 +29,8 @@ module tb_judge_snmp;
     always @(posedge clk) begin
         cycle = cycle + 1;
         if (cycle > 4000000 || errors1 + errors2 > 20) begin
+            // 等检查计数传到端口后，再汇总结果。
+            #1;
             $display("[RESULT] tb_judge_snmp FAIL checks=%0d errors=%0d",
                 checks1 + checks2, errors1 + errors2 + 1);
             $finish;
@@ -196,6 +198,8 @@ module tb_judge_snmp;
         manager.check(manager.received == 4 && agent.received == 0, "no extra response or leaked service message");
         manager.check(manager.duplicates == 4 && agent.duplicates == 3, "both networks deliver once per message");
         $display("[SNMP_SUMMARY] Get=1 GetNext=1 Set=1 Trap=1 request_id=PASS error_status=0 register_values=PASS");
+        // 等检查计数传到端口后，再汇总结果。
+        #1;
         $display("[RESULT] tb_judge_snmp %0s checks=%0d errors=%0d",
             errors1 + errors2 == 0 ? "PASS" : "FAIL", checks1 + checks2, errors1 + errors2);
         $finish;

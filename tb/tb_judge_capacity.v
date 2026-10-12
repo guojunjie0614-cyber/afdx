@@ -21,6 +21,8 @@ module tb_judge_capacity;
     always @(posedge clk) begin
         cycle = cycle + 1;
         if (cycle > 3000000 || errors1 + errors2 > 20) begin
+            // 等检查计数传到端口后，再汇总结果。
+            #1;
             $display("[RESULT] tb_judge_capacity FAIL checks=%0d errors=%0d",
                 checks1 + checks2, errors1 + errors2 + 1);
             $finish;
@@ -56,6 +58,8 @@ module tb_judge_capacity;
         es1.check(es1.frames_a == 128 && es1.frames_b == 128, "all VLs sent on both networks");
         es2.check(es2.frames_a == 128 && es2.frames_b == 128, "all VLs sent on both networks");
         $display("[CAPACITY_SUMMARY] tx_vls_each=128 rx_configured_each=4096 rx_sampled_each=128 first=0 last=4095");
+        // 等检查计数传到端口后，再汇总结果。
+        #1;
         $display("[RESULT] tb_judge_capacity %0s checks=%0d errors=%0d",
             errors1 + errors2 == 0 ? "PASS" : "FAIL", checks1 + checks2, errors1 + errors2);
         $finish;

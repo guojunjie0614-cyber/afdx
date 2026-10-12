@@ -114,7 +114,7 @@ module tb_rm_phase;
         end
         check(good==2*pairs,"all injected frames are valid");
         check(busy_arrivals>0 && reverse_pairs>0 && cross_pairs>0,"busy, reversed processing and coarse-boundary coverage");
-        wait(age_done);check(age_errors==0,"busy-load aging probe");
+        wait(age_done);#1;check(age_errors==0,"busy-load aging probe");
         $display("[COVERAGE] pairs=%0d cross=%0d reverse=%0d busy=%0d cycles=%0d aging_checks=%0d",pairs,cross_pairs,reverse_pairs,busy_arrivals,ticks,age_checks);
         $display("[RESULT] tb_rm_phase %0s checks=%0d errors=%0d",errors+age_errors==0?"PASS":"FAIL",checks+age_checks,errors+age_errors);$finish;
     end

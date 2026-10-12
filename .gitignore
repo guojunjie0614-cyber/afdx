@@ -6,6 +6,7 @@
 /elinx/*.qsf
 /elinx/*.pr/
 /elinx/*.runs/
+/elinx/*.sim/
 /elinx/db/
 /elinx/incremental_db/
 /elinx/hierarchy.xml

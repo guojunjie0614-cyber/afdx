@@ -25,6 +25,7 @@ module tb_sys_rtc;
     always @(posedge clk)begin
         cycle=cycle+1;
         if(cycle>7000000 || errors+errors1+errors2>30)begin
+            #1;
             $display("[RESULT] tb_sys_rtc FAIL checks=%0d errors=%0d",checks+checks1+checks2,errors+errors1+errors2+1);$finish;
         end
     end

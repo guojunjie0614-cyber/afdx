@@ -1524,6 +1524,29 @@ T16 验收通过，RTL 以 `2e03d0a7` 为定稿。本卡在 `c3-gbe` 上做，�
 
 **状态**：2026-10-12 验收通过（Codex 提交 `4e942030` 至 `812d75d2`）。回归 38/38（原 37 项删 2 个 gmii 测试、加容量、SNMP、eLinx 自检 3 项），网表清单 8/8，整顶层五功能网表仿真通过，纯 ModelSim 评委入口 7 个用例 524 秒；指标不变（906.136 Mbps、24.408 µs、抖动 0、RTC 0/10788 ns）。综合 29961 逻辑单元（比 29945 多 16，映射分配差异，寄存器数不变）、783 RAM 切片、setup +2.749 ns。Claude 抽查：现有注释无丢失和改写，`afdx_cfg.v` 逐字节未变，顶层端口未变，`rtl/` 无超过 120 字符的行，最终日志无失败标记，新测试已读。Claude 另把例化里重复的分段注释改成短标签、小例化里的删掉（去注释比对代码一致）。未完成：eLinx 界面 Run Behavioral Simulation 待用户实际点一遍。未推送。
 
+## T25b：评委测试的最终结果行不能漏掉最后几项检查
+
+**背景**：用户 2026-10-12 在 eLinx 界面点 Run Behavioral Simulation，`tb_elinx` 通过，但打印 `checks=9234`，而回归和 README 是 9238。eLinx 生成的脚本用 `vsim -t 1ps -voptargs=+acc work.tb_elinx`（脚本在 `elinx/AFDX_EndSystem.sim/sim_1/behav/AFDX_EndSystem.do`）。Claude 的判断：`judge_endpoint` 的 `checks`、`errors` 是输出端口，测试在调用完最后 4 次 `check` 的同一时刻经端口连线读它们；保留可见性时端口没有被合并，连线还没更新，最后 4 项没算进去。后果不只是数字不同：这 4 项正是“只交付一次、双网都发出”的检查，它们失败时结果行仍会打印 PASS、errors=0。请先确认这个判断，不对就按你查到的原因修。
+
+**做什么**
+
+1. 修 `tb/tb_elinx.v`、`tb/tb_judge_capacity.v`、`tb/tb_judge_snmp.v`，让结果行在任何优化选项下都包含全部检查。做法你定，取最直接的。超时分支的那一行同样处理。
+2. 查其余经端口读计数器的测试（`tb_net_services`、`tb_sys_615a`、`tb_sys_rtc`、`tb_sys_snmp`、`tb_sys_snmp_settrap` 等）有没有同样的问题，有就一并修，没有就在摘要里说明依据。
+3. `.gitignore` 加上 `/elinx/*.sim/`。
+4. README 的 eLinx 一节：把“界面点击由用户随后验证”改成已在界面实测通过（不写人名），补一句仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
+
+**验证**
+
+- 这三个测试各用默认选项和 `-voptargs=+acc` 跑一次，两种方式的 checks 相同且通过。
+- 在临时副本里把 `tb_elinx` 最后 4 项检查中的一项改成必然失败，用 `-voptargs=+acc` 跑，结果行必须是 FAIL。
+- 回归全过；纯 ModelSim 评委入口全过；README 里的检查项数与实跑一致。不用重新综合，不跑网表。
+
+**不做**：不动 `rtl/`；不动 `elinx/AFDX_EndSystem.epr`（工作区里有界面保存带来的改动，不提交、不还原）；不推送。
+
+**交付**：`docs/PROBE_T25b.md` 不超过 15 行；提交说明以 `T25b:` 开头；做完除 `.epr` 外工作区干净。限时 90 分钟。
+
+**状态**：2026-10-12 已派发。
+
 ## 协议版本的依据（写设计文档时照此说明）
 
 - AFDX：ARINC 664P7（2005）原文，已逐条核对。最新版 664P7-1（2009）未拿到；赛题和答疑未指定版本（R47、R12）。用户 2026-10-08 定：按 2005 版，不再追。

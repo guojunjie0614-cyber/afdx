@@ -36,6 +36,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
      es1.ev_rm_drop||es2.ev_rm_drop||es1.ev_deliver||es2.ev_deliver||
      es1.ev_gdrop||es2.ev_gdrop||es1.line_activity||es2.line_activity)quiet=cycle;
   if(cycle>50000000 || errors+e1+e2+l0e+l1e+l2e+l3e>100)begin
+   #1;
    $display("[RESULT] %0s FAIL checks=%0d errors=%0d",NAME,checks+c1+c2,errors+e1+e2+l0e+l1e+l2e+l3e+1);$finish;
   end
  end

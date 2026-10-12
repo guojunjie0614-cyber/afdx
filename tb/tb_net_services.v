@@ -38,6 +38,7 @@ module tb_net_services;
         end
         if(cycle%32768==0)begin $display("[PROGRESS] phase=%0d cycles=%0d time_ns=%0t",phase,cycle,$time);$fflush(fd);end
         if(cycle>1000000 || errors+errors1+errors2>10)begin
+            #1;
             $display("[RESULT] tb_net_services FAIL checks=%0d errors=%0d",checks+checks1+checks2,errors+errors1+errors2+1);$finish;
         end
     end
@@ -147,6 +148,8 @@ module tb_net_services;
         check(ge1a+ge1b+ge2a+ge2b+gerx==0,"GMII frame continuity and gap checks");
         $fwrite(fd,"U %0d %0d\n",es1.received,es2.received);$fclose(fd);
         $display("[COVERAGE] cycles=%0d",cycle);
+        // 最后一次配置读回检查也要计入结果。
+        #1;
         $display("[RESULT] tb_net_services %0s checks=%0d errors=%0d",errors+errors1+errors2==0?"PASS":"FAIL",checks+checks1+checks2,errors+errors1+errors2);$finish;
     end
 endmodule
