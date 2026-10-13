@@ -11,3 +11,5 @@
 /elinx/incremental_db/
 /elinx/hierarchy.xml
 /elinx/log4cpp.property
+
+__pycache__/

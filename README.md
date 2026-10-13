@@ -100,7 +100,7 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
    预期：综合和时序分析成功，`out/latest_AFDX_top.json` 给出资源数、时序裕量和网表目录。
 
-也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。工程默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。网表仿真需要先综合，命令见“综合后网表仿真”。
+也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。工程默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。两种综合产生的网表怎样仿真，见“综合后网表仿真”。
 
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
@@ -126,8 +126,31 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
 此入口已在 eLinx 界面实测通过，仿真时间约 2.56 ms。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
 
-
 ## 综合后网表仿真
+
+综合有两种做法：在 eLinx 界面点击 Run Synthesis，或运行命令行入口 `elinx/synth.ps1`。两种做法生成的网表都已通过综合后仿真，步骤分别如下。
+
+### 界面综合生成的网表
+
+1. 在 eLinx 中打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis，完成后应有 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`。下面的命令直接使用这份网表，不会重新综合。
+2. 按“软件准备”安装 Python 依赖、设置工具环境变量，在 PowerShell 中进入工程根目录后运行：
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1
+   ```
+
+   预期最后打印 `GUI NETLIST PASS tb_elinx mode=gui checks=9238 errors=0`。运行的是与界面自检相同的 `tb_elinx`，只是把 RTL 换成网表。
+3. 核对赛题五功能时运行下面这条命令。它先仿真 RTL，再用相同激励仿真界面网表，并逐字节比较七份外部记录；预期两个阶段都打印 `GUI NETLIST PASS tb_net_services ... checks=1123 errors=0`。
+
+   ```powershell
+   powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services
+   ```
+
+实测结果：`tb_elinx` 为 9238 项检查、0 错误，仿真约 130 分钟；五功能为 1123 项检查、0 错误，仿真约 52 分钟，独立检查器的 65 项全部通过，七份外部记录与 RTL 完全一致。耗时随电脑而变，入口的总时限是五小时。每次运行的网表副本、日志和 `summary.json` 放在 `out/gui_netlist/` 下的新目录；出错时打印 `GUI NETLIST FAIL` 或 `GUI NETLIST ENTRY FAIL` 并返回非零退出码。
+
+界面导出的网表省略了取默认值的输入和参数，而 eLinx 自带的单元仿真模型没有给这些输入和参数设默认值，直接仿真时寄存器不会更新。`tools/adapt_gui_vqm.py` 在仿真用的副本上把它们补齐：省略的输入按 eLinx 组件声明和单元模型的默认上拉、下拉取值；原网表接了进位输入的单元补上 `cin_used="true"`，让模型使用这条进位。当前网表共补 427486 个输入连接和 3933 个进位参数。原有连接、参数和查找表内容不变，原网表和厂商仿真模型也不改。
+
+### 命令行综合生成的网表
 
 先综合完整顶层，再用同一个五功能测试分别仿真 RTL 和综合网表；网表仿真的外部记录要与 RTL 逐字节一致才算通过。在 PowerShell 中进入工程根目录后执行：
 
@@ -214,5 +237,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist
 - 最大端到端时延 24.408 µs 和发送抖动 0 µs 的条件是各虚拟链路错开提交、没有服务报文插入。77 条虚拟链路同拍提交 1471 字节消息时，最后一条要等前面的排完，相对理想时刻最多晚 935.120 µs；满载时插入 RTC、SNMP、615A 报文，数据帧间隔会比 1 ms 多出最多 312 个时钟周期（约 2.5 µs）。
 - 时钟同步误差在两端使用同一个理想时钟的仿真中测得：空载 0 ns，有用户流量时最大 10788 ns。
 - MAC 层是本工程自己编写的，没有使用 eLinx 的 MAC IP。
-- 综合后网表仿真使用命令行综合产生的网表。布局布线后导出的 `.vo` 网表没有通过仿真，原因是工具导出的 18/36 位 RAM 写数据位序与仿真库不一致；按赛题答疑，综合后仿真即可。
+- 综合后网表仿真覆盖界面综合和命令行综合两种网表，都是功能仿真，不含布局布线延迟；吞吐等性能指标没有在网表上重测。布局布线后导出的 `.vo` 网表没有通过仿真，原因是工具导出的 18/36 位 RAM 写数据位序与仿真库不一致；按赛题答疑，综合后仿真即可。
 - 时序数字是综合阶段的估算，没有上板，也没有布线后的时序结果。
