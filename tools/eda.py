@@ -1,4 +1,4 @@
-"""C3统一原生入口；所有工具产物只写out，进程保护只作用本次子进程树。"""
+"""统一工具入口；所有工具产物只写out，进程保护只作用本次子进程树。"""
 import argparse, hashlib, json, math, os, re, shutil, sqlite3, subprocess, sys, time
 from datetime import datetime
 from pathlib import Path
@@ -60,7 +60,7 @@ class Flow:
                            creationflags=subprocess.CREATE_NO_WINDOW)
             identity={"pid":p.pid,"created":p.create_time()}
             active={"name":name,"command":command,"cwd":str(cwd or self.folder),**identity,
-                    "owner_thread":os.environ.get("CODEX_THREAD_ID"),"log":str(log_path),
+                    "log":str(log_path),
                     "budget_seconds":budget,"status":"running"}
             save(self.folder/"active_job.json",active)
             while p.poll() is None:

@@ -1,4 +1,4 @@
-"""Black-box T5 system reconstruction from thirteen text records only.
+"""Black-box system reconstruction from thirteen text records only.
 
 The stimulus file and DUT implementation are never opened.  Source captures are
 bound to accepted application messages, transformed by the recorded links, then

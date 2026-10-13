@@ -10,7 +10,7 @@ tb/目录中的测试模块名。
 .PARAMETER Param
 顶层参数 NAME=value，多个值可用逗号分隔。
 .PARAMETER Deadline
-可选的整个调用硬截止ISO时间，不会延长任务卡预算。
+可选的整个调用硬截止ISO时间，不会延长运行预算。
 #>
 param(
  [Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z_][A-Za-z0-9_]*$')][string]$Test,

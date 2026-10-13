@@ -1,4 +1,4 @@
-// T1固定规格包装；输入地址/数据/使能先寄存，RAM输出再寄存。
+// 固定规格包装；输入地址/数据/使能先寄存，RAM输出再寄存。
 module probe_sdp #(parameter WIDTH=8,DEPTH=2048,AW=11)(
 input wire clk,write_enable,read_enable,
  input wire [15:0] write_address,read_address,
@@ -70,7 +70,7 @@ module probe_p3_banks(
   );
   always @(posedge clk)bank_hold[bank]<=bank_data[bank];
  end endgenerate
- // 单级16选1仅是T1指定的比较探测，后续产品遵守ARCH第9节两拍选择。
+ // 单级16选1仅用于比较探测，正式设计使用两拍选择。
 endmodule
 
 // 两种减法探测共用寄存的地址、数据、使能和减数，避免漏计外部组合选择。

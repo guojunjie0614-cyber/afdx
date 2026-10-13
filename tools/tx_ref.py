@@ -1,4 +1,4 @@
-"""ARCH v0.3 TX stimulus and black-box event/capture checker (stdlib only).
+"""TX stimulus and black-box event/capture checker (stdlib only).
 
 The checker opens only events.txt, dump_a.txt, dump_b.txt. Stimulus generation
 is deliberately separate from reconstruction of accepted messages and frames.

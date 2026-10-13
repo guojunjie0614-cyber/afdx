@@ -68,7 +68,7 @@ module sys_endpoint #(
     assign slow_tv_a=0;assign slow_tv_b=0;assign slow_rv_a=0;assign slow_rv_b=0;
     assign mon_ta_errors=0;assign mon_tb_errors=0;assign mon_ra_errors=0;assign mon_rb_errors=0;
 `else
-    // T6唯一的内部观测例外：四条核心边界慢线。
+    // 唯一的内部观测例外：四条核心边界慢线。
     assign slow_td_a=td_a;assign slow_tv_a=tv_a;
     assign slow_td_b=td_b;assign slow_tv_b=tv_b;
     assign slow_rd_a=rd_a;assign slow_rv_a=rv_a;

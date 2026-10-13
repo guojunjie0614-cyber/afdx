@@ -36,7 +36,7 @@ def check(folder):
         f=line.split()
         if f[0]=='S':
             phase=int(f[1]);difference=abs(int(f[4]));(loaded if phase==3 else gbe if phase==6 else idle).append(difference)
-            if phase not in (3,6):ck(difference<=16,'idle synchronization no worse than T14 16 ns')
+            if phase not in (3,6):ck(difference<=16,'idle synchronization no worse than 16 ns')
         elif f[0]=='H':ck(abs(int(f[2]))<=40,'clock hold after sync stops')
         elif f[0]=='U':ck(f[1:5]==['40','40','40','40'],'user delivery exactly once each way')
         elif f[0]=='G':
@@ -73,7 +73,7 @@ def check(folder):
                ((30,999999000),(1000,999980000),(1007,200000000),(991,700000000)),'Reference timestamp is configured clock update')
             if pair is None:pair=[(request[0],request[1]),(cycle,eth)]
     ck(len(responses)>=28 and len(idle)==20 and len(loaded)==8,'all RTC test phases captured')
-    ck(len(gbe)==40 and max(gbe)<=39364 and max(loaded)<=39364,'RTC under full load no worse than T14 39364 ns')
+    ck(len(gbe)==40 and max(gbe)<=39364 and max(loaded)<=39364,'RTC under full load no worse than 39364 ns')
     ck(window is not None and window[1]-window[0]>=2500000,'RTC full-load stable measurement window >=20ms')
     rates={}
     for es,packets in user_frames.items():

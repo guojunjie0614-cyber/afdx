@@ -1,4 +1,4 @@
-"""T10最小五功能顶层测试：生成输入，独立解码真实端口记录；网表再与RTL比对。"""
+"""最小五功能顶层测试：生成输入，独立解码真实端口记录；网表再与RTL比对。"""
 import argparse,json,struct
 from pathlib import Path
 from afdx_ref import build_frame,line_bytes

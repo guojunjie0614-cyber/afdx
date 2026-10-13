@@ -146,7 +146,7 @@ module tb_sys_rtc;
         es1.write_cfg(18'h80,0);es2.write_cfg(18'h80,0);
         repeat(100000)@(negedge clk);
         check(es1.received==40+23*77 && es2.received==40+23*77,"all full-load user messages delivered once");
-        check(gbe_max<=39364,"900 Mbps RTC error no worse than T14");
+        check(gbe_max<=39364,"900 Mbps RTC error within 39364 ns");
         $fwrite(fd,"G %0d %0d %0d %0d %0d\n",gbe_base+250000,gbe_base+23*125000,es1.received,es2.received,gbe_max);
         $fwrite(fd,"A 1 %0d %0d\nA 2 %0d %0d\n",es1.max_source_lateness,es1.max_source_duration,es2.max_source_lateness,es2.max_source_duration);
         $display("[RTC_GBE] delivered=%0d/%0d max_difference_ns=%0d",es1.received-40,es2.received-40,gbe_max);

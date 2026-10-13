@@ -1,4 +1,4 @@
-"""Independent ARCH v0.3 reference; standard library only, never reads RTL.
+"""Independent reference model; standard library only, never reads RTL.
 
 vectors writes byte-per-line hex files and decimal metadata. tx.meta starts with
 case_count/source_bytes/wire_bytes, then len/en_a/en_b/delay/underrun/reset_cut/

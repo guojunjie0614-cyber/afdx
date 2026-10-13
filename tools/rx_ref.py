@@ -1,4 +1,4 @@
-"""ARCH v0.4 RX: absolute-cycle stimulus and independent H1-H7 reconstruction.
+"""RX: absolute-cycle stimulus and independent H1-H7 reconstruction.
 
 rx_control.txt: P cycle stage; C cycle map|cfg address_hex data_hex;
 Z cycle now_hex step (four reset cycles); K cycle step; B cycle 1 (reset precondition).

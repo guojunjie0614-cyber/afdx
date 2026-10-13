@@ -184,4 +184,4 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
         pulses=Counter(p[2] for _,_,p in rows if p[0]=='E');keys=('good','fcs','len','hdr','unk','cfg','ic','ovf')
         got=(sum(f['net']=='A' for f in frames),sum(f['net']=='B' for f in frames),
              tuple(pulses['a_'+k] for k in keys),tuple(pulses['b_'+k] for k in keys),pulses['rm_drop'],pulses['deliver'],sum(p[0]=='D' for _,_,p in rows))
-        expect(got==totals[test],f'T4b totals {got}');expect(either==0,'T4b requires either=0')
+        expect(got==totals[test],f'totals {got}');expect(either==0,'requires either=0')

@@ -1,4 +1,4 @@
-"""Coverage assertions for T5; all evidence is reconstructed from records."""
+"""Coverage assertions for the system tests; all evidence is reconstructed from records."""
 import bisect
 import collections
 from sys_ref import COUNTERS
