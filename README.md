@@ -82,6 +82,8 @@ JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=457.3
 JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 ```
 
+运行结果可与 [评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对照。评委入口的七条 `JUDGE CASE PASS`、最终 `JUDGE ENTRY PASS cases=7`、检查项数、错误数以及 `JUDGE METRIC` 的指标应一致；回归汇总的 38 项测试名、参数、PASS 状态和检查项数也应一致。耗时、时间戳、输出目录名和输出文件大小会随机器或运行时间变化，不用逐字比较。参考汇总中的路径相对于仓库根目录，指向那次运行的输出位置，本仓库不附带这些运行目录。
+
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
 3. 运行全部 38 项测试，参考检查器会另行核对报文和周期记录。

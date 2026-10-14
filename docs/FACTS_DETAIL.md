@@ -1,6 +1,6 @@
 # AFDX 端系统补充数据
 
-源码统计基线为 `5019fb7a`；本页只整理已有源码、综合报告和仿真记录，没有重新综合或仿真。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
+源码行号和规模基于 `b970089f`；本页其余数据沿用所列报告和仿真记录，新一轮运行的参考输出见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
 
 ## 逐项回归与评委入口
 
@@ -161,34 +161,34 @@ README 的命令行 LUT 29962 来自 [cli_resources.rpt](evidence/cli_resources.
 | 接收字节环 | A、B 网各 4096 字节（各 4 KiB）。 | `AFDX_top.v:10` 的 `RX_RING_AW=12`；`afdx_rx_core.v:160,169` |
 | 接收描述队列 | 共用 32 项，每项 68 位；按 `2**RX_DQ_AW` 和 `RX_RING_AW+56` 计算。 | `AFDX_top.v:11`；`afdx_rx_core.v:59–77`；`afdx_rx_engine.v` 的 `DQ_DEPTH` |
 | 虚拟链路容量 | 每端发送 128 条、接收 4096 条；接收映射表 65536 项×13 位。 | `afdx_tx_core.v:104,113`；`afdx_rx_core.v:132–150` |
-| 复位后初始化 | 解除复位到观察到顶层就绪相隔 65538 拍，即 524.304 µs；记录 `R 5`、`I 65543`。 | `afdx_rx_core.v:100–113` 清 65536 项后收尾，`AFDX_top.v:158–160` 注册就绪；[fault_rx_events.txt](evidence/fault_rx_events.txt) 第 4、6 行；其 `G CLOCK_NS` 在 [fault_events.txt](evidence/fault_events.txt) |
-| 工作节拍 | 共用 125 MHz 时钟，即每拍 8 ns；复位后每拍处理一个线路字节。 | `afdx_timebase.v` 的 `byte_en`；`AFDX_top.v:163`；`fault_events.txt` 的 `G CLOCK_NS 8` |
-| 帧间隔 | 12 拍，即 96 ns；末帧之后首个空闲拍加后续 11 拍。 | `afdx_mac_tx.v:155–165` 的 `gap_left` |
+| 复位后初始化 | 解除复位到观察到顶层就绪相隔 65538 拍，即 524.304 µs；记录 `R 5`、`I 65543`。 | `afdx_rx_core.v:100–113` 清 65536 项后收尾，`AFDX_top.v:255–257` 注册就绪；[fault_rx_events.txt](evidence/fault_rx_events.txt) 第 4、6 行；其 `G CLOCK_NS` 在 [fault_events.txt](evidence/fault_events.txt) |
+| 工作节拍 | 共用 125 MHz 时钟，即每拍 8 ns；复位后每拍处理一个线路字节。 | `afdx_timebase.v` 的 `byte_en`；`AFDX_top.v:260–266`；`fault_events.txt` 的 `G CLOCK_NS 8` |
+| 帧间隔 | 12 拍，即 96 ns；末帧之后首个空闲拍加后续 11 拍。 | `afdx_mac_tx.v:27,159–169` 的 `gap_left` |
 | 调度前瞻 | `LOOKAHEAD=512` 拍，即 4.096 µs；它是调度参数，不是实测端到端时延。 | `AFDX_top.v:9`；`afdx_tx_engine.v` 的 `LOOKAHEAD` |
-| 用户消息长度 | 每条最多 1471 字节，还受该链路配置的最大长度限制。 | `afdx_tx_buf.v` 的长度检查 `1471` |
-| 网络管理对象 | 简单网络管理协议（Simple Network Management Protocol，SNMP）共 36 个对象：2 个系统对象、34 个私有对象。 | `afdx_snmp.v:122–138,618` 的 `mib_arc/candidate` |
-| 网络管理请求 | 请求缓存 256 字节，最多接收 256 字节；超过后不进入解析；每次处理 1 个变量绑定。 | `afdx_snmp.v:99–110,388–400` 的 `request_ram/rx_count/overflow`；报文解析状态机 |
-| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:208–244` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
-| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:480–485,624–638` 的 `timeout_cycles/retry_limit/retries` |
-| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:482,485` 的 `request_port/protocol_a4` |
-| 实时时钟分辨率 | 实时时钟（Real-Time Clock，RTC）每拍增加 8 ns，默认同步周期 125000 拍（1 ms）；分辨率不等于同步精度。 | `afdx_rtc.v:191,255–259` 的 `period/nanoseconds` |
+| 用户消息长度 | 每条最多 1471 字节，还受该链路配置的最大长度限制。 | `afdx_tx_buf.v:53,183` 的 `MAX_PAYLOAD` |
+| 网络管理对象 | 简单网络管理协议（Simple Network Management Protocol，SNMP）共 36 个对象：2 个系统对象、34 个私有对象。 | `afdx_snmp.v:172–192,682` 的 `mib_arc/candidate` |
+| 网络管理请求 | 请求缓存 256 字节，最多接收 256 字节；超过后不进入解析；每次处理 1 个变量绑定。 | `afdx_snmp.v:150–161,446–458` 的 `request_ram/rx_count/overflow`；报文解析状态机 |
+| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:234–270` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
+| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:141,508–511,651–665` 的 `timeout_cycles/retry_limit/retries` |
+| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:141,508,511` 的 `request_port/protocol_a4` |
+| 实时时钟分辨率 | 实时时钟（Real-Time Clock，RTC）每拍增加 8 ns，默认同步周期 125000 拍（1 ms）；分辨率不等于同步精度。 | `afdx_rtc.v:52–55,210,274–278` 的 `period/nanoseconds` |
 
 上述源码文件均在 [rtl](../rtl/)；初始化的拍数是当前记录的观察值，其余容量和时间换算由所列参数直接计算。
 
 ## 代码规模
 
-统计所有已跟踪文本文件的物理行数，包含注释与空行，不算运行产物。`sim/` 包含固定向量及清单，因此该目录行数不等于脚本代码行数。以下命令在仓库根目录执行即可复算。
+统计所有已跟踪文本文件的物理行数，包含注释与空行，不算运行产物和 `sim/reference/` 中的参考输出。`sim/` 包含固定向量及清单，因此该目录行数不等于脚本代码行数。以下命令在仓库根目录执行即可复算。
 
 | 目录 | 文件数 | 物理行数 |
 |---|---:|---:|
-| `rtl/` | 21 | 6663 |
+| `rtl/` | 21 | 7068 |
 | `tb/` | 53 | 4090 |
 | `tools/` | 21 | 4275 |
 | `sim/` | 11 | 2740 |
 
 ```powershell
 foreach ($dir in 'rtl','tb','tools','sim') {
-  $files = @(git ls-files -- $dir)
+  $files = @(git ls-files -- $dir ':(exclude)sim/reference/**')
   $count = ($files | ForEach-Object { [IO.File]::ReadAllLines((Join-Path $PWD $_)).Length } | Measure-Object -Sum).Sum
   '{0}: files={1}, lines={2}' -f $dir,$files.Count,$count
 }
