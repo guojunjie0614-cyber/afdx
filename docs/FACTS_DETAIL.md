@@ -67,7 +67,7 @@
 |---|---:|---:|---:|
 | 查找表（Lookup Table，LUT） | 32847 | 136160 | 24.12% |
 | 触发器（Flip-Flop，FF） | 13869 | 136160 | 10.19% |
-| 可配置逻辑块（Configurable Logic Block，CLB） | 4626 | 13616 | 33.97% |
+| 可配置逻辑块（Configurable Logic Block，CLB） | 4620 | 13616 | 33.93% |
 | 存储块（Memory） | 340 | 1200 | 28.33% |
 | 数字信号处理单元（Digital Signal Processing，DSP） | 0 | 48 | 0.00% |
 | 锁相环（Phase-Locked Loop，PLL） | 0 | 8 | 0.00% |
@@ -100,7 +100,7 @@
 | `afdx_tx_engine` | 1 | 1790 | 1460 | 1029 | 0 |
 | `afdx_tx_free` | 1 | 206 | 181 | 126 | 2048 |
 
-README 的命令行 LUT 29962 来自 [cli_resources.rpt](evidence/cli_resources.rpt) 的 `Total LUTs`；事实清单的 29961 来自 [cli_synthesis_summary.json](evidence/cli_synthesis_summary.json) 的 `lcells`。二者分别统计 LUT 和网表逻辑单元，不是笔误，不互相替换。
+README 的命令行 LUT 29964 来自 [cli_resources.rpt](evidence/cli_resources.rpt) 的 `Total LUTs`；事实清单的 29963 来自 [cli_synthesis_summary.json](evidence/cli_synthesis_summary.json) 的 `lcells`。二者分别统计 LUT 和网表逻辑单元，不是笔误，不互相替换。
 
 ## 各工况的时延细分
 

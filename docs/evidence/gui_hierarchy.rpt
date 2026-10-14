@@ -1,5 +1,5 @@
 Analysis & Synthesis report for AFDX_EndSystem
-Mon Oct 12 14:00:24 2026
+Wed Oct 14 13:44:23 2026
 eLinx 64-Bit Version 3.0 
 
 
@@ -148,7 +148,7 @@ applicable agreement for further details.
 +--------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                   ;
 +-----------------------------+--------------------------------------------------+
-; Analysis & Synthesis Status ; Successful - Mon Oct 12 14:00:24 2026            ;
+; Analysis & Synthesis Status ; Successful - Wed Oct 14 13:44:22 2026            ;
 ; eLinx 64-Bit Version   ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
 ; Revision Name               ; AFDX_EndSystem                                   ;
 ; Top-level Entity Name       ; AFDX_top                                         ;
@@ -271,27 +271,27 @@ applicable agreement for further details.
 +----------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
 ; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                               ; Library ;
 +----------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
-; ../rtl/afdx_rx_engine.v          ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_rx_engine.v                      ;         ;
-; ../rtl/afdx_crc32_d8.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_crc32_d8.v                       ;         ;
-; ../rtl/afdx_mac_tx.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_mac_tx.v                         ;         ;
-; ../rtl/afdx_cfg.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_cfg.v                            ;         ;
-; ../rtl/afdx_svc.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_svc.v                            ;         ;
-; ../rtl/afdx_snmp.v               ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_snmp.v                           ;         ;
-; ../rtl/afdx_mac_rx.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_mac_rx.v                         ;         ;
-; ../rtl/afdx_tx_builder.v         ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_tx_builder.v                     ;         ;
-; ../rtl/afdx_tx_engine.v          ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_tx_engine.v                      ;         ;
-; ../rtl/afdx_rtc.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_rtc.v                            ;         ;
-; ../rtl/afdx_rx_deliver.v         ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_rx_deliver.v                     ;         ;
-; ../rtl/AFDX_top.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/AFDX_top.v                            ;         ;
-; ../rtl/afdx_ram_sdp.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_ram_sdp.v                        ;         ;
-; ../rtl/afdx_tx_free.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_tx_free.v                        ;         ;
-; ../rtl/afdx_timebase.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_timebase.v                       ;         ;
-; ../rtl/afdx_ntp_fraction.v       ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_ntp_fraction.v                   ;         ;
-; ../rtl/afdx_tx_buf.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_tx_buf.v                         ;         ;
-; ../rtl/afdx_rx_parse.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_rx_parse.v                       ;         ;
-; ../rtl/afdx_615a.v               ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_615a.v                           ;         ;
-; ../rtl/afdx_tx_core.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_tx_core.v                        ;         ;
-; ../rtl/afdx_rx_core.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/rtl/afdx_rx_core.v                        ;         ;
+; ../rtl/afdx_ram_sdp.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_ram_sdp.v                        ;         ;
+; ../rtl/afdx_ntp_fraction.v       ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_ntp_fraction.v                   ;         ;
+; ../rtl/afdx_cfg.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_cfg.v                            ;         ;
+; ../rtl/afdx_rx_engine.v          ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_rx_engine.v                      ;         ;
+; ../rtl/afdx_615a.v               ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_615a.v                           ;         ;
+; ../rtl/afdx_tx_buf.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_tx_buf.v                         ;         ;
+; ../rtl/afdx_tx_core.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_tx_core.v                        ;         ;
+; ../rtl/afdx_tx_builder.v         ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_tx_builder.v                     ;         ;
+; ../rtl/afdx_mac_tx.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_mac_tx.v                         ;         ;
+; ../rtl/afdx_snmp.v               ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_snmp.v                           ;         ;
+; ../rtl/afdx_timebase.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_timebase.v                       ;         ;
+; ../rtl/afdx_tx_free.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_tx_free.v                        ;         ;
+; ../rtl/afdx_rx_deliver.v         ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_rx_deliver.v                     ;         ;
+; ../rtl/afdx_rx_parse.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_rx_parse.v                       ;         ;
+; ../rtl/afdx_tx_engine.v          ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_tx_engine.v                      ;         ;
+; ../rtl/afdx_rx_core.v            ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_rx_core.v                        ;         ;
+; ../rtl/AFDX_top.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/AFDX_top.v                            ;         ;
+; ../rtl/afdx_crc32_d8.v           ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_crc32_d8.v                       ;         ;
+; ../rtl/afdx_mac_rx.v             ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_mac_rx.v                         ;         ;
+; ../rtl/afdx_rtc.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_rtc.v                            ;         ;
+; ../rtl/afdx_svc.v                ; yes             ; User Verilog HDL File        ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/rtl/afdx_svc.v                            ;         ;
 ; altsyncram.tdf                   ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/altsyncram.tdf        ;         ;
 ; stratix_ram_block.inc            ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/stratix_ram_block.inc ;         ;
 ; lpm_mux.inc                      ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/lpm_mux.inc           ;         ;
@@ -301,25 +301,25 @@ applicable agreement for further details.
 ; altrom.inc                       ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/altrom.inc            ;         ;
 ; altram.inc                       ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/altram.inc            ;         ;
 ; altdpram.inc                     ; yes             ; Megafunction                 ; e:/2026_embedded_fpga/setup_pack/bin/passkey/libraries/megafunctions/altdpram.inc          ;         ;
-; db/altsyncram_pec1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_pec1.tdf              ;         ;
-; db/altsyncram_9rg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_9rg1.tdf              ;         ;
-; db/altsyncram_5rg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_5rg1.tdf              ;         ;
-; db/altsyncram_5og1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_5og1.tdf              ;         ;
-; db/altsyncram_vkg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_vkg1.tdf              ;         ;
-; db/altsyncram_3qg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_3qg1.tdf              ;         ;
-; db/altsyncram_3ig1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_3ig1.tdf              ;         ;
-; db/altsyncram_9ng1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_9ng1.tdf              ;         ;
-; db/altsyncram_rhg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_rhg1.tdf              ;         ;
-; db/altsyncram_png1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_png1.tdf              ;         ;
-; db/altsyncram_h8c1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_h8c1.tdf              ;         ;
-; db/altsyncram_dec1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_dec1.tdf              ;         ;
-; db/decode_hha.tdf                ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/decode_hha.tdf                   ;         ;
-; db/mux_1cb.tdf                   ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/mux_1cb.tdf                      ;         ;
-; db/altsyncram_3lg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_3lg1.tdf              ;         ;
-; db/altsyncram_2c63.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_2c63.tdf              ;         ;
-; db/altsyncram_ai63.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/altsyncram_ai63.tdf              ;         ;
-; db/decode_9ja.tdf                ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/decode_9ja.tdf                   ;         ;
-; db/mux_5fb.tdf                   ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/db/mux_5fb.tdf                      ;         ;
+; db/altsyncram_pec1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_pec1.tdf              ;         ;
+; db/altsyncram_9rg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_9rg1.tdf              ;         ;
+; db/altsyncram_5rg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_5rg1.tdf              ;         ;
+; db/altsyncram_5og1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_5og1.tdf              ;         ;
+; db/altsyncram_vkg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_vkg1.tdf              ;         ;
+; db/altsyncram_3qg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_3qg1.tdf              ;         ;
+; db/altsyncram_3ig1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_3ig1.tdf              ;         ;
+; db/altsyncram_9ng1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_9ng1.tdf              ;         ;
+; db/altsyncram_rhg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_rhg1.tdf              ;         ;
+; db/altsyncram_png1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_png1.tdf              ;         ;
+; db/altsyncram_h8c1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_h8c1.tdf              ;         ;
+; db/altsyncram_dec1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_dec1.tdf              ;         ;
+; db/decode_hha.tdf                ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/decode_hha.tdf                   ;         ;
+; db/mux_1cb.tdf                   ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/mux_1cb.tdf                      ;         ;
+; db/altsyncram_3lg1.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_3lg1.tdf              ;         ;
+; db/altsyncram_2c63.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_2c63.tdf              ;         ;
+; db/altsyncram_ai63.tdf           ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/altsyncram_ai63.tdf              ;         ;
+; db/decode_9ja.tdf                ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/decode_9ja.tdf                   ;         ;
+; db/mux_5fb.tdf                   ; yes             ; Auto-Generated Megafunction  ; E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/db/mux_5fb.tdf                      ;         ;
 +----------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
 
 
@@ -490,44 +490,44 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 
 
 Encoding Type:  One-Hot
-+-------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_cfg:cfg_regs|read_loader           ;
-+----------------+----------------+----------------+----------------+
-; Name           ; read_loader.00 ; read_loader.10 ; read_loader.01 ;
-+----------------+----------------+----------------+----------------+
-; read_loader.00 ; 0              ; 0              ; 0              ;
-; read_loader.01 ; 1              ; 0              ; 1              ;
-; read_loader.10 ; 1              ; 1              ; 0              ;
-+----------------+----------------+----------------+----------------+
++----------------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_cfg:cfg_regs|read_loader                                                  ;
++-------------------------------+----------------+-------------------------------+-------------------------+
+; Name                          ; read_loader.00 ; read_loader.SHARED_LOAD_EXTRA ; read_loader.SHARED_LOAD ;
++-------------------------------+----------------+-------------------------------+-------------------------+
+; read_loader.00                ; 0              ; 0                             ; 0                       ;
+; read_loader.SHARED_LOAD       ; 1              ; 0                             ; 1                       ;
+; read_loader.SHARED_LOAD_EXTRA ; 1              ; 1                             ; 0                       ;
++-------------------------------+----------------+-------------------------------+-------------------------+
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_cfg:cfg_regs|read_select                                                                                                         ;
-+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
-; Name            ; read_select.111 ; read_select.110 ; read_select.101 ; read_select.100 ; read_select.011 ; read_select.010 ; read_select.001 ; read_select.000 ;
-+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
-; read_select.000 ; 0               ; 0               ; 0               ; 0               ; 0               ; 0               ; 0               ; 0               ;
-; read_select.001 ; 0               ; 0               ; 0               ; 0               ; 0               ; 0               ; 1               ; 1               ;
-; read_select.010 ; 0               ; 0               ; 0               ; 0               ; 0               ; 1               ; 0               ; 1               ;
-; read_select.011 ; 0               ; 0               ; 0               ; 0               ; 1               ; 0               ; 0               ; 1               ;
-; read_select.100 ; 0               ; 0               ; 0               ; 1               ; 0               ; 0               ; 0               ; 1               ;
-; read_select.101 ; 0               ; 0               ; 1               ; 0               ; 0               ; 0               ; 0               ; 1               ;
-; read_select.110 ; 0               ; 1               ; 0               ; 0               ; 0               ; 0               ; 0               ; 1               ;
-; read_select.111 ; 1               ; 0               ; 0               ; 0               ; 0               ; 0               ; 0               ; 1               ;
-+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_cfg:cfg_regs|read_select                                                                                                                                                                 ;
++------------------------------+------------------------+-----------------------------+------------------------------+---------------------+-------------------+-------------------+--------------------+-----------------+
+; Name                         ; read_select.SEL_SHARED ; read_select.SEL_SNMP_STATUS ; read_select.SEL_SNMP_CONTROL ; read_select.SEL_RTC ; read_select.SEL_B ; read_select.SEL_A ; read_select.SEL_TX ; read_select.000 ;
++------------------------------+------------------------+-----------------------------+------------------------------+---------------------+-------------------+-------------------+--------------------+-----------------+
+; read_select.000              ; 0                      ; 0                           ; 0                            ; 0                   ; 0                 ; 0                 ; 0                  ; 0               ;
+; read_select.SEL_TX           ; 0                      ; 0                           ; 0                            ; 0                   ; 0                 ; 0                 ; 1                  ; 1               ;
+; read_select.SEL_A            ; 0                      ; 0                           ; 0                            ; 0                   ; 0                 ; 1                 ; 0                  ; 1               ;
+; read_select.SEL_B            ; 0                      ; 0                           ; 0                            ; 0                   ; 1                 ; 0                 ; 0                  ; 1               ;
+; read_select.SEL_RTC          ; 0                      ; 0                           ; 0                            ; 1                   ; 0                 ; 0                 ; 0                  ; 1               ;
+; read_select.SEL_SNMP_CONTROL ; 0                      ; 0                           ; 1                            ; 0                   ; 0                 ; 0                 ; 0                  ; 1               ;
+; read_select.SEL_SNMP_STATUS  ; 0                      ; 1                           ; 0                            ; 0                   ; 0                 ; 0                 ; 0                  ; 1               ;
+; read_select.SEL_SHARED       ; 1                      ; 0                           ; 0                            ; 0                   ; 0                 ; 0                 ; 0                  ; 1               ;
++------------------------------+------------------------+-----------------------------+------------------------------+---------------------+-------------------+-------------------+--------------------+-----------------+
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_deliver:deliver|head_phase ;
-+---------------+---------------+---------------+-----------------------------------+
-; Name          ; head_phase.00 ; head_phase.10 ; head_phase.01                     ;
-+---------------+---------------+---------------+-----------------------------------+
-; head_phase.00 ; 0             ; 0             ; 0                                 ;
-; head_phase.01 ; 1             ; 0             ; 1                                 ;
-; head_phase.10 ; 1             ; 1             ; 0                                 ;
-+---------------+---------------+---------------+-----------------------------------+
++---------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_deliver:deliver|head_phase                 ;
++-------------------------+----------------------+-------------------------+------------------------+
+; Name                    ; head_phase.HEAD_IDLE ; head_phase.HEAD_RELEASE ; head_phase.HEAD_SELECT ;
++-------------------------+----------------------+-------------------------+------------------------+
+; head_phase.HEAD_IDLE    ; 0                    ; 0                       ; 0                      ;
+; head_phase.HEAD_SELECT  ; 1                    ; 0                       ; 1                      ;
+; head_phase.HEAD_RELEASE ; 1                    ; 1                       ; 0                      ;
++-------------------------+----------------------+-------------------------+------------------------+
 
 
 Encoding Type:  One-Hot
@@ -559,27 +559,27 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_parse:parse_b|length_phase ;
-+------------------+------------------+------------------+--------------------------+
-; Name             ; length_phase.000 ; length_phase.010 ; length_phase.001         ;
-+------------------+------------------+------------------+--------------------------+
-; length_phase.000 ; 0                ; 0                ; 0                        ;
-; length_phase.001 ; 1                ; 0                ; 1                        ;
-; length_phase.010 ; 1                ; 1                ; 0                        ;
-+------------------+------------------+------------------+--------------------------+
++----------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_parse:parse_b|length_phase                  ;
++-------------------------+-----------------------+-------------------------+------------------------+
+; Name                    ; length_phase.LEN_WAIT ; length_phase.LEN_LIMITS ; length_phase.LEN_SIZES ;
++-------------------------+-----------------------+-------------------------+------------------------+
+; length_phase.LEN_WAIT   ; 0                     ; 0                       ; 0                      ;
+; length_phase.LEN_SIZES  ; 1                     ; 0                       ; 1                      ;
+; length_phase.LEN_LIMITS ; 1                     ; 1                       ; 0                      ;
++-------------------------+-----------------------+-------------------------+------------------------+
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_parse:parse_a|length_phase ;
-+------------------+------------------+------------------+--------------------------+
-; Name             ; length_phase.000 ; length_phase.010 ; length_phase.001         ;
-+------------------+------------------+------------------+--------------------------+
-; length_phase.000 ; 0                ; 0                ; 0                        ;
-; length_phase.001 ; 1                ; 0                ; 1                        ;
-; length_phase.010 ; 1                ; 1                ; 0                        ;
-+------------------+------------------+------------------+--------------------------+
++----------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_rx_core:rx_core|afdx_rx_parse:parse_a|length_phase                  ;
++-------------------------+-----------------------+-------------------------+------------------------+
+; Name                    ; length_phase.LEN_WAIT ; length_phase.LEN_LIMITS ; length_phase.LEN_SIZES ;
++-------------------------+-----------------------+-------------------------+------------------------+
+; length_phase.LEN_WAIT   ; 0                     ; 0                       ; 0                      ;
+; length_phase.LEN_SIZES  ; 1                     ; 0                       ; 1                      ;
+; length_phase.LEN_LIMITS ; 1                     ; 1                       ; 0                      ;
++-------------------------+-----------------------+-------------------------+------------------------+
 
 
 Encoding Type:  One-Hot
@@ -623,16 +623,16 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_tx_core:tx_core|afdx_tx_builder:builder|part ;
-+---------+---------+---------+---------+-------------------------------------+
-; Name    ; part.11 ; part.10 ; part.01 ; part.00                             ;
-+---------+---------+---------+---------+-------------------------------------+
-; part.00 ; 0       ; 0       ; 0       ; 0                                   ;
-; part.01 ; 0       ; 0       ; 1       ; 1                                   ;
-; part.10 ; 0       ; 1       ; 0       ; 1                                   ;
-; part.11 ; 1       ; 0       ; 0       ; 1                                   ;
-+---------+---------+---------+---------+-------------------------------------+
++---------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_tx_core:tx_core|afdx_tx_builder:builder|part                 ;
++-------------------+--------------+-------------------+-------------------+------------------+
+; Name              ; part.PART_SN ; part.PART_PADDING ; part.PART_PAYLOAD ; part.PART_HEADER ;
++-------------------+--------------+-------------------+-------------------+------------------+
+; part.PART_HEADER  ; 0            ; 0                 ; 0                 ; 0                ;
+; part.PART_PAYLOAD ; 0            ; 0                 ; 1                 ; 1                ;
+; part.PART_PADDING ; 0            ; 1                 ; 0                 ; 1                ;
+; part.PART_SN      ; 1            ; 0                 ; 0                 ; 1                ;
++-------------------+--------------+-------------------+-------------------+------------------+
 
 
 Encoding Type:  One-Hot
@@ -669,16 +669,16 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_tx_core:tx_core|afdx_tx_free:free_pages|phase ;
-+-----------+-----------+-----------+-----------+------------------------------+
-; Name      ; phase.011 ; phase.010 ; phase.001 ; phase.000                    ;
-+-----------+-----------+-----------+-----------+------------------------------+
-; phase.000 ; 0         ; 0         ; 0         ; 0                            ;
-; phase.001 ; 0         ; 0         ; 1         ; 1                            ;
-; phase.010 ; 0         ; 1         ; 0         ; 1                            ;
-; phase.011 ; 1         ; 0         ; 0         ; 1                            ;
-+-----------+-----------+-----------+-----------+------------------------------+
++-------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_tx_core:tx_core|afdx_tx_free:free_pages|phase              ;
++-------------------+-----------------+-------------------+----------------+----------------+
+; Name              ; phase.POP_REPLY ; phase.POP_CAPTURE ; phase.POP_READ ; phase.POP_IDLE ;
++-------------------+-----------------+-------------------+----------------+----------------+
+; phase.POP_IDLE    ; 0               ; 0                 ; 0              ; 0              ;
+; phase.POP_READ    ; 0               ; 0                 ; 1              ; 1              ;
+; phase.POP_CAPTURE ; 0               ; 1                 ; 0              ; 1              ;
+; phase.POP_REPLY   ; 1               ; 0                 ; 0              ; 1              ;
++-------------------+-----------------+-------------------+----------------+----------------+
 
 
 Encoding Type:  One-Hot
@@ -705,91 +705,91 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_rtc:rtc|tx_state                                         ;
-+--------------+--------------+--------------+--------------+--------------+--------------+
-; Name         ; tx_state.011 ; tx_state.010 ; tx_state.001 ; tx_state.000 ; tx_state.100 ;
-+--------------+--------------+--------------+--------------+--------------+--------------+
-; tx_state.000 ; 0            ; 0            ; 0            ; 0            ; 0            ;
-; tx_state.001 ; 0            ; 0            ; 1            ; 1            ; 0            ;
-; tx_state.010 ; 0            ; 1            ; 0            ; 1            ; 0            ;
-; tx_state.011 ; 1            ; 0            ; 0            ; 1            ; 0            ;
-; tx_state.100 ; 0            ; 0            ; 0            ; 1            ; 1            ;
-+--------------+--------------+--------------+--------------+--------------+--------------+
++-----------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_rtc:rtc|tx_state                                                                             ;
++-----------------------+------------------+------------------+--------------------+------------------+-----------------------+
+; Name                  ; tx_state.TX_BYTE ; tx_state.TX_WORD ; tx_state.TX_GROUPS ; tx_state.TX_IDLE ; tx_state.TX_HANDSHAKE ;
++-----------------------+------------------+------------------+--------------------+------------------+-----------------------+
+; tx_state.TX_IDLE      ; 0                ; 0                ; 0                  ; 0                ; 0                     ;
+; tx_state.TX_GROUPS    ; 0                ; 0                ; 1                  ; 1                ; 0                     ;
+; tx_state.TX_WORD      ; 0                ; 1                ; 0                  ; 1                ; 0                     ;
+; tx_state.TX_BYTE      ; 1                ; 0                ; 0                  ; 1                ; 0                     ;
+; tx_state.TX_HANDSHAKE ; 0                ; 0                ; 0                  ; 1                ; 1                     ;
++-----------------------+------------------+------------------+--------------------+------------------+-----------------------+
 
 
 Encoding Type:  One-Hot
 +--------------------------------------------------------------------------+
 ; State Machine - |AFDX_top|afdx_rtc:rtc|afdx_ntp_fraction:decode_rx|state ;
-+----------+----------+----------+-----------------------------------------+
-; Name     ; state.00 ; state.10 ; state.01                                ;
-+----------+----------+----------+-----------------------------------------+
-; state.00 ; 0        ; 0        ; 0                                       ;
-; state.01 ; 1        ; 0        ; 1                                       ;
-; state.10 ; 1        ; 1        ; 0                                       ;
-+----------+----------+----------+-----------------------------------------+
++------------------+-----------------+------------------+------------------+
+; Name             ; state.STEP_IDLE ; state.STEP_SHIFT ; state.STEP_ADD   ;
++------------------+-----------------+------------------+------------------+
+; state.STEP_IDLE  ; 0               ; 0                ; 0                ;
+; state.STEP_ADD   ; 1               ; 0                ; 1                ;
+; state.STEP_SHIFT ; 1               ; 1                ; 0                ;
++------------------+-----------------+------------------+------------------+
 
 
 Encoding Type:  One-Hot
 +--------------------------------------------------------------------------+
 ; State Machine - |AFDX_top|afdx_rtc:rtc|afdx_ntp_fraction:encode_rx|state ;
-+----------+----------+----------+-----------------------------------------+
-; Name     ; state.00 ; state.10 ; state.01                                ;
-+----------+----------+----------+-----------------------------------------+
-; state.00 ; 0        ; 0        ; 0                                       ;
-; state.01 ; 1        ; 0        ; 1                                       ;
-; state.10 ; 1        ; 1        ; 0                                       ;
-+----------+----------+----------+-----------------------------------------+
++------------------+-----------------+------------------+------------------+
+; Name             ; state.STEP_IDLE ; state.STEP_SHIFT ; state.STEP_ADD   ;
++------------------+-----------------+------------------+------------------+
+; state.STEP_IDLE  ; 0               ; 0                ; 0                ;
+; state.STEP_ADD   ; 1               ; 0                ; 1                ;
+; state.STEP_SHIFT ; 1               ; 1                ; 0                ;
++------------------+-----------------+------------------+------------------+
 
 
 Encoding Type:  One-Hot
 +--------------------------------------------------------------------------+
 ; State Machine - |AFDX_top|afdx_rtc:rtc|afdx_ntp_fraction:encode_tx|state ;
-+----------+----------+----------+-----------------------------------------+
-; Name     ; state.00 ; state.10 ; state.01                                ;
-+----------+----------+----------+-----------------------------------------+
-; state.00 ; 0        ; 0        ; 0                                       ;
-; state.01 ; 1        ; 0        ; 1                                       ;
-; state.10 ; 1        ; 1        ; 0                                       ;
-+----------+----------+----------+-----------------------------------------+
++------------------+-----------------+------------------+------------------+
+; Name             ; state.STEP_IDLE ; state.STEP_SHIFT ; state.STEP_ADD   ;
++------------------+-----------------+------------------+------------------+
+; state.STEP_IDLE  ; 0               ; 0                ; 0                ;
+; state.STEP_ADD   ; 1               ; 0                ; 1                ;
+; state.STEP_SHIFT ; 1               ; 1                ; 0                ;
++------------------+-----------------+------------------+------------------+
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_snmp:snmp|part                                                                                                                                                                                                                                                                                                                                                       ;
-+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+
-; Name       ; part.11100 ; part.11011 ; part.11010 ; part.11001 ; part.11000 ; part.10111 ; part.10110 ; part.10101 ; part.10100 ; part.10011 ; part.10010 ; part.10001 ; part.10000 ; part.01111 ; part.01110 ; part.01101 ; part.01100 ; part.01011 ; part.01010 ; part.01001 ; part.01000 ; part.00111 ; part.00110 ; part.00101 ; part.00100 ; part.00011 ; part.00010 ; part.00001 ; part.00000 ;
-+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+
-; part.00000 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ;
-; part.00001 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 1          ;
-; part.00010 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 1          ;
-; part.00011 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 1          ;
-; part.00100 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 1          ;
-; part.00101 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.00110 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.00111 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01000 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01001 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01010 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01011 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01100 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01101 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01110 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.01111 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10000 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10001 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10010 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10011 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10100 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10101 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10110 ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.10111 ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.11000 ; 0          ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.11001 ; 0          ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.11010 ; 0          ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.11011 ; 0          ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-; part.11100 ; 1          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 0          ; 1          ;
-+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_snmp:snmp|part                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ;
++-------------------------+--------------+---------------------+------------------+------------+-------------------+----------------+-----------------------+--------------------+--------------------+-----------------+--------------+---------------------+------------------+---------------+----------------------+-------------------+-----------+------------------+---------------+-------------------+----------------+------------------+-------------------------+----------------------+----------------+-----------------------+--------------------+-----------------------+--------------------+
+; Name                    ; part.B_VALUE ; part.B_VALUE_LENGTH ; part.B_VALUE_TAG ; part.B_OID ; part.B_OID_LENGTH ; part.B_OID_TAG ; part.B_BINDING_LENGTH ; part.B_BINDING_TAG ; part.B_LIST_LENGTH ; part.B_LIST_TAG ; part.B_INDEX ; part.B_INDEX_LENGTH ; part.B_INDEX_TAG ; part.B_STATUS ; part.B_STATUS_LENGTH ; part.B_STATUS_TAG ; part.B_ID ; part.B_ID_LENGTH ; part.B_ID_TAG ; part.B_PDU_LENGTH ; part.B_PDU_TAG ; part.B_COMMUNITY ; part.B_COMMUNITY_LENGTH ; part.B_COMMUNITY_TAG ; part.B_VERSION ; part.B_VERSION_LENGTH ; part.B_VERSION_TAG ; part.B_MESSAGE_LENGTH ; part.B_MESSAGE_TAG ;
++-------------------------+--------------+---------------------+------------------+------------+-------------------+----------------+-----------------------+--------------------+--------------------+-----------------+--------------+---------------------+------------------+---------------+----------------------+-------------------+-----------+------------------+---------------+-------------------+----------------+------------------+-------------------------+----------------------+----------------+-----------------------+--------------------+-----------------------+--------------------+
+; part.B_MESSAGE_TAG      ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 0                  ;
+; part.B_MESSAGE_LENGTH   ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 1                     ; 1                  ;
+; part.B_VERSION_TAG      ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 1                  ; 0                     ; 1                  ;
+; part.B_VERSION_LENGTH   ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 1                     ; 0                  ; 0                     ; 1                  ;
+; part.B_VERSION          ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 1              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_COMMUNITY_TAG    ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 1                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_COMMUNITY_LENGTH ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 1                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_COMMUNITY        ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 1                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_PDU_TAG          ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 1              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_PDU_LENGTH       ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 1                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_ID_TAG           ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 1             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_ID_LENGTH        ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 1                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_ID               ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 1         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_STATUS_TAG       ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 1                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_STATUS_LENGTH    ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 1                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_STATUS           ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 1             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_INDEX_TAG        ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 1                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_INDEX_LENGTH     ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 1                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_INDEX            ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 1            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_LIST_TAG         ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 1               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_LIST_LENGTH      ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 1                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_BINDING_TAG      ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 1                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_BINDING_LENGTH   ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 1                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_OID_TAG          ; 0            ; 0                   ; 0                ; 0          ; 0                 ; 1              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_OID_LENGTH       ; 0            ; 0                   ; 0                ; 0          ; 1                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_OID              ; 0            ; 0                   ; 0                ; 1          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_VALUE_TAG        ; 0            ; 0                   ; 1                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_VALUE_LENGTH     ; 0            ; 1                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
+; part.B_VALUE            ; 1            ; 0                   ; 0                ; 0          ; 0                 ; 0              ; 0                     ; 0                  ; 0                  ; 0               ; 0            ; 0                   ; 0                ; 0             ; 0                    ; 0                 ; 0         ; 0                ; 0             ; 0                 ; 0              ; 0                ; 0                       ; 0                    ; 0              ; 0                     ; 0                  ; 0                     ; 1                  ;
++-------------------------+--------------+---------------------+------------------+------------+-------------------+----------------+-----------------------+--------------------+--------------------+-----------------+--------------+---------------------+------------------+---------------+----------------------+-------------------+-----------+------------------+---------------+-------------------+----------------+------------------+-------------------------+----------------------+----------------+-----------------------+--------------------+-----------------------+--------------------+
 
 
 Encoding Type:  One-Hot
@@ -809,15 +809,15 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------+
-; State Machine - |AFDX_top|afdx_615a:loader|file_kind      ;
-+--------------+--------------+--------------+--------------+
-; Name         ; file_kind.00 ; file_kind.10 ; file_kind.01 ;
-+--------------+--------------+--------------+--------------+
-; file_kind.00 ; 0            ; 0            ; 0            ;
-; file_kind.01 ; 1            ; 0            ; 1            ;
-; file_kind.10 ; 1            ; 1            ; 0            ;
-+--------------+--------------+--------------+--------------+
++-------------------------------------------------------------------------------------------+
+; State Machine - |AFDX_top|afdx_615a:loader|file_kind                                      ;
++-----------------------+---------------------+---------------------+-----------------------+
+; Name                  ; file_kind.FILE_LIST ; file_kind.FILE_DATA ; file_kind.FILE_HEADER ;
++-----------------------+---------------------+---------------------+-----------------------+
+; file_kind.FILE_LIST   ; 0                   ; 0                   ; 0                     ;
+; file_kind.FILE_HEADER ; 1                   ; 0                   ; 1                     ;
+; file_kind.FILE_DATA   ; 1                   ; 1                   ; 0                     ;
++-----------------------+---------------------+---------------------+-----------------------+
 
 
 +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1210,8 +1210,8 @@ Encoding Type:  One-Hot
 ; afdx_tx_core:tx_core|afdx_tx_free:free_pages|afdx_ram_sdp:tx_free|memory_rtl_0_bypass[12]                                                                               ; Merged with afdx_tx_core:tx_core|afdx_tx_free:free_pages|ra[5]             ;
 ; afdx_tx_core:tx_core|afdx_tx_free:free_pages|afdx_ram_sdp:tx_free|memory_rtl_0_bypass[14]                                                                               ; Merged with afdx_tx_core:tx_core|afdx_tx_free:free_pages|ra[6]             ;
 ; afdx_tx_core:tx_core|afdx_tx_free:free_pages|afdx_ram_sdp:tx_free|memory_rtl_0_bypass[16]                                                                               ; Merged with afdx_tx_core:tx_core|afdx_tx_free:free_pages|ra[7]             ;
-; afdx_rx_core:rx_core|afdx_rx_parse:parse_b|length_phase.000                                                                                                             ; Lost fanout                                                                ;
-; afdx_rx_core:rx_core|afdx_rx_parse:parse_a|length_phase.000                                                                                                             ; Lost fanout                                                                ;
+; afdx_rx_core:rx_core|afdx_rx_parse:parse_b|length_phase.LEN_WAIT                                                                                                        ; Lost fanout                                                                ;
+; afdx_rx_core:rx_core|afdx_rx_parse:parse_a|length_phase.LEN_WAIT                                                                                                        ; Lost fanout                                                                ;
 ; afdx_cfg:cfg_regs|read_select~2                                                                                                                                         ; Lost fanout                                                                ;
 ; afdx_cfg:cfg_regs|read_select~3                                                                                                                                         ; Lost fanout                                                                ;
 ; afdx_cfg:cfg_regs|read_select~4                                                                                                                                         ; Lost fanout                                                                ;
@@ -1255,7 +1255,7 @@ Encoding Type:  One-Hot
 ; afdx_615a:loader|wait_kind~4                                                                                                                                            ; Lost fanout                                                                ;
 ; afdx_rx_core:rx_core|afdx_mac_rx:mac_b|state.BAD_PRE                                                                                                                    ; Lost fanout                                                                ;
 ; afdx_rx_core:rx_core|afdx_mac_rx:mac_a|state.BAD_PRE                                                                                                                    ; Lost fanout                                                                ;
-; afdx_tx_core:tx_core|afdx_tx_builder:builder|part.11                                                                                                                    ; Lost fanout                                                                ;
+; afdx_tx_core:tx_core|afdx_tx_builder:builder|part.PART_SN                                                                                                               ; Lost fanout                                                                ;
 ; afdx_tx_core:tx_core|afdx_tx_buf:buffer|state.ENQUEUE                                                                                                                   ; Merged with afdx_tx_core:tx_core|afdx_tx_buf:buffer|desc_we                ;
 ; afdx_snmp:snmp|uptime_cycles[0]                                                                                                                                         ; Merged with afdx_timebase:timebase|now[0]                                  ;
 ; afdx_cfg:cfg_regs|read_loader.00                                                                                                                                        ; Lost fanout                                                                ;
@@ -1299,7 +1299,7 @@ Encoding Type:  One-Hot
 ;                                                         ; due to stuck port data_in ;                                                                    ;
 ; afdx_rx_core:rx_core|afdx_mac_rx:mac_b|state~6          ; Lost Fanouts              ; afdx_rx_core:rx_core|afdx_mac_rx:mac_b|state.BAD_PRE               ;
 ; afdx_rx_core:rx_core|afdx_mac_rx:mac_a|state~6          ; Lost Fanouts              ; afdx_rx_core:rx_core|afdx_mac_rx:mac_a|state.BAD_PRE               ;
-; afdx_tx_core:tx_core|afdx_tx_builder:builder|part~5     ; Lost Fanouts              ; afdx_tx_core:tx_core|afdx_tx_builder:builder|part.11               ;
+; afdx_tx_core:tx_core|afdx_tx_builder:builder|part~5     ; Lost Fanouts              ; afdx_tx_core:tx_core|afdx_tx_builder:builder|part.PART_SN          ;
 +---------------------------------------------------------+---------------------------+--------------------------------------------------------------------+
 
 
@@ -4695,7 +4695,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:16:27     ;
+; Top            ; 00:16:25     ;
 +----------------+--------------+
 
 
@@ -4718,280 +4718,328 @@ Info: Running eLinx 64-Bit Analysis & Synthesis
     Info: programming logic devices manufactured by eHiWay and sold by 
     Info: eHiWay or its authorized distributors.  Please refer to the 
     Info: applicable agreement for further details.
-    Info: Processing started: Mon Oct 12 13:43:39 2026
+    Info: Processing started: Wed Oct 14 13:27:38 2026
 Info: Command: ehiway_map --read_settings_files=on --write_settings_files=off AFDX_EndSystem
 Info (11104): Parallel Compilation has detected 12 hyper-threaded processors. However, the extra hyper-threaded processors will not be used by default. Parallel Compilation will use 6 of the 6 physical processors detected instead.
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_rx_engine.v
-    Info (12023): Found entity 1: afdx_rx_engine
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_crc32_d8.v
-    Info (12023): Found entity 1: afdx_crc32_d8
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_mac_tx.v
-    Info (12023): Found entity 1: afdx_mac_tx
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_cfg.v
-    Info (12023): Found entity 1: afdx_cfg
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_svc.v
-    Info (12023): Found entity 1: afdx_svc
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_snmp.v
-    Info (12023): Found entity 1: afdx_snmp
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_mac_rx.v
-    Info (12023): Found entity 1: afdx_mac_rx
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_tx_builder.v
-    Info (12023): Found entity 1: afdx_tx_builder
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_tx_engine.v
-    Info (12023): Found entity 1: afdx_tx_engine
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_rtc.v
-    Info (12023): Found entity 1: afdx_rtc
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_rx_deliver.v
-    Info (12023): Found entity 1: afdx_rx_deliver
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_top.v
-    Info (12023): Found entity 1: AFDX_top
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_ram_sdp.v
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_ram_sdp.v
     Info (12023): Found entity 1: afdx_ram_sdp
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_tx_free.v
-    Info (12023): Found entity 1: afdx_tx_free
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_timebase.v
-    Info (12023): Found entity 1: afdx_timebase
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_ntp_fraction.v
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_ntp_fraction.v
     Info (12023): Found entity 1: afdx_ntp_fraction
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_tx_buf.v
-    Info (12023): Found entity 1: afdx_tx_buf
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_rx_parse.v
-    Info (12023): Found entity 1: afdx_rx_parse
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_615a.v
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_cfg.v
+    Info (12023): Found entity 1: afdx_cfg
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_rx_engine.v
+    Info (12023): Found entity 1: afdx_rx_engine
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_615a.v
     Info (12023): Found entity 1: afdx_615a
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_tx_core.v
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_tx_buf.v
+    Info (12023): Found entity 1: afdx_tx_buf
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_tx_core.v
     Info (12023): Found entity 1: afdx_tx_core
-Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_github/rtl/afdx_rx_core.v
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_tx_builder.v
+    Info (12023): Found entity 1: afdx_tx_builder
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_mac_tx.v
+    Info (12023): Found entity 1: afdx_mac_tx
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_snmp.v
+    Info (12023): Found entity 1: afdx_snmp
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_timebase.v
+    Info (12023): Found entity 1: afdx_timebase
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_tx_free.v
+    Info (12023): Found entity 1: afdx_tx_free
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_rx_deliver.v
+    Info (12023): Found entity 1: afdx_rx_deliver
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_rx_parse.v
+    Info (12023): Found entity 1: afdx_rx_parse
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_tx_engine.v
+    Info (12023): Found entity 1: afdx_tx_engine
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_rx_core.v
     Info (12023): Found entity 1: afdx_rx_core
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_top.v
+    Info (12023): Found entity 1: AFDX_top
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_crc32_d8.v
+    Info (12023): Found entity 1: afdx_crc32_d8
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_mac_rx.v
+    Info (12023): Found entity 1: afdx_mac_rx
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_rtc.v
+    Info (12023): Found entity 1: afdx_rtc
+Info (12021): Found 1 design units, including 1 entities, in source file /2026_embedded_fpga/worktrees/active/c3_submit/rtl/afdx_svc.v
+    Info (12023): Found entity 1: afdx_svc
 Info (12127): Elaborating entity "AFDX_top" for the top level hierarchy
 Info (12128): Elaborating entity "afdx_615a" for hierarchy "afdx_615a:loader"
-Warning (10036): Verilog HDL or VHDL warning at afdx_615a.v(149): object "deny_empty" assigned a value but never read
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(449): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(450): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(465): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(615): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(616): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(622): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(623): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(630): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(632): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(396): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(640): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(652): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(656): truncated value with size 32 to match size of target (8)
+Warning (10036): Verilog HDL or VHDL warning at afdx_615a.v(176): object "deny_empty" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(475): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(476): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(477): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(492): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(509): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(511): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(569): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(643): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(644): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(650): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(651): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(658): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(663): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(664): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(659): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(660): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(422): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(423): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(668): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(675): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(678): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(683): truncated value with size 32 to match size of target (11)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(685): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(388): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(680): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(684): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(685): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(686): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(690): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(691): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(692): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(694): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(356): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(704): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(709): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(696): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(703): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(706): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(711): truncated value with size 32 to match size of target (11)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(713): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(718): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(415): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(720): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(722): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(729): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(733): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(736): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(753): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(768): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(777): truncated value with size 32 to match size of target (14)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(785): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(304): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(306): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(307): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(312): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(313): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(314): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(825): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(828): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(837): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(843): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(844): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(851): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(862): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(867): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(884): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(383): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(732): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(737): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(741): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(746): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(750): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(758): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(762): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(765): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(783): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(797): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(798): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(807): truncated value with size 32 to match size of target (14)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(815): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(331): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(333): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(334): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(339): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(340): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(341): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(856): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(859): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(868): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(874): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(875): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(882): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(894): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(912): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(920): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(937): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(938): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(946): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(947): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(963): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(968): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(974): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(977): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(899): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(916): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(926): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(945): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(953): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(970): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(971): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(980): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(981): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(997): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1007): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(998): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1003): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1009): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1012): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1022): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1024): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1029): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1035): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1050): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1059): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1016): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1032): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1043): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1048): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1058): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1060): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1065): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1071): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1081): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1092): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1103): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1104): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1107): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1086): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1096): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1108): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1110): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1113): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1116): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1117): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1119): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(370): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1144): truncated value with size 32 to match size of target (10)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1118): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1129): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1140): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1141): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1144): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1145): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1147): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1152): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1159): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1160): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1172): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1178): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1179): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1183): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1184): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1150): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1152): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1153): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1154): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1156): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(397): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1182): truncated value with size 32 to match size of target (10)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1185): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1190): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1196): truncated value with size 32 to match size of target (16)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1197): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1201): truncated value with size 32 to match size of target (11)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1212): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1213): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1198): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1210): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1216): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1217): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1218): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1220): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1245): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1253): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1262): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1274): truncated value with size 32 to match size of target (12)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1280): truncated value with size 32 to match size of target (11)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1281): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1295): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1296): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1314): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1315): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1321): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1322): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1331): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1332): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1336): truncated value with size 32 to match size of target (2)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1337): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1340): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1220): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1221): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1222): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1235): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1239): truncated value with size 32 to match size of target (11)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1249): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1250): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1251): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1254): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1255): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1256): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1258): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1284): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1292): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1301): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1313): truncated value with size 32 to match size of target (12)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1319): truncated value with size 32 to match size of target (11)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1320): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1333): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1334): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1335): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1353): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1354): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1359): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1360): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1361): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1371): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1372): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1376): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1377): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_615a.v(1380): truncated value with size 32 to match size of target (8)
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_615a:loader|afdx_ram_sdp:packet_rx"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_615a:loader|afdx_ram_sdp:lur_ram"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_615a:loader|afdx_ram_sdp:header_ram"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_615a:loader|afdx_ram_sdp:load_ram"
 Info (12128): Elaborating entity "afdx_snmp" for hierarchy "afdx_snmp:snmp"
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(264): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(265): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(357): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(377): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(379): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(386): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(399): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(189): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(415): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(426): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(263): truncated value with size 32 to match size of target (5)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(321): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(322): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(361): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(390): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(414): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(435): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(437): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(442): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(444): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(457): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(464): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(471): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(477): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(480): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(463): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(468): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(246): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(473): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(484): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(486): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(496): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(501): truncated value with size 16 to match size of target (9)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(505): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(510): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(512): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(495): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(500): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(516): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(518): truncated value with size 16 to match size of target (9)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(522): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(526): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(523): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(530): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(538): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(540): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(541): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(552): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(563): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(594): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(602): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(536): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(539): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(540): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(543): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(545): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(556): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(561): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(562): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(565): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(571): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(573): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(574): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(577): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(579): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(580): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(583): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(588): truncated value with size 16 to match size of target (9)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(589): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(592): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(601): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(603): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(605): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(606): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(608): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(618): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(621): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(176): truncated value with size 32 to match size of target (18)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(177): truncated value with size 32 to match size of target (18)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(178): truncated value with size 32 to match size of target (18)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(179): truncated value with size 32 to match size of target (18)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(630): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(633): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(634): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(637): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(638): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(641): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(642): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(655): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(656): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(660): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(664): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(673): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(679): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(680): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(604): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(612): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(615): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(626): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(629): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(658): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(666): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(667): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(669): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(670): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(672): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(682): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(685): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(692): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(701): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(707): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(712): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(716): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(746): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(751): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(233): truncated value with size 32 to match size of target (18)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(234): truncated value with size 32 to match size of target (18)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(235): truncated value with size 32 to match size of target (18)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(236): truncated value with size 32 to match size of target (18)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(694): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(697): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(698): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(701): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(702): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(705): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(706): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(719): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(720): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(724): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(728): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(737): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(743): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(744): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(749): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(756): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(761): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(772): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(805): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(150): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(152): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(153): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(154): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(901): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(920): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(923): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(930): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(937): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(943): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(958): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(968): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(978): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(765): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(771): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(776): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(781): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(811): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(816): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(821): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(826): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(837): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(870): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(204): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(206): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(207): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(208): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(966): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(985): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(988): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1003): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(995): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1002): truncated value with size 32 to match size of target (7)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1008): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1014): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1017): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1012): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1017): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1023): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1030): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1035): truncated value with size 32 to match size of target (7)
-Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1038): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1033): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1043): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1053): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1068): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1074): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1080): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1083): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1089): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1096): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1101): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_snmp.v(1104): truncated value with size 32 to match size of target (7)
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_snmp:snmp|afdx_ram_sdp:request_ram"
 Info (12128): Elaborating entity "afdx_rtc" for hierarchy "afdx_rtc:rtc"
-Info (10264): Verilog HDL Case Statement information at afdx_rtc.v(353): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_rtc.v(212): truncated value with size 32 to match size of target (16)
+Info (10264): Verilog HDL Case Statement information at afdx_rtc.v(372): all case item expressions in this case statement are onehot
 Info (12128): Elaborating entity "afdx_ntp_fraction" for hierarchy "afdx_rtc:rtc|afdx_ntp_fraction:encode_tx"
-Warning (10230): Verilog HDL assignment warning at afdx_ntp_fraction.v(41): truncated value with size 32 to match size of target (31)
+Warning (10230): Verilog HDL assignment warning at afdx_ntp_fraction.v(45): truncated value with size 32 to match size of target (31)
 Info (12128): Elaborating entity "afdx_svc" for hierarchy "afdx_svc:service_channel"
-Warning (10270): Verilog HDL Case Statement warning at afdx_svc.v(92): incomplete case statement has no default case item
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(66): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(68): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(69): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(70): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(71): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(72): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(73): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(74): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(75): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(76): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(77): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(78): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(79): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(80): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(81): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(82): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_svc.v(83): truncated value with size 32 to match size of target (2)
+Warning (10270): Verilog HDL Case Statement warning at afdx_svc.v(94): incomplete case statement has no default case item
 Info (12128): Elaborating entity "afdx_timebase" for hierarchy "afdx_timebase:timebase"
 Info (12128): Elaborating entity "afdx_tx_core" for hierarchy "afdx_tx_core:tx_core"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_tx_core:tx_core|afdx_ram_sdp:tx_cfg"
@@ -4999,42 +5047,44 @@ Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_tx_core:tx_c
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_tx_core:tx_core|afdx_ram_sdp:tx_desc"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_tx_core:tx_core|afdx_ram_sdp:tx_payload"
 Info (12128): Elaborating entity "afdx_tx_free" for hierarchy "afdx_tx_core:tx_core|afdx_tx_free:free_pages"
-Warning (10230): Verilog HDL assignment warning at afdx_tx_free.v(92): truncated value with size 32 to match size of target (9)
-Info (10264): Verilog HDL Case Statement information at afdx_tx_free.v(106): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_tx_free.v(94): truncated value with size 32 to match size of target (9)
+Info (10264): Verilog HDL Case Statement information at afdx_tx_free.v(108): all case item expressions in this case statement are onehot
 Info (12128): Elaborating entity "afdx_tx_buf" for hierarchy "afdx_tx_core:tx_core|afdx_tx_buf:buffer"
-Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(95): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(133): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(147): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(182): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(97): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(135): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(149): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_buf.v(184): truncated value with size 32 to match size of target (3)
 Info (12128): Elaborating entity "afdx_tx_engine" for hierarchy "afdx_tx_core:tx_core|afdx_tx_engine:engine"
-Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(131): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(309): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(310): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(311): truncated value with size 32 to match size of target (3)
-Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(313): truncated value with size 32 to match size of target (3)
-Info (10264): Verilog HDL Case Statement information at afdx_tx_engine.v(402): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(136): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(172): truncated value with size 32 to match size of target (5)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(314): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(315): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(316): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at afdx_tx_engine.v(318): truncated value with size 32 to match size of target (3)
+Info (10264): Verilog HDL Case Statement information at afdx_tx_engine.v(407): all case item expressions in this case statement are onehot
 Info (12128): Elaborating entity "afdx_tx_builder" for hierarchy "afdx_tx_core:tx_core|afdx_tx_builder:builder"
-Info (10264): Verilog HDL Case Statement information at afdx_tx_builder.v(179): all case item expressions in this case statement are onehot
-Info (10264): Verilog HDL Case Statement information at afdx_tx_builder.v(194): all case item expressions in this case statement are onehot
-Warning (10230): Verilog HDL assignment warning at afdx_tx_builder.v(321): truncated value with size 32 to match size of target (5)
+Info (10264): Verilog HDL Case Statement information at afdx_tx_builder.v(198): all case item expressions in this case statement are onehot
+Info (10264): Verilog HDL Case Statement information at afdx_tx_builder.v(213): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_tx_builder.v(342): truncated value with size 32 to match size of target (5)
 Info (12128): Elaborating entity "afdx_mac_tx" for hierarchy "afdx_tx_core:tx_core|afdx_mac_tx:mac"
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(91): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(92): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(105): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(106): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(55): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(95): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(96): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(109): truncated value with size 32 to match size of target (8)
 Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(110): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(121): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(122): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(133): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(134): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(141): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(142): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(148): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(149): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(169): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(170): truncated value with size 32 to match size of target (8)
-Info (10264): Verilog HDL Case Statement information at afdx_mac_tx.v(84): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(113): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(114): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(125): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(126): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(137): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(138): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(145): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(146): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(152): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(153): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(173): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_tx.v(174): truncated value with size 32 to match size of target (8)
+Info (10264): Verilog HDL Case Statement information at afdx_mac_tx.v(88): all case item expressions in this case statement are onehot
 Info (12128): Elaborating entity "afdx_crc32_d8" for hierarchy "afdx_tx_core:tx_core|afdx_mac_tx:mac|afdx_crc32_d8:update_a"
 Info (12128): Elaborating entity "afdx_rx_core" for hierarchy "afdx_rx_core:rx_core"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_rx_core:rx_core|afdx_ram_sdp:rx_map"
@@ -5042,21 +5092,31 @@ Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_rx_core:rx_c
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_rx_core:rx_core|afdx_ram_sdp:rx_state"
 Info (12128): Elaborating entity "afdx_ram_sdp" for hierarchy "afdx_rx_core:rx_core|afdx_ram_sdp:rx_ring_a"
 Info (12128): Elaborating entity "afdx_mac_rx" for hierarchy "afdx_rx_core:rx_core|afdx_mac_rx:mac_a"
+Warning (10230): Verilog HDL assignment warning at afdx_mac_rx.v(96): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_rx.v(99): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_rx.v(100): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_mac_rx.v(101): truncated value with size 32 to match size of target (2)
 Info (12128): Elaborating entity "afdx_rx_parse" for hierarchy "afdx_rx_core:rx_core|afdx_rx_parse:parse_a"
 Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(34): truncated value with size 32 to match size of target (13)
-Warning (10036): Verilog HDL or VHDL warning at afdx_rx_parse.v(64): object "arrival" assigned a value but never read
-Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(145): truncated value with size 16 to match size of target (13)
-Info (10264): Verilog HDL Case Statement information at afdx_rx_parse.v(133): all case item expressions in this case statement are onehot
+Warning (10036): Verilog HDL or VHDL warning at afdx_rx_parse.v(88): object "arrival" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(130): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(169): truncated value with size 16 to match size of target (13)
+Info (10264): Verilog HDL Case Statement information at afdx_rx_parse.v(157): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(257): truncated value with size 32 to match size of target (2)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_parse.v(264): truncated value with size 32 to match size of target (2)
 Info (12128): Elaborating entity "afdx_rx_engine" for hierarchy "afdx_rx_core:rx_core|afdx_rx_engine:engine"
-Warning (10036): Verilog HDL or VHDL warning at afdx_rx_engine.v(80): object "now_q" assigned a value but never read
-Info (10264): Verilog HDL Case Statement information at afdx_rx_engine.v(111): all case item expressions in this case statement are onehot
-Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(159): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(160): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(179): truncated value with size 32 to match size of target (8)
-Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(180): truncated value with size 32 to match size of target (8)
+Warning (10036): Verilog HDL or VHDL warning at afdx_rx_engine.v(89): object "now_q" assigned a value but never read
+Info (10264): Verilog HDL Case Statement information at afdx_rx_engine.v(120): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(168): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(169): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(188): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(189): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(249): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(266): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at afdx_rx_engine.v(293): truncated value with size 32 to match size of target (4)
 Info (12128): Elaborating entity "afdx_rx_deliver" for hierarchy "afdx_rx_core:rx_core|afdx_rx_deliver:deliver"
 Info (12128): Elaborating entity "afdx_cfg" for hierarchy "afdx_cfg:cfg_regs"
-Info (10264): Verilog HDL Case Statement information at afdx_cfg.v(287): all case item expressions in this case statement are onehot
+Info (10264): Verilog HDL Case Statement information at afdx_cfg.v(304): all case item expressions in this case statement are onehot
 Warning (276020): Inferred RAM node "afdx_rx_core:rx_core|afdx_ram_sdp:rx_map|memory_rtl_0" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design.
 Warning (276026): Inferred RAM node "afdx_rx_core:rx_core|afdx_ram_sdp:rx_map|memory_rtl_0" from synchronous design logic.  The RAM node maps into an M-RAM that powers up into an unknown state
 Warning (276020): Inferred RAM node "afdx_rx_core:rx_core|afdx_ram_sdp:rx_cfg|memory_rtl_0" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design.
@@ -5764,7 +5824,7 @@ Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "ev_gdrop[0]" is stuck at GND
     Warning (13410): Pin "ev_gdrop[1]" is stuck at GND
 Info (17049): 63 registers lost all their fanouts during netlist optimizations.
-Info (144001): Generated suppressed messages file E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.smsg
+Info (144001): Generated suppressed messages file E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
 Warning (21074): Design contains 1 input pin(s) that do not drive logic
@@ -5774,16 +5834,16 @@ Info (21057): Implemented 33643 device resources after synthesis - the final res
     Info (21059): Implemented 136 output pins
     Info (21061): Implemented 32846 logic cells
     Info (21064): Implemented 538 RAM segments
-Info: eLinx 64-Bit Analysis & Synthesis was successful. 0 errors, 282 warnings
+Info: eLinx 64-Bit Analysis & Synthesis was successful. 0 errors, 342 warnings
     Info: Peak virtual memory: 4794 megabytes
-    Info: Processing ended: Mon Oct 12 14:00:24 2026
+    Info: Processing ended: Wed Oct 14 13:44:23 2026
     Info: Elapsed time: 00:16:45
-    Info: Total CPU time (on all processors): 00:23:07
+    Info: Total CPU time (on all processors): 00:23:29
 
 
 +------------------------------------------+
 ; Analysis & Synthesis Suppressed Messages ;
 +------------------------------------------+
-The suppressed messages can be found in E:/2026_Embedded_FPGA/worktrees/active/c3_github/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.smsg.
+The suppressed messages can be found in E:/2026_Embedded_FPGA/worktrees/active/c3_submit/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.smsg.
 
 

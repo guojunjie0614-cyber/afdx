@@ -51,7 +51,7 @@
     "file": "gui_resources.rpt",
     "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt",
     "bytes": 239,
-    "sha256": "c2df16fee7bf4d6b0a72613af7e9f3bbc96e2f4e01320b556689cc3127f5bd57"
+    "sha256": "834b748a2cc8f7ee2bafa43b06a142a5be6345667571f77ec6ec38030e787dec"
   },
   {
     "file": "gui_elinx.log",
@@ -85,9 +85,9 @@
   },
   {
     "file": "cli_synthesis_summary.json",
-    "source": "out/synth/AFDX_top/20261012_141415_998117/summary.json",
-    "bytes": 1967061,
-    "sha256": "7158f0d2205802f11584be64326501596e2e5c1b1c9f2e62af921076691e3b64"
+    "source": "out/synth/AFDX_top/20261014_104324_658437/summary.json",
+    "bytes": 1966378,
+    "sha256": "683252a1c159fec78ee9a552ab223c4b20d90ae8ee21fea2df20a655f5bbc3c5"
   },
   {
     "file": "cli_validation.json",
@@ -171,7 +171,7 @@
     "file": "gui_timing.json",
     "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
     "operation": "read-only SQLite query of elinx_intra_clock_summary",
-    "source_sha256": "a4dd38ca9d174339c323d7f96ff9f291f72e5efcc8feb8369558d414aa693ab5",
+    "source_sha256": "e2331149bdd121fff8500aeea85ff715a33809364833dd4bc6a5c70d4cef36d1",
     "sha256": "2601802d041c8814a0a727615261c2f161ec419e28647483ce019efb32e8aad0"
   },
   {
@@ -181,112 +181,112 @@
     "source_sha256": "85ad0b58eee78d0ae256ea3d309c22e212580c9d2b93b39991cde4b798005354",
     "sha256": "5d9aee0df713eb60dfc6b3be676afd2818eb8834f6f85d6b08edc9ee72f90625"
   },
-{
-  "file": "gui_hierarchy.rpt",
-  "source": "../c3_github/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.rpt",
-  "bytes": 824848,
-  "sha256": "ad584ba4cd90f8307bcf84a43d519540ab55d810349847a7544813693ade67d0"
-},
-{
-  "file": "device_capacity.rpt",
-  "source": "../c3_github/out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem_utilization_placed.rpt",
-  "bytes": 348,
-  "sha256": "ce6018cc1a18400be4861ac4f9eb5029d2ae140a31664a93f0aca0b665854b5f"
-},
-{
-  "file": "cli_resources.rpt",
-  "source": "../c3_github/out/synth/AFDX_top/20261012_141415_998117/utilization_synth.rpt",
-  "bytes": 209,
-  "sha256": "f355e6f932e0374b8aa4449bc2d00692dfc61a2b1f9560b93fd53a966bb55eb2"
-},
-{
-  "file": "gui_synthesis_timing.pb",
-  "source": "../c3_github/elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
-  "bytes": 2351104,
-  "sha256": "a4dd38ca9d174339c323d7f96ff9f291f72e5efcc8feb8369558d414aa693ab5"
-},
-{
-  "file": "cli_synthesis_timing.pb",
-  "source": "../c3_github/out/synth/AFDX_top/20261012_141415_998117/synthesized_timing.pb",
-  "bytes": 1753088,
-  "sha256": "435cb54b085274ea6c8ce1301c353c1935b7134dccf549bc8727df95a74bd2b6"
-},
-{
-  "file": "cli_design_excerpt.txt",
-  "source": "../c3_github/out/synth/AFDX_top/20261012_141415_998117/design.vqm (lines 286314-286322 and 461087-461093)",
-  "bytes": 463,
-  "sha256": "fdc18c691dfb0593510c75b7b9a75743c0f688fb6d294c535caaf55ef0cb956a"
-},
-{
-  "file": "fault_checks.json",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/check_summary.json",
-  "bytes": 19372,
-  "sha256": "78a0129bd000866cb8448c99b3143a7be24d7dedc660090786c8ab433b5839f2"
-},
-{
-  "file": "fault_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/sys_events.txt",
-  "bytes": 129289,
-  "sha256": "8fbacdc06f49bce3e3dace54806435707de6d9ea8ce900187ed33e4bf79bf3d5"
-},
-{
-  "file": "fault_rx_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/es1_rx/events.txt",
-  "bytes": 4260,
-  "sha256": "91d3cab19312cac7ef574358af247504df4742ffc3e8e321fb6430e5da147215"
-},
-{
-  "file": "load_checks.json",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/check_summary.json",
-  "bytes": 10049,
-  "sha256": "98fbd73091ebb58a8c002034a51c92d00000911bab60d8cbee7d9bfd5198d5fd"
-},
-{
-  "file": "load_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/sys_events.txt",
-  "bytes": 251509,
-  "sha256": "ba3a2542a26c5fa68ddfa101641ab4363ef28881dec1e32a79c65fb22dda37db"
-},
-{
-  "file": "load_tx_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/es1_tx/events.txt",
-  "bytes": 550754,
-  "sha256": "20e7695e665a5eff2d4f0bcf1f7be0f025e10625c9a0037a94061e5e02437516"
-},
-{
-  "file": "load_commands.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/vectors/sys_commands.txt",
-  "bytes": 159900,
-  "sha256": "f063a2952b7ccf1b89fa123946fe230cf39cafa27915f9db3c4406133f92abf0"
-},
-{
-  "file": "overflow_checks.json",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/check_summary.json",
-  "bytes": 5563,
-  "sha256": "4ee7902565d8ccdcd2d880841996a14d5d101075a284455cb4dc9119e70ae712"
-},
-{
-  "file": "overflow_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/sys_events.txt",
-  "bytes": 6442,
-  "sha256": "747a24eefe24fa85c4d86cc75dbcb4ec755f3a5372d57e8f939cc0a071a0bb1b"
-},
-{
-  "file": "overflow_tx_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/es1_tx/events.txt",
-  "bytes": 6727,
-  "sha256": "01e230c5d260cf9947456bb8d8b8b84229f735f52a07501ff87301a75e85af34"
-},
-{
-  "file": "queue_overflow_checks.json",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_rx_ovf_dq/20261012_130701_856242/check_summary.json",
-  "bytes": 465,
-  "sha256": "be186b75ded69861490a9c2d3d34b4ad428edae153746397ee605569d4d9a0ac"
-},
-{
-  "file": "queue_overflow_events.txt",
-  "source": "../c3_github/out/t25b/frozen/out/sim/tb_rx_ovf_dq/20261012_130701_856242/events.txt",
-  "bytes": 3486,
-  "sha256": "a1035bf95511092e7ddb4da5906b6c905d24b0589b2657fabf00a16564bcb519"
-}
+  {
+    "file": "gui_hierarchy.rpt",
+    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.rpt",
+    "bytes": 842063,
+    "sha256": "78a1a452f0046497f219e43d3c9050d349a67d80ec325ea70d5e2f61ef8242bc"
+  },
+  {
+    "file": "device_capacity.rpt",
+    "source": "../c3_github/out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem_utilization_placed.rpt",
+    "bytes": 348,
+    "sha256": "ce6018cc1a18400be4861ac4f9eb5029d2ae140a31664a93f0aca0b665854b5f"
+  },
+  {
+    "file": "cli_resources.rpt",
+    "source": "out/synth/AFDX_top/20261014_104324_658437/utilization_synth.rpt",
+    "bytes": 209,
+    "sha256": "fa1d84e506e67ee7e7fa66c53a780e1b1fbe3e2a6e59d915896d828f5ba448ff"
+  },
+  {
+    "file": "gui_synthesis_timing.pb",
+    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
+    "bytes": 2351104,
+    "sha256": "e2331149bdd121fff8500aeea85ff715a33809364833dd4bc6a5c70d4cef36d1"
+  },
+  {
+    "file": "cli_synthesis_timing.pb",
+    "source": "out/synth/AFDX_top/20261014_104324_658437/synthesized_timing.pb",
+    "bytes": 1732608,
+    "sha256": "10badbf3b477b433b5dc1ee9bf8d2d2950917814b0d29a2696280e2e64af598c"
+  },
+  {
+    "file": "cli_design_excerpt.txt",
+    "source": "out/synth/AFDX_top/20261014_104324_658437/design.vqm (lines 286174-286182 and 461118-461124)",
+    "bytes": 463,
+    "sha256": "5b0c19bb08455d551e47cfd97a9be8d5c57d7658f5c8a499bd4e94e3fc3af4ca"
+  },
+  {
+    "file": "fault_checks.json",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/check_summary.json",
+    "bytes": 19372,
+    "sha256": "78a0129bd000866cb8448c99b3143a7be24d7dedc660090786c8ab433b5839f2"
+  },
+  {
+    "file": "fault_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/sys_events.txt",
+    "bytes": 129289,
+    "sha256": "8fbacdc06f49bce3e3dace54806435707de6d9ea8ce900187ed33e4bf79bf3d5"
+  },
+  {
+    "file": "fault_rx_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_fault/20261012_130717_899976/es1_rx/events.txt",
+    "bytes": 4260,
+    "sha256": "91d3cab19312cac7ef574358af247504df4742ffc3e8e321fb6430e5da147215"
+  },
+  {
+    "file": "load_checks.json",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/check_summary.json",
+    "bytes": 10049,
+    "sha256": "98fbd73091ebb58a8c002034a51c92d00000911bab60d8cbee7d9bfd5198d5fd"
+  },
+  {
+    "file": "load_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/sys_events.txt",
+    "bytes": 251509,
+    "sha256": "ba3a2542a26c5fa68ddfa101641ab4363ef28881dec1e32a79c65fb22dda37db"
+  },
+  {
+    "file": "load_tx_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/es1_tx/events.txt",
+    "bytes": 550754,
+    "sha256": "20e7695e665a5eff2d4f0bcf1f7be0f025e10625c9a0037a94061e5e02437516"
+  },
+  {
+    "file": "load_commands.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_load/20261012_130749_243754/vectors/sys_commands.txt",
+    "bytes": 159900,
+    "sha256": "f063a2952b7ccf1b89fa123946fe230cf39cafa27915f9db3c4406133f92abf0"
+  },
+  {
+    "file": "overflow_checks.json",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/check_summary.json",
+    "bytes": 5563,
+    "sha256": "4ee7902565d8ccdcd2d880841996a14d5d101075a284455cb4dc9119e70ae712"
+  },
+  {
+    "file": "overflow_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/sys_events.txt",
+    "bytes": 6442,
+    "sha256": "747a24eefe24fa85c4d86cc75dbcb4ec755f3a5372d57e8f939cc0a071a0bb1b"
+  },
+  {
+    "file": "overflow_tx_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_sys_ovf/20261012_130949_448055/es1_tx/events.txt",
+    "bytes": 6727,
+    "sha256": "01e230c5d260cf9947456bb8d8b8b84229f735f52a07501ff87301a75e85af34"
+  },
+  {
+    "file": "queue_overflow_checks.json",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_rx_ovf_dq/20261012_130701_856242/check_summary.json",
+    "bytes": 465,
+    "sha256": "be186b75ded69861490a9c2d3d34b4ad428edae153746397ee605569d4d9a0ac"
+  },
+  {
+    "file": "queue_overflow_events.txt",
+    "source": "../c3_github/out/t25b/frozen/out/sim/tb_rx_ovf_dq/20261012_130701_856242/events.txt",
+    "bytes": 3486,
+    "sha256": "a1035bf95511092e7ddb4da5906b6c905d24b0589b2657fabf00a16564bcb519"
+  }
 ]

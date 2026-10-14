@@ -38,11 +38,11 @@
 
 ## 三、综合资源与时序
 
-以下主结果来自 2026-10-12 的 eLinx 界面 Run Synthesis，器件为 EQ6HL130、封装 CSG484_H；R30 允许自行选择器件。这些是综合后估算，未计布线延迟。
+以下主结果来自 2026-10-14 的 eLinx 界面 Run Synthesis，器件为 EQ6HL130、封装 CSG484_H；R30 允许自行选择器件。这些是综合后估算，未计布线延迟。
 | 流程 | 资源 | 时序及原始出处 |
 |---|---|---|
-| 界面 Run Synthesis（报告主表使用） | LUT 32847、FF 13869、CLB 4626、Memory 340、引脚 259。 | setup +2.522 ns、Fmax 182.548 MHz、hold −0.068 ns；`elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt` 与同目录 `AFDX_EndSystem.tan.pb`。 |
-| 命令行综合（单独列示） | 29961 个逻辑单元、783 个未装箱 RAM 切片；不与上行 Memory 数直接相减。 | setup +2.749 ns、Fmax 190.440 MHz、hold −0.068 ns；`out/synth/AFDX_top/20261012_141415_998117/summary.json`，复现 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta`。 |
+| 界面 Run Synthesis（报告主表使用） | LUT 32847、FF 13869、CLB 4620、Memory 340、引脚 259。 | setup +2.522 ns、Fmax 182.548 MHz、hold −0.068 ns；`elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt` 与同目录 `AFDX_EndSystem.tan.pb`。 |
+| 命令行综合（单独列示） | 29963 个逻辑单元、783 个未装箱 RAM 切片；不与上行 Memory 数直接相减。 | setup +2.749 ns、Fmax 190.440 MHz、hold −0.068 ns；`out/synth/AFDX_top/20261014_104324_658437/summary.json`，复现 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta`。 |
 
 界面时序库为 SQLite；只读查询 `elinx_intra_clock_summary` 中 `name=clk`：`period=8000`、`setup_worst_slack=2522`、`hold_worst_slack=-68`，时间单位 ps；Fmax 字段单位 MHz。查询副本见 `证据/gui_timing.json`。
 界面先运行 Analysis & Synthesis 并选择 Speed，再交给后端；依据同目录 `AFDX_EndSystem.map.rpt` 的 Settings 和 `AFDX_EndSystem.flow.rpt` 的执行阶段。命令行直接由 `tools/eda.py:synth` 调用 `eLinx_synthesis.exe`，没有这个额外前端。两条流程的映射和统计口径不同，不要求资源数字相同。
