@@ -1,0 +1,103 @@
+{
+  "name": "tb_elinx_gui",
+  "started": "2026-10-13T18:15:49.199504+08:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 2.0,
+  "memory_limit_gib": 10.0,
+  "passed": true,
+  "results": [
+    [
+      "tb_elinx",
+      "PASS",
+      "9238",
+      "0"
+    ]
+  ],
+  "diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0
+  },
+  "mode": "gui",
+  "finished": "2026-10-13T20:26:22.580981+08:00",
+  "jobs": [
+    {
+      "name": "library",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506",
+      "pid": 42060,
+      "created": 1791886549.233113,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.266,
+      "peak_tree_bytes": 8204288,
+      "budget_seconds": 60,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506\\library.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+lib",
+        "AFDX_EndSystem_sim.vqm",
+        "220model.v",
+        "altera_mf.v",
+        "altera_primitives.v",
+        "stratix_atoms.v",
+        "stratixiv_atoms.v",
+        "lib/gmii_monitor.v",
+        "lib/judge_endpoint.v",
+        "lib/line_driver.v",
+        "lib/line_monitor.v",
+        "lib/link_model.v",
+        "lib/load_test_endpoint.v",
+        "lib/mac_tx_suite.v",
+        "lib/rm_age_probe.v",
+        "lib/rtc_retry_suite.v",
+        "lib/rx_core_suite.v",
+        "lib/snmp_test_endpoint.v",
+        "lib/sys_endpoint.v",
+        "lib/sys_suite.v",
+        "lib/tx_core_suite.v",
+        "tb_elinx.v"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506",
+      "pid": 39424,
+      "created": 1791886549.5039246,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 6.375,
+      "peak_tree_bytes": 561299456,
+      "budget_seconds": 600,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-c",
+        "-t",
+        "1ps",
+        "work.tb_elinx",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506",
+      "pid": 1216,
+      "created": 1791886555.873926,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 7826.703,
+      "peak_tree_bytes": 2369265664,
+      "budget_seconds": 16960.33753657341,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t26c\\out\\runs\\tb_elinx_gui\\20261013_181549_198506\\simulation.log"
+    }
+  ]
+}

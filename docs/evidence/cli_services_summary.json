@@ -1,0 +1,643 @@
+{
+  "name": "tb_net_services",
+  "started": "2026-10-12T11:42:57.689910+08:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 2.0,
+  "memory_limit_gib": 10.0,
+  "replaced_modules": [
+    "AFDX_top"
+  ],
+  "inputs": [
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_615a.v",
+      "sha256": "6E6DB5E749AA819F775C4371ED5DE72F0FD3FA8771CCAD8C2C1E59A2619ADB0A"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_cfg.v",
+      "sha256": "4E438A3B61231FFE243E2411868840D1F4240A35806F3869E9D07DAC56BF1DF2"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_crc32_d8.v",
+      "sha256": "6D37CE1ED4C003D5BE2D9386553888E835C469696474CEABFF0061FAF23D35B7"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_mac_rx.v",
+      "sha256": "0A8607315939265DA84545F36BDA1D130E619205282B85ABD4EACB209C5E09B7"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_mac_tx.v",
+      "sha256": "A3B1A4791EC4659987B124000842CD4DA7F10BB5FA15E8E2275A8FAAFBFDDE84"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_ntp_fraction.v",
+      "sha256": "00994EBCEDB80C2642DD5B2F8FFA83FF2681AE5BDE4F50B788FCDCBD306C908A"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_ram_sdp.v",
+      "sha256": "58898E439CA4FEF2CDFBA55F617CB6A06533766834392054146B77D26DC92C97"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rtc.v",
+      "sha256": "CC35F7528E6DDFD3AAC96D1B3CB39952F8BCFD6E9DC9D37C5F9C963C930A80CB"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_core.v",
+      "sha256": "E4A637F960172B6E6C6A1DD581150477299B02450EB48C17B5B118C6D2698875"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_deliver.v",
+      "sha256": "1EFE1D2408B0D6BFF48BA04703CB92B18D0D7A9F31E45423AD585F3530F670CD"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_engine.v",
+      "sha256": "F040AFE722A1591D206EF08F70A4321FBEAFAEC4AAC861F86CBCDB943403B0AF"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_parse.v",
+      "sha256": "11C344F236F6534DAA265533994D235DBB43AF899A6E57D580D03CD4163B5AEA"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_snmp.v",
+      "sha256": "32A215452A6E57022B6A2160567D5FDA4D973782D13EDF6882E56429961DD287"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_svc.v",
+      "sha256": "D90A012377DDBDE21D79B1A6F5FEBDCA409CF0313901200CE87B82BD428AFBAD"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_timebase.v",
+      "sha256": "A89C2BDC76746E8829240F39C6B92589A37AB458BDAA718FD3CB3EF0C01AAE4D"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_buf.v",
+      "sha256": "75A3DD4CB0F631E1E921784A299715DA78B85FB081AD024EA34610EBA5472B45"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_builder.v",
+      "sha256": "0C632CC436681781E52B425382DF14CC707E587AE3AD20A57D76403C1249528E"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_core.v",
+      "sha256": "D20D3F646F4978E1C5D8AFCE92B2B374A1F3940DBE3FFE347EC38F734FAD44F8"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_engine.v",
+      "sha256": "73976B8B567A2E8197888BA0085E0029A528B130B63134A16F29EE42824C8237"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_free.v",
+      "sha256": "D97AA80E6985D7B23107774E6B8AB877DBD3A50B37173364D1CB703541AB60FB"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\gmii_monitor.v",
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\judge_endpoint.v",
+      "sha256": "9F0258498783F9F02F3622CE9946C4E77D78BCE2950CD1F3AE9125490F2A3A0B"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\line_driver.v",
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\line_monitor.v",
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\link_model.v",
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\load_test_endpoint.v",
+      "sha256": "0E0FA29D5031050EE8CFBB8BDE78C5FC4771196B40BFDEB89E3293D60CFC8CCC"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\mac_tx_suite.v",
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rm_age_probe.v",
+      "sha256": "DB399B7E721C49632E32A71F11A1F6F359622A1E4863F52E81382B669A4D2AF1"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rtc_retry_suite.v",
+      "sha256": "7C884C7C403244455500881A3FCD22F4E6E116A603F25B8F98A6E35A98BB95A1"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rx_core_suite.v",
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\snmp_test_endpoint.v",
+      "sha256": "9DA9A92F94737CDC6F3AE6F20EF25BCC2752E8E19B6214D1EDD2B4727DD19D0F"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\sys_endpoint.v",
+      "sha256": "48890C08CCA46A05C857258B3B411E8CA13DC18E40DE5F8DD64785186C759CE8"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\sys_suite.v",
+      "sha256": "C3D11A703F24A69BCC20A63621DA99D0CA2978C5C50AAF134054805D4BA1BAB4"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\tx_core_suite.v",
+      "sha256": "B9F5E6BD4EFDE1337C1297EB65BAB82097D8AD5CDA6DE5655A02760C707D9011"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\tb_net_services.v",
+      "sha256": "0320716AD9866F7544D39E34ABB271331EEA42BEFCD57D602672F3686A167E44"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\download_test_tasks.vh",
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\synth_ready\\out\\synth\\AFDX_top\\20261012_095521_276542\\netlist.v",
+      "sha256": "37599AE6D7A860CAFBCCAB11D38A40DB64B906244DBC0A383DE9A8FC6372F3C4"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\fix_lut_mask.py",
+      "sha256": "8180C72642866029F24194E65D424F7D4F9AEDDE398B15619D3F2ECB8778B571"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\stratix_atoms.v",
+      "sha256": "98F26BE0121DE5ACEA108E774668491E39AF47659E903F2D309E8AEAB613B278"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\net_services_ref.py",
+      "sha256": "D9E73859DC0CC304FA3D18DC46F64FB45037547751EB8786CC92E352F7DB8F4C"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\load_ref.py",
+      "sha256": "7D40E7B866E193743DF1E94E70DB64BDB15F90DEC5B22BF139F0284D41C34F2E"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\download_ref.py",
+      "sha256": "8F0494877CA8C5F0ABF5AC83DC1778A5C96EEF1BC2794659B74CC91AE8F895B7"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\snmp_ref.py",
+      "sha256": "DD0DC77D3AD7C72714A483CB91A8B3B5A2898AEBC72328EC7F061F5856263B40"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\afdx_ref.py",
+      "sha256": "A6D8FA1B4D199BBFE265EA9DEE1BE2C581D79D80548D3931743F708A45D55F7E"
+    }
+  ],
+  "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\sim\\tb_net_services\\20261012_102449_075621",
+  "parameters": [],
+  "simulation_diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0
+  },
+  "check": {
+    "download": {
+      "items": 41,
+      "errors": 0,
+      "cases": {
+        "0": {
+          "start": 78646,
+          "size": 16,
+          "version": 16692,
+          "port": 59,
+          "mode": 0,
+          "status": 2,
+          "received": 16,
+          "retries": 0,
+          "lost": 0,
+          "nstatus": 3,
+          "end": 124759,
+          "lnr": {
+            "version": "A4",
+            "names": [
+              "MEMORY.BIN"
+            ],
+            "user_data": ""
+          },
+          "lns": [
+            {
+              "version": "A4",
+              "status": 1,
+              "description": "",
+              "counter": 1,
+              "exception": 0,
+              "estimated": 0,
+              "ratio": 0,
+              "count": 0,
+              "files": []
+            },
+            {
+              "version": "A4",
+              "status": 2,
+              "description": "",
+              "counter": 2,
+              "exception": 0,
+              "estimated": 65535,
+              "ratio": 0,
+              "count": 1,
+              "files": [
+                {
+                  "name": "MEMORY.BIN",
+                  "status": 2,
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "version": "A4",
+              "status": 3,
+              "description": "",
+              "counter": 3,
+              "exception": 0,
+              "estimated": 0,
+              "ratio": 100,
+              "count": 1,
+              "files": [
+                {
+                  "name": "MEMORY.BIN",
+                  "status": 3,
+                  "description": ""
+                }
+              ]
+            }
+          ],
+          "bytes_equal": true
+        }
+      },
+      "busy_rejections": 0
+    },
+    "items": 65,
+    "errors": 0,
+    "functions": {
+      "users": {
+        "start_cycle": 65645,
+        "end_cycle": 65951,
+        "cycles": 306
+      },
+      "integrity": {
+        "start_cycle": 65951,
+        "end_cycle": 66151,
+        "cycles": 200
+      },
+      "snmp": {
+        "start_cycle": 66151,
+        "end_cycle": 67144,
+        "cycles": 993
+      },
+      "rtc": {
+        "start_cycle": 67144,
+        "end_cycle": 68114,
+        "cycles": 970
+      },
+      "upload": {
+        "start_cycle": 68114,
+        "end_cycle": 78644,
+        "cycles": 10530
+      },
+      "download": {
+        "start_cycle": 78644,
+        "end_cycle": 124759,
+        "cycles": 46115
+      }
+    },
+    "rtc_error_ns": 0,
+    "snmp": {
+      "version": 1,
+      "community": "public",
+      "op": 2,
+      "request_id": 7,
+      "error": 0,
+      "index": 0,
+      "bindings": [
+        {
+          "oid": "1.3.6.1.2.1.1.1.0",
+          "tag": 4,
+          "value": "C3 AFDX endpoint"
+        }
+      ],
+      "oid": "1.3.6.1.2.1.1.1.0",
+      "tag": 4,
+      "value": "C3 AFDX endpoint"
+    },
+    "frames": {
+      "es1_a": 29,
+      "es1_b": 29,
+      "es2_a": 29,
+      "es2_b": 29
+    },
+    "tftp_packets": 29,
+    "status": [
+      {
+        "version": "A4",
+        "status": 1,
+        "description": "",
+        "counter": 1,
+        "ratio": 0,
+        "headers": 0
+      },
+      {
+        "version": "A4",
+        "status": 2,
+        "description": "",
+        "counter": 2,
+        "ratio": 0,
+        "headers": 1,
+        "name": "DEM0001.LUH",
+        "part": "DEM4C-0001-0001",
+        "file_ratio": 0,
+        "file_status": 2,
+        "file_description": ""
+      },
+      {
+        "version": "A4",
+        "status": 2,
+        "description": "",
+        "counter": 3,
+        "ratio": 0,
+        "headers": 1,
+        "name": "DEM0001.LUH",
+        "part": "DEM4C-0001-0001",
+        "file_ratio": 0,
+        "file_status": 2,
+        "file_description": ""
+      },
+      {
+        "version": "A4",
+        "status": 3,
+        "description": "",
+        "counter": 4,
+        "ratio": 100,
+        "headers": 1,
+        "name": "DEM0001.LUH",
+        "part": "DEM4C-0001-0001",
+        "file_ratio": 100,
+        "file_status": 3,
+        "file_description": ""
+      }
+    ],
+    "ram_bytes": 16,
+    "checks": [
+      {
+        "ok": true,
+        "label": "all five functions complete including upload and download"
+      },
+      {
+        "ok": true,
+        "label": "one IC error, normal A/B duplicate rejected at each endpoint, no delivery of bad SN"
+      },
+      {
+        "ok": true,
+        "label": "one user delivery in each direction"
+      },
+      {
+        "ok": true,
+        "label": "one RTC sync, clock difference within 40 ns"
+      },
+      {
+        "ok": true,
+        "label": "loaded RAM equals independent 16-byte data"
+      },
+      {
+        "ok": true,
+        "label": "one SNMP response"
+      },
+      {
+        "ok": true,
+        "label": "standard BER GetResponse, ID and sysDescr"
+      },
+      {
+        "ok": true,
+        "label": "ES1 network a sends valid CRC frames"
+      },
+      {
+        "ok": true,
+        "label": "ES1 network b sends valid CRC frames"
+      },
+      {
+        "ok": true,
+        "label": "ES2 network a sends valid CRC frames"
+      },
+      {
+        "ok": true,
+        "label": "ES2 network b sends valid CRC frames"
+      },
+      {
+        "ok": true,
+        "label": "standard NTP client and server packets"
+      },
+      {
+        "ok": true,
+        "label": "NTP Origin echoes client Transmit"
+      },
+      {
+        "ok": true,
+        "label": "TFTP upload has RRQ,WRQ,DATA,ACK and no ERROR"
+      },
+      {
+        "ok": true,
+        "label": "A4 LUI accepted"
+      },
+      {
+        "ok": true,
+        "label": "LUI/list/header/data/final status sequence"
+      },
+      {
+        "ok": true,
+        "label": "LUS counter and completion ratio"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record net_services.txt"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record es1_a.txt"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record es1_b.txt"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record es2_a.txt"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record es2_b.txt"
+      },
+      {
+        "ok": true,
+        "label": "netlist/RTL exact external record es2_rx_a.txt"
+      },
+      {
+        "ok": true,
+        "label": "download exact 16 bytes from loaded RAM"
+      }
+    ],
+    "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\sim\\tb_net_services\\20261012_102449_075621"
+  },
+  "passed": true,
+  "checks": 1123,
+  "errors": 0,
+  "result": "PASS",
+  "coverage": [
+    "[COVERAGE] cycles=124759"
+  ],
+  "finished": "2026-10-12T12:38:27.617211+08:00",
+  "jobs": [
+    {
+      "name": "adapt_0",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\fix_lut_mask.py",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\synth_ready\\out\\synth\\AFDX_top\\20261012_095521_276542\\netlist.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\netlist_0.v",
+        "--allow-no-ram"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 46584,
+      "created": 1791776577.8812163,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 1.062,
+      "peak_tree_bytes": 100204544,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\adapt_0.log"
+    },
+    {
+      "name": "vectors",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\net_services_ref.py",
+        "vectors",
+        "--dir",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 29200,
+      "created": 1791776578.9592197,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.265,
+      "peak_tree_bytes": 9023488,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\vectors.log"
+    },
+    {
+      "name": "vlib",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 31480,
+      "created": 1791776579.3164458,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.344,
+      "peak_tree_bytes": 7028736,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\vlib.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib",
+        "+define+SYS_TOP_NETLIST",
+        "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\stratix_atoms.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\netlist_0.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_615a.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_cfg.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_crc32_d8.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_mac_rx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_mac_tx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_ntp_fraction.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_ram_sdp.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rtc.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_core.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_deliver.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_rx_parse.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_snmp.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_svc.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_timebase.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_buf.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_builder.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_core.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\rtl\\afdx_tx_free.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\gmii_monitor.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\judge_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\line_driver.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\line_monitor.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\link_model.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\load_test_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\mac_tx_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rm_age_probe.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rtc_retry_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\rx_core_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\snmp_test_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\sys_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\sys_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\lib\\tx_core_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tb\\tb_net_services.v"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 34920,
+      "created": 1791776579.6750245,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 4.062,
+      "peak_tree_bytes": 412315648,
+      "budget_seconds": 120,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-c",
+        "tb_net_services",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 23048,
+      "created": 1791776583.7017553,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 3323.563,
+      "peak_tree_bytes": 2059608064,
+      "budget_seconds": 19136.299653053284,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\simulation.log"
+    },
+    {
+      "name": "check",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\tools\\net_services_ref.py",
+        "check",
+        "--dir",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+        "--rtl-reference",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\sim\\tb_net_services\\20261012_102449_075621"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910",
+      "pid": 11428,
+      "created": 1791779907.3140016,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.282,
+      "peak_tree_bytes": 17772544,
+      "budget_seconds": 60,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t25\\stage5\\out\\net\\tb_net_services\\20261012_114257_689910\\check.log"
+    }
+  ]
+}

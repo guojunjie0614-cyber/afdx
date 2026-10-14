@@ -1,0 +1,450 @@
+{
+  "baseline": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\baseline\\20261011_211049_841668",
+    "summary": {
+      "inputs": 19,
+      "wire_frames": 19,
+      "rx_frames": 19,
+      "rx_ends": 19,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 19,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 19,
+      "source_all_bytes": true,
+      "run_ms": 9900,
+      "cycles": 30290,
+      "cycles_per_second": 3059.59595959596
+    },
+    "latencies": {
+      "tx_from_valid": {
+        "77": 1,
+        "79": 1,
+        "78": 1,
+        "99": 1,
+        "114": 1,
+        "133": 1,
+        "152": 1,
+        "171": 1,
+        "190": 1,
+        "209": 1,
+        "228": 1,
+        "247": 1,
+        "268": 1,
+        "285": 1,
+        "302": 1,
+        "319": 1,
+        "336": 1,
+        "353": 1,
+        "370": 1
+      },
+      "tx_from_accept": {
+        "77": 1,
+        "79": 1,
+        "78": 1,
+        "95": 1,
+        "114": 1,
+        "133": 1,
+        "152": 1,
+        "171": 1,
+        "190": 1,
+        "209": 1,
+        "228": 1,
+        "247": 1,
+        "264": 1,
+        "281": 1,
+        "298": 1,
+        "315": 1,
+        "332": 1,
+        "349": 1,
+        "366": 1
+      },
+      "rx_latency": {
+        "15": 19
+      },
+      "gap": {
+        "null": 1,
+        "15": 1,
+        "12": 9,
+        "14": 8
+      }
+    }
+  },
+  "stress_crc": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc\\20261011_205422_945673",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 118,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 57052,
+      "cycles": 111380,
+      "cycles_per_second": 1952.2540839935498
+    },
+    "rx_each_frame_continuous": true
+  },
+  "stress_crc_n2": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n2\\20261011_211308_154450",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 118,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 157266,
+      "cycles": 111380,
+      "cycles_per_second": 708.2268258873501
+    },
+    "rx_each_frame_continuous": true
+  },
+  "stress_crc_n4": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 118,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 562151,
+      "cycles": 111380,
+      "cycles_per_second": 198.1318186750535
+    },
+    "rx_each_frame_continuous": true
+  },
+  "idle_crc": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\idle_crc\\20261011_211108_713891",
+    "summary": {
+      "inputs": 16,
+      "wire_frames": 16,
+      "rx_frames": 16,
+      "rx_ends": 16,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 16,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 16,
+      "rx_equal_input": 16,
+      "source_all_bytes": true,
+      "run_ms": 13677,
+      "cycles": 60688,
+      "cycles_per_second": 4437.230386780727
+    },
+    "latencies": {
+      "tx_from_valid": {
+        "59": 16
+      },
+      "tx_from_accept": {
+        "59": 16
+      },
+      "rx_latency": {
+        "15": 16
+      },
+      "gap": {
+        "null": 1,
+        "1993": 15
+      }
+    }
+  },
+  "bad_crc": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+    "summary": {
+      "inputs": 2,
+      "wire_frames": 2,
+      "rx_frames": 2,
+      "rx_ends": 2,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 2,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 2,
+      "source_all_bytes": true,
+      "run_ms": 4076,
+      "cycles": 21600,
+      "cycles_per_second": 5299.313052011777
+    }
+  },
+  "rxer": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\rxer\\20261011_211145_317262",
+    "summary": {
+      "inputs": 2,
+      "wire_frames": 2,
+      "rx_frames": 2,
+      "rx_ends": 2,
+      "rx_error_bytes": 1560,
+      "rx_error_any_cycles": 1560,
+      "wire_equal_input": 2,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 2,
+      "rx_equal_input": 2,
+      "source_all_bytes": true,
+      "run_ms": 4425,
+      "cycles": 21600,
+      "cycles_per_second": 4881.35593220339
+    }
+  },
+  "runt": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\runt\\20261011_211159_479730",
+    "summary": {
+      "inputs": 1,
+      "wire_frames": 0,
+      "rx_frames": 0,
+      "rx_ends": 0,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 0,
+      "source_all_bytes": true,
+      "run_ms": 2756,
+      "cycles": 16034,
+      "cycles_per_second": 5817.851959361394
+    }
+  },
+  "smoke_no_phy": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\smoke_no_phy\\20261011_211210_848829",
+    "summary": {
+      "inputs": 1,
+      "wire_frames": 1,
+      "rx_frames": 1,
+      "rx_ends": 1,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 1,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 1,
+      "source_all_bytes": true,
+      "run_ms": 2700,
+      "cycles": 16077,
+      "cycles_per_second": 5954.444444444444
+    }
+  },
+  "idle": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\idle\\20261011_211222_228976",
+    "summary": {
+      "inputs": 0,
+      "wire_frames": 0,
+      "rx_frames": 0,
+      "rx_ends": 0,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 0,
+      "source_all_bytes": true,
+      "run_ms": 2984,
+      "cycles": 16016,
+      "cycles_per_second": 5367.292225201072
+    }
+  },
+  "idle_n4": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\idle_n4\\20261011_211234_400310",
+    "summary": {
+      "inputs": 0,
+      "wire_frames": 0,
+      "rx_frames": 0,
+      "rx_ends": 0,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 0,
+      "source_all_bytes": true,
+      "run_ms": 21091,
+      "cycles": 16016,
+      "cycles_per_second": 759.3760371722535
+    }
+  },
+  "self_rtl_n1": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n1\\20261011_210559_553632",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 118,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 253,
+      "cycles": 111693,
+      "cycles_per_second": 441474.30830039526
+    }
+  },
+  "self_rtl_n4": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 118,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 599,
+      "cycles": 111693,
+      "cycles_per_second": 186465.77629382303
+    }
+  },
+  "self_netlist_n1": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n1\\20261011_210609_329606",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 118,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 19117,
+      "cycles": 111693,
+      "cycles_per_second": 5842.600826489512
+    }
+  },
+  "self_netlist_n4": {
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+    "summary": {
+      "inputs": 118,
+      "wire_frames": 118,
+      "rx_frames": 118,
+      "rx_ends": 118,
+      "rx_error_bytes": 0,
+      "wire_equal_input": 0,
+      "wire_auto_crc": 118,
+      "wire_crc_valid": 118,
+      "rx_equal_input": 118,
+      "source_all_bytes": true,
+      "run_ms": 191127,
+      "cycles": 111693,
+      "cycles_per_second": 584.3915302390557
+    }
+  },
+  "wire_pair_bytes": 94282,
+  "stress_groups": {
+    "minimum": {
+      "frames": 50,
+      "wire_frame_bytes": 64,
+      "period_cycles": 84,
+      "ifg_cycles": 12,
+      "frame_body_mbps": 714.2857142857143,
+      "ethernet_payload_mbps": 547.6190476190476,
+      "tx_first_accept_cycles": [
+        383,
+        402,
+        421,
+        440,
+        459,
+        478,
+        497,
+        516,
+        535,
+        554,
+        573,
+        592,
+        611,
+        630,
+        649
+      ],
+      "tx_first_request_cycles": [
+        387,
+        402,
+        421,
+        440,
+        459,
+        478,
+        497,
+        516,
+        535,
+        554,
+        573,
+        592,
+        611,
+        630,
+        649
+      ],
+      "rx_last_cycles": [
+        15
+      ]
+    },
+    "maximum": {
+      "frames": 50,
+      "wire_frame_bytes": 1518,
+      "period_cycles": 1540,
+      "ifg_cycles": 14,
+      "frame_body_mbps": 983.1168831168832,
+      "ethernet_payload_mbps": 974.025974025974,
+      "tx_first_accept_cycles": [
+        507,
+        649
+      ],
+      "tx_first_request_cycles": [
+        511,
+        649
+      ],
+      "rx_last_cycles": [
+        15
+      ]
+    }
+  },
+  "estimates": {
+    "assumption": "Unchanged test cycle counts, all existing non-MAC work retained; active/idle standalone MAC rates are endpoint workload models, not measured integrated runtime bounds. Two-IP idle seconds/cycle interpolated. Compilation/adaptation excluded.",
+    "old_37_sim_seconds": 826.3720000000001,
+    "active_rates": {
+      "1": 1952.2540839935498,
+      "2": 708.2268258873501,
+      "4": 198.1318186750535
+    },
+    "idle_rates": {
+      "1": 5367.292225201072,
+      "4": 759.3760371722535,
+      "2": 1775.6753760301563
+    },
+    "regression_active_hours": 109.16355021336862,
+    "regression_idle_hours": 30.68130024500384,
+    "services_mixed_active_seconds": 629.6767517417849,
+    "services_mixed_idle_seconds": 164.29146284965037,
+    "services_full_net_active_seconds": 4133.816453710574,
+    "services_cycles": 124759
+  },
+  "system_capacity_estimate": {
+    "udp_payload_bytes": 1471,
+    "vls": 77,
+    "bag_cycles": 125000,
+    "ip_long_period_cycles": 1540,
+    "wire_cycles_per_bag": 118580,
+    "offered_payload_mbps": 906.136,
+    "capacity_payload_mbps": 955.1948051948052,
+    "remaining_cycles_per_bag": 6420,
+    "whole_system_test_run": false
+  }
+}

@@ -1,0 +1,184 @@
+[
+  {
+    "file": "judge_result.txt",
+    "source": "out/t25b/frozen/out/modelsim/judge_20261012_132455_42448/result.txt",
+    "bytes": 2744,
+    "sha256": "af29dcbd620d7e93948c05fc141bdcf4882b2d3d6e28a9e7fece03bbaf9afc4c"
+  },
+  {
+    "file": "regression.json",
+    "source": "out/t25b/frozen/out/regress/rtl_20261012_130438_1025591/summary.json",
+    "bytes": 16801,
+    "sha256": "fc2d8b7cc0b07753efe5dd083570afcdf583dbb60076f0ea478dd09ba5dac82d"
+  },
+  {
+    "file": "validation.json",
+    "source": "out/t25b/validation.json",
+    "bytes": 3214,
+    "sha256": "526280d3a38466818159334e79698873b45e1e0163ca85692de6350b1b5c548c"
+  },
+  {
+    "file": "performance.json",
+    "source": "out/t25b/frozen/out/sim/tb_sys_perf/20261012_131003_202794/check_summary.json",
+    "bytes": 89211,
+    "sha256": "9f19bc6cafcf877b959ee6c082ef412dd4486c6b1eda1263ac389555e3a2248c"
+  },
+  {
+    "file": "rtc.json",
+    "source": "out/t25b/frozen/out/sim/tb_sys_rtc/20261012_132155_956827/check_summary.json",
+    "bytes": 2650,
+    "sha256": "201139ca51bc693b6b1979edae976097ce3b8a7022526b13b773aa9db3b6e9fc"
+  },
+  {
+    "file": "capacity.log",
+    "source": "out/t25b/frozen/out/sim/tb_judge_capacity/20261012_132422_307268/simulation.log",
+    "bytes": 8694,
+    "sha256": "fe4d5f333e75a8b6f381fb468a05b773d163f7f731b7cbebd55f97c64e44a46c"
+  },
+  {
+    "file": "snmp.log",
+    "source": "out/t25b/frozen/out/sim/tb_judge_snmp/20261012_132426_988892/simulation.log",
+    "bytes": 1468,
+    "sha256": "23820e154ad2986a82f2d37c7bdcf03bf3a33003f05db9ea3bbced9cd92cad28"
+  },
+  {
+    "file": "gui_behavior.log",
+    "source": "elinx/AFDX_EndSystem.sim/sim_1/behav/transcript",
+    "bytes": 36932,
+    "sha256": "51c646d8a4b87febc725cc81db361e14604dd9e6b8d3cd5027174218a59b8d23"
+  },
+  {
+    "file": "gui_resources.rpt",
+    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt",
+    "bytes": 239,
+    "sha256": "c2df16fee7bf4d6b0a72613af7e9f3bbc96e2f4e01320b556689cc3127f5bd57"
+  },
+  {
+    "file": "gui_elinx.log",
+    "source": "out/t26c/out/runs/tb_elinx_gui/20261013_181549_198506/simulation.log",
+    "bytes": 3064,
+    "sha256": "33e9f42e342a16e7f1ed056d6f480cdc2f6f9295d180a33a33adcc5e210bb6dc"
+  },
+  {
+    "file": "gui_elinx_summary.json",
+    "source": "out/t26c/out/runs/tb_elinx_gui/20261013_181549_198506/summary.json",
+    "bytes": 3324,
+    "sha256": "179686560164972d1fd0f1ad66f04f5f663d3c1275228d655734352c16cfeb0e"
+  },
+  {
+    "file": "gui_services_summary.json",
+    "source": "out/gui_netlist/tb_net_services_gui/20261013_213142_900813/summary.json",
+    "bytes": 18183,
+    "sha256": "874b8d049058a0a8d4843836e2eb0e9b34eb8027499140405fb6ea835ec410ab"
+  },
+  {
+    "file": "cli_services_summary.json",
+    "source": "out/t25/stage5/out/net/tb_net_services/20261012_114257_689910/summary.json",
+    "bytes": 26204,
+    "sha256": "7de73c4c9e6c8aaa90a8ca3ce5e49fe19cdd814fe9ed1b90a0011754c47d4692"
+  },
+  {
+    "file": "cli_services.log",
+    "source": "out/t25/stage5/out/net/tb_net_services/20261012_114257_689910/simulation.log",
+    "bytes": 4251,
+    "sha256": "db77e37fd352b06ed2cc145912d513f18ac6789d6232a9b3425ca40ed12673ac"
+  },
+  {
+    "file": "cli_synthesis_summary.json",
+    "source": "out/synth/AFDX_top/20261012_141415_998117/summary.json",
+    "bytes": 1967061,
+    "sha256": "7158f0d2205802f11584be64326501596e2e5c1b1c9f2e62af921076691e3b64"
+  },
+  {
+    "file": "cli_validation.json",
+    "source": "out/t25/validation_status.json",
+    "bytes": 18234,
+    "sha256": "58673a911bb00d1757624ac0dc3f20732d22fa3c9b6eaaaa945f4e0b69a73d7c"
+  },
+  {
+    "file": "contention.json",
+    "source": "out/t17/jitter_summary.json",
+    "bytes": 78031,
+    "sha256": "0b16098b6ff6074a16d7b372e55190ee02037a38106069d34695ec880aaf69a7"
+  },
+  {
+    "file": "route_default.json",
+    "source": "out/latest_baseline.json",
+    "bytes": 5483,
+    "sha256": "dbbc843e083f4cdcc9e60e281aaa2a579a93b79c4c8010b510fabf1459e4d235"
+  },
+  {
+    "file": "vo_functional.json",
+    "source": "out/latest_functional.json",
+    "bytes": 9738,
+    "sha256": "f027e5ca7664945aedb0b06cc3c5b6f9cb76d3da8b7a22e984585e7519044946"
+  },
+  {
+    "file": "vo_ram.json",
+    "source": "out/t22/ram_summary.json",
+    "bytes": 19214,
+    "sha256": "f7af1f6238d3ab51de9b32e9d3bfae54549468731b5be47d58e04253b4e8b797"
+  },
+  {
+    "file": "vo_ram_bits.json",
+    "source": "out/t22/ram_bit_map.json",
+    "bytes": 2912,
+    "sha256": "b2ef764b19772cd818930cae90d4cb62db185ae97f7cec44d9f527173dce8163"
+  },
+  {
+    "file": "mac_results.json",
+    "source": "out/t22/b/results.json",
+    "bytes": 12226,
+    "sha256": "83e5d49e3fb7b3fe1e0806fc991f3be1a85807d1bbdc3a8b7d80edb21594bae9"
+  },
+  {
+    "file": "mac_official_resources.json",
+    "source": "out/t22/b/result_resources_official.json",
+    "bytes": 2416,
+    "sha256": "46c8acfc232e11e4698348ffe80b72f9936acf6edf74ad9a6fcbd0e226dd0cb9"
+  },
+  {
+    "file": "mac_self_resources.json",
+    "source": "out/t22/b/result_resources_self.json",
+    "bytes": 3919,
+    "sha256": "e3a115d8826ce9a7f9aa8bdb6e33719c89ec8e40d6d5d7fe5d030a43ec9374a4"
+  },
+  {
+    "file": "mac_official_stress.json",
+    "source": "out/t22/b/result_stress_crc_n4.json",
+    "bytes": 86344,
+    "sha256": "c2e0ac68815d43d0b234b821b9d63af146a54a8a21136a16cfe949e4b97fa002"
+  },
+  {
+    "file": "mac_self_rtl.json",
+    "source": "out/t22/b/result_self_rtl_n4.json",
+    "bytes": 85208,
+    "sha256": "52642e9025be71878b7f7ab7f278a3973076a14b9aa7a850ade170441d258e16"
+  },
+  {
+    "file": "mac_self_net.json",
+    "source": "out/t22/b/result_self_netlist_n4.json",
+    "bytes": 85833,
+    "sha256": "e7f1d30ec59fa458d41aca1bf55eec9ad19a60c8a544e0d4d36bc08972958165"
+  },
+  {
+    "file": "mac_bad_crc.json",
+    "source": "out/t22/b/result_bad_crc.json",
+    "bytes": 7345,
+    "sha256": "3f9b57053d2d902becf875c39b3597e8d208f9b30c74fd413cd4719abad59393"
+  },
+  {
+    "file": "gui_timing.json",
+    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
+    "operation": "read-only SQLite query of elinx_intra_clock_summary",
+    "source_sha256": "a4dd38ca9d174339c323d7f96ff9f291f72e5efcc8feb8369558d414aa693ab5",
+    "sha256": "2601802d041c8814a0a727615261c2f161ec419e28647483ce019efb32e8aad0"
+  },
+  {
+    "file": "route_timing.json",
+    "source": "out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.tan.pb",
+    "operation": "read-only SQLite query of elinx_intra_clock_summary",
+    "source_sha256": "85ad0b58eee78d0ae256ea3d309c22e212580c9d2b93b39991cde4b798005354",
+    "sha256": "5d9aee0df713eb60dfc6b3be676afd2818eb8834f6f85d6b08edc9ee72f90625"
+  }
+]

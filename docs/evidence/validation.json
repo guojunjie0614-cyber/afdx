@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "phase": "complete",
+  "source_head": "ca01c931255ca5ac76e077e8f6ed7d04a492f41f",
+  "regression": {
+    "passed": 38,
+    "result_checks": 1183249131,
+    "independent_checks": 2305780,
+    "matrix": "frozen\\out\\regress\\rtl_20261012_130438_1025591\\summary.json",
+    "seconds": 1202.078
+  },
+  "judge": {
+    "result": "JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.107\nJUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=2.383\nJUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=5.556\nJUDGE CASE PASS burst77 checks=643550 errors=0 warnings=0 elapsed_s=2.447\nJUDGE METRIC burst_vls=77 queue_clear_us=959.272 app_last_to_delivery_last_us=959.360\nJUDGE CASE PASS burst81 checks=673498 errors=0 warnings=0 elapsed_s=2.546\nJUDGE METRIC burst_vls=81 queue_clear_us=1008.488 app_last_to_delivery_last_us=1452.576\nJUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=63.748\nJUDGE METRIC rtc_idle_max_ns=0 rtc_loaded_max_ns=10788 rtc_77vl_max_ns=10788\nJUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=548.421\nJUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es1_to_es2 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136\nJUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es1_to_es2 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000\nJUDGE BASELINE PASS stage=gbe77_d0 direction=es1_to_es2 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0\nJUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es2_to_es1 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136\nJUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es2_to_es1 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000\nJUDGE BASELINE PASS stage=gbe77_d0 direction=es2_to_es1 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0\nJUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es1_to_es2 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136\nJUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es1_to_es2 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000\nJUDGE BASELINE PASS stage=gbe77_d257 direction=es1_to_es2 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0\nJUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es2_to_es1 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136\nJUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es2_to_es1 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000\nJUDGE BASELINE PASS stage=gbe77_d257 direction=es2_to_es1 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0\nJUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=627.787 output_mib=579.3\n",
+    "folder": "frozen\\out\\modelsim\\judge_20261012_132455_42448",
+    "python_on_path": false
+  }
+}

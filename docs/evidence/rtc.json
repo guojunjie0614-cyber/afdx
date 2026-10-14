@@ -1,0 +1,112 @@
+{
+  "items": 1811,
+  "errors": 0,
+  "idle_max_ns": 0,
+  "loaded_max_ns": 10788,
+  "idle_syncs": 20,
+  "loaded_syncs": 8,
+  "gbe_syncs": 40,
+  "gbe_max_ns": 10788,
+  "gbe_mbps": {
+    "es1": 906.136,
+    "es2": 906.136
+  },
+  "gbe_window": [
+    2922245,
+    5547245
+  ],
+  "source_timing": {
+    "es1": {
+      "max_lateness_cycles": 0,
+      "max_message_cycles": 1568
+    },
+    "es2": {
+      "max_lateness_cycles": 16,
+      "max_message_cycles": 1639
+    }
+  },
+  "fraction_vectors": 72,
+  "ntp_frames": 148,
+  "responses": 74,
+  "pcap_packets": [
+    {
+      "li": 0,
+      "version": 4,
+      "mode": 3,
+      "stratum": 0,
+      "poll": 4,
+      "precision": -26,
+      "root_delay": 0,
+      "root_dispersion": 0,
+      "reference_id": 0,
+      "reference": {
+        "raw": "0000000000000000",
+        "seconds": 0,
+        "fraction": 0,
+        "nanoseconds": 0,
+        "utc": null
+      },
+      "originate": {
+        "raw": "0000000000000000",
+        "seconds": 0,
+        "fraction": 0,
+        "nanoseconds": 0,
+        "utc": null
+      },
+      "receive": {
+        "raw": "0000000000000000",
+        "seconds": 0,
+        "fraction": 0,
+        "nanoseconds": 0,
+        "utc": null
+      },
+      "transmit": {
+        "raw": "bc17c5ef33333401",
+        "seconds": 3155674607,
+        "fraction": 858993665,
+        "nanoseconds": 200000048,
+        "utc": "2000-01-01T00:16:47.200000048Z"
+      }
+    },
+    {
+      "li": 0,
+      "version": 4,
+      "mode": 4,
+      "stratum": 1,
+      "poll": 4,
+      "precision": -26,
+      "root_delay": 0,
+      "root_dispersion": 0,
+      "reference_id": 1280262988,
+      "reference": {
+        "raw": "bc17c5e8fffeb074",
+        "seconds": 3155674600,
+        "fraction": 4294881396,
+        "nanoseconds": 999980000,
+        "utc": "2000-01-01T00:16:40.999980000Z"
+      },
+      "originate": {
+        "raw": "bc17c5ef33333401",
+        "seconds": 3155674607,
+        "fraction": 858993665,
+        "nanoseconds": 200000048,
+        "utc": "2000-01-01T00:16:47.200000048Z"
+      },
+      "receive": {
+        "raw": "bc17c5e8fffee05f",
+        "seconds": 3155674600,
+        "fraction": 4294893663,
+        "nanoseconds": 999982856,
+        "utc": "2000-01-01T00:16:40.999982856Z"
+      },
+      "transmit": {
+        "raw": "bc17c5e8fffee77c",
+        "seconds": 3155674600,
+        "fraction": 4294895484,
+        "nanoseconds": 999983280,
+        "utc": "2000-01-01T00:16:40.999983280Z"
+      }
+    }
+  ],
+  "decoder": "RFC 4330 48-byte NTP header, Python struct"
+}

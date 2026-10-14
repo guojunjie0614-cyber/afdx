@@ -1,0 +1,2853 @@
+{
+  "status": "finished",
+  "started": "2026-10-10T11:56:11.887265+08:00",
+  "runs": [
+    {
+      "label": "phase_8_1471",
+      "test": "tb_t17_contend",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t17\\jitter\\phase_8_1471\\20261010_115612_291428",
+      "passed": true,
+      "checks": 3814001,
+      "errors": 0,
+      "seconds": 8.875,
+      "cycles": 2966699,
+      "measurements": {
+        "count": 8,
+        "length": 1471,
+        "rounds": 24,
+        "base": 77813,
+        "ideal": "common initial release + round*125000; subsequent RTL timers use actual previous SOF",
+        "vl": [
+          {
+            "vl": 0,
+            "frames": 24,
+            "max_ideal_deviation": 2,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 1,
+            "frames": 24,
+            "max_ideal_deviation": 1540,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 2,
+            "frames": 24,
+            "max_ideal_deviation": 3078,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 3,
+            "frames": 24,
+            "max_ideal_deviation": 4616,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 4,
+            "frames": 24,
+            "max_ideal_deviation": 6154,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 5,
+            "frames": 24,
+            "max_ideal_deviation": 7692,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 6,
+            "frames": 24,
+            "max_ideal_deviation": 9230,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 7,
+            "frames": 24,
+            "max_ideal_deviation": 10768,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          }
+        ],
+        "max_ideal_deviation": 10768,
+        "min_interval": 125000,
+        "max_interval": 125000,
+        "valid_crc_frames": 384,
+        "errors": 0
+      }
+    },
+    {
+      "label": "phase_8_17",
+      "test": "tb_t17_contend",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t17\\jitter\\phase_8_17\\20261010_115622_538944",
+      "passed": true,
+      "checks": 2951704,
+      "errors": 0,
+      "seconds": 6.75,
+      "cycles": 2941906,
+      "measurements": {
+        "count": 8,
+        "length": 17,
+        "rounds": 24,
+        "base": 66102,
+        "ideal": "common initial release + round*125000; subsequent RTL timers use actual previous SOF",
+        "vl": [
+          {
+            "vl": 0,
+            "frames": 24,
+            "max_ideal_deviation": 2,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 1,
+            "frames": 24,
+            "max_ideal_deviation": 86,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 2,
+            "frames": 24,
+            "max_ideal_deviation": 174,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 3,
+            "frames": 24,
+            "max_ideal_deviation": 258,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 4,
+            "frames": 24,
+            "max_ideal_deviation": 342,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 5,
+            "frames": 24,
+            "max_ideal_deviation": 426,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 6,
+            "frames": 24,
+            "max_ideal_deviation": 510,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 7,
+            "frames": 24,
+            "max_ideal_deviation": 594,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          }
+        ],
+        "max_ideal_deviation": 594,
+        "min_interval": 125000,
+        "max_interval": 125000,
+        "valid_crc_frames": 384,
+        "errors": 0
+      }
+    },
+    {
+      "label": "phase_77_1471",
+      "test": "tb_t17_contend",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t17\\jitter\\phase_77_1471\\20261010_115630_037459",
+      "passed": true,
+      "checks": 11333966,
+      "errors": 0,
+      "seconds": 22.0,
+      "cycles": 3178667,
+      "measurements": {
+        "count": 77,
+        "length": 1471,
+        "rounds": 24,
+        "base": 183659,
+        "ideal": "common initial release + round*125000; subsequent RTL timers use actual previous SOF",
+        "vl": [
+          {
+            "vl": 0,
+            "frames": 24,
+            "max_ideal_deviation": 2,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 1,
+            "frames": 24,
+            "max_ideal_deviation": 1540,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 2,
+            "frames": 24,
+            "max_ideal_deviation": 3078,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 3,
+            "frames": 24,
+            "max_ideal_deviation": 4616,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 4,
+            "frames": 24,
+            "max_ideal_deviation": 6154,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 5,
+            "frames": 24,
+            "max_ideal_deviation": 7692,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 6,
+            "frames": 24,
+            "max_ideal_deviation": 9230,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 7,
+            "frames": 24,
+            "max_ideal_deviation": 10768,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 8,
+            "frames": 24,
+            "max_ideal_deviation": 12306,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 9,
+            "frames": 24,
+            "max_ideal_deviation": 13844,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 10,
+            "frames": 24,
+            "max_ideal_deviation": 15382,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 11,
+            "frames": 24,
+            "max_ideal_deviation": 16920,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 12,
+            "frames": 24,
+            "max_ideal_deviation": 18458,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 13,
+            "frames": 24,
+            "max_ideal_deviation": 19996,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 14,
+            "frames": 24,
+            "max_ideal_deviation": 21534,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 15,
+            "frames": 24,
+            "max_ideal_deviation": 23072,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 16,
+            "frames": 24,
+            "max_ideal_deviation": 24610,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 17,
+            "frames": 24,
+            "max_ideal_deviation": 26148,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 18,
+            "frames": 24,
+            "max_ideal_deviation": 27686,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 19,
+            "frames": 24,
+            "max_ideal_deviation": 29224,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 20,
+            "frames": 24,
+            "max_ideal_deviation": 30762,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 21,
+            "frames": 24,
+            "max_ideal_deviation": 32300,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 22,
+            "frames": 24,
+            "max_ideal_deviation": 33838,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 23,
+            "frames": 24,
+            "max_ideal_deviation": 35376,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 24,
+            "frames": 24,
+            "max_ideal_deviation": 36914,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 25,
+            "frames": 24,
+            "max_ideal_deviation": 38452,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 26,
+            "frames": 24,
+            "max_ideal_deviation": 39990,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 27,
+            "frames": 24,
+            "max_ideal_deviation": 41528,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 28,
+            "frames": 24,
+            "max_ideal_deviation": 43066,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 29,
+            "frames": 24,
+            "max_ideal_deviation": 44604,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 30,
+            "frames": 24,
+            "max_ideal_deviation": 46142,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 31,
+            "frames": 24,
+            "max_ideal_deviation": 47680,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 32,
+            "frames": 24,
+            "max_ideal_deviation": 49218,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 33,
+            "frames": 24,
+            "max_ideal_deviation": 50756,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 34,
+            "frames": 24,
+            "max_ideal_deviation": 52294,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 35,
+            "frames": 24,
+            "max_ideal_deviation": 53832,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 36,
+            "frames": 24,
+            "max_ideal_deviation": 55370,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 37,
+            "frames": 24,
+            "max_ideal_deviation": 56908,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 38,
+            "frames": 24,
+            "max_ideal_deviation": 58446,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 39,
+            "frames": 24,
+            "max_ideal_deviation": 59984,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 40,
+            "frames": 24,
+            "max_ideal_deviation": 61522,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 41,
+            "frames": 24,
+            "max_ideal_deviation": 63060,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 42,
+            "frames": 24,
+            "max_ideal_deviation": 64598,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 43,
+            "frames": 24,
+            "max_ideal_deviation": 66136,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 44,
+            "frames": 24,
+            "max_ideal_deviation": 67674,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 45,
+            "frames": 24,
+            "max_ideal_deviation": 69212,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 46,
+            "frames": 24,
+            "max_ideal_deviation": 70750,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 47,
+            "frames": 24,
+            "max_ideal_deviation": 72288,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 48,
+            "frames": 24,
+            "max_ideal_deviation": 73826,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 49,
+            "frames": 24,
+            "max_ideal_deviation": 75364,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 50,
+            "frames": 24,
+            "max_ideal_deviation": 76902,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 51,
+            "frames": 24,
+            "max_ideal_deviation": 78440,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 52,
+            "frames": 24,
+            "max_ideal_deviation": 79978,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 53,
+            "frames": 24,
+            "max_ideal_deviation": 81516,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 54,
+            "frames": 24,
+            "max_ideal_deviation": 83054,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 55,
+            "frames": 24,
+            "max_ideal_deviation": 84592,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 56,
+            "frames": 24,
+            "max_ideal_deviation": 86130,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 57,
+            "frames": 24,
+            "max_ideal_deviation": 87668,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 58,
+            "frames": 24,
+            "max_ideal_deviation": 89206,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 59,
+            "frames": 24,
+            "max_ideal_deviation": 90744,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 60,
+            "frames": 24,
+            "max_ideal_deviation": 92282,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 61,
+            "frames": 24,
+            "max_ideal_deviation": 93820,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 62,
+            "frames": 24,
+            "max_ideal_deviation": 95358,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 63,
+            "frames": 24,
+            "max_ideal_deviation": 96896,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 64,
+            "frames": 24,
+            "max_ideal_deviation": 98434,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 65,
+            "frames": 24,
+            "max_ideal_deviation": 99972,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 66,
+            "frames": 24,
+            "max_ideal_deviation": 101510,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 67,
+            "frames": 24,
+            "max_ideal_deviation": 103048,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 68,
+            "frames": 24,
+            "max_ideal_deviation": 104586,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 69,
+            "frames": 24,
+            "max_ideal_deviation": 106124,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 70,
+            "frames": 24,
+            "max_ideal_deviation": 107662,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 71,
+            "frames": 24,
+            "max_ideal_deviation": 109200,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 72,
+            "frames": 24,
+            "max_ideal_deviation": 110738,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 73,
+            "frames": 24,
+            "max_ideal_deviation": 112276,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 74,
+            "frames": 24,
+            "max_ideal_deviation": 113814,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 75,
+            "frames": 24,
+            "max_ideal_deviation": 115352,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 76,
+            "frames": 24,
+            "max_ideal_deviation": 116890,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          }
+        ],
+        "max_ideal_deviation": 116890,
+        "min_interval": 125000,
+        "max_interval": 125000,
+        "valid_crc_frames": 3696,
+        "errors": 0
+      }
+    },
+    {
+      "label": "phase_77_17",
+      "test": "tb_t17_contend",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t17\\jitter\\phase_77_17\\20261010_115653_752456",
+      "passed": true,
+      "checks": 3046881,
+      "errors": 0,
+      "seconds": 7.547,
+      "cycles": 2952558,
+      "measurements": {
+        "count": 77,
+        "length": 17,
+        "rounds": 24,
+        "base": 70794,
+        "ideal": "common initial release + round*125000; subsequent RTL timers use actual previous SOF",
+        "vl": [
+          {
+            "vl": 0,
+            "frames": 24,
+            "max_ideal_deviation": 2,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 1,
+            "frames": 24,
+            "max_ideal_deviation": 86,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 2,
+            "frames": 24,
+            "max_ideal_deviation": 2186,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 3,
+            "frames": 24,
+            "max_ideal_deviation": 2270,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 4,
+            "frames": 24,
+            "max_ideal_deviation": 2354,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 5,
+            "frames": 24,
+            "max_ideal_deviation": 2438,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 6,
+            "frames": 24,
+            "max_ideal_deviation": 2522,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 7,
+            "frames": 24,
+            "max_ideal_deviation": 2606,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 8,
+            "frames": 24,
+            "max_ideal_deviation": 2690,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 9,
+            "frames": 24,
+            "max_ideal_deviation": 2774,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 10,
+            "frames": 24,
+            "max_ideal_deviation": 2858,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 11,
+            "frames": 24,
+            "max_ideal_deviation": 2942,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 12,
+            "frames": 24,
+            "max_ideal_deviation": 3026,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 13,
+            "frames": 24,
+            "max_ideal_deviation": 3110,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 14,
+            "frames": 24,
+            "max_ideal_deviation": 3194,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 15,
+            "frames": 24,
+            "max_ideal_deviation": 3278,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 16,
+            "frames": 24,
+            "max_ideal_deviation": 3362,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 17,
+            "frames": 24,
+            "max_ideal_deviation": 3446,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 18,
+            "frames": 24,
+            "max_ideal_deviation": 3530,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 19,
+            "frames": 24,
+            "max_ideal_deviation": 3614,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 20,
+            "frames": 24,
+            "max_ideal_deviation": 3698,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 21,
+            "frames": 24,
+            "max_ideal_deviation": 3782,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 22,
+            "frames": 24,
+            "max_ideal_deviation": 3866,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 23,
+            "frames": 24,
+            "max_ideal_deviation": 3950,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 24,
+            "frames": 24,
+            "max_ideal_deviation": 4034,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 25,
+            "frames": 24,
+            "max_ideal_deviation": 4118,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 26,
+            "frames": 24,
+            "max_ideal_deviation": 4202,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 27,
+            "frames": 24,
+            "max_ideal_deviation": 4286,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 28,
+            "frames": 24,
+            "max_ideal_deviation": 4370,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 29,
+            "frames": 24,
+            "max_ideal_deviation": 4454,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 30,
+            "frames": 24,
+            "max_ideal_deviation": 4538,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 31,
+            "frames": 24,
+            "max_ideal_deviation": 4622,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 32,
+            "frames": 24,
+            "max_ideal_deviation": 4706,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 33,
+            "frames": 24,
+            "max_ideal_deviation": 4790,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 34,
+            "frames": 24,
+            "max_ideal_deviation": 4874,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 35,
+            "frames": 24,
+            "max_ideal_deviation": 4958,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 36,
+            "frames": 24,
+            "max_ideal_deviation": 5042,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 37,
+            "frames": 24,
+            "max_ideal_deviation": 5126,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 38,
+            "frames": 24,
+            "max_ideal_deviation": 5210,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 39,
+            "frames": 24,
+            "max_ideal_deviation": 5294,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 40,
+            "frames": 24,
+            "max_ideal_deviation": 5378,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 41,
+            "frames": 24,
+            "max_ideal_deviation": 5462,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 42,
+            "frames": 24,
+            "max_ideal_deviation": 5546,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 43,
+            "frames": 24,
+            "max_ideal_deviation": 5630,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 44,
+            "frames": 24,
+            "max_ideal_deviation": 5714,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 45,
+            "frames": 24,
+            "max_ideal_deviation": 5798,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 46,
+            "frames": 24,
+            "max_ideal_deviation": 5882,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 47,
+            "frames": 24,
+            "max_ideal_deviation": 5966,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 48,
+            "frames": 24,
+            "max_ideal_deviation": 6050,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 49,
+            "frames": 24,
+            "max_ideal_deviation": 6134,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 50,
+            "frames": 24,
+            "max_ideal_deviation": 6218,
+            "min_interval": 125000,
+            "max_interval": 125000,
+            "max_extra_after_previous_BAG": 0
+          },
+          {
+            "vl": 51,
+            "frames": 24,
+            "max_ideal_deviation": 6302,
+            "min_interval": 125000,
+            "max_interval": 129284,
+            "max_extra_after_previous_BAG": 4284
+          },
+          {
+            "vl": 52,
+            "frames": 24,
+            "max_ideal_deviation": 6386,
+            "min_interval": 125000,
+            "max_interval": 125084,
+            "max_extra_after_previous_BAG": 84
+          },
+          {
+            "vl": 53,
+            "frames": 24,
+            "max_ideal_deviation": 6470,
+            "min_interval": 125000,
+            "max_interval": 129368,
+            "max_extra_after_previous_BAG": 4368
+          },
+          {
+            "vl": 54,
+            "frames": 24,
+            "max_ideal_deviation": 6554,
+            "min_interval": 125000,
+            "max_interval": 125084,
+            "max_extra_after_previous_BAG": 84
+          },
+          {
+            "vl": 55,
+            "frames": 24,
+            "max_ideal_deviation": 200,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 56,
+            "frames": 24,
+            "max_ideal_deviation": 284,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 57,
+            "frames": 24,
+            "max_ideal_deviation": 368,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 58,
+            "frames": 24,
+            "max_ideal_deviation": 452,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 59,
+            "frames": 24,
+            "max_ideal_deviation": 536,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 60,
+            "frames": 24,
+            "max_ideal_deviation": 620,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 61,
+            "frames": 24,
+            "max_ideal_deviation": 704,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 62,
+            "frames": 24,
+            "max_ideal_deviation": 788,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 63,
+            "frames": 24,
+            "max_ideal_deviation": 872,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 64,
+            "frames": 24,
+            "max_ideal_deviation": 956,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 65,
+            "frames": 24,
+            "max_ideal_deviation": 1040,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 66,
+            "frames": 24,
+            "max_ideal_deviation": 1124,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 67,
+            "frames": 24,
+            "max_ideal_deviation": 1208,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 68,
+            "frames": 24,
+            "max_ideal_deviation": 1292,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 69,
+            "frames": 24,
+            "max_ideal_deviation": 1376,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 70,
+            "frames": 24,
+            "max_ideal_deviation": 1460,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 71,
+            "frames": 24,
+            "max_ideal_deviation": 1544,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 72,
+            "frames": 24,
+            "max_ideal_deviation": 1628,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 73,
+            "frames": 24,
+            "max_ideal_deviation": 1712,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 74,
+            "frames": 24,
+            "max_ideal_deviation": 1796,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 75,
+            "frames": 24,
+            "max_ideal_deviation": 1880,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          },
+          {
+            "vl": 76,
+            "frames": 24,
+            "max_ideal_deviation": 1964,
+            "min_interval": 125000,
+            "max_interval": 125030,
+            "max_extra_after_previous_BAG": 30
+          }
+        ],
+        "max_ideal_deviation": 6554,
+        "min_interval": 125000,
+        "max_interval": 129368,
+        "valid_crc_frames": 3696,
+        "errors": 0
+      }
+    },
+    {
+      "label": "data77_services",
+      "test": "tb_t17_services",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t17\\jitter\\data77_services\\20261010_120003_105372",
+      "passed": true,
+      "checks": 10875569,
+      "errors": 0,
+      "seconds": 60.547,
+      "cycles": 3171141,
+      "measurements": {
+        "base": 68223,
+        "rounds": 24,
+        "directions": {
+          "1": {
+            "vl": [
+              {
+                "vl": 0,
+                "min_interval": 125000,
+                "max_interval": 125258
+              },
+              {
+                "vl": 1,
+                "min_interval": 125000,
+                "max_interval": 125173
+              },
+              {
+                "vl": 2,
+                "min_interval": 125000,
+                "max_interval": 125115
+              },
+              {
+                "vl": 3,
+                "min_interval": 125000,
+                "max_interval": 125089
+              },
+              {
+                "vl": 4,
+                "min_interval": 125000,
+                "max_interval": 125135
+              },
+              {
+                "vl": 5,
+                "min_interval": 125000,
+                "max_interval": 125054
+              },
+              {
+                "vl": 6,
+                "min_interval": 125000,
+                "max_interval": 125052
+              },
+              {
+                "vl": 7,
+                "min_interval": 125000,
+                "max_interval": 125074
+              },
+              {
+                "vl": 8,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 9,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 10,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 11,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 12,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 13,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 14,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 15,
+                "min_interval": 125000,
+                "max_interval": 125086
+              },
+              {
+                "vl": 16,
+                "min_interval": 125000,
+                "max_interval": 125107
+              },
+              {
+                "vl": 17,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 18,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 19,
+                "min_interval": 125000,
+                "max_interval": 125023
+              },
+              {
+                "vl": 20,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 21,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 22,
+                "min_interval": 125000,
+                "max_interval": 125021
+              },
+              {
+                "vl": 23,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 24,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 25,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 26,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 27,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 28,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 29,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 30,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 31,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 32,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 33,
+                "min_interval": 125000,
+                "max_interval": 125088
+              },
+              {
+                "vl": 34,
+                "min_interval": 125000,
+                "max_interval": 125107
+              },
+              {
+                "vl": 35,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 36,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 37,
+                "min_interval": 125000,
+                "max_interval": 125028
+              },
+              {
+                "vl": 38,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 39,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 40,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 41,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 42,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 43,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 44,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 45,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 46,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 47,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 48,
+                "min_interval": 125000,
+                "max_interval": 125001
+              },
+              {
+                "vl": 49,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 50,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 51,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 52,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 53,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 54,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 55,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 56,
+                "min_interval": 125000,
+                "max_interval": 125021
+              },
+              {
+                "vl": 57,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 58,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 59,
+                "min_interval": 125000,
+                "max_interval": 125021
+              },
+              {
+                "vl": 60,
+                "min_interval": 125000,
+                "max_interval": 125002
+              },
+              {
+                "vl": 61,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 62,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 63,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 64,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 65,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 66,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 67,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 68,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 69,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 70,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 71,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 72,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 73,
+                "min_interval": 125000,
+                "max_interval": 125002
+              },
+              {
+                "vl": 74,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 75,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 76,
+                "min_interval": 125000,
+                "max_interval": 125000
+              }
+            ],
+            "min_interval": 125000,
+            "max_interval": 125258,
+            "payload_mbps": 906.136,
+            "data_frames": 1848,
+            "rtc_frames": 22,
+            "snmp_frames": 20,
+            "tftp_frames": 26,
+            "all_crc_frames": 3832
+          },
+          "2": {
+            "vl": [
+              {
+                "vl": 0,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 1,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 2,
+                "min_interval": 125000,
+                "max_interval": 125312
+              },
+              {
+                "vl": 3,
+                "min_interval": 125000,
+                "max_interval": 125226
+              },
+              {
+                "vl": 4,
+                "min_interval": 125000,
+                "max_interval": 125202
+              },
+              {
+                "vl": 5,
+                "min_interval": 125000,
+                "max_interval": 125140
+              },
+              {
+                "vl": 6,
+                "min_interval": 125000,
+                "max_interval": 125118
+              },
+              {
+                "vl": 7,
+                "min_interval": 125000,
+                "max_interval": 125210
+              },
+              {
+                "vl": 8,
+                "min_interval": 125000,
+                "max_interval": 125268
+              },
+              {
+                "vl": 9,
+                "min_interval": 125000,
+                "max_interval": 125181
+              },
+              {
+                "vl": 10,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 11,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 12,
+                "min_interval": 125000,
+                "max_interval": 125037
+              },
+              {
+                "vl": 13,
+                "min_interval": 125000,
+                "max_interval": 125066
+              },
+              {
+                "vl": 14,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 15,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 16,
+                "min_interval": 125000,
+                "max_interval": 125108
+              },
+              {
+                "vl": 17,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 18,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 19,
+                "min_interval": 125000,
+                "max_interval": 125109
+              },
+              {
+                "vl": 20,
+                "min_interval": 125000,
+                "max_interval": 125022
+              },
+              {
+                "vl": 21,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 22,
+                "min_interval": 125000,
+                "max_interval": 125108
+              },
+              {
+                "vl": 23,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 24,
+                "min_interval": 125000,
+                "max_interval": 125177
+              },
+              {
+                "vl": 25,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 26,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 27,
+                "min_interval": 125000,
+                "max_interval": 125263
+              },
+              {
+                "vl": 28,
+                "min_interval": 125000,
+                "max_interval": 125178
+              },
+              {
+                "vl": 29,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 30,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 31,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 32,
+                "min_interval": 125000,
+                "max_interval": 125082
+              },
+              {
+                "vl": 33,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 34,
+                "min_interval": 125000,
+                "max_interval": 125110
+              },
+              {
+                "vl": 35,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 36,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 37,
+                "min_interval": 125000,
+                "max_interval": 125108
+              },
+              {
+                "vl": 38,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 39,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 40,
+                "min_interval": 125000,
+                "max_interval": 125109
+              },
+              {
+                "vl": 41,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 42,
+                "min_interval": 125000,
+                "max_interval": 125264
+              },
+              {
+                "vl": 43,
+                "min_interval": 125000,
+                "max_interval": 125178
+              },
+              {
+                "vl": 44,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 45,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 46,
+                "min_interval": 125000,
+                "max_interval": 125036
+              },
+              {
+                "vl": 47,
+                "min_interval": 125000,
+                "max_interval": 125110
+              },
+              {
+                "vl": 48,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 49,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 50,
+                "min_interval": 125000,
+                "max_interval": 125110
+              },
+              {
+                "vl": 51,
+                "min_interval": 125000,
+                "max_interval": 125023
+              },
+              {
+                "vl": 52,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 53,
+                "min_interval": 125000,
+                "max_interval": 125110
+              },
+              {
+                "vl": 54,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 55,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 56,
+                "min_interval": 125000,
+                "max_interval": 125263
+              },
+              {
+                "vl": 57,
+                "min_interval": 125000,
+                "max_interval": 125178
+              },
+              {
+                "vl": 58,
+                "min_interval": 125000,
+                "max_interval": 125093
+              },
+              {
+                "vl": 59,
+                "min_interval": 125000,
+                "max_interval": 125123
+              },
+              {
+                "vl": 60,
+                "min_interval": 125000,
+                "max_interval": 125045
+              },
+              {
+                "vl": 61,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 62,
+                "min_interval": 125000,
+                "max_interval": 125109
+              },
+              {
+                "vl": 63,
+                "min_interval": 125000,
+                "max_interval": 125024
+              },
+              {
+                "vl": 64,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 65,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 66,
+                "min_interval": 125000,
+                "max_interval": 125002
+              },
+              {
+                "vl": 67,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 68,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 69,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 70,
+                "min_interval": 125000,
+                "max_interval": 125043
+              },
+              {
+                "vl": 71,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 72,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 73,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 74,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 75,
+                "min_interval": 125000,
+                "max_interval": 125000
+              },
+              {
+                "vl": 76,
+                "min_interval": 125000,
+                "max_interval": 125000
+              }
+            ],
+            "min_interval": 125000,
+            "max_interval": 125312,
+            "payload_mbps": 906.136,
+            "data_frames": 1848,
+            "rtc_frames": 22,
+            "snmp_frames": 20,
+            "tftp_frames": 26,
+            "all_crc_frames": 3832
+          }
+        },
+        "errors": 0,
+        "download": {
+          "items": 41,
+          "errors": 0,
+          "cases": {
+            "0": {
+              "start": 415483,
+              "size": 16,
+              "version": 16692,
+              "port": 59,
+              "mode": 0,
+              "status": 2,
+              "received": 16,
+              "retries": 0,
+              "lost": 0,
+              "nstatus": 3,
+              "end": 525321,
+              "lnr": {
+                "version": "A4",
+                "names": [
+                  "MEMORY.BIN"
+                ],
+                "user_data": ""
+              },
+              "lns": [
+                {
+                  "version": "A4",
+                  "status": 1,
+                  "description": "",
+                  "counter": 1,
+                  "exception": 0,
+                  "estimated": 0,
+                  "ratio": 0,
+                  "count": 0,
+                  "files": []
+                },
+                {
+                  "version": "A4",
+                  "status": 2,
+                  "description": "",
+                  "counter": 2,
+                  "exception": 0,
+                  "estimated": 65535,
+                  "ratio": 0,
+                  "count": 1,
+                  "files": [
+                    {
+                      "name": "MEMORY.BIN",
+                      "status": 2,
+                      "description": ""
+                    }
+                  ]
+                },
+                {
+                  "version": "A4",
+                  "status": 3,
+                  "description": "",
+                  "counter": 3,
+                  "exception": 0,
+                  "estimated": 0,
+                  "ratio": 100,
+                  "count": 1,
+                  "files": [
+                    {
+                      "name": "MEMORY.BIN",
+                      "status": 3,
+                      "description": ""
+                    }
+                  ]
+                }
+              ],
+              "bytes_equal": true
+            }
+          },
+          "busy_rejections": 0
+        },
+        "source_lateness": [
+          125,
+          178
+        ],
+        "rtc_syncs": 22,
+        "loaded_bytes": 16,
+        "snmp_replies": 20
+      }
+    }
+  ],
+  "phase": "supplementary measurements passed",
+  "finished": "2026-10-10T12:03:07.743512+08:00",
+  "light_reason": {
+    "T14": [
+      {
+        "stage": "light_d0",
+        "length": 1,
+        "samples": 8,
+        "min_tx_delay": 10725,
+        "max_tx_delay": 10732,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 17,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 18,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 1471,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 511,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 1,
+        "samples": 8,
+        "min_tx_delay": 10725,
+        "max_tx_delay": 10732,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 17,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 18,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 1471,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 511,
+        "samples": 8,
+        "min_tx_delay": 10719,
+        "max_tx_delay": 10726,
+        "spread": 7,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          5
+        ]
+      }
+    ],
+    "T16": [
+      {
+        "stage": "light_d0",
+        "length": 1,
+        "samples": 8,
+        "min_tx_delay": 37,
+        "max_tx_delay": 37,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 17,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 18,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 1471,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d0",
+        "length": 511,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 1,
+        "samples": 8,
+        "min_tx_delay": 37,
+        "max_tx_delay": 37,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 17,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 18,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 1471,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "stage": "light_d257",
+        "length": 511,
+        "samples": 8,
+        "min_tx_delay": 31,
+        "max_tx_delay": 31,
+        "spread": 0,
+        "M_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "S_phases": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  }
+}

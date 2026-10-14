@@ -1,0 +1,23 @@
+JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=2.107
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=2.383
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=5.556
+JUDGE CASE PASS burst77 checks=643550 errors=0 warnings=0 elapsed_s=2.447
+JUDGE METRIC burst_vls=77 queue_clear_us=959.272 app_last_to_delivery_last_us=959.360
+JUDGE CASE PASS burst81 checks=673498 errors=0 warnings=0 elapsed_s=2.546
+JUDGE METRIC burst_vls=81 queue_clear_us=1008.488 app_last_to_delivery_last_us=1452.576
+JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=63.748
+JUDGE METRIC rtc_idle_max_ns=0 rtc_loaded_max_ns=10788 rtc_77vl_max_ns=10788
+JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=548.421
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es1_to_es2 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es1_to_es2 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000
+JUDGE BASELINE PASS stage=gbe77_d0 direction=es1_to_es2 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es2_to_es1 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es2_to_es1 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000
+JUDGE BASELINE PASS stage=gbe77_d0 direction=es2_to_es1 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es1_to_es2 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es1_to_es2 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000
+JUDGE BASELINE PASS stage=gbe77_d257 direction=es1_to_es2 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es2_to_es1 delivered_mbps=906.136 max_e2e_us=24.408 jitter_us=0.000 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es2_to_es1 min_mbps=100 throughput_margin_mbps=806.136 max_e2e_us=2000 latency_margin_us=1975.592 max_jitter_us=50 jitter_margin_us=50.000
+JUDGE BASELINE PASS stage=gbe77_d257 direction=es2_to_es1 expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0
+JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=627.787 output_mib=579.3

@@ -1,0 +1,177 @@
+{
+  "name": "bad_crc",
+  "started": "2026-10-11T21:20:57.446349+08:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+  "scope": "T22b isolated official MAC experiment; original IP and tracked sources unchanged",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 10.0,
+  "completed": true,
+  "tail": "# Loading ip_vendor.stratix_ram_register(fast__6)\n# Loading ip_vendor.stratix_lcell_register(fast__2)\n# Loading ip_vendor.stratix_lcell_register(fast__3)\n# Loading ip_vendor.stratix_ram_register(fast__7)\n# Loading ip_vendor.stratix_asynch_io(fast__3)\n# do run.do\n# 1791724865101\n# [MDIO] t=11724000 header=1831 op=10 phy= 1 reg=17 response=a400\n# [START] cycle=8016 ready=1 full=0 mdio_transactions=1\n# [MDIO_STATUS] sampled=a400 link=1 encoded_speed=01\n# [WIRE] frame=1 cycle=10076\n# [WIRE] frame=2 cycle=12141\n# [CAPTURE_DONE] frames=2 wire=2 rxends=2 cycles=21600 stalls=0 instances=1 shadow_errors=0\n# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/bad_crc/20261011_212057_446349/tb_official.v(88)\n#    Time: 172800 ns  Iteration: 1  Instance: /tb_official\n# Break at E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/bad_crc/20261011_212057_446349/tb_official.v line 88\n# Stopped at E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/bad_crc/20261011_212057_446349/tb_official.v line 88\nT22B_RUN_MS 4076\n# End time: 21:21:09 on Oct 11,2026, Elapsed time: 0:00:09\n# Errors: 0, Warnings: 0",
+  "analysis": {
+    "summary": {
+      "inputs": 2,
+      "wire_frames": 2,
+      "rx_frames": 2,
+      "rx_ends": 2,
+      "rx_error_bytes": 0,
+      "rx_error_any_cycles": 0,
+      "wire_equal_input": 2,
+      "wire_auto_crc": 0,
+      "wire_crc_valid": 0,
+      "rx_equal_input": 2,
+      "source_all_bytes": true,
+      "run_ms": 4076,
+      "cycles": 21600,
+      "cycles_per_second": 5299.313052011777
+    },
+    "metrics": [
+      {
+        "frame": 0,
+        "input_bytes": 64,
+        "source_bytes": 64,
+        "wire_bytes": 72,
+        "rx_bytes": 64,
+        "wire_equals_input_with_preamble": true,
+        "wire_auto_crc": false,
+        "rx_equals_input": true,
+        "wire_crc_valid": false,
+        "first_valid": 10017,
+        "first_accept": 10017,
+        "last_accept": 10080,
+        "wire_first": 10076,
+        "wire_last": 10147,
+        "tx_from_valid": 59,
+        "tx_from_accept": 59,
+        "store_full_before_tx": false,
+        "gap": null,
+        "txerr": 0,
+        "rx_last": 10162,
+        "rx_latency": 15,
+        "rx_first": 10099
+      },
+      {
+        "frame": 1,
+        "input_bytes": 1518,
+        "source_bytes": 1518,
+        "wire_bytes": 1526,
+        "rx_bytes": 1518,
+        "wire_equals_input_with_preamble": true,
+        "wire_auto_crc": false,
+        "rx_equals_input": true,
+        "wire_crc_valid": false,
+        "first_valid": 12082,
+        "first_accept": 12082,
+        "last_accept": 13599,
+        "wire_first": 12141,
+        "wire_last": 13666,
+        "tx_from_valid": 59,
+        "tx_from_accept": 59,
+        "store_full_before_tx": false,
+        "gap": 1993,
+        "txerr": 0,
+        "rx_last": 13681,
+        "rx_latency": 15,
+        "rx_first": 12164
+      }
+    ]
+  },
+  "finished": "2026-10-11T21:21:09.752603+08:00",
+  "jobs": [
+    {
+      "name": "ini",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
+        "-c"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+      "pid": 9184,
+      "created": 1791724857.450854,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.266,
+      "peak_tree_bytes": 7512064,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\ini.log"
+    },
+    {
+      "name": "work",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+      "pid": 43788,
+      "created": 1791724857.722707,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.266,
+      "peak_tree_bytes": 7532544,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\work.log"
+    },
+    {
+      "name": "vendor_map",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
+        "-modelsimini",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\modelsim.ini",
+        "ip_vendor",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\vendor\\ip_vendor"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+      "pid": 14696,
+      "created": 1791724857.993644,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.266,
+      "peak_tree_bytes": 8310784,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\vendor_map.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
+        "-vlog01compat",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\t22_official_mac.vo",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\phy_status.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\tb_official.v"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+      "pid": 42316,
+      "created": 1791724858.2805347,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.547,
+      "peak_tree_bytes": 51036160,
+      "budget_seconds": 180,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-c",
+        "-t",
+        "1ps",
+        "-L",
+        "ip_vendor",
+        "tb_official",
+        "-gCOUNT=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349",
+      "pid": 48008,
+      "created": 1791724858.8293824,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 10.859,
+      "peak_tree_bytes": 365522944,
+      "budget_seconds": 600,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\bad_crc\\20261011_212057_446349\\simulation.log"
+    }
+  ]
+}
