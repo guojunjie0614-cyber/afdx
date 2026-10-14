@@ -52,6 +52,8 @@ module afdx_svc (
     output wire [11:0] app_rx_vl,
     output wire [15:0] app_rx_sport, app_rx_dport,
     output wire app_rx_net);
+    // 四个发送方的编号，也是 request 里对应的位：应用、时钟同步、网络管理、加卸载。
+    localparam SRC_APP = 0, SRC_RTC = 1, SRC_SNMP = 2, SRC_LOAD = 3;
     // busy 为高时，owner 保存当前消息的发送方。
     // turn 指定下次从哪一方开始查找待发消息。
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
@@ -61,24 +63,24 @@ module afdx_svc (
     // 模块从 turn 开始查找待发消息，选中后保持到整条消息发完。
     // 只有选中的发送方能收到 ready。
     always @ * begin
-        selected = 0;
+        selected = SRC_APP;
         case (turn)
-            0 : if (request[0]) selected = 0;
-            else if (request[1]) selected = 1;
-            else if (request[2]) selected = 2;
-            else if (request[3]) selected = 3;
-            1 : if (request[1]) selected = 1;
-            else if (request[2]) selected = 2;
-            else if (request[3]) selected = 3;
-            else if (request[0]) selected = 0;
-            2 : if (request[2]) selected = 2;
-            else if (request[3]) selected = 3;
-            else if (request[0]) selected = 0;
-            else if (request[1]) selected = 1;
-            3 : if (request[3]) selected = 3;
-            else if (request[0]) selected = 0;
-            else if (request[1]) selected = 1;
-            else if (request[2]) selected = 2;
+            SRC_APP : if (request[SRC_APP]) selected = SRC_APP;
+            else if (request[SRC_RTC]) selected = SRC_RTC;
+            else if (request[SRC_SNMP]) selected = SRC_SNMP;
+            else if (request[SRC_LOAD]) selected = SRC_LOAD;
+            SRC_RTC : if (request[SRC_RTC]) selected = SRC_RTC;
+            else if (request[SRC_SNMP]) selected = SRC_SNMP;
+            else if (request[SRC_LOAD]) selected = SRC_LOAD;
+            else if (request[SRC_APP]) selected = SRC_APP;
+            SRC_SNMP : if (request[SRC_SNMP]) selected = SRC_SNMP;
+            else if (request[SRC_LOAD]) selected = SRC_LOAD;
+            else if (request[SRC_APP]) selected = SRC_APP;
+            else if (request[SRC_RTC]) selected = SRC_RTC;
+            SRC_LOAD : if (request[SRC_LOAD]) selected = SRC_LOAD;
+            else if (request[SRC_APP]) selected = SRC_APP;
+            else if (request[SRC_RTC]) selected = SRC_RTC;
+            else if (request[SRC_SNMP]) selected = SRC_SNMP;
         endcase
         if (busy) selected = owner;
         m_valid = app_tx_valid;
@@ -90,7 +92,7 @@ module afdx_svc (
         m_dport = app_tx_dport;
         svc_tx_ready = 0;
         case (selected)
-            1 : begin
+            SRC_RTC : begin
                 m_valid = svc_tx_valid[0];
                 m_data = svc_tx_data[7:0];
                 m_last = svc_tx_last[0];
@@ -100,7 +102,7 @@ module afdx_svc (
                 m_dport = svc_tx_dport[15:0];
                 svc_tx_ready[0] = m_ready;
             end
-            2 : begin
+            SRC_SNMP : begin
                 m_valid = svc_tx_valid[1];
                 m_data = svc_tx_data[15:8];
                 m_last = svc_tx_last[1];
@@ -110,7 +112,7 @@ module afdx_svc (
                 m_dport = svc_tx_dport[31:16];
                 svc_tx_ready[1] = m_ready;
             end
-            3 : begin
+            SRC_LOAD : begin
                 m_valid = svc_tx_valid[2];
                 m_data = svc_tx_data[23:16];
                 m_last = svc_tx_last[2];
@@ -122,7 +124,7 @@ module afdx_svc (
             end
         endcase
     end
-    assign app_tx_ready = (selected == 0) && m_ready;
+    assign app_tx_ready = (selected == SRC_APP) && m_ready;
     assign svc_rx_valid = d_valid;
     assign svc_rx_data = d_data;
     assign svc_rx_last = d_last;

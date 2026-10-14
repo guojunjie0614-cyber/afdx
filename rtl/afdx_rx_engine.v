@@ -53,6 +53,15 @@ module afdx_rx_engine #(
     localparam EV_BAD_SEQUENCE = 8'h40;
     localparam EV_QUEUE_FULL = 8'h80;
     localparam INIT = 0, IDLE = 1, FRAME = 2, AGE = 3, DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 56;
+    // 接收虚拟链路共 4096 条，LAST_VL 是最后一条的序号。
+    localparam LAST_VL = 4095;
+    // 帧序号在 1–255 之间循环：255 之后回到 1，一圈共 255 个。
+    // 新序号领先上一个序号不超过半圈（127）才算新帧。
+    localparam SN_MAX = 255, SN_FIRST = 8'd1, SN_RANGE = 9'd255, SN_HALF_RANGE = 127;
+    // 上次接纳后超过这么多个粗时间单位（每单位 4096 拍）没有新帧，就清除重复帧记录。
+    localparam AGE_LIMIT = 16'h4000;
+    // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
+    localparam STEP_DELIVER = 9, STEP_WRITE = 10, STEP_FINISH = 11;
     reg [1:0] op;
     assign cfg_ok = enable && (op == IDLE || op == AGE) && ! desc_a_valid && ! desc_b_valid;
     // phase 把一次检查分成多拍，op_idx 保存本次检查的配置索引。
@@ -89,7 +98,7 @@ module afdx_rx_engine #(
     reg [RX_DQ_AW - 1:0] wr_ptr;
     // 检查通过且交付队列有空位时，才写入消息信息。
     // 队列满时不更新最近交付的序号。
-    wire dq_put = op == FRAME && phase == 9 && deliver_allowed && dq_count < DQ_DEPTH;
+    wire dq_put = op == FRAME && phase == STEP_DELIVER && deliver_allowed && dq_count < DQ_DEPTH;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
     always @(posedge clk) begin
@@ -188,7 +197,7 @@ module afdx_rx_engine #(
                     state_wa <= init_ptr;
                     state_wd <= 0;
                     init_ptr <= init_ptr + 1'b1;
-                    if (init_ptr == 4095) init_flush <= 1;
+                    if (init_ptr == LAST_VL) init_flush <= 1;
                 end
                 else begin
                     initialized <= 1;
@@ -237,7 +246,7 @@ module afdx_rx_engine #(
                         1 : saved_map <= map_q;
                         2 : if (! saved_map[12]) begin
                             result <= RX_UNMAPPED;
-                            phase <= 11;
+                            phase <= STEP_FINISH;
                         end
                         else begin
                             op_idx <= saved_map[11:0];
@@ -254,9 +263,9 @@ module afdx_rx_engine #(
                             if (! saved_cfg[0] || ! (op_net ? saved_cfg[2] : saved_cfg[1])
                                 || length > saved_cfg[27:17]) begin
                                 result <= RX_CONFIG_REJECT;
-                                phase <= 11;
+                                phase <= STEP_FINISH;
                             end
-                            next_sn <= psn == 255 ? 8'd1 : psn + 1'b1;
+                            next_sn <= psn == SN_MAX ? SN_FIRST : psn + 1'b1;
                             elapsed <= arrival - saved_state[15:0];
                             raw_distance <= { 1'b0, sn } - { 1'b0, saved_state[23:16] };
                         end
@@ -264,8 +273,8 @@ module afdx_rx_engine #(
                             // 旧记录会在半个计数周期前失效，因此可以取时间差的绝对值。
                             // 即使后到的帧先处理，这个差值仍代表两帧的到达间隔。
                             if (elapsed[15]) elapsed <= -elapsed;
-                            second_sn <= next_sn == 255 ? 8'd1 : next_sn + 1'b1;
-                            forward_distance <= raw_distance[8] ? raw_distance + 9'd255 : raw_distance;
+                            second_sn <= next_sn == SN_MAX ? SN_FIRST : next_sn + 1'b1;
+                            forward_distance <= raw_distance[8] ? raw_distance + SN_RANGE : raw_distance;
                         end
                         // 序号为零、紧接上一序号或只跳过一个序号时，完整性检查通过。
                         // 无论是否通过，本网络都记录此次收到的序号。
@@ -281,7 +290,7 @@ module afdx_rx_engine #(
                             end
                             if (psn_valid && sn != 0 && sn != next_sn && sn != second_sn) begin
                                 result <= RX_BAD_SEQUENCE;
-                                phase <= 10;
+                                phase <= STEP_WRITE;
                             end
                         end
                         // SkewMax 是两网同一帧允许的最大到达时间差。
@@ -291,9 +300,9 @@ module afdx_rx_engine #(
                             if (! saved_cfg[4] || ! saved_state[24] || elapsed > saved_cfg[16:5]) deliver_allowed <= 1;
                             else if (sn == saved_state[23:16]) deliver_allowed <= 0;
                             else if (sn == 0 || saved_state[23:16] == 0) deliver_allowed <= 1;
-                            else deliver_allowed <= forward_distance >= 1 && forward_distance <= 127;
+                            else deliver_allowed <= forward_distance >= 1 && forward_distance <= SN_HALF_RANGE;
                         end
-                        9 : begin
+                        STEP_DELIVER : begin
                             if (! deliver_allowed) result <= RX_DUPLICATE;
                             else if (dq_count == DQ_DEPTH) result <= RX_QUEUE_FULL;
                             else begin
@@ -306,12 +315,12 @@ module afdx_rx_engine #(
                                 end
                             end
                         end
-                        10 : if (state_changed) begin
+                        STEP_WRITE : if (state_changed) begin
                             state_we <= 1;
                             state_wa <= op_idx;
                             state_wd <= saved_state;
                         end
-                        11 : begin
+                        STEP_FINISH : begin
                             resolve_a <= ! op_net;
                             resolve_b <= op_net;
                             commit_a <= ! op_net && result == RX_ACCEPTED;
@@ -350,7 +359,7 @@ module afdx_rx_engine #(
                             3 : begin
                                 age_ptr <= age_ptr + 1'b1;
                                 age_pending <= now_c != now_previous;
-                                if (saved_state[24] && elapsed > 16'h4000) begin
+                                if (saved_state[24] && elapsed > AGE_LIMIT) begin
                                     state_we <= 1;
                                     state_wa <= op_idx;
                                     state_wd <= { saved_state[43:25], 1'b0, saved_state[23:0] };

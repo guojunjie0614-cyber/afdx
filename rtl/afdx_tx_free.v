@@ -22,6 +22,8 @@ module afdx_tx_free #(
     input wire [7:0] ret2_page,
     output wire ret2_ready);
     localparam PAGES = (1 << TX_PAGE_AW);
+    // phase 的取值：取一个空闲页要经过的四步。
+    localparam POP_IDLE = 0, POP_READ = 1, POP_CAPTURE = 2, POP_REPLY = 3;
     // rd_ptr/wr_ptr 指向空闲页号队列的读写位置。
     // init_ptr 用于初始化，count 表示目前可分配的页数。
     reg [TX_PAGE_AW - 1:0] rd_ptr, wr_ptr, init_ptr, ra, wa;
@@ -29,17 +31,17 @@ module afdx_tx_free #(
     reg we, re, init_flush;
     reg [7:0] wd, captured;
     wire [7:0] q;
-    // phase=0：接收申请，有空闲页转 1；队列为空时直接报告失败。
-    // phase=1：等待存储器读出，下一拍转 2。
-    // phase=2：保存读出的页号，下一拍转 3。
-    // phase=3：输出 pop_ack，下一拍转 0。
+    // POP_IDLE：接收申请，有空闲页转 POP_READ；队列为空时直接报告失败。
+    // POP_READ：等待存储器读出，下一拍转 POP_CAPTURE。
+    // POP_CAPTURE：保存读出的页号，下一拍转 POP_REPLY。
+    // POP_REPLY：输出 pop_ack，下一拍转 POP_IDLE。
     reg [2:0] phase;
     // 每个归还口先保存一个页号，共用写口优先处理 ret1。
     reg ret1_pending, ret2_pending;
     reg [7:0] ret1_saved, ret2_saved;
     wire take = pop_req && pop_ready;
     wire put = (ret1_pending || ret2_pending) && count < PAGES;
-    assign pop_ready = init_done && phase == 0;
+    assign pop_ready = init_done && phase == POP_IDLE;
     assign ret1_ready = init_done && ! ret1_pending;
     assign ret2_ready = init_done && ! ret2_pending;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
@@ -64,7 +66,7 @@ module afdx_tx_free #(
             wa <= 0;
             ra <= 0;
             wd <= 0;
-            phase <= 0;
+            phase <= POP_IDLE;
             pop_ack <= 0;
             pop_ok <= 0;
             pop_page <= 0;
@@ -117,30 +119,30 @@ module afdx_tx_free #(
                     wr_ptr <= wr_ptr + 1'b1;
                 end
                 case (phase)
-                    0 : if (take) begin
+                    POP_IDLE : if (take) begin
                         pop_ok <= count != 0;
                         if (count != 0) begin
                             re <= 1;
                             ra <= rd_ptr;
                             rd_ptr <= rd_ptr + 1'b1;
-                            phase <= 1;
+                            phase <= POP_READ;
                         end
                         else begin
                             pop_ack <= 1;
                             pop_page <= 0;
                         end
                     end
-                    1 : phase <= 2;
-                    2 : begin
+                    POP_READ : phase <= POP_CAPTURE;
+                    POP_CAPTURE : begin
                         captured <= q;
-                        phase <= 3;
+                        phase <= POP_REPLY;
                     end
-                    3 : begin
+                    POP_REPLY : begin
                         pop_page <= captured;
                         pop_ack <= 1;
-                        phase <= 0;
+                        phase <= POP_IDLE;
                     end
-                    default : phase <= 0;
+                    default : phase <= POP_IDLE;
                 endcase
             end
         end

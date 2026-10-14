@@ -25,13 +25,15 @@ module afdx_rx_deliver #(
     output reg [15:0] d_sport, d_dport,
     output reg d_net);
     localparam DQ_WIDTH = RX_RING_AW + 56;
+    // head_phase 的取值：取出队首消息信息的三步。
+    localparam HEAD_IDLE = 0, HEAD_SELECT = 1, HEAD_RELEASE = 2;
     // rd_ptr 指向下一条消息。
     // 消息信息分两级选择，以减少一拍内的选择层数。
     reg [RX_DQ_AW - 1:0] rd_ptr;
     wire [4:0] read_index = rd_ptr;
-    // head_phase=0：有消息且收到读请求时选择组内项，然后转 1。
-    // head_phase=1：选出完整队首信息并移除该项，然后转 2。
-    // head_phase=2：等待 dq_req 撤销，然后转 0。
+    // HEAD_IDLE：有消息且收到读请求时选择组内项，然后转 HEAD_SELECT。
+    // HEAD_SELECT：选出完整队首信息并移除该项，然后转 HEAD_RELEASE。
+    // HEAD_RELEASE：等待 dq_req 撤销，然后转 HEAD_IDLE。
     reg [1:0] head_phase;
     reg [1:0] head_bank;
     reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
@@ -48,7 +50,7 @@ module afdx_rx_deliver #(
             dq_valid <= 0;
             dq_pop <= 0;
             rd_ptr <= 0;
-            head_phase <= 0;
+            head_phase <= HEAD_IDLE;
             head_bank <= 0;
             group0 <= 0;
             group1 <= 0;
@@ -79,7 +81,7 @@ module afdx_rx_deliver #(
             dq_valid <= 0;
             dq_pop <= 0;
             case (head_phase)
-                0 : if (dq_req && dq_count != 0) begin
+                HEAD_IDLE : if (dq_req && dq_count != 0) begin
                     // 先在四组内分别选一项，下一拍再从四组结果中选出一项。
                     case (read_index[2:0])
                         0 : begin
@@ -132,9 +134,9 @@ module afdx_rx_deliver #(
                         end
                     endcase
                     head_bank <= read_index[4:3];
-                    head_phase <= 1;
+                    head_phase <= HEAD_SELECT;
                 end
-                1 : begin
+                HEAD_SELECT : begin
                     case (head_bank)
                         0 : dq_data <= group0;
                         1 : dq_data <= group1;
@@ -144,10 +146,10 @@ module afdx_rx_deliver #(
                     dq_valid <= 1;
                     dq_pop <= 1;
                     rd_ptr <= rd_ptr + 1'b1;
-                    head_phase <= 2;
+                    head_phase <= HEAD_RELEASE;
                 end
-                2 : if (! dq_req) head_phase <= 0;
-                default : head_phase <= 0;
+                HEAD_RELEASE : if (! dq_req) head_phase <= HEAD_IDLE;
+                default : head_phase <= HEAD_IDLE;
             endcase
             ring_a_re <= 0;
             ring_b_re <= 0;

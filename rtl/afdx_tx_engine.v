@@ -57,6 +57,11 @@ module afdx_tx_engine #(
     localparam ENQ_FULL = 2;
     localparam ENQ_TOO_LONG = 3;
     localparam INIT = 0, IDLE = 1, ENQ = 2, GRANT = 3, START = 4;
+    // 发送虚拟链路共 128 条，LAST_VL 是最后一条的序号。
+    // 连续扫描满 SCAN_QUOTA 条后，先让等待中的新消息入队。
+    localparam LAST_VL = 127, SCAN_QUOTA = 16;
+    // 帧序号用到 255 后回到 1；0 只用于复位后的第一帧。
+    localparam SN_MAX = 255, SN_FIRST = 8'd1;
     // op 选择本次表操作，phase 记录操作进行到哪一拍。
     reg [2:0] op;
     reg [3:0] phase;
@@ -92,7 +97,7 @@ module afdx_tx_engine #(
     // quota 限制连续扫描次数，让新消息也能及时加入队列。
     // ack_pending 表示还有一个实际发送时间需要写回。
     reg [4:0] quota;
-    wire want_enq = enq_valid && ! enq_seen && (candidate || quota >= 16);
+    wire want_enq = enq_valid && ! enq_seen && (candidate || quota >= SCAN_QUOTA);
     wire want_grant = candidate && grant_ready && ! pend_valid;
     assign cfg_ok = enable && op == IDLE && ! want_enq && ! want_grant;
     wire scanning = enable && op == IDLE && ! candidate && ! ack_pending && ! want_enq;
@@ -164,7 +169,7 @@ module afdx_tx_engine #(
             scan_commit <= 0;
             scan_phase <= 0;
             scan_valid <= 0;
-            quota <= 16;
+            quota <= SCAN_QUOTA;
             scan_vl0 <= 0;
             scan_vl1 <= 0;
             scan_vl2 <= 0;
@@ -211,7 +216,7 @@ module afdx_tx_engine #(
             // LOOKAHEAD 指定提前准备组帧的周期数，实际发送仍要等到期。
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
-                if (quota < 16) quota <= quota + 1'b1;
+                if (quota < SCAN_QUOTA) quota <= quota + 1'b1;
                 if (scan_eligible) begin
                     candidate <= 1;
                     candidate_vl <= scan_vl4;
@@ -234,7 +239,7 @@ module afdx_tx_engine #(
                         state_wa <= init_ptr;
                         state_wd <= 0;
                         init_ptr <= init_ptr + 1'b1;
-                        if (init_ptr == 127) init_flush <= 1;
+                        if (init_ptr == LAST_VL) init_flush <= 1;
                     end
                     else begin
                         initialized <= 1;
@@ -382,7 +387,7 @@ module afdx_tx_engine #(
                             state_we <= 1;
                             state_wa <= op_vl;
                             state_wd <= { saved_state[62:30],
-                                saved_state[29:22] == 255 ? 8'd1 : saved_state[29:22] + 8'd1,
+                                saved_state[29:22] == SN_MAX ? SN_FIRST : saved_state[29:22] + 8'd1,
                                 saved_state[21:16] - 6'd1, saved_next, saved_state[7:0] };
                             // 当前消息开始发送前，同一虚拟链路不能再次被选中。
                             pend_valid <= 1;
