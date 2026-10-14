@@ -100,6 +100,7 @@ def sim(options):
         bench=ROOT/"tb"/(options.test+".v")
         if not bench.is_file():raise RuntimeError("Unknown test: "+str(bench))
         netlists=[Path(p).resolve() for p in options.netlist]
+        if options.coverage and netlists:raise ValueError("Code coverage is available for RTL simulation only")
         replaced=set()
         adapted=[]
         for index,path in enumerate(netlists):
@@ -152,7 +153,10 @@ def sim(options):
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
         snapshot=f.folder/"sources";snapshot.mkdir()
         for i,p in enumerate(sources):(snapshot/(str(i)+"_"+p.name)).write_bytes(p.read_bytes())
-        (f.folder/"run.do").write_text("onerror {quit -code 1}\nonbreak {quit -code 1}\nrun -all\nquit -code 0\n",encoding="ascii")
+        run_do="onerror {quit -code 1}\nonbreak {quit -code 1}\n"
+        if options.coverage:
+            run_do+=f"coverage save -onexit -testname {options.test}_{f.folder.name} coverage.ucdb\n"
+        (f.folder/"run.do").write_text(run_do+"run -all\nquit -code 0\n",encoding="ascii")
         f.job("vlib",[MS/"vlib.exe","work"],30)
         defines=["+define+PROBE_P2"] if "probe_p2_array" in replaced else []
         if "AFDX_top" in replaced:
@@ -174,7 +178,13 @@ def sim(options):
             defaults={"RX_RING_AW":"12","RX_DQ_AW":"5"}
             if any(defaults.get(value.partition('=')[0])!=value.partition('=')[2] for value in options.param):
                 raise ValueError("afdx_rx_core mapped netlist has fixed default parameters")
-        compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],120)
+        if options.coverage:
+            # t 记录翻转；测试平台另编译，不把激励与检查器计入 RTL 覆盖率。
+            compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*rtl],120)
+            if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("RTL compile diagnostic; see compile_rtl.log")
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources[len(rtl):]],120)
+        else:
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],120)
         if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("Compile diagnostic; see compile.log")
         parameters=[]
         for value in options.param:
@@ -183,7 +193,12 @@ def sim(options):
         f.result["parameters"]=options.param
         # 加载后卸载使五功能场景达到约70万拍；网表预算8小时，仍受Deadline截断。
         sim_budget=28800 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
-        log=f.job("simulation",[MS/"vsim.exe","-c",options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
+        if options.coverage:sim_budget=max(sim_budget,3600)
+        log=f.job("simulation",[MS/"vsim.exe","-c",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
+        if options.coverage:
+            ucdb=f.folder/"coverage.ucdb"
+            if not ucdb.is_file() or not ucdb.stat().st_size:raise RuntimeError("Coverage database absent; see simulation.log")
+            f.result["code_coverage"]={"metrics":"sbceft","ucdb":str(ucdb),"bytes":ucdb.stat().st_size}
         rows=re.findall(r"\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)[^\r\n]*",log)
         if not rows:raise RuntimeError("Test [RESULT] absent")
         name,status,checks,errors=rows[-1]
@@ -450,6 +465,7 @@ def main():
     p=sub.add_parser("sim");p.add_argument("--test",required=True);p.add_argument("--deadline")
     p.add_argument("--netlist",nargs="*",default=[]);p.add_argument("--seed",type=int,default=20261007)
     p.add_argument("--param",action="append",default=[])
+    p.add_argument("--coverage",action="store_true",help="Instrument RTL only and save coverage.ucdb after simulation")
     p=sub.add_parser("synth");p.add_argument("--top",required=True);p.add_argument("--sta",action="store_true");p.add_argument("--deadline")
     p=sub.add_parser("impl");p.add_argument("--top",default="AFDX_top");p.add_argument("--deadline",required=True)
     args=parser.parse_args()

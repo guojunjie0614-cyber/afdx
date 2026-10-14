@@ -54,6 +54,9 @@
 
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
 
+报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示白底波形，生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。PNG 在 `sim/wave/png/`，FCS 图包含错误帧和稍后配置读回的两段窗口，BAG 图包含双游标和两个帧起点的放大图。
+批量重新导出用 `python sim/wave/export.py`；另需 Ghostscript 和 PATH 中的 ImageMagick `magick`，用 `AFDX_GHOSTSCRIPT` 指向 Ghostscript 可执行文件（也可传 `--ghostscript`）。工作库、WLF、原生打印和日志保存在 `out/wave/`。
+
 一次七用例实测如下（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
 
 | 用例 | 实测耗时（秒） |
@@ -93,6 +96,9 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
    ```
 
    预期：末尾表格中的 38 项都为 `PASS`（一次实测约 20 分钟）；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+
+代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
+用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。参考数字、原始报告和合并数据库在 `sim/reference/coverage/`，统计口径见该目录 README。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 

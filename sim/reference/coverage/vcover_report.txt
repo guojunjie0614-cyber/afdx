@@ -1,0 +1,375 @@
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.AFDX_top
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         8         8         0   100.00%
+    Conditions                       2         2         0   100.00%
+    Expressions                     28        26         2    92.85%
+    Statements                      15        15         0   100.00%
+    Toggles                       2052      1656       396    80.70%
+
+
+Total Coverage By Design Unit (filtered view): 94.71%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_615a
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       459       414        45    90.19%
+    Conditions                     172        89        83    51.74%
+    Expressions                     16        14         2    87.50%
+    FSM States                      11        11         0   100.00%
+    FSM Transitions                 54        16        38    29.62%
+    Statements                     666       632        34    94.89%
+    Toggles                       2624      1630       994    62.11%
+
+
+Total Coverage By Design Unit (filtered view): 73.72%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_cfg
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       134       129         5    96.26%
+    Conditions                       9         8         1    88.88%
+    Expressions                      3         3         0   100.00%
+    Statements                     154       152         2    98.70%
+    Toggles                       2288       643      1645    28.10%
+
+
+Total Coverage By Design Unit (filtered view): 82.39%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_crc32_d8
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         2         2         0   100.00%
+    Statements                       6         6         0   100.00%
+    Toggles                        128        64        64    50.00%
+
+
+Total Coverage By Design Unit (filtered view): 83.33%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_mac_rx
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        26        26         0   100.00%
+    Conditions                      14        14         0   100.00%
+    Expressions                      1         1         0   100.00%
+    FSM States                       4         4         0   100.00%
+    FSM Transitions                  8         8         0   100.00%
+    Statements                      45        45         0   100.00%
+    Toggles                        308       307         1    99.67%
+
+
+Total Coverage By Design Unit (filtered view): 99.95%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_mac_tx
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        63        58         5    92.06%
+    Conditions                      13        11         2    84.61%
+    Expressions                      6         6         0   100.00%
+    FSM States                       5         5         0   100.00%
+    FSM Transitions                  9         8         1    88.88%
+    Statements                      87        86         1    98.85%
+    Toggles                        512       473        39    92.38%
+
+
+Total Coverage By Design Unit (filtered view): 93.82%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_ntp_fraction
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        24        23         1    95.83%
+    Conditions                       1         1         0   100.00%
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  5         4         1    80.00%
+    Statements                      28        27         1    96.42%
+    Toggles                        344       341         3    99.12%
+
+
+Total Coverage By Design Unit (filtered view): 95.23%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_ram_sdp
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         8         5         3    62.50%
+    Conditions                       4         0         4     0.00%
+    Statements                      10         5         5    50.00%
+    Toggles                        268       257        11    95.89%
+
+
+Total Coverage By Design Unit (filtered view): 52.09%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rtc
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       135       126         9    93.33%
+    Conditions                      35        24        11    68.57%
+    Expressions                     16        14         2    87.50%
+    FSM States                      19        19         0   100.00%
+    FSM Transitions                 47        21        26    44.68%
+    Statements                     222       217         5    97.74%
+    Toggles                       3268      2338       930    71.54%
+
+
+Total Coverage By Design Unit (filtered view): 80.48%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rx_core
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        75        74         1    98.66%
+    Conditions                      66        66         0   100.00%
+    Expressions                      4         4         0   100.00%
+    Statements                      99        99         0   100.00%
+    Toggles                       6180      5999       181    97.07%
+
+
+Total Coverage By Design Unit (filtered view): 99.14%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rx_deliver
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        39        36         3    92.30%
+    Conditions                       7         6         1    85.71%
+    Expressions                      5         5         0   100.00%
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  4         3         1    75.00%
+    Statements                     110       109         1    99.09%
+    Toggles                        996       996         0   100.00%
+
+
+Total Coverage By Design Unit (filtered view): 93.15%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rx_engine
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        98        95         3    96.93%
+    Conditions                      28        27         1    96.42%
+    Expressions                     19        17         2    89.47%
+    FSM States                       4         4         0   100.00%
+    FSM Transitions                  8         6         2    75.00%
+    Statements                     170       168         2    98.82%
+    Toggles                       1914      1402       512    73.24%
+
+
+Total Coverage By Design Unit (filtered view): 89.98%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rx_parse
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        83        83         0   100.00%
+    Conditions                      41        41         0   100.00%
+    Expressions                     10         9         1    90.00%
+    FSM States                       3         3         0   100.00%
+    FSM Transitions                  5         3         2    60.00%
+    Statements                     135       135         0   100.00%
+    Toggles                       1294      1212        82    93.66%
+
+
+Total Coverage By Design Unit (filtered view): 91.95%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_snmp
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       391       348        43    89.00%
+    Conditions                     104        63        41    60.57%
+    Expressions                      8         7         1    87.50%
+    FSM States                      29        29         0   100.00%
+    FSM Transitions                110        29        81    26.36%
+    Statements                     558       528        30    94.62%
+    Toggles                       2756      1624      1132    58.92%
+
+
+Total Coverage By Design Unit (filtered view): 73.85%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_svc
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        43        39         4    90.69%
+    Conditions                       2         2         0   100.00%
+    Expressions                      8         8         0   100.00%
+    Statements                      67        63         4    94.02%
+    Toggles                        158       158         0   100.00%
+
+
+Total Coverage By Design Unit (filtered view): 96.94%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_timebase
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         2         2         0   100.00%
+    Statements                       6         6         0   100.00%
+    Toggles                        102        84        18    82.35%
+
+
+Total Coverage By Design Unit (filtered view): 94.11%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_buf
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        69        65         4    94.20%
+    Conditions                      17        11         6    64.70%
+    Expressions                      4         4         0   100.00%
+    FSM States                      10        10         0   100.00%
+    FSM Transitions                 24        17         7    70.83%
+    Statements                     131       129         2    98.47%
+    Toggles                        524       524         0   100.00%
+
+
+Total Coverage By Design Unit (filtered view): 89.74%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_builder
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        59        56         3    94.91%
+    Conditions                      30        26         4    86.66%
+    Expressions                     14        14         0   100.00%
+    FSM States                       4         4         0   100.00%
+    FSM Transitions                  5         4         1    80.00%
+    Statements                     201       200         1    99.50%
+    Toggles                       1400      1280       120    91.42%
+
+
+Total Coverage By Design Unit (filtered view): 93.21%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_core
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        11        11         0   100.00%
+    Conditions                       4         2         2    50.00%
+    Expressions                      2         2         0   100.00%
+    Statements                      19        19         0   100.00%
+    Toggles                       1872      1750       122    93.48%
+
+
+Total Coverage By Design Unit (filtered view): 88.69%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_engine
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        72        71         1    98.61%
+    Conditions                      25        23         2    92.00%
+    Expressions                     21        20         1    95.23%
+    FSM States                       5         5         0   100.00%
+    FSM Transitions                 11         8         3    72.72%
+    Statements                     215       214         1    99.53%
+    Toggles                       1978      1812       166    91.60%
+
+
+Total Coverage By Design Unit (filtered view): 92.81%
+
+
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_free
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        30        29         1    96.66%
+    Conditions                       6         5         1    83.33%
+    Expressions                     12        10         2    83.33%
+    FSM States                       4         4         0   100.00%
+    FSM Transitions                  6         4         2    66.66%
+    Statements                      62        61         1    98.38%
+    Toggles                        220       218         2    99.09%
+
+
+Total Coverage By Design Unit (filtered view): 89.63%

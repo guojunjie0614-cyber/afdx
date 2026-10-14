@@ -1,0 +1,62 @@
+{
+  "tool": "ModelSim SE-64 2020.4",
+  "rtl_metrics": "sbceft",
+  "module_count": 21,
+  "aggregation": "design-unit covered bins / design-unit total bins; FSM = states + transitions",
+  "metrics": {
+    "Statements": {
+      "covered": 2916,
+      "total": 3006,
+      "percent": 97.0
+    },
+    "Branches": {
+      "covered": 1700,
+      "total": 1831,
+      "percent": 92.84
+    },
+    "Conditions": {
+      "covered": 421,
+      "total": 580,
+      "percent": 72.58
+    },
+    "FSM States": {
+      "covered": 104,
+      "total": 104,
+      "percent": 100.0
+    },
+    "FSM Transitions": {
+      "covered": 131,
+      "total": 296,
+      "percent": 44.25
+    },
+    "Toggles": {
+      "covered": 24768,
+      "total": 31186,
+      "percent": 79.42
+    },
+    "FSM": {
+      "covered": 235,
+      "total": 400,
+      "percent": 58.75
+    }
+  },
+  "coverage_regression": {
+    "tests": 38,
+    "passed": 38,
+    "initial_missing_dependency_failures": 2,
+    "retries_passed": 2,
+    "reference_counts_match": true,
+    "started": "2026-10-14T21:56:44.7627894+08:00",
+    "finished": "2026-10-14T22:28:29.803503+08:00",
+    "elapsed_seconds": 1905.041
+  },
+  "merged_ucdb_bytes": 1566635,
+  "coverage_off_regression": {
+    "tests": 38,
+    "passed": 38,
+    "reference_counts_match": true,
+    "started": "2026-10-14T22:30:11.367848+08:00",
+    "finished": "2026-10-14T22:46:35.251635+08:00",
+    "elapsed_seconds": 983.884
+  }
+}
