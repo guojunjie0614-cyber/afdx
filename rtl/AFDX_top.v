@@ -9,21 +9,24 @@ module AFDX_top #(
     parameter LOOKAHEAD = 512,
     parameter RX_RING_AW = 12,
     parameter RX_DQ_AW = 5) (
+
     // 下面八个端口与赛题模板一致，其中的数据口连接 A 网。
     // A 网和 B 网是互为备份的两路以太网，同一帧在两路上各发一份。
-    input wire clk,             // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
-    input wire reset,           // reset 为高时，在时钟上升沿复位。
-    output wire [7:0] tx_data,   // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
-    input wire [7:0] rx_data,    // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
-    output wire tx_valid,       // tx_valid 为高表示本拍有发送字节，帧内每拍都有效。
-    input wire rx_valid,        // rx_valid 为高表示本拍有接收字节，拉低表示帧已结束。
-    output wire tx_ready,       // tx_ready 为高表示收发核心初始化完成，可以配置和使用。
-    input wire rx_ready,        // rx_ready 是赛题模板规定的端口；以太网线路不能暂停，本设计不使用它。
+    input wire clk, // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
+    input wire reset, // reset 为高时，在时钟上升沿复位。
+    output wire [7:0] tx_data, // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
+    input wire [7:0] rx_data, // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
+    output wire tx_valid, // tx_valid 为高表示本拍有发送字节，帧内每拍都有效。
+    input wire rx_valid, // rx_valid 为高表示本拍有接收字节，拉低表示帧已结束。
+    output wire tx_ready, // tx_ready 为高表示收发核心初始化完成，可以配置和使用。
+    input wire rx_ready, // rx_ready 是赛题模板规定的端口；以太网线路不能暂停，本设计不使用它。
+
     // 下面四个是 B 网的数据口，含义与 A 网的对应端口相同。
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
     input wire [7:0] rx_data_b,
     input wire rx_valid_b,
+
     // 应用在 app_tx_valid 和 app_tx_ready 同为高时送入一个字节。
     // app_tx_last 标记消息末字节，app_tx_vl 选择发送配置项。
     // app_tx_port_en 为高时使用消息自带端口，否则使用配置中的端口。
@@ -34,6 +37,7 @@ module AFDX_top #(
     input wire [6:0] app_tx_vl,
     input wire app_tx_port_en,
     input wire [15:0] app_tx_sport, app_tx_dport,
+
     // app_rx_valid 为高时，应用必须接收本拍的字节。
     // app_rx_last 标记消息末字节，app_rx_vl 是接收配置索引。
     // app_rx_port 和 app_rx_sport 分别给出目的端口和源端口。
@@ -44,6 +48,7 @@ module AFDX_top #(
     output wire [11:0] app_rx_vl,
     output wire [15:0] app_rx_port, app_rx_sport,
     output wire app_rx_net,
+
     // cfg_wr 和 cfg_ready 同为高时，模块接收一次写请求。
     // cfg_rd 发起读请求，两拍后 cfg_rvalid 指示 cfg_rdata 有效。
     // cfg_addr 按 32 位字寻址。
@@ -52,6 +57,7 @@ module AFDX_top #(
     input wire [31:0] cfg_wdata,
     output wire [31:0] cfg_rdata,
     output wire cfg_rvalid, cfg_ready,
+
     // ev_tx 报告发送结果，ev_a 和 ev_b 分别报告两网接收结果。
     // ev_rm_drop 表示丢弃一份重复帧，ev_deliver 表示接纳一条消息。
     // ev_gdrop 是预留的丢帧事件口，本设计中固定为零。
@@ -59,9 +65,12 @@ module AFDX_top #(
     output wire [7:0] ev_a, ev_b,
     output wire ev_rm_drop, ev_deliver,
     output wire [1:0] ev_gdrop);
+
     // tx_ready_q 保存收发核心都已初始化的结果。
     reg tx_ready_q;
+
     assign tx_ready = tx_ready_q;
+
     // now 供发送调度计时，now_c 供接收引擎判断重复帧。
     // 两路核心都初始化完成后，顶层才允许服务开始工作。
     wire [31:0] now;
@@ -71,6 +80,7 @@ module AFDX_top #(
     wire [9:0] tx_cfg_addr;
     wire [15:0] rx_cfg_addr;
     wire [31:0] tx_cfg_wdata, rx_cfg_wdata;
+
     // 收发核心直接连接千兆线路，中间没有会丢帧的缓存，所以 ev_gdrop 固定为零。
     assign ev_gdrop = 2'b00;
     wire m_valid, m_ready, m_last, m_port_en;
@@ -94,18 +104,22 @@ module AFDX_top #(
     wire [15:0] load_tx_sport, load_tx_dport;
     wire [31:0] load_rdata, load_extra_data;
     wire bus_rd, bus_wr;
+
     // 主机和网络管理服务共用配置读口。
     // 各自的读有效标记延后两拍，与返回数据对齐。
     reg [1:0] host_read_pipe, snmp_read_pipe;
+
     // 主机优先读取；两者读同一地址时，共用本次读取结果。
-    assign snmp_mib_ready = ! cfg_wr && (! cfg_rd || (! snmp_mib_wr && cfg_addr == snmp_mib_addr))
-        && (! snmp_mib_wr || cfg_ready);
+    assign snmp_mib_ready = ! cfg_wr && ( ! cfg_rd || ( ! snmp_mib_wr && cfg_addr == snmp_mib_addr))
+        && ( ! snmp_mib_wr || cfg_ready);
+
     assign snmp_grant = (snmp_mib_rd || snmp_mib_wr) && snmp_mib_ready;
     assign bus_addr = snmp_grant ? snmp_mib_addr : cfg_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
     assign bus_wr = cfg_wr || (snmp_grant && snmp_mib_wr);
     assign bus_wdata = (snmp_grant && snmp_mib_wr) ? snmp_mib_wdata : cfg_wdata;
     assign cfg_rvalid = host_read_pipe[1];
+
     always @(posedge clk) begin
         if (reset) begin
             host_read_pipe <= 0;
@@ -116,12 +130,14 @@ module AFDX_top #(
             snmp_read_pipe <= { snmp_read_pipe[0], snmp_grant && snmp_mib_rd };
         end
     end
+
     // 时钟配置位于 0x80 组。
     // 网络管理配置位于 0x90、0x98 和 0xa0 组。
     // 网络管理模块会收到地址高位为零的全部写操作，再由模块内部按低 8 位挑出自己的寄存器。
     // 加卸载配置位于 0xb0 和 0xb8 组。
     // 每 16 个地址为一组，下面是时钟同步和加卸载两组地址的高 14 位。
     localparam RTC_ADDR_GROUP = 14'h0008, LOAD_ADDR_GROUP = 14'h000b;
+
     // 网络管理回应使用的 UDP 源端口。
     localparam SNMP_PORT = 16'd161;
     wire rtc_select = (bus_addr[17:4] == RTC_ADDR_GROUP);
@@ -201,6 +217,7 @@ module AFDX_top #(
         .rx_port(svc_rx_port),
         .rx_claim(rtc_claim)
     );
+
     // afdx_svc 每次选一条完整消息发送，并按接收端口分配消息。
     afdx_svc service_channel (
         .clk(clk),
@@ -252,10 +269,12 @@ module AFDX_top #(
         .app_rx_dport(app_rx_port),
         .app_rx_net(app_rx_net)
     );
+
     always @(posedge clk) begin
         if (reset) tx_ready_q <= 0;
         else tx_ready_q <= tx_initialized && rx_initialized;
     end
+
     // 双网收发核心直接连接线路，每拍处理一个字节。
     afdx_timebase timebase (
         .clk(clk),
@@ -363,4 +382,5 @@ module AFDX_top #(
         .load_rdata(load_rdata),
         .load_extra_data(load_extra_data)
     );
+
 endmodule

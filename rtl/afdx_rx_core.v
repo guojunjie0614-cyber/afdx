@@ -3,19 +3,23 @@
 // 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
 module afdx_rx_core #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+
     // now_c 提供粗粒度时间，rx_data_a/b 在对应 valid 为高时有效。
     input wire [15:0] now_c,
     input wire [7:0] rx_data_a,
     input wire rx_valid_a,
     input wire [7:0] rx_data_b,
     input wire rx_valid_b,
+
     // cfg_map_we 写入线路编号到配置索引的映射。
     // cfg_cfg_we 写入接收参数，cfg_ok 为高时允许这些写操作。
     input wire cfg_map_we, cfg_cfg_we,
     input wire [15:0] cfg_addr,
     input wire [31:0] cfg_wdata,
+
     // d_valid 为高时交付一个用户字节，d_last 标记消息末字节。
     // d_vl 是接收配置索引，d_sport/d_dport 是源端口和目的端口。
     // d_net 为 0 表示来自 A 网，为 1 表示来自 B 网。
@@ -25,6 +29,7 @@ module afdx_rx_core #(
     output wire [11:0] d_vl,
     output wire [15:0] d_sport, d_dport,
     output wire d_net,
+
     // 所有接收表初始化完成后，init_done 才变高。
     // ev_a/b 分别报告两网检查结果。
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
@@ -32,6 +37,7 @@ module afdx_rx_core #(
     output reg [7:0] ev_a, ev_b,
     output reg ev_rm_drop, ev_deliver,
     output wire cfg_ok);
+
     // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
     // flush_init 等待最后一次写入完成。
     reg map_we, cfg_we, flush_init;
@@ -56,12 +62,14 @@ module afdx_rx_core #(
     wire da_valid, db_valid, take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
     wire [RX_RING_AW + 82:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
+
     localparam DQ_WIDTH = RX_RING_AW + 56;
     wire engine_rm, engine_deliver, dq_pop, dq_we;
     wire [RX_DQ_AW - 1:0] dq_wa;
     wire [RX_DQ_AW:0] dq_count;
     wire [DQ_WIDTH - 1:0] dq_wd;
     wire [32 * DQ_WIDTH - 1:0] dq_entries;
+
     // rx_dq 最多保存 32 条待交付消息的信息。
     // 接收引擎写入这些寄存器，交付模块按顺序读取。
     genvar i;
@@ -69,14 +77,18 @@ module afdx_rx_core #(
         for (i = 0; i < 32; i = i + 1) begin : queue_slot
             if (i < (1 << RX_DQ_AW)) begin : present
                 reg [DQ_WIDTH - 1:0] entry;
+
                 always @(posedge clk) if (dq_we && dq_wa == i) entry <= dq_wd;
+
                 assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = entry;
             end
             else begin : absent
+
                 assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = { DQ_WIDTH { 1'b0 } };
             end
         end
     endgenerate
+
     // 初始化完成且 cfg_ok 为高时，外部配置才能写入接收表。
     always @(posedge clk) begin
         if (reset) begin
@@ -97,8 +109,8 @@ module afdx_rx_core #(
         else begin
             map_we <= 0;
             cfg_we <= 0;
-            if (! init_done) begin
-                if (! flush_init) begin
+            if ( ! init_done) begin
+                if ( ! flush_init) begin
                     map_we <= 1;
                     map_wa <= clear_addr;
                     map_wd <= 0;
@@ -126,6 +138,7 @@ module afdx_rx_core #(
             ev_deliver <= engine_deliver;
         end
     end
+
     // map 保存有效位和 12 位配置索引。
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
@@ -156,6 +169,7 @@ module afdx_rx_core #(
         .read_address(state_ra),
         .read_data(state_q)
     );
+
     // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
         .clk(clk),
@@ -175,6 +189,7 @@ module afdx_rx_core #(
         .read_address(rb_ra),
         .read_data(rb_q)
     );
+
     // 每网先检查并解析帧，再共用一个引擎检查序号和重复帧。
     afdx_mac_rx mac_a (
         // 时钟和复位
@@ -323,4 +338,5 @@ module afdx_rx_core #(
         .d_dport(d_dport),
         .d_net(d_net)
     );
+
 endmodule

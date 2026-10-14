@@ -4,15 +4,18 @@
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
 module afdx_snmp (
+
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
     input wire [31:0] now,
+
     // cfg_* 配置代理开关、团体名和 Trap 通知，并读取状态。
     // 团体名（community）是 SNMP 报文里携带的访问口令。
     input wire cfg_we,
     input wire [7:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_control_data, cfg_status_data, cfg_descr_data,
+
     // mib_* 通过共享配置总线读寄存器或写 user_id。
     // ready 表示请求可执行，rvalid 表示返回数据有效。
     output reg mib_rd, mib_wr,
@@ -20,6 +23,7 @@ module afdx_snmp (
     output reg [31:0] mib_wdata,
     input wire mib_ready, mib_rvalid,
     input wire [31:0] mib_rdata,
+
     // tx_valid 和 tx_ready 同为高时发送一个回应或通知字节。
     // tx_vl 选择发送配置，tx_dport 给出对端端口。
     output reg tx_valid,
@@ -28,65 +32,87 @@ module afdx_snmp (
     output reg tx_last,
     output wire [6:0] tx_vl,
     output wire [15:0] tx_dport,
+
     // rx_valid 为高时接收字节，rx_claim 表示已启用且目的端口为 161。
     input wire rx_valid,
     input wire [7:0] rx_data,
     input wire rx_last,
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
+
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
+
     // 下面是主状态机的状态，按用途分组。
     // 接收请求，并从请求存储器里读一个字节：
     localparam IDLE = 0, CAPTURE = 1, START = 2, FETCH0 = 3, FETCH1 = 4, FETCH2 = 5, FETCH3 = 6;
+
     // 解析请求的各字段：
     localparam TAG = 7, LENGTH = 8, LONG_LENGTH = 9, DISPATCH = 10, VERSION = 11, COMMUNITY = 12;
     localparam INTEGER_VALUE = 13;
+
     // 查找对象，再读取或设置它的值：
     localparam LOOK_START = 14, LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17, MISSING = 18;
     localparam MIB_REQUEST = 19, MIB_WAIT = 20, SET_VALUE = 34, SET_CHECK = 35, SET_WRITE = 36, SET_ERROR = 37;
+
     // 计算各层长度并构造回应：
     localparam VALUE_PREP = 21, LEN1 = 22, LEN2 = 23, LEN3 = 24, LEN4 = 25, BUILD = 26;
     localparam COPY_COMM = 27, COPY_OID = 28, COPY_VALUE = 38;
+
     // 发送回应：
     localparam TX_FLUSH = 29, TX_ADDR = 30, TX_WAIT1 = 31, TX_WAIT2 = 32, TX_SEND = 33;
+
     // 构造事件通知：
     localparam TRAP_INIT = 39, TRAP_COMM0 = 40, TRAP_COMM1 = 41, TRAP_WORD = 42, TRAP_BYTE = 43;
+
     // 管理请求和事件通知使用的 UDP 端口。
     localparam SNMP_PORT = 161, TRAP_PORT = 162;
+
     // 报文按“类型、长度、内容”逐层编码，下面是用到的类型字节。
     // 基本类型：整数、字节串、空值、对象标识符、序列。
     localparam TAG_INTEGER = 8'h02, TAG_OCTET_STRING = 8'h04, TAG_NULL = 8'h05, TAG_OID = 8'h06;
     localparam TAG_SEQUENCE = 8'h30;
+
     // 操作类型：查询、查询下一个、回应、设置、事件通知。
     localparam PDU_GET = 8'ha0, PDU_GET_NEXT = 8'ha1, PDU_RESPONSE = 8'ha2, PDU_SET = 8'ha3, PDU_TRAP = 8'ha7;
+
     // 数值类型：计数器、非负整数、运行时间。
     localparam TYPE_COUNTER32 = 8'h41, TYPE_GAUGE32 = 8'h42, TYPE_TIMETICKS = 8'h43;
+
     // v2c 表示“没有这个对象”和“已到末尾”的两种特殊值。
     localparam EXC_NO_SUCH_OBJECT = 8'h80, EXC_END_OF_MIB = 8'h82;
+
     // 长度字节为这两个值时，后面再跟 1 或 2 个字节给出实际长度。
     localparam LENGTH_1_BYTE = 8'h81, LENGTH_2_BYTES = 8'h82;
+
     // 回应里的错误码。v1 用 2、3；v2c 用 7、8、10、17。
     localparam ERR_NONE = 0, ERR_NO_SUCH_NAME = 2, ERR_BAD_VALUE = 3, ERR_WRONG_TYPE = 7;
     localparam ERR_WRONG_LENGTH = 8, ERR_WRONG_VALUE = 10, ERR_NOT_WRITABLE = 17;
+
     // 事件通知的编号：冷启动和认证失败。
     localparam TRAP_COLD_START = 8'd1, TRAP_AUTH_FAILURE = 8'd5;
+
     // 口令和对象标识符最长 16 字节；复位后的口令是 6 个字符的 public。
     localparam MAX_COMMUNITY_LENGTH = 16, MAX_OID_LENGTH = 16, DEFAULT_COMMUNITY_LENGTH = 6;
     localparam DEFAULT_COMMUNITY0 = 32'h7075626c, DEFAULT_COMMUNITY1 = 32'h69630000;
+
     // 运行时间每 10 ms 加一，即每 1250000 拍；计到 UPTIME_TICK_LAST 后归零。
     localparam UPTIME_TICK_LAST = 1249999;
+
     // 本模块的配置寄存器地址（低 8 位）。
     localparam REG_ENABLE = 8'h90, REG_TX_VL = 8'h91, REG_COMMUNITY_LENGTH = 8'h92;
     localparam REG_COMMUNITY0 = 8'h93, REG_COMMUNITY1 = 8'h94, REG_COMMUNITY2 = 8'h95, REG_COMMUNITY3 = 8'h96;
     localparam REG_TRAP_ENABLE = 8'h9b;
+
     // 各对象在共享配置总线上的地址；四个 COUNT 是一组计数器的起始地址。
     localparam ADDR_DESCR = 18'ha0, ADDR_UPTIME = 18'h98, ADDR_RTC_SECONDS = 18'h84, ADDR_RTC_SYNC = 18'h88;
     localparam ADDR_REQUESTS = 18'h99, ADDR_BAD_COMMUNITY = 18'h9a, ADDR_TRAPS_SENT = 18'h9c;
     localparam ADDR_TX_COUNT = 18'h40, ADDR_A_COUNT = 18'h48, ADDR_B_COUNT = 18'h50, ADDR_SHARED_COUNT = 18'h58;
+
     // field 的取值：正在解析请求的第几个字段。
     localparam FIELD_MESSAGE = 0, FIELD_VERSION = 1, FIELD_COMMUNITY = 2, FIELD_PDU = 3, FIELD_REQUEST_ID = 4;
     localparam FIELD_ERROR_STATUS = 5, FIELD_ERROR_INDEX = 6, FIELD_BINDING_LIST = 7, FIELD_BINDING = 8;
     localparam FIELD_OID = 9, FIELD_VALUE = 10;
+
     // part 的取值：正在写回应的第几个字段，每个字段依次是类型、长度、内容。
     localparam B_MESSAGE_TAG = 0, B_MESSAGE_LENGTH = 1, B_VERSION_TAG = 2, B_VERSION_LENGTH = 3, B_VERSION = 4;
     localparam B_COMMUNITY_TAG = 5, B_COMMUNITY_LENGTH = 6, B_COMMUNITY = 7, B_PDU_TAG = 8, B_PDU_LENGTH = 9;
@@ -94,11 +120,13 @@ module afdx_snmp (
     localparam B_INDEX_TAG = 16, B_INDEX_LENGTH = 17, B_INDEX = 18, B_LIST_TAG = 19, B_LIST_LENGTH = 20;
     localparam B_BINDING_TAG = 21, B_BINDING_LENGTH = 22, B_OID_TAG = 23, B_OID_LENGTH = 24, B_OID = 25;
     localparam B_VALUE_TAG = 26, B_VALUE_LENGTH = 27, B_VALUE = 28;
+
     // cold_pending/auth_pending 保存尚未发送的启动和认证失败通知。
     // 通知发送完成后，traps_sent 才增加。
     reg configured, trap_enabled, cold_pending, auth_pending, sending_trap;
     reg [31:0] traps_sent;
     reg [7:0] trap_event;
+
     // 固定通知内容分两级选择，先选 64 位字，再选字内字节。
     reg [63:0] trap_word;
     reg get_set, echo_value, set_negative;
@@ -106,11 +134,13 @@ module afdx_snmp (
     reg [31:0] set_number;
     reg [6:0] response_vl;
     reg [4:0] configured_length;
+
     // community 保存最多 16 字节的团体名，按高字节在前发送。
     reg [31:0] community0, community1, community2, community3;
     reg [31:0] uptime, uptime_cycles, requests, bad_community, sample_cycle;
     reg [6:0] state, return_state;
     reg [15:0] response_port;
+
     // cursor 记录当前读取位置，各层结束位置用来检查字段是否越界。
     // 本实现只接受一个完整的变量绑定。
     reg [8:0] rx_count, request_length, cursor, outer_end, pdu_end, list_end, binding_end;
@@ -131,6 +161,7 @@ module afdx_snmp (
     reg get_next;
     reg [2:0] request_id_length;
     reg [31:0] request_id, id_shift;
+
     // candidate/object_index 选择待查询的寄存器对象。
     // 对象标识符（Object Identifier，OID）按数字逐段比较，不按编码后的字节大小比较。
     reg [5:0] candidate, object_index;
@@ -143,10 +174,12 @@ module afdx_snmp (
     reg [31:0] value_number, value_shift;
     reg [127:0] descr_shift;
     reg [7:0] binding_length, list_length, pdu_length, message_length;
+
     // output_count 记录回应写到哪里，tx_pos 记录发到哪里。
     // part/part_pos 记录当前构造哪个字段及字段内的位置。
     reg [8:0] output_count, response_length, tx_pos;
     reg [4:0] part, part_pos;
+
     // 两个 256 字节存储器分别保存请求和回应。
     // 即使发送暂停，请求内容仍可用于生成错误回应。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) request_ram (
@@ -167,9 +200,11 @@ module afdx_snmp (
         .read_address(out_ra),
         .read_data(out_q)
     );
+
     assign rx_claim = configured && rx_dport == SNMP_PORT;
     assign tx_vl = response_vl;
     assign tx_dport = response_port;
+
     // 对象按编号的数字顺序排列，先是两个系统对象，再是 34 个私有对象。
     // 系统对象的标识符是 1.3.6.1.2.1.1.x.0，私有对象是 1.3.6.1.4.1.424242.3.x.0。
     // 开头的 1.3 按编码规则合并成一个数 43（即一个字节 0x2b）。
@@ -192,6 +227,7 @@ module afdx_snmp (
             endcase
         end
     endfunction
+
     function [7:0] mib_oid_byte;
         input [5:0] item;
         input [4:0] position;
@@ -212,6 +248,7 @@ module afdx_snmp (
             endcase
         end
     endfunction
+
     // 私有对象对应配置或统计地址，只有索引 3 的 user_id 允许设置。
     // 对象 0–5 依次是描述、运行时间、版本、user_id、时钟秒和同步次数。
     // 对象 6–12 是发送计数，13–20 和 21–28 是 A、B 网接收计数，29–32 是两网合计的计数，
@@ -238,6 +275,7 @@ module afdx_snmp (
             endcase
         end
     endfunction
+
     // 读取请求字节前保存返回状态，emit 每次只登记一个回应字节。
     task fetch;
         input [6:0] target;
@@ -246,6 +284,7 @@ module afdx_snmp (
             state <= FETCH0;
         end
     endtask
+
     task emit;
         input [7:0] value;
         begin
@@ -255,6 +294,7 @@ module afdx_snmp (
             output_count <= output_count + 9'd1;
         end
     endtask
+
     always @(posedge clk) begin
         if (reset) begin
             configured <= 0;
@@ -316,6 +356,7 @@ module afdx_snmp (
             endcase
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             state <= IDLE;
@@ -410,7 +451,7 @@ module afdx_snmp (
             out_we <= 0;
             out_re <= 0;
             if (rx_valid && rx_claim && rx_last) requests <= requests + 32'd1;
-            if (! configured || ! enable) begin
+            if ( ! configured || ! enable) begin
                 state <= IDLE;
                 tx_valid <= 0;
                 tx_last <= 0;
@@ -420,6 +461,7 @@ module afdx_snmp (
             // 模块依次解析请求、访问寄存器、构造回应，再逐字节发送。
             // SNMP 报文的每个字段都按类型（TAG）、长度（LENGTH）、值的顺序编码。
             else case (state)
+
                 // ======== 第一部分：接收请求，并按位置读出请求字节 ========
                 // IDLE：等请求或待发通知，然后转 CAPTURE、START 或 TRAP_INIT。
                 IDLE : if (rx_valid && rx_claim) begin
@@ -443,9 +485,10 @@ module afdx_snmp (
                     else auth_pending <= 0;
                     state <= TRAP_INIT;
                 end
+
                 // CAPTURE：保存请求字节，末字节后转 START，超长则转 IDLE。
                 CAPTURE : if (rx_valid) begin
-                    if (! overflow) begin
+                    if ( ! overflow) begin
                         req_we <= 1;
                         req_wa <= rx_count[7:0];
                         req_wdata <= rx_data;
@@ -457,6 +500,7 @@ module afdx_snmp (
                         state <= overflow ? IDLE : START;
                     end
                 end
+
                 // START：复位本次解析位置，然后读取 TAG。
                 START : begin
                     cursor <= 0;
@@ -468,6 +512,7 @@ module afdx_snmp (
                     error_status <= ERR_NONE;
                     fetch (TAG);
                 end
+
                 // FETCH0：检查读取范围并发出读请求，然后转 FETCH1。
                 FETCH0 : begin
                     if (cursor >= request_length) state <= IDLE;
@@ -484,6 +529,7 @@ module afdx_snmp (
                         state <= FETCH1;
                     end
                 end
+
                 // FETCH1：等待同步读取并选择口令字节，然后转 FETCH2。
                 FETCH1 : begin
                     case (value_pos[1:0])
@@ -494,13 +540,16 @@ module afdx_snmp (
                     endcase
                     state <= FETCH2;
                 end
+
                 // FETCH2：保存读出的字节，然后转 FETCH3。
                 FETCH2 : begin
                     byte_value <= req_q;
                     state <= FETCH3;
                 end
+
                 // FETCH3：返回调用读取操作时保存的状态。
                 FETCH3 : state <= return_state;
+
                 // ======== 第二部分：逐个字段解析请求 ========
                 // TAG：保存字段类型，然后读取 LENGTH。
                 TAG : begin
@@ -508,10 +557,11 @@ module afdx_snmp (
                     cursor <= cursor + 9'd1;
                     fetch (LENGTH);
                 end
+
                 // LENGTH：短长度转 DISPATCH，长长度转 LONG_LENGTH，非法长度转 IDLE。
                 LENGTH : begin
                     cursor <= cursor + 9'd1;
-                    if (! byte_value[7]) begin
+                    if ( ! byte_value[7]) begin
                         field_length <= { 9'b0, byte_value[6:0] };
                         state <= DISPATCH;
                     end
@@ -522,6 +572,7 @@ module afdx_snmp (
                     end
                     else state <= IDLE;
                 end
+
                 // LONG_LENGTH：逐字节拼出长度，读够后转 DISPATCH。
                 LONG_LENGTH : begin
                     field_length <= { field_length[7:0], byte_value };
@@ -530,19 +581,23 @@ module afdx_snmp (
                     if (length_left == 1) state <= DISPATCH;
                     else fetch (LONG_LENGTH);
                 end
+
                 // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
                 DISPATCH : begin
                     value_pos <= 0;
                     if (field_length > 256 || cursor + field_length > request_length) state <= IDLE;
                     else case (field)
+
                         FIELD_MESSAGE : if (tag_value == TAG_SEQUENCE) begin
                             outer_end <= cursor + field_length;
                             field <= FIELD_VERSION;
                             fetch (TAG);
                         end
                         else state <= IDLE;
+
                         FIELD_VERSION : if (tag_value == TAG_INTEGER && field_length == 1) fetch (VERSION);
                         else state <= IDLE;
+
                         FIELD_COMMUNITY : if (tag_value == TAG_OCTET_STRING && field_length >= 1
                             && field_length <= MAX_COMMUNITY_LENGTH) begin
                             community_length <= field_length[4:0];
@@ -555,6 +610,7 @@ module afdx_snmp (
                             if (trap_enabled) auth_pending <= 1;
                             state <= IDLE;
                         end
+
                         FIELD_PDU : if (tag_value == PDU_GET || tag_value == PDU_GET_NEXT || tag_value == PDU_SET) begin
                             get_next <= (tag_value == PDU_GET_NEXT);
                             get_set <= (tag_value == PDU_SET);
@@ -563,24 +619,28 @@ module afdx_snmp (
                             fetch (TAG);
                         end
                         else state <= IDLE;
+
                         FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX : if (tag_value == TAG_INTEGER
                             && field_length >= 1 && field_length <= 4) begin
                             if (field == FIELD_REQUEST_ID) request_id_length <= field_length[2:0];
                             fetch (INTEGER_VALUE);
                         end
                         else state <= IDLE;
+
                         FIELD_BINDING_LIST : if (tag_value == TAG_SEQUENCE) begin
                             list_end <= cursor + field_length;
                             field <= FIELD_BINDING;
                             fetch (TAG);
                         end
                         else state <= IDLE;
+
                         FIELD_BINDING : if (tag_value == TAG_SEQUENCE) begin
                             binding_end <= cursor + field_length;
                             field <= FIELD_OID;
                             fetch (TAG);
                         end
                         else state <= IDLE;
+
                         FIELD_OID : if (tag_value == TAG_OID && field_length >= 1
                             && field_length <= MAX_OID_LENGTH) begin
                             oid_start <= cursor[7:0];
@@ -590,6 +650,7 @@ module afdx_snmp (
                             fetch (TAG);
                         end
                         else state <= IDLE;
+
                         FIELD_VALUE : if (((get_set && field_length <= 16)
                             || (tag_value == TAG_NULL && field_length == 0))
                             && cursor + field_length == binding_end && binding_end == list_end
@@ -601,9 +662,11 @@ module afdx_snmp (
                             state <= LOOK_START;
                         end
                         else state <= IDLE;
+
                         default : state <= IDLE;
                     endcase
                 end
+
                 // VERSION：检查协议版本，通过后读口令，否则转 IDLE。
                 VERSION : begin
                     if (byte_value <= 1) begin
@@ -614,6 +677,7 @@ module afdx_snmp (
                     end
                     else state <= IDLE;
                 end
+
                 // COMMUNITY：逐字节核对口令，通过后读下一字段，否则转 IDLE。
                 COMMUNITY : begin
                     community_bad <= community_bad || byte_value != community_expected;
@@ -632,6 +696,7 @@ module afdx_snmp (
                     end
                     else fetch (COMMUNITY);
                 end
+
                 // INTEGER_VALUE：读完请求中的整数字段后，继续读取 TAG。
                 INTEGER_VALUE : begin
                     if (field == FIELD_REQUEST_ID) request_id <= { request_id[23:0], byte_value };
@@ -643,6 +708,7 @@ module afdx_snmp (
                     end
                     else fetch (INTEGER_VALUE);
                 end
+
                 // ======== 第三部分：查找对象，读取或设置它的值 ========
                 // LOOK_START：从对象编号的第一个数字开始，然后转 LOOK_COMPARE。
                 LOOK_START : begin
@@ -652,6 +718,7 @@ module afdx_snmp (
                     oid_acc <= 0;
                     fetch (LOOK_COMPARE);
                 end
+
                 // LOOK_COMPARE：逐个数字比较对象编号，匹配转 FOUND，否则转 LOOK_NEXT。
                 LOOK_COMPARE : begin
                     if (byte_value[7]) begin
@@ -678,18 +745,20 @@ module afdx_snmp (
                         fetch (LOOK_COMPARE);
                     end
                 end
+
                 // LOOK_NEXT：换下一个对象重试，全部试完后转 MISSING。
                 LOOK_NEXT : if (candidate == 35) state <= MISSING;
                 else begin
                     candidate <= candidate + 6'd1;
                     state <= LOOK_START;
                 end
+
                 // FOUND：查询转 MIB_REQUEST；设置先读入待写值，非法写转 SET_ERROR。
                 FOUND : begin
                     object_index <= candidate;
                     mib_addr <= mib_address (candidate);
                     missing <= 0;
-                    if (! get_set) begin
+                    if ( ! get_set) begin
                         mib_rd <= 1;
                         state <= MIB_REQUEST;
                     end
@@ -713,6 +782,7 @@ module afdx_snmp (
                         fetch (SET_VALUE);
                     end
                 end
+
                 // MISSING：生成对象不存在或不可写的结果，然后准备回应长度。
                 MISSING : begin
                     if (get_set) begin
@@ -728,6 +798,7 @@ module afdx_snmp (
                         state <= LEN1;
                     end
                 end
+
                 // SET_VALUE：拼出待写整数，读完后转 SET_CHECK。
                 SET_VALUE : begin
                     set_number <= { set_number[23:0], byte_value };
@@ -737,6 +808,7 @@ module afdx_snmp (
                     if (value_pos + 1 == set_value_length) state <= SET_CHECK;
                     else fetch (SET_VALUE);
                 end
+
                 // SET_CHECK：检查数值范围，通过则写总线，否则转 SET_ERROR。
                 SET_CHECK : begin
                     if (set_negative || | set_number[31:16]) begin
@@ -749,12 +821,14 @@ module afdx_snmp (
                         state <= SET_WRITE;
                     end
                 end
+
                 // SET_WRITE：等写握手完成，再读回实际值。
                 SET_WRITE : if (mib_ready) begin
                     mib_wr <= 0;
                     mib_rd <= 1;
                     state <= MIB_REQUEST;
                 end
+
                 // SET_ERROR：保留请求中的编号和值用于错误回应，然后转 LEN1。
                 SET_ERROR : begin
                     missing <= 1;
@@ -764,17 +838,20 @@ module afdx_snmp (
                     response_oid_length <= { 3'b0, oid_length };
                     state <= LEN1;
                 end
+
                 // MIB_REQUEST：等共享总线允许读取，发出读请求后转 MIB_WAIT。
                 MIB_REQUEST : if (mib_ready) begin
                     mib_rd <= 0;
                     sample_cycle <= now;
                     state <= MIB_WAIT;
                 end
+
                 // MIB_WAIT：等读数据有效，保存数值后转 VALUE_PREP。
                 MIB_WAIT : if (mib_rvalid) begin
                     value_number <= mib_rdata;
                     state <= VALUE_PREP;
                 end
+
                 // ======== 第四部分：计算各层长度，构造回应或事件通知 ========
                 // VALUE_PREP：确定回应值的类型和长度，然后转 LEN1。
                 VALUE_PREP : begin
@@ -791,15 +868,15 @@ module afdx_snmp (
                             value_length <= 5;
                             value_shift <= value_number;
                         end
-                        else if (| value_number[30:23]) begin
+                        else if ( | value_number[30:23]) begin
                             value_length <= 4;
                             value_shift <= value_number;
                         end
-                        else if (| value_number[22:15]) begin
+                        else if ( | value_number[22:15]) begin
                             value_length <= 3;
                             value_shift <= { value_number[23:0], 8'b0 };
                         end
-                        else if (| value_number[14:7]) begin
+                        else if ( | value_number[14:7]) begin
                             value_length <= 2;
                             value_shift <= { value_number[15:0], 16'b0 };
                         end
@@ -810,21 +887,25 @@ module afdx_snmp (
                     end
                     state <= LEN1;
                 end
+
                 // LEN1：计算一个变量的编码长度，然后转 LEN2。
                 LEN1 : begin
                     binding_length <= response_oid_length + value_length + 8'd4;
                     state <= LEN2;
                 end
+
                 // LEN2：计算变量列表的编码长度，然后转 LEN3。
                 LEN2 : begin
                     list_length <= binding_length + (sending_trap ? 8'd27 : 8'd2);
                     state <= LEN3;
                 end
+
                 // LEN3：计算协议数据单元的长度，然后转 LEN4。
                 LEN3 : begin
                     pdu_length <= list_length + { 5'b0, request_id_length } + 8'd10;
                     state <= LEN4;
                 end
+
                 // LEN4：计算整条消息的长度，然后转 BUILD。
                 LEN4 : begin
                     message_length <= pdu_length + { 3'b0, community_length } + 8'd7;
@@ -836,114 +917,141 @@ module afdx_snmp (
                     output_count <= 0;
                     state <= BUILD;
                 end
+
                 // BUILD：依次写入回应的各字段，全部完成后进入发送过程。
                 BUILD : case (part)
+
                     B_MESSAGE_TAG : begin
                         emit (TAG_SEQUENCE);
                         part <= B_MESSAGE_LENGTH;
                     end
+
                     B_MESSAGE_LENGTH : begin
                         emit (message_length);
                         part <= B_VERSION_TAG;
                     end
+
                     B_VERSION_TAG : begin
                         emit (TAG_INTEGER);
                         part <= B_VERSION_LENGTH;
                     end
+
                     B_VERSION_LENGTH : begin
                         emit (1);
                         part <= B_VERSION;
                     end
+
                     B_VERSION : begin
                         emit ({ 7'b0, version });
                         part <= B_COMMUNITY_TAG;
                     end
+
                     B_COMMUNITY_TAG : begin
                         emit (TAG_OCTET_STRING);
                         part <= B_COMMUNITY_LENGTH;
                     end
+
                     B_COMMUNITY_LENGTH : begin
                         emit ({ 3'b0, community_length });
                         part <= B_COMMUNITY;
                         part_pos <= 0;
                     end
+
                     B_COMMUNITY : if (sending_trap) state <= TRAP_COMM0;
                     else begin
                         cursor <= { 1'b0, community_start } + part_pos;
                         fetch (COPY_COMM);
                     end
+
                     B_PDU_TAG : begin
                         emit (sending_trap ? PDU_TRAP : PDU_RESPONSE);
                         part <= B_PDU_LENGTH;
                     end
+
                     B_PDU_LENGTH : begin
                         emit (pdu_length);
                         part <= B_ID_TAG;
                     end
+
                     B_ID_TAG : begin
                         emit (TAG_INTEGER);
                         part <= B_ID_LENGTH;
                     end
+
                     B_ID_LENGTH : begin
                         emit ({ 5'b0, request_id_length });
                         part <= B_ID;
                         part_pos <= 0;
                     end
+
                     B_ID : begin
                         emit (id_shift[31:24]);
                         id_shift <= { id_shift[23:0], 8'b0 };
                         part_pos <= part_pos + 5'd1;
                         if (part_pos + 1 == request_id_length) part <= B_STATUS_TAG;
                     end
+
                     B_STATUS_TAG : begin
                         emit (TAG_INTEGER);
                         part <= B_STATUS_LENGTH;
                     end
+
                     B_STATUS_LENGTH : begin
                         emit (1);
                         part <= B_STATUS;
                     end
+
                     B_STATUS : begin
                         emit (error_status);
                         part <= B_INDEX_TAG;
                     end
+
                     B_INDEX_TAG : begin
                         emit (TAG_INTEGER);
                         part <= B_INDEX_LENGTH;
                     end
+
                     B_INDEX_LENGTH : begin
                         emit (1);
                         part <= B_INDEX;
                     end
+
                     B_INDEX : begin
                         emit (error_status == ERR_NONE ? 8'd0 : 8'd1);
                         part <= B_LIST_TAG;
                     end
+
                     B_LIST_TAG : begin
                         emit (TAG_SEQUENCE);
                         part <= B_LIST_LENGTH;
                     end
+
                     B_LIST_LENGTH : begin
                         emit (list_length);
                         part <= B_BINDING_TAG;
                     end
+
                     B_BINDING_TAG : begin
                         emit (TAG_SEQUENCE);
                         part <= B_BINDING_LENGTH;
                     end
+
                     B_BINDING_LENGTH : begin
                         emit (binding_length);
                         part <= B_OID_TAG;
                     end
+
                     B_OID_TAG : begin
                         emit (TAG_OID);
                         part <= B_OID_LENGTH;
                     end
+
                     B_OID_LENGTH : begin
                         emit (response_oid_length);
                         part <= B_OID;
                         part_pos <= 0;
                     end
+
                     B_OID : begin
                         if (missing) begin
                             cursor <= { 1'b0, oid_start } + part_pos;
@@ -955,16 +1063,19 @@ module afdx_snmp (
                             if (part_pos + 1 == response_oid_length) part <= B_VALUE_TAG;
                         end
                     end
+
                     B_VALUE_TAG : begin
                         emit (value_tag);
                         part <= B_VALUE_LENGTH;
                     end
+
                     B_VALUE_LENGTH : begin
                         emit (value_length);
                         part <= B_VALUE;
                         part_pos <= 0;
                         if (value_length == 0) state <= TX_FLUSH;
                     end
+
                     B_VALUE : if (echo_value) begin
                         cursor <= { 1'b0, set_value_start } + part_pos;
                         fetch (COPY_VALUE);
@@ -985,8 +1096,10 @@ module afdx_snmp (
                             state <= sending_trap ? TRAP_WORD : TX_FLUSH;
                         end
                     end
+
                     default : state <= IDLE;
                 endcase
+
                 // COPY_COMM：写入口令字节，写完后继续构造协议头。
                 COPY_COMM : begin
                     emit (byte_value);
@@ -994,6 +1107,7 @@ module afdx_snmp (
                     if (part_pos + 1 == community_length) part <= B_PDU_TAG;
                     state <= BUILD;
                 end
+
                 // COPY_OID：写入请求中的对象编号，写完后继续值字段。
                 COPY_OID : begin
                     emit (byte_value);
@@ -1001,12 +1115,14 @@ module afdx_snmp (
                     if (part_pos + 1 == response_oid_length) part <= B_VALUE_TAG;
                     state <= BUILD;
                 end
+
                 // COPY_VALUE：复制错误请求中的值，写完后转 TX_FLUSH。
                 COPY_VALUE : begin
                     emit (byte_value);
                     part_pos <= part_pos + 5'd1;
                     state <= part_pos + 1 == value_length ? TX_FLUSH : BUILD;
                 end
+
                 // TRAP_INIT：准备事件通知及运行时间字段，然后计算回应长度。
                 TRAP_INIT : begin
                     response_port <= TRAP_PORT;
@@ -1022,6 +1138,7 @@ module afdx_snmp (
                     value_number <= uptime;
                     state <= VALUE_PREP;
                 end
+
                 // TRAP_COMM0：选择口令所在的字，然后转 TRAP_COMM1。
                 TRAP_COMM0 : begin
                     case (part_pos[3:2])
@@ -1032,6 +1149,7 @@ module afdx_snmp (
                     endcase
                     state <= TRAP_COMM1;
                 end
+
                 // TRAP_COMM1：选择字内的字节，然后转 COPY_COMM。
                 TRAP_COMM1 : begin
                     case (part_pos[1:0])
@@ -1042,6 +1160,7 @@ module afdx_snmp (
                     endcase
                     state <= COPY_COMM;
                 end
+
                 // TRAP_WORD：选择事件编号所在的字，然后转 TRAP_BYTE。
                 TRAP_WORD : begin
                     case (part_pos[4:3])
@@ -1052,6 +1171,7 @@ module afdx_snmp (
                     endcase
                     state <= TRAP_BYTE;
                 end
+
                 // TRAP_BYTE：写一个事件编号字节，写完转 TX_FLUSH，否则转 TRAP_WORD。
                 TRAP_BYTE : begin
                     case (part_pos[2:0])
@@ -1067,20 +1187,24 @@ module afdx_snmp (
                     part_pos <= part_pos + 5'd1;
                     state <= part_pos == 24 ? TX_FLUSH : TRAP_WORD;
                 end
+
                 // ======== 第五部分：逐字节发送 ========
                 // TX_FLUSH：等最后一次写入完成，然后转 TX_ADDR。
                 TX_FLUSH : begin
                     tx_pos <= 0;
                     state <= TX_ADDR;
                 end
+
                 // TX_ADDR：请求读取待发字节，然后转 TX_WAIT1。
                 TX_ADDR : begin
                     out_re <= 1;
                     out_ra <= tx_pos[7:0];
                     state <= TX_WAIT1;
                 end
+
                 // TX_WAIT1：等待同步读取，然后转 TX_WAIT2。
                 TX_WAIT1 : state <= TX_WAIT2;
+
                 // TX_WAIT2：保存字节并置发送有效，然后转 TX_SEND。
                 TX_WAIT2 : begin
                     tx_data <= out_q;
@@ -1088,6 +1212,7 @@ module afdx_snmp (
                     tx_last <= (tx_pos + 1 == response_length);
                     state <= TX_SEND;
                 end
+
                 // TX_SEND：等待握手，未发完转 TX_ADDR，发完转 IDLE。
                 TX_SEND : if (tx_ready) begin
                     tx_valid <= 0;
@@ -1101,14 +1226,16 @@ module afdx_snmp (
                         state <= TX_ADDR;
                     end
                 end
+
                 default : state <= IDLE;
             endcase
             // 关闭事件通知后，模块丢弃尚未发送的通知请求。
-            if (! configured || ! trap_enabled) begin
+            if ( ! configured || ! trap_enabled) begin
                 cold_pending <= 0;
                 auth_pending <= 0;
             end
             if (cfg_we && cfg_addr == 8'h90 && cfg_wdata[0] && ! configured && trap_enabled) cold_pending <= 1;
         end
     end
+
 endmodule

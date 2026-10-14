@@ -3,36 +3,47 @@
 // 本模块用于赛题的以太网发送，并保证两帧之间的空闲时间。
 // FCS（Frame Check Sequence，帧校验序列）用于让接收方检查帧内容。
 module afdx_mac_tx (
+
     // byte_en 为高时推进一个字节，当前顶层每拍都为高。
     input wire clk, reset, byte_en,
+
     // s_valid 和 s_ready 同为高时接收一个帧内容字节。
     // s_last 标记最后的序号字节，s_en_a/b 选择发送网络。
     input wire s_valid,
     output wire s_ready,
+
     // s_data_a/b 分别提供两网帧内容，以便使用不同的源网络标识。
     input wire [7:0] s_data_a, s_data_b,
     input wire s_last, s_en_a, s_en_b,
+
     // tx_sof 标记首个前导字节，tx_eof 标记帧结束。
     // 发送途中缺少字节时，tx_underrun 变高并发送错误校验值。
     output reg tx_sof, tx_eof, tx_underrun,
+
     // tx_valid_a/b 为高时，tx_data_a/b 是对应网络本拍发送的字节。
     output reg [7:0] tx_data_a,
     output reg tx_valid_a,
     output reg [7:0] tx_data_b,
     output reg tx_valid_b);
+
     localparam GAP = 3'd0, PREAMBLE = 3'd1, DATA = 3'd2, FCS = 3'd3, DRAIN = 3'd4;
+
     // 前导码字节、帧起始定界符和校验值的初值。
     localparam PREAMBLE_BYTE = 8'h55, SFD_BYTE = 8'hd5, CRC_INIT = 32'hffffffff;
+
     // 两帧之间至少空闲的拍数。
     localparam IFG_CYCLES = 12;
+
     // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
     // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
     reg [1:0] fcs_index;
     reg [6:0] gap_left;
+
     // en_a/b 保存本帧使用的网络。
     // discard_tail 表示发送中途缺字节后，还要丢弃上游剩余内容。
     reg en_a, en_b, last_byte, discard_tail;
+
     // 两网分别计算帧校验值，正常时取反并先发低字节。
     // 发送途中缺字节时故意不取反，让接收方发现错误。
     reg [31:0] crc_a, crc_b, fcs_a, fcs_b;
@@ -47,8 +58,10 @@ module afdx_mac_tx (
         .data(s_data_b),
         .next_crc(next_b)
     );
+
     assign s_ready = byte_en && ((state == PREAMBLE && pre_index == 7) || (state == DATA && ! last_byte)
         || state == DRAIN);
+
     always @(posedge clk) begin
         if (reset) begin
             state <= GAP;
@@ -86,6 +99,7 @@ module afdx_mac_tx (
             end
             else if (byte_en) begin
                 case (state)
+
                     // GAP：空闲间隔已满且首字节就绪时，保存网络选择并转 PREAMBLE。
                     GAP : if (gap_left == 0 && s_valid) begin
                         en_a <= s_en_a;
@@ -102,6 +116,7 @@ module afdx_mac_tx (
                         state <= PREAMBLE;
                         tx_sof <= 1;
                     end
+
                     // PREAMBLE：发完前导码后转 DATA；上游缺字节时转 FCS。
                     PREAMBLE : begin
                         if (pre_index < 7) begin
@@ -128,6 +143,7 @@ module afdx_mac_tx (
                             fcs_b <= { 8'b0, crc_b[31:8] };
                         end
                     end
+
                     // DATA：逐字节发送内容，末字节或上游缺字节时转 FCS。
                     DATA : begin
                         if (last_byte || ! s_valid) begin
@@ -156,6 +172,7 @@ module afdx_mac_tx (
                             last_byte <= s_last;
                         end
                     end
+
                     // FCS：发完四字节校验值，正常转 GAP，缺字节时转 DRAIN。
                     FCS : begin
                         if (fcs_index == 3) begin
@@ -176,9 +193,11 @@ module afdx_mac_tx (
                             fcs_b <= { 8'b0, fcs_b[31:8] };
                         end
                     end
+
                     default : state <= GAP;
                 endcase
             end
         end
     end
+
 endmodule

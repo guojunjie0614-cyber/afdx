@@ -4,8 +4,10 @@
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
 module afdx_rtc (
+
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
     input wire clk, reset, enable,
+
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     input wire cfg_we, cfg_re,
@@ -13,6 +15,7 @@ module afdx_rtc (
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
     output reg [31:0] sync_count,
+
     // tx_valid 和 tx_ready 同为高时发送一个时间报文字节。
     // tx_last 标记第 48 个字节，tx_vl/port 选择发送通道。
     output reg tx_valid,
@@ -21,6 +24,7 @@ module afdx_rtc (
     output reg tx_last,
     output wire [6:0] tx_vl,
     output wire [15:0] tx_port,
+
     // rx_valid 为高时接收一个字节，满 48 字节后才置 rx_done。
     // rx_claim 为高表示接收端口匹配本服务。
     input wire rx_valid,
@@ -28,6 +32,7 @@ module afdx_rtc (
     input wire rx_last,
     input wire [15:0] rx_port,
     output wire rx_claim);
+
     localparam CALC_IDLE = 0;
     localparam CALC_START_T2 = 10;
     localparam CALC_WAIT_T2 = 11;
@@ -43,25 +48,34 @@ module afdx_rtc (
     localparam CALC_LATENCY = 8;
     localparam CALC_APPLY = 9;
     localparam NTP_EPOCH = 32'd3155673600;
+
     // tx_state 的取值。
     localparam TX_IDLE = 0, TX_GROUPS = 1, TX_WORD = 2, TX_BYTE = 3, TX_HANDSHAKE = 4;
+
     // 一秒的纳秒数（无符号和有符号两种写法，分别用于本地时间和带符号的校正量）、半秒的纳秒数。
     localparam NS_PER_SECOND = 32'd1000000000, NS_PER_SECOND_S = 32'sd1000000000;
     localparam HALF_SECOND_NS_S = 32'sd500000000;
+
     // 时钟周期 8 ns；纳秒数到达 LAST_TICK_NS 时，下一拍进位到秒。
     // 校正量从算出到生效经过 4 拍，所以再补 32 ns。
     localparam CLOCK_NS = 32'd8, LAST_TICK_NS = 32'd999999992, PIPELINE_NS = 32'd32;
+
     // 复位后的请求周期（125000 拍即 1 ms）和服务端口。
     localparam DEFAULT_PERIOD = 125000, NTP_PORT = 123;
+
     // 报文共 48 字节，PACKET_LAST 是末字节的下标。
     localparam PACKET_LAST = 47;
+
     // 报文首字节里的版本号和模式：3 是客户端请求，4 是服务端回应。
     localparam NTP_VERSION = 4, MODE_CLIENT = 3, MODE_SERVER = 4;
+
     // 回应和请求的报文首字，以及回应里的参考标识，含义见发送处的说明。
     localparam REPLY_HEADER = 32'h240104e6, REQUEST_HEADER = 32'h230004e6, REFERENCE_ID = 32'h4c4f434c;
+
     // 配置字的序号。
     localparam REG_CONTROL = 0, REG_PERIOD = 1, REG_VL = 2, REG_PORT = 3, REG_SECONDS = 4, REG_NS = 5;
     localparam REG_OFFSET_SEC = 6, REG_OFFSET_NS = 7;
+
     // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
     // active 表示服务已启用，master 为高表示本机是服务端。
     // 客户端用 period/countdown 控制请求间隔。
@@ -69,6 +83,7 @@ module afdx_rtc (
     reg [31:0] period, load_sec, load_ns;
     reg [6:0] vl;
     reg [15:0] port_number;
+
     // seconds/nanoseconds 保存本地时间。
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
@@ -76,14 +91,17 @@ module afdx_rtc (
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
     wire load_time = cfg_we && cfg_addr == 0 && cfg_wdata[2];
+
     assign tx_vl = vl;
     assign tx_port = port_number;
     assign rx_claim = active && rx_port == port_number;
+
     // 报文的 12 个 32 位字段保存在寄存器中。
     reg [383:0] rx_packet;
     reg rx_busy, rx_done;
     reg [5:0] rx_index;
     reg [31:0] received_sec, received_ns;
+
     // T1 是客户端发送请求的时间，由 req 保存。
     // T2 是服务端收到请求的时间，由 server_receive 保存。
     // T3 是服务端发送回应的时间，由 server_transmit 保存。
@@ -91,17 +109,20 @@ module afdx_rtc (
     // 这些时间都在服务接口传输首字节时采样。
     reg [31:0] req_sec, req_ns, echo_sec, echo_frac;
     reg [31:0] server_receive_sec, server_receive_ns, server_transmit_sec, server_transmit_ns;
+
     // waiting 表示客户端仍在等回应，reply_pending 表示服务端有待发回应。
     // echo_* 原样回送请求中的发送时间，供客户端匹配本次请求。
     reg waiting, reply_pending, tx_reply;
     reg [31:0] countdown, tx_word, tx_word_low, tx_word_high;
     reg [5:0] tx_index;
+
     // TX_IDLE：等待回应任务或请求到期，满足条件后转 TX_GROUPS。
     // TX_GROUPS：选出两组候选字，下一拍转 TX_WORD。
     // TX_WORD：选出当前字，下一拍转 TX_BYTE。
     // TX_BYTE：选出当前字节并置 valid，下一拍转 TX_HANDSHAKE。
     // TX_HANDSHAKE：等待握手；还有字节时转 TX_GROUPS，报文结束后转 TX_IDLE。
     reg [2:0] tx_state;
+
     // CALC_IDLE：等待匹配的回应，收到后转 CALC_START_T2。
     // CALC_START_T2：启动 T2 小数换算，下一拍转 CALC_WAIT_T2。
     // CALC_WAIT_T2：等待 T2 换算完成，然后转 CALC_START_T3。
@@ -161,6 +182,7 @@ module afdx_rtc (
         .done(decode_done),
         .result(decode_result)
     );
+
     always @(posedge clk) begin
         if (reset) begin
             encode_tx_start <= 0;
@@ -203,6 +225,7 @@ module afdx_rtc (
             end
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             active <= 0;
@@ -250,6 +273,7 @@ module afdx_rtc (
             endcase
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             seconds <= 0;
@@ -277,6 +301,7 @@ module afdx_rtc (
         end
         else nanoseconds <= nanoseconds + CLOCK_NS;
     end
+
     always @(posedge clk) begin
         if (reset) begin
             tx_valid <= 0;
@@ -323,7 +348,7 @@ module afdx_rtc (
             offset_ns <= 0;
             sync_count <= 0;
         end
-        else if (! active || ! enable || load_time) begin
+        else if ( ! active || ! enable || load_time) begin
             tx_valid <= 0;
             tx_last <= 0;
             tx_state <= TX_IDLE;
@@ -342,7 +367,7 @@ module afdx_rtc (
             if (rx_valid && rx_claim) begin
                 rx_packet <= { rx_packet[375:0], rx_data };
                 rx_busy <= ! rx_last;
-                if (! rx_busy) begin
+                if ( ! rx_busy) begin
                     received_sec <= seconds;
                     received_ns <= nanoseconds;
                     rx_index <= 1;
@@ -360,7 +385,7 @@ module afdx_rtc (
                     reply_pending <= 1;
                 end
                 // 重发报文还未发完时，不接受旧请求的回应。
-                else if (! master && waiting && tx_state == TX_IDLE && rx_packet[378:376] == MODE_SERVER
+                else if ( ! master && waiting && tx_state == TX_IDLE && rx_packet[378:376] == MODE_SERVER
                     && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
                     server_receive_sec <= rx_packet[127:96] - NTP_EPOCH;
                     server_transmit_sec <= rx_packet[63:32] - NTP_EPOCH;
@@ -370,24 +395,29 @@ module afdx_rtc (
             // 时钟偏差为 ((T2-T1)+(T3-T4))/2。
             // 秒和纳秒分开计算，再处理借位和进位。
             case (calc_state)
+
                 CALC_START_T2 : begin
                     decode_value <= rx_packet[95:64];
                     decode_start <= 1;
                     calc_state <= CALC_WAIT_T2;
                 end
+
                 CALC_WAIT_T2 : if (decode_done) begin
                     server_receive_ns <= decode_result;
                     calc_state <= CALC_START_T3;
                 end
+
                 CALC_START_T3 : begin
                     decode_value <= rx_packet[31:0];
                     decode_start <= 1;
                     calc_state <= CALC_WAIT_T3;
                 end
+
                 CALC_WAIT_T3 : if (decode_done) begin
                     server_transmit_ns <= decode_result;
                     calc_state <= CALC_DIFFERENCES;
                 end
+
                 CALC_DIFFERENCES : begin
                     diff_sec1 <= $signed (server_receive_sec) - $signed (req_sec);
                     diff_ns1 <= $signed (server_receive_ns) - $signed (req_ns);
@@ -395,21 +425,25 @@ module afdx_rtc (
                     diff_ns2 <= $signed (server_transmit_ns) - $signed (received_ns);
                     calc_state <= CALC_SUM;
                 end
+
                 CALC_SUM : begin
                     sum_sec <= diff_sec1 + diff_sec2;
                     sum_ns <= diff_ns1 + diff_ns2;
                     calc_state <= CALC_HALF;
                 end
+
                 CALC_HALF : begin
                     correction_sec <= sum_sec >>> 1;
                     correction_ns <= sum_ns >>> 1;
                     second_odd <= sum_sec[0];
                     calc_state <= CALC_HALF_SECOND;
                 end
+
                 CALC_HALF_SECOND : begin
                     correction_ns <= correction_ns + (second_odd ? HALF_SECOND_NS_S : 32'sd0);
                     calc_state <= CALC_NORMALIZE_OFFSET;
                 end
+
                 CALC_NORMALIZE_OFFSET : begin
                     if (correction_ns < 0) begin
                         correction_ns <= correction_ns + NS_PER_SECOND_S;
@@ -421,11 +455,13 @@ module afdx_rtc (
                     end
                     calc_state <= CALC_ADD_OFFSET;
                 end
+
                 CALC_ADD_OFFSET : begin
                     adjusted_sec <= seconds + correction_sec;
                     adjusted_ns <= nanoseconds + correction_ns;
                     calc_state <= CALC_NORMALIZE_TIME;
                 end
+
                 CALC_NORMALIZE_TIME : begin
                     if (adjusted_ns >= NS_PER_SECOND_S) begin
                         adjusted_ns <= adjusted_ns - NS_PER_SECOND;
@@ -433,10 +469,12 @@ module afdx_rtc (
                     end
                     calc_state <= CALC_LATENCY;
                 end
+
                 CALC_LATENCY : begin
                     adjusted_ns <= adjusted_ns + PIPELINE_NS;
                     calc_state <= CALC_APPLY;
                 end
+
                 CALC_APPLY : begin
                     offset_sec <= correction_sec;
                     offset_ns <= correction_ns;
@@ -447,6 +485,7 @@ module afdx_rtc (
             endcase
             // 服务端发送待答复的报文，客户端在请求周期到期时重发。
             case (tx_state)
+
                 TX_IDLE : begin
                     tx_valid <= 0;
                     tx_last <= 0;
@@ -457,13 +496,14 @@ module afdx_rtc (
                         tx_state <= TX_GROUPS;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if (! master && countdown == 0 && calc_state == CALC_IDLE && ! rx_done) begin
+                    else if ( ! master && countdown == 0 && calc_state == CALC_IDLE && ! rx_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;
                         tx_state <= TX_GROUPS;
                     end
                 end
+
                 TX_GROUPS : begin
                     // 字段分两组选择，以减少一拍内的数据选择层数。
                     case (tx_index[4:2])
@@ -488,10 +528,12 @@ module afdx_rtc (
                     endcase
                     tx_state <= TX_WORD;
                 end
+
                 TX_WORD : begin
                     tx_word <= tx_index[5] ? tx_word_high : tx_word_low;
                     tx_state <= TX_BYTE;
                 end
+
                 TX_BYTE : begin
                     case (tx_index[1:0])
                         0 : tx_data <= tx_word[31:24];
@@ -503,6 +545,7 @@ module afdx_rtc (
                     tx_last <= (tx_index == PACKET_LAST);
                     tx_state <= TX_HANDSHAKE;
                 end
+
                 TX_HANDSHAKE : if (tx_ready) begin
                     if (tx_index == 0 && ! tx_reply) begin
                         req_sec <= seconds;
@@ -519,4 +562,5 @@ module afdx_rtc (
             endcase
         end
     end
+
 endmodule

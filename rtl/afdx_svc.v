@@ -3,8 +3,10 @@
 // 接收时按端口交给对应服务，其余消息交给应用。
 // 它连接赛题的用户收发、时钟同步、网络管理和加卸载功能。
 module afdx_svc (
+
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+
     // app_tx_* 提供应用消息，m_* 把选中的消息交给发送核心。
     // valid 和 ready 同为高时传输一个字节，last 标记消息结束。
     input wire app_tx_valid,
@@ -14,6 +16,7 @@ module afdx_svc (
     input wire [6:0] app_tx_vl,
     input wire app_tx_port_en,
     input wire [15:0] app_tx_sport, app_tx_dport,
+
     // svc_tx_* 从低位到高位依次连接时钟同步、网络管理和加卸载。
     // 各组字段都按这个服务顺序拼接。
     input wire [2:0] svc_tx_valid,
@@ -30,6 +33,7 @@ module afdx_svc (
     output reg [6:0] m_vl,
     output reg m_port_en,
     output reg [15:0] m_sport, m_dport,
+
     // d_* 提供接收核心交付的用户字节、配置索引和端口。
     input wire d_valid,
     input wire [7:0] d_data,
@@ -37,6 +41,7 @@ module afdx_svc (
     input wire [11:0] d_vl,
     input wire [15:0] d_sport, d_dport,
     input wire d_net,
+
     // 三个服务在首字节到来时用 svc_rx_claim 表示是否接收此消息。
     // 没有服务接收时，app_rx_* 把消息交给应用。
     input wire [2:0] svc_rx_claim,
@@ -52,14 +57,17 @@ module afdx_svc (
     output wire [11:0] app_rx_vl,
     output wire [15:0] app_rx_sport, app_rx_dport,
     output wire app_rx_net);
+
     // 四个发送方的编号，也是 request 里对应的位：应用、时钟同步、网络管理、加卸载。
     localparam SRC_APP = 0, SRC_RTC = 1, SRC_SNMP = 2, SRC_LOAD = 3;
+
     // busy 为高时，owner 保存当前消息的发送方。
     // turn 指定下次从哪一方开始查找待发消息。
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
     reg busy, rx_active, rx_claimed;
     reg [1:0] owner, turn, selected;
     wire [3:0] request = { svc_tx_valid, app_tx_valid };
+
     // 模块从 turn 开始查找待发消息，选中后保持到整条消息发完。
     // 只有选中的发送方能收到 ready。
     always @ * begin
@@ -92,6 +100,7 @@ module afdx_svc (
         m_dport = app_tx_dport;
         svc_tx_ready = 0;
         case (selected)
+
             SRC_RTC : begin
                 m_valid = svc_tx_valid[0];
                 m_data = svc_tx_data[7:0];
@@ -102,6 +111,7 @@ module afdx_svc (
                 m_dport = svc_tx_dport[15:0];
                 svc_tx_ready[0] = m_ready;
             end
+
             SRC_SNMP : begin
                 m_valid = svc_tx_valid[1];
                 m_data = svc_tx_data[15:8];
@@ -112,6 +122,7 @@ module afdx_svc (
                 m_dport = svc_tx_dport[31:16];
                 svc_tx_ready[1] = m_ready;
             end
+
             SRC_LOAD : begin
                 m_valid = svc_tx_valid[2];
                 m_data = svc_tx_data[23:16];
@@ -124,6 +135,7 @@ module afdx_svc (
             end
         endcase
     end
+
     assign app_tx_ready = (selected == SRC_APP) && m_ready;
     assign svc_rx_valid = d_valid;
     assign svc_rx_data = d_data;
@@ -139,6 +151,7 @@ module afdx_svc (
     assign app_rx_sport = d_sport;
     assign app_rx_dport = d_dport;
     assign app_rx_net = d_net;
+
     // 发送末字节握手后，模块允许下一来源发送。
     // 接收时在首字节保存去向，在末字节释放这个选择。
     always @(posedge clk) begin
@@ -161,9 +174,10 @@ module afdx_svc (
                 end
             end
             if (d_valid) begin
-                if (! rx_active) rx_claimed <= | svc_rx_claim;
+                if ( ! rx_active) rx_claimed <= | svc_rx_claim;
                 rx_active <= ! d_last;
             end
         end
     end
+
 endmodule

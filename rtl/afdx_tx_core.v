@@ -3,11 +3,14 @@
 // 本模块对应赛题的发送、带宽控制和双网冗余发送功能。
 module afdx_tx_core #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, LOOKAHEAD = 512) (
+
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+
     // now 提供周期数，当前顶层将 byte_en 每拍置为有效。
     input wire [31:0] now,
     input wire byte_en,
+
     // m_valid 和 m_ready 同为高时接收一个用户字节。
     // m_last 标记消息末字节，m_vl 指定发送配置索引。
     input wire m_valid,
@@ -15,15 +18,18 @@ module afdx_tx_core #(
     input wire [7:0] m_data,
     input wire m_last,
     input wire [6:0] m_vl,
+
     // m_port_en 为高时使用消息自带端口，否则使用虚拟链路配置。
     input wire m_port_en,
     input wire [15:0] m_sport, m_dport,
+
     // cfg_* 写入 128 条虚拟链路的配置，每项占八个字。
     // cfg_ok 为高时允许写入，user_id 设置源以太网地址中的端系统编号。
     input wire cfg_we,
     input wire [9:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     input wire [15:0] user_id,
+
     // 对应 valid 为高时，tx_data_a/b 是两网本拍发送的字节。
     // 配置表、状态表和空闲页队列都初始化完成后，init_done 才变高。
     output wire [7:0] tx_data_a,
@@ -31,10 +37,13 @@ module afdx_tx_core #(
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
     output reg init_done,
+
     // ev_* 用单拍脉冲报告消息接纳、丢弃原因和两网发送完成。
     output wire ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage, ev_tx_a, ev_tx_b,
     output wire cfg_ok);
+
     localparam PAGES = (1 << TX_PAGE_AW), PAYLOAD_DEPTH = (1 << (TX_PAGE_AW + TX_OFF_AW));
+
     // init_addr 逐项将配置表置零，init_flush 等待最后一次写入完成。
     // 初始化完成后，外部配置使用这个写口。
     reg cfg_write, init_flush, cfg_initialized;
@@ -66,6 +75,7 @@ module afdx_tx_core #(
     wire [7:0] grant_sn, grant_page;
     wire s_valid, s_ready, s_last, s_en_a, s_en_b, tx_sof, tx_eof, tx_underrun;
     wire [7:0] s_data_a, s_data_b;
+
     // 配置表、调度状态和空闲页队列全部就绪后，才接收消息和配置。
     always @(posedge clk) begin
         if (reset) begin
@@ -79,8 +89,8 @@ module afdx_tx_core #(
         end
         else begin
             cfg_write <= 0;
-            if (! cfg_initialized) begin
-                if (! init_flush) begin
+            if ( ! cfg_initialized) begin
+                if ( ! init_flush) begin
                     cfg_write <= 1;
                     cfg_write_addr <= init_addr;
                     cfg_write_data <= 0;
@@ -97,6 +107,7 @@ module afdx_tx_core #(
             if (cfg_initialized && free_initialized && engine_initialized) init_done <= 1;
         end
     end
+
     // cfg 保存各虚拟链路的配置。
     // state 保存队列位置、序号和发送时间。
     // mnext 记录同一虚拟链路的下一条消息。
@@ -137,6 +148,7 @@ module afdx_tx_core #(
         .read_address(desc_read_addr),
         .read_data(desc_data)
     );
+
     // pnext 记录同一消息的下一页，payload 保存消息字节。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_pnext (
         .clk(clk),
@@ -156,6 +168,7 @@ module afdx_tx_core #(
         .read_address(payload_read_addr),
         .read_data(payload_data)
     );
+
     // 消息先存入空闲页，再由调度器选择，组帧模块发送后归还页。
     afdx_tx_free #(.TX_PAGE_AW(TX_PAGE_AW)) free_pages (
         // 时钟和复位
@@ -340,4 +353,5 @@ module afdx_tx_core #(
         .tx_data_b(tx_data_b),
         .tx_valid_b(tx_valid_b)
     );
+
 endmodule

@@ -3,19 +3,23 @@
 // 本模块完成赛题的接收消息交付，并释放已读完的缓存空间。
 module afdx_rx_deliver #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
+
     // dq_count 表示等待交付的消息数，dq_entries 保存这些消息的信息。
     // 保存队首消息后，dq_pop 输出一拍，通知队列移除该项。
     input wire [RX_DQ_AW:0] dq_count,
     input wire [32 * (RX_RING_AW + 56) - 1:0] dq_entries,
     output reg dq_pop,
+
     // ring_a/b_* 从选中网络的缓存读字节。
     // read_ptr_a/b 通知解析器哪些空间已读完，可以重新使用。
     output reg ring_a_re, ring_b_re,
     output reg [RX_RING_AW - 1:0] ring_a_ra, ring_b_ra,
     input wire [7:0] ring_a_q, ring_b_q,
     output reg [RX_RING_AW:0] read_ptr_a, read_ptr_b,
+
     // d_valid 为高时，接收方必须取走本拍 d_data，d_last 标记末字节。
     // 虚拟链路索引、端口和来源网络在整条消息期间保持不变。
     output reg d_valid,
@@ -24,13 +28,17 @@ module afdx_rx_deliver #(
     output reg [11:0] d_vl,
     output reg [15:0] d_sport, d_dport,
     output reg d_net);
+
     localparam DQ_WIDTH = RX_RING_AW + 56;
+
     // head_phase 的取值：取出队首消息信息的三步。
     localparam HEAD_IDLE = 0, HEAD_SELECT = 1, HEAD_RELEASE = 2;
+
     // rd_ptr 指向下一条消息。
     // 消息信息分两级选择，以减少一拍内的选择层数。
     reg [RX_DQ_AW - 1:0] rd_ptr;
     wire [4:0] read_index = rd_ptr;
+
     // HEAD_IDLE：有消息且收到读请求时选择组内项，然后转 HEAD_SELECT。
     // HEAD_SELECT：选出完整队首信息并移除该项，然后转 HEAD_RELEASE。
     // HEAD_RELEASE：等待 dq_req 撤销，然后转 HEAD_IDLE。
@@ -38,12 +46,14 @@ module afdx_rx_deliver #(
     reg [1:0] head_bank;
     reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
     reg dq_req, dq_valid;
+
     // issuing/left 控制连续读取和剩余字节数。
     // valid_pipe/last_pipe 将有效与末字节标记对齐到读出数据。
     reg issuing;
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
     reg [7:0] data_a, data_b;
+
     always @(posedge clk) begin
         if (reset) begin
             dq_req <= 1;
@@ -81,51 +91,60 @@ module afdx_rx_deliver #(
             dq_valid <= 0;
             dq_pop <= 0;
             case (head_phase)
+
                 HEAD_IDLE : if (dq_req && dq_count != 0) begin
                     // 先在四组内分别选一项，下一拍再从四组结果中选出一项。
                     case (read_index[2:0])
+
                         0 : begin
                             group0 <= dq_entries[1 * DQ_WIDTH - 1:0 * DQ_WIDTH];
                             group1 <= dq_entries[9 * DQ_WIDTH - 1:8 * DQ_WIDTH];
                             group2 <= dq_entries[17 * DQ_WIDTH - 1:16 * DQ_WIDTH];
                             group3 <= dq_entries[25 * DQ_WIDTH - 1:24 * DQ_WIDTH];
                         end
+
                         1 : begin
                             group0 <= dq_entries[2 * DQ_WIDTH - 1:1 * DQ_WIDTH];
                             group1 <= dq_entries[10 * DQ_WIDTH - 1:9 * DQ_WIDTH];
                             group2 <= dq_entries[18 * DQ_WIDTH - 1:17 * DQ_WIDTH];
                             group3 <= dq_entries[26 * DQ_WIDTH - 1:25 * DQ_WIDTH];
                         end
+
                         2 : begin
                             group0 <= dq_entries[3 * DQ_WIDTH - 1:2 * DQ_WIDTH];
                             group1 <= dq_entries[11 * DQ_WIDTH - 1:10 * DQ_WIDTH];
                             group2 <= dq_entries[19 * DQ_WIDTH - 1:18 * DQ_WIDTH];
                             group3 <= dq_entries[27 * DQ_WIDTH - 1:26 * DQ_WIDTH];
                         end
+
                         3 : begin
                             group0 <= dq_entries[4 * DQ_WIDTH - 1:3 * DQ_WIDTH];
                             group1 <= dq_entries[12 * DQ_WIDTH - 1:11 * DQ_WIDTH];
                             group2 <= dq_entries[20 * DQ_WIDTH - 1:19 * DQ_WIDTH];
                             group3 <= dq_entries[28 * DQ_WIDTH - 1:27 * DQ_WIDTH];
                         end
+
                         4 : begin
                             group0 <= dq_entries[5 * DQ_WIDTH - 1:4 * DQ_WIDTH];
                             group1 <= dq_entries[13 * DQ_WIDTH - 1:12 * DQ_WIDTH];
                             group2 <= dq_entries[21 * DQ_WIDTH - 1:20 * DQ_WIDTH];
                             group3 <= dq_entries[29 * DQ_WIDTH - 1:28 * DQ_WIDTH];
                         end
+
                         5 : begin
                             group0 <= dq_entries[6 * DQ_WIDTH - 1:5 * DQ_WIDTH];
                             group1 <= dq_entries[14 * DQ_WIDTH - 1:13 * DQ_WIDTH];
                             group2 <= dq_entries[22 * DQ_WIDTH - 1:21 * DQ_WIDTH];
                             group3 <= dq_entries[30 * DQ_WIDTH - 1:29 * DQ_WIDTH];
                         end
+
                         6 : begin
                             group0 <= dq_entries[7 * DQ_WIDTH - 1:6 * DQ_WIDTH];
                             group1 <= dq_entries[15 * DQ_WIDTH - 1:14 * DQ_WIDTH];
                             group2 <= dq_entries[23 * DQ_WIDTH - 1:22 * DQ_WIDTH];
                             group3 <= dq_entries[31 * DQ_WIDTH - 1:30 * DQ_WIDTH];
                         end
+
                         7 : begin
                             group0 <= dq_entries[8 * DQ_WIDTH - 1:7 * DQ_WIDTH];
                             group1 <= dq_entries[16 * DQ_WIDTH - 1:15 * DQ_WIDTH];
@@ -136,6 +155,7 @@ module afdx_rx_deliver #(
                     head_bank <= read_index[4:3];
                     head_phase <= HEAD_SELECT;
                 end
+
                 HEAD_SELECT : begin
                     case (head_bank)
                         0 : dq_data <= group0;
@@ -148,7 +168,9 @@ module afdx_rx_deliver #(
                     rd_ptr <= rd_ptr + 1'b1;
                     head_phase <= HEAD_RELEASE;
                 end
-                HEAD_RELEASE : if (! dq_req) head_phase <= HEAD_IDLE;
+
+                HEAD_RELEASE : if ( ! dq_req) head_phase <= HEAD_IDLE;
+
                 default : head_phase <= HEAD_IDLE;
             endcase
             ring_a_re <= 0;
@@ -192,4 +214,5 @@ module afdx_rx_deliver #(
             end
         end
     end
+
 endmodule

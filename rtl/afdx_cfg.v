@@ -2,8 +2,10 @@
 // 输入来自顶层配置口和各模块的事件脉冲，读结果返回顶层。
 // 本模块为赛题的收发配置和网络管理提供寄存器接口。
 module afdx_cfg (
+
     // tx_ready 为高表示收发核心都已初始化。
     input wire clk, reset, tx_ready,
+
     // cfg_wr 和 cfg_ready 同为高时接收写请求。
     // cfg_rd 发起读请求，两拍后 cfg_rvalid 指示 cfg_rdata 有效。
     // 此读口返回寄存器和统计值，不读回配置存储表。
@@ -12,10 +14,12 @@ module afdx_cfg (
     input wire [31:0] cfg_wdata,
     output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
+
     // user_id 是源以太网地址中的端系统编号。
     // tx/rx_cfg_ok 为高时，对应核心允许写配置。
     output reg [15:0] user_id,
     input wire tx_cfg_ok, rx_cfg_ok,
+
     // tx_cfg_* 写发送配置表。
     // rx_map_we 写编号到索引的映射，rx_cfg_we 写接收配置。
     output reg tx_cfg_we,
@@ -24,6 +28,7 @@ module afdx_cfg (
     output reg rx_map_we, rx_cfg_we,
     output reg [15:0] rx_cfg_addr,
     output reg [31:0] rx_cfg_wdata,
+
     // ev_tx[0] 表示消息被接纳。
     // ev_tx[1] 表示所选虚拟链路未启用。
     // ev_tx[2] 表示消息队列已满。
@@ -32,6 +37,7 @@ module afdx_cfg (
     // ev_tx[5] 表示 A 网发送完成。
     // ev_tx[6] 表示 B 网发送完成。
     input wire [6:0] ev_tx,
+
     // ev_a 和 ev_b 分别报告 A 网和 B 网的事件。
     // 位 0 表示帧校验通过。
     // 位 1 表示帧校验值错误。
@@ -42,6 +48,7 @@ module afdx_cfg (
     // 位 6 表示序号检查失败。
     // 位 7 表示接收缓存或交付队列已满。
     input wire [7:0] ev_a, ev_b,
+
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
     // ev_gdrop 表示适配器丢帧，当前顶层将它固定为零。
     // 服务模块的读值由对应 rdata/count 输入提供。
@@ -49,34 +56,41 @@ module afdx_cfg (
     input wire [1:0] ev_gdrop,
     input wire [31:0] rtc_rdata, rtc_sync_count,
     input wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data);
+
     // 0x01000–0x013ff 对应发送配置表。
     // 0x10000–0x1ffff 对应接收编号映射表。
     // 0x20000–0x20fff 对应接收配置表。
     wire select_tx = (cfg_addr[17:10] == 8'b00000100);
     wire select_map = (cfg_addr[17:16] == 2'b01);
     wire select_rx = (cfg_addr[17:12] == 6'b100000);
+
     // 单个寄存器的地址（按 32 位字编址）和版本号。
     localparam ADDR_VERSION = 18'h00000, ADDR_STATUS = 18'h00001, ADDR_USER_ID = 18'h00002;
     localparam ADDR_RM_DROP = 18'h00058, ADDR_DELIVER = 18'h00059;
     localparam ADDR_A_GDROP = 18'h0005a, ADDR_B_GDROP = 18'h0005b, ADDR_RTC_SYNC_COUNT = 18'h00088;
     localparam VERSION_VALUE = 32'hc3110000;
+
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
     // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
     // 0x90、0x98、0xa0 组是网络管理，0xb0、0xb8 组是加卸载。
     localparam GROUP_TX_COUNT = 15'h0008, GROUP_A_COUNT = 15'h0009, GROUP_B_COUNT = 15'h000a;
     localparam GROUP_RTC = 15'h0010, GROUP_SNMP_CONTROL = 15'h0012, GROUP_SNMP_STATUS = 15'h0013;
     localparam GROUP_SNMP_DESCR = 15'h0014, GROUP_LOAD = 15'h0016, GROUP_LOAD_EXTRA = 15'h0017;
+
     // read_select 的取值：第二拍从哪一组读值里选结果。
     localparam SEL_REGS = 3'd0, SEL_TX = 3'd1, SEL_A = 3'd2, SEL_B = 3'd3, SEL_RTC = 3'd4;
     localparam SEL_SNMP_CONTROL = 3'd5, SEL_SNMP_STATUS = 3'd6, SEL_SHARED = 3'd7;
+
     // read_loader 的取值：SEL_SHARED 这一组里再选哪个读值。
     localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
+
     // read_valid/read_select 将读有效标记与两拍后的数据对齐。
     // read_loader 选择共享地址组中的服务读值。
     reg read_valid;
     reg [2:0] read_select;
     reg [1:0] read_loader;
     reg [31:0] read_regs, read_tx, read_a, read_b;
+
     // 这 27 个计数器分别累计一种事件。
     reg [31:0] count_accept;
     reg [31:0] count_drop_dis;
@@ -104,6 +118,7 @@ module afdx_cfg (
     reg [31:0] count_rm_drop;
     reg [31:0] count_deliver;
     reg [31:0] count_a_gdrop, count_b_gdrop;
+
     always @(posedge clk) begin
         if (reset) begin
             count_accept <= 0;
@@ -165,6 +180,7 @@ module afdx_cfg (
             if (ev_gdrop[1]) count_b_gdrop <= count_b_gdrop + 32'd1;
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             cfg_ready <= 0;
@@ -178,7 +194,7 @@ module afdx_cfg (
             rx_cfg_wdata <= 0;
         end
         // 等待核心接收写请求时，模块保持地址和数据，并拉低 cfg_ready。
-        else if (! tx_ready) begin
+        else if ( ! tx_ready) begin
             cfg_ready <= 0;
             tx_cfg_we <= 0;
             rx_map_we <= 0;
@@ -220,6 +236,7 @@ module afdx_cfg (
             end
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             read_valid <= 0;
@@ -309,4 +326,5 @@ module afdx_cfg (
             endcase
         end
     end
+
 endmodule
