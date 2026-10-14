@@ -121,6 +121,22 @@ module afdx_snmp (
     localparam B_BINDING_TAG = 21, B_BINDING_LENGTH = 22, B_OID_TAG = 23, B_OID_LENGTH = 24, B_OID = 25;
     localparam B_VALUE_TAG = 26, B_VALUE_LENGTH = 27, B_VALUE = 28;
 
+    // 对象标识符开头的 1.3 合并编码为 43；私有分支的企业数字为 424242。
+    // 企业数字使用每字节七个有效位编码为 0x99、0xf2、0x32。
+    localparam OID_FIRST_ARC = 43, OID_FIRST_BYTE = 8'h2b, OID_ENTERPRISE_ARC = 424242;
+    localparam OID_ENTERPRISE_BYTE0 = 8'h99, OID_ENTERPRISE_BYTE1 = 8'hf2, OID_ENTERPRISE_BYTE2 = 8'h32;
+    localparam SYSTEM_OBJECT_COUNT = 2, LAST_OBJECT_INDEX = 35;
+    localparam SYSTEM_OID_LAST_ARC = 7, PRIVATE_OID_LAST_ARC = 8;
+    localparam SYSTEM_OID_BYTES = 8, PRIVATE_OID_BYTES = 11;
+
+    // 请求与回应各有 256 字节存储；请求写到下标 255 后不能再增加字节。
+    localparam PACKET_BUFFER_BYTES = 256, REQUEST_LAST_POS = 255;
+    localparam ADDR_USER_ID = 2;
+
+    // snmpTrapOID.0 变量绑定的固定编码，最后一个字节另填事件编号。
+    localparam TRAP_OID_WORD0 = 64'h3017060a2b060106, TRAP_OID_WORD1 = 64'h0301010401000609;
+    localparam TRAP_OID_WORD2 = 64'h2b06010603010105, TRAP_OID_LAST_POS = 24;
+
     // cold_pending/auth_pending 保存尚未发送的启动和认证失败通知。
     // 通知发送完成后，traps_sent 才增加。
     reg configured, trap_enabled, cold_pending, auth_pending, sending_trap;
@@ -182,7 +198,7 @@ module afdx_snmp (
 
     // 两个 256 字节存储器分别保存请求和回应。
     // 即使发送暂停，请求内容仍可用于生成错误回应。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) request_ram (
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PACKET_BUFFER_BYTES)) request_ram (
         .clk(clk),
         .write_enable(req_we),
         .write_address(req_wa),
@@ -191,7 +207,7 @@ module afdx_snmp (
         .read_address(req_ra),
         .read_data(req_q)
     );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) response_ram (
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PACKET_BUFFER_BYTES)) response_ram (
         .clk(clk),
         .write_enable(out_we),
         .write_address(out_wa),
@@ -215,14 +231,14 @@ module afdx_snmp (
         begin
             mib_arc = 0;
             case (position)
-                0 : mib_arc = 43;
+                0 : mib_arc = OID_FIRST_ARC;
                 1 : mib_arc = 6;
                 2 : mib_arc = 1;
-                3 : mib_arc = item < 2 ? 2 : 4;
+                3 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 2 : 4;
                 4 : mib_arc = 1;
-                5 : mib_arc = item < 2 ? 1 : 424242;
-                6 : mib_arc = item < 2 ? (item == 0 ? 1 : 3) : 3;
-                7 : mib_arc = item < 2 ? 0 : { 26'b0, item } - 32'd1;
+                5 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 1 : OID_ENTERPRISE_ARC;
+                6 : mib_arc = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 1 : 3) : 3;
+                7 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 0 : { 26'b0, item } - 32'd1;
                 default : mib_arc = 0;
             endcase
         end
@@ -234,14 +250,14 @@ module afdx_snmp (
         begin
             mib_oid_byte = 0;
             case (position)
-                0 : mib_oid_byte = 8'h2b;
+                0 : mib_oid_byte = OID_FIRST_BYTE;
                 1 : mib_oid_byte = 6;
                 2 : mib_oid_byte = 1;
-                3 : mib_oid_byte = item < 2 ? 2 : 4;
+                3 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 2 : 4;
                 4 : mib_oid_byte = 1;
-                5 : mib_oid_byte = item < 2 ? 1 : 8'h99;
-                6 : mib_oid_byte = item < 2 ? (item == 0 ? 1 : 3) : 8'hf2;
-                7 : mib_oid_byte = item < 2 ? 0 : 8'h32;
+                5 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 1 : OID_ENTERPRISE_BYTE0;
+                6 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 1 : 3) : OID_ENTERPRISE_BYTE1;
+                7 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 0 : OID_ENTERPRISE_BYTE2;
                 8 : mib_oid_byte = 3;
                 9 : mib_oid_byte = { 2'b0, item } - 8'd1;
                 default : mib_oid_byte = 0;
@@ -260,7 +276,7 @@ module afdx_snmp (
                 0 : mib_address = ADDR_DESCR;
                 1 : mib_address = ADDR_UPTIME;
                 2 : mib_address = 0;
-                3 : mib_address = 2;
+                3 : mib_address = ADDR_USER_ID;
                 4 : mib_address = ADDR_RTC_SECONDS;
                 5 : mib_address = ADDR_RTC_SYNC;
                 33 : mib_address = ADDR_REQUESTS;
@@ -494,7 +510,7 @@ module afdx_snmp (
                         req_wdata <= rx_data;
                         rx_count <= rx_count + 9'd1;
                     end
-                    if (rx_count == 255) overflow <= 1;
+                    if (rx_count == REQUEST_LAST_POS) overflow <= 1;
                     if (rx_last) begin
                         request_length <= rx_count + 9'd1;
                         state <= overflow ? IDLE : START;
@@ -585,7 +601,7 @@ module afdx_snmp (
                 // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
                 DISPATCH : begin
                     value_pos <= 0;
-                    if (field_length > 256 || cursor + field_length > request_length) state <= IDLE;
+                    if (field_length > PACKET_BUFFER_BYTES || cursor + field_length > request_length) state <= IDLE;
                     else case (field)
 
                         FIELD_MESSAGE : if (tag_value == TAG_SEQUENCE) begin
@@ -733,10 +749,10 @@ module afdx_snmp (
                     else if (decoded_arc < expected_arc) state <= get_next ? FOUND : LOOK_NEXT;
                     else if (decoded_arc > expected_arc) state <= LOOK_NEXT;
                     else if (oid_pos + 1 == oid_length) begin
-                        if (arc_index == (candidate < 2 ? 7 : 8)) state <= get_next ? LOOK_NEXT : FOUND;
+                        if (arc_index == (candidate < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC)) state <= get_next ? LOOK_NEXT : FOUND;
                         else state <= get_next ? FOUND : LOOK_NEXT;
                     end
-                    else if (arc_index == (candidate < 2 ? 7 : 8)) state <= LOOK_NEXT;
+                    else if (arc_index == (candidate < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC)) state <= LOOK_NEXT;
                     else begin
                         oid_acc <= 0;
                         arc_index <= arc_index + 4'd1;
@@ -747,7 +763,7 @@ module afdx_snmp (
                 end
 
                 // LOOK_NEXT：换下一个对象重试，全部试完后转 MISSING。
-                LOOK_NEXT : if (candidate == 35) state <= MISSING;
+                LOOK_NEXT : if (candidate == LAST_OBJECT_INDEX) state <= MISSING;
                 else begin
                     candidate <= candidate + 6'd1;
                     state <= LOOK_START;
@@ -855,14 +871,14 @@ module afdx_snmp (
                 // ======== 第四部分：计算各层长度，构造回应或事件通知 ========
                 // VALUE_PREP：确定回应值的类型和长度，然后转 LEN1。
                 VALUE_PREP : begin
-                    response_oid_length <= object_index < 2 ? 8 : 11;
+                    response_oid_length <= object_index < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_BYTES : PRIVATE_OID_BYTES;
                     if (object_index == 0) begin
                         value_tag <= 4;
                         value_length <= 16;
                         value_shift <= 0;
                     end
                     else begin
-                        value_tag <= object_index == 1 ? TYPE_TIMETICKS : (object_index >= 2
+                        value_tag <= object_index == 1 ? TYPE_TIMETICKS : (object_index >= SYSTEM_OBJECT_COUNT
                             && object_index <= 4 ? TYPE_GAUGE32 : TYPE_COUNTER32);
                         if (value_number[31]) begin
                             value_length <= 5;
@@ -1164,9 +1180,9 @@ module afdx_snmp (
                 // TRAP_WORD：选择事件编号所在的字，然后转 TRAP_BYTE。
                 TRAP_WORD : begin
                     case (part_pos[4:3])
-                        0 : trap_word <= 64'h3017060a2b060106;
-                        1 : trap_word <= 64'h0301010401000609;
-                        2 : trap_word <= 64'h2b06010603010105;
+                        0 : trap_word <= TRAP_OID_WORD0;
+                        1 : trap_word <= TRAP_OID_WORD1;
+                        2 : trap_word <= TRAP_OID_WORD2;
                         3 : trap_word <= { trap_event, 56'b0 };
                     endcase
                     state <= TRAP_BYTE;
@@ -1185,7 +1201,7 @@ module afdx_snmp (
                         7 : emit (trap_word[7:0]);
                     endcase
                     part_pos <= part_pos + 5'd1;
-                    state <= part_pos == 24 ? TX_FLUSH : TRAP_WORD;
+                    state <= part_pos == TRAP_OID_LAST_POS ? TX_FLUSH : TRAP_WORD;
                 end
 
                 // ======== 第五部分：逐字节发送 ========
@@ -1234,7 +1250,7 @@ module afdx_snmp (
                 cold_pending <= 0;
                 auth_pending <= 0;
             end
-            if (cfg_we && cfg_addr == 8'h90 && cfg_wdata[0] && ! configured && trap_enabled) cold_pending <= 1;
+            if (cfg_we && cfg_addr == REG_ENABLE && cfg_wdata[0] && ! configured && trap_enabled) cold_pending <= 1;
         end
     end
 

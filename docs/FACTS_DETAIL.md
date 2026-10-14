@@ -1,6 +1,6 @@
 # AFDX 端系统补充数据
 
-源码行号和规模按当前 `rtl/`（2026-10-14 整理后）统计；回归、评委入口、性能、异常注入的数据来自 2026-10-14 在当前代码上的运行，汇总见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
+源码行号和规模按当前 `rtl/`（2026-10-14 排版与常量命名后）统计；回归、评委入口、性能、异常注入的数据来自 2026-10-14 在当前代码上的运行，汇总见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
 
 ## 逐项回归与评委入口
 
@@ -100,7 +100,7 @@
 | `afdx_tx_engine` | 1 | 1790 | 1460 | 1029 | 0 |
 | `afdx_tx_free` | 1 | 206 | 181 | 126 | 2048 |
 
-README 的命令行 LUT 29964 来自 [cli_resources.rpt](evidence/cli_resources.rpt) 的 `Total LUTs`；事实清单的 29963 来自 [cli_synthesis_summary.json](evidence/cli_synthesis_summary.json) 的 `lcells`。二者分别统计 LUT 和网表逻辑单元，不是笔误，不互相替换。
+当前命令行 LUT 29968 来自 `out/synth/AFDX_top/20261014_234301_767138/utilization_synth.rpt` 的 `Total LUTs`，逻辑单元 29967 来自同目录 `summary.json` 的 `lcells`；二者统计口径不同。保留的 [cli_resources.rpt](evidence/cli_resources.rpt) 与 [cli_synthesis_summary.json](evidence/cli_synthesis_summary.json) 是此前基线，不能当作本次数值；当前原始输出在 `out/`，按事实清单第三节的命令重建。
 
 ## 各工况的时延细分
 
@@ -141,14 +141,14 @@ README 的命令行 LUT 29964 来自 [cli_resources.rpt](evidence/cli_resources.
 
 ## 综合后最慢路径
 
-在 [界面时序库](evidence/gui_synthesis_timing.pb) 和 [命令行时序库](evidence/cli_synthesis_timing.pb) 中以只读方式执行 SQL：`SELECT * FROM elinx_intra_clock_longest_sync_path_report ORDER BY slack, path_id LIMIT 1;`，按最小建立裕量选路径。延迟和裕量字段单位为 ps，表内换算为 ns。两条路径的 `net_delay` 均为 0，不能用来证明布线后能运行在该频率。
+界面数据取 [界面时序库](evidence/gui_synthesis_timing.pb)，当前命令行数据取 `out/synth/AFDX_top/20261014_234301_767138/synthesized_timing.pb`；[此前命令行时序库](evidence/cli_synthesis_timing.pb) 保留为基线。以只读方式执行 SQL：`SELECT * FROM elinx_intra_clock_longest_sync_path_report ORDER BY slack, path_id LIMIT 1;`，按最小建立裕量选路径。延迟和裕量字段单位为 ps，表内换算为 ns。两条路径的 `net_delay` 均为 0，不能用来证明布线后能运行在该频率。
 
 | 综合方式 | 模块与路径起点 → 终点 | 逻辑级数 | 逻辑延迟（ns） | 建立裕量（ns） |
 |---|---|---:|---:|---:|
 | 界面 | `afdx_615a:loader`；`name_pos[1]~I\|ff/Q` → `packet_type[1]~I\|ff/D` | 15 | 5.403 | +2.522 |
 | 命令行 | `afdx_snmp:snmp`；`cursor[0]` → `state[1]` | 23 | 5.176 | +2.749 |
 
-命令行库中的起终点为 `c3_native_cell_9490|ff/Q` 和 `c3_native_cell_10117|ff/D`；命令行综合网表里这两个单元的例化（摘录见 [cli_design_excerpt.txt](evidence/cli_design_excerpt.txt)）通过 `regout` 将其对应到上表寄存器。这是综合后的单元路径，不是源码行间的执行顺序。
+当前命令行库中的起终点为 `c3_native_cell_9477|ff/Q` 和 `c3_native_cell_10104|ff/D`；同目录 `design.vqm` 的 `regout` 将其对应到上表寄存器，位置为第 460913–460919、286177–286185 行。[此前网表摘录](evidence/cli_design_excerpt.txt) 保留为基线。这是综合后的单元路径，不是源码行间的执行顺序。
 
 ## 设计默认参数
 
@@ -156,39 +156,39 @@ README 的命令行 LUT 29964 来自 [cli_resources.rpt](evidence/cli_resources.
 
 | 参数或容量 | 默认数值与含义 | 源码出处 |
 |---|---|---|
-| 发送负载缓冲 | 256 页 × 512 字节 = 131072 字节（128 KiB），双网共用一份负载。 | `AFDX_top.v:7–9` 的 `TX_PAGE_AW=8/TX_OFF_AW=9`；`afdx_tx_core.v:37,150` 的 `PAGES/PAYLOAD_DEPTH/tx_payload` |
-| 发送描述与链表 | 消息描述 256 项×44 位；消息链和页链分别 256 项×8 位；空闲页池 256 页。 | `afdx_tx_core.v:122–150`；`afdx_tx_free.v` 的 `PAGES` |
-| 接收字节环 | A、B 网各 4096 字节（各 4 KiB）。 | `AFDX_top.v:10` 的 `RX_RING_AW=12`；`afdx_rx_core.v:160,169` |
-| 接收描述队列 | 共用 32 项，每项 68 位；按 `2**RX_DQ_AW` 和 `RX_RING_AW+56` 计算。 | `AFDX_top.v:11`；`afdx_rx_core.v:59–77`；`afdx_rx_engine.v` 的 `DQ_DEPTH` |
-| 虚拟链路容量 | 每端发送 128 条、接收 4096 条；接收映射表 65536 项×13 位。 | `afdx_tx_core.v:104,113`；`afdx_rx_core.v:132–150` |
-| 复位后初始化 | 解除复位到观察到顶层就绪相隔 65538 拍，即 524.304 µs；记录 `R 5`、`I 65543`。 | `afdx_rx_core.v:100–113` 清 65536 项后收尾，`AFDX_top.v:255–257` 注册就绪；[fault_rx_events.txt](evidence/fault_rx_events.txt) 第 4、6 行；其 `G CLOCK_NS` 在 [fault_events.txt](evidence/fault_events.txt) |
-| 工作节拍 | 共用 125 MHz 时钟，即每拍 8 ns；复位后每拍处理一个线路字节。 | `afdx_timebase.v` 的 `byte_en`；`AFDX_top.v:260–266`；`fault_events.txt` 的 `G CLOCK_NS 8` |
-| 帧间隔 | 12 拍，即 96 ns；末帧之后首个空闲拍加后续 11 拍。 | `afdx_mac_tx.v:27,159–169` 的 `gap_left` |
+| 发送负载缓冲 | 256 页 × 512 字节 = 131072 字节（128 KiB），双网共用一份负载。 | `AFDX_top.v:7–9` 的 `TX_PAGE_AW=8/TX_OFF_AW=9`；`afdx_tx_core.v:45,162` 的 `PAGES/PAYLOAD_DEPTH/tx_payload` |
+| 发送描述与链表 | 消息描述 256 项×44 位；消息链和页链分别 256 项×8 位；空闲页池 256 页。 | `afdx_tx_core.v:133–162`；`afdx_tx_free.v` 的 `PAGES` |
+| 接收字节环 | A、B 网各 4096 字节（各 4 KiB）。 | `AFDX_top.v:10` 的 `RX_RING_AW=12`；`afdx_rx_core.v:174,183` |
+| 接收描述队列 | 共用 32 项，每项 68 位；按 `2**RX_DQ_AW` 和 `RX_RING_AW+56` 计算。 | `AFDX_top.v:11`；`afdx_rx_core.v:66–88`；`afdx_rx_engine.v` 的 `DQ_DEPTH` |
+| 虚拟链路容量 | 每端发送 128 条、接收 4096 条；接收映射表 65536 项×13 位。 | `afdx_tx_core.v:115,124`；`afdx_rx_core.v:145–163` |
+| 复位后初始化 | 解除复位到观察到顶层就绪相隔 65538 拍，即 524.304 µs；记录 `R 5`、`I 65543`。 | `afdx_rx_core.v:112–125` 清 65536 项后收尾，`AFDX_top.v:273–275` 注册就绪；[fault_rx_events.txt](evidence/fault_rx_events.txt) 第 4、6 行；其 `G CLOCK_NS` 在 [fault_events.txt](evidence/fault_events.txt) |
+| 工作节拍 | 共用 125 MHz 时钟，即每拍 8 ns；复位后每拍处理一个线路字节。 | `afdx_timebase.v` 的 `byte_en`；`AFDX_top.v:279–285`；`fault_events.txt` 的 `G CLOCK_NS 8` |
+| 帧间隔 | 12 拍，即 96 ns；末帧之后首个空闲拍加后续 11 拍。 | `afdx_mac_tx.v:35,176–186` 的 `gap_left` |
 | 调度前瞻 | `LOOKAHEAD=512` 拍，即 4.096 µs；它是调度参数，不是实测端到端时延。 | `AFDX_top.v:9`；`afdx_tx_engine.v` 的 `LOOKAHEAD` |
-| 用户消息长度 | 每条最多 1471 字节，还受该链路配置的最大长度限制。 | `afdx_tx_buf.v:53,183` 的 `MAX_PAYLOAD` |
-| 网络管理对象 | 简单网络管理协议（Simple Network Management Protocol，SNMP）共 36 个对象：2 个系统对象、34 个私有对象。 | `afdx_snmp.v:172–192,682` 的 `mib_arc/candidate` |
-| 网络管理请求 | 请求缓存 256 字节，最多接收 256 字节；超过后不进入解析；每次处理 1 个变量绑定。 | `afdx_snmp.v:150–161,446–458` 的 `request_ram/rx_count/overflow`；报文解析状态机 |
-| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:235–271` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
-| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:142,509–512,652–666` 的 `timeout_cycles/retry_limit/retries` |
-| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:142,509,512` 的 `request_port/protocol_a4` |
-| 实时时钟分辨率 | 实时时钟（Real-Time Clock，RTC）每拍增加 8 ns，默认同步周期 125000 拍（1 ms）；分辨率不等于同步精度。 | `afdx_rtc.v:52–55,210,274–278` 的 `period/nanoseconds` |
+| 用户消息长度 | 每条最多 1471 字节，还受该链路配置的最大长度限制。 | `afdx_tx_buf.v:62,201` 的 `MAX_PAYLOAD` |
+| 网络管理对象 | 简单网络管理协议（Simple Network Management Protocol，SNMP）共 36 个对象：2 个系统对象、34 个私有对象。 | `afdx_snmp.v:222–243,766` 的 `mib_arc/candidate` |
+| 网络管理请求 | 请求缓存 256 字节，最多接收 256 字节；超过后不进入解析；每次处理 1 个变量绑定。 | `afdx_snmp.v:199–210,505–517` 的 `request_ram/rx_count/overflow`；报文解析状态机 |
+| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:297–333` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
+| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:167,595–598,740–754` 的 `timeout_cycles/retry_limit/retries` |
+| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:167,595,598` 的 `request_port/protocol_a4` |
+| 实时时钟分辨率 | 实时时钟（Real-Time Clock，RTC）每拍增加 8 ns，默认同步周期 125000 拍（1 ms）；分辨率不等于同步精度。 | `afdx_rtc.v:60–64,233,298–302` 的 `period/nanoseconds` |
 
 上述源码文件均在 [rtl](../rtl/)；初始化的拍数是当前记录的观察值，其余容量和时间换算由所列参数直接计算。
 
 ## 代码规模
 
-统计所有已跟踪文本文件的物理行数，包含注释与空行，不算运行产物和 `sim/reference/` 中的参考输出。`sim/` 包含固定向量及清单，因此该目录行数不等于脚本代码行数。以下命令在仓库根目录执行即可复算。
+统计所有已跟踪文本文件的物理行数，包含注释与空行，不算运行产物、PNG 图片和 `sim/reference/` 中的参考输出。`sim/` 包含固定向量及清单，因此该目录行数不等于脚本代码行数。以下命令在仓库根目录执行即可复算。
 
 | 目录 | 文件数 | 物理行数 |
 |---|---:|---:|
-| `rtl/` | 21 | 7069 |
+| `rtl/` | 21 | 7791 |
 | `tb/` | 53 | 4090 |
-| `tools/` | 21 | 4275 |
-| `sim/` | 11 | 2740 |
+| `tools/` | 21 | 4291 |
+| `sim/` | 19 | 3107 |
 
 ```powershell
 foreach ($dir in 'rtl','tb','tools','sim') {
-  $files = @(git ls-files -- $dir ':(exclude)sim/reference/**')
+  $files = @(git ls-files -- $dir ':(exclude)sim/reference/**' ':(exclude)*.png')
   $count = ($files | ForEach-Object { [IO.File]::ReadAllLines((Join-Path $PWD $_)).Length } | Measure-Object -Sum).Sum
   '{0}: files={1}, lines={2}' -f $dir,$files.Count,$count
 }

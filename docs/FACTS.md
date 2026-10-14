@@ -1,7 +1,7 @@
 # AFDX 端系统事实清单
 
 补充的逐项测试、资源、时延、参数和异常覆盖见 [补充数据](FACTS_DETAIL.md)。
-本页对应当前 `master` 的代码。RTL 在 2026-10-14 做过一次可读性整理（只给常数起名、调整排版），整理前后命令行综合网表逐行相同，此后 RTL 未再改动。本页供设计文档和测试报告直接引用；功能覆盖以实测范围为准，不等于完整协议认证。
+本页对应本工程当前代码。RTL 于 2026-10-14 完成排版与常量命名；纯排版的 21 个文件去除空白后逐字节一致，改名的两个模块通过形式等价，完整回归 38 项的自检数和独立检查数与参考输出一致。命令行综合数字已按这轮代码刷新。本页供设计文档和测试报告直接引用；功能覆盖以实测范围为准，不等于完整协议认证。
 赛题来源：[选题指南](sources/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总 1010 版](sources/FPGA创新大赛问题汇总1010.xlsx)的 Sheet1，R 表示工作表行号。1010 版比 1008 版只在末尾新增了行，选题一新增的 R79–R82 都是 eLinx 工具使用问题，不改变本页结论。
 数据分两类。标准数据（完整回归、评委入口、性能、RTC、容量、异常注入、两种综合）来自 2026-10-14 在当前代码上的运行；回归和评委入口的汇总见 `参考/`。第九节附录的专项实验是开发期间为做设计取舍跑的单次实验，各注日期，没有在当前代码上重跑。
 本页的 `参考/` 指 [`sim/reference/`](../sim/reference/)，`证据/` 指 [`docs/evidence/`](evidence/)：原始输出的副本及只读数据库查询结果，`manifest.json` 记录每份文件的原位置和 SHA-256 摘要；文件里的绝对路径是生成时那台机器上的路径，不在本仓库。标准测试可用下列命令重建，专项实验的复现限制在对应条目说明。
@@ -42,7 +42,7 @@
 | 流程 | 资源 | 时序及原始出处 |
 |---|---|---|
 | 界面 Run Synthesis（报告主表使用） | LUT 32847、FF 13869、CLB 4620、Memory 340、引脚 259。 | setup +2.522 ns、Fmax 182.548 MHz、hold −0.068 ns；`elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt` 与同目录 `AFDX_EndSystem.tan.pb`。 |
-| 命令行综合（单独列示） | 29963 个逻辑单元、783 个未装箱 RAM 切片；不与上行 Memory 数直接相减。 | setup +2.749 ns、Fmax 190.440 MHz、hold −0.068 ns；`out/synth/AFDX_top/20261014_104324_658437/summary.json`，复现 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta`。 |
+| 命令行综合（单独列示） | 29967 个逻辑单元、LUT 29968、783 个未装箱 RAM 切片；不与上行 Memory 数直接相减。 | setup +2.749 ns、Fmax 190.440 MHz、hold −0.068 ns；`out/synth/AFDX_top/20261014_234301_767138/summary.json`，复现 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta`。 |
 
 界面时序库为 SQLite；只读查询 `elinx_intra_clock_summary` 中 `name=clk`：`period=8000`、`setup_worst_slack=2522`、`hold_worst_slack=-68`，时间单位 ps；Fmax 字段单位 MHz。查询副本见 `证据/gui_timing.json`。
 界面先运行 Analysis & Synthesis 并选择 Speed，再交给后端；依据同目录 `AFDX_EndSystem.map.rpt` 的 Settings 和 `AFDX_EndSystem.flow.rpt` 的执行阶段。命令行直接由 `tools/eda.py:synth` 调用 `eLinx_synthesis.exe`，没有这个额外前端。两条流程的映射和统计口径不同，不要求资源数字相同。
@@ -61,7 +61,7 @@ hold 仍为负，且未给完整外部 I/O 延迟预算；上述 Fmax 不能当�
 | 网表来源 | 仿真副本补全内容 | 已跑结果 |
 |---|---|---|
 | 界面 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm` | `tools/adapt_gui_vqm.py` 按组件声明/模型补 427486 个输入，按原有进位连接补 3933 个 `cin_used=true`；不改已有连接、参数和 LUT 内容。 | `tb_elinx` 9238/0，7826.703 秒；五功能入口完整复跑 1123/0、独立检查 65/0，3121.109 秒，七份记录与同激励 RTL 逐字节相同。见 `证据/gui_elinx_summary.json`、`gui_services_summary.json`。这两次在 2026-10-13，用的是 RTL 整理前的界面网表；整理后重新做界面综合，资源和时序只有 CLB 由 4626 变为 4620，未在新的界面网表上重跑。 |
-| 命令行 `out/synth/AFDX_top/<日期>/netlist.v` | `tools/fix_lut_mask.py` 把逗号分隔的 LUT 位值转成十六进制字面量，补算术进位使用参数及省略输入。 | 网表清单 8/8；完整五功能 1123/0、独立检查 65/0，六份记录与 RTL 一致，仿真 3323.563 秒。见 `证据/cli_validation.json`、`cli_services_summary.json`；被测网表位置保存在后者的 `inputs`。这两次在 2026-10-12；命令行网表在 RTL 整理前后逐行相同，结果对当前代码同样成立。 |
+| 命令行 `out/synth/AFDX_top/<日期>/netlist.v` | `tools/fix_lut_mask.py` 把逗号分隔的 LUT 位值转成十六进制字面量，补算术进位使用参数及省略输入。 | 网表清单 8/8；完整五功能 1123/0、独立检查 65/0，六份记录与 RTL 一致，仿真 3323.563 秒。见 `证据/cli_validation.json`、`cli_services_summary.json`；被测网表位置保存在后者的 `inputs`。这两次在 2026-10-12；当前排版与常量命名后未重跑网表仿真，当前功能另经完整 RTL 回归和修改模块的形式等价核对。 |
 
 “9238/0”等表示检查数/错误数。界面流程省略的数据输入按厂商声明置 1；命令行适配器把自身导出格式中的未接数据输入置 0，二者不能互换。两套都显式补使能及 RAM 掩码等默认输入，否则悬空值或未启用进位会使模型行为不同。依据为 `tools/adapt_gui_vqm.py`、`tools/fix_lut_mask.py` 及安装目录 `stratix_components.vhd:546–561`、`stratix_atoms.v:692–698,979,3114–3137`。
 界面网表复现：先点 Run Synthesis，再执行下面任一命令；输出在 `out/gui_netlist/`，失败返回非零退出码。
@@ -87,7 +87,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_ser
 - 服务争用：77 条长消息叠加 RTC/SNMP/615A 时，两个方向同一虚拟链路的发送间隔分别为 125000–125258、125000–125312 拍，而非恒定 BAG。上述专项记录保留了逐虚拟链路数据；本页未把它们当作当前提交重跑结果，也未将独立实验驱动纳入标准回归；服务争用数字同样出自 `证据/contention.json` 的 `runs[-1].measurements.directions`。
 - 突发排队：77/81 条虚拟链路同时提交后清空发送队列分别需 959.272/1008.488 µs；从应用末字节到对端末字节的最大值为 959.360/1452.576 µs。81 条的队列清空超过 1 ms，但这不是稳定窗口单条消息的 24.408 µs。来源为 `参考/judge_result.txt` 的两条 `JUDGE METRIC burst_vls`；复现 `run tb_gbe_burst -Param COUNT=77` 或 `COUNT=81`。
 
-顶层保留赛题八个端口的名称和方向；新增 B 网口用于冗余、`app_*` 用于应用消息、`cfg_*` 用于配置和读回、`ev_*` 用于观察错误。`tx_ready` 表示初始化完成，`rx_ready` 不参与线路背压；不能把它描述为可暂停的标准接收流。依据为 `rtl/AFDX_top.v:12–61`、选题模板正文第 3–4 页和 R61。
+顶层保留赛题八个端口的名称和方向；新增 B 网口用于冗余、`app_*` 用于应用消息、`cfg_*` 用于配置和读回、`ev_*` 用于观察错误。`tx_ready` 表示初始化完成，`rx_ready` 不参与线路背压；不能把它描述为可暂停的标准接收流。依据为 `rtl/AFDX_top.v:13–67`、选题模板正文第 3–4 页和 R61。
 
 ## 六、协议版本依据
 

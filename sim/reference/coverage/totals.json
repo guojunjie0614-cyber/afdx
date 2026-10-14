@@ -43,20 +43,18 @@
   "coverage_regression": {
     "tests": 38,
     "passed": 38,
-    "initial_missing_dependency_failures": 2,
-    "retries_passed": 2,
     "reference_counts_match": true,
-    "started": "2026-10-14T21:56:44.7627894+08:00",
-    "finished": "2026-10-14T22:28:29.803503+08:00",
-    "elapsed_seconds": 1905.041
+    "started": "2026-10-14T23:50:40.3196842+08:00",
+    "finished": "2026-10-15T00:21:34.014930+08:00",
+    "elapsed_seconds": 1853.695
   },
-  "merged_ucdb_bytes": 1566635,
+  "merged_ucdb_bytes": 1566037,
   "coverage_off_regression": {
     "tests": 38,
     "passed": 38,
     "reference_counts_match": true,
-    "started": "2026-10-14T22:30:11.367848+08:00",
-    "finished": "2026-10-14T22:46:35.251635+08:00",
-    "elapsed_seconds": 983.884
+    "started": "2026-10-14T23:32:40.4245279+08:00",
+    "finished": "2026-10-14T23:49:28.788552+08:00",
+    "elapsed_seconds": 1008.364
   }
 }

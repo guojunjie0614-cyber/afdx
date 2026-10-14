@@ -188,7 +188,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist
 
 | 项目 | eLinx 图形界面 Run Synthesis | 命令行 `elinx/synth.ps1` |
 |---|---:|---:|
-| 查找表（LUT） | 32847 | 29964 |
+| 查找表（LUT） | 32847 | 29968 |
 | 触发器（FF） | 13869 | 13011 |
 | 存储器 | 340（Memory） | 783（未装箱的 RAM 切片） |
 | 建立时间裕量 | +2.522 ns | +2.749 ns |
