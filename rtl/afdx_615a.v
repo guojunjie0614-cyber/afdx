@@ -132,6 +132,7 @@ module afdx_615a (
     localparam FILE_LIST = 0, FILE_HEADER = 1, FILE_DATA = 2;
     // 协议文件版本是两个 ASCII 字符 A3 或 A4；头文件格式版本固定为 0x8002。
     localparam VERSION_A3 = 16'h4133, VERSION_A4 = 16'h4134, HEADER_FILE_VERSION = 16'h8002;
+    localparam VERSION_A3_WORD = 32'h4133, VERSION_A4_WORD = 32'h4134;
     // 文件校验用 16 位循环冗余校验：多项式 0x1021，初值全 1。
     localparam CRC16_POLY = 16'h1021, CRC16_INIT = 16'hffff;
     // 本端各类传输使用的 UDP 端口起始值，每开始一次新传输换一个端口。
@@ -627,7 +628,7 @@ module afdx_615a (
                 0 : cfg_extra_data <= { 16'b0, request_port };
                 1 : cfg_extra_data <= timeout_cycles;
                 2 : cfg_extra_data <= { 24'b0, retry_limit };
-                3 : cfg_extra_data <= protocol_a4 ? VERSION_A4 : VERSION_A3;
+                3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
                 default : cfg_extra_data <= 0;
             endcase
             // 加载操作依次交换初始化、状态、请求列表、头文件和数据文件。
