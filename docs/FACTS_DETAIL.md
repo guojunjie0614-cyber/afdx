@@ -1,6 +1,6 @@
 # AFDX 端系统补充数据
 
-源码行号和规模基于 `b970089f`；本页其余数据沿用所列报告和仿真记录，新一轮运行的参考输出见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
+源码行号和规模基于 `27e00555`；本页其余数据沿用所列报告和仿真记录，新一轮运行的参考输出见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
 
 ## 逐项回归与评委入口
 
@@ -168,9 +168,9 @@ README 的命令行 LUT 29962 来自 [cli_resources.rpt](evidence/cli_resources.
 | 用户消息长度 | 每条最多 1471 字节，还受该链路配置的最大长度限制。 | `afdx_tx_buf.v:53,183` 的 `MAX_PAYLOAD` |
 | 网络管理对象 | 简单网络管理协议（Simple Network Management Protocol，SNMP）共 36 个对象：2 个系统对象、34 个私有对象。 | `afdx_snmp.v:172–192,682` 的 `mib_arc/candidate` |
 | 网络管理请求 | 请求缓存 256 字节，最多接收 256 字节；超过后不进入解析；每次处理 1 个变量绑定。 | `afdx_snmp.v:150–161,446–458` 的 `request_ram/rx_count/overflow`；报文解析状态机 |
-| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:234–270` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
-| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:141,508–511,651–665` 的 `timeout_cycles/retry_limit/retries` |
-| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:141,508,511` 的 `request_port/protocol_a4` |
+| 数据加载存储 | 加载区 8192 字节（8 KiB），头文件区 2048 字节，加载请求区 512 字节；收发包缓存各 1024 字节。 | `afdx_615a.v:235–271` 的 `packet_rx/packet_tx/lur_ram/header_ram/load_ram` |
+| 数据加载超时与重试 | 超时默认 250000000 拍（2 s），每次等待最多重发 1 次；初始请求另计。 | `afdx_615a.v:142,509–512,652–666` 的 `timeout_cycles/retry_limit/retries` |
+| 数据加载默认协议 | 请求端口 59，协议文件版本 A4；不是完整文件无限重试。 | `afdx_615a.v:142,509,512` 的 `request_port/protocol_a4` |
 | 实时时钟分辨率 | 实时时钟（Real-Time Clock，RTC）每拍增加 8 ns，默认同步周期 125000 拍（1 ms）；分辨率不等于同步精度。 | `afdx_rtc.v:52–55,210,274–278` 的 `period/nanoseconds` |
 
 上述源码文件均在 [rtl](../rtl/)；初始化的拍数是当前记录的观察值，其余容量和时间换算由所列参数直接计算。
@@ -181,7 +181,7 @@ README 的命令行 LUT 29962 来自 [cli_resources.rpt](evidence/cli_resources.
 
 | 目录 | 文件数 | 物理行数 |
 |---|---:|---:|
-| `rtl/` | 21 | 7068 |
+| `rtl/` | 21 | 7069 |
 | `tb/` | 53 | 4090 |
 | `tools/` | 21 | 4275 |
 | `sim/` | 11 | 2740 |
