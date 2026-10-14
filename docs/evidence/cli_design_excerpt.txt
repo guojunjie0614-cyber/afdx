@@ -1,0 +1,18 @@
+# lines 286314-286322 of design.vqm
+  stratix_lcell c3_native_cell_10117 (
+    .aclr(gnd),
+    .clk(clk),
+    .dataa(\_13472_ ),
+    .datab(\_13782_ ),
+    .datac(reset),
+    .datad(\_2243_ ),
+    .ena(\_8178_ ),
+    .regout(\afdx_snmp:snmp|state[1] ));
+# lines 461087-461093 of design.vqm
+  stratix_lcell c3_native_cell_9490 (
+    .aclr(gnd),
+    .clk(clk),
+    .dataa(\_13198_ ),
+    .datab(reset),
+    .ena(\_8201_ ),
+    .regout(\afdx_snmp:snmp|cursor[0] ));
