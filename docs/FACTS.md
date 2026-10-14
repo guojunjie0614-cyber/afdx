@@ -1,7 +1,7 @@
 # AFDX 端系统事实清单
 
 代码版本：`eb9499dc`。本页供设计文档和测试报告直接引用；功能覆盖以实测范围为准，不等于完整协议认证。
-赛题来源：[选题指南](../spec/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总](../spec/FPGA创新大赛问题汇总1008.xlsx)的 Sheet1，R 表示工作表行号。
+赛题来源：[选题指南](../spec/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总](../spec/FPGA创新大赛问题汇总1008.xlsx)的 Sheet1，R 表示工作表行号。本页提到的 `spec/`、`ref/` 目录在 `master` 分支，本分支不带。
 本次只核对已有源码、报告和日志，没有重新综合或运行长仿真。常规回归的 RTL 与当前版本一致，测试仅有注释及检查提示差异；专项历史实验另注明日期。
 本页的 `证据/` 指 `out/facts/evidence/`：原始输出的逐字节副本及只读数据库查询结果，`manifest.json` 记录原位置和摘要。它不随 Git 分发；标准测试可用下列命令重建，专项实验的复现限制在对应条目说明。
 命令均在仓库根目录的 PowerShell 执行；先按 [软件准备](../README.md#软件准备)配置工具路径和 Python 依赖。下表 `run <名称>` 表示 `powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test <名称>`。
@@ -68,7 +68,7 @@ hold 仍为负，且未给完整外部 I/O 延迟预算；上述 Fmax 不能当�
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services
 ```
-命令行网表复现：先按 [FLOW 的网表入口](FLOW.md#网表入口)生成清单要求的各顶层网表，再运行；源码摘要有变化时需重新综合，不能绕过摘要检查。
+命令行网表复现：先按 [README 的“命令行综合生成的网表”](../README.md#命令行综合生成的网表)生成清单要求的各顶层网表，再运行；源码摘要有变化时需重新综合，不能绕过摘要检查。
 ```powershell
 $deadline=(Get-Date).AddHours(5).ToString('o')
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist -Deadline $deadline
