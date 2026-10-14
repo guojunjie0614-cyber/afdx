@@ -26,6 +26,14 @@ module afdx_mac_rx (
     // FRAME：接收内容，线路空闲时报告结果并转 IDLE。
     // BAD_PRE：丢弃错误前导码后的内容，线路空闲时转 IDLE。
     localparam IDLE = 2'd0, PREAMBLE = 2'd1, FRAME = 2'd2, BAD_PRE = 2'd3;
+    // 前导码字节、帧起始定界符，以及校验值的初值和整帧校验后的固定余数。
+    localparam PREAMBLE_BYTE = 8'h55, SFD_BYTE = 8'hd5;
+    localparam CRC_INIT = 32'hffffffff, CRC_RESIDUE = 32'hdebb20e3;
+    // 帧长从目的以太网地址数到校验值末字节，不含前导码。
+    // 计数到 LENGTH_LIMIT 就不再增加，表示帧已超长。
+    localparam FCS_LENGTH = 4, MIN_FRAME_LENGTH = 64, MAX_FRAME_LENGTH = 1518, LENGTH_LIMIT = 1519;
+    // f_err 的取值。
+    localparam ERR_NONE = 0, ERR_FCS = 1, ERR_LENGTH = 2, ERR_PREAMBLE = 3;
     // data_q/valid_q 将数据与有效标记一起延迟一拍。
     // armed 要求复位后先看到线路空闲，避免从半帧开始接收。
     reg [7:0] data_q;
@@ -51,7 +59,7 @@ module afdx_mac_rx (
             state <= IDLE;
             armed <= 0;
             length <= 0;
-            crc <= 32'hffffffff;
+            crc <= CRC_INIT;
             delay0 <= 0;
             delay1 <= 0;
             delay2 <= 0;
@@ -70,10 +78,10 @@ module afdx_mac_rx (
             if (state == IDLE) begin
                 if (! valid_q) armed <= 1;
                 else if (armed) begin
-                    state <= data_q == 8'hd5 ? FRAME : data_q == 8'h55 ? PREAMBLE : BAD_PRE;
+                    state <= data_q == SFD_BYTE ? FRAME : data_q == PREAMBLE_BYTE ? PREAMBLE : BAD_PRE;
                     armed <= 0;
                     length <= 0;
-                    crc <= 32'hffffffff;
+                    crc <= CRC_INIT;
                 end
             end
             else begin
@@ -85,29 +93,29 @@ module afdx_mac_rx (
                         armed <= 1;
                         f_len <= length;
                         if (state != FRAME) begin
-                            f_err <= 3;
+                            f_err <= ERR_PREAMBLE;
                             f_len <= 0;
                         end
-                        else if (length < 64 || length > 1518) f_err <= 2;
-                        else if (crc != 32'hdebb20e3) f_err <= 1;
-                        else f_err <= 0;
+                        else if (length < MIN_FRAME_LENGTH || length > MAX_FRAME_LENGTH) f_err <= ERR_LENGTH;
+                        else if (crc != CRC_RESIDUE) f_err <= ERR_FCS;
+                        else f_err <= ERR_NONE;
                     end
                     else if (state == PREAMBLE) begin
-                        if (data_q == 8'hd5) state <= FRAME;
-                        else if (data_q != 8'h55) state <= BAD_PRE;
+                        if (data_q == SFD_BYTE) state <= FRAME;
+                        else if (data_q != PREAMBLE_BYTE) state <= BAD_PRE;
                     end
-                    else if (state == FRAME && length < 1519) begin
+                    else if (state == FRAME && length < LENGTH_LIMIT) begin
                         length <= length + 1'b1;
-                        if (length < 1518) begin
+                        if (length < MAX_FRAME_LENGTH) begin
                             crc <= next_crc;
                             delay3 <= delay2;
                             delay2 <= delay1;
                             delay1 <= delay0;
                             delay0 <= data_q;
-                            if (length >= 4) begin
+                            if (length >= FCS_LENGTH) begin
                                 m_valid <= 1;
                                 m_data <= delay3;
-                                m_first <= (length == 4);
+                                m_first <= (length == FCS_LENGTH);
                             end
                         end
                     end

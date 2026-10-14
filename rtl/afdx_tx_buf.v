@@ -49,6 +49,8 @@ module afdx_tx_buf #(
     localparam ENQ_FULL = 2;
     localparam ENQ_TOO_LONG = 3;
     localparam ENQ_NO_PAGE = 4;
+    // 一条消息最多 1471 字节，加上协议头和序号后正好是最长的以太网帧。
+    localparam MAX_PAYLOAD = 1471;
     localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
         EVENT = 9;
     reg [3:0] state;
@@ -178,7 +180,7 @@ module afdx_tx_buf #(
                 // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
                 RECV : if (m_valid && m_ready) begin
                     ended <= m_last;
-                    if (enq_len == 1471) begin
+                    if (enq_len == MAX_PAYLOAD) begin
                         reason <= ENQ_TOO_LONG;
                         returned <= 0;
                         state <= RETURN;

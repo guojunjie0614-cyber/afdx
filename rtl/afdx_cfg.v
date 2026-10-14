@@ -55,6 +55,22 @@ module afdx_cfg (
     wire select_tx = (cfg_addr[17:10] == 8'b00000100);
     wire select_map = (cfg_addr[17:16] == 2'b01);
     wire select_rx = (cfg_addr[17:12] == 6'b100000);
+    // 单个寄存器的地址（按 32 位字编址）和版本号。
+    localparam ADDR_VERSION = 18'h00000, ADDR_STATUS = 18'h00001, ADDR_USER_ID = 18'h00002;
+    localparam ADDR_RM_DROP = 18'h00058, ADDR_DELIVER = 18'h00059;
+    localparam ADDR_A_GDROP = 18'h0005a, ADDR_B_GDROP = 18'h0005b, ADDR_RTC_SYNC_COUNT = 18'h00088;
+    localparam VERSION_VALUE = 32'hc3110000;
+    // 每 8 个地址为一组，下面是各组地址的高 15 位。
+    // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
+    // 0x90、0x98、0xa0 组是网络管理，0xb0、0xb8 组是加卸载。
+    localparam GROUP_TX_COUNT = 15'h0008, GROUP_A_COUNT = 15'h0009, GROUP_B_COUNT = 15'h000a;
+    localparam GROUP_RTC = 15'h0010, GROUP_SNMP_CONTROL = 15'h0012, GROUP_SNMP_STATUS = 15'h0013;
+    localparam GROUP_SNMP_DESCR = 15'h0014, GROUP_LOAD = 15'h0016, GROUP_LOAD_EXTRA = 15'h0017;
+    // read_select 的取值：第二拍从哪一组读值里选结果。
+    localparam SEL_REGS = 3'd0, SEL_TX = 3'd1, SEL_A = 3'd2, SEL_B = 3'd3, SEL_RTC = 3'd4;
+    localparam SEL_SNMP_CONTROL = 3'd5, SEL_SNMP_STATUS = 3'd6, SEL_SHARED = 3'd7;
+    // read_loader 的取值：SEL_SHARED 这一组里再选哪个读值。
+    localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
     // read_valid/read_select 将读有效标记与两拍后的数据对齐。
     // read_loader 选择共享地址组中的服务读值。
     reg read_valid;
@@ -198,7 +214,7 @@ module afdx_cfg (
                     rx_cfg_wdata <= cfg_wdata;
                     cfg_ready <= 0;
                 end
-                else if (cfg_addr == 18'h00002) begin
+                else if (cfg_addr == ADDR_USER_ID) begin
                     user_id <= cfg_wdata[15:0];
                 end
             end
@@ -221,14 +237,14 @@ module afdx_cfg (
             // 第一拍保存各组读值，第二拍选择本次请求对应的一组。
             read_valid <= cfg_rd;
             case (cfg_addr)
-                18'h00000 : read_regs <= 32'hc3110000;
-                18'h00001 : read_regs <= { 31'b0, tx_ready };
-                18'h00002 : read_regs <= { 16'b0, user_id };
-                18'h00058 : read_regs <= count_rm_drop;
-                18'h00059 : read_regs <= count_deliver;
-                18'h0005a : read_regs <= count_a_gdrop;
-                18'h0005b : read_regs <= count_b_gdrop;
-                18'h00088 : read_regs <= rtc_sync_count;
+                ADDR_VERSION : read_regs <= VERSION_VALUE;
+                ADDR_STATUS : read_regs <= { 31'b0, tx_ready };
+                ADDR_USER_ID : read_regs <= { 16'b0, user_id };
+                ADDR_RM_DROP : read_regs <= count_rm_drop;
+                ADDR_DELIVER : read_regs <= count_deliver;
+                ADDR_A_GDROP : read_regs <= count_a_gdrop;
+                ADDR_B_GDROP : read_regs <= count_b_gdrop;
+                ADDR_RTC_SYNC_COUNT : read_regs <= rtc_sync_count;
                 default : read_regs <= 0;
             endcase
             case (cfg_addr[2:0])
@@ -262,31 +278,32 @@ module afdx_cfg (
                 3'd7 : read_b <= count_b_ovf;
             endcase
             case (cfg_addr[17:3])
-                15'h0008 : read_select <= 1;
-                15'h0009 : read_select <= 2;
-                15'h000a : read_select <= 3;
-                15'h0010 : read_select <= 4;
-                15'h0012 : read_select <= 5;
-                15'h0013 : read_select <= 6;
-                15'h0014 : read_select <= 7;
-                15'h0016 : read_select <= 7;
-                15'h0017 : read_select <= 7;
-                default : read_select <= 0;
+                GROUP_TX_COUNT : read_select <= SEL_TX;
+                GROUP_A_COUNT : read_select <= SEL_A;
+                GROUP_B_COUNT : read_select <= SEL_B;
+                GROUP_RTC : read_select <= SEL_RTC;
+                GROUP_SNMP_CONTROL : read_select <= SEL_SNMP_CONTROL;
+                GROUP_SNMP_STATUS : read_select <= SEL_SNMP_STATUS;
+                GROUP_SNMP_DESCR : read_select <= SEL_SHARED;
+                GROUP_LOAD : read_select <= SEL_SHARED;
+                GROUP_LOAD_EXTRA : read_select <= SEL_SHARED;
+                default : read_select <= SEL_REGS;
             endcase
-            read_loader <= cfg_addr[17:3] == 15'h0016 ? 1 : cfg_addr[17:3] == 15'h0017 ? 2 : 0;
+            read_loader <= cfg_addr[17:3] == GROUP_LOAD ? SHARED_LOAD
+                : cfg_addr[17:3] == GROUP_LOAD_EXTRA ? SHARED_LOAD_EXTRA : SHARED_SNMP_DESCR;
             // 读结果分两级选择，并在请求后第二拍返回。
             cfg_rvalid <= read_valid;
             case (read_select)
-                3'd0 : cfg_rdata <= read_regs;
-                3'd1 : cfg_rdata <= read_tx;
-                3'd2 : cfg_rdata <= read_a;
-                3'd3 : cfg_rdata <= read_b;
-                3'd4 : cfg_rdata <= rtc_rdata;
-                3'd5 : cfg_rdata <= snmp_control_data;
-                3'd6 : cfg_rdata <= snmp_status_data;
-                3'd7 : case (read_loader)
-                    1 : cfg_rdata <= load_rdata;
-                    2 : cfg_rdata <= load_extra_data;
+                SEL_REGS : cfg_rdata <= read_regs;
+                SEL_TX : cfg_rdata <= read_tx;
+                SEL_A : cfg_rdata <= read_a;
+                SEL_B : cfg_rdata <= read_b;
+                SEL_RTC : cfg_rdata <= rtc_rdata;
+                SEL_SNMP_CONTROL : cfg_rdata <= snmp_control_data;
+                SEL_SNMP_STATUS : cfg_rdata <= snmp_status_data;
+                SEL_SHARED : case (read_loader)
+                    SHARED_LOAD : cfg_rdata <= load_rdata;
+                    SHARED_LOAD_EXTRA : cfg_rdata <= load_extra_data;
                     default : cfg_rdata <= snmp_descr_data;
                 endcase
             endcase

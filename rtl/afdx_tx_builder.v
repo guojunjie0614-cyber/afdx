@@ -55,6 +55,24 @@ module afdx_tx_builder #(
     // prep=8：再处理一次进位，下一拍转 9。
     // prep=9：取反得到校验和，置 prepared 后等待发送。
     reg [3:0] prep;
+    // part 的取值：一帧依次发送协议头、用户数据、补零和序号。
+    localparam PART_HEADER = 0, PART_PAYLOAD = 1, PART_PADDING = 2, PART_SN = 3;
+    // 协议头共 42 字节，下标 0–41；发到下标 10 时，下一个字节是源地址里的网络标识。
+    // 用户数据不足 17 字节时补零到 17 字节。
+    localparam HEADER_LAST = 41, NETWORK_ID_INDEX = 10, MIN_PAYLOAD = 17;
+    // IPv4 总长度比用户数据多 28 字节（IPv4 头 20 字节加 UDP 头 8 字节），UDP 长度多 8 字节。
+    localparam IP_UDP_OVERHEAD = 16'd28, UDP_HEADER_LENGTH = 16'd8;
+    // IPv4 头校验和的累加初值，见下面 prep=0 处的说明。
+    localparam IP_SUM_SEED = 20'h04611;
+    // 协议头里的固定字段。
+    localparam DMAC_PREFIX = 32'h03000000, DMAC_BYTE0 = 8'h03, SMAC_PREFIX = 24'h020000;
+    localparam NETWORK_A = 8'h20, NETWORK_B = 8'h40, ETHERTYPE_IPV4 = 16'h0800;
+    localparam IP_VERSION_TOS = 16'h4500, IP_NO_FRAGMENT = 16'h0000, IP_TTL_PROTOCOL = 16'h0111;
+    localparam UDP_NO_CHECKSUM = 16'h0000;
+    // time_difference 不小于这个值（即负四及以上）时，离发送时刻已不足四拍。
+    localparam START_LEAD = 32'hfffffffc;
+    // 预读队列里已有这么多字节时，暂停发出新的读请求。
+    localparam FIFO_STOP_LEVEL = 5;
     reg [31:0] p_time, p_src, p_dst, now_q, time_difference;
     reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ident, ip_length, udp_length, checksum;
     reg [10:0] p_len, active_len, payload_index;
@@ -87,7 +105,8 @@ module afdx_tx_builder #(
     reg [1:0] payload_pipe, pnext_pipe;
     wire fifo_push = payload_pipe[1];
     wire fifo_pop = s_valid && s_ready && ! s_last &&
-        ((part == 0 && header_index == 41) || (part == 1 && payload_index < active_len));
+        ((part == PART_HEADER && header_index == HEADER_LAST)
+        || (part == PART_PAYLOAD && payload_index < active_len));
     wire return_push = payload_pipe[1] && return_pipe[1];
     wire return_pop = (! ret_valid || ret_ready) && return_count != 0;
     reg [TX_OFF_AW - 1:0] fetch_offset;
@@ -136,7 +155,7 @@ module afdx_tx_builder #(
             s_en_b <= 0;
             header <= 0;
             header_index <= 0;
-            part <= 0;
+            part <= PART_HEADER;
             active_len <= 0;
             active_sn <= 0;
             payload_index <= 0;
@@ -197,7 +216,7 @@ module afdx_tx_builder #(
                 default:;
             endcase
             // 最多同时等待三个读结果，队列剩五项时就暂停发出新读请求。
-            if (stream_active && fetch_left != 0 && fifo_count < 5) begin
+            if (stream_active && fetch_left != 0 && fifo_count < FIFO_STOP_LEVEL) begin
                 payload_re <= 1;
                 payload_ra <= { fetch_page[TX_PAGE_AW-1:0], fetch_offset };
                 issue_page <= fetch_page;
@@ -233,11 +252,11 @@ module afdx_tx_builder #(
                 prep <= prep + 1'b1;
                 case (prep)
                     0 : begin
-                        ip_length <= p_len + 16'd28;
-                        udp_length <= p_len + 16'd8;
+                        ip_length <= p_len + IP_UDP_OVERHEAD;
+                        udp_length <= p_len + UDP_HEADER_LENGTH;
                         // 校验和从两个固定字段之和开始累加：
                         // 0x4500（版本 4、头长 20 字节）加 0x0111（生存时间 1、协议号 17 即 UDP）。
-                        sum <= 20'h04611;
+                        sum <= IP_SUM_SEED;
                     end
                     1 : sum <= sum + ip_length;
                     2 : sum <= sum + p_ident;
@@ -256,7 +275,7 @@ module afdx_tx_builder #(
             end
             // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
             if (pending && prepared && ! stream_active && (! p_timed || ! time_difference[31]
-                || time_difference >= 32'hfffffffc)) begin
+                || time_difference >= START_LEAD)) begin
                 stream_active <= 1;
                 s_valid <= 1;
                 s_last <= 0;
@@ -264,12 +283,14 @@ module afdx_tx_builder #(
                 s_en_b <= p_b;
                 // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
                 // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
-                header <= { 32'h03000000, p_vlid, 24'h020000, p_user, 8'h20, 16'h0800, 16'h4500, ip_length, p_ident,
-                    16'h0000, 16'h0111, checksum, p_src, p_dst, p_sport, p_dport, udp_length, 16'h0000 };
-                s_data_a <= 8'h03;
-                s_data_b <= 8'h03;
+                header <= { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
+                    IP_VERSION_TOS, ip_length, p_ident,
+                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
+                    UDP_NO_CHECKSUM };
+                s_data_a <= DMAC_BYTE0;
+                s_data_b <= DMAC_BYTE0;
                 header_index <= 0;
-                part <= 0;
+                part <= PART_HEADER;
                 active_len <= p_len;
                 active_sn <= p_sn;
                 payload_index <= 0;
@@ -302,37 +323,37 @@ module afdx_tx_builder #(
                     s_last <= 0;
                     stream_active <= 0;
                 end
-                else if (part == 0 && header_index < 41) begin
+                else if (part == PART_HEADER && header_index < HEADER_LAST) begin
                     header <= header << 8;
                     header_index <= header_index + 1'b1;
                     s_data_a <= header[327:320];
                     // B 网把源 MAC 地址里的网络标识换成 0x40，其余字节与 A 网相同。
-                    s_data_b <= header_index == 10 ? 8'h40 : header[327:320];
+                    s_data_b <= header_index == NETWORK_ID_INDEX ? NETWORK_B : header[327:320];
                 end
-                else if (part == 0 || (part == 1 && payload_index < active_len)) begin
-                    part <= 1;
+                else if (part == PART_HEADER || (part == PART_PAYLOAD && payload_index < active_len)) begin
+                    part <= PART_PAYLOAD;
                     s_data_a <= payload_fifo[{fifo_rd,3'b0} +: 8];
                     s_data_b <= payload_fifo[{fifo_rd,3'b0} +: 8];
                     payload_index <= payload_index + 1'b1;
                 end
-                else if (part == 1) begin
-                    if (active_len < 17) begin
-                        part <= 2;
-                        padding_left <= 17 - active_len;
+                else if (part == PART_PAYLOAD) begin
+                    if (active_len < MIN_PAYLOAD) begin
+                        part <= PART_PADDING;
+                        padding_left <= MIN_PAYLOAD - active_len;
                         s_data_a <= 0;
                         s_data_b <= 0;
                     end
                     else begin
-                        part <= 3;
+                        part <= PART_SN;
                         s_data_a <= active_sn;
                         s_data_b <= active_sn;
                         s_last <= 1;
                     end
                 end
-                else if (part == 2) begin
+                else if (part == PART_PADDING) begin
                     padding_left <= padding_left - 1'b1;
                     if (padding_left == 1) begin
-                        part <= 3;
+                        part <= PART_SN;
                         s_data_a <= active_sn;
                         s_data_b <= active_sn;
                         s_last <= 1;

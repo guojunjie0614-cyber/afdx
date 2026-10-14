@@ -21,6 +21,10 @@ module afdx_mac_tx (
     output reg [7:0] tx_data_b,
     output reg tx_valid_b);
     localparam GAP = 3'd0, PREAMBLE = 3'd1, DATA = 3'd2, FCS = 3'd3, DRAIN = 3'd4;
+    // 前导码字节、帧起始定界符和校验值的初值。
+    localparam PREAMBLE_BYTE = 8'h55, SFD_BYTE = 8'hd5, CRC_INIT = 32'hffffffff;
+    // 两帧之间至少空闲的拍数。
+    localparam IFG_CYCLES = 12;
     // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
     // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
@@ -48,15 +52,15 @@ module afdx_mac_tx (
     always @(posedge clk) begin
         if (reset) begin
             state <= GAP;
-            gap_left <= 12;
+            gap_left <= IFG_CYCLES;
             pre_index <= 0;
             fcs_index <= 0;
             en_a <= 0;
             en_b <= 0;
             last_byte <= 0;
             discard_tail <= 0;
-            crc_a <= 32'hffffffff;
-            crc_b <= 32'hffffffff;
+            crc_a <= CRC_INIT;
+            crc_b <= CRC_INIT;
             fcs_a <= 0;
             fcs_b <= 0;
             tx_sof <= 0;
@@ -88,10 +92,10 @@ module afdx_mac_tx (
                         en_b <= s_en_b;
                         tx_valid_a <= s_en_a;
                         tx_valid_b <= s_en_b;
-                        tx_data_a <= s_en_a ? 8'h55 : 0;
-                        tx_data_b <= s_en_b ? 8'h55 : 0;
-                        crc_a <= 32'hffffffff;
-                        crc_b <= 32'hffffffff;
+                        tx_data_a <= s_en_a ? PREAMBLE_BYTE : 0;
+                        tx_data_b <= s_en_b ? PREAMBLE_BYTE : 0;
+                        crc_a <= CRC_INIT;
+                        crc_b <= CRC_INIT;
                         pre_index <= 0;
                         last_byte <= 0;
                         discard_tail <= 0;
@@ -102,8 +106,8 @@ module afdx_mac_tx (
                     PREAMBLE : begin
                         if (pre_index < 7) begin
                             pre_index <= pre_index + 1'b1;
-                            tx_data_a <= en_a ? (pre_index == 6 ? 8'hd5 : 8'h55) : 0;
-                            tx_data_b <= en_b ? (pre_index == 6 ? 8'hd5 : 8'h55) : 0;
+                            tx_data_a <= en_a ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 0;
+                            tx_data_b <= en_b ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 0;
                         end
                         else if (s_valid) begin
                             tx_data_a <= en_a ? s_data_a : 0;
