@@ -1,10 +1,10 @@
 # AFDX 端系统补充数据
 
-源码行号和规模基于 `27e00555`；本页其余数据沿用所列报告和仿真记录，新一轮运行的参考输出见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
+源码行号和规模按当前 `rtl/`（2026-10-14 整理后）统计；回归、评委入口、性能、异常注入的数据来自 2026-10-14 在当前代码上的运行，汇总见 [sim/reference](../sim/reference/)。功能与测量边界见 [事实清单](FACTS.md)。下文“证据”均指 [evidence](evidence/)；新增原件的来源、字节数和 SHA-256 摘要见 [manifest.json](evidence/manifest.json)。时延均为仿真值，综合时序不含布线延迟。
 
 ## 逐项回归与评委入口
 
-下表按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](evidence/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
+下表按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](../sim/reference/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
 
 | 测试名及非默认参数 | 测什么 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---:|---:|---|
@@ -47,7 +47,7 @@
 | [tb_judge_snmp](../tb/tb_judge_snmp.v) | 解码查询、设置和通知，核对字段与配置口读值。 | 699 | — | PASS |
 | [tb_elinx](../tb/tb_elinx.v) | 由界面入口运行双端双网互发，核对字节、端口和去重。 | 9238 | — | PASS |
 
-纯 ModelSim 入口 `do sim/run_judge.do` 的独立一次记录见 [judge_result.txt](evidence/judge_result.txt)：以下各例错误数和 Warning 数均为 0；该入口未单列独立核对项数，总结果为 `PASS cases=7`。
+纯 ModelSim 入口 `do sim/run_judge.do` 的记录见 [judge_result.txt](../sim/reference/judge_result.txt)：以下各例错误数和 Warning 数均为 0；该入口未单列独立核对项数，总结果为 `PASS cases=7`。
 
 | 入口用例 | 测试平台与目的 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---:|---:|---|

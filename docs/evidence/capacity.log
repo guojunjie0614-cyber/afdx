@@ -3,7 +3,7 @@ Reading pref.tcl
 # 2020.4
 
 # vsim -c tb_judge_capacity -wlf simulation.wlf -do "do run.do" 
-# Start time: 13:24:24 on Oct 12,2026
+# Start time: 10:09:50 on Oct 14,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # //  ModelSim SE-64 2020.4 Oct 13 2020
 # //
@@ -151,7 +151,7 @@ Reading pref.tcl
 # [CAPACITY] tx_vl=127 rx_index=4095 both_directions=PASS
 # [CAPACITY_SUMMARY] tx_vls_each=128 rx_configured_each=4096 rx_sampled_each=128 first=0 last=4095
 # [RESULT] tb_judge_capacity PASS checks=49924 errors=0
-# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t25b/frozen/tb/tb_judge_capacity.v(65)
+# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_submit/tb/tb_judge_capacity.v(65)
 #    Time: 1133465 ns  Iteration: 0  Instance: /tb_judge_capacity
-# End time: 13:24:26 on Oct 12,2026, Elapsed time: 0:00:02
+# End time: 10:09:52 on Oct 14,2026, Elapsed time: 0:00:02
 # Errors: 0, Warnings: 0

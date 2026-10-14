@@ -3,7 +3,7 @@ Reading pref.tcl
 # 2020.4
 
 # vsim -c tb_judge_snmp -wlf simulation.wlf -do "do run.do" 
-# Start time: 13:24:28 on Oct 12,2026
+# Start time: 10:09:54 on Oct 14,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # //  ModelSim SE-64 2020.4 Oct 13 2020
 # //
@@ -26,7 +26,7 @@ Reading pref.tcl
 # [SNMP_RESPONSE] request_id=1003 error=0 returned=13398 cfg=13398
 # [SNMP_SUMMARY] Get=1 GetNext=1 Set=1 Trap=1 request_id=PASS error_status=0 register_values=PASS
 # [RESULT] tb_judge_snmp PASS checks=699 errors=0
-# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t25b/frozen/tb/tb_judge_snmp.v(205)
+# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_submit/tb/tb_judge_snmp.v(205)
 #    Time: 11213057 ns  Iteration: 0  Instance: /tb_judge_snmp
-# End time: 13:24:34 on Oct 12,2026, Elapsed time: 0:00:06
+# End time: 10:10:00 on Oct 14,2026, Elapsed time: 0:00:06
 # Errors: 0, Warnings: 0
