@@ -46,7 +46,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     localparam IDLE = 0;
     localparam WAIT_PACKET = 1;
     localparam DISPATCH = 2;
-    localparam DISPATCH_CHECK = 72, DISPATCH_SELECT = 73, PACKET_START = 74;
+    localparam DISPATCH_CHECK = 72, DISPATCH_SELECT = 73, PACKET_START = 74, BUILD_CANDIDATE = 75;
     localparam NAME = 3;
     localparam NAME_BYTE = 4;
     localparam MODE = 5;
@@ -104,6 +104,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     localparam HEADER_VERSION = 42;
     localparam HEADER_PTR = 43;
     localparam HEADER_PTR_CHECK = 71;
+    localparam HEADER_PTR_MERGE = 76;
     localparam HEADER_CRC = 44;
     localparam HEADER_CRC_BYTE = 45;
     localparam HEADER_CRC_EXPECT = 46;
@@ -251,6 +252,11 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     // 文件里的指针以两个字节为单位，使用前先乘二。
     reg [11:0] metadata_size, header_pointer, header_name_addr, data_name_addr;
     reg header_pointer_ok;
+    reg [31:0] header_limit;
+    reg [3:0] pointer_less, pointer_equal;
+    reg pointer_minimum;
+    // 文件长度在读取指针之前已稳定；提前寄存上界，分开减法和范围比较。
+    always @(posedge clk) header_limit <= metadata_size - HEADER_TRAILER_BYTES;
     reg [6:0] header_name_len, part_len, data_name_len;
     reg [9:0] part_addr;
     reg manifest;
@@ -264,6 +270,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     reg [10:0] copy_pos, copy_len, scan_pos;
     reg [7:0] byte_value, build_value;
     reg [31:0] number;
+    wire [31:0] pointer_bytes = {number[30:0], 1'b0};
     reg [2:0] number_left;
     reg [9:0] packet_len, packet_pos, rx_length, rx_index;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
@@ -370,6 +377,249 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
+    // 各报文类型并行准备一个字节，下一拍只选择已寄存的结果。
+    // 位置和常量偏移先寄存，避免位置加减、字符表和报文类型选择串在同一路径上。
+    localparam PACKET_KIND_COUNT = 7;
+    (* preserve = 1, dont_merge = 1 *) reg [9:0] build_position [0:PACKET_KIND_COUNT - 1];
+    reg [7:0] candidate_byte [0:PACKET_KIND_COUNT - 1];
+    reg [PACKET_KIND_COUNT - 1:0] candidate_read;
+    reg [1:0] candidate_source [0:PACKET_KIND_COUNT - 1];
+    reg [12:0] candidate_address [0:PACKET_KIND_COUNT - 1];
+    reg [9:0] error_position, lus_description_position, filename_position;
+    reg [9:0] wrq_mode_position, rrq_mode_position;
+    reg [12:0] rrq_header_read, rrq_data_read;
+    genvar byte_kind;
+    generate
+        for (byte_kind = 0; byte_kind < PACKET_KIND_COUNT; byte_kind = byte_kind + 1) begin : byte_position
+            always @(posedge clk) build_position[byte_kind] <= packet_pos;
+        end
+    endgenerate
+    always @(posedge clk) begin
+        error_position <= packet_pos - 10'd4;
+        lus_description_position <= packet_pos - 10'd13;
+        filename_position <= packet_pos - 10'd2;
+        wrq_mode_position <= packet_pos - 10'd14;
+        rrq_mode_position <= packet_pos - mode_start;
+        rrq_header_read <= header_name_addr + filename_position;
+        rrq_data_read <= data_name_addr + filename_position;
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_ACK] <= 0;
+            candidate_read[PK_ACK] <= 0;
+            candidate_source[PK_ACK] <= 0;
+            candidate_address[PK_ACK] <= 0;
+        end
+        else begin
+            candidate_byte[PK_ACK] <= 0;
+            candidate_read[PK_ACK] <= 0;
+            case (build_position[PK_ACK])
+                1 : candidate_byte[PK_ACK] <= 4;
+                2 : candidate_byte[PK_ACK] <= ack_number[15:8];
+                3 : candidate_byte[PK_ACK] <= ack_number[7:0];
+            endcase
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_LUI] <= 0;
+            candidate_read[PK_LUI] <= 0;
+            candidate_source[PK_LUI] <= 0;
+            candidate_address[PK_LUI] <= 0;
+        end
+        else begin
+            candidate_byte[PK_LUI] <= 0;
+            candidate_read[PK_LUI] <= 0;
+            case (build_position[PK_LUI])
+                1 : candidate_byte[PK_LUI] <= 3;
+                3 : candidate_byte[PK_LUI] <= 1;
+                7 : candidate_byte[PK_LUI] <= 9;
+                8 : candidate_byte[PK_LUI] <= "A";
+                9 : candidate_byte[PK_LUI] <= protocol_a4 ? "4" : "3";
+                11 : candidate_byte[PK_LUI] <= 1;
+            endcase
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_ERROR] <= 0;
+            candidate_read[PK_ERROR] <= 0;
+            candidate_source[PK_ERROR] <= 0;
+            candidate_address[PK_ERROR] <= 0;
+        end
+        else begin
+            candidate_byte[PK_ERROR] <= 0;
+            candidate_read[PK_ERROR] <= 0;
+            case (build_position[PK_ERROR])
+                1 : candidate_byte[PK_ERROR] <= 5;
+                3 : candidate_byte[PK_ERROR] <= reason == REASON_DESCRIPTION ? 1 : reason == REASON_TFTP_ERROR ? 4 : 0;
+                default : if (build_position[PK_ERROR] >= 4) candidate_byte[PK_ERROR] <= description (error_position);
+            endcase
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_LUS_WRQ] <= 0;
+            candidate_read[PK_LUS_WRQ] <= 0;
+            candidate_source[PK_LUS_WRQ] <= 0;
+            candidate_address[PK_LUS_WRQ] <= 0;
+        end
+        else begin
+            candidate_byte[PK_LUS_WRQ] <= 0;
+            candidate_read[PK_LUS_WRQ] <= 0;
+            begin
+                if (build_position[PK_LUS_WRQ] == 1) candidate_byte[PK_LUS_WRQ] <= 2;
+                else if (build_position[PK_LUS_WRQ] >= 2 && build_position[PK_LUS_WRQ] < 14)
+                    candidate_byte[PK_LUS_WRQ] <= target_name (filename_position,
+                    "S", download_mode);
+                else if (build_position[PK_LUS_WRQ] >= 14) candidate_byte[PK_LUS_WRQ] <= octet_byte (wrq_mode_position);
+            end
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_RRQ] <= 0;
+            candidate_read[PK_RRQ] <= 0;
+            candidate_source[PK_RRQ] <= 0;
+            candidate_address[PK_RRQ] <= 0;
+        end
+        else begin
+            candidate_byte[PK_RRQ] <= 0;
+            candidate_read[PK_RRQ] <= 0;
+            begin
+                if (build_position[PK_RRQ] == 1) candidate_byte[PK_RRQ] <= download_mode ? 2 : 1;
+                else if (build_position[PK_RRQ] >= 2 && build_position[PK_RRQ] < name_end) begin
+                    if (download_mode) candidate_byte[PK_RRQ] <= memory_name(filename_position);
+                    else if (file_kind == FILE_HEADER)
+                        begin
+                            candidate_read[PK_RRQ] <= 1;
+                            candidate_source[PK_RRQ] <= 1;
+                            end
+                    else begin
+                        candidate_read[PK_RRQ] <= 1;
+                        candidate_source[PK_RRQ] <= 2;
+                    end
+                end
+                else if (build_position[PK_RRQ] >= mode_start) candidate_byte[PK_RRQ] <= octet_byte (rrq_mode_position);
+            end
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_DL_DATA] <= 0;
+            candidate_read[PK_DL_DATA] <= 0;
+            candidate_source[PK_DL_DATA] <= 0;
+            candidate_address[PK_DL_DATA] <= 0;
+        end
+        else begin
+            candidate_byte[PK_DL_DATA] <= 0;
+            candidate_read[PK_DL_DATA] <= 0;
+            case (build_position[PK_DL_DATA])
+                1 : candidate_byte[PK_DL_DATA] <= 3;
+                2 : candidate_byte[PK_DL_DATA] <= block_number[15:8];
+                3 : candidate_byte[PK_DL_DATA] <= block_number[7:0];
+                default : if (build_position[PK_DL_DATA] >= 4) begin
+                    candidate_read[PK_DL_DATA] <= 1;
+                    candidate_source[PK_DL_DATA] <= 3;
+                    candidate_address[PK_DL_DATA] <= dl_read_addr;
+                end
+            endcase
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            candidate_byte[PK_LUS] <= 0;
+            candidate_read[PK_LUS] <= 0;
+            candidate_source[PK_LUS] <= 0;
+            candidate_address[PK_LUS] <= 0;
+        end
+        else begin
+            candidate_byte[PK_LUS] <= 0;
+            candidate_read[PK_LUS] <= 0;
+            begin
+                case (build_position[PK_LUS])
+
+                    1 : candidate_byte[PK_LUS] <= 3;
+
+                    3 : candidate_byte[PK_LUS] <= 1;
+
+                    7 : candidate_byte[PK_LUS] <= packet_len - 4;
+
+                    8 : candidate_byte[PK_LUS] <= "A";
+
+                    9 : candidate_byte[PK_LUS] <= protocol_a4 ? "4" : "3";
+
+                    10 : candidate_byte[PK_LUS] <= lus_status[15:8];
+
+                    11 : candidate_byte[PK_LUS] <= lus_status[7:0];
+
+                    12 : candidate_byte[PK_LUS] <= 8;
+
+                    21 : candidate_byte[PK_LUS] <= lus_counter[15:8];
+
+                    22 : candidate_byte[PK_LUS] <= lus_counter[7:0];
+
+                    25, 26 : candidate_byte[PK_LUS] <= lus_status == LUS_IN_PROGRESS ? 8'hff : 0;
+
+                    27 : candidate_byte[PK_LUS] <= ratio_h;
+
+                    28 : candidate_byte[PK_LUS] <= ratio_t;
+
+                    29 : candidate_byte[PK_LUS] <= ratio_u;
+
+                    31 : candidate_byte[PK_LUS] <= manifest;
+
+                    32 : candidate_byte[PK_LUS] <= header_name_len;
+
+                    default : begin
+                        if (build_position[PK_LUS] >= 13
+                            && build_position[PK_LUS] <= 20)
+                                candidate_byte[PK_LUS] <= description (lus_description_position);
+                        else if (build_position[PK_LUS] >= 33 && build_position[PK_LUS] < lus_partlen_pos) begin
+                            candidate_read[PK_LUS] <= 1;
+                            candidate_source[PK_LUS] <= 1;
+                            candidate_address[PK_LUS] <= header_name_addr + head_index;
+                        end
+                        else if ( ! download_mode && build_position[PK_LUS] == lus_partlen_pos)
+                            candidate_byte[PK_LUS] <= part_len;
+                        else if ( ! download_mode && build_position[PK_LUS] >= lus_part_pos
+                            && build_position[PK_LUS] < lus_tail_pos) begin
+                                candidate_read[PK_LUS] <= 1;
+                                candidate_source[PK_LUS] <= 1;
+                                candidate_address[PK_LUS] <= part_addr + part_index;
+                            end
+                        else if (download_mode && build_position[PK_LUS] >= 33
+                            && build_position[PK_LUS] >= lus_tail_pos) case (tail_index)
+                            0 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
+                            1 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
+                                : lus_status[7:0];
+                            2 : candidate_byte[PK_LUS] <= 8;
+                            default : candidate_byte[PK_LUS] <= description(tail_index - 10'd3);
+                        endcase
+                        else if (build_position[PK_LUS] >= 33 && build_position[PK_LUS] >= lus_tail_pos)
+                            case (tail_index)
+                            0 : candidate_byte[PK_LUS] <= ratio_h;
+                            1 : candidate_byte[PK_LUS] <= ratio_t;
+                            2 : candidate_byte[PK_LUS] <= ratio_u;
+                            3 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
+                            4 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
+                                : lus_status[7:0];
+                            5 : candidate_byte[PK_LUS] <= 8;
+                            default : candidate_byte[PK_LUS] <= description (tail_index - 10'd6);
+                        endcase
+                    end
+                endcase
+            end
+        end
+    end
+
     always @(posedge clk) begin
         if (reset) begin
             rx_port_stage <= 0;
@@ -735,6 +985,9 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
             packet_pos <= 0;
             metadata_size <= 0;
             header_pointer_ok <= 0;
+            pointer_less <= 0;
+            pointer_equal <= 0;
+            pointer_minimum <= 0;
             header_pointer <= 0;
             header_name_addr <= 0;
             header_name_len <= 0;
@@ -1124,125 +1377,52 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                     name_end <= packet_len - RRQ_SUFFIX_BYTES;
                     mode_start <= packet_len - OCTET_MODE_BYTES;
                     dl_read_addr <= dl_acked[12:0] + packet_pos - TFTP_DATA_POS;
-                    state <= BUILD;
+                    state <= BUILD_CANDIDATE;
                 end
+
+                // 并行候选值需要一拍寄存，随后选择当前报文类型的结果。
+                BUILD_CANDIDATE : state <= BUILD;
 
                 // BUILD：选择本字节内容，需读存储器时先读取，随后转 EMIT。
                 BUILD : begin
                     build_value <= 0;
                     state <= EMIT;
-                    case (packet_type)
-
-                        PK_ACK : case (packet_pos)
-                            1 : build_value <= 4;
-                            2 : build_value <= ack_number[15:8];
-                            3 : build_value <= ack_number[7:0];
-                        endcase
-
-                        PK_LUI : case (packet_pos)
-                            1 : build_value <= 3;
-                            3 : build_value <= 1;
-                            7 : build_value <= 9;
-                            8 : build_value <= "A";
-                            9 : build_value <= protocol_a4 ? "4" : "3";
-                            11 : build_value <= 1;
-                        endcase
-
-                        PK_ERROR : case (packet_pos)
-                            1 : build_value <= 5;
-                            3 : build_value <= reason == REASON_DESCRIPTION ? 1 : reason == REASON_TFTP_ERROR ? 4 : 0;
-                            default : if (packet_pos >= 4) build_value <= description (packet_pos - 4);
-                        endcase
-
+                    case (packet_type) // synthesis parallel_case
+                        PK_ACK : begin
+                            build_value <= candidate_byte[PK_ACK];
+                            if (candidate_read[PK_ACK])
+                                get_byte(candidate_source[PK_ACK], candidate_address[PK_ACK], EMIT);
+                        end
+                        PK_LUI : begin
+                            build_value <= candidate_byte[PK_LUI];
+                            if (candidate_read[PK_LUI])
+                                get_byte(candidate_source[PK_LUI], candidate_address[PK_LUI], EMIT);
+                        end
+                        PK_ERROR : begin
+                            build_value <= candidate_byte[PK_ERROR];
+                            if (candidate_read[PK_ERROR])
+                                get_byte(candidate_source[PK_ERROR], candidate_address[PK_ERROR], EMIT);
+                        end
                         PK_LUS_WRQ : begin
-                            if (packet_pos == 1) build_value <= 2;
-                            else if (packet_pos >= 2 && packet_pos < 14) build_value <= target_name (packet_pos - 2,
-                                "S", download_mode);
-                            else if (packet_pos >= 14) build_value <= octet_byte (packet_pos - 14);
+                            build_value <= candidate_byte[PK_LUS_WRQ];
+                            if (candidate_read[PK_LUS_WRQ])
+                                get_byte(candidate_source[PK_LUS_WRQ], candidate_address[PK_LUS_WRQ], EMIT);
                         end
-
                         PK_RRQ : begin
-                            if (packet_pos == 1) build_value <= download_mode ? 2 : 1;
-                            else if (packet_pos >= 2 && packet_pos < name_end) begin
-                                if (download_mode) build_value <= memory_name(packet_pos - 2);
-                                else if (file_kind == FILE_HEADER)
-                                    get_byte (1, header_name_addr + packet_pos - 2, EMIT);
-                                else get_byte (2, data_name_addr + packet_pos - 2, EMIT);
-                            end
-                            else if (packet_pos >= mode_start) build_value <= octet_byte (packet_pos - mode_start);
+                            build_value <= candidate_byte[PK_RRQ];
+                            if (candidate_read[PK_RRQ])
+                                get_byte(candidate_source[PK_RRQ],
+                                    candidate_source[PK_RRQ] == 1 ? rrq_header_read : rrq_data_read, EMIT);
                         end
-
-                        PK_DL_DATA : case (packet_pos)
-                            1 : build_value <= 3;
-                            2 : build_value <= block_number[15:8];
-                            3 : build_value <= block_number[7:0];
-                            default : if (packet_pos >= 4) get_byte(3, dl_read_addr, EMIT);
-                        endcase
-
+                        PK_DL_DATA : begin
+                            build_value <= candidate_byte[PK_DL_DATA];
+                            if (candidate_read[PK_DL_DATA])
+                                get_byte(candidate_source[PK_DL_DATA], candidate_address[PK_DL_DATA], EMIT);
+                        end
                         PK_LUS : begin
-                            case (packet_pos)
-
-                                1 : build_value <= 3;
-
-                                3 : build_value <= 1;
-
-                                7 : build_value <= packet_len - 4;
-
-                                8 : build_value <= "A";
-
-                                9 : build_value <= protocol_a4 ? "4" : "3";
-
-                                10 : build_value <= lus_status[15:8];
-
-                                11 : build_value <= lus_status[7:0];
-
-                                12 : build_value <= 8;
-
-                                21 : build_value <= lus_counter[15:8];
-
-                                22 : build_value <= lus_counter[7:0];
-
-                                25, 26 : build_value <= lus_status == LUS_IN_PROGRESS ? 8'hff : 0;
-
-                                27 : build_value <= ratio_h;
-
-                                28 : build_value <= ratio_t;
-
-                                29 : build_value <= ratio_u;
-
-                                31 : build_value <= manifest;
-
-                                32 : build_value <= header_name_len;
-
-                                default : begin
-                                    if (packet_pos >= 13
-                                        && packet_pos <= 20) build_value <= description (packet_pos - 13);
-                                    else if (packet_pos >= 33 && packet_pos < lus_partlen_pos) get_byte (1,
-                                        header_name_addr + head_index, EMIT);
-                                    else if ( ! download_mode && packet_pos == lus_partlen_pos) build_value <= part_len;
-                                    else if ( ! download_mode && packet_pos >= lus_part_pos
-                                        && packet_pos < lus_tail_pos) get_byte (1,
-                                        part_addr + part_index, EMIT);
-                                    else if (download_mode && packet_pos >= 33
-                                        && packet_pos >= lus_tail_pos) case (tail_index)
-                                        0 : build_value <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
-                                        1 : build_value <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
-                                            : lus_status[7:0];
-                                        2 : build_value <= 8;
-                                        default : build_value <= description(tail_index - 10'd3);
-                                    endcase
-                                    else if (packet_pos >= 33 && packet_pos >= lus_tail_pos) case (tail_index)
-                                        0 : build_value <= ratio_h;
-                                        1 : build_value <= ratio_t;
-                                        2 : build_value <= ratio_u;
-                                        3 : build_value <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
-                                        4 : build_value <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
-                                            : lus_status[7:0];
-                                        5 : build_value <= 8;
-                                        default : build_value <= description (tail_index - 10'd6);
-                                    endcase
-                                end
-                            endcase
+                            build_value <= candidate_byte[PK_LUS];
+                            if (candidate_read[PK_LUS])
+                                get_byte(candidate_source[PK_LUS], candidate_address[PK_LUS], EMIT);
                         end
                     endcase
                 end
@@ -1581,11 +1761,25 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                 HEADER_VERSION : if (number != HEADER_FILE_VERSION) fail (REASON_DESCRIPTION);
                 else get_number (2, 14, 4, HEADER_PTR);
 
-                // HEADER_PTR：检查指针范围并保存结果，然后转 HEADER_PTR_CHECK。
+                // HEADER_PTR：先逐字节比较指针与上界，再合并比较结果。
                 HEADER_PTR : begin
-                    // 先保存范围检查结果，下一拍再决定是否继续。
-                    header_pointer_ok <= number >= HEADER_DATA_PTR_MIN_WORDS
-                                         && (number << 1) < metadata_size - HEADER_TRAILER_BYTES;
+                    pointer_minimum <= number >= HEADER_DATA_PTR_MIN_WORDS;
+                    pointer_less[0] <= pointer_bytes[7:0] < header_limit[7:0];
+                    pointer_equal[0] <= pointer_bytes[7:0] == header_limit[7:0];
+                    pointer_less[1] <= pointer_bytes[15:8] < header_limit[15:8];
+                    pointer_equal[1] <= pointer_bytes[15:8] == header_limit[15:8];
+                    pointer_less[2] <= pointer_bytes[23:16] < header_limit[23:16];
+                    pointer_equal[2] <= pointer_bytes[23:16] == header_limit[23:16];
+                    pointer_less[3] <= pointer_bytes[31:24] < header_limit[31:24];
+                    pointer_equal[3] <= pointer_bytes[31:24] == header_limit[31:24];
+                    state <= HEADER_PTR_MERGE;
+                end
+
+                HEADER_PTR_MERGE : begin
+                    header_pointer_ok <= pointer_minimum && (pointer_less[3]
+                        || (pointer_equal[3] && pointer_less[2])
+                        || (pointer_equal[3] && pointer_equal[2] && pointer_less[1])
+                        || (pointer_equal[3] && pointer_equal[2] && pointer_equal[1] && pointer_less[0]));
                     state <= HEADER_PTR_CHECK;
                 end
 

@@ -109,6 +109,7 @@ module afdx_tx_engine #(
     reg [62:0] scan_s0, scan_s1, scan_s2;
     reg [31:0] scan_d, scan_soon;
     reg scan_due;
+    reg scan_has_data, scan_unrestricted, scan_blocked;
 
     // quota 限制连续扫描次数，让新消息也能及时加入队列。
     // ack_pending 表示还有一个实际发送时间需要写回。
@@ -128,8 +129,9 @@ module afdx_tx_engine #(
         end
     endtask
 
-    wire scan_eligible = scan_s2[21:16] != 0 && ( ! scan_s2[62] || ! scan_soon[31]) && ! (pend_valid
-        && scan_vl4 == pend_vl);
+    // 第四拍已知队列状态和待发送链路，先寄存比较结果。
+    // 第五拍只组合三个标记，不再把链路比较和调度条件串到存储器地址选择上。
+    wire scan_eligible = scan_has_data && (scan_unrestricted || !scan_soon[31]) && !scan_blocked;
 
     always @(posedge clk) begin
         if (reset) begin
@@ -201,6 +203,9 @@ module afdx_tx_engine #(
             scan_d <= 0;
             scan_soon <= 0;
             scan_due <= 0;
+            scan_has_data <= 0;
+            scan_unrestricted <= 0;
+            scan_blocked <= 0;
         end
         else begin
             now_q <= now;
@@ -231,6 +236,9 @@ module afdx_tx_engine #(
                 scan_s2 <= scan_s1;
                 scan_soon <= scan_d + LOOKAHEAD;
                 scan_due <= ! scan_d[31];
+                scan_has_data <= scan_s1[21:16] != 0;
+                scan_unrestricted <= !scan_s1[62];
+                scan_blocked <= pend_valid && scan_vl3 == pend_vl;
             end
             // 模块只选择有排队消息且已到期或即将到期的虚拟链路。
             // LOOKAHEAD 指定提前准备组帧的周期数，实际发送仍要等到期。
@@ -244,7 +252,7 @@ module afdx_tx_engine #(
                     scan_issue <= scan_vl4 + 1'b1;
                     scan_phase <= 0;
                 end
-                else if (scan_s2[21:16] == 0 && scan_s2[62] && scan_due && ! (pend_valid && scan_vl4 == pend_vl)) begin
+                else if (!scan_has_data && !scan_unrestricted && scan_due && !scan_blocked) begin
                     state_we <= 1;
                     state_wa <= scan_vl4;
                     state_wd <= { 1'b0, scan_s2[61:0] };

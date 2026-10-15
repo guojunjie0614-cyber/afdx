@@ -78,8 +78,9 @@ module AFDX_top #(
     wire byte_en, tx_initialized, rx_initialized;
     wire tx_cfg_ok, rx_cfg_ok, tx_cfg_we, rx_map_we, rx_cfg_we;
     wire [9:0] tx_cfg_addr;
-    wire [15:0] rx_cfg_addr;
-    wire [31:0] tx_cfg_wdata, rx_cfg_wdata;
+    wire [32 * 16 - 1:0] rx_cfg_addr;
+    wire [31:0] tx_cfg_wdata;
+    wire [32 * 32 - 1:0] rx_cfg_wdata;
 
     // 收发核心直接连接千兆线路，中间没有会丢帧的缓存，所以 ev_gdrop 固定为零。
     assign ev_gdrop = 2'b00;
@@ -321,7 +322,8 @@ module AFDX_top #(
     );
     afdx_rx_core #(
         .RX_RING_AW(RX_RING_AW),
-        .RX_DQ_AW(RX_DQ_AW)
+        .RX_DQ_AW(RX_DQ_AW),
+        .CFG_COPIES(32)
     ) rx_core (
         .clk(clk),
         .reset(reset),
@@ -348,17 +350,18 @@ module AFDX_top #(
         .ev_deliver(ev_deliver),
         .cfg_ok(rx_cfg_ok)
     );
-    afdx_cfg cfg_regs (
+    afdx_cfg #(.RX_BUS_COPIES(32)) cfg_regs (
         .clk(clk),
         .reset(reset),
         .tx_ready(tx_ready),
         .cfg_wr(cfg_wr),
         .cfg_rd(bus_rd),
         .cfg_addr(bus_addr),
+        .cfg_write_addr(cfg_addr),
         .cfg_wdata(cfg_wdata),
         .mib_user_wr(mib_user_write),
         .mib_user_wdata(snmp_mib_wdata[15:0]),
-        .mib_read_addr(snmp_mib_addr[2:0]),
+        .mib_read_addr(snmp_mib_addr),
         .host_read(cfg_rd),
         .host_read_addr(cfg_addr[2:0]),
         .cfg_ready(cfg_ready),

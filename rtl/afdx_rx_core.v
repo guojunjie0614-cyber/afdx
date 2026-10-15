@@ -2,7 +2,7 @@
 // 两路线路分别接收，检查通过后由一个输出口交付消息。
 // 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
 module afdx_rx_core #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
@@ -17,8 +17,8 @@ module afdx_rx_core #(
     // cfg_map_we 写入线路编号到配置索引的映射。
     // cfg_cfg_we 写入接收参数，cfg_ok 为高时允许这些写操作。
     input wire cfg_map_we, cfg_cfg_we,
-    input wire [15:0] cfg_addr,
-    input wire [31:0] cfg_wdata,
+    input wire [CFG_COPIES * 16 - 1:0] cfg_addr,
+    input wire [CFG_COPIES * 32 - 1:0] cfg_wdata,
 
     // d_valid 为高时交付一个用户字节，d_last 标记消息末字节。
     // d_vl 是接收配置索引，d_sport/d_dport 是源端口和目的端口。
@@ -61,9 +61,6 @@ module afdx_rx_core #(
     wire da_valid, db_valid, take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
     wire [RX_RING_AW + 82:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
-    wire map_we = !reset && (init_done ? cfg_map_we && cfg_ok : !flush_init);
-    wire [15:0] map_wa = init_done ? cfg_addr : clear_addr;
-    wire [12:0] map_wd = init_done ? cfg_wdata[12:0] : 13'b0;
 
     localparam DQ_WIDTH = RX_RING_AW + 56;
     wire engine_rm, engine_deliver, dq_pop, dq_we;
@@ -122,7 +119,7 @@ module afdx_rx_core #(
             else begin
                 cfg_we <= cfg_cfg_we && cfg_ok;
                 cfg_wa <= cfg_addr[11:0];
-                cfg_wd <= cfg_wdata;
+                cfg_wd <= cfg_wdata[31:0];
             end
             ev_a <= parse_ev_a | engine_ev_a;
             ev_b <= parse_ev_b | engine_ev_b;
@@ -144,6 +141,13 @@ module afdx_rx_core #(
     genvar bank, map_group;
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
+            localparam BUS_COPY = CFG_COPIES > 1 ? bank : 0;
+            (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
+            (* preserve = 1, dont_merge = 1 *) reg cleared;
+            wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16 +: 16];
+            wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32 +: 13];
+            wire bank_write = init_done && cfg_map_we && cfg_ok
+                && bank_cfg_addr[15:MAP_BANK_AW] == bank;
             (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
             (* preserve = 1, dont_merge = 1 *) reg [12:0] write_data;
@@ -155,16 +159,23 @@ module afdx_rx_core #(
                     read_request <= 0;
                     write_request <= 0;
                     selected <= 0;
+                    clear_local <= 0;
+                    cleared <= 0;
                 end
                 else begin
                     selected <= read_request;
                     read_request <= map_re && map_ra[15:MAP_BANK_AW] == bank;
-                    write_request <= map_we && map_wa[15:MAP_BANK_AW] == bank;
+                    // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
+                    write_request <= !cleared || bank_write;
+                    if (!cleared) begin
+                        clear_local <= clear_local + 1'b1;
+                        if (&clear_local) cleared <= 1;
+                    end
                     // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
                     // 返回选择由局部读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
                     read_address <= map_ra[MAP_BANK_AW - 1:0];
-                    write_address <= map_wa[MAP_BANK_AW - 1:0];
-                    write_data <= map_wd;
+                    write_address <= cleared ? bank_cfg_addr[MAP_BANK_AW - 1:0] : clear_local;
+                    write_data <= cleared ? bank_cfg_data : 13'b0;
                 end
             end
             afdx_ram_sdp #(.WIDTH(13), .DEPTH(1 << MAP_BANK_AW)) memory (

@@ -1,7 +1,7 @@
 // 本模块把外部配置读写请求送到对应模块，并统计收发事件。
 // 输入来自顶层配置口和各模块的事件脉冲，读结果返回顶层。
 // 本模块为赛题的收发配置和网络管理提供寄存器接口。
-module afdx_cfg (
+module afdx_cfg #(parameter RX_BUS_COPIES = 1) (
 
     // tx_ready 为高表示收发核心都已初始化。
     input wire clk, reset, tx_ready,
@@ -10,11 +10,12 @@ module afdx_cfg (
     // cfg_rd 发起读请求，两拍后 cfg_rvalid 指示 cfg_rdata 有效。
     // 此读口返回寄存器和统计值，不读回配置存储表。
     input wire cfg_wr, cfg_rd,
-    input wire [17:0] cfg_addr,
+    input wire [17:0] cfg_addr, cfg_write_addr,
     input wire [31:0] cfg_wdata,
     input wire mib_user_wr,
     input wire [15:0] mib_user_wdata,
-    input wire [2:0] mib_read_addr, host_read_addr,
+    input wire [17:0] mib_read_addr,
+    input wire [2:0] host_read_addr,
     input wire host_read,
     output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
@@ -30,8 +31,8 @@ module afdx_cfg (
     output reg [9:0] tx_cfg_addr,
     output reg [31:0] tx_cfg_wdata,
     output reg rx_map_we, rx_cfg_we,
-    output reg [15:0] rx_cfg_addr,
-    output reg [31:0] rx_cfg_wdata,
+    output wire [RX_BUS_COPIES * 16 - 1:0] rx_cfg_addr,
+    output wire [RX_BUS_COPIES * 32 - 1:0] rx_cfg_wdata,
 
     // ev_tx[0] 表示消息被接纳。
     // ev_tx[1] 表示所选虚拟链路未启用。
@@ -64,9 +65,72 @@ module afdx_cfg (
     // 0x01000–0x013ff 对应发送配置表。
     // 0x10000–0x1ffff 对应接收编号映射表。
     // 0x20000–0x20fff 对应接收配置表。
-    wire select_tx = (cfg_addr[17:10] == 8'b00000100);
-    wire select_map = (cfg_addr[17:16] == 2'b01);
-    wire select_rx = (cfg_addr[17:12] == 6'b100000);
+    wire select_tx = (cfg_write_addr[17:10] == 8'b00000100);
+    wire select_map = (cfg_write_addr[17:16] == 2'b01);
+    wire select_rx = (cfg_write_addr[17:12] == 6'b100000);
+
+    // 每个接收 bank 在配置源处有独立副本，不让一个地址寄存器跨越整片存储区。
+    // 捕获条件和原写请求相同；忙时保持，因此没有增加写入拍数。
+    genvar bus_copy;
+    generate
+        for (bus_copy = 0; bus_copy < RX_BUS_COPIES; bus_copy = bus_copy + 1) begin : receive_bus
+            localparam DATA_WIDTH = bus_copy == 0 ? 32 : 13;
+            (* preserve = 1, dont_merge = 1 *) reg [15:0] address;
+            (* preserve = 1, dont_merge = 1 *) reg [DATA_WIDTH - 1:0] data;
+            (* preserve = 1, dont_merge = 1 *) reg ready, transmit_pending, receive_pending;
+            wire capture = tx_ready && !transmit_pending && !receive_pending
+                && cfg_wr && ready && (select_map || select_rx);
+            assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
+            assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
+            // 握手状态也按目的地复制；每个 ready 只驱动本 bank 的地址和数据保持端。
+            // 和总线主状态同拍更新，避免全局 ready 跨片驱动一千多个寄存器。
+            always @(posedge clk) begin
+                if (reset) begin
+                    ready <= 0;
+                    transmit_pending <= 0;
+                    receive_pending <= 0;
+                    address <= 0;
+                    data <= 0;
+                end
+                else begin
+                    if (!tx_ready) begin
+                        ready <= 0;
+                        transmit_pending <= 0;
+                        receive_pending <= 0;
+                    end
+                    else if (transmit_pending) begin
+                        if (tx_cfg_ok) begin
+                            transmit_pending <= 0;
+                            ready <= 1;
+                        end
+                    end
+                    else if (receive_pending) begin
+                        if (rx_cfg_ok) begin
+                            receive_pending <= 0;
+                            ready <= 1;
+                        end
+                    end
+                    else begin
+                        ready <= 1;
+                        if (cfg_wr && ready) begin
+                            if (select_tx) begin
+                                transmit_pending <= 1;
+                                ready <= 0;
+                            end
+                            else if (select_map || select_rx) begin
+                                receive_pending <= 1;
+                                ready <= 0;
+                            end
+                        end
+                    end
+                    if (capture) begin
+                        address <= cfg_write_addr[15:0];
+                        data <= cfg_wdata[DATA_WIDTH - 1:0];
+                    end
+                end
+            end
+        end
+    endgenerate
 
     // 单个寄存器的地址（按 32 位字编址）和版本号。
     localparam ADDR_VERSION = 18'h00000, ADDR_STATUS = 18'h00001, ADDR_USER_ID = 18'h00002;
@@ -124,6 +188,64 @@ module afdx_cfg (
     reg [31:0] count_deliver;
     reg [31:0] count_a_gdrop, count_b_gdrop;
 
+    function [7:0] register_select;
+        input [17:0] address;
+        begin
+            register_select = 0;
+            case (address)
+                ADDR_VERSION : register_select[0] = 1;
+                ADDR_STATUS : register_select[1] = 1;
+                ADDR_USER_ID : register_select[2] = 1;
+                ADDR_RM_DROP : register_select[3] = 1;
+                ADDR_DELIVER : register_select[4] = 1;
+                ADDR_A_GDROP : register_select[5] = 1;
+                ADDR_B_GDROP : register_select[6] = 1;
+                ADDR_RTC_SYNC_COUNT : register_select[7] = 1;
+            endcase
+        end
+    endfunction
+
+    function [2:0] group_select;
+        input [17:0] address;
+        begin
+            case (address[17:3])
+                GROUP_TX_COUNT : group_select = SEL_TX;
+                GROUP_A_COUNT : group_select = SEL_A;
+                GROUP_B_COUNT : group_select = SEL_B;
+                GROUP_RTC : group_select = SEL_RTC;
+                GROUP_SNMP_CONTROL : group_select = SEL_SNMP_CONTROL;
+                GROUP_SNMP_STATUS : group_select = SEL_SNMP_STATUS;
+                GROUP_SNMP_DESCR : group_select = SEL_SHARED;
+                GROUP_LOAD : group_select = SEL_SHARED;
+                GROUP_LOAD_EXTRA : group_select = SEL_SHARED;
+                default : group_select = SEL_REGS;
+            endcase
+        end
+    endfunction
+
+    function [1:0] loader_select;
+        input [17:0] address;
+        begin
+            loader_select = address[17:3] == GROUP_LOAD ? SHARED_LOAD
+                : address[17:3] == GROUP_LOAD_EXTRA ? SHARED_LOAD_EXTRA : SHARED_SNMP_DESCR;
+        end
+    endfunction
+
+    reg [2:0] mib_group;
+    reg [1:0] mib_loader;
+    wire [31:0] status_value = {31'b0, tx_ready};
+    wire [31:0] user_value = {16'b0, user_id};
+    always @(posedge clk) begin
+        if (reset) begin
+            mib_group <= SEL_REGS;
+            mib_loader <= SHARED_SNMP_DESCR;
+        end
+        else begin
+            mib_group <= group_select(mib_read_addr);
+            mib_loader <= loader_select(mib_read_addr);
+        end
+    end
+
     // 每四位计数值使用独立的地址译码寄存器，每个选择位只驱动十二个数据位。
     // 网络管理先发地址、下一拍再发读请求；主机读口直接译码，仍在两拍后返回。
     genvar read_slice;
@@ -131,15 +253,29 @@ module afdx_cfg (
         for (read_slice = 0; read_slice < 8; read_slice = read_slice + 1) begin : counter_read
             (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
             wire [7:0] lane = host_read ? (8'b1 << host_read_addr) : mib_lane;
+            (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_register_lane;
+            wire [7:0] reg_lane = host_read ? register_select(cfg_write_addr) : mib_register_lane;
             always @(posedge clk) begin
                 if (reset) begin
                     mib_lane <= 8'b1;
+                    mib_register_lane <= 0;
+                    read_regs[read_slice * 4 +: 4] <= 0;
                     read_tx[read_slice * 4 +: 4] <= 0;
                     read_a[read_slice * 4 +: 4] <= 0;
                     read_b[read_slice * 4 +: 4] <= 0;
                 end
                 else begin
-                    mib_lane <= 8'b1 << mib_read_addr;
+                    mib_lane <= 8'b1 << mib_read_addr[2:0];
+                    mib_register_lane <= register_select(mib_read_addr);
+                    read_regs[read_slice * 4 +: 4] <=
+                        ({4{reg_lane[0]}} & VERSION_VALUE[read_slice * 4 +: 4])
+                        | ({4{reg_lane[1]}} & status_value[read_slice * 4 +: 4])
+                        | ({4{reg_lane[2]}} & user_value[read_slice * 4 +: 4])
+                        | ({4{reg_lane[3]}} & count_rm_drop[read_slice * 4 +: 4])
+                        | ({4{reg_lane[4]}} & count_deliver[read_slice * 4 +: 4])
+                        | ({4{reg_lane[5]}} & count_a_gdrop[read_slice * 4 +: 4])
+                        | ({4{reg_lane[6]}} & count_b_gdrop[read_slice * 4 +: 4])
+                        | ({4{reg_lane[7]}} & rtc_sync_count[read_slice * 4 +: 4]);
                     read_tx[read_slice * 4 +: 4] <=
                         ({4{lane[0]}} & count_accept[read_slice * 4 +: 4])
                         | ({4{lane[1]}} & count_drop_dis[read_slice * 4 +: 4])
@@ -242,8 +378,6 @@ module afdx_cfg (
             tx_cfg_wdata <= 0;
             rx_map_we <= 0;
             rx_cfg_we <= 0;
-            rx_cfg_addr <= 0;
-            rx_cfg_wdata <= 0;
         end
         // 等待核心接收写请求时，模块保持地址和数据，并拉低 cfg_ready。
         else if ( ! tx_ready) begin
@@ -271,18 +405,16 @@ module afdx_cfg (
             if (cfg_wr && cfg_ready) begin
                 if (select_tx) begin
                     tx_cfg_we <= 1;
-                    tx_cfg_addr <= cfg_addr[9:0];
+                    tx_cfg_addr <= cfg_write_addr[9:0];
                     tx_cfg_wdata <= cfg_wdata;
                     cfg_ready <= 0;
                 end
                 else if (select_map || select_rx) begin
                     rx_map_we <= select_map;
                     rx_cfg_we <= select_rx;
-                    rx_cfg_addr <= cfg_addr[15:0];
-                    rx_cfg_wdata <= cfg_wdata;
                     cfg_ready <= 0;
                 end
-                else if (cfg_addr == ADDR_USER_ID) begin
+                else if (cfg_write_addr == ADDR_USER_ID) begin
                     user_id <= cfg_wdata[15:0];
                 end
             end
@@ -296,38 +428,14 @@ module afdx_cfg (
             cfg_rvalid <= 0;
             read_select <= 0;
             read_loader <= 0;
-            read_regs <= 0;
             cfg_rdata <= 0;
         end
         else begin
             // 读请求到来时保存此前的计数值，本拍新事件不计入此次读值。
             // 第一拍保存各组读值，第二拍选择本次请求对应的一组。
             read_valid <= cfg_rd;
-            case (cfg_addr)
-                ADDR_VERSION : read_regs <= VERSION_VALUE;
-                ADDR_STATUS : read_regs <= { 31'b0, tx_ready };
-                ADDR_USER_ID : read_regs <= { 16'b0, user_id };
-                ADDR_RM_DROP : read_regs <= count_rm_drop;
-                ADDR_DELIVER : read_regs <= count_deliver;
-                ADDR_A_GDROP : read_regs <= count_a_gdrop;
-                ADDR_B_GDROP : read_regs <= count_b_gdrop;
-                ADDR_RTC_SYNC_COUNT : read_regs <= rtc_sync_count;
-                default : read_regs <= 0;
-            endcase
-            case (cfg_addr[17:3])
-                GROUP_TX_COUNT : read_select <= SEL_TX;
-                GROUP_A_COUNT : read_select <= SEL_A;
-                GROUP_B_COUNT : read_select <= SEL_B;
-                GROUP_RTC : read_select <= SEL_RTC;
-                GROUP_SNMP_CONTROL : read_select <= SEL_SNMP_CONTROL;
-                GROUP_SNMP_STATUS : read_select <= SEL_SNMP_STATUS;
-                GROUP_SNMP_DESCR : read_select <= SEL_SHARED;
-                GROUP_LOAD : read_select <= SEL_SHARED;
-                GROUP_LOAD_EXTRA : read_select <= SEL_SHARED;
-                default : read_select <= SEL_REGS;
-            endcase
-            read_loader <= cfg_addr[17:3] == GROUP_LOAD ? SHARED_LOAD
-                : cfg_addr[17:3] == GROUP_LOAD_EXTRA ? SHARED_LOAD_EXTRA : SHARED_SNMP_DESCR;
+            read_select <= host_read ? group_select(cfg_write_addr) : mib_group;
+            read_loader <= host_read ? loader_select(cfg_write_addr) : mib_loader;
             // 读结果分两级选择，并在请求后第二拍返回。
             cfg_rvalid <= read_valid;
             case (read_select)
