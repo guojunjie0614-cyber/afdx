@@ -774,29 +774,34 @@ module afdx_615a (
                         status <= ST_FAILED;
                         state <= DONE;
                     end
-                    else if (wait_kind == WK_LUI_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == TFTP_OPCODE_ACK
-                        && rx_block == 1) begin
+                    else if (wait_kind == WK_LUI_ACK && peer_dp == main_tid && peer_sp == main_peer
+                             && rx_op == TFTP_OPCODE_ACK
+                             && rx_block == 1) begin
                         lus_status <= LUS_ACCEPTED;
                         lus_return <= LUS_DONE;
                         state <= START_LUS;
                     end
-                    else if (wait_kind == WK_LUS_ACK0 && peer_dp == status_tid && rx_op == TFTP_OPCODE_ACK && rx_block == 0) begin
+                    else if (wait_kind == WK_LUS_ACK0 && peer_dp == status_tid && rx_op == TFTP_OPCODE_ACK
+                             && rx_block == 0) begin
                         status_peer <= peer_sp;
                         state <= LUS_DATA;
                     end
                     else if (wait_kind == WK_LUS_ACK1 && peer_dp == status_tid && peer_sp == status_peer
                         && rx_op == TFTP_OPCODE_ACK && rx_block == 1) state <= lus_return;
-                    else if (wait_kind == WK_DL_ACK0 && peer_dp == main_tid && rx_op == TFTP_OPCODE_ACK && rx_block == 0) begin
+                    else if (wait_kind == WK_DL_ACK0 && peer_dp == main_tid && rx_op == TFTP_OPCODE_ACK
+                             && rx_block == 0) begin
                         main_peer <= peer_sp;
                         block_number <= 1;
                         state <= DL_BLOCK;
                     end
-                    else if (wait_kind == WK_DL_ACK && peer_dp == main_tid && peer_sp == main_peer && rx_op == TFTP_OPCODE_ACK
-                        && rx_block == block_number) state <= DL_ACK;
+                    else if (wait_kind == WK_DL_ACK && peer_dp == main_tid && peer_sp == main_peer
+                             && rx_op == TFTP_OPCODE_ACK
+                             && rx_block == block_number) state <= DL_ACK;
                     else if (wait_kind == WK_DATA && peer_dp == main_tid && rx_op == TFTP_OPCODE_DATA && (main_peer == 0
                         || peer_sp == main_peer)) begin
                         main_peer <= peer_sp;
-                        if (rx_block == block_number && rx_length >= TFTP_HEADER_BYTES && rx_length <= TFTP_MAX_PACKET_BYTES) begin
+                        if (rx_block == block_number && rx_length >= TFTP_HEADER_BYTES
+                            && rx_length <= TFTP_MAX_PACKET_BYTES) begin
                             copy_len <= rx_length - TFTP_HEADER_BYTES;
                             copy_pos <= 0;
                             state <= DATA_COPY;
@@ -822,7 +827,8 @@ module afdx_615a (
                     name_pos <= name_pos + 1'b1;
                     state <= NAME;
                 end
-                else if (name_pos == TARGET_DOWNLOAD_MARK_POS && ! request_write && request_download && byte_value == "O") begin
+                else if (name_pos == TARGET_DOWNLOAD_MARK_POS && ! request_write && request_download
+                         && byte_value == "O") begin
                     request_unsupported <= 1;
                     name_pos <= name_pos + 1'b1;
                     state <= NAME;
@@ -1217,7 +1223,8 @@ module afdx_615a (
                 // LUS_DATA：发送状态文件数据，发完后等待第一块确认。
                 LUS_DATA : begin
                     wait_kind <= WK_LUS_ACK1;
-                    make_packet (PK_LUS, manifest ? lus_packet_len : LUS_SHORT_PACKET_BYTES, status_tid, status_peer, WAIT_PACKET);
+                    make_packet (PK_LUS, manifest ? lus_packet_len : LUS_SHORT_PACKET_BYTES, status_tid,
+                                 status_peer, WAIT_PACKET);
                 end
 
                 // LUS_DONE：初始状态文件获确认后转 IDLE，等待文件列表。
@@ -1358,7 +1365,8 @@ module afdx_615a (
                     lus_tail_pos <= LUS_NAME_POS + header_name_len;
                     lus_packet_len <= LUS_DOWNLOAD_LENGTH_BASE + header_name_len;
                     scan_pos <= 0;
-                    if (metadata_size != LUR_FIXED_BYTES + header_name_len + byte_value || header_name_len != TARGET_NAME_BYTES)
+                    if (metadata_size != LUR_FIXED_BYTES + header_name_len + byte_value
+                        || header_name_len != TARGET_NAME_BYTES)
                         fail(REASON_DESCRIPTION);
                     else state <= LNR_NAME;
                 end
@@ -1400,8 +1408,10 @@ module afdx_615a (
                 DL_SIZE : begin
                     copy_len <= dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_BLOCK_BYTES : dl_remaining[10:0];
                     wait_kind <= WK_DL_ACK;
-                    make_packet(PK_DL_DATA, dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_MAX_PACKET_BYTES : dl_remaining[9:0] + TFTP_DATA_POS, main_tid,
-                        main_peer, WAIT_PACKET);
+                    make_packet(PK_DL_DATA,
+                                dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_MAX_PACKET_BYTES
+                                                                : dl_remaining[9:0] + TFTP_DATA_POS,
+                                main_tid, main_peer, WAIT_PACKET);
                 end
 
                 // DL_ACK：更新已确认字节数，未完转 DL_BLOCK，完成则发送成功状态。
@@ -1438,7 +1448,8 @@ module afdx_615a (
                 HEADER_START : get_number (2, 0, 4, HEADER_LENGTH);
 
                 // HEADER_LENGTH：核对字数与实际长度，通过后读取格式版本。
-                HEADER_LENGTH : if ((number << 1) != metadata_size || metadata_size < HEADER_MIN_BYTES) fail (REASON_DESCRIPTION);
+                HEADER_LENGTH : if ((number << 1) != metadata_size
+                                    || metadata_size < HEADER_MIN_BYTES) fail (REASON_DESCRIPTION);
                 else get_number (2, 4, 2, HEADER_VERSION);
 
                 // HEADER_VERSION：检查版本为 0x8002，通过后读取数据文件指针。
@@ -1448,7 +1459,8 @@ module afdx_615a (
                 // HEADER_PTR：检查指针范围并保存结果，然后转 HEADER_PTR_CHECK。
                 HEADER_PTR : begin
                     // 先保存范围检查结果，下一拍再决定是否继续。
-                    header_pointer_ok <= number >= HEADER_DATA_PTR_MIN_WORDS && (number << 1) < metadata_size - HEADER_TRAILER_BYTES;
+                    header_pointer_ok <= number >= HEADER_DATA_PTR_MIN_WORDS
+                                         && (number << 1) < metadata_size - HEADER_TRAILER_BYTES;
                     state <= HEADER_PTR_CHECK;
                 end
 
@@ -1462,7 +1474,8 @@ module afdx_615a (
                 end
 
                 // HEADER_CRC：读取下一校验字节；读完覆盖区后读取预期校验值。
-                HEADER_CRC : if (scan_pos == metadata_size - HEADER_TRAILER_BYTES) get_number (2, scan_pos, 2, HEADER_CRC_CHECK);
+                HEADER_CRC : if (scan_pos == metadata_size - HEADER_TRAILER_BYTES)
+                    get_number (2, scan_pos, 2, HEADER_CRC_CHECK);
                 else get_byte (2, scan_pos, HEADER_CRC_BYTE);
 
                 // HEADER_CRC_BYTE：更新头文件校验值，再转 HEADER_CRC。
@@ -1545,7 +1558,8 @@ module afdx_615a (
                 // ======== 第八部分：报告失败并结束本次操作 ========
                 // FAILURE：发送文件传输错误，发送完成后转 FAILURE_SENT。
                 FAILURE : begin
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, main_tid, main_peer == 0 ? request_port : main_peer, FAILURE_SENT);
+                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, main_tid,
+                                 main_peer == 0 ? request_port : main_peer, FAILURE_SENT);
                 end
 
                 // FAILURE_SENT：发送失败状态，确认或重试结束后转 DONE。

@@ -749,10 +749,14 @@ module afdx_snmp (
                     else if (decoded_arc < expected_arc) state <= get_next ? FOUND : LOOK_NEXT;
                     else if (decoded_arc > expected_arc) state <= LOOK_NEXT;
                     else if (oid_pos + 1 == oid_length) begin
-                        if (arc_index == (candidate < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC)) state <= get_next ? LOOK_NEXT : FOUND;
+                        if (arc_index == (candidate < SYSTEM_OBJECT_COUNT
+                                          ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC))
+                            state <= get_next ? LOOK_NEXT : FOUND;
                         else state <= get_next ? FOUND : LOOK_NEXT;
                     end
-                    else if (arc_index == (candidate < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC)) state <= LOOK_NEXT;
+                    else if (arc_index == (candidate < SYSTEM_OBJECT_COUNT
+                                           ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC))
+                        state <= LOOK_NEXT;
                     else begin
                         oid_acc <= 0;
                         arc_index <= arc_index + 4'd1;
