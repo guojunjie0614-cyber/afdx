@@ -3,7 +3,7 @@
 // 本模块对应赛题的 SNMP（Simple Network Management Protocol，
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
-module afdx_snmp #(parameter SPLIT_CFG_ADDR = 0) (
+module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
@@ -226,7 +226,22 @@ module afdx_snmp #(parameter SPLIT_CFG_ADDR = 0) (
         .read_data(out_q)
     );
 
-    assign rx_claim = configured && rx_dport == SNMP_PORT;
+    // 顶层交付口提前三拍给出端口，两级局部寄存分摊跨模块布线。
+    // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
+    wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
+    always @(posedge clk) begin
+        if (reset) begin
+            rx_port_stage <= 0;
+            rx_port_local <= 0;
+        end
+        else begin
+            rx_port_stage <= rx_dport;
+            rx_port_local <= rx_port_stage;
+        end
+    end
+
+    assign rx_claim = configured && incoming_port == SNMP_PORT;
     assign tx_vl = response_vl;
     assign tx_dport = response_port;
 

@@ -142,7 +142,7 @@ module AFDX_top #(
     // 网络管理回应使用的 UDP 源端口。
     localparam SNMP_PORT = 16'd161;
     wire rtc_select = (bus_addr[17:4] == RTC_ADDR_GROUP);
-    afdx_615a #(.SPLIT_CFG_ADDR(1)) loader (
+    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1)) loader (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
@@ -165,7 +165,7 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.SPLIT_CFG_ADDR(1)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1)) snmp (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
@@ -196,7 +196,7 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(snmp_claim)
     );
-    afdx_rtc rtc (
+    afdx_rtc #(.LOCAL_RX_PORT(1)) rtc (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),

@@ -3,7 +3,7 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter SPLIT_CFG_ADDR = 0) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input wire clk, reset, enable,
@@ -366,8 +366,23 @@ module afdx_615a #(parameter SPLIT_CFG_ADDR = 0) (
         .read_data(load_q)
     );
 
-    assign rx_claim = enable && configured && (rx_dport == request_port || rx_dport == main_tid
-        || rx_dport == status_tid || rx_dport == deny_tid);
+    // 顶层交付口提前三拍给出端口，两级局部寄存分摊跨模块布线。
+    // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
+    wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
+    always @(posedge clk) begin
+        if (reset) begin
+            rx_port_stage <= 0;
+            rx_port_local <= 0;
+        end
+        else begin
+            rx_port_stage <= rx_dport;
+            rx_port_local <= rx_port_stage;
+        end
+    end
+
+    assign rx_claim = enable && configured && (incoming_port == request_port || incoming_port == main_tid
+        || incoming_port == status_tid || incoming_port == deny_tid);
 
     function [15:0] crc16;
         input [15:0] old;
@@ -595,7 +610,7 @@ module afdx_615a #(parameter SPLIT_CFG_ADDR = 0) (
                     0 : begin
                         rx_op[15:8] <= rx_data;
                         peer_sp <= rx_sport;
-                        peer_dp <= rx_dport;
+                        peer_dp <= incoming_port;
                     end
                     1 : rx_op[7:0] <= rx_data;
                     2 : rx_block[15:8] <= rx_data;

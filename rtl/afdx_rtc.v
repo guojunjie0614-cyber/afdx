@@ -3,7 +3,7 @@
 // 本模块对应赛题的 RTC（Real-Time Clock，实时时钟）同步功能。
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
-module afdx_rtc (
+module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
     input wire clk, reset, enable,
@@ -11,7 +11,7 @@ module afdx_rtc (
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     input wire cfg_we, cfg_re,
-    input wire [3:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
     output reg [31:0] sync_count,
@@ -32,6 +32,9 @@ module afdx_rtc (
     input wire rx_last,
     input wire [15:0] rx_port,
     output wire rx_claim);
+
+    // 高 4 位专供主机写译码，低 4 位保持共享读地址。
+    wire [3:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 4 : cfg_addr;
 
     localparam CALC_IDLE = 0;
     localparam CALC_START_T2 = 10;
@@ -90,11 +93,26 @@ module afdx_rtc (
     reg [31:0] seconds, nanoseconds, snapshot_ns;
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
-    wire load_time = cfg_we && cfg_addr == 0 && cfg_wdata[2];
+    wire load_time = cfg_we && cfg_write_addr == 0 && cfg_wdata[2];
 
     assign tx_vl = vl;
     assign tx_port = port_number;
-    assign rx_claim = active && rx_port == port_number;
+    // 顶层交付口提前三拍给出端口，两级局部寄存分摊跨模块布线。
+    // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
+    wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_port;
+    always @(posedge clk) begin
+        if (reset) begin
+            rx_port_stage <= 0;
+            rx_port_local <= 0;
+        end
+        else begin
+            rx_port_stage <= rx_port;
+            rx_port_local <= rx_port_stage;
+        end
+    end
+
+    assign rx_claim = active && incoming_port == port_number;
 
     // 报文的 12 个 32 位字段保存在寄存器中。
     reg [383:0] rx_packet;
@@ -245,7 +263,7 @@ module afdx_rtc (
             // 配置字 3 设置服务端口。
             // 配置字 4 设置秒。
             // 配置字 5 设置纳秒。
-            if (cfg_we) case (cfg_addr)
+            if (cfg_we) case (cfg_write_addr)
                 REG_CONTROL : begin
                     active <= cfg_wdata[0];
                     master <= cfg_wdata[1];
