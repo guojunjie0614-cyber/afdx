@@ -52,6 +52,7 @@ module afdx_snmp (
 
     // 查找对象，再读取或设置它的值：
     localparam LOOK_START = 14, LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17, MISSING = 18;
+    localparam MIB_ADDRESS = 44;
     localparam MIB_REQUEST = 19, MIB_WAIT = 20, SET_VALUE = 34, SET_CHECK = 35, SET_WRITE = 36, SET_ERROR = 37;
 
     // 计算各层长度并构造回应：
@@ -779,8 +780,8 @@ module afdx_snmp (
                     mib_addr <= mib_address (candidate);
                     missing <= 0;
                     if ( ! get_set) begin
-                        mib_rd <= 1;
-                        state <= MIB_REQUEST;
+                        mib_rd <= 0;
+                        state <= MIB_ADDRESS;
                     end
                     else if (candidate != 3) begin
                         error_status <= version ? ERR_NOT_WRITABLE : ERR_NO_SUCH_NAME;
@@ -857,6 +858,12 @@ module afdx_snmp (
                     value_length <= set_value_length;
                     response_oid_length <= { 3'b0, oid_length };
                     state <= LEN1;
+                end
+
+                // 先稳定地址一拍，让各个计数器分组在本地保存预译码结果。
+                MIB_ADDRESS : begin
+                    mib_rd <= 1;
+                    state <= MIB_REQUEST;
                 end
 
                 // MIB_REQUEST：等共享总线允许读取，发出读请求后转 MIB_WAIT。

@@ -96,14 +96,14 @@ module AFDX_top #(
     wire [6:0] snmp_tx_vl;
     wire [15:0] snmp_tx_dport;
     wire [17:0] snmp_mib_addr, bus_addr;
-    wire [31:0] snmp_mib_wdata, bus_wdata;
+    wire [31:0] snmp_mib_wdata;
     wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data;
     wire load_tx_valid, load_tx_last, load_claim;
     wire [7:0] load_tx_data;
     wire [6:0] load_tx_vl;
     wire [15:0] load_tx_sport, load_tx_dport;
     wire [31:0] load_rdata, load_extra_data;
-    wire bus_rd, bus_wr;
+    wire bus_rd, mib_user_write;
 
     // 主机和网络管理服务共用配置读口。
     // 各自的读有效标记延后两拍，与返回数据对齐。
@@ -114,10 +114,11 @@ module AFDX_top #(
         && ( ! snmp_mib_wr || cfg_ready);
 
     assign snmp_grant = (snmp_mib_rd || snmp_mib_wr) && snmp_mib_ready;
-    assign bus_addr = snmp_grant ? snmp_mib_addr : cfg_addr;
+    // 主机正在读写时地址直接来自主机，其余时间预选网络管理读地址。
+    // 网络管理仅能写 user_id，独立分发该写使能，避免写握手进入所有读地址和 RTC 控制链。
+    assign bus_addr = (cfg_rd || cfg_wr) ? cfg_addr : snmp_mib_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
-    assign bus_wr = cfg_wr || (snmp_grant && snmp_mib_wr);
-    assign bus_wdata = (snmp_grant && snmp_mib_wr) ? snmp_mib_wdata : cfg_wdata;
+    assign mib_user_write = snmp_grant && snmp_mib_wr && snmp_mib_addr == 18'h00002;
     assign cfg_rvalid = host_read_pipe[1];
 
     always @(posedge clk) begin
@@ -145,7 +146,7 @@ module AFDX_top #(
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
-        .cfg_we(cfg_wr && cfg_ready && bus_addr[17:4] == LOAD_ADDR_GROUP),
+        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == LOAD_ADDR_GROUP),
         .cfg_addr(bus_addr[7:0]),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
@@ -169,7 +170,7 @@ module AFDX_top #(
         .reset(reset),
         .enable(tx_ready),
         .now(now),
-        .cfg_we(cfg_wr && cfg_ready && bus_addr[17:8] == 0),
+        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:8] == 0),
         .cfg_addr(bus_addr[7:0]),
         .cfg_wdata(cfg_wdata),
         .cfg_control_data(snmp_control_data),
@@ -199,7 +200,7 @@ module AFDX_top #(
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
-        .cfg_we(cfg_wr && cfg_ready && rtc_select),
+        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == RTC_ADDR_GROUP),
         .cfg_re(bus_rd && rtc_select),
         .cfg_addr(bus_addr[3:0]),
         .cfg_wdata(cfg_wdata),
@@ -351,10 +352,15 @@ module AFDX_top #(
         .clk(clk),
         .reset(reset),
         .tx_ready(tx_ready),
-        .cfg_wr(bus_wr),
+        .cfg_wr(cfg_wr),
         .cfg_rd(bus_rd),
         .cfg_addr(bus_addr),
-        .cfg_wdata(bus_wdata),
+        .cfg_wdata(cfg_wdata),
+        .mib_user_wr(mib_user_write),
+        .mib_user_wdata(snmp_mib_wdata[15:0]),
+        .mib_read_addr(snmp_mib_addr[2:0]),
+        .host_read(cfg_rd),
+        .host_read_addr(cfg_addr[2:0]),
         .cfg_ready(cfg_ready),
         .cfg_rvalid(),
         .cfg_rdata(cfg_rdata),

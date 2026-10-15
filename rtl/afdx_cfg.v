@@ -12,6 +12,10 @@ module afdx_cfg (
     input wire cfg_wr, cfg_rd,
     input wire [17:0] cfg_addr,
     input wire [31:0] cfg_wdata,
+    input wire mib_user_wr,
+    input wire [15:0] mib_user_wdata,
+    input wire [2:0] mib_read_addr, host_read_addr,
+    input wire host_read,
     output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
 
@@ -91,6 +95,7 @@ module afdx_cfg (
     reg [1:0] read_loader;
     reg [31:0] read_regs, read_tx, read_a, read_b;
 
+
     // 这 27 个计数器分别累计一种事件。
     reg [31:0] count_accept;
     reg [31:0] count_drop_dis;
@@ -118,6 +123,53 @@ module afdx_cfg (
     reg [31:0] count_rm_drop;
     reg [31:0] count_deliver;
     reg [31:0] count_a_gdrop, count_b_gdrop;
+
+    // 每四位计数值使用独立的地址译码寄存器，每个选择位只驱动十二个数据位。
+    // 网络管理先发地址、下一拍再发读请求；主机读口直接译码，仍在两拍后返回。
+    genvar read_slice;
+    generate
+        for (read_slice = 0; read_slice < 8; read_slice = read_slice + 1) begin : counter_read
+            (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+            wire [7:0] lane = host_read ? (8'b1 << host_read_addr) : mib_lane;
+            always @(posedge clk) begin
+                if (reset) begin
+                    mib_lane <= 8'b1;
+                    read_tx[read_slice * 4 +: 4] <= 0;
+                    read_a[read_slice * 4 +: 4] <= 0;
+                    read_b[read_slice * 4 +: 4] <= 0;
+                end
+                else begin
+                    mib_lane <= 8'b1 << mib_read_addr;
+                    read_tx[read_slice * 4 +: 4] <=
+                        ({4{lane[0]}} & count_accept[read_slice * 4 +: 4])
+                        | ({4{lane[1]}} & count_drop_dis[read_slice * 4 +: 4])
+                        | ({4{lane[2]}} & count_drop_full[read_slice * 4 +: 4])
+                        | ({4{lane[3]}} & count_drop_long[read_slice * 4 +: 4])
+                        | ({4{lane[4]}} & count_drop_nopage[read_slice * 4 +: 4])
+                        | ({4{lane[5]}} & count_tx_a[read_slice * 4 +: 4])
+                        | ({4{lane[6]}} & count_tx_b[read_slice * 4 +: 4]);
+                    read_a[read_slice * 4 +: 4] <=
+                        ({4{lane[0]}} & count_a_good[read_slice * 4 +: 4])
+                        | ({4{lane[1]}} & count_a_fcs[read_slice * 4 +: 4])
+                        | ({4{lane[2]}} & count_a_len[read_slice * 4 +: 4])
+                        | ({4{lane[3]}} & count_a_hdr[read_slice * 4 +: 4])
+                        | ({4{lane[4]}} & count_a_unk[read_slice * 4 +: 4])
+                        | ({4{lane[5]}} & count_a_cfg[read_slice * 4 +: 4])
+                        | ({4{lane[6]}} & count_a_ic[read_slice * 4 +: 4])
+                        | ({4{lane[7]}} & count_a_ovf[read_slice * 4 +: 4]);
+                    read_b[read_slice * 4 +: 4] <=
+                        ({4{lane[0]}} & count_b_good[read_slice * 4 +: 4])
+                        | ({4{lane[1]}} & count_b_fcs[read_slice * 4 +: 4])
+                        | ({4{lane[2]}} & count_b_len[read_slice * 4 +: 4])
+                        | ({4{lane[3]}} & count_b_hdr[read_slice * 4 +: 4])
+                        | ({4{lane[4]}} & count_b_unk[read_slice * 4 +: 4])
+                        | ({4{lane[5]}} & count_b_cfg[read_slice * 4 +: 4])
+                        | ({4{lane[6]}} & count_b_ic[read_slice * 4 +: 4])
+                        | ({4{lane[7]}} & count_b_ovf[read_slice * 4 +: 4]);
+                end
+            end
+        end
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -234,6 +286,7 @@ module afdx_cfg (
                     user_id <= cfg_wdata[15:0];
                 end
             end
+            else if (mib_user_wr && cfg_ready) user_id <= mib_user_wdata;
         end
     end
 
@@ -244,9 +297,6 @@ module afdx_cfg (
             read_select <= 0;
             read_loader <= 0;
             read_regs <= 0;
-            read_tx <= 0;
-            read_a <= 0;
-            read_b <= 0;
             cfg_rdata <= 0;
         end
         else begin
@@ -263,36 +313,6 @@ module afdx_cfg (
                 ADDR_B_GDROP : read_regs <= count_b_gdrop;
                 ADDR_RTC_SYNC_COUNT : read_regs <= rtc_sync_count;
                 default : read_regs <= 0;
-            endcase
-            case (cfg_addr[2:0])
-                3'd0 : read_tx <= count_accept;
-                3'd1 : read_tx <= count_drop_dis;
-                3'd2 : read_tx <= count_drop_full;
-                3'd3 : read_tx <= count_drop_long;
-                3'd4 : read_tx <= count_drop_nopage;
-                3'd5 : read_tx <= count_tx_a;
-                3'd6 : read_tx <= count_tx_b;
-                default : read_tx <= 0;
-            endcase
-            case (cfg_addr[2:0])
-                3'd0 : read_a <= count_a_good;
-                3'd1 : read_a <= count_a_fcs;
-                3'd2 : read_a <= count_a_len;
-                3'd3 : read_a <= count_a_hdr;
-                3'd4 : read_a <= count_a_unk;
-                3'd5 : read_a <= count_a_cfg;
-                3'd6 : read_a <= count_a_ic;
-                3'd7 : read_a <= count_a_ovf;
-            endcase
-            case (cfg_addr[2:0])
-                3'd0 : read_b <= count_b_good;
-                3'd1 : read_b <= count_b_fcs;
-                3'd2 : read_b <= count_b_len;
-                3'd3 : read_b <= count_b_hdr;
-                3'd4 : read_b <= count_b_unk;
-                3'd5 : read_b <= count_b_cfg;
-                3'd6 : read_b <= count_b_ic;
-                3'd7 : read_b <= count_b_ovf;
             endcase
             case (cfg_addr[17:3])
                 GROUP_TX_COUNT : read_select <= SEL_TX;
