@@ -13,6 +13,5 @@
     "tools/tx_ref.py"
   ],
   "non_text_change": "tools/eda.py removed owner_thread from active_job records",
-  "rtl_matches_cli_synthesis_sources": 21,
   "rtl_tb_matches_latest_regression_except_one_check_message": 73
 }

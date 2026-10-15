@@ -54,30 +54,6 @@
     "sha256": "874b8d049058a0a8d4843836e2eb0e9b34eb8027499140405fb6ea835ec410ab"
   },
   {
-    "file": "cli_services_summary.json",
-    "source": "out/t25/stage5/out/net/tb_net_services/20261012_114257_689910/summary.json",
-    "bytes": 26204,
-    "sha256": "7de73c4c9e6c8aaa90a8ca3ce5e49fe19cdd814fe9ed1b90a0011754c47d4692"
-  },
-  {
-    "file": "cli_services.log",
-    "source": "out/t25/stage5/out/net/tb_net_services/20261012_114257_689910/simulation.log",
-    "bytes": 4251,
-    "sha256": "db77e37fd352b06ed2cc145912d513f18ac6789d6232a9b3425ca40ed12673ac"
-  },
-  {
-    "file": "cli_synthesis_summary.json",
-    "source": "out/synth/AFDX_top/20261014_104324_658437/summary.json",
-    "bytes": 1966378,
-    "sha256": "683252a1c159fec78ee9a552ab223c4b20d90ae8ee21fea2df20a655f5bbc3c5"
-  },
-  {
-    "file": "cli_validation.json",
-    "source": "out/t25/validation_status.json",
-    "bytes": 18234,
-    "sha256": "58673a911bb00d1757624ac0dc3f20732d22fa3c9b6eaaaa945f4e0b69a73d7c"
-  },
-  {
     "file": "contention.json",
     "source": "out/t17/jitter_summary.json",
     "bytes": 78031,
@@ -176,28 +152,10 @@
     "sha256": "ce6018cc1a18400be4861ac4f9eb5029d2ae140a31664a93f0aca0b665854b5f"
   },
   {
-    "file": "cli_resources.rpt",
-    "source": "out/synth/AFDX_top/20261014_104324_658437/utilization_synth.rpt",
-    "bytes": 209,
-    "sha256": "fa1d84e506e67ee7e7fa66c53a780e1b1fbe3e2a6e59d915896d828f5ba448ff"
-  },
-  {
     "file": "gui_synthesis_timing.pb",
     "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
     "bytes": 2351104,
     "sha256": "e2331149bdd121fff8500aeea85ff715a33809364833dd4bc6a5c70d4cef36d1"
-  },
-  {
-    "file": "cli_synthesis_timing.pb",
-    "source": "out/synth/AFDX_top/20261014_104324_658437/synthesized_timing.pb",
-    "bytes": 1732608,
-    "sha256": "10badbf3b477b433b5dc1ee9bf8d2d2950917814b0d29a2696280e2e64af598c"
-  },
-  {
-    "file": "cli_design_excerpt.txt",
-    "source": "out/synth/AFDX_top/20261014_104324_658437/design.vqm (lines 286174-286182 and 461118-461124)",
-    "bytes": 463,
-    "sha256": "5b0c19bb08455d551e47cfd97a9be8d5c57d7658f5c8a499bd4e94e3fc3af4ca"
   },
   {
     "file": "fault_checks.json",

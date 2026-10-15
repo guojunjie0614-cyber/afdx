@@ -110,6 +110,9 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
    预期：末尾表格中的 38 项都为 `PASS`（一次实测约 20 分钟）；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
 
+ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执行 `vlog -lint -vlog01compat -work out/lint_work rtl/*.v`；ModelSim 工具目录需在 PATH 中。
+2026-10-15 对全部 21 个 RTL 模块实跑，结果为 `Errors: 0, Warnings: 0`。
+
 代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
 用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。参考数字、原始报告和合并数据库在 `sim/reference/coverage/`，统计口径见该目录 README。
 
