@@ -11,14 +11,14 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     input wire cfg_we, cfg_re,
-    input wire [(SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
     output reg [31:0] sync_count,
 
     // tx_valid 和 tx_ready 同为高时发送一个时间报文字节。
     // tx_last 标记第 48 个字节，tx_vl/port 选择发送通道。
-    output reg tx_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
     input wire tx_ready,
     output reg [7:0] tx_data,
     output reg tx_last,
@@ -34,7 +34,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     output wire rx_claim);
 
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
-    wire [3:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 4 : cfg_addr;
+    wire [3:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 4 : cfg_addr;
 
     localparam CALC_OFFSET_CANDIDATES = 15, CALC_TIME_CANDIDATES = 16;
     localparam CALC_IDLE = 0;
@@ -94,6 +94,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg [31:0] seconds, nanoseconds, snapshot_ns;
     // seconds_increment 恒为 seconds + 1；tick_overflow 恒表示当前纳秒到达秒边界。
     reg [31:0] seconds_increment;
+    reg load_overflow;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tick_overflow;
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
@@ -105,18 +106,23 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_port;
+    reg local_port_match;
     always @(posedge clk) begin
         if (reset) begin
             rx_port_stage <= 0;
             rx_port_local <= 0;
+            local_port_match <= 0;
         end
         else begin
             rx_port_stage <= rx_port;
             rx_port_local <= rx_port_stage;
+            // 与本拍更新后的本地端口比较；配置写同时发生时也保持原匹配语义。
+            local_port_match <= cfg_we && cfg_write_addr == REG_PORT
+                ? rx_port_stage == cfg_wdata[15:0] : rx_port_stage == port_number;
         end
     end
 
-    assign rx_claim = active && incoming_port == port_number;
+    assign rx_claim = active && (LOCAL_RX_PORT ? local_port_match : incoming_port == port_number);
 
     // 报文的 12 个 32 位字段保存在寄存器中。
     reg [383:0] rx_packet;
@@ -298,8 +304,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             port_number <= NTP_PORT;
             load_sec <= 0;
             load_ns <= 0;
+            load_overflow <= 0;
             snapshot_ns <= 0;
-            cfg_rdata <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_rdata <= 0;
         end
         else begin
             // 配置字 0 控制主从角色、使能和时间装载。
@@ -317,9 +324,14 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 REG_VL : vl <= cfg_wdata[6:0];
                 REG_PORT : port_number <= cfg_wdata[15:0];
                 REG_SECONDS : load_sec <= cfg_wdata;
-                REG_NS : load_ns <= cfg_wdata;
+                REG_NS : begin
+                    load_ns <= cfg_wdata;
+                    load_overflow <= ge32(cfg_wdata, LAST_TICK_NS);
+                end
             endcase
+            if (SPLIT_CFG_ADDR == 2 && cfg_re) snapshot_ns <= nanoseconds;
             // 读秒时同时保存纳秒值，由配置模块再选择最终读结果。
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 REG_CONTROL : cfg_rdata <= { 30'b0, master, active };
                 REG_PERIOD : cfg_rdata <= period;
@@ -334,6 +346,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 REG_OFFSET_NS : cfg_rdata <= offset_ns;
                 default : cfg_rdata <= 0;
             endcase
+            end
         end
     end
 
@@ -341,7 +354,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         if (reset) begin
             seconds <= 0;
             seconds_increment <= 1;
-            tick_overflow <= 0;
+
             nanoseconds <= 0;
         end
         // 配置装载优先于同步校正，两者都没有时按拍递增。
@@ -349,32 +362,119 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else if (load_time) begin
             seconds <= load_sec;
             seconds_increment <= load_sec + 32'd1;
-            tick_overflow <= load_ns >= LAST_TICK_NS;
+
             nanoseconds <= load_ns;
         end
         else if (calc_state == CALC_APPLY) begin
             if (final_overflow) begin
                 seconds <= final_sec_increment;
                 seconds_increment <= final_sec_twice;
-                tick_overflow <= final_tick_wrapped;
+
                 nanoseconds <= final_ns_wrapped;
             end
             else begin
                 seconds <= adjusted_sec;
                 seconds_increment <= final_sec_increment;
-                tick_overflow <= final_tick_direct;
+
                 nanoseconds <= adjusted_ns;
             end
         end
         else if (tick_overflow) begin
             seconds <= seconds_increment;
             seconds_increment <= seconds_increment + 32'd1;
-            tick_overflow <= nanoseconds >= (LAST_TICK_NS + LAST_TICK_NS);
+
             nanoseconds <= nanoseconds - LAST_TICK_NS;
         end
         else begin
             nanoseconds <= nanoseconds + CLOCK_NS;
-            tick_overflow <= nanoseconds >= LAST_TICK_NS - CLOCK_NS;
+
+        end
+    end
+
+    // 按字节并行比较，再合并优先级，限制常数比较的进位链长度。
+    function ge32;
+        input [31:0] value, limit;
+        begin
+            ge32 = (value[31:24] > limit[31:24])
+                || (value[31:24] == limit[31:24] && value[23:16] > limit[23:16])
+                || (value[31:16] == limit[31:16] && value[15:8] > limit[15:8])
+                || (value[31:8] == limit[31:8] && value[7:0] >= limit[7:0]);
+        end
+    endfunction
+
+    // 比较与更新时间选择分拍：各比较只看上一拍数据，mode 记录上一拍实际更新方式。
+    // nn 表示连续两次正常 +8；wn/ww 表示上拍回卷后，本拍正常递增或再次回卷。
+    localparam TIME_NORMAL = 5'b00001, TIME_WRAP = 5'b00010, TIME_LOAD = 5'b00100,
+        TIME_APPLY_DIRECT = 5'b01000, TIME_APPLY_WRAP = 5'b10000;
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg [4:0] previous_time_mode;
+    reg tick_nn, tick_wn, tick_ww, tick_ln, tick_lw, tick_dn, tick_dw, tick_an, tick_aw;
+    wire predicted_normal = (previous_time_mode[0] && tick_nn)
+        || (previous_time_mode[1] && tick_wn) || (previous_time_mode[2] && tick_ln)
+        || (previous_time_mode[3] && tick_dn) || (previous_time_mode[4] && tick_an);
+    // 正常递增后最多超出边界 7 ns，随后一次回卷必定不再进位。
+    wire predicted_wrap = (previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)
+        || (previous_time_mode[3] && tick_dw) || (previous_time_mode[4] && tick_aw);
+    always @(posedge clk) begin
+        if (reset) begin
+            tick_overflow <= 0;
+            previous_time_mode <= TIME_NORMAL;
+            tick_nn <= 0; tick_wn <= 0; tick_ww <= 0;
+            tick_ln <= 0; tick_lw <= 0; tick_dn <= 0; tick_dw <= 0; tick_an <= 0; tick_aw <= 0;
+        end
+        else begin
+            tick_nn <= ge32(nanoseconds, LAST_TICK_NS - 2 * CLOCK_NS);
+            tick_wn <= ge32(nanoseconds, 2 * LAST_TICK_NS - CLOCK_NS);
+            tick_ww <= ge32(nanoseconds, 3 * LAST_TICK_NS);
+            tick_ln <= ge32(load_ns, LAST_TICK_NS - CLOCK_NS);
+            tick_lw <= ge32(load_ns, 2 * LAST_TICK_NS);
+            tick_dn <= ge32(adjusted_ns, LAST_TICK_NS - CLOCK_NS);
+            tick_dw <= ge32(adjusted_ns, 2 * LAST_TICK_NS);
+            tick_an <= ge32(final_ns_wrapped, LAST_TICK_NS - CLOCK_NS);
+            tick_aw <= ge32(final_ns_wrapped, 2 * LAST_TICK_NS);
+            if (load_time) begin
+                tick_overflow <= load_overflow;
+                previous_time_mode <= TIME_LOAD;
+            end
+            else if (calc_state == CALC_APPLY) begin
+                tick_overflow <= final_overflow ? final_tick_wrapped : final_tick_direct;
+                previous_time_mode <= final_overflow ? TIME_APPLY_WRAP : TIME_APPLY_DIRECT;
+            end
+            else begin
+                tick_overflow <= tick_overflow ? predicted_wrap : predicted_normal;
+                previous_time_mode <= tick_overflow ? TIME_WRAP : TIME_NORMAL;
+            end
+        end
+    end
+
+    // 事件拍先同时保存时间和局部写使能，下一拍分发到各 32 位时间戳；采样时刻不变。
+    reg [31:0] timestamp_seconds, timestamp_nanoseconds;
+    (* preserve = 1, dont_merge = 1 *) reg receive_seconds_event, receive_nanoseconds_event;
+    (* preserve = 1, dont_merge = 1 *) reg request_seconds_event, request_nanoseconds_event;
+    wire request_event = tx_state == TX_HANDSHAKE && tx_ready && tx_index == 0 && !tx_reply;
+    always @(posedge clk) begin
+        if (reset) begin
+            timestamp_seconds <= 0;
+            timestamp_nanoseconds <= 0;
+            receive_seconds_event <= 0;
+            receive_nanoseconds_event <= 0;
+            request_seconds_event <= 0;
+            request_nanoseconds_event <= 0;
+            received_sec <= 0;
+            received_ns <= 0;
+            req_sec <= 0;
+            req_ns <= 0;
+        end
+        else begin
+            timestamp_seconds <= seconds;
+            timestamp_nanoseconds <= nanoseconds;
+            receive_seconds_event <= first_rx;
+            receive_nanoseconds_event <= first_rx;
+            request_seconds_event <= request_event;
+            request_nanoseconds_event <= request_event;
+            if (receive_seconds_event) received_sec <= timestamp_seconds;
+            if (receive_nanoseconds_event) received_ns <= timestamp_nanoseconds;
+            if (request_seconds_event) req_sec <= timestamp_seconds;
+            if (request_nanoseconds_event) req_ns <= timestamp_nanoseconds;
         end
     end
 
@@ -414,10 +514,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             rx_busy <= 0;
             rx_done <= 0;
             rx_index <= 0;
-            received_sec <= 0;
-            received_ns <= 0;
-            req_sec <= 0;
-            req_ns <= 0;
             echo_sec <= 0;
             echo_frac <= 0;
             server_receive_sec <= 0;
@@ -465,8 +561,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             if (rx_valid && rx_claim) begin
                 rx_busy <= ! rx_last;
                 if ( ! rx_busy) begin
-                    received_sec <= seconds;
-                    received_ns <= nanoseconds;
                     rx_index <= 1;
                 end
                 else rx_index <= rx_index + 6'd1;
@@ -570,7 +664,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
 
                 CALC_TIME_CANDIDATES : begin
-                    time_overflow <= adjusted_ns >= NS_PER_SECOND;
+                    time_overflow <= ge32(adjusted_ns, NS_PER_SECOND);
                     time_ns_minus <= adjusted_ns - NS_PER_SECOND;
                     time_sec_plus <= adjusted_sec + 32'd1;
                     calc_state <= CALC_NORMALIZE_TIME;
@@ -586,12 +680,12 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
 
                 CALC_LATENCY : begin
                     // 预先并行计算最终进位及两种结果；应用拍只选择，不串接比较和加法。
-                    final_overflow <= adjusted_ns >= NS_PER_SECOND - PIPELINE_NS
-                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
-                    final_tick_direct <= adjusted_ns >= LAST_TICK_NS - PIPELINE_NS
-                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
-                    final_tick_wrapped <= adjusted_ns >= NS_PER_SECOND + LAST_TICK_NS - PIPELINE_NS
-                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
+                    final_overflow <= ge32(adjusted_ns, NS_PER_SECOND - PIPELINE_NS)
+                        && !ge32(adjusted_ns, MAX_BEFORE_PIPELINE + 1);
+                    final_tick_direct <= ge32(adjusted_ns, LAST_TICK_NS - PIPELINE_NS)
+                        && !ge32(adjusted_ns, MAX_BEFORE_PIPELINE + 1);
+                    final_tick_wrapped <= ge32(adjusted_ns, NS_PER_SECOND + LAST_TICK_NS - PIPELINE_NS)
+                        && !ge32(adjusted_ns, MAX_BEFORE_PIPELINE + 1);
                     final_ns_wrapped <= adjusted_ns + PIPELINE_NS - NS_PER_SECOND;
                     final_sec_increment <= adjusted_sec + 32'd1;
                     final_sec_twice <= adjusted_sec + 32'd2;
@@ -668,10 +762,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
 
                 TX_HANDSHAKE : if (tx_ready) begin
-                    if (tx_index == 0 && ! tx_reply) begin
-                        req_sec <= seconds;
-                        req_ns <= nanoseconds;
-                    end
                     tx_valid <= 0;
                     tx_last <= 0;
                     if (tx_index == PACKET_LAST) tx_state <= TX_IDLE;
@@ -696,5 +786,42 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             end
         end
     end
+
+    // 模式 2：高位为写地址，bit 6 选主机，[5:3] 为主机读址，[2:0] 为 MIB 预读址。
+    // MIB 地址在读请求之前稳定一拍；每四位输出使用独立译码副本，主机仍直接译码。
+    wire [31:0] word_cfg_rdata_0 = {30'b0, master, active};
+    wire [31:0] word_cfg_rdata_1 = period;
+    wire [31:0] word_cfg_rdata_2 = {25'b0, vl};
+    wire [31:0] word_cfg_rdata_3 = {16'b0, port_number};
+    wire [31:0] word_cfg_rdata_4 = seconds;
+    wire [31:0] word_cfg_rdata_5 = snapshot_ns;
+    wire [31:0] word_cfg_rdata_6 = offset_sec;
+    wire [31:0] word_cfg_rdata_7 = offset_ns;
+    genvar read_nibble;
+    generate
+        if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
+            for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
+                (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+                wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
+                always @(posedge clk) begin
+                    if (reset) begin
+                        mib_lane <= 8'b1;
+                        cfg_rdata[read_nibble * 4 +: 4] <= 0;
+                    end
+                    else begin
+                        mib_lane <= 8'b1 << cfg_addr[2:0];
+                        cfg_rdata[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]) |
+                            ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
+                            ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]) |
+                            ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
+                            ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                    end
+                end
+            end
+        end
+    endgenerate
 
 endmodule

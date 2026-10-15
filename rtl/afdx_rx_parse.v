@@ -2,7 +2,7 @@
 // afdx_mac_rx 提供帧内容和校验结果，完整帧的信息交给接收引擎。
 // 本模块对应赛题的接收协议检查，检查失败时释放本帧暂占的空间。
 module afdx_rx_parse #(
-    parameter RX_RING_AW = 12) (
+    parameter RX_RING_AW = 12, DESC_COPIES = 1) (
 
     // enable 为高时允许接收新帧，rx_valid 标记线路有数据。
     input wire clk, reset, enable, rx_valid,
@@ -26,8 +26,8 @@ module afdx_rx_parse #(
 
     // desc_valid 为高时提交完整帧信息，desc_take 表示引擎已取走。
     // resolve_valid 为高时，commit 决定保留还是释放本帧数据。
-    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg desc_valid,
-    output reg [RX_RING_AW + 82:0] desc_data,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [DESC_COPIES - 1:0] desc_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [RX_RING_AW + 82:0] desc_data,
     input wire desc_take,
     input wire resolve_valid, resolve_commit,
 
@@ -92,7 +92,13 @@ module afdx_rx_parse #(
     // UDP 校验和字段为零表示发送方没有计算，此时跳过这项检查。
     reg [19:0] ip_sum;
     reg [25:0] udp_sum;
-    reg [16:0] ip_fold, ip_final, udp_fold, udp_final;
+    reg ip_add_valid, ip_seed;
+    reg [15:0] ip_add_word;
+    wire ip_checksum_good = (&ip_sum[15:4]) && ((ip_sum[3:0] ^ ip_sum[19:16]) == 4'hf);
+    reg udp_add_valid, udp_seed;
+    reg [15:0] udp_add_word;
+    // low16 + high10 == 0xffff 等价于这组补码比较，无需串接两次进位相加。
+    wire udp_checksum_good = (&udp_sum[15:10]) && ((udp_sum[9:0] ^ udp_sum[25:16]) == 10'h3ff);
 
     // LEN_WAIT：等到报文长度字段，收到后转 LEN_SIZES。
     // LEN_SIZES：计算用户数据和网络报文长度，然后转 LEN_LIMITS。
@@ -102,10 +108,47 @@ module afdx_rx_parse #(
     // FIN_WAIT：等待帧结束，收到后转 FIN_SETTLE。
     // FIN_SETTLE：等待末字节校验和稳定，然后转 FIN_REPORT。
     // FIN_REPORT：报告错误或提交完整帧信息，然后转 FIN_WAIT。
-    reg [1:0] finish_phase, err_saved;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
     reg [15:0] arrival;
     reg [RX_RING_AW + 82:0] end_desc;
+
+    // 先登记本拍校验字，再累加；帧尾检查直接使用累加值的补码关系。
+    // 并行判断当前头字段，再更新一个粘滞错误位；各字段不串接到反馈选择链。
+    reg header_byte_bad;
+    always @* begin
+        case (position)
+            1, 2, 3, POS_ETHERTYPE_LOW, POS_IP_OFFSET_LOW : header_byte_bad = m_data != 0;
+            POS_ETHERTYPE_HIGH : header_byte_bad = m_data != ETHERTYPE_HIGH;
+            POS_IP_HEADER : header_byte_bad = m_data != IP_VERSION_IHL;
+            POS_IP_FLAGS : header_byte_bad = (m_data & IP_FRAGMENT_MASK) != 0;
+            POS_IP_PROTOCOL : header_byte_bad = m_data != IP_PROTOCOL_UDP;
+            default : header_byte_bad = 0;
+        endcase
+    end
+    always @(posedge clk) begin
+        if (reset) header_bad <= 0;
+        else if (m_valid && allowed) begin
+            if (m_first) header_bad <= m_data != DMAC_BYTE0;
+            else header_bad <= header_bad || header_byte_bad;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) ip_sum <= 0;
+        else if (ip_add_valid) begin
+            if (ip_seed) ip_sum <= 0;
+            else ip_sum <= ip_sum + ip_add_word;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) udp_sum <= 0;
+        else if (udp_add_valid) begin
+            if (udp_seed) udp_sum <= UDP_SUM_SEED;
+            else udp_sum <= udp_sum + udp_add_word;
+        end
+    end
 
     always @(posedge clk) begin
         if (reset) begin
@@ -139,14 +182,13 @@ module afdx_rx_parse #(
             expected_len <= 0;
             space_limit <= 0;
             overflow <= 0;
-            header_bad <= 0;
             has_payload <= 0;
-            ip_sum <= 0;
-            udp_sum <= 0;
-            ip_fold <= 0;
-            ip_final <= 0;
-            udp_fold <= 0;
-            udp_final <= 0;
+            ip_add_valid <= 0;
+            ip_seed <= 0;
+            ip_add_word <= 0;
+            udp_add_valid <= 0;
+            udp_seed <= 0;
+            udp_add_word <= 0;
             length_phase <= LEN_WAIT;
             finish_phase <= FIN_WAIT;
             err_saved <= 0;
@@ -158,6 +200,10 @@ module afdx_rx_parse #(
         end
         else begin
             ring_we <= 0;
+            ip_add_valid <= 0;
+            ip_seed <= 0;
+            udp_add_valid <= 0;
+            udp_seed <= 0;
             ev <= 0;
             prev_line <= rx_valid;
             if (rx_valid && ! prev_line) begin
@@ -171,16 +217,12 @@ module afdx_rx_parse #(
                 if (resolve_commit) committed <= desc_finish;
                 else trial <= committed;
             end
-            ip_fold <= { 1'b0, ip_sum[15:0] } + ip_sum[19:16];
-            ip_final <= { 1'b0, ip_fold[15:0] } + ip_fold[16];
-            udp_fold <= { 1'b0, udp_sum[15:0] } + udp_sum[25:16];
-            udp_final <= { 1'b0, udp_fold[15:0] } + udp_fold[16];
             case (length_phase)
                 LEN_SIZES : begin
                     n <= udp_len - UDP_HEADER_LENGTH;
                     n_ok <= udp_len >= MIN_UDP_LENGTH && udp_len <= MAX_UDP_LENGTH;
                     ip_expected <= udp_len + IP_HEADER_LENGTH;
-                    udp_sum <= udp_sum + udp_len;
+                    begin udp_add_valid <= 1; udp_add_word <= udp_len; end
                     length_phase <= LEN_LIMITS;
                 end
                 LEN_LIMITS : begin
@@ -199,10 +241,9 @@ module afdx_rx_parse #(
                 if (m_first) begin
                     position <= 1;
                     high_byte <= m_data;
-                    header_bad <= m_data != DMAC_BYTE0;
                     overflow <= 0;
-                    ip_sum <= 0;
-                    udp_sum <= UDP_SUM_SEED;
+                    begin ip_add_valid <= 1; ip_seed <= 1; ip_add_word <= 0; end
+                    begin udp_add_valid <= 1; udp_seed <= 1; udp_add_word <= 0; end
                     n_ok <= 0;
                     length_phase <= LEN_WAIT;
                     vlid <= 0;
@@ -218,12 +259,12 @@ module afdx_rx_parse #(
                     if ( ! position[0]) high_byte <= m_data;
                     case (position)
                         // 目的地址的第 1–3 字节和类型字段的低字节必须为零。
-                        1, 2, 3, POS_ETHERTYPE_LOW : if (m_data != 0) header_bad <= 1;
-                        POS_ETHERTYPE_HIGH : if (m_data != ETHERTYPE_HIGH) header_bad <= 1;
-                        POS_IP_HEADER : if (m_data != IP_VERSION_IHL) header_bad <= 1;
-                        POS_IP_FLAGS : if ((m_data & IP_FRAGMENT_MASK) != 0) header_bad <= 1;
-                        POS_IP_OFFSET_LOW : if (m_data != 0) header_bad <= 1;
-                        POS_IP_PROTOCOL : if (m_data != IP_PROTOCOL_UDP) header_bad <= 1;
+
+
+
+
+
+
                         POS_VLID_LOW : vlid <= { high_byte, m_data };
                         POS_IP_LENGTH_LOW : ip_len <= { high_byte, m_data };
                         POS_SPORT_LOW : sport <= { high_byte, m_data };
@@ -236,12 +277,12 @@ module afdx_rx_parse #(
                         default : ;
                     endcase
                     if (position >= POS_IP_HEADER && position <= POS_IP_HEADER_END && position[0])
-                        ip_sum <= ip_sum + { high_byte, m_data };
+                        begin ip_add_valid <= 1; ip_add_word <= { high_byte, m_data }; end
                     if (position >= POS_IP_ADDRESSES && position <= POS_UDP_CHECK_LOW && position[0])
-                        udp_sum <= udp_sum + { high_byte, m_data };
+                        begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
                     if (n_ok && position >= POS_PAYLOAD && position < end_data) begin
-                        if (position[0]) udp_sum <= udp_sum + { high_byte, m_data };
-                        else if (position == last_data) udp_sum <= udp_sum + { m_data, 8'b0 };
+                        if (position[0]) begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
+                        else if (position == last_data) begin udp_add_valid <= 1; udp_add_word <= { m_data, 8'b0 }; end
                         if (position == POS_PAYLOAD) begin
                             // 第 42 字节到达时，检查缓存剩余空间能否容纳本帧用户数据。
                             frame_begin <= committed;
@@ -272,7 +313,7 @@ module afdx_rx_parse #(
                 arrival <= now_c;
                 end_overflow <= overflow;
                 end_alloc <= has_payload;
-                end_bad <= header_bad || ! n_ok || ip_final[15:0] != CHECKSUM_GOOD || ip_len != ip_expected
+                end_bad <= header_bad || ! n_ok || !ip_checksum_good || ip_len != ip_expected
                     || f_len != expected_len;
                 end_desc <= { vlid, sn, sport, dport, n[10:0], frame_begin[RX_RING_AW - 1:0], now_c };
                 desc_finish <= trial;
@@ -281,7 +322,7 @@ module afdx_rx_parse #(
             else if (finish_phase != FIN_WAIT) begin
                 finish_phase <= finish_phase + 1'b1;
                 // 连续收字节时，末字节校验和要到帧尾后的下一拍才稳定。
-                if (finish_phase == FIN_SETTLE && udp_check != 0 && udp_final[15:0] != CHECKSUM_GOOD) end_bad <= 1;
+                if (finish_phase == FIN_SETTLE && udp_check != 0 && !udp_checksum_good) end_bad <= 1;
                 if (finish_phase == FIN_REPORT) begin
                     finish_phase <= FIN_WAIT;
                     if (err_saved == ERR_FCS) ev <= EV_FCS;
@@ -290,7 +331,7 @@ module afdx_rx_parse #(
                     else if (end_overflow) ev <= EV_OVERFLOW;
                     else begin
                         ev <= EV_GOOD;
-                        desc_valid <= 1;
+                        desc_valid <= {DESC_COPIES{1'b1}};
                         desc_data <= end_desc;
                     end
                     // 坏帧在这里释放暂占空间。

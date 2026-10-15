@@ -12,7 +12,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     output reg [AW - 1:0] read_address,
     input wire [7:0] read_data,
     output reg read_mode,
-    output reg tx_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
     input wire tx_ready,
     output reg [7:0] tx_data,
     output reg tx_last,

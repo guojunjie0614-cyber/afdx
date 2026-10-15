@@ -18,20 +18,21 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     input wire [17:0] mib_read_addr,
     input wire [2:0] host_read_addr,
     input wire host_read,
-    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg cfg_ready, cfg_rvalid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
     // tx/rx_cfg_ok 为高时，对应核心允许写配置。
     output reg [15:0] user_id,
-    input wire tx_cfg_ok, rx_cfg_ok,
+    input wire tx_cfg_ok,
+    input wire [RX_BUS_COPIES - 1:0] rx_cfg_ok,
 
     // tx_cfg_* 写发送配置表。
     // rx_map_we 写编号到索引的映射，rx_cfg_we 写接收配置。
-    output reg tx_cfg_we,
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg tx_cfg_we,
     output reg [9:0] tx_cfg_addr,
     output reg [31:0] tx_cfg_wdata,
-    output reg rx_map_we, rx_cfg_we,
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg rx_map_we, rx_cfg_we,
     output wire [RX_BUS_COPIES * 16 - 1:0] rx_cfg_addr,
     output wire [RX_BUS_COPIES * 32 - 1:0] rx_cfg_wdata,
 
@@ -110,7 +111,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         end
                     end
                     else if (receive_pending) begin
-                        if (rx_cfg_ok) begin
+                        if (rx_cfg_ok[bus_copy]) begin
                             receive_pending <= 0;
                             ready <= 1;
                         end
@@ -397,7 +398,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             end
         end
         else if (rx_map_we || rx_cfg_we) begin
-            if (rx_cfg_ok) begin
+            if (rx_cfg_ok[0]) begin
                 rx_map_we <= 0;
                 rx_cfg_we <= 0;
                 cfg_ready <= 1;

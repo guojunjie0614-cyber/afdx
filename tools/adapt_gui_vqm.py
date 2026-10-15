@@ -3,6 +3,7 @@
 输入取值依据：厂商 stratix_components.vhd 546–561 行和
 stratix_atoms.v 的默认上拉、下拉。实际接入的进位输入须声明为使用。
 本脚本不改查找表内容、不改已有连接、不修补单元逻辑。
+复制寄存器的 created_from 只记录综合来源；厂商模型没有这个参数，保存在审计报告中。
 """
 from pathlib import Path
 import collections
@@ -31,12 +32,18 @@ CELL = re.compile(
     r"(?P<name>\S+)[ \t]*\((?P<body>[\s\S]*?)\);"
     r"(?P<params>(?:\ndefparam[^\n]*)*)"
 )
+PROVENANCE = re.compile(r'(?m)^defparam[ \t]+(?P<name>\S+)[ \t]+\.created_from[ \t]*=[ \t]*"(?P<value>[^"\n]*)";[ \t]*\n')
 
 
 def adapt(source, target):
     assert source.resolve() != target.resolve()
     original = source.read_bytes()
     data = original.decode('utf-8').replace('\r\n', '\n')
+    known_cells = {m['name']: m['kind'] for m in CELL.finditer(data)}
+    provenance = [dict(cell=m['name'], created_from=m['value']) for m in PROVENANCE.finditer(data)]
+    if any(known_cells.get(row['cell']) != 'stratix_lcell' for row in provenance):
+        raise ValueError('created_from does not identify a parsed logic cell')
+    data = PROVENANCE.sub('', data)
     stats = collections.defaultdict(collections.Counter)
     cells = collections.Counter()
     carry_params = collections.Counter()
@@ -83,7 +90,7 @@ def adapt(source, target):
     expected = collections.Counter(re.findall(r'(?m)^(stratix_lcell|stratix_ram_block)\s', data))
     if not cells or cells != expected:
         raise ValueError('无法完整解析界面网表，已停止补全')
-    # 原有连接和参数必须逐项保留，不能为了仿真通过而改变它们。
+    # 原有连接和功能参数逐项保留；仅不把综合来源元数据传给没有该参数的厂商模型。
     after = list(CELL.finditer(result))
     assert len(after) == len(audit)
     for m, (kind, name, body, params) in zip(after, audit):
@@ -95,7 +102,9 @@ def adapt(source, target):
         'source_sha256': hashlib.sha256(original).hexdigest(),
         'adapted_sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
         'cells': cells, 'added_input_defaults': stats,
-        'original_connections_and_parameters_unchanged': True,
+        'original_connections_and_functional_parameters_unchanged': True,
+        'synthesis_provenance_not_model_parameters': provenance,
+        'provenance_parameter_count': len(provenance),
         'carry_use_parameters_added': carry_params,
         'lut_masks_changed': 0,
     }

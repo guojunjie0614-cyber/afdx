@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。全部通过 eLinx 3.0.7 和 ModelSim 编译、仿真，不需要硬件平台。
+本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
 
 已实现赛题要求的五项功能：用户数据发送、用户数据接收（含双网冗余、虚拟链路带宽间隔调度、序号和完整性检查）、SNMP 网络管理、ARINC 615A 数据加载和卸载、RTC 时钟同步。
 
@@ -53,6 +53,8 @@
    Warning 只计数和提示，Error、Fatal 或测试打印的 FAIL 会判失败。成功和失败都会回到工程根目录，恢复原来的 Transcript 记录设置；可直接重新运行这条命令。
 
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
+
+下列 PNG 为此前版本的归档截图，表中时间窗口对应这些原图；当前管理响应拍数以本版联测结果为准。
 
 报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
 批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。PNG 在 `sim/wave/png/`；工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
@@ -118,7 +120,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
 vsim -c -do 'do sim/run_judge.do'
 ```
 
-该环境变量仅选择 RTL 仿真参数；官方综合使用工程中顶层参数的默认值 2。吞吐用例的仿真墙钟预算为 1800 秒，测试中的周期数和判定条件保持原值。
+该环境变量仅选择 RTL 仿真参数；官方综合使用工程中顶层参数的默认值 2。吞吐用例的仿真墙钟预算为 5400 秒，测试中的周期数和判定条件保持原值。
 
 ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执行 `vlog -lint -vlog01compat -work out/lint_work rtl/*.v`；ModelSim 工具目录需在 PATH 中。
 2026-10-15 对全部 21 个 RTL 模块实跑，结果为 `Errors: 0, Warnings: 0`。
@@ -138,6 +140,8 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
    预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
 
 综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方默认布局布线。两个入口及旧版实现模板均使用 `elinx/constraints.edc` 这一份约束源；输出目录中的 `constraints.sdc` 是它的副本。
+
+主机配置访问优先；主机与 SNMP MIB 同时读同一地址时共用返回值，不同地址时 MIB 保持请求到主机释放总线。主机读延迟仍为两拍。接收映射、配置或序号检查拒绝的报文多用一拍登记判断，正常数据帧保持原处理拍数。
 
 协议引擎的同域寄存器路径使用 16 ns；跨引擎、捕获、配置、RAM、发送输出及数据面内部路径仍为 8 ns。本版 eLinx 的 `-hold 0` 对应原同沿保持检查；小网表实测 `-hold 1` 会把检查移到前一拍，因此采用经过原始报告核实的写法。约束按真实网表依赖分组，避免工具建立大规模全连接矩阵。
 
@@ -165,7 +169,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 `JUDGE REQUIREMENT` 对照赛题门限并打印余量：吞吐至少 100 Mbps、最大端到端时延至多 2000 µs、抖动至多 50 µs。`JUDGE BASELINE` 另行检查是否仍为 906.136 Mbps、24.408 µs、0 µs；门限不达标和基线不一致会分别标出 FAIL。
 
 `tb_gbe_burst` 的突发指标在发送核心的消息输入口和接收核心的消息交付口之间测量。顶层将这两路核心直接接到 GMII，没有另加适配缓存或流水延迟。
-队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上是仿真测量；综合时序也尚未计入布局布线延迟，不能当作上板或物理时序结果。
+队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上吞吐和周期指标是 RTL 仿真测量；布线后静态时序另见“综合与布线结果”，不能当作上板实测。
 
 ## 从 eLinx 界面运行自检
 
@@ -186,32 +190,39 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 入口先仿真 RTL，再用相同激励仿真新生成的 VQM，逐字节比较七份外部记录。预期两个阶段均打印 `GUI NETLIST PASS tb_net_services ... checks=1123 errors=0`，独立检查器的 65 项通过；`summary.json` 中的七项 `exact_external_records` 全为 `true`。
 
-2026-10-15 使用上述命令行综合的 VQM 实跑通过：自检 1123 项、独立检查 65 项，错误均为 0，七份外部记录与 RTL 完全一致；ModelSim 的 Error、Fatal、Warning 均为 0。网表仿真耗时 **3555.438 秒（约 59.3 分钟）**，同激励 RTL 仿真为 3.422 秒。原始结果在 `out/gui_netlist/tb_net_services_gui/20261015_093125_259732/summary.json`，亦可由 `out/latest_tb_net_services_gui.json` 定位。
+2026-10-16 使用当前代码新生成的官方 VQM 实跑通过：自检 1123 项、独立检查 65 项，错误均为 0，七份外部记录与同版 RTL 完全一致；ModelSim 的 Error、Fatal、Warning 均为 0。网表仿真耗时 **5747.610 秒**，同激励 RTL 仿真为 7.406 秒。结果由 `out/latest_tb_net_services_gui.json` 定位；网表 SHA-256 与本次官方综合产物一致。
 
 使用界面产物时省略 `-Netlist`，默认读取 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`。两种入口都不重新综合；每次仿真的网表副本、日志、独立检查和 `summary.json` 放在 `out/gui_netlist/` 下的新目录。出错时打印 `GUI NETLIST FAIL` 或 `GUI NETLIST ENTRY FAIL` 并返回非零退出码，总时限为五小时。
 
 较长的双端双网互发自检可用 `sim/run_gui_netlist.ps1 -Test tb_elinx -Netlist $net`。此前界面网表已通过 9238 项检查、0 错误，仿真约 130 分钟；本次只重跑新网表的五功能测试。
 
-官方导出的网表省略了取默认值的输入和参数，而配套单元仿真模型没有给这些输入和参数设默认值，直接仿真时寄存器不会更新。`tools/adapt_gui_vqm.py` 仅在仿真副本上补齐：省略输入按组件声明和单元模型的默认上拉、下拉取值；原有进位连接补上 `cin_used="true"`。原有连接、参数、查找表内容以及厂商模型均不改，补全数量记录在 `summary.json` 的 `adaptation` 中。
+官方导出的网表省略了取默认值的输入和参数，而配套单元仿真模型没有给这些输入和参数设默认值，直接仿真时寄存器不会更新。`tools/adapt_gui_vqm.py` 仅在仿真副本上补齐：省略输入按组件声明和单元模型的默认上拉、下拉取值；原有进位连接补上 `cin_used="true"`。原有连接、功能参数、查找表内容以及厂商模型均不改。复制寄存器的 `created_from` 仅记录综合来源，厂商仿真模型没有该参数；仿真副本将这项元数据转存审计报告。补全数量和来源记录保存在 `summary.json` 的 `adaptation` 中。
 
-## 综合结果
+## 综合与布线结果
 
-器件 EQ6HL130、封装 CSG484_H，时钟约束 8 ns（125 MHz），按速度优化。界面 Run Synthesis 与命令行入口使用同一官方流程，对外统一采用以下资源与时序口径。
+器件 EQ6HL130、封装 CSG484_H，唯一主时钟为 8 ns（125 MHz），顶层 `CE_DIV=2`。2026-10-16 从不含 `.qsf` 的源码副本运行官方命令行流程；综合设置和实现选项保持工程默认值，界面与命令行共用 `constraints.edc`。本次尚未满足 125 MHz 的建立时间要求；保持检查通过。
 
-| 项目 | 官方综合结果 |
+| 项目 | 当前官方结果 |
 |---|---:|
-| 查找表（LUT） | 32847 |
-| 触发器（FF） | 13869 |
-| 可配置逻辑块（CLB） | 4620 |
-| 存储器（Memory） | 340 |
+| 查找表（LUT） | 37716 |
+| 触发器（FF） | 19554 |
+| 可配置逻辑块（CLB） | 4880 |
+| 存储器（Memory） | 363 |
 | 用户引脚 | 259 |
-| 建立时间裕量 | +2.522 ns |
-| 最高频率估算 | 182.548 MHz |
-| 保持时间裕量 | −0.068 ns |
+| 综合后建立裕量／保持裕量 | +4.204 / -0.068 ns |
+| 综合后最高频率估算 | 263.435 MHz |
+| 布线后建立裕量／保持裕量 | -0.580 / +0.229 ns |
+| 布线后最高频率估算 | 116.550 MHz |
+| 布线后 setup 失败端点 | 215 / 49937 |
 
-2026-10-15 在当前代码上实测，命令行完整流程耗时 **233.062 秒（约 3.9 分钟）**：分析综合 150.125 秒、VQM 导出 3.469 秒、装箱 56.328 秒、综合后时序 23.032 秒。实际耗时随运行条件变化；同次资源和时序与当日界面结果逐项相同。
+全量报告包含 183711 条 8 ns 路径，最差建立裕量 -0.580 ns；
+50296 条引擎内部 16 ns 路径，最差建立裕量 +0.682 ns。
+约束检查确认 2755 个引擎寄存器均受正确 CE 控制，不合格寄存器、遗漏内部连接、错误路径要求均为 0；234007 条 hold 路径仍按同沿检查。
+综合估算、布线后静态时序和 RTL 性能仿真采用不同证据口径；未设置外部 I/O 延迟预算，也没有上板测量。
+资源和原始报告由 `out/latest_AFDX_top.json`、`out/latest_AFDX_top_route.json`、`out/latest_AFDX_top_full_timing.json` 定位。
 
-以上时序是综合后的估算，没有计入布局布线延迟。保持时间裕量为负也出现在这一阶段，通常由布局布线修正，本工程没有做布线后的时序确认。
+当前两种 CE 配置均通过完整回归 38/38 和评委入口 7/7，吞吐、时延、抖动和 RTC 误差与 `docs/FACTS.md` 中的固定工况基线一致。
+默认半速管理引擎的五功能联测中，SNMP、上传、卸载分别为 1472、16587、48281 拍；数据面的周期指标保持原值。
 
 ## 模块一览
 
@@ -236,8 +247,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | `afdx_svc.v` | 按整条消息仲裁应用与服务发送，将收到的服务消息分发给对应模块。 |
 | `afdx_rtc.v` | 维护秒和纳秒时钟，以标准 48 字节 SNTP 报文同步。 |
 | `afdx_ntp_fraction.v` | 用移位加减迭代换算纳秒与 NTP 的 32 位二进制小数。 |
-| `afdx_snmp.v` | 处理 SNMP v1/v2c 单变量 Get、GetNext、Set 及 v2c Trap。 |
-| `afdx_615a.v` | 通过 TFTP 执行 615A 加载和介质定义卸载，管理加载 RAM。 |
+| `afdx_snmp.v` | 全速捕获 SNMP 请求、配置与 MIB 桥接、保存报文 RAM 并连接输出。 |
+| `afdx_snmp_engine.v` | 通过 CE 每两拍处理一次 SNMP v1/v2c 单变量 Get、GetNext、Set 及 v2c Trap。 |
+| `afdx_615a.v` | 全速捕获 615A/TFTP 请求，桥接配置与加载 RAM，连接发送输出。 |
+| `afdx_615a_engine.v` | 通过 CE 每两拍推进一次 615A 加载、卸载和 TFTP 协议。 |
+| `afdx_mgmt_tx.v` | 在全速域读取管理响应 RAM，按 valid/ready 连续发送字节。 |
 
 数据路径：应用 `app_tx_*` → `afdx_svc` → `afdx_tx_core`（缓冲、调度、组帧）→ `afdx_mac_tx` → GMII 链路 → `afdx_mac_rx` → `afdx_rx_parse` → `afdx_rx_engine` → `afdx_rx_deliver` → `afdx_svc` → 应用 `app_rx_*`。RTC、SNMP、615A 三种服务报文和用户数据共用这条路径，由 `afdx_svc` 按整条消息仲裁。
 
@@ -261,4 +275,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 - 时钟同步误差在两端使用同一个理想时钟的仿真中测得：空载 0 ns，有用户流量时最大 10788 ns。
 - MAC 层是本工程自己编写的，没有使用 eLinx 的 MAC IP。
 - 综合后网表仿真使用官方流程导出的 VQM，不含布局布线延迟；吞吐等性能指标没有在网表上重测。布局布线后导出的 `.vo` 网表没有通过仿真，原因是工具导出的 18/36 位 RAM 写数据位序与仿真库不一致；按赛题答疑，综合后仿真即可。
-- 时序数字是综合阶段的估算，没有上板，也没有布线后的时序结果。
+- 已完成官方默认布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。

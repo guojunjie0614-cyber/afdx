@@ -3,7 +3,7 @@
 // afdx_svc 提供字节，整条消息存好后通知 afdx_tx_engine 排队。
 // 本模块用于赛题的发送缓存，接收失败时归还本条消息占用的页。
 module afdx_tx_buf #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
+    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, EARLY_ENQUEUE = 0) (
 
     // init_done 为高时才允许接收新消息。
     input wire clk, reset, init_done,
@@ -42,7 +42,7 @@ module afdx_tx_buf #(
 
     // 整条消息存好后，enq_* 请求加入发送队列。
     // enq_ack 为高时，enq_result 给出接纳或拒绝的原因。
-    output reg enq_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg enq_valid,
     output reg [6:0] enq_vl,
     output reg [7:0] enq_head,
     output reg [10:0] enq_len,
@@ -125,6 +125,14 @@ module afdx_tx_buf #(
             ev_drop_nopage <= 0;
         end
         else begin
+            // 数据和地址先预存，写使能单独确认真实握手，避免把 ready/valid 串入宽数据路径。
+            payload_wd <= state == WAIT_PAGE ? held_data : m_data;
+            payload_wa <= state == WAIT_PAGE
+                ? {pop_page[TX_PAGE_AW - 1:0], {TX_OFF_AW{1'b0}}} : {current_page[TX_PAGE_AW - 1:0], offset};
+            if (state == RECV) begin
+                held_data <= m_data;
+                held_last <= m_last;
+            end
             payload_we <= 0;
             pnext_we <= 0;
             desc_we <= 0;
@@ -136,7 +144,8 @@ module afdx_tx_buf #(
             case (state)
 
                 // IDLE：接收并保存首字节，握手后转 ALLOC。
-                IDLE : if (m_valid && m_ready) begin
+                // 空闲时预存首字节候选，真实握手拍仍保存同一值；只有握手改变状态。
+                IDLE : begin
                     enq_vl <= m_vl;
                     port_en <= m_port_en;
                     sport <= m_sport;
@@ -149,7 +158,7 @@ module afdx_tx_buf #(
                     returned <= 0;
                     reason <= ENQ_ACCEPTED;
                     boundary <= 0;
-                    state <= ALLOC;
+                    if (m_valid && init_done) state <= ALLOC;
                 end
 
                 // ALLOC：发出页申请，下一拍转 WAIT_PAGE。
@@ -188,15 +197,13 @@ module afdx_tx_buf #(
                             offset <= 1;
                             boundary <= 0;
                             payload_we <= 1;
-                            payload_wa <= { pop_page[TX_PAGE_AW - 1:0], { TX_OFF_AW { 1'b0 } } };
-                            payload_wd <= held_data;
                             state <= held_last ? DESC : RECV;
                         end
                     end
                 end
 
                 // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
-                RECV : if (m_valid && m_ready) begin
+                RECV : if (m_valid && init_done) begin
                     ended <= m_last;
                     if (enq_len == MAX_PAYLOAD) begin
                         reason <= ENQ_TOO_LONG;
@@ -206,14 +213,10 @@ module afdx_tx_buf #(
                     else begin
                         enq_len <= enq_len + 1'b1;
                         if (boundary) begin
-                            held_data <= m_data;
-                            held_last <= m_last;
                             state <= ALLOC;
                         end
                         else begin
                             payload_we <= 1;
-                            payload_wa <= { current_page[TX_PAGE_AW - 1:0], offset };
-                            payload_wd <= m_data;
                             offset <= offset + 1'b1;
                             if ( & offset) boundary <= 1;
                             if (m_last) state <= DESC;
@@ -223,6 +226,7 @@ module afdx_tx_buf #(
 
                 // DESC：保存消息长度和端口，下一拍转 ENQUEUE。
                 DESC : begin
+                    if (EARLY_ENQUEUE) enq_valid <= 1;
                     desc_we <= 1;
                     desc_wa <= enq_head;
                     desc_wd <= { enq_len, port_en, sport, dport };
@@ -270,7 +274,7 @@ module afdx_tx_buf #(
                 end
 
                 // DRAIN：继续接收但不保存字节，收到末字节后转 EVENT。
-                DRAIN : if (m_valid && m_ready && m_last) state <= EVENT;
+                DRAIN : if (m_valid && init_done && m_last) state <= EVENT;
 
                 // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
                 EVENT : begin

@@ -77,7 +77,7 @@ module AFDX_top #(
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
     // 同一主时钟下的本地时钟使能副本；不产生新时钟。
-    (* preserve = 1, dont_merge = 1 *) reg [69:0] loader_ce_q;
+    (* preserve = 1, dont_merge = 1 *) reg [71:0] loader_ce_q;
     (* preserve = 1, dont_merge = 1 *) reg [58:0] snmp_ce_q;
     always @(posedge clk) begin
         if (reset) begin
@@ -103,7 +103,8 @@ module AFDX_top #(
         else now_c_tick <= &now[11:0];
     end
     wire byte_en, tx_initialized, rx_initialized;
-    wire tx_cfg_ok, rx_cfg_ok, tx_cfg_we, rx_map_we, rx_cfg_we;
+    wire tx_cfg_ok, tx_cfg_we, rx_map_we, rx_cfg_we;
+    wire [RX_CONFIG_BANKS - 1:0] rx_cfg_ok;
     wire [9:0] tx_cfg_addr;
     wire [32 * 16 - 1:0] rx_cfg_addr;
     wire [31:0] tx_cfg_wdata;
@@ -132,21 +133,24 @@ module AFDX_top #(
     wire [15:0] load_tx_sport, load_tx_dport;
     wire [31:0] load_rdata, load_extra_data;
     wire bus_rd, mib_user_write;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg mib_is_user_id, mib_snapshot_seconds;
 
     // 主机和网络管理服务共用配置读口。
     // 各自的读有效标记延后两拍，与返回数据对齐。
     reg [1:0] host_read_pipe, snmp_read_pipe;
 
     // 主机优先读取；两者读同一地址时，共用本次读取结果。
-    assign snmp_mib_ready = ! cfg_wr && ( ! cfg_rd || ( ! snmp_mib_wr && cfg_addr == snmp_mib_addr))
-        && ( ! snmp_mib_wr || cfg_ready);
+    // 不同地址时主机优先；同地址读必须共享结果，避免连续主机读取饿死 MIB 请求。
+    assign snmp_mib_ready = !cfg_wr
+        && (!cfg_rd || (!snmp_mib_wr && cfg_addr == snmp_mib_addr))
+        && (!snmp_mib_wr || cfg_ready);
 
     assign snmp_grant = (snmp_mib_rd || snmp_mib_wr) && snmp_mib_ready;
     // 主机正在读写时地址直接来自主机，其余时间预选网络管理读地址。
     // 网络管理仅能写 user_id，独立分发该写使能，避免写握手进入所有读地址和 RTC 控制链。
     assign bus_addr = (cfg_rd || cfg_wr) ? cfg_addr : snmp_mib_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
-    assign mib_user_write = snmp_grant && snmp_mib_wr && snmp_mib_addr == 18'h00002;
+    assign mib_user_write = snmp_mib_wr && !cfg_wr && !cfg_rd && cfg_ready && mib_is_user_id;
     assign cfg_rvalid = host_read_pipe[1];
 
     always @(posedge clk) begin
@@ -169,14 +173,27 @@ module AFDX_top #(
 
     // 网络管理回应使用的 UDP 源端口。
     localparam SNMP_PORT = 16'd161;
-    wire rtc_select = (bus_addr[17:4] == RTC_ADDR_GROUP);
-    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1), .CE_DIV(CE_DIV)) loader (
-        .ce(CE_DIV == 1 ? {70{1'b1}} : loader_ce_q),
+    // 网络管理先放地址，下一拍才请求读写；译码先寄存，主机仍按原拍响应。
+    always @(posedge clk) begin
+        if (reset) begin
+            mib_is_user_id <= 0;
+            mib_snapshot_seconds <= 0;
+        end
+        else begin
+            mib_is_user_id <= snmp_mib_addr == 18'h00002;
+            // RTC 读址 bit 3 原本被忽略，因此保留 0x84/0x8c 的同一抓拍语义。
+            mib_snapshot_seconds <= snmp_mib_addr[17:4] == RTC_ADDR_GROUP && snmp_mib_addr[2:0] == 4;
+        end
+    end
+    wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
+        || (!cfg_rd && !cfg_wr && snmp_mib_rd && (!snmp_mib_wr || cfg_ready) && mib_snapshot_seconds);
+    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) loader (
+        .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == LOAD_ADDR_GROUP),
-        .cfg_addr({cfg_addr[7:0], bus_addr[2:0]}),
+        .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
         .cfg_extra_data(load_extra_data),
@@ -194,14 +211,14 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1), .CE_DIV(CE_DIV)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) snmp (
         .clk(clk),
         .reset(reset),
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
         .enable(tx_ready),
         .now(now),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:8] == 0),
-        .cfg_addr({cfg_addr[7:0], bus_addr[2:0]}),
+        .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_control_data(snmp_control_data),
         .cfg_status_data(snmp_status_data),
@@ -226,14 +243,14 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(snmp_claim)
     );
-    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(1)) rtc (
+    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2)) rtc (
         .clk(clk),
         .reset(reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
         .enable(1'b1),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == RTC_ADDR_GROUP),
-        .cfg_re(bus_rd && rtc_select),
-        .cfg_addr({cfg_addr[3:0], bus_addr[3:0]}),
+        .cfg_re(rtc_snapshot_read),
+        .cfg_addr({cfg_addr[3:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(rtc_rdata),
         .sync_count(rtc_sync_count),

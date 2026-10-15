@@ -36,7 +36,7 @@ module afdx_tx_core #(
     output wire tx_valid_a,
     output wire [7:0] tx_data_b,
     output wire tx_valid_b,
-    output reg init_done,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg init_done,
 
     // ev_* 用单拍脉冲报告消息接纳、丢弃原因和两网发送完成。
     output wire ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage, ev_tx_a, ev_tx_b,
@@ -73,7 +73,7 @@ module afdx_tx_core #(
     wire [15:0] grant_vlid, grant_sport, grant_dport;
     wire [10:0] grant_len;
     wire [7:0] grant_sn, grant_page;
-    wire s_valid, s_ready, s_last, s_en_a, s_en_b, tx_sof, tx_eof, tx_underrun;
+    wire s_valid, s_last, s_en_a, s_en_b, tx_sof, tx_eof, tx_underrun;
     wire [7:0] s_data_a, s_data_b;
 
     // 配置表、调度状态和空闲页队列全部就绪后，才接收消息和配置。
@@ -189,7 +189,7 @@ module afdx_tx_core #(
         .ret2_page(ret2_page),
         .ret2_ready(ret2_ready)
     );
-    afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) buffer (
+    afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .EARLY_ENQUEUE(1)) buffer (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -234,7 +234,7 @@ module afdx_tx_core #(
         .ev_drop_long(ev_drop_long),
         .ev_drop_nopage(ev_drop_nopage)
     );
-    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD)) engine (
+    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD), .PIPELINED_ENQUEUE(1)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -285,7 +285,10 @@ module afdx_tx_core #(
         .grant_sn(grant_sn),
         .grant_page(grant_page)
     );
-    afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW)) builder (
+    localparam READY_COPIES = 15;
+    wire [READY_COPIES - 1:0] s_ready;
+
+    afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .READY_COPIES(READY_COPIES)) builder (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -332,7 +335,7 @@ module afdx_tx_core #(
         .ev_tx_a(ev_tx_a),
         .ev_tx_b(ev_tx_b)
     );
-    afdx_mac_tx mac (
+    afdx_mac_tx #(.READY_COPIES(READY_COPIES)) mac (
         // 时钟和复位
         .clk(clk),
         .reset(reset),

@@ -34,19 +34,20 @@ module afdx_rx_core #(
     // 所有接收表初始化完成后，init_done 才变高。
     // ev_a/b 分别报告两网检查结果。
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
-    output reg init_done,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg init_done,
     output reg [7:0] ev_a, ev_b,
     output reg ev_rm_drop, ev_deliver,
-    output wire cfg_ok);
+    output wire [CFG_COPIES - 1:0] cfg_ok);
 
     // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
     // flush_init 等待最后一次写入完成。
-    reg cfg_we, flush_init;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg cfg_we, flush_init;
     reg [15:0] clear_addr;
     reg [11:0] cfg_wa;
     reg [31:0] cfg_wd;
-    wire engine_initialized, map_re, cfg_re, state_re, state_we;
-    wire [15:0] map_ra;
+    wire engine_initialized, cfg_re, state_re, state_we;
+    wire [CFG_COPIES - 1:0] map_re;
+    wire [CFG_COPIES * 16 - 1:0] map_ra;
     wire [12:0] map_q;
     wire [11:0] cfg_ra, state_ra, state_wa;
     wire [31:0] cfg_q;
@@ -59,12 +60,14 @@ module afdx_rx_core #(
     wire [RX_RING_AW - 1:0] ra_wa, rb_wa, ra_ra, rb_ra;
     wire [7:0] ra_wd, rb_wd, ra_q, rb_q;
     wire [RX_RING_AW:0] ptr_a, ptr_b;
-    wire da_valid, db_valid, take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
+    wire [CFG_COPIES - 1:0] da_valid, db_valid;
+    wire take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
     wire [RX_RING_AW + 82:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
 
-    localparam DQ_WIDTH = RX_RING_AW + 56;
-    wire engine_rm, engine_deliver, dq_pop, dq_we;
+    localparam DQ_WIDTH = RX_RING_AW + 56, DQ_WRITE_SLICES = (DQ_WIDTH + 23) / 24;
+    wire engine_rm, engine_deliver, dq_pop;
+    wire [32 * DQ_WRITE_SLICES - 1:0] dq_we;
     wire [RX_DQ_AW - 1:0] dq_wa;
     wire [RX_DQ_AW:0] dq_count;
     wire [DQ_WIDTH - 1:0] dq_wd;
@@ -72,13 +75,18 @@ module afdx_rx_core #(
 
     // rx_dq 最多保存 32 条待交付消息的信息。
     // 接收引擎写入这些寄存器，交付模块按顺序读取。
-    genvar i;
+    genvar i, dq_word;
     generate
         for (i = 0; i < 32; i = i + 1) begin : queue_slot
             if (i < (1 << RX_DQ_AW)) begin : present
                 reg [DQ_WIDTH - 1:0] entry;
 
-                always @(posedge clk) if (dq_we && dq_wa == i) entry <= dq_wd;
+                // 写目标与数据同拍预译码，局部使能各驱动不超过 24 位。
+                for (dq_word = 0; dq_word < DQ_WRITE_SLICES; dq_word = dq_word + 1) begin : word
+                    localparam WORD_WIDTH = DQ_WIDTH - dq_word * 24 >= 24 ? 24 : DQ_WIDTH - dq_word * 24;
+                    always @(posedge clk) if (dq_we[i * DQ_WRITE_SLICES + dq_word])
+                        entry[dq_word * 24 +: WORD_WIDTH] <= dq_wd[dq_word * 24 +: WORD_WIDTH];
+                end
 
                 assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = entry;
             end
@@ -118,7 +126,7 @@ module afdx_rx_core #(
                 else if (engine_initialized) init_done <= 1;
             end
             else begin
-                cfg_we <= cfg_cfg_we && cfg_ok;
+                cfg_we <= cfg_cfg_we && cfg_ok[0];
                 cfg_wa <= cfg_addr[11:0];
                 cfg_wd <= cfg_wdata[31:0];
             end
@@ -159,9 +167,10 @@ module afdx_rx_core #(
             localparam BUS_COPY = CFG_COPIES > 1 ? bank : 0;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
             (* preserve = 1, dont_merge = 1 *) reg cleared;
+            wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16 +: 16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16 +: 16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32 +: 13];
-            wire bank_write = init_done && cfg_map_we && cfg_ok
+            wire bank_write = init_done && cfg_map_we && cfg_ok[BUS_COPY]
                 && bank_cfg_addr[15:MAP_BANK_AW] == bank;
             (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
@@ -179,7 +188,7 @@ module afdx_rx_core #(
                 end
                 else begin
                     selected <= read_request;
-                    read_request <= map_re && map_ra[15:MAP_BANK_AW] == bank;
+                    read_request <= map_re[BUS_COPY] && bank_read_addr[15:MAP_BANK_AW] == bank;
                     // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
                     write_request <= !cleared || bank_write;
                     if (!cleared) begin
@@ -188,7 +197,7 @@ module afdx_rx_core #(
                     end
                     // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
                     // 返回选择由局部读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
-                    read_address <= map_ra[MAP_BANK_AW - 1:0];
+                    read_address <= bank_read_addr[MAP_BANK_AW - 1:0];
                     write_address <= cleared ? bank_cfg_addr[MAP_BANK_AW - 1:0] : clear_local;
                     write_data <= cleared ? bank_cfg_data : 13'b0;
                 end
@@ -277,7 +286,7 @@ module afdx_rx_core #(
         .f_err(fb_err),
         .f_len(fb_len)
     );
-    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_a (
+    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_a (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -303,7 +312,7 @@ module afdx_rx_core #(
         .resolve_commit(commit_a),
         .ev(parse_ev_a)
     );
-    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW)) parse_b (
+    afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_b (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -329,7 +338,7 @@ module afdx_rx_core #(
         .resolve_commit(commit_b),
         .ev(parse_ev_b)
     );
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK)) engine (
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(1), .DESC_COPIES(CFG_COPIES)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),

@@ -5,7 +5,7 @@
 // 同一条 VL 相邻两帧的发送起点至少相隔一个 BAG。
 // 队列有消息且满足时间条件时，模块才允许这条消息开始发送。
 module afdx_tx_engine #(
-    parameter TX_PAGE_AW = 8, LOOKAHEAD = 512) (
+    parameter TX_PAGE_AW = 8, LOOKAHEAD = 512, PIPELINED_ENQUEUE = 0) (
 
     // enable 为高时允许调度，now 给出当前周期数。
     // initialized 为高表示状态表已初始化完成。
@@ -16,10 +16,10 @@ module afdx_tx_engine #(
     // cfg_* 读取当前虚拟链路的配置。
     // state_* 读写队列长度、序号和下一次允许发送的时间。
     output reg cfg_re,
-    output reg [9:0] cfg_ra,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [9:0] cfg_ra,
     input wire [31:0] cfg_q,
     output reg state_we, state_re,
-    output reg [6:0] state_wa, state_ra,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [6:0] state_wa, state_ra,
     output reg [62:0] state_wd,
     input wire [62:0] state_q,
 
@@ -60,6 +60,30 @@ module afdx_tx_engine #(
     // cfg_ok 为高时，发送核心可以写入外部配置。
     output wire cfg_ok);
 
+    // 缓存端提前一拍提出请求，本拍采样后仍在原来的周期进入调度器。
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg enq_sampled;
+    reg [6:0] enq_vl_sampled;
+    reg [7:0] enq_head_sampled;
+    reg [10:0] enq_len_sampled;
+    wire enq_valid_local = PIPELINED_ENQUEUE ? enq_sampled : enq_valid;
+    wire [6:0] enq_vl_local = PIPELINED_ENQUEUE ? enq_vl_sampled : enq_vl;
+    wire [7:0] enq_head_local = PIPELINED_ENQUEUE ? enq_head_sampled : enq_head;
+    wire [10:0] enq_len_local = PIPELINED_ENQUEUE ? enq_len_sampled : enq_len;
+    always @(posedge clk) begin
+        if (reset) begin
+            enq_sampled <= 0;
+            enq_vl_sampled <= 0;
+            enq_head_sampled <= 0;
+            enq_len_sampled <= 0;
+        end
+        else begin
+            enq_sampled <= enq_valid && !enq_ack;
+            enq_vl_sampled <= enq_vl;
+            enq_head_sampled <= enq_head;
+            enq_len_sampled <= enq_len;
+        end
+    end
+
     localparam ENQ_ACCEPTED = 0;
     localparam ENQ_DISABLED = 1;
     localparam ENQ_FULL = 2;
@@ -74,8 +98,8 @@ module afdx_tx_engine #(
     localparam SN_MAX = 255, SN_FIRST = 8'd1;
 
     // op 选择本次表操作，phase 记录操作进行到哪一拍。
-    reg [2:0] op;
-    reg [3:0] phase;
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg [2:0] op;
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg [3:0] phase;
 
     // scan_issue 是下一条要检查的虚拟链路，scan_commit 是已检查的位置。
     // candidate_vl 保存候选项，pend_vl 保存已选中但尚未发送的项。
@@ -113,12 +137,41 @@ module afdx_tx_engine #(
 
     // quota 限制连续扫描次数，让新消息也能及时加入队列。
     // ack_pending 表示还有一个实际发送时间需要写回。
-    reg [4:0] quota;
-    wire want_enq = enq_valid && ! enq_seen && (candidate || quota >= SCAN_QUOTA);
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [4:0] quota;
+    wire want_enq = enq_valid_local && ! enq_seen && (candidate || quota >= SCAN_QUOTA);
     wire want_grant = candidate && grant_ready && ! pend_valid;
 
     assign cfg_ok = enable && op == IDLE && ! want_enq && ! want_grant;
     wire scanning = enable && op == IDLE && ! candidate && ! ack_pending && ! want_enq;
+
+    // 状态字的加减先并行寄存，提交拍只选择已经算好的整字。
+    reg [62:0] state_after_enqueue, state_after_grant;
+    always @(posedge clk) begin
+        if (reset) begin
+            state_after_enqueue <= 0;
+            state_after_grant <= 0;
+        end
+        else begin
+            state_after_enqueue <= {saved_state[62:22], saved_state[21:16] + 6'd1,
+                saved_state[21:16] == 0 ? op_head : saved_state[15:8], op_head};
+            state_after_grant <= {saved_state[62:30],
+                saved_state[29:22] == SN_MAX ? SN_FIRST : saved_state[29:22] + 8'd1,
+                saved_state[21:16] - 6'd1, saved_next, saved_state[7:0]};
+        end
+    end
+
+    // 各操作的写入内容始终预备，写脉冲独立决定提交；宽数据不经过扫描准入或 phase 使能链。
+    always @(posedge clk) begin
+        if (reset) state_wd <= 0;
+        else case (op)
+            INIT : state_wd <= 0;
+            IDLE : state_wd <= {1'b0, scan_s2[61:0]};
+            ENQ : state_wd <= state_after_enqueue;
+            GRANT : state_wd <= state_after_grant;
+            START : state_wd <= {1'b1, new_time, saved_state[29:0]};
+            default : state_wd <= 0;
+        endcase
+    end
 
     task invalidate_scan;
         begin
@@ -146,7 +199,7 @@ module afdx_tx_engine #(
             state_re <= 0;
             state_wa <= 0;
             state_ra <= 0;
-            state_wd <= 0;
+
             mnext_we <= 0;
             mnext_re <= 0;
             mnext_wa <= 0;
@@ -217,7 +270,7 @@ module afdx_tx_engine #(
             desc_re <= 0;
             enq_ack <= 0;
             grant_valid <= 0;
-            if ( ! enq_valid) enq_seen <= 0;
+            if ( ! enq_valid_local) enq_seen <= 0;
             if (start_valid) begin
                 ack_pending <= 1;
                 ack_time <= t_start;
@@ -242,6 +295,11 @@ module afdx_tx_engine #(
             end
             // 模块只选择有排队消息且已到期或即将到期的虚拟链路。
             // LOOKAHEAD 指定提前准备组帧的周期数，实际发送仍要等到期。
+            // 空闲时预备扫描写回值；扫描准入只控制写脉冲，不再驱动整字保持端。
+            if (op == IDLE) begin
+                state_wa <= scan_vl4;
+
+            end
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
                 if (quota < SCAN_QUOTA) quota <= quota + 1'b1;
@@ -254,8 +312,6 @@ module afdx_tx_engine #(
                 end
                 else if (!scan_has_data && !scan_unrestricted && scan_due && !scan_blocked) begin
                     state_we <= 1;
-                    state_wa <= scan_vl4;
-                    state_wd <= { 1'b0, scan_s2[61:0] };
                 end
             end
             // 先处理实际发送时间，再处理入队和选帧请求。
@@ -266,7 +322,7 @@ module afdx_tx_engine #(
                     if ( ! init_flush) begin
                         state_we <= 1;
                         state_wa <= init_ptr;
-                        state_wd <= 0;
+
                         init_ptr <= init_ptr + 1'b1;
                         if (init_ptr == LAST_VL) init_flush <= 1;
                     end
@@ -292,13 +348,13 @@ module afdx_tx_engine #(
                         invalidate_scan;
                         op <= ENQ;
                         phase <= 0;
-                        op_vl <= enq_vl;
-                        op_head <= enq_head;
-                        op_len <= enq_len;
+                        op_vl <= enq_vl_local;
+                        op_head <= enq_head_local;
+                        op_len <= enq_len_local;
                         cfg_re <= 1;
-                        cfg_ra <= { enq_vl, 3'b000 };
+                        cfg_ra <= { enq_vl_local, 3'b000 };
                         state_re <= 1;
-                        state_ra <= enq_vl;
+                        state_ra <= enq_vl_local;
                         enq_seen <= 1;
                         quota <= 0;
                     end
@@ -344,6 +400,9 @@ module afdx_tx_engine #(
                         3 : soon_difference <= difference + LOOKAHEAD;
 
                         4 : begin
+                            // 地址和内容独立准备，只有写使能受接纳判断控制。
+                            state_wa <= op_vl;
+
                             enq_ack <= 1;
                             op <= IDLE;
                             if ( ! words[0] [0] || words[0] [2:1] == 0) enq_result <= ENQ_DISABLED;
@@ -352,9 +411,7 @@ module afdx_tx_engine #(
                             else begin
                                 enq_result <= ENQ_ACCEPTED;
                                 state_we <= 1;
-                                state_wa <= op_vl;
-                                state_wd <= { saved_state[62:22], saved_state[21:16] + 6'd1,
-                                    saved_state[21:16] == 0 ? op_head : saved_state[15:8], op_head };
+
                                 if (saved_state[21:16] != 0) begin
                                     mnext_we <= 1;
                                     mnext_wa <= saved_state[7:0];
@@ -430,9 +487,7 @@ module afdx_tx_engine #(
                             grant_time <= saved_state[61:30];
                             state_we <= 1;
                             state_wa <= op_vl;
-                            state_wd <= { saved_state[62:30],
-                                saved_state[29:22] == SN_MAX ? SN_FIRST : saved_state[29:22] + 8'd1,
-                                saved_state[21:16] - 6'd1, saved_next, saved_state[7:0] };
+
                             // 当前消息开始发送前，同一虚拟链路不能再次被选中。
                             pend_valid <= 1;
                             pend_vl <= op_vl;
@@ -455,7 +510,7 @@ module afdx_tx_engine #(
                         2 : begin
                             state_we <= 1;
                             state_wa <= op_vl;
-                            state_wd <= { 1'b1, new_time, saved_state[29:0] };
+
                             pend_valid <= 0;
                             op <= IDLE;
                         end

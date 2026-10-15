@@ -66,77 +66,72 @@ module afdx_svc (
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
     reg busy, rx_active, rx_claimed;
     reg [1:0] owner, turn, selected;
+    reg [3:0] granted;
     wire [3:0] request = { svc_tx_valid, app_tx_valid };
 
     // 模块从 turn 开始查找待发消息，选中后保持到整条消息发完。
     // 只有选中的发送方能收到 ready。
-    always @ * begin
-        selected = SRC_APP;
-        case (turn)
-            SRC_APP : if (request[SRC_APP]) selected = SRC_APP;
-            else if (request[SRC_RTC]) selected = SRC_RTC;
-            else if (request[SRC_SNMP]) selected = SRC_SNMP;
-            else if (request[SRC_LOAD]) selected = SRC_LOAD;
-            SRC_RTC : if (request[SRC_RTC]) selected = SRC_RTC;
-            else if (request[SRC_SNMP]) selected = SRC_SNMP;
-            else if (request[SRC_LOAD]) selected = SRC_LOAD;
-            else if (request[SRC_APP]) selected = SRC_APP;
-            SRC_SNMP : if (request[SRC_SNMP]) selected = SRC_SNMP;
-            else if (request[SRC_LOAD]) selected = SRC_LOAD;
-            else if (request[SRC_APP]) selected = SRC_APP;
-            else if (request[SRC_RTC]) selected = SRC_RTC;
-            SRC_LOAD : if (request[SRC_LOAD]) selected = SRC_LOAD;
-            else if (request[SRC_APP]) selected = SRC_APP;
-            else if (request[SRC_RTC]) selected = SRC_RTC;
-            else if (request[SRC_SNMP]) selected = SRC_SNMP;
-        endcase
-        if (busy) selected = owner;
-        m_valid = app_tx_valid;
-        m_data = app_tx_data;
-        m_last = app_tx_last;
-        m_vl = app_tx_vl;
-        m_port_en = app_tx_port_en;
-        m_sport = app_tx_sport;
-        m_dport = app_tx_dport;
-        svc_tx_ready = 0;
-        case (selected)
-
-            SRC_RTC : begin
-                m_valid = svc_tx_valid[0];
-                m_data = svc_tx_data[7:0];
-                m_last = svc_tx_last[0];
-                m_vl = svc_tx_vl[6:0];
-                m_port_en = svc_tx_port_en[0];
-                m_sport = svc_tx_sport[15:0];
-                m_dport = svc_tx_dport[15:0];
-                svc_tx_ready[0] = m_ready;
+    // 直接生成互斥选择位，避免先编码优先级、再译码数据多路器。
+    always @* begin
+        granted = 4'b0001;
+        if (busy) granted = 4'b0001 << owner;
+        else case (turn)
+            2'd0 : begin
+                granted[0] = (request[0]) || !(|request);
+                granted[1] = request[1] && !request[0];
+                granted[2] = request[2] && !request[0] && !request[1];
+                granted[3] = request[3] && !request[0] && !request[1] && !request[2];
             end
-
-            SRC_SNMP : begin
-                m_valid = svc_tx_valid[1];
-                m_data = svc_tx_data[15:8];
-                m_last = svc_tx_last[1];
-                m_vl = svc_tx_vl[13:7];
-                m_port_en = svc_tx_port_en[1];
-                m_sport = svc_tx_sport[31:16];
-                m_dport = svc_tx_dport[31:16];
-                svc_tx_ready[1] = m_ready;
+            2'd1 : begin
+                granted[0] = (request[0] && !request[1] && !request[2] && !request[3]) || !(|request);
+                granted[1] = request[1];
+                granted[2] = request[2] && !request[1];
+                granted[3] = request[3] && !request[1] && !request[2];
             end
-
-            SRC_LOAD : begin
-                m_valid = svc_tx_valid[2];
-                m_data = svc_tx_data[23:16];
-                m_last = svc_tx_last[2];
-                m_vl = svc_tx_vl[20:14];
-                m_port_en = svc_tx_port_en[2];
-                m_sport = svc_tx_sport[47:32];
-                m_dport = svc_tx_dport[47:32];
-                svc_tx_ready[2] = m_ready;
+            2'd2 : begin
+                granted[0] = (request[0] && !request[2] && !request[3]) || !(|request);
+                granted[1] = request[1] && !request[2] && !request[3] && !request[0];
+                granted[2] = request[2];
+                granted[3] = request[3] && !request[2];
+            end
+            2'd3 : begin
+                granted[0] = (request[0] && !request[3]) || !(|request);
+                granted[1] = request[1] && !request[3] && !request[0];
+                granted[2] = request[2] && !request[3] && !request[0] && !request[1];
+                granted[3] = request[3];
             end
         endcase
+        selected = {granted[2] | granted[3], granted[1] | granted[3]};
+        // 空闲时只要任一来源有效就必定选中有效来源，valid 无需穿过优先级链。
+        m_valid = busy ? request[owner] : |request;
+        svc_tx_ready = granted[3:1] & {3{m_ready}};
+        m_data = ({8{granted[0]}} & app_tx_data) |
+            ({8{granted[1]}} & svc_tx_data[0 +: 8]) |
+            ({8{granted[2]}} & svc_tx_data[8 +: 8]) |
+            ({8{granted[3]}} & svc_tx_data[16 +: 8]);
+        m_last = ({1{granted[0]}} & app_tx_last) |
+            ({1{granted[1]}} & svc_tx_last[0]) |
+            ({1{granted[2]}} & svc_tx_last[1]) |
+            ({1{granted[3]}} & svc_tx_last[2]);
+        m_vl = ({7{granted[0]}} & app_tx_vl) |
+            ({7{granted[1]}} & svc_tx_vl[0 +: 7]) |
+            ({7{granted[2]}} & svc_tx_vl[7 +: 7]) |
+            ({7{granted[3]}} & svc_tx_vl[14 +: 7]);
+        m_port_en = ({1{granted[0]}} & app_tx_port_en) |
+            ({1{granted[1]}} & svc_tx_port_en[0]) |
+            ({1{granted[2]}} & svc_tx_port_en[1]) |
+            ({1{granted[3]}} & svc_tx_port_en[2]);
+        m_sport = ({16{granted[0]}} & app_tx_sport) |
+            ({16{granted[1]}} & svc_tx_sport[0 +: 16]) |
+            ({16{granted[2]}} & svc_tx_sport[16 +: 16]) |
+            ({16{granted[3]}} & svc_tx_sport[32 +: 16]);
+        m_dport = ({16{granted[0]}} & app_tx_dport) |
+            ({16{granted[1]}} & svc_tx_dport[0 +: 16]) |
+            ({16{granted[2]}} & svc_tx_dport[16 +: 16]) |
+            ({16{granted[3]}} & svc_tx_dport[32 +: 16]);
     end
 
-    assign app_tx_ready = (selected == SRC_APP) && m_ready;
+    assign app_tx_ready = granted[0] && m_ready;
     assign svc_rx_valid = d_valid;
     assign svc_rx_data = d_data;
     assign svc_rx_last = d_last;
@@ -163,6 +158,8 @@ module afdx_svc (
             rx_claimed <= 0;
         end
         else begin
+            // 空闲时保存候选来源，busy 时 selected 本来就是 owner；无需再串入 valid 使能。
+            owner <= selected;
             if (m_valid) begin
                 if (m_ready && m_last) begin
                     busy <= 0;
@@ -170,7 +167,6 @@ module afdx_svc (
                 end
                 else begin
                     busy <= 1;
-                    owner <= selected;
                 end
             end
             if (d_valid) begin

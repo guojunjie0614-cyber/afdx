@@ -22,7 +22,7 @@ module afdx_rx_deliver #(
 
     // d_valid 为高时，接收方必须取走本拍 d_data，d_last 标记末字节。
     // 虚拟链路索引、端口和来源网络在整条消息期间保持不变。
-    output reg d_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg d_valid,
     output reg [7:0] d_data,
     output reg d_last,
     output reg [11:0] d_vl,
@@ -36,16 +36,17 @@ module afdx_rx_deliver #(
 
     // rd_ptr 指向下一条消息。
     // 消息信息分两级选择，以减少一拍内的选择层数。
-    reg [RX_DQ_AW - 1:0] rd_ptr;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [RX_DQ_AW - 1:0] rd_ptr;
     wire [4:0] read_index = rd_ptr;
 
     // HEAD_IDLE：有消息且收到读请求时选择组内项，然后转 HEAD_SELECT。
     // HEAD_SELECT：选出完整队首信息并移除该项，然后转 HEAD_RELEASE。
     // HEAD_RELEASE：等待 dq_req 撤销，然后转 HEAD_IDLE。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [1:0] head_phase;
-    reg [1:0] head_bank;
-    reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
-    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg dq_req, dq_valid;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] head_bank;
+    wire [DQ_WIDTH - 1:0] group0, group1, group2, group3;
+    reg [DQ_WIDTH - 1:0] dq_data;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg dq_req, dq_valid;
 
     // issuing/left 控制连续读取和剩余字节数。
     // valid_pipe/last_pipe 将有效与末字节标记对齐到读出数据。
@@ -53,6 +54,116 @@ module afdx_rx_deliver #(
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
     reg [7:0] data_a, data_b;
+
+    // 每 8 个消息信息位独立保存读指针，避免组内译码驱动整片队列。
+    // 副本和 rd_ptr 同拍复位、递增；选择仍在请求拍完成，不增加交付延迟。
+    genvar queue_bit;
+    generate
+        for (queue_bit = 0; queue_bit < DQ_WIDTH; queue_bit = queue_bit + 8) begin : queue_bank0
+            localparam WIDTH = DQ_WIDTH - queue_bit < 8 ? DQ_WIDTH - queue_bit : 8;
+            (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW - 1:0] local_rd_ptr;
+            wire [4:0] local_index = local_rd_ptr;
+            reg [WIDTH - 1:0] selected;
+            assign group0[queue_bit +: WIDTH] = selected;
+            always @(posedge clk) begin
+                if (reset) begin
+                    local_rd_ptr <= 0;
+                    selected <= 0;
+                end
+                else begin
+                    if (head_phase == HEAD_SELECT) local_rd_ptr <= local_rd_ptr + 1'b1;
+                    case (local_index[2:0])
+                        3'd0: selected <= dq_entries[0 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd1: selected <= dq_entries[1 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd2: selected <= dq_entries[2 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd3: selected <= dq_entries[3 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd4: selected <= dq_entries[4 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd5: selected <= dq_entries[5 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd6: selected <= dq_entries[6 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd7: selected <= dq_entries[7 * DQ_WIDTH + queue_bit +: WIDTH];
+                    endcase
+                end
+            end
+        end
+        for (queue_bit = 0; queue_bit < DQ_WIDTH; queue_bit = queue_bit + 8) begin : queue_bank1
+            localparam WIDTH = DQ_WIDTH - queue_bit < 8 ? DQ_WIDTH - queue_bit : 8;
+            (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW - 1:0] local_rd_ptr;
+            wire [4:0] local_index = local_rd_ptr;
+            reg [WIDTH - 1:0] selected;
+            assign group1[queue_bit +: WIDTH] = selected;
+            always @(posedge clk) begin
+                if (reset) begin
+                    local_rd_ptr <= 0;
+                    selected <= 0;
+                end
+                else begin
+                    if (head_phase == HEAD_SELECT) local_rd_ptr <= local_rd_ptr + 1'b1;
+                    case (local_index[2:0])
+                        3'd0: selected <= dq_entries[8 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd1: selected <= dq_entries[9 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd2: selected <= dq_entries[10 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd3: selected <= dq_entries[11 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd4: selected <= dq_entries[12 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd5: selected <= dq_entries[13 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd6: selected <= dq_entries[14 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd7: selected <= dq_entries[15 * DQ_WIDTH + queue_bit +: WIDTH];
+                    endcase
+                end
+            end
+        end
+        for (queue_bit = 0; queue_bit < DQ_WIDTH; queue_bit = queue_bit + 8) begin : queue_bank2
+            localparam WIDTH = DQ_WIDTH - queue_bit < 8 ? DQ_WIDTH - queue_bit : 8;
+            (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW - 1:0] local_rd_ptr;
+            wire [4:0] local_index = local_rd_ptr;
+            reg [WIDTH - 1:0] selected;
+            assign group2[queue_bit +: WIDTH] = selected;
+            always @(posedge clk) begin
+                if (reset) begin
+                    local_rd_ptr <= 0;
+                    selected <= 0;
+                end
+                else begin
+                    if (head_phase == HEAD_SELECT) local_rd_ptr <= local_rd_ptr + 1'b1;
+                    case (local_index[2:0])
+                        3'd0: selected <= dq_entries[16 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd1: selected <= dq_entries[17 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd2: selected <= dq_entries[18 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd3: selected <= dq_entries[19 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd4: selected <= dq_entries[20 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd5: selected <= dq_entries[21 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd6: selected <= dq_entries[22 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd7: selected <= dq_entries[23 * DQ_WIDTH + queue_bit +: WIDTH];
+                    endcase
+                end
+            end
+        end
+        for (queue_bit = 0; queue_bit < DQ_WIDTH; queue_bit = queue_bit + 8) begin : queue_bank3
+            localparam WIDTH = DQ_WIDTH - queue_bit < 8 ? DQ_WIDTH - queue_bit : 8;
+            (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW - 1:0] local_rd_ptr;
+            wire [4:0] local_index = local_rd_ptr;
+            reg [WIDTH - 1:0] selected;
+            assign group3[queue_bit +: WIDTH] = selected;
+            always @(posedge clk) begin
+                if (reset) begin
+                    local_rd_ptr <= 0;
+                    selected <= 0;
+                end
+                else begin
+                    if (head_phase == HEAD_SELECT) local_rd_ptr <= local_rd_ptr + 1'b1;
+                    case (local_index[2:0])
+                        3'd0: selected <= dq_entries[24 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd1: selected <= dq_entries[25 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd2: selected <= dq_entries[26 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd3: selected <= dq_entries[27 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd4: selected <= dq_entries[28 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd5: selected <= dq_entries[29 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd6: selected <= dq_entries[30 * DQ_WIDTH + queue_bit +: WIDTH];
+                        3'd7: selected <= dq_entries[31 * DQ_WIDTH + queue_bit +: WIDTH];
+                    endcase
+                end
+            end
+        end
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -62,10 +173,6 @@ module afdx_rx_deliver #(
             rd_ptr <= 0;
             head_phase <= HEAD_IDLE;
             head_bank <= 0;
-            group0 <= 0;
-            group1 <= 0;
-            group2 <= 0;
-            group3 <= 0;
             dq_data <= 0;
             ring_a_re <= 0;
             ring_b_re <= 0;
@@ -88,65 +195,6 @@ module afdx_rx_deliver #(
             data_b <= 0;
         end
         else begin
-            // 组内选择每拍预装；HEAD_SELECT 仍使用请求拍采样的结果。
-                    case (read_index[2:0])
-
-                        0 : begin
-                            group0 <= dq_entries[1 * DQ_WIDTH - 1:0 * DQ_WIDTH];
-                            group1 <= dq_entries[9 * DQ_WIDTH - 1:8 * DQ_WIDTH];
-                            group2 <= dq_entries[17 * DQ_WIDTH - 1:16 * DQ_WIDTH];
-                            group3 <= dq_entries[25 * DQ_WIDTH - 1:24 * DQ_WIDTH];
-                        end
-
-                        1 : begin
-                            group0 <= dq_entries[2 * DQ_WIDTH - 1:1 * DQ_WIDTH];
-                            group1 <= dq_entries[10 * DQ_WIDTH - 1:9 * DQ_WIDTH];
-                            group2 <= dq_entries[18 * DQ_WIDTH - 1:17 * DQ_WIDTH];
-                            group3 <= dq_entries[26 * DQ_WIDTH - 1:25 * DQ_WIDTH];
-                        end
-
-                        2 : begin
-                            group0 <= dq_entries[3 * DQ_WIDTH - 1:2 * DQ_WIDTH];
-                            group1 <= dq_entries[11 * DQ_WIDTH - 1:10 * DQ_WIDTH];
-                            group2 <= dq_entries[19 * DQ_WIDTH - 1:18 * DQ_WIDTH];
-                            group3 <= dq_entries[27 * DQ_WIDTH - 1:26 * DQ_WIDTH];
-                        end
-
-                        3 : begin
-                            group0 <= dq_entries[4 * DQ_WIDTH - 1:3 * DQ_WIDTH];
-                            group1 <= dq_entries[12 * DQ_WIDTH - 1:11 * DQ_WIDTH];
-                            group2 <= dq_entries[20 * DQ_WIDTH - 1:19 * DQ_WIDTH];
-                            group3 <= dq_entries[28 * DQ_WIDTH - 1:27 * DQ_WIDTH];
-                        end
-
-                        4 : begin
-                            group0 <= dq_entries[5 * DQ_WIDTH - 1:4 * DQ_WIDTH];
-                            group1 <= dq_entries[13 * DQ_WIDTH - 1:12 * DQ_WIDTH];
-                            group2 <= dq_entries[21 * DQ_WIDTH - 1:20 * DQ_WIDTH];
-                            group3 <= dq_entries[29 * DQ_WIDTH - 1:28 * DQ_WIDTH];
-                        end
-
-                        5 : begin
-                            group0 <= dq_entries[6 * DQ_WIDTH - 1:5 * DQ_WIDTH];
-                            group1 <= dq_entries[14 * DQ_WIDTH - 1:13 * DQ_WIDTH];
-                            group2 <= dq_entries[22 * DQ_WIDTH - 1:21 * DQ_WIDTH];
-                            group3 <= dq_entries[30 * DQ_WIDTH - 1:29 * DQ_WIDTH];
-                        end
-
-                        6 : begin
-                            group0 <= dq_entries[7 * DQ_WIDTH - 1:6 * DQ_WIDTH];
-                            group1 <= dq_entries[15 * DQ_WIDTH - 1:14 * DQ_WIDTH];
-                            group2 <= dq_entries[23 * DQ_WIDTH - 1:22 * DQ_WIDTH];
-                            group3 <= dq_entries[31 * DQ_WIDTH - 1:30 * DQ_WIDTH];
-                        end
-
-                        7 : begin
-                            group0 <= dq_entries[8 * DQ_WIDTH - 1:7 * DQ_WIDTH];
-                            group1 <= dq_entries[16 * DQ_WIDTH - 1:15 * DQ_WIDTH];
-                            group2 <= dq_entries[24 * DQ_WIDTH - 1:23 * DQ_WIDTH];
-                            group3 <= dq_entries[32 * DQ_WIDTH - 1:31 * DQ_WIDTH];
-                        end
-                    endcase
             dq_valid <= 0;
             dq_pop <= 0;
             case (head_phase)

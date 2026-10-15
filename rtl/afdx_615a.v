@@ -3,7 +3,7 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 70) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input wire clk, reset, enable,
@@ -12,7 +12,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
     input wire cfg_we,
-    input wire [(SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata, cfg_extra_data,
 
@@ -35,7 +35,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
-    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
 
     // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
@@ -163,21 +163,23 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         end
         else begin
             rx_we <= 0;
+            // RAM 端口预存当前输入，写脉冲独立确认字节；未握手时这些候选值不会被使用。
+            rx_wa <= rx_index;
+            rx_wd <= rx_data;
+            if (rx_valid && receiving) case (rx_index)
+                1 : rx_op[7:0] <= rx_data;
+                2 : rx_block[15:8] <= rx_data;
+                3 : rx_block[7:0] <= rx_data;
+            endcase
             if (consume_q && !consume_previous) packet_pending <= 0;
+            // 尚无待处理报文时预存端口；首字节仍采样同一值，接收及 pending 期间保持。
+            if (!receiving && !packet_pending) begin
+                rx_op[15:8] <= rx_data;
+                peer_sp <= rx_sport;
+                peer_dp <= incoming_port;
+            end
             if (rx_valid && (receiving || (rx_claim && ! packet_pending))) begin
                 rx_we <= 1;
-                rx_wa <= rx_index;
-                rx_wd <= rx_data;
-                case (rx_index)
-                    0 : begin
-                        rx_op[15:8] <= rx_data;
-                        peer_sp <= rx_sport;
-                        peer_dp <= incoming_port;
-                    end
-                    1 : rx_op[7:0] <= rx_data;
-                    2 : rx_block[15:8] <= rx_data;
-                    3 : rx_block[7:0] <= rx_data;
-                endcase
                 if (rx_last) begin
                     rx_length <= rx_index + 1'b1;
                     rx_index <= 0;
@@ -203,8 +205,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             retry_limit <= DEFAULT_RETRY_LIMIT;
             protocol_a4 <= 1;
             load_sample <= 0;
-            cfg_rdata <= 0;
-            cfg_extra_data <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_rdata <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_extra_data <= 0;
             consume_q <= 0;
             consume_previous <= 0;
             status <= 0;
@@ -238,6 +240,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 REG_VERSION : if (status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
                     || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
             endcase
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_rdata <= { 31'b0, configured };
                 1 : cfg_rdata <= { 25'b0, configured_vl };
@@ -248,6 +251,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 6 : cfg_rdata <= { 16'b0, lus_counter };
                 7 : cfg_rdata <= retry_total;
             endcase
+            end
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_extra_data <= { 16'b0, request_port };
                 1 : cfg_extra_data <= timeout_cycles;
@@ -255,6 +260,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
                 default : cfg_extra_data <= 0;
             endcase
+            end
         end
     end
     // 引擎输出保持到下一个 CE 拍，RAM 端口在本地寄存后使用。
@@ -512,4 +518,50 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             );
         end
     endgenerate
+    // 模式 2：高位为写地址，bit 6 选主机，[5:3] 为主机读址，[2:0] 为 MIB 预读址。
+    // MIB 地址在读请求之前稳定一拍；每四位输出使用独立译码副本，主机仍直接译码。
+    wire [31:0] word_cfg_rdata_0 = {31'b0, configured};
+    wire [31:0] word_cfg_rdata_1 = {25'b0, configured_vl};
+    wire [31:0] word_cfg_rdata_2 = {16'b0, reason, 6'b0, status};
+    wire [31:0] word_cfg_rdata_3 = {18'b0, loaded};
+    wire [31:0] word_cfg_rdata_4 = {19'b0, memory_addr};
+    wire [31:0] word_cfg_rdata_5 = {24'b0, load_sample};
+    wire [31:0] word_cfg_rdata_6 = {16'b0, lus_counter};
+    wire [31:0] word_cfg_rdata_7 = retry_total;
+    wire [31:0] word_cfg_extra_data_0 = {16'b0, request_port};
+    wire [31:0] word_cfg_extra_data_1 = timeout_cycles;
+    wire [31:0] word_cfg_extra_data_2 = {24'b0, retry_limit};
+    wire [31:0] word_cfg_extra_data_3 = protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
+    genvar read_nibble;
+    generate
+        if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
+            for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
+                (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+                wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
+                always @(posedge clk) begin
+                    if (reset) begin
+                        mib_lane <= 8'b1;
+                        cfg_rdata[read_nibble * 4 +: 4] <= 0;
+                        cfg_extra_data[read_nibble * 4 +: 4] <= 0;
+                    end
+                    else begin
+                        mib_lane <= 8'b1 << cfg_addr[2:0];
+                        cfg_rdata[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]) |
+                            ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
+                            ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]) |
+                            ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
+                            ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                        cfg_extra_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_extra_data_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_extra_data_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_extra_data_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_extra_data_3[read_nibble * 4 +: 4]);
+                    end
+                end
+            end
+        end
+    endgenerate
+
 endmodule

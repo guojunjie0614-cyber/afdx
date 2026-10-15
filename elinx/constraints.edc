@@ -26,8 +26,7 @@ set from_loader_ack_return [get_cells {
     *loader|*half_rate.engine|data_crc*~I
     *loader|*half_rate.engine|expected_crc*~I
     *loader|*half_rate.engine|file_kind*~I
-    *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|load_size_ok*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_ack_return [get_cells {*loader|*half_rate.engine|ack_return*~I}]
@@ -278,7 +277,7 @@ set_multicycle_path -hold 0 -from $from_loader_data_crc -to $to_loader_data_crc
 set from_loader_data_name_addr [get_cells {
     *loader|*half_rate.engine|data_name_addr*~I
     *loader|*half_rate.engine|header_pointer*~I
-    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_name_ok*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_data_name_addr [get_cells {*loader|*half_rate.engine|data_name_addr*~I}]
@@ -288,6 +287,7 @@ set_multicycle_path -hold 0 -from $from_loader_data_name_addr -to $to_loader_dat
 set from_loader_data_name_len [get_cells {
     *loader|*half_rate.engine|data_name_len*~I
     *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_name_ok*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_data_name_len [get_cells {*loader|*half_rate.engine|data_name_len*~I}]
@@ -296,10 +296,9 @@ set_multicycle_path -hold 0 -from $from_loader_data_name_len -to $to_loader_data
 
 set from_loader_decimal_rest [get_cells {
     *loader|*half_rate.engine|decimal_rest*~I
-    *loader|*half_rate.engine|file_size*~I
     *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|percent*~I
-    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|ratio_continue*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_decimal_rest [get_cells {*loader|*half_rate.engine|decimal_rest*~I}]
@@ -309,9 +308,7 @@ set_multicycle_path -hold 0 -from $from_loader_decimal_rest -to $to_loader_decim
 set from_loader_decimal_tens [get_cells {
     *loader|*half_rate.engine|decimal_rest*~I
     *loader|*half_rate.engine|decimal_tens*~I
-    *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|percent*~I
-    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|ratio_continue*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_decimal_tens [get_cells {*loader|*half_rate.engine|decimal_tens*~I}]
@@ -516,11 +513,17 @@ set from_loader_fetch_addr [get_cells {
     *loader|*half_rate.engine|copy_len*~I
     *loader|*half_rate.engine|copy_pos*~I
     *loader|*half_rate.engine|fetch_addr*~I
-    *loader|*half_rate.engine|header_crc*~I
     *loader|*half_rate.engine|header_pointer*~I
-    *loader|*half_rate.engine|metadata_size*~I
     *loader|*half_rate.engine|name_pos*~I
     *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|packet_type*~I
     *loader|*half_rate.engine|rrq_data_read*~I
     *loader|*half_rate.engine|rrq_header_read*~I
@@ -538,9 +541,14 @@ set from_loader_fetch_source [get_cells {
     *loader|*half_rate.engine|copy_len*~I
     *loader|*half_rate.engine|copy_pos*~I
     *loader|*half_rate.engine|fetch_source*~I
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|metadata_size*~I
-    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|packet_type*~I
     *loader|*half_rate.engine|state*~I
 }]
@@ -564,6 +572,7 @@ set from_loader_file_size [get_cells {
     *loader|*half_rate.engine|available_size*~I
     *loader|*half_rate.engine|file_size*~I
     *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
     *loader|*half_rate.engine|request_download*~I
     *loader|*half_rate.engine|request_reject*~I
     *loader|*half_rate.engine|request_write*~I
@@ -693,6 +702,21 @@ set to_loader_header_pointer_ok [get_cells {*loader|*half_rate.engine|header_poi
 set_multicycle_path -setup 2 -from $from_loader_header_pointer_ok -to $to_loader_header_pointer_ok
 set_multicycle_path -hold 0 -from $from_loader_header_pointer_ok -to $to_loader_header_pointer_ok
 
+set from_loader_lnr_expected_length [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_len*~I
+}]
+set to_loader_lnr_expected_length [get_cells {*loader|*half_rate.engine|lnr_expected_length*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lnr_expected_length -to $to_loader_lnr_expected_length
+set_multicycle_path -hold 0 -from $from_loader_lnr_expected_length -to $to_loader_lnr_expected_length
+
+set from_loader_lnr_name_ok [get_cells {
+    *loader|*half_rate.engine|header_name_len*~I
+}]
+set to_loader_lnr_name_ok [get_cells {*loader|*half_rate.engine|lnr_name_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lnr_name_ok -to $to_loader_lnr_name_ok
+set_multicycle_path -hold 0 -from $from_loader_lnr_name_ok -to $to_loader_lnr_name_ok
+
 set from_loader_load_ra [get_cells {
     *loader|*half_rate.engine|fetch_addr*~I
     *loader|*half_rate.engine|fetch_source*~I
@@ -710,6 +734,14 @@ set from_loader_load_re [get_cells {
 set to_loader_load_re [get_cells {*loader|*half_rate.engine|load_re*~I}]
 set_multicycle_path -setup 2 -from $from_loader_load_re -to $to_loader_load_re
 set_multicycle_path -hold 0 -from $from_loader_load_re -to $to_loader_load_re
+
+set from_loader_load_size_ok [get_cells {
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|loaded*~I
+}]
+set to_loader_load_size_ok [get_cells {*loader|*half_rate.engine|load_size_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_size_ok -to $to_loader_load_size_ok
+set_multicycle_path -hold 0 -from $from_loader_load_size_ok -to $to_loader_load_size_ok
 
 set from_loader_load_wa [get_cells {
     *loader|*half_rate.engine|file_kind*~I
@@ -1017,10 +1049,16 @@ set_multicycle_path -setup 2 -from $from_loader_name_terminal -to $to_loader_nam
 set_multicycle_path -hold 0 -from $from_loader_name_terminal -to $to_loader_name_terminal
 
 set from_loader_num_return [get_cells {
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|header_limit*~I
     *loader|*half_rate.engine|num_return*~I
-    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
 }]
@@ -1030,9 +1068,16 @@ set_multicycle_path -hold 0 -from $from_loader_num_return -to $to_loader_num_ret
 
 set from_loader_number [get_cells {
     *loader|*half_rate.engine|byte_value*~I
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|header_limit*~I
     *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
 }]
@@ -1040,17 +1085,89 @@ set to_loader_number [get_cells {*loader|*half_rate.engine|number*~I}]
 set_multicycle_path -setup 2 -from $from_loader_number -to $to_loader_number
 set_multicycle_path -hold 0 -from $from_loader_number -to $to_loader_number
 
-set from_loader_number_left [get_cells {
+set from_loader_number_crc_ok [get_cells {
     *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_crc_ok [get_cells {*loader|*half_rate.engine|number_crc_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_crc_ok -to $to_loader_number_crc_ok
+set_multicycle_path -hold 0 -from $from_loader_number_crc_ok -to $to_loader_number_crc_ok
+
+set from_loader_number_data_size_ok [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_data_size_ok [get_cells {*loader|*half_rate.engine|number_data_size_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_data_size_ok -to $to_loader_number_data_size_ok
+set_multicycle_path -hold 0 -from $from_loader_number_data_size_ok -to $to_loader_number_data_size_ok
+
+set from_loader_number_header_length_ok [get_cells {
     *loader|*half_rate.engine|metadata_size*~I
     *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_header_length_ok [get_cells {*loader|*half_rate.engine|number_header_length_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_header_length_ok -to $to_loader_number_header_length_ok
+set_multicycle_path -hold 0 -from $from_loader_number_header_length_ok -to $to_loader_number_header_length_ok
+
+set from_loader_number_header_version_ok [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_header_version_ok [get_cells {*loader|*half_rate.engine|number_header_version_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_header_version_ok -to $to_loader_number_header_version_ok
+set_multicycle_path -hold 0 -from $from_loader_number_header_version_ok -to $to_loader_number_header_version_ok
+
+set from_loader_number_left [get_cells {
+    *loader|*half_rate.engine|header_limit*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
     *loader|*half_rate.engine|number_left*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_number_left [get_cells {*loader|*half_rate.engine|number_left*~I}]
 set_multicycle_path -setup 2 -from $from_loader_number_left -to $to_loader_number_left
 set_multicycle_path -hold 0 -from $from_loader_number_left -to $to_loader_number_left
+
+set from_loader_number_metadata_ok [get_cells {
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_metadata_ok [get_cells {*loader|*half_rate.engine|number_metadata_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_metadata_ok -to $to_loader_number_metadata_ok
+set_multicycle_path -hold 0 -from $from_loader_number_metadata_ok -to $to_loader_number_metadata_ok
+
+set from_loader_number_name_ok [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_name_ok [get_cells {*loader|*half_rate.engine|number_name_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_name_ok -to $to_loader_number_name_ok
+set_multicycle_path -hold 0 -from $from_loader_number_name_ok -to $to_loader_number_name_ok
+
+set from_loader_number_one [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_one [get_cells {*loader|*half_rate.engine|number_one*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_one -to $to_loader_number_one
+set_multicycle_path -hold 0 -from $from_loader_number_one -to $to_loader_number_one
+
+set from_loader_number_part_ok [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_part_ok [get_cells {*loader|*half_rate.engine|number_part_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_part_ok -to $to_loader_number_part_ok
+set_multicycle_path -hold 0 -from $from_loader_number_part_ok -to $to_loader_number_part_ok
+
+set from_loader_number_version_ok [get_cells {
+    *loader|*half_rate.engine|number*~I
+}]
+set to_loader_number_version_ok [get_cells {*loader|*half_rate.engine|number_version_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_version_ok -to $to_loader_number_version_ok
+set_multicycle_path -hold 0 -from $from_loader_number_version_ok -to $to_loader_number_version_ok
 
 set from_loader_packet_len [get_cells {
     *loader|*half_rate.engine|packet_len*~I
@@ -1062,12 +1179,10 @@ set_multicycle_path -setup 2 -from $from_loader_packet_len -to $to_loader_packet
 set_multicycle_path -hold 0 -from $from_loader_packet_len -to $to_loader_packet_len
 
 set from_loader_packet_pos [get_cells {
-    *loader|*half_rate.engine|packet_pending*~I
     *loader|*half_rate.engine|packet_pos*~I
     *loader|*half_rate.engine|retries*~I
     *loader|*half_rate.engine|retry_limit*~I
     *loader|*half_rate.engine|state*~I
-    *loader|*half_rate.engine|timer*~I
 }]
 set to_loader_packet_pos [get_cells {*loader|*half_rate.engine|packet_pos*~I}]
 set_multicycle_path -setup 2 -from $from_loader_packet_pos -to $to_loader_packet_pos
@@ -1211,9 +1326,8 @@ set_multicycle_path -setup 2 -from $from_loader_pending_sport -to $to_loader_pen
 set_multicycle_path -hold 0 -from $from_loader_pending_sport -to $to_loader_pending_sport
 
 set from_loader_percent [get_cells {
-    *loader|*half_rate.engine|file_size*~I
     *loader|*half_rate.engine|percent*~I
-    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|ratio_continue*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_percent [get_cells {*loader|*half_rate.engine|percent*~I}]
@@ -1256,17 +1370,32 @@ set to_loader_previous_block [get_cells {*loader|*half_rate.engine|previous_bloc
 set_multicycle_path -setup 2 -from $from_loader_previous_block -to $to_loader_previous_block
 set_multicycle_path -hold 0 -from $from_loader_previous_block -to $to_loader_previous_block
 
-set from_loader_ratio_h [get_cells {
+set from_loader_ratio_continue [get_cells {
     *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|percent*~I
-    *loader|*half_rate.engine|ratio_h*~I
     *loader|*half_rate.engine|scaled*~I
+}]
+set to_loader_ratio_continue [get_cells {*loader|*half_rate.engine|ratio_continue*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ratio_continue -to $to_loader_ratio_continue
+set_multicycle_path -hold 0 -from $from_loader_ratio_continue -to $to_loader_ratio_continue
+
+set from_loader_ratio_h [get_cells {
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|ratio_continue*~I
+    *loader|*half_rate.engine|ratio_h*~I
     *loader|*half_rate.engine|state*~I
 }]
 set to_loader_ratio_h [get_cells {*loader|*half_rate.engine|ratio_h*~I}]
 set_multicycle_path -setup 2 -from $from_loader_ratio_h -to $to_loader_ratio_h
 set_multicycle_path -hold 0 -from $from_loader_ratio_h -to $to_loader_ratio_h
+
+set from_loader_ratio_remainder [get_cells {
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|scaled*~I
+}]
+set to_loader_ratio_remainder [get_cells {*loader|*half_rate.engine|ratio_remainder*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ratio_remainder -to $to_loader_ratio_remainder
+set_multicycle_path -hold 0 -from $from_loader_ratio_remainder -to $to_loader_ratio_remainder
 
 set from_loader_ratio_t [get_cells {
     *loader|*half_rate.engine|decimal_rest*~I
@@ -1294,18 +1423,25 @@ set from_loader_reason [get_cells {
     *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|expected_crc*~I
     *loader|*half_rate.engine|file_kind*~I
-    *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|header_name_len*~I
     *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|lnr_expected_length*~I
+    *loader|*half_rate.engine|lnr_name_ok*~I
+    *loader|*half_rate.engine|load_size_ok*~I
     *loader|*half_rate.engine|loaded*~I
     *loader|*half_rate.engine|metadata_size*~I
     *loader|*half_rate.engine|mode_bad*~I
     *loader|*half_rate.engine|name_bad*~I
     *loader|*half_rate.engine|name_mark*~I
     *loader|*half_rate.engine|name_option*~I
-    *loader|*half_rate.engine|number*~I
-    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_part_ok*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|reason*~I
     *loader|*half_rate.engine|request_reject*~I
     *loader|*half_rate.engine|request_write*~I
@@ -1314,7 +1450,6 @@ set from_loader_reason [get_cells {
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
     *loader|*half_rate.engine|status*~I
-    *loader|*half_rate.engine|timer*~I
     *loader|*half_rate.engine|wait_kind*~I
 }]
 set to_loader_reason [get_cells {*loader|*half_rate.engine|reason*~I}]
@@ -1378,23 +1513,19 @@ set_multicycle_path -setup 2 -from $from_loader_request_write -to $to_loader_req
 set_multicycle_path -hold 0 -from $from_loader_request_write -to $to_loader_request_write
 
 set from_loader_retries [get_cells {
-    *loader|*half_rate.engine|packet_pending*~I
     *loader|*half_rate.engine|retries*~I
     *loader|*half_rate.engine|retry_limit*~I
     *loader|*half_rate.engine|state*~I
-    *loader|*half_rate.engine|timer*~I
 }]
 set to_loader_retries [get_cells {*loader|*half_rate.engine|retries*~I}]
 set_multicycle_path -setup 2 -from $from_loader_retries -to $to_loader_retries
 set_multicycle_path -hold 0 -from $from_loader_retries -to $to_loader_retries
 
 set from_loader_retry_total [get_cells {
-    *loader|*half_rate.engine|packet_pending*~I
     *loader|*half_rate.engine|retries*~I
     *loader|*half_rate.engine|retry_limit*~I
     *loader|*half_rate.engine|retry_total*~I
     *loader|*half_rate.engine|state*~I
-    *loader|*half_rate.engine|timer*~I
 }]
 set to_loader_retry_total [get_cells {*loader|*half_rate.engine|retry_total*~I}]
 set_multicycle_path -setup 2 -from $from_loader_retry_total -to $to_loader_retry_total
@@ -1406,8 +1537,8 @@ set from_loader_return_state [get_cells {
     *loader|*half_rate.engine|copy_len*~I
     *loader|*half_rate.engine|copy_pos*~I
     *loader|*half_rate.engine|download_mode*~I
-    *loader|*half_rate.engine|metadata_size*~I
-    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|header_limit*~I
+    *loader|*half_rate.engine|number_one*~I
     *loader|*half_rate.engine|packet_type*~I
     *loader|*half_rate.engine|return_state*~I
     *loader|*half_rate.engine|scan_pos*~I
@@ -1482,9 +1613,9 @@ set_multicycle_path -hold 0 -from $from_loader_saved_sport -to $to_loader_saved_
 set from_loader_scaled [get_cells {
     *loader|*half_rate.engine|dl_acked*~I
     *loader|*half_rate.engine|download_mode*~I
-    *loader|*half_rate.engine|file_size*~I
     *loader|*half_rate.engine|loaded*~I
-    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|ratio_continue*~I
+    *loader|*half_rate.engine|ratio_remainder*~I
     *loader|*half_rate.engine|scaled*~I
     *loader|*half_rate.engine|state*~I
 }]
@@ -1497,6 +1628,7 @@ set from_loader_scan_pos [get_cells {
     *loader|*half_rate.engine|fetch_addr*~I
     *loader|*half_rate.engine|header_pointer_ok*~I
     *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_part_ok*~I
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
 }]
@@ -1548,10 +1680,11 @@ set from_loader_state [get_cells {
     *loader|*half_rate.engine|enable*~I
     *loader|*half_rate.engine|expected_crc*~I
     *loader|*half_rate.engine|file_kind*~I
-    *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|header_limit*~I
     *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|lnr_expected_length*~I
+    *loader|*half_rate.engine|lnr_name_ok*~I
+    *loader|*half_rate.engine|load_size_ok*~I
     *loader|*half_rate.engine|loaded*~I
     *loader|*half_rate.engine|lus_return*~I
     *loader|*half_rate.engine|metadata_size*~I
@@ -1562,19 +1695,26 @@ set from_loader_state [get_cells {
     *loader|*half_rate.engine|name_option*~I
     *loader|*half_rate.engine|name_terminal*~I
     *loader|*half_rate.engine|num_return*~I
-    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
     *loader|*half_rate.engine|number_left*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_part_ok*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|packet_len*~I
     *loader|*half_rate.engine|packet_pending*~I
     *loader|*half_rate.engine|packet_pos*~I
     *loader|*half_rate.engine|packet_type*~I
-    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|ratio_continue*~I
     *loader|*half_rate.engine|request_reject*~I
     *loader|*half_rate.engine|request_resume*~I
     *loader|*half_rate.engine|retries*~I
     *loader|*half_rate.engine|retry_limit*~I
     *loader|*half_rate.engine|return_state*~I
-    *loader|*half_rate.engine|scaled*~I
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|send_complete*~I
     *loader|*half_rate.engine|send_request*~I
@@ -1593,14 +1733,21 @@ set from_loader_status [get_cells {
     *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|expected_crc*~I
     *loader|*half_rate.engine|file_kind*~I
-    *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|header_crc*~I
-    *loader|*half_rate.engine|header_name_len*~I
     *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|lnr_expected_length*~I
+    *loader|*half_rate.engine|lnr_name_ok*~I
+    *loader|*half_rate.engine|load_size_ok*~I
     *loader|*half_rate.engine|loaded*~I
     *loader|*half_rate.engine|metadata_size*~I
-    *loader|*half_rate.engine|number*~I
-    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|number_crc_ok*~I
+    *loader|*half_rate.engine|number_data_size_ok*~I
+    *loader|*half_rate.engine|number_header_length_ok*~I
+    *loader|*half_rate.engine|number_header_version_ok*~I
+    *loader|*half_rate.engine|number_metadata_ok*~I
+    *loader|*half_rate.engine|number_name_ok*~I
+    *loader|*half_rate.engine|number_one*~I
+    *loader|*half_rate.engine|number_part_ok*~I
+    *loader|*half_rate.engine|number_version_ok*~I
     *loader|*half_rate.engine|reason*~I
     *loader|*half_rate.engine|request_reject*~I
     *loader|*half_rate.engine|request_write*~I
@@ -1609,7 +1756,6 @@ set from_loader_status [get_cells {
     *loader|*half_rate.engine|scan_pos*~I
     *loader|*half_rate.engine|state*~I
     *loader|*half_rate.engine|status*~I
-    *loader|*half_rate.engine|timer*~I
 }]
 set to_loader_status [get_cells {*loader|*half_rate.engine|status*~I}]
 set_multicycle_path -setup 2 -from $from_loader_status -to $to_loader_status

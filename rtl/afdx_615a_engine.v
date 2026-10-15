@@ -1,5 +1,5 @@
 // 协议状态只在 ce 拍更新；所有 RAM 和外部握手均留在全速外壳。
-module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 70) (
+module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     input wire clk, reset,
     input wire [CE_BANKS - 1:0] ce_phase,
     input wire  enable_in,
@@ -128,6 +128,8 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 70) (
     (* direct_enable = 1, keep = 1 *) wire ce_67 = ce_phase[67] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_68 = ce_phase[68] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_69 = ce_phase[69] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_70 = ce_phase[70] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_71 = ce_phase[71] | reset;
     // 这些状态接收并检查请求。
     localparam REASON_NONE = 0;
     localparam REASON_DESCRIPTION = 1;
@@ -300,7 +302,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 70) (
     localparam HEADER_MIN_BYTES = 32, HEADER_DATA_PTR_MIN_WORDS = 13, HEADER_TRAILER_BYTES = 6;
     localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 10;
 
-    localparam FETCH_WAIT_A = 240, FETCH_WAIT_B = 241, DENY_FLUSH = 242, DENY_FINISH = 243, FETCH_WAIT_C = 244, DATA_DISPATCH = 245;
+    localparam FETCH_WAIT_A = 240, FETCH_WAIT_B = 241, DENY_FLUSH = 242, DENY_FINISH = 243, FETCH_WAIT_C = 244, DATA_DISPATCH = 245, RATIO_TEST = 246, NUMBER_READY = 247, LNR_USER_CHECK = 248, RETRY_DECIDE = 249;
     reg  enable;
     reg  configured;
     reg [15:0] request_port;
@@ -623,6 +625,20 @@ build_position[byte_kind] <= packet_pos;
     end
         end
     endgenerate
+    reg [19:0] ratio_remainder;
+    reg ratio_continue;
+    reg number_metadata_ok, number_version_ok, number_one, number_header_length_ok;
+    localparam DATA_COUNTS_WAIT = 8'd250;
+    reg load_size_ok;
+    always @(posedge clk) begin
+        if (ce_70) begin
+            if (reset) load_size_ok <= 0;
+            else load_size_ok <= loaded == file_size;
+        end
+    end
+    reg number_header_version_ok, number_crc_ok, number_name_ok, number_part_ok, number_data_size_ok;
+    reg [8:0] lnr_expected_length;
+    reg lnr_name_ok;
     // 下一状态保持原非阻塞赋值的旧值语义；每组 CE 最多驱动 32 个数据位。
     always @* begin
         next_error_position = error_position;
@@ -1437,6 +1453,12 @@ next_error_position = packet_pos - 10'd4;
                     end
                     else if (timer <= CE_DIV) begin
                         next_timer = 0;
+                        next_state = RETRY_DECIDE;
+                    end
+                    else next_timer = timer - CE_DIV;
+                end
+
+                RETRY_DECIDE : begin
                         if (retries == retry_limit) begin
                             if (wait_kind == WK_LUS_ACK0 || wait_kind == WK_LUS_ACK1) begin
                                 next_reason = REASON_RETRY_LIMIT;
@@ -1451,8 +1473,6 @@ next_error_position = packet_pos - 10'd4;
                             next_packet_pos = 0;
                             next_state = TX_ADDR;
                         end
-                    end
-                    else next_timer = timer - CE_DIV;
                 end
 
                 // 比较、优先级和动作各占一拍；选择位互斥，动作不再串接长优先级链。
@@ -1696,13 +1716,15 @@ next_error_position = packet_pos - 10'd4;
                     next_state = FETCH;
                 end
 
-                // NUMBER_BYTE：拼接整数，读够后返回 num_return，否则转 NUMBER。
+                // NUMBER_BYTE：拼接整数，读够后等待比较结果更新，再返回 num_return。
                 NUMBER_BYTE : begin
                     next_number = { number[23:0], byte_value };
                     next_fetch_addr = fetch_addr + 1'b1;
                     next_number_left = number_left - 1'b1;
-                    next_state = number_left == 1 ? num_return : NUMBER;
+                    next_state = number_left == 1 ? NUMBER_READY : NUMBER;
                 end
+
+                NUMBER_READY : next_state = num_return;
 
                 // 字段位置先算好并寄存，下一拍再选择字节，以缩短组合路径。
                 // ======== 第三部分：构造并发送一个报文 ========
@@ -1816,16 +1838,19 @@ next_error_position = packet_pos - 10'd4;
                     next_state = RATIO_SCALE;
                 end
 
-                // RATIO_SCALE：把已完成字节数乘 100，然后转 RATIO_SUB。
+                // RATIO_SCALE：乘 100；RATIO_TEST 先寄存比较和差值，再由 RATIO_SUB 执行动作。
                 RATIO_SCALE : begin
                     next_scaled = (scaled << 6) + (scaled << 5) + (scaled << 2);
-                    next_state = RATIO_SUB;
+                    next_state = RATIO_TEST;
                 end
 
                 // RATIO_SUB：用反复相减求百分比，求完后转 RATIO_DEC。
+                RATIO_TEST : next_state = RATIO_SUB;
+
                 RATIO_SUB : begin
-                    if (file_size != 0 && scaled >= file_size && percent < MAX_PROGRESS_PERCENT) begin
-                        next_scaled = scaled - file_size;
+                    if (ratio_continue) begin
+                        next_scaled = ratio_remainder;
+                        next_state = RATIO_TEST;
                         next_percent = percent + 1'b1;
                     end
                     else begin
@@ -1928,7 +1953,7 @@ next_error_position = packet_pos - 10'd4;
                             next_ack_return = HEADER_START;
                             next_state = ACK_MAIN;
                         end
-                        else next_state = DATA_CHECK;
+                        else next_state = DATA_COUNTS_WAIT;
                     end
                     else begin
                         next_ack_return = WAIT_PACKET;
@@ -1946,15 +1971,15 @@ next_error_position = packet_pos - 10'd4;
                 LUR_START : get_number (1, 0, 4, LUR_LENGTH);
 
                 // LUR_LENGTH：核对总长，通过后读取协议版本，否则报告失败。
-                LUR_LENGTH : if (number != metadata_size) fail (REASON_DESCRIPTION);
+                LUR_LENGTH : if (!number_metadata_ok) fail (REASON_DESCRIPTION);
                 else get_number (1, 4, 2, LUR_VERSION);
 
                 // LUR_VERSION：检查 A3/A4 版本，通过后读取文件数量，否则报告失败。
-                LUR_VERSION : if (number != VERSION_A3 && number != VERSION_A4) fail (REASON_DESCRIPTION);
+                LUR_VERSION : if (!number_version_ok) fail (REASON_DESCRIPTION);
                 else get_number (1, 6, 2, LUR_COUNT);
 
                 // LUR_COUNT：检查文件数量为一，通过后读取文件名长度，否则报告失败。
-                LUR_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
+                LUR_COUNT : if (!number_one) fail (REASON_DESCRIPTION);
                 else get_byte (1, 8, LUR_HLEN);
 
                 // LUR_HLEN：检查文件名长度，加载时继续读件号，卸载时转 LNR_USER。
@@ -1998,11 +2023,12 @@ next_error_position = packet_pos - 10'd4;
                     next_lus_tail_pos = LUS_NAME_POS + header_name_len;
                     next_lus_packet_len = LUS_DOWNLOAD_LENGTH_BASE + header_name_len;
                     next_scan_pos = 0;
-                    if (metadata_size != LUR_FIXED_BYTES + header_name_len + byte_value
-                        || header_name_len != TARGET_NAME_BYTES)
-                        fail(REASON_DESCRIPTION);
-                    else next_state = LNR_NAME;
+                    next_state = LNR_USER_CHECK;
                 end
+
+                LNR_USER_CHECK : if (metadata_size != lnr_expected_length || !lnr_name_ok)
+                    fail(REASON_DESCRIPTION);
+                else next_state = LNR_NAME;
 
                 // LNR_NAME：读取卸载文件名的下一字节，然后转 LNR_BYTE。
                 LNR_NAME : get_byte(1, LNR_NAME_POS + scan_pos, LNR_BYTE);
@@ -2081,12 +2107,11 @@ next_error_position = packet_pos - 10'd4;
                 HEADER_START : get_number (2, 0, 4, HEADER_LENGTH);
 
                 // HEADER_LENGTH：核对字数与实际长度，通过后读取格式版本。
-                HEADER_LENGTH : if ((number << 1) != metadata_size
-                                    || metadata_size < HEADER_MIN_BYTES) fail (REASON_DESCRIPTION);
+                HEADER_LENGTH : if (!number_header_length_ok) fail (REASON_DESCRIPTION);
                 else get_number (2, 4, 2, HEADER_VERSION);
 
                 // HEADER_VERSION：检查版本为 0x8002，通过后读取数据文件指针。
-                HEADER_VERSION : if (number != HEADER_FILE_VERSION) fail (REASON_DESCRIPTION);
+                HEADER_VERSION : if (!number_header_version_ok) fail (REASON_DESCRIPTION);
                 else get_number (2, 14, 4, HEADER_PTR);
 
                 // HEADER_PTR：先逐字节比较指针与上界，再合并比较结果。
@@ -2121,7 +2146,7 @@ next_error_position = packet_pos - 10'd4;
                 end
 
                 // HEADER_CRC：读取下一校验字节；读完覆盖区后读取预期校验值。
-                HEADER_CRC : if (scan_pos == metadata_size - HEADER_TRAILER_BYTES)
+                HEADER_CRC : if (scan_pos == header_limit)
                     get_number (2, scan_pos, 2, HEADER_CRC_CHECK);
                 else get_byte (2, scan_pos, HEADER_CRC_BYTE);
 
@@ -2133,15 +2158,15 @@ next_error_position = packet_pos - 10'd4;
                 end
 
                 // HEADER_CRC_CHECK：核对头文件校验值，通过后读取数据文件数量。
-                HEADER_CRC_CHECK : if (number != header_crc) fail (REASON_CHECKSUM);
+                HEADER_CRC_CHECK : if (!number_crc_ok) fail (REASON_CHECKSUM);
                 else get_number (2, header_pointer, 2, HEADER_COUNT);
 
                 // HEADER_COUNT：要求只有一个数据文件，通过后读取文件名长度。
-                HEADER_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
+                HEADER_COUNT : if (!number_one) fail (REASON_DESCRIPTION);
                 else get_number (2, header_pointer + 4, 2, HEADER_NLEN);
 
                 // HEADER_NLEN：检查文件名长度，通过后定位件号字段。
-                HEADER_NLEN : if (number == 0 || number > MAX_HEADER_NAME_CHARS) fail (REASON_DESCRIPTION);
+                HEADER_NLEN : if (!number_name_ok) fail (REASON_DESCRIPTION);
                 else begin
                     next_data_name_len = number[6:0];
                     next_data_name_addr = header_pointer + 6;
@@ -2149,7 +2174,7 @@ next_error_position = packet_pos - 10'd4;
                 end
 
                 // HEADER_PLEN：检查件号长度并处理偶数字节对齐，然后转 HEADER_SIZE。
-                HEADER_PLEN : if (number > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
+                HEADER_PLEN : if (!number_part_ok) fail (REASON_DESCRIPTION);
                 else begin
                     next_scan_pos = fetch_addr + ((number + 1) & EVEN_MASK);
                     next_state = HEADER_SIZE;
@@ -2159,7 +2184,7 @@ next_error_position = packet_pos - 10'd4;
                 HEADER_SIZE : get_number (2, scan_pos, 4, HEADER_DCRC);
 
                 // HEADER_DCRC：检查数据量不超过 8 KiB，通过后读取预期校验值。
-                HEADER_DCRC : if (number == 0 || number > MAX_DATA_WORDS) fail (REASON_LENGTH);
+                HEADER_DCRC : if (!number_data_size_ok) fail (REASON_LENGTH);
                 else begin
                     next_file_size = number[12:0] << 1;
                     get_number (2, scan_pos + 4, 2, HEADER_READY);
@@ -2187,7 +2212,8 @@ next_error_position = packet_pos - 10'd4;
                 end
 
                 // DATA_CHECK：核对文件大小和校验值，通过并确认末块后转 DATA_SUCCESS。
-                DATA_CHECK : if (loaded != file_size) fail (REASON_LENGTH);
+                DATA_COUNTS_WAIT : next_state = DATA_CHECK;
+                DATA_CHECK : if (!load_size_ok) fail (REASON_LENGTH);
                 else if (data_crc != expected_crc) fail (REASON_CHECKSUM);
                 else begin
                     next_ack_return = DATA_SUCCESS;
@@ -2857,6 +2883,50 @@ next_error_position = packet_pos - 10'd4;
             mode_start <= next_mode_start;
         end
     end
+    end
+
+    // 比较和动作分拍；两个 CE 组分别只有 30 位和 10 位。
+    always @(posedge clk) begin
+        if (ce_70) begin
+            if (reset) begin
+                ratio_remainder <= 0;
+                ratio_continue <= 0;
+                number_metadata_ok <= 0;
+                number_version_ok <= 0;
+                number_one <= 0;
+                number_header_length_ok <= 0;
+                number_header_version_ok <= 0;
+                number_crc_ok <= 0;
+                number_name_ok <= 0;
+                number_part_ok <= 0;
+                number_data_size_ok <= 0;
+            end
+            else begin
+                ratio_remainder <= scaled - file_size;
+                ratio_continue <= file_size != 0 && scaled >= file_size && percent < MAX_PROGRESS_PERCENT;
+                number_metadata_ok <= number == metadata_size;
+                number_version_ok <= number == VERSION_A3 || number == VERSION_A4;
+                number_one <= number == 1;
+                number_header_length_ok <= (number << 1) == metadata_size && metadata_size >= HEADER_MIN_BYTES;
+                number_header_version_ok <= number == HEADER_FILE_VERSION;
+                number_crc_ok <= number == header_crc;
+                number_name_ok <= number != 0 && number <= MAX_HEADER_NAME_CHARS;
+                number_part_ok <= number <= MAX_FILENAME_BYTES;
+                number_data_size_ok <= number != 0 && number <= MAX_DATA_WORDS;
+            end
+        end
+    end
+    always @(posedge clk) begin
+        if (ce_71) begin
+            if (reset) begin
+                lnr_expected_length <= 0;
+                lnr_name_ok <= 0;
+            end
+            else begin
+                lnr_expected_length <= LUR_FIXED_BYTES + header_name_len + byte_value;
+                lnr_name_ok <= header_name_len == TARGET_NAME_BYTES;
+            end
+        end
     end
 
 endmodule

@@ -2,7 +2,7 @@
 // afdx_tx_engine 给出要发送的消息，组好的字节交给 afdx_mac_tx。
 // 本模块用于赛题的发送组帧，也把实际发送时间返回调度器。
 module afdx_tx_builder #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9) (
+    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, READY_COPIES = 1) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
@@ -28,11 +28,11 @@ module afdx_tx_builder #(
 
     // payload_* 读消息字节，pnext_* 读同一消息的下一页。
     // 读完一页后，通过 ret_* 归还这一页。
-    output reg payload_re,
-    output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_ra,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg payload_re,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_ra,
     input wire [7:0] payload_q,
-    output reg pnext_re,
-    output reg [TX_PAGE_AW - 1:0] pnext_ra,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg pnext_re,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [TX_PAGE_AW - 1:0] pnext_ra,
     input wire [7:0] pnext_q,
     output reg ret_valid,
     output reg [7:0] ret_page,
@@ -42,7 +42,7 @@ module afdx_tx_builder #(
     // tx_sof/eof 分别报告帧开始和结束，tx_underrun 表示中途缺字节。
     // ev_tx_a/b 只统计正常发送完成的帧。
     output reg s_valid,
-    input wire s_ready,
+    input wire [READY_COPIES - 1:0] s_ready,
     output reg [7:0] s_data_a, s_data_b,
     output reg s_last, s_en_a, s_en_b,
     input wire tx_sof, tx_eof, tx_underrun,
@@ -50,7 +50,7 @@ module afdx_tx_builder #(
 
     // pending/prepared 记录下一条消息的准备进度。
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。
-    reg pending, prepared, stream_active, p_a, p_b, p_timed;
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg pending, prepared, stream_active, p_a, p_b, p_timed;
 
     // prep 用十拍算出 IPv4 头校验和，每拍只做一次加法。
     // prep=0：计算 IPv4 和 UDP 的长度字段，下一拍转 1。
@@ -99,6 +99,12 @@ module afdx_tx_builder #(
     // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
     // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
     reg [335:0] header;
+    wire [335:0] prepared_header = { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
+                    IP_VERSION_TOS, ip_length, p_ident,
+                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
+                    UDP_NO_CHECKSUM };
+    wire [335:0] shifted_header = header << 8;
+
 
     // part=0：发送协议头，完成后转 1。
     // part=1：发送用户数据，完成后按帧长转 2 或 3。
@@ -125,7 +131,7 @@ module afdx_tx_builder #(
     reg [2:0] return_count;
     reg [1:0] payload_pipe, pnext_pipe;
     wire fifo_push = payload_pipe[1];
-    wire fifo_pop = s_valid && s_ready && ! s_last &&
+    wire fifo_pop = s_valid && s_ready[0] && ! s_last &&
         ((part == PART_HEADER && header_index == HEADER_LAST)
         || (part == PART_PAYLOAD && payload_index < active_len));
     wire return_push = payload_pipe[1] && return_pipe[1];
@@ -134,6 +140,22 @@ module afdx_tx_builder #(
     reg complete_a, complete_b, bad;
 
     assign grant_ready = ! pending;
+
+    genvar header_group;
+    generate
+        for (header_group = 0; header_group < 14; header_group = header_group + 1) begin : header_word
+            localparam READY_BIT = READY_COPIES > 1 ? header_group + 1 : 0;
+            // 顶层提供 15 份接纳窗口，bit 0 供控制，其余各驱动 24 位。
+            always @(posedge clk) begin
+                if (reset) header[header_group * 24 +: 24] <= 0;
+                else if (s_valid && s_ready[READY_BIT] && !s_last
+                    && part == PART_HEADER && header_index < HEADER_LAST)
+                    header[header_group * 24 +: 24] <= shifted_header[header_group * 24 +: 24];
+                else if (!stream_active)
+                    header[header_group * 24 +: 24] <= prepared_header[header_group * 24 +: 24];
+            end
+        end
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -177,7 +199,6 @@ module afdx_tx_builder #(
             s_last <= 0;
             s_en_a <= 0;
             s_en_b <= 0;
-            header <= 0;
             header_index <= 0;
             part <= PART_HEADER;
             active_len <= 0;
@@ -213,10 +234,7 @@ module afdx_tx_builder #(
         end
         else begin
             // 空闲时预装帧头；启动拍使用的字段与原来相同。
-            if (!stream_active) header <= { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
-                    IP_VERSION_TOS, ip_length, p_ident,
-                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
-                    UDP_NO_CHECKSUM };
+
             now_q <= now;
             time_difference <= now_q - p_time;
             // 等价于上一版下一拍的有符号“差值 >= -4”，包含 32 位回绕边界。
@@ -362,14 +380,13 @@ module afdx_tx_builder #(
                 ev_tx_b <= complete_b;
             end
             // 帧头和用户数据发完后，短帧补零，最后发送序号并结束。
-            if (s_valid && s_ready) begin
+            if (s_valid && s_ready[0]) begin
                 if (s_last) begin
                     s_valid <= 0;
                     s_last <= 0;
                     stream_active <= 0;
                 end
                 else if (part == PART_HEADER && header_index < HEADER_LAST) begin
-                    header <= header << 8;
                     header_index <= header_index + 1'b1;
                     s_data_a <= header[327:320];
                     // B 网把源 MAC 地址里的网络标识换成 0x40，其余字节与 A 网相同。

@@ -2,7 +2,7 @@
 // afdx_tx_builder 提供帧内容，本模块逐字节输出到线路。
 // 本模块用于赛题的以太网发送，并保证两帧之间的空闲时间。
 // FCS（Frame Check Sequence，帧校验序列）用于让接收方检查帧内容。
-module afdx_mac_tx (
+module afdx_mac_tx #(parameter READY_COPIES = 1) (
 
     // byte_en 为高时推进一个字节，当前顶层每拍都为高。
     input wire clk, reset, byte_en,
@@ -10,7 +10,7 @@ module afdx_mac_tx (
     // s_valid 和 s_ready 同为高时接收一个帧内容字节。
     // s_last 标记最后的序号字节，s_en_a/b 选择发送网络。
     input wire s_valid,
-    output wire s_ready,
+    output wire [READY_COPIES - 1:0] s_ready,
 
     // s_data_a/b 分别提供两网帧内容，以便使用不同的源网络标识。
     input wire [7:0] s_data_a, s_data_b,
@@ -59,8 +59,22 @@ module afdx_mac_tx (
         .next_crc(next_b)
     );
 
-    assign s_ready = byte_en && ((state == PREAMBLE && pre_index == 7) || (state == DATA && ! last_byte)
-        || state == DRAIN);
+    // 与状态寄存器同拍维护接纳窗口，每份只连接一个局部发送寄存器组。
+    (* preserve = 1, dont_merge = 1 *) reg [READY_COPIES - 1:0] ready_window;
+    assign s_ready = {READY_COPIES{byte_en}} & ready_window;
+    always @(posedge clk) begin
+        if (reset) ready_window <= 0;
+        else if (byte_en) begin
+            case (state)
+                PREAMBLE : ready_window <= {READY_COPIES{
+                    pre_index < 7 ? pre_index == 6 : s_valid && !s_last}};
+                DATA : ready_window <= {READY_COPIES{!last_byte && s_valid && !s_last}};
+                FCS : ready_window <= {READY_COPIES{fcs_index == 3 && discard_tail}};
+                DRAIN : ready_window <= {READY_COPIES{!(s_valid && s_last)}};
+                default : ready_window <= 0;
+            endcase
+        end
+    end
 
     always @(posedge clk) begin
         if (reset) begin

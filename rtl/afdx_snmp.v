@@ -13,7 +13,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // cfg_* 配置代理开关、团体名和 Trap 通知，并读取状态。
     // 团体名（community）是 SNMP 报文里携带的访问口令。
     input wire cfg_we,
-    input wire [(SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_control_data, cfg_status_data, cfg_descr_data,
 
@@ -41,7 +41,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
 
-    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
     localparam SNMP_PORT = 161, TRAP_PORT = 162;
     localparam MAX_COMMUNITY_LENGTH = 16, MAX_OID_LENGTH = 16, DEFAULT_COMMUNITY_LENGTH = 6;
@@ -86,18 +86,21 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
+    reg local_port_match;
     always @(posedge clk) begin
         if (reset) begin
             rx_port_stage <= 0;
             rx_port_local <= 0;
+            local_port_match <= 0;
         end
         else begin
             rx_port_stage <= rx_dport;
             rx_port_local <= rx_port_stage;
+            local_port_match <= rx_port_stage == SNMP_PORT;
         end
     end
 
-    assign rx_claim = configured && incoming_port == SNMP_PORT;
+    assign rx_claim = configured && (LOCAL_RX_PORT ? local_port_match : incoming_port == SNMP_PORT);
 
     always @(posedge clk) begin
         if (reset) begin
@@ -112,9 +115,9 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             community3 <= 0;
             uptime <= 0;
             uptime_cycles <= 0;
-            cfg_control_data <= 0;
-            cfg_status_data <= 0;
-            cfg_descr_data <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_control_data <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_status_data <= 0;
+            if (SPLIT_CFG_ADDR != 2) cfg_descr_data <= 0;
         end
         else begin
             // 每 1250000 拍是 10 ms，正好是 SNMP 运行时间（sysUpTime）的一个计数单位。
@@ -133,6 +136,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 REG_COMMUNITY3 : community3 <= cfg_wdata;
                 REG_TRAP_ENABLE : trap_enabled <= cfg_wdata[0];
             endcase
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_control_data <= { 31'b0, configured };
                 1 : cfg_control_data <= { 25'b0, response_vl };
@@ -143,6 +147,8 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 6 : cfg_control_data <= community3;
                 7 : cfg_control_data <= sample_cycle;
             endcase
+            end
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_status_data <= uptime;
                 1 : cfg_status_data <= requests;
@@ -151,6 +157,8 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 4 : cfg_status_data <= traps_sent;
                 default : cfg_status_data <= 0;
             endcase
+            end
+            if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_descr_data <= DESCRIPTION[127:96];
                 1 : cfg_descr_data <= DESCRIPTION[95:64];
@@ -158,6 +166,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 3 : cfg_descr_data <= DESCRIPTION[31:0];
                 default : cfg_descr_data <= 0;
             endcase
+            end
         end
     end
 
@@ -423,4 +432,61 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             );
         end
     endgenerate
+    // 模式 2：高位为写地址，bit 6 选主机，[5:3] 为主机读址，[2:0] 为 MIB 预读址。
+    // MIB 地址在读请求之前稳定一拍；每四位输出使用独立译码副本，主机仍直接译码。
+    wire [31:0] word_cfg_control_data_0 = {31'b0, configured};
+    wire [31:0] word_cfg_control_data_1 = {25'b0, response_vl};
+    wire [31:0] word_cfg_control_data_2 = {27'b0, configured_length};
+    wire [31:0] word_cfg_control_data_3 = community0;
+    wire [31:0] word_cfg_control_data_4 = community1;
+    wire [31:0] word_cfg_control_data_5 = community2;
+    wire [31:0] word_cfg_control_data_6 = community3;
+    wire [31:0] word_cfg_control_data_7 = sample_cycle;
+    wire [31:0] word_cfg_status_data_0 = uptime;
+    wire [31:0] word_cfg_status_data_1 = requests;
+    wire [31:0] word_cfg_status_data_2 = bad_community;
+    wire [31:0] word_cfg_status_data_3 = {31'b0, trap_enabled};
+    wire [31:0] word_cfg_status_data_4 = traps_sent;
+    wire [31:0] word_cfg_descr_data_0 = DESCRIPTION[127:96];
+    wire [31:0] word_cfg_descr_data_1 = DESCRIPTION[95:64];
+    wire [31:0] word_cfg_descr_data_2 = DESCRIPTION[63:32];
+    wire [31:0] word_cfg_descr_data_3 = DESCRIPTION[31:0];
+    genvar read_nibble;
+    generate
+        if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
+            for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
+                (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+                wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
+                always @(posedge clk) begin
+                    if (reset) begin
+                        mib_lane <= 8'b1;
+                        cfg_control_data[read_nibble * 4 +: 4] <= 0;
+                        cfg_status_data[read_nibble * 4 +: 4] <= 0;
+                        cfg_descr_data[read_nibble * 4 +: 4] <= 0;
+                    end
+                    else begin
+                        mib_lane <= 8'b1 << cfg_addr[2:0];
+                        cfg_control_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_control_data_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_control_data_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_control_data_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_control_data_3[read_nibble * 4 +: 4]) |
+                            ({4{lane[4]}} & word_cfg_control_data_4[read_nibble * 4 +: 4]) |
+                            ({4{lane[5]}} & word_cfg_control_data_5[read_nibble * 4 +: 4]) |
+                            ({4{lane[6]}} & word_cfg_control_data_6[read_nibble * 4 +: 4]) |
+                            ({4{lane[7]}} & word_cfg_control_data_7[read_nibble * 4 +: 4]);
+                        cfg_status_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_status_data_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_status_data_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_status_data_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_status_data_3[read_nibble * 4 +: 4]) |
+                            ({4{lane[4]}} & word_cfg_status_data_4[read_nibble * 4 +: 4]);
+                        cfg_descr_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_descr_data_0[read_nibble * 4 +: 4]) |
+                            ({4{lane[1]}} & word_cfg_descr_data_1[read_nibble * 4 +: 4]) |
+                            ({4{lane[2]}} & word_cfg_descr_data_2[read_nibble * 4 +: 4]) |
+                            ({4{lane[3]}} & word_cfg_descr_data_3[read_nibble * 4 +: 4]);
+                    end
+                end
+            end
+        end
+    endgenerate
+
 endmodule
