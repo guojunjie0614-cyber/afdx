@@ -1,9 +1,9 @@
 # AFDX 端系统事实清单
 
 补充的逐项测试、资源、时延、参数和异常覆盖见 [补充数据](FACTS_DETAIL.md)。
-本页对应本工程当前代码。RTL 于 2026-10-14 完成排版与常量命名；纯排版的 21 个文件去除空白后逐字节一致，改名的两个模块通过形式等价，完整回归 38 项的自检数和独立检查数与参考输出一致。命令行综合数字已按这轮代码刷新。本页供设计文档和测试报告直接引用；功能覆盖以实测范围为准，不等于完整协议认证。
+本页对应本工程当前代码。RTL 于 2026-10-14 完成排版与常量命名；纯排版的 21 个文件去除空白后逐字节一致，改名的两个模块通过形式等价，完整回归 38 项的自检数和独立检查数与参考输出一致。综合资源与时序统一采用 Run Synthesis 的官方流程，命令行入口按同一工程设置重建。本页供设计文档和测试报告直接引用；功能覆盖以实测范围为准，不等于完整协议认证。
 赛题来源：[选题指南](sources/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总 1010 版](sources/FPGA创新大赛问题汇总1010.xlsx)的 Sheet1，R 表示工作表行号。1010 版比 1008 版只在末尾新增了行，选题一新增的 R79–R82 都是 eLinx 工具使用问题，不改变本页结论。
-数据分两类。标准数据（完整回归、评委入口、性能、RTC、容量、异常注入、两种综合）来自 2026-10-14 在当前代码上的运行；回归和评委入口的汇总见 `参考/`。第九节附录的专项实验是开发期间为做设计取舍跑的单次实验，各注日期，没有在当前代码上重跑。
+数据分两类。完整回归、评委入口、性能、RTC、容量和异常注入来自 2026-10-14 在当前代码上的运行；综合与新网表五功能验证见第三、四节，回归和评委入口的汇总见 `参考/`。第九节附录的专项实验是开发期间为做设计取舍跑的单次实验，各注日期，没有在当前代码上重跑。
 本页的 `参考/` 指 [`sim/reference/`](../sim/reference/)，`证据/` 指 [`docs/evidence/`](evidence/)：原始输出的副本及只读数据库查询结果，`manifest.json` 记录每份文件的原位置和 SHA-256 摘要；文件里的绝对路径是生成时那台机器上的路径，不在本仓库。标准测试可用下列命令重建，专项实验的复现限制在对应条目说明。
 命令均在仓库根目录的 PowerShell 执行；先按 [软件准备](../README.md#软件准备)配置工具路径和 Python 依赖。下表 `run <名称>` 表示 `powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test <名称>`。
 
@@ -38,14 +38,16 @@
 
 ## 三、综合资源与时序
 
-以下主结果来自 2026-10-14 的 eLinx 界面 Run Synthesis，器件为 EQ6HL130、封装 CSG484_H；R30 允许自行选择器件。这些是综合后估算，未计布线延迟。
+以下结果采用 eLinx Run Synthesis 的官方流程，器件为 EQ6HL130、封装 CSG484_H，按速度优化，时钟约束 8 ns；R30 允许自行选择器件。这些是综合后估算，未计布线延迟。
 | 流程 | 资源 | 时序及原始出处 |
 |---|---|---|
-| 界面 Run Synthesis（报告主表使用） | LUT 32847、FF 13869、CLB 4620、Memory 340、引脚 259。 | setup +2.522 ns、Fmax 182.548 MHz、hold −0.068 ns；`elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt` 与同目录 `AFDX_EndSystem.tan.pb`。 |
-| 命令行综合（单独列示） | 29967 个逻辑单元、LUT 29968、783 个未装箱 RAM 切片；不与上行 Memory 数直接相减。 | setup +2.749 ns、Fmax 190.440 MHz、hold −0.068 ns；`out/synth/AFDX_top/20261014_234301_767138/summary.json`，复现 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1 -Top AFDX_top -Sta`。 |
+| 官方综合，界面与命令行共用 | LUT 32847、FF 13869、CLB 4620、Memory 340、引脚 259。 | setup +2.522 ns、Fmax 182.548 MHz、hold −0.068 ns；界面报告为 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt` 与同目录 `AFDX_EndSystem.tan.pb`。命令行结果由 `out/latest_AFDX_top.json` 的 `resources_report/timing_database` 定位。 |
 
-界面时序库为 SQLite；只读查询 `elinx_intra_clock_summary` 中 `name=clk`：`period=8000`、`setup_worst_slack=2522`、`hold_worst_slack=-68`，时间单位 ps；Fmax 字段单位 MHz。查询副本见 `证据/gui_timing.json`。
-界面先运行 Analysis & Synthesis 并选择 Speed，再交给后端；依据同目录 `AFDX_EndSystem.map.rpt` 的 Settings 和 `AFDX_EndSystem.flow.rpt` 的执行阶段。命令行直接由 `tools/eda.py:synth` 调用 `eLinx_synthesis.exe`，没有这个额外前端。两条流程的映射和统计口径不同，不要求资源数字相同。
+时序库为 SQLite；只读查询 `elinx_intra_clock_summary` 中 `name=clk`：`period=8000`、`setup_worst_slack=2522`、`hold_worst_slack=-68`，时间单位 ps；Fmax 字段单位 MHz。界面查询副本见 `证据/gui_timing.json`，命令行查询结果保存在 `out/latest_AFDX_top.json` 的 `timing.clocks`。
+两个入口均使用安装包的 Passkey 分析综合与 VQM 导出程序，再调用官方 `run_pack.tcl`、`run_synthesized_timing.tcl`。命令行读取 `.epr`、已有 `.qsf` 和相邻的默认设置文件，在 `out/` 的工程副本中运行，不覆盖界面结果。复现命令为 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1`。
+
+2026-10-15 的命令行完整流程耗时 233.062 秒，八项资源与时序指标逐项等于当日界面结果，整个 `clk` 时钟摘要和最慢路径查询也一致。运行目录为 `out/synth/AFDX_top/20261015_091856_983349/`，各阶段退出码和耗时见 `tool_metrics.json`。
+不含 `.qsf`、旧数据库或界面产物的检出副本，在仅保留 Windows 系统目录的 PATH 下也完成同一流程，资源、时钟摘要和最慢路径均相同；入口按 `.epr` 生成工作副本，不需要先打开界面。
 hold 仍为负，且未给完整外部 I/O 延迟预算；上述 Fmax 不能当作上板频率或物理时序签核。
 
 ## 四、仿真入口与已跑结果
@@ -57,27 +59,25 @@ hold 仍为负，且未给完整外部 I/O 延迟预算；上述 Fmax 不能当�
 | 纯 ModelSim 评委入口 | Transcript 中进入仓库根目录，`do sim/run_judge.do`；不需要 Python。 | `JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=626.779`；2026-10-14 运行，约 10.5 分钟，涵盖五功能、容量、SNMP、两种突发、RTC、性能。见 `参考/judge_result.txt`。 |
 | 完整 RTL 回归 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1`。 | 38/38 通过；2026-10-14 09:53 开始，约 17 分钟。自检合计 1183249131、独立核对 2305780（各项 `Checks`、`CheckItems` 之和），见 `参考/regression.json`。 |
 
-综合后功能仿真有两套，均使用原厂单元模型，均不含布线延迟；不能用其中一套的资源表冒充另一套。
+综合后功能仿真共用官方 VQM 入口，使用原厂单元模型，不含布线延迟。
 | 网表来源 | 仿真副本补全内容 | 已跑结果 |
 |---|---|---|
-| 界面 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm` | `tools/adapt_gui_vqm.py` 按组件声明/模型补 427486 个输入，按原有进位连接补 3933 个 `cin_used=true`；不改已有连接、参数和 LUT 内容。 | `tb_elinx` 9238/0，7826.703 秒；五功能入口完整复跑 1123/0、独立检查 65/0，3121.109 秒，七份记录与同激励 RTL 逐字节相同。见 `证据/gui_elinx_summary.json`、`gui_services_summary.json`。这两次在 2026-10-13，用的是 RTL 整理前的界面网表；整理后重新做界面综合，资源和时序只有 CLB 由 4626 变为 4620，未在新的界面网表上重跑。 |
-| 命令行 `out/synth/AFDX_top/<日期>/netlist.v` | `tools/fix_lut_mask.py` 把逗号分隔的 LUT 位值转成十六进制字面量，补算术进位使用参数及省略输入。 | 网表清单 8/8；完整五功能 1123/0、独立检查 65/0，六份记录与 RTL 一致，仿真 3323.563 秒。见 `证据/cli_validation.json`、`cli_services_summary.json`；被测网表位置保存在后者的 `inputs`。这两次在 2026-10-12；当前排版与常量命名后未重跑网表仿真，当前功能另经完整 RTL 回归和修改模块的形式等价核对。 |
+| 界面 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm` | `tools/adapt_gui_vqm.py` 按组件声明/模型补省略输入，按原有进位连接补 `cin_used=true`；只写仿真副本。 | 2026-10-13 的 `tb_elinx` 为 9238/0，7826.703 秒；五功能为 1123/0、独立检查 65/0，3121.109 秒，七份记录与同激励 RTL 逐字节相同。见 `证据/gui_elinx_summary.json`、`gui_services_summary.json`；这是 RTL 整理前的记录，本次没有重跑 `tb_elinx`。 |
+| 命令行官方综合，VQM 路径取 `out/latest_AFDX_top.json:netlist` | 同一个 `tools/adapt_gui_vqm.py` 和原厂单元模型；本次补 427486 个省略输入、3933 个进位使用参数。 | 2026-10-15 的 `tb_net_services` 为 1123/0、独立检查 65/0，网表仿真 3555.438 秒；七份外部记录与同激励 RTL 逐字节相同，Error/Fatal/Warning 均为 0。原始摘要为 `out/gui_netlist/tb_net_services_gui/20261015_093125_259732/summary.json`，亦可由 `out/latest_tb_net_services_gui.json` 定位。 |
 
-“9238/0”等表示检查数/错误数。界面流程省略的数据输入按厂商声明置 1；命令行适配器把自身导出格式中的未接数据输入置 0，二者不能互换。两套都显式补使能及 RAM 掩码等默认输入，否则悬空值或未启用进位会使模型行为不同。依据为 `tools/adapt_gui_vqm.py`、`tools/fix_lut_mask.py` 及安装目录 `stratix_components.vhd:546–561`、`stratix_atoms.v:692–698,979,3114–3137`。
+“9238/0”等表示检查数/错误数。补省略输入时按厂商声明取默认值，并补使能、RAM 掩码及进位使用参数；原有连接、参数和 LUT 内容不变，原网表和厂商模型不改。依据为 `tools/adapt_gui_vqm.py` 及安装目录 `stratix_components.vhd:546–561`、`stratix_atoms.v:692–698,979,3114–3137`。
 界面网表复现：先点 Run Synthesis，再执行下面任一命令；输出在 `out/gui_netlist/`，失败返回非零退出码。
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services
 ```
-命令行网表复现：先按 [README 的“命令行综合生成的网表”](../README.md#命令行综合生成的网表)生成清单要求的各顶层网表，再运行；源码摘要有变化时需重新综合，不能绕过摘要检查。
+命令行网表复现：先按 [README 的“综合后网表仿真”](../README.md#综合后网表仿真)运行官方综合，再把它生成的 VQM 交给同一入口。
 ```powershell
-$deadline=(Get-Date).AddHours(5).ToString('o')
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Netlist -Deadline $deadline
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Deadline $deadline
-$net=Join-Path ((Get-Content out/latest_AFDX_top.json -Raw|ConvertFrom-Json).folder) 'netlist.v'
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_net_services -Netlist $net -Deadline $deadline
+powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1
+$net=(Get-Content out/latest_AFDX_top.json -Raw|ConvertFrom-Json).netlist
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services -Netlist $net
 ```
-上例五小时是运行预算，不是预计耗时。两套都只写仿真副本，不修改原网表或厂商模型；通过条件包括测试结果和独立检查，不能只看工具退出码。
+入口默认五小时是运行预算，不是预计耗时。通过条件包括测试结果、独立检查和七份外部记录对照，不能只看工具退出码。
 
 ## 五、报告必须主动说明的边界
 

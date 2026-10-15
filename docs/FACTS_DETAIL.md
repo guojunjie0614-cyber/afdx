@@ -100,7 +100,7 @@
 | `afdx_tx_engine` | 1 | 1790 | 1460 | 1029 | 0 |
 | `afdx_tx_free` | 1 | 206 | 181 | 126 | 2048 |
 
-当前命令行 LUT 29968 来自 `out/synth/AFDX_top/20261014_234301_767138/utilization_synth.rpt` 的 `Total LUTs`，逻辑单元 29967 来自同目录 `summary.json` 的 `lcells`；二者统计口径不同。保留的 [cli_resources.rpt](evidence/cli_resources.rpt) 与 [cli_synthesis_summary.json](evidence/cli_synthesis_summary.json) 是此前基线，不能当作本次数值；当前原始输出在 `out/`，按事实清单第三节的命令重建。
+命令行入口与界面均使用官方分析综合、VQM 导出、装箱和综合后时序流程，资源按同一装箱报告统计。命令行报告和时序库位置取 `out/latest_AFDX_top.json` 的 `resources_report/timing_database`，复现见事实清单第三节；分模块表中的逻辑单元和功能 LUT 仍按上方层次报告的定义统计，不与总体 `Total LUTs` 混用。
 
 ## 各工况的时延细分
 
@@ -141,14 +141,13 @@
 
 ## 综合后最慢路径
 
-界面数据取 [界面时序库](evidence/gui_synthesis_timing.pb)，当前命令行数据取 `out/synth/AFDX_top/20261014_234301_767138/synthesized_timing.pb`；[此前命令行时序库](evidence/cli_synthesis_timing.pb) 保留为基线。以只读方式执行 SQL：`SELECT * FROM elinx_intra_clock_longest_sync_path_report ORDER BY slack, path_id LIMIT 1;`，按最小建立裕量选路径。延迟和裕量字段单位为 ps，表内换算为 ns。两条路径的 `net_delay` 均为 0，不能用来证明布线后能运行在该频率。
+官方综合数据取 [界面时序库](evidence/gui_synthesis_timing.pb)，命令行按同一流程生成的库由 `out/latest_AFDX_top.json:timing_database` 定位。以只读方式执行 SQL：`SELECT * FROM elinx_intra_clock_longest_sync_path_report ORDER BY slack, path_id LIMIT 1;`，按最小建立裕量选路径；命令行摘要也保留查询结果 `timing.worst_setup_path`。延迟和裕量字段单位为 ps，表内换算为 ns；`net_delay=0`，不能用来证明布线后能运行在该频率。
 
-| 综合方式 | 模块与路径起点 → 终点 | 逻辑级数 | 逻辑延迟（ns） | 建立裕量（ns） |
+| 流程 | 模块与路径起点 → 终点 | 逻辑级数 | 逻辑延迟（ns） | 建立裕量（ns） |
 |---|---|---:|---:|---:|
-| 界面 | `afdx_615a:loader`；`name_pos[1]~I\|ff/Q` → `packet_type[1]~I\|ff/D` | 15 | 5.403 | +2.522 |
-| 命令行 | `afdx_snmp:snmp`；`cursor[0]` → `state[1]` | 23 | 5.176 | +2.749 |
+| 官方综合 | `afdx_615a:loader`；`name_pos[1]~I\|ff/Q` → `packet_type[1]~I\|ff/D` | 15 | 5.403 | +2.522 |
 
-当前命令行库中的起终点为 `c3_native_cell_9477|ff/Q` 和 `c3_native_cell_10104|ff/D`；同目录 `design.vqm` 的 `regout` 将其对应到上表寄存器，位置为第 460913–460919、286177–286185 行。[此前网表摘录](evidence/cli_design_excerpt.txt) 保留为基线。这是综合后的单元路径，不是源码行间的执行顺序。
+这是综合后的单元路径，不是源码行间的执行顺序。
 
 ## 设计默认参数
 
@@ -183,8 +182,8 @@
 |---|---:|---:|
 | `rtl/` | 21 | 7791 |
 | `tb/` | 53 | 4090 |
-| `tools/` | 21 | 4291 |
-| `sim/` | 19 | 3107 |
+| `tools/` | 22 | 4530 |
+| `sim/` | 19 | 3126 |
 
 ```powershell
 foreach ($dir in 'rtl','tb','tools','sim') {

@@ -1,4 +1,4 @@
-﻿# 先在 eLinx 中运行 Run Synthesis，再执行本入口。
+﻿# 使用界面或命令行官方综合的 VQM；命令行产物通过 -Netlist 指定。
 param(
  [ValidateSet('tb_elinx','tb_net_services')][string]$Test='tb_elinx',
  [string]$Netlist,
