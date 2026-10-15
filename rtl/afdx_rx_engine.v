@@ -5,7 +5,7 @@
 // 冗余管理（Redundancy Management）在两路网络送来的同一帧中只保留先到的一份。
 // 虚拟链路（Virtual Link，VL）把一组消息归到同一个配置项。
 module afdx_rx_engine #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5, LOCAL_MAP_READ = 0) (
 
     // enable 为高时允许处理帧，now_c 给出粗粒度时间。
     // initialized 为高表示接收状态表已初始化。
@@ -21,8 +21,8 @@ module afdx_rx_engine #(
 
     // map_* 把线路上的虚拟链路编号换成配置索引。
     // cfg_* 读取接收限制，state_* 读写该链路的接收状态。
-    output reg map_re,
-    output reg [15:0] map_ra,
+    output wire map_re,
+    output wire [15:0] map_ra,
     input wire [12:0] map_q,
     output reg cfg_re,
     output reg [11:0] cfg_ra,
@@ -75,6 +75,34 @@ module afdx_rx_engine #(
     localparam STEP_DELIVER = 9, STEP_WRITE = 10, STEP_FINISH = 11;
     reg [1:0] op;
 
+    // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。
+    // 独立使用本模块时仍保持原来的一拍请求接口。
+    wire map_start = !reset && op == IDLE && enable && (desc_a_valid || desc_b_valid);
+    wire [15:0] map_address = desc_a_valid ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67]
+        : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
+    generate
+        if (LOCAL_MAP_READ) begin : local_map
+            assign map_re = map_start;
+            assign map_ra = map_address;
+        end
+        else begin : registered_map
+            reg request;
+            reg [15:0] address;
+            always @(posedge clk) begin
+                if (reset) begin
+                    request <= 0;
+                    address <= 0;
+                end
+                else begin
+                    request <= map_start;
+                    if (map_start) address <= map_address;
+                end
+            end
+            assign map_re = request;
+            assign map_ra = address;
+        end
+    endgenerate
+
     assign cfg_ok = enable && (op == IDLE || op == AGE) && ! desc_a_valid && ! desc_b_valid;
 
     // phase 把一次检查分成多拍，op_idx 保存本次检查的配置索引。
@@ -88,6 +116,7 @@ module afdx_rx_engine #(
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
     reg [RX_RING_AW + 82:0] current_desc;
     reg [12:0] saved_map;
+    wire [12:0] selected_map = LOCAL_MAP_READ ? map_q : saved_map;
     reg [31:0] saved_cfg;
 
     // saved_state[42] 表示 A 网的上一序号有效。
@@ -159,8 +188,6 @@ module afdx_rx_engine #(
             resolve_b <= 0;
             commit_a <= 0;
             commit_b <= 0;
-            map_re <= 0;
-            map_ra <= 0;
             cfg_re <= 0;
             cfg_ra <= 0;
             state_re <= 0;
@@ -199,7 +226,6 @@ module afdx_rx_engine #(
             resolve_b <= 0;
             commit_a <= 0;
             commit_b <= 0;
-            map_re <= 0;
             cfg_re <= 0;
             state_re <= 0;
             state_we <= 0;
@@ -229,9 +255,6 @@ module afdx_rx_engine #(
                         // 两网同时提交时先处理 A 网。
                         op_net <= ! desc_a_valid;
                         current_desc <= desc_a_valid ? desc_a : desc_b;
-                        map_ra <= desc_a_valid ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67] : desc_b[RX_RING_AW +
-                            82 : RX_RING_AW + 67];
-                        map_re <= 1;
                         take_a <= desc_a_valid;
                         take_b <= ! desc_a_valid;
                         state_changed <= 0;
@@ -250,7 +273,7 @@ module afdx_rx_engine #(
                 end
 
                 // FRAME：查配置并检查帧，写回结果后转 IDLE。
-                // phase=1：保存编号映射，下一拍转 2。
+                // phase=1：分 bank 接口在表内寄存结果；独立接口保存编号映射，下一拍转 2。
                 // phase=2：有效映射触发配置读取，否则转 11。
                 // phase=3：等待同步读取，下一拍转 4。
                 // phase=4：保存配置和状态，下一拍转 5。
@@ -265,18 +288,18 @@ module afdx_rx_engine #(
                     phase <= phase + 1'b1;
                     case (phase)
 
-                        1 : saved_map <= map_q;
+                        1 : if (!LOCAL_MAP_READ) saved_map <= map_q;
 
-                        2 : if ( ! saved_map[12]) begin
+                        2 : if ( ! selected_map[12]) begin
                             result <= RX_UNMAPPED;
                             phase <= STEP_FINISH;
                         end
                         else begin
-                            op_idx <= saved_map[11:0];
+                            op_idx <= selected_map[11:0];
                             cfg_re <= 1;
-                            cfg_ra <= saved_map[11:0];
+                            cfg_ra <= selected_map[11:0];
                             state_re <= 1;
-                            state_ra <= saved_map[11:0];
+                            state_ra <= selected_map[11:0];
                         end
 
                         4 : begin

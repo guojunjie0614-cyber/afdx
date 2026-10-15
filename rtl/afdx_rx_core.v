@@ -40,10 +40,9 @@ module afdx_rx_core #(
 
     // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
     // flush_init 等待最后一次写入完成。
-    reg map_we, cfg_we, flush_init;
-    reg [15:0] clear_addr, map_wa;
+    reg cfg_we, flush_init;
+    reg [15:0] clear_addr;
     reg [11:0] cfg_wa;
-    reg [12:0] map_wd;
     reg [31:0] cfg_wd;
     wire engine_initialized, map_re, cfg_re, state_re, state_we;
     wire [15:0] map_ra;
@@ -62,6 +61,9 @@ module afdx_rx_core #(
     wire da_valid, db_valid, take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
     wire [RX_RING_AW + 82:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
+    wire map_we = !reset && (init_done ? cfg_map_we && cfg_ok : !flush_init);
+    wire [15:0] map_wa = init_done ? cfg_addr : clear_addr;
+    wire [12:0] map_wd = init_done ? cfg_wdata[12:0] : 13'b0;
 
     localparam DQ_WIDTH = RX_RING_AW + 56;
     wire engine_rm, engine_deliver, dq_pop, dq_we;
@@ -93,12 +95,9 @@ module afdx_rx_core #(
     always @(posedge clk) begin
         if (reset) begin
             init_done <= 0;
-            map_we <= 0;
             cfg_we <= 0;
             clear_addr <= 0;
-            map_wa <= 0;
             cfg_wa <= 0;
-            map_wd <= 0;
             cfg_wd <= 0;
             flush_init <= 0;
             ev_a <= 0;
@@ -107,13 +106,9 @@ module afdx_rx_core #(
             ev_deliver <= 0;
         end
         else begin
-            map_we <= 0;
             cfg_we <= 0;
             if ( ! init_done) begin
                 if ( ! flush_init) begin
-                    map_we <= 1;
-                    map_wa <= clear_addr;
-                    map_wd <= 0;
                     if (clear_addr < 4096) begin
                         cfg_we <= 1;
                         cfg_wa <= clear_addr[11:0];
@@ -125,9 +120,6 @@ module afdx_rx_core #(
                 else if (engine_initialized) init_done <= 1;
             end
             else begin
-                map_we <= cfg_map_we && cfg_ok;
-                map_wa <= cfg_addr;
-                map_wd <= cfg_wdata[12:0];
                 cfg_we <= cfg_cfg_we && cfg_ok;
                 cfg_wa <= cfg_addr[11:0];
                 cfg_wd <= cfg_wdata;
@@ -142,15 +134,61 @@ module afdx_rx_core #(
     // map 保存有效位和 12 位配置索引。
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
-    afdx_ram_sdp #(.WIDTH(13), .DEPTH(65536)) rx_map (
-        .clk(clk),
-        .write_enable(map_we),
-        .write_address(map_wa),
-        .write_data(map_wd),
-        .read_enable(map_re),
-        .read_address(map_ra),
-        .read_data(map_q)
-    );
+    // 32 个 bank 各保存 2048 项；每个局部地址只驱动本 bank 的存储块。
+    // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新，读取不增加交付拍数。
+    localparam MAP_BANKS = 32, MAP_BANK_AW = 11;
+    wire [MAP_BANKS * 13 - 1:0] map_bank_data;
+    (* preserve = 1, dont_merge = 1 *) reg [4 * 13 - 1:0] map_group_data;
+    assign map_q = map_group_data[0 * 13 +: 13] | map_group_data[1 * 13 +: 13]
+        | map_group_data[2 * 13 +: 13] | map_group_data[3 * 13 +: 13];
+    genvar bank, map_group;
+    generate
+        for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
+            (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
+            (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
+            (* preserve = 1, dont_merge = 1 *) reg [12:0] write_data;
+            (* preserve = 1, dont_merge = 1 *) reg selected;
+            wire [12:0] data;
+            assign map_bank_data[bank * 13 +: 13] = data & {13{selected}};
+            always @(posedge clk) begin
+                if (reset) begin
+                    read_request <= 0;
+                    write_request <= 0;
+                    selected <= 0;
+                end
+                else begin
+                    selected <= read_request;
+                    read_request <= map_re && map_ra[15:MAP_BANK_AW] == bank;
+                    write_request <= map_we && map_wa[15:MAP_BANK_AW] == bank;
+                    // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
+                    // 返回选择由局部读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
+                    read_address <= map_ra[MAP_BANK_AW - 1:0];
+                    write_address <= map_wa[MAP_BANK_AW - 1:0];
+                    write_data <= map_wd;
+                end
+            end
+            afdx_ram_sdp #(.WIDTH(13), .DEPTH(1 << MAP_BANK_AW)) memory (
+                .clk(clk), .write_enable(write_request), .write_address(write_address), .write_data(write_data),
+                .read_enable(read_request), .read_address(read_address),
+                .read_data(data)
+            );
+        end
+        // 复用引擎原来保存映射结果的那一拍，每八个 bank 在附近合并并寄存。
+        for (map_group = 0; map_group < 4; map_group = map_group + 1) begin : map_read_group
+            always @(posedge clk) begin
+                if (reset) map_group_data[map_group * 13 +: 13] <= 0;
+                else map_group_data[map_group * 13 +: 13] <=
+                    map_bank_data[(map_group * 8 + 0) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 1) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 2) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 3) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 4) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 5) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 6) * 13 +: 13]
+                    | map_bank_data[(map_group * 8 + 7) * 13 +: 13];
+            end
+        end
+    endgenerate
     afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (
         .clk(clk),
         .write_enable(cfg_we),
@@ -271,7 +309,7 @@ module afdx_rx_core #(
         .resolve_commit(commit_b),
         .ev(parse_ev_b)
     );
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) engine (
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
