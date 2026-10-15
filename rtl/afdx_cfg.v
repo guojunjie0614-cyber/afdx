@@ -1,10 +1,11 @@
 // 本模块把外部配置读写请求送到对应模块，并统计收发事件。
 // 输入来自顶层配置口和各模块的事件脉冲，读结果返回顶层。
 // 本模块为赛题的收发配置和网络管理提供寄存器接口。
-module afdx_cfg #(parameter RX_BUS_COPIES = 1) (
+module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
 
     // tx_ready 为高表示收发核心都已初始化。
     input wire clk, reset, tx_ready,
+    input wire [RX_BUS_COPIES:0] rx_ready_by_bank,
 
     // cfg_wr 和 cfg_ready 同为高时接收写请求。
     // cfg_rd 发起读请求，两拍后 cfg_rvalid 指示 cfg_rdata 有效。
@@ -78,7 +79,11 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1) (
             (* preserve = 1, dont_merge = 1 *) reg [15:0] address;
             (* preserve = 1, dont_merge = 1 *) reg [DATA_WIDTH - 1:0] data;
             (* preserve = 1, dont_merge = 1 *) reg ready, transmit_pending, receive_pending;
-            wire capture = tx_ready && !transmit_pending && !receive_pending
+            wire bank_ready = BANKED_READY ? rx_ready_by_bank[bus_copy] : tx_ready;
+            wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
+            wire capture_address = bank_ready && !transmit_pending && !receive_pending
+                && cfg_wr && ready && (select_map || select_rx);
+            wire capture_data = data_ready && !transmit_pending && !receive_pending
                 && cfg_wr && ready && (select_map || select_rx);
             assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
             assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
@@ -93,7 +98,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1) (
                     data <= 0;
                 end
                 else begin
-                    if (!tx_ready) begin
+                    if (!bank_ready) begin
                         ready <= 0;
                         transmit_pending <= 0;
                         receive_pending <= 0;
@@ -123,10 +128,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1) (
                             end
                         end
                     end
-                    if (capture) begin
-                        address <= cfg_write_addr[15:0];
-                        data <= cfg_wdata[DATA_WIDTH - 1:0];
-                    end
+                    if (capture_address) address <= cfg_write_addr[15:0];
+                    if (capture_data) data <= cfg_wdata[DATA_WIDTH - 1:0];
                 end
             end
         end

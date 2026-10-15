@@ -69,7 +69,13 @@ module afdx_rx_engine #(
     localparam SN_MAX = 255, SN_FIRST = 8'd1, SN_RANGE = 9'd255, SN_HALF_RANGE = 127;
 
     // 上次接纳后超过这么多个粗时间单位（每单位 4096 拍）没有新帧，就清除重复帧记录。
-    localparam AGE_LIMIT = 16'h4000;
+    localparam AGE_LOW_BITS = 14;
+    localparam [1:0] AGE_LIMIT_HIGH = 1;
+    reg age_low_borrow, age_low_equal;
+    reg [1:0] age_high_difference;
+    // 原阈值为 0x4000。低位借位/相等与高两位差并行寄存，仍在原 phase=3 写回。
+    wire age_expired = age_low_borrow ? age_high_difference != AGE_LIMIT_HIGH
+        : (age_high_difference > AGE_LIMIT_HIGH || (age_high_difference == AGE_LIMIT_HIGH && !age_low_equal));
 
     // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
     localparam STEP_DELIVER = 9, STEP_WRITE = 10, STEP_FINISH = 11;
@@ -146,6 +152,19 @@ module afdx_rx_engine #(
     wire dq_put = op == FRAME && phase == STEP_DELIVER && deliver_allowed && dq_count < DQ_DEPTH;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
+
+    always @(posedge clk) begin
+        if (reset) begin
+            age_low_borrow <= 0;
+            age_low_equal <= 0;
+            age_high_difference <= 0;
+        end
+        else begin
+            age_low_borrow <= age_time[AGE_LOW_BITS - 1:0] < saved_state[AGE_LOW_BITS - 1:0];
+            age_low_equal <= age_time[AGE_LOW_BITS - 1:0] == saved_state[AGE_LOW_BITS - 1:0];
+            age_high_difference <= age_time[15:AGE_LOW_BITS] - saved_state[15:AGE_LOW_BITS];
+        end
+    end
 
     always @(posedge clk) begin
         if (reset) begin
@@ -411,15 +430,13 @@ module afdx_rx_engine #(
                         phase <= phase + 1'b1;
                         case (phase)
                             1 : saved_state <= state_q;
-                            2 : elapsed <= age_time - saved_state[15:0];
+                            2 : ; // 分段时间差在独立寄存器中完成。
                             3 : begin
                                 age_ptr <= age_ptr + 1'b1;
                                 age_pending <= now_c != now_previous;
-                                if (saved_state[24] && elapsed > AGE_LIMIT) begin
-                                    state_we <= 1;
-                                    state_wa <= op_idx;
-                                    state_wd <= { saved_state[43:25], 1'b0, saved_state[23:0] };
-                                end
+                                state_wa <= op_idx;
+                                state_wd <= { saved_state[43:25], 1'b0, saved_state[23:0] };
+                                if (saved_state[24] && age_expired) state_we <= 1;
                                 op <= IDLE;
                             end
                             default : ;

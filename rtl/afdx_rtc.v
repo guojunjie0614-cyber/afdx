@@ -215,7 +215,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 (* preserve = 1, dont_merge = 1 *) reg write_byte;
                 always @(posedge clk) begin
                     if (reset) write_byte <= 0;
-                    else write_byte <= active && enable && !load_time && rx_valid && rx_claim;
+                    else write_byte <= active && enable && rx_valid && rx_claim;
                     if (reset) rx_packet[packet_group * 24 +: 24] <= 0;
                     else if (write_byte)
                         rx_packet[packet_group * 24 +: 24] <= shifted_packet[packet_group * 24 +: 24];
@@ -225,7 +225,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else begin : direct_receive
             always @(posedge clk) begin
                 if (reset) rx_packet <= 0;
-                else if (active && enable && !load_time && rx_valid && rx_claim)
+                else if (active && enable && rx_valid && rx_claim)
                     rx_packet <= {rx_packet[375:0], rx_data};
             end
         end
@@ -354,6 +354,28 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else nanoseconds <= nanoseconds + CLOCK_NS;
     end
 
+    wire abort_protocol = !active || !enable || load_time;
+    // 预先保存下一拍的提交状态，各副本只驱动一个 32 位对外状态寄存器。
+    (* preserve = 1, dont_merge = 1 *) reg apply_seconds, apply_nanoseconds, apply_count;
+    always @(posedge clk) begin
+        if (reset) begin
+            apply_seconds <= 0;
+            apply_nanoseconds <= 0;
+            apply_count <= 0;
+            offset_sec <= 0;
+            offset_ns <= 0;
+            sync_count <= 0;
+        end
+        else begin
+            apply_seconds <= calc_state == CALC_LATENCY && !abort_protocol;
+            apply_nanoseconds <= calc_state == CALC_LATENCY && !abort_protocol;
+            apply_count <= calc_state == CALC_LATENCY && !abort_protocol;
+            if (apply_seconds && !abort_protocol) offset_sec <= correction_sec;
+            if (apply_nanoseconds && !abort_protocol) offset_ns <= correction_ns;
+            if (apply_count && !abort_protocol) sync_count <= sync_count + 32'd1;
+        end
+    end
+
     always @(posedge clk) begin
         if (reset) begin
             tx_valid <= 0;
@@ -395,21 +417,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             second_odd <= 0;
             adjusted_sec <= 0;
             adjusted_ns <= 0;
-            offset_sec <= 0;
-            offset_ns <= 0;
-            sync_count <= 0;
-        end
-        else if ( ! active || ! enable || load_time) begin
-            tx_valid <= 0;
-            tx_last <= 0;
-            tx_state <= TX_IDLE;
-            rx_busy <= 0;
-            rx_done <= 0;
-            waiting <= 0;
-            reply_pending <= 0;
-            countdown <= 0;
-            calc_state <= CALC_IDLE;
-            decode_start <= 0;
+
         end
         else begin
             rx_done <= 0;
@@ -526,9 +534,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
 
                 CALC_APPLY : begin
-                    offset_sec <= correction_sec;
-                    offset_ns <= correction_ns;
-                    sync_count <= sync_count + 32'd1;
                     waiting <= 0;
                     calc_state <= CALC_IDLE;
                 end
@@ -610,6 +615,19 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     end
                 end
             endcase
+            // 中止只覆盖控制位；宽中间结果会在下一事务使用前重新计算。
+            if (abort_protocol) begin
+                tx_valid <= 0;
+                tx_last <= 0;
+                tx_state <= TX_IDLE;
+                rx_busy <= 0;
+                rx_done <= 0;
+                waiting <= 0;
+                reply_pending <= 0;
+                countdown <= 0;
+                calc_state <= CALC_IDLE;
+                decode_start <= 0;
+            end
         end
     end
 

@@ -72,6 +72,9 @@ module AFDX_top #(
 
     // tx_ready_q 保存收发核心都已初始化的结果。
     reg tx_ready_q;
+    localparam RX_CONFIG_BANKS = 32;
+    // 与 tx_ready_q 同拍更新，分别供接收配置各 bank 使用；末项独供首 bank 的 32 位数据。
+    (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
     // 同一主时钟下的本地时钟使能副本；不产生新时钟。
     (* preserve = 1, dont_merge = 1 *) reg loader_ce_q, snmp_ce_q;
@@ -219,7 +222,8 @@ module AFDX_top #(
     afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(1)) rtc (
         .clk(clk),
         .reset(reset),
-        .enable(tx_ready),
+        // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
+        .enable(1'b1),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == RTC_ADDR_GROUP),
         .cfg_re(bus_rd && rtc_select),
         .cfg_addr({cfg_addr[3:0], bus_addr[3:0]}),
@@ -292,8 +296,14 @@ module AFDX_top #(
     );
 
     always @(posedge clk) begin
-        if (reset) tx_ready_q <= 0;
-        else tx_ready_q <= tx_initialized && rx_initialized;
+        if (reset) begin
+            tx_ready_q <= 0;
+            receive_ready_q <= 0;
+        end
+        else begin
+            tx_ready_q <= tx_initialized && rx_initialized;
+            receive_ready_q <= {(RX_CONFIG_BANKS + 1){tx_initialized && rx_initialized}};
+        end
     end
 
     // 双网收发核心直接连接线路，每拍处理一个字节。
@@ -369,7 +379,8 @@ module AFDX_top #(
         .ev_deliver(ev_deliver),
         .cfg_ok(rx_cfg_ok)
     );
-    afdx_cfg #(.RX_BUS_COPIES(32)) cfg_regs (
+    afdx_cfg #(.RX_BUS_COPIES(RX_CONFIG_BANKS), .BANKED_READY(1)) cfg_regs (
+        .rx_ready_by_bank(receive_ready_q),
         .clk(clk),
         .reset(reset),
         .tx_ready(tx_ready),

@@ -210,6 +210,11 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
         end
         else begin
+            // 空闲时预装帧头；启动拍使用的字段与原来相同。
+            if (!stream_active) header <= { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
+                    IP_VERSION_TOS, ip_length, p_ident,
+                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
+                    UDP_NO_CHECKSUM };
             now_q <= now;
             time_difference <= now_q - p_time;
             payload_re <= 0;
@@ -320,10 +325,7 @@ module afdx_tx_builder #(
                 s_en_b <= p_b;
                 // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
                 // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
-                header <= { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
-                    IP_VERSION_TOS, ip_length, p_ident,
-                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
-                    UDP_NO_CHECKSUM };
+
                 s_data_a <= DMAC_BYTE0;
                 s_data_b <= DMAC_BYTE0;
                 header_index <= 0;
