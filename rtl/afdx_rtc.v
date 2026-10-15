@@ -36,6 +36,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
     wire [3:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 4 : cfg_addr;
 
+    localparam CALC_OFFSET_CANDIDATES = 15, CALC_TIME_CANDIDATES = 16;
     localparam CALC_IDLE = 0;
     localparam CALC_START_T2 = 10;
     localparam CALC_WAIT_T2 = 11;
@@ -60,8 +61,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     localparam HALF_SECOND_NS_S = 32'sd500000000;
 
     // 时钟周期 8 ns；纳秒数到达 LAST_TICK_NS 时，下一拍进位到秒。
-    // 校正量从算出到生效经过 4 拍，所以再补 32 ns。
-    localparam CLOCK_NS = 32'd8, LAST_TICK_NS = 32'd999999992, PIPELINE_NS = 32'd32;
+    // 校正量从算出到生效经过 5 拍，所以再补 40 ns。
+    localparam CLOCK_NS = 32'd8, LAST_TICK_NS = 32'd999999992, PIPELINE_NS = 32'd40;
 
     // 复位后的请求周期（125000 拍即 1 ms）和服务端口。
     localparam DEFAULT_PERIOD = 125000, NTP_PORT = 123;
@@ -91,6 +92,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
+    // seconds_increment 恒为 seconds + 1；tick_overflow 恒表示当前纳秒到达秒边界。
+    reg [31:0] seconds_increment;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tick_overflow;
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
     wire load_time = cfg_we && cfg_write_addr == 0 && cfg_wdata[2];
@@ -151,16 +155,23 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // CALC_DIFFERENCES：计算 T2-T1 和 T3-T4，下一拍转 CALC_SUM。
     // CALC_SUM：相加两段时间差，下一拍转 CALC_HALF。
     // CALC_HALF：把和除以二，下一拍转 CALC_HALF_SECOND。
-    // CALC_HALF_SECOND：补入奇数秒对应的半秒，下一拍转 CALC_NORMALIZE_OFFSET。
+    // CALC_HALF_SECOND：补入半秒；候选计算拍并行计算进位、借位和比较，再转 CALC_NORMALIZE_OFFSET。
     // CALC_NORMALIZE_OFFSET：处理纳秒的借位或进位，下一拍转 CALC_ADD_OFFSET。
-    // CALC_ADD_OFFSET：把校正量加到本地时间，下一拍转 CALC_NORMALIZE_TIME。
+    // CALC_ADD_OFFSET：采样校正后的本地时间；候选计算拍先计算秒进位，再转 CALC_NORMALIZE_TIME。
     // CALC_NORMALIZE_TIME：处理新的秒边界，下一拍转 CALC_LATENCY。
-    // CALC_LATENCY：补偿计算经过的 32 ns，下一拍转 CALC_APPLY。
+    // CALC_LATENCY：补偿计算经过的 40 ns，下一拍转 CALC_APPLY。
     // CALC_APPLY：应用校正并计数，下一拍转 CALC_IDLE。
-    reg [3:0] calc_state;
+    reg [4:0] calc_state;
     reg signed [31:0] diff_sec1, diff_sec2, diff_ns1, diff_ns2, sum_sec, sum_ns;
     reg signed [31:0] correction_sec, correction_ns;
     reg second_odd;
+    reg offset_negative, offset_overflow, time_overflow;
+    reg signed [31:0] offset_ns_plus, offset_ns_minus, offset_sec_plus, offset_sec_minus;
+    reg [31:0] time_ns_minus, time_sec_plus;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg final_overflow;
+    reg [31:0] final_ns_wrapped, final_sec_increment, final_sec_twice;
+    reg final_tick_direct, final_tick_wrapped;
+    localparam MAX_BEFORE_PIPELINE = 32'hffffffff - PIPELINE_NS;
     reg [31:0] adjusted_sec, adjusted_ns;
     reg encode_tx_start, encode_rx_start, encode_rx_reference, decode_start;
     reg [31:0] encode_tx_value, encode_rx_value, decode_value;
@@ -329,29 +340,42 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     always @(posedge clk) begin
         if (reset) begin
             seconds <= 0;
+            seconds_increment <= 1;
+            tick_overflow <= 0;
             nanoseconds <= 0;
         end
         // 配置装载优先于同步校正，两者都没有时按拍递增。
         // 纳秒达到十亿时向秒进位。
         else if (load_time) begin
             seconds <= load_sec;
+            seconds_increment <= load_sec + 32'd1;
+            tick_overflow <= load_ns >= LAST_TICK_NS;
             nanoseconds <= load_ns;
         end
         else if (calc_state == CALC_APPLY) begin
-            if (adjusted_ns >= NS_PER_SECOND_S) begin
-                seconds <= adjusted_sec + 32'd1;
-                nanoseconds <= adjusted_ns - NS_PER_SECOND;
+            if (final_overflow) begin
+                seconds <= final_sec_increment;
+                seconds_increment <= final_sec_twice;
+                tick_overflow <= final_tick_wrapped;
+                nanoseconds <= final_ns_wrapped;
             end
             else begin
                 seconds <= adjusted_sec;
+                seconds_increment <= final_sec_increment;
+                tick_overflow <= final_tick_direct;
                 nanoseconds <= adjusted_ns;
             end
         end
-        else if (nanoseconds >= LAST_TICK_NS) begin
-            seconds <= seconds + 32'd1;
+        else if (tick_overflow) begin
+            seconds <= seconds_increment;
+            seconds_increment <= seconds_increment + 32'd1;
+            tick_overflow <= nanoseconds >= (LAST_TICK_NS + LAST_TICK_NS);
             nanoseconds <= nanoseconds - LAST_TICK_NS;
         end
-        else nanoseconds <= nanoseconds + CLOCK_NS;
+        else begin
+            nanoseconds <= nanoseconds + CLOCK_NS;
+            tick_overflow <= nanoseconds >= LAST_TICK_NS - CLOCK_NS;
+        end
     end
 
     wire abort_protocol = !active || !enable || load_time;
@@ -414,6 +438,21 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             sum_ns <= 0;
             correction_sec <= 0;
             correction_ns <= 0;
+            offset_negative <= 0;
+            offset_overflow <= 0;
+            time_overflow <= 0;
+            offset_ns_plus <= 0;
+            offset_ns_minus <= 0;
+            offset_sec_plus <= 0;
+            offset_sec_minus <= 0;
+            time_ns_minus <= 0;
+            time_sec_plus <= 0;
+            final_overflow <= 0;
+            final_ns_wrapped <= 0;
+            final_sec_increment <= 0;
+            final_sec_twice <= 0;
+            final_tick_direct <= 0;
+            final_tick_wrapped <= 0;
             second_odd <= 0;
             adjusted_sec <= 0;
             adjusted_ns <= 0;
@@ -499,17 +538,27 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
 
                 CALC_HALF_SECOND : begin
                     correction_ns <= correction_ns + (second_odd ? HALF_SECOND_NS_S : 32'sd0);
+                    calc_state <= CALC_OFFSET_CANDIDATES;
+                end
+
+                CALC_OFFSET_CANDIDATES : begin
+                    offset_negative <= correction_ns < 0;
+                    offset_overflow <= correction_ns >= NS_PER_SECOND_S;
+                    offset_ns_plus <= correction_ns + NS_PER_SECOND_S;
+                    offset_ns_minus <= correction_ns - NS_PER_SECOND_S;
+                    offset_sec_plus <= correction_sec + 32'sd1;
+                    offset_sec_minus <= correction_sec - 32'sd1;
                     calc_state <= CALC_NORMALIZE_OFFSET;
                 end
 
                 CALC_NORMALIZE_OFFSET : begin
-                    if (correction_ns < 0) begin
-                        correction_ns <= correction_ns + NS_PER_SECOND_S;
-                        correction_sec <= correction_sec - 32'sd1;
+                    if (offset_negative) begin
+                        correction_ns <= offset_ns_plus;
+                        correction_sec <= offset_sec_minus;
                     end
-                    else if (correction_ns >= NS_PER_SECOND_S) begin
-                        correction_ns <= correction_ns - NS_PER_SECOND_S;
-                        correction_sec <= correction_sec + 32'sd1;
+                    else if (offset_overflow) begin
+                        correction_ns <= offset_ns_minus;
+                        correction_sec <= offset_sec_plus;
                     end
                     calc_state <= CALC_ADD_OFFSET;
                 end
@@ -517,18 +566,35 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 CALC_ADD_OFFSET : begin
                     adjusted_sec <= seconds + correction_sec;
                     adjusted_ns <= nanoseconds + correction_ns;
+                    calc_state <= CALC_TIME_CANDIDATES;
+                end
+
+                CALC_TIME_CANDIDATES : begin
+                    time_overflow <= adjusted_ns >= NS_PER_SECOND;
+                    time_ns_minus <= adjusted_ns - NS_PER_SECOND;
+                    time_sec_plus <= adjusted_sec + 32'd1;
                     calc_state <= CALC_NORMALIZE_TIME;
                 end
 
                 CALC_NORMALIZE_TIME : begin
-                    if (adjusted_ns >= NS_PER_SECOND_S) begin
-                        adjusted_ns <= adjusted_ns - NS_PER_SECOND;
-                        adjusted_sec <= adjusted_sec + 32'd1;
+                    if (time_overflow) begin
+                        adjusted_ns <= time_ns_minus;
+                        adjusted_sec <= time_sec_plus;
                     end
                     calc_state <= CALC_LATENCY;
                 end
 
                 CALC_LATENCY : begin
+                    // 预先并行计算最终进位及两种结果；应用拍只选择，不串接比较和加法。
+                    final_overflow <= adjusted_ns >= NS_PER_SECOND - PIPELINE_NS
+                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
+                    final_tick_direct <= adjusted_ns >= LAST_TICK_NS - PIPELINE_NS
+                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
+                    final_tick_wrapped <= adjusted_ns >= NS_PER_SECOND + LAST_TICK_NS - PIPELINE_NS
+                        && adjusted_ns <= MAX_BEFORE_PIPELINE;
+                    final_ns_wrapped <= adjusted_ns + PIPELINE_NS - NS_PER_SECOND;
+                    final_sec_increment <= adjusted_sec + 32'd1;
+                    final_sec_twice <= adjusted_sec + 32'd2;
                     adjusted_ns <= adjusted_ns + PIPELINE_NS;
                     calc_state <= CALC_APPLY;
                 end

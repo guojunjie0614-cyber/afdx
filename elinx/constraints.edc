@@ -8,7 +8,6 @@ create_clock -name clk -period 8.000 [get_ports {clk}]
 set from_loader_ack_number [get_cells {
     *loader|*half_rate.engine|ack_number*~I
     *loader|*half_rate.engine|command_block*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|request_reject*~I
@@ -127,7 +126,6 @@ set from_loader_candidate_byte [get_cells {
     *loader|*half_rate.engine|lus_counter*~I
     *loader|*half_rate.engine|lus_description_position*~I
     *loader|*half_rate.engine|lus_partlen_pos*~I
-    *loader|*half_rate.engine|lus_return*~I
     *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|lus_tail_pos*~I
     *loader|*half_rate.engine|manifest*~I
@@ -247,7 +245,6 @@ set_multicycle_path -hold 0 -from $from_loader_consume -to $to_loader_consume
 set from_loader_copy_len [get_cells {
     *loader|*half_rate.engine|command_length*~I
     *loader|*half_rate.engine|copy_len*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dl_remaining*~I
     *loader|*half_rate.engine|state*~I
@@ -259,7 +256,6 @@ set_multicycle_path -hold 0 -from $from_loader_copy_len -to $to_loader_copy_len
 
 set from_loader_copy_pos [get_cells {
     *loader|*half_rate.engine|copy_pos*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|state*~I
     *loader|*half_rate.engine|wait_kind*~I
@@ -301,7 +297,6 @@ set_multicycle_path -hold 0 -from $from_loader_data_name_len -to $to_loader_data
 set from_loader_decimal_rest [get_cells {
     *loader|*half_rate.engine|decimal_rest*~I
     *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|lus_return*~I
     *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|percent*~I
     *loader|*half_rate.engine|scaled*~I
@@ -1118,7 +1113,6 @@ set_multicycle_path -hold 0 -from $from_loader_part_len -to $to_loader_part_len
 
 set from_loader_pending_after [get_cells {
     *loader|*half_rate.engine|ack_return*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|mode_bad*~I
@@ -1138,7 +1132,6 @@ set_multicycle_path -hold 0 -from $from_loader_pending_after -to $to_loader_pend
 
 set from_loader_pending_dport [get_cells {
     *loader|*half_rate.engine|command_sport*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|main_peer*~I
@@ -1158,7 +1151,6 @@ set_multicycle_path -setup 2 -from $from_loader_pending_dport -to $to_loader_pen
 set_multicycle_path -hold 0 -from $from_loader_pending_dport -to $to_loader_pending_dport
 
 set from_loader_pending_kind [get_cells {
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|mode_bad*~I
@@ -1178,7 +1170,6 @@ set_multicycle_path -hold 0 -from $from_loader_pending_kind -to $to_loader_pendi
 
 set from_loader_pending_length [get_cells {
     *loader|*half_rate.engine|data_name_len*~I
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|dl_remaining*~I
@@ -1201,7 +1192,6 @@ set_multicycle_path -setup 2 -from $from_loader_pending_length -to $to_loader_pe
 set_multicycle_path -hold 0 -from $from_loader_pending_length -to $to_loader_pending_length
 
 set from_loader_pending_sport [get_cells {
-    *loader|*half_rate.engine|dispatch_action*~I
     *loader|*half_rate.engine|dispatch_current*~I
     *loader|*half_rate.engine|dispatch_repeat*~I
     *loader|*half_rate.engine|main_tid*~I
@@ -1268,7 +1258,6 @@ set_multicycle_path -hold 0 -from $from_loader_previous_block -to $to_loader_pre
 
 set from_loader_ratio_h [get_cells {
     *loader|*half_rate.engine|file_size*~I
-    *loader|*half_rate.engine|lus_return*~I
     *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|percent*~I
     *loader|*half_rate.engine|ratio_h*~I
@@ -1282,7 +1271,6 @@ set_multicycle_path -hold 0 -from $from_loader_ratio_h -to $to_loader_ratio_h
 set from_loader_ratio_t [get_cells {
     *loader|*half_rate.engine|decimal_rest*~I
     *loader|*half_rate.engine|decimal_tens*~I
-    *loader|*half_rate.engine|lus_return*~I
     *loader|*half_rate.engine|lus_status*~I
     *loader|*half_rate.engine|ratio_t*~I
     *loader|*half_rate.engine|state*~I
@@ -1431,19 +1419,15 @@ set_multicycle_path -hold 0 -from $from_loader_return_state -to $to_loader_retur
 
 set from_loader_rrq_data_read [get_cells {
     *loader|*half_rate.engine|data_name_addr*~I
-    *loader|*half_rate.engine|error_position*~I
     *loader|*half_rate.engine|filename_position*~I
-    *loader|*half_rate.engine|wrq_mode_position*~I
 }]
 set to_loader_rrq_data_read [get_cells {*loader|*half_rate.engine|rrq_data_read*~I}]
 set_multicycle_path -setup 2 -from $from_loader_rrq_data_read -to $to_loader_rrq_data_read
 set_multicycle_path -hold 0 -from $from_loader_rrq_data_read -to $to_loader_rrq_data_read
 
 set from_loader_rrq_header_read [get_cells {
-    *loader|*half_rate.engine|error_position*~I
     *loader|*half_rate.engine|filename_position*~I
     *loader|*half_rate.engine|header_name_addr*~I
-    *loader|*half_rate.engine|wrq_mode_position*~I
 }]
 set to_loader_rrq_header_read [get_cells {*loader|*half_rate.engine|rrq_header_read*~I}]
 set_multicycle_path -setup 2 -from $from_loader_rrq_header_read -to $to_loader_rrq_header_read
@@ -2150,6 +2134,7 @@ set_multicycle_path -hold 0 -from $from_snmp_field -to $to_snmp_field
 set from_snmp_field_accept [get_cells {
     *snmp|*half_rate.engine|configured*~I
     *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_accept*~I
     *snmp|*half_rate.engine|field_length*~I
     *snmp|*half_rate.engine|get_set*~I
     *snmp|*half_rate.engine|state*~I
@@ -2162,6 +2147,7 @@ set_multicycle_path -hold 0 -from $from_snmp_field_accept -to $to_snmp_field_acc
 set from_snmp_field_bounds_ok [get_cells {
     *snmp|*half_rate.engine|configured*~I
     *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
     *snmp|*half_rate.engine|field_end*~I
     *snmp|*half_rate.engine|field_length*~I
     *snmp|*half_rate.engine|request_length*~I
@@ -2175,6 +2161,7 @@ set from_snmp_field_end [get_cells {
     *snmp|*half_rate.engine|configured*~I
     *snmp|*half_rate.engine|cursor*~I
     *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_end*~I
     *snmp|*half_rate.engine|field_length*~I
     *snmp|*half_rate.engine|state*~I
 }]
@@ -2947,6 +2934,7 @@ set from_snmp_value_chain_ok [get_cells {
     *snmp|*half_rate.engine|pdu_end*~I
     *snmp|*half_rate.engine|request_length*~I
     *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
 }]
 set to_snmp_value_chain_ok [get_cells {*snmp|*half_rate.engine|value_chain_ok*~I}]
 set_multicycle_path -setup 2 -from $from_snmp_value_chain_ok -to $to_snmp_value_chain_ok

@@ -3,10 +3,11 @@
 // 本模块对应赛题的 SNMP（Simple Network Management Protocol，
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
-module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) (
+module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 59) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
-    input wire clk, reset, enable, ce,
+    input wire clk, reset, enable,
+    input wire [CE_BANKS - 1:0] ce,
     input wire [31:0] now,
 
     // cfg_* 配置代理开关、团体名和 Trap 通知，并读取状态。
@@ -255,9 +256,9 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             cmd_out_we <= out_we;
             cmd_out_wa <= out_wa;
             cmd_out_data <= out_wdata;
-            ram_req_re <= cmd_req_re && (CE_DIV == 1 || !ce);
+            ram_req_re <= cmd_req_re && (CE_DIV == 1 || !ce[0]);
             ram_req_ra <= cmd_req_ra;
-            ram_out_we <= cmd_out_we && (CE_DIV == 1 || !ce);
+            ram_out_we <= cmd_out_we && (CE_DIV == 1 || !ce[0]);
             ram_out_wa <= cmd_out_wa;
             ram_out_data <= cmd_out_data;
         end
@@ -332,7 +333,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
 
     generate
         if (CE_DIV == 2) begin : half_rate
-            afdx_snmp_engine engine (
+            afdx_snmp_engine #(.CE_BANKS(CE_BANKS)) engine (
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),
@@ -377,7 +378,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             );
         end
         else begin : full_rate
-            afdx_snmp_engine engine (
+            afdx_snmp_engine #(.CE_BANKS(CE_BANKS)) engine (
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),

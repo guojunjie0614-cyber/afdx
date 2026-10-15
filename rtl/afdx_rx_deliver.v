@@ -42,10 +42,10 @@ module afdx_rx_deliver #(
     // HEAD_IDLE：有消息且收到读请求时选择组内项，然后转 HEAD_SELECT。
     // HEAD_SELECT：选出完整队首信息并移除该项，然后转 HEAD_RELEASE。
     // HEAD_RELEASE：等待 dq_req 撤销，然后转 HEAD_IDLE。
-    reg [1:0] head_phase;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [1:0] head_phase;
     reg [1:0] head_bank;
     reg [DQ_WIDTH - 1:0] group0, group1, group2, group3, dq_data;
-    reg dq_req, dq_valid;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg dq_req, dq_valid;
 
     // issuing/left 控制连续读取和剩余字节数。
     // valid_pipe/last_pipe 将有效与末字节标记对齐到读出数据。
@@ -88,12 +88,7 @@ module afdx_rx_deliver #(
             data_b <= 0;
         end
         else begin
-            dq_valid <= 0;
-            dq_pop <= 0;
-            case (head_phase)
-
-                HEAD_IDLE : if (dq_req && dq_count != 0) begin
-                    // 先在四组内分别选一项，下一拍再从四组结果中选出一项。
+            // 组内选择每拍预装；HEAD_SELECT 仍使用请求拍采样的结果。
                     case (read_index[2:0])
 
                         0 : begin
@@ -152,6 +147,13 @@ module afdx_rx_deliver #(
                             group3 <= dq_entries[32 * DQ_WIDTH - 1:31 * DQ_WIDTH];
                         end
                     endcase
+            dq_valid <= 0;
+            dq_pop <= 0;
+            case (head_phase)
+
+                HEAD_IDLE : if (dq_req && dq_count != 0) begin
+                    // 先在四组内分别选一项，下一拍再从四组结果中选出一项。
+
                     head_bank <= read_index[4:3];
                     head_phase <= HEAD_SELECT;
                 end

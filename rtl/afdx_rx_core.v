@@ -2,13 +2,14 @@
 // 两路线路分别接收，检查通过后由一个输出口交付消息。
 // 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
 module afdx_rx_core #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1, REGISTERED_TIME_TICK = 0) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
 
     // now_c 提供粗粒度时间，rx_data_a/b 在对应 valid 为高时有效。
-    input wire [15:0] now_c,
+    // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
+    input wire [15 + REGISTERED_TIME_TICK:0] now_c,
     input wire [7:0] rx_data_a,
     input wire rx_valid_a,
     input wire [7:0] rx_data_b,
@@ -133,11 +134,25 @@ module afdx_rx_core #(
     // state 保存各虚拟链路的接收序号和交付记录。
     // 32 个 bank 各保存 2048 项；每个局部地址只驱动本 bank 的存储块。
     // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新，读取不增加交付拍数。
-    localparam MAP_BANKS = 32, MAP_BANK_AW = 11;
+    localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
-    (* preserve = 1, dont_merge = 1 *) reg [4 * 13 - 1:0] map_group_data;
-    assign map_q = map_group_data[0 * 13 +: 13] | map_group_data[1 * 13 +: 13]
-        | map_group_data[2 * 13 +: 13] | map_group_data[3 * 13 +: 13];
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
+    assign map_q = map_group_data[0 * 13 +: 13] |
+        map_group_data[1 * 13 +: 13] |
+        map_group_data[2 * 13 +: 13] |
+        map_group_data[3 * 13 +: 13] |
+        map_group_data[4 * 13 +: 13] |
+        map_group_data[5 * 13 +: 13] |
+        map_group_data[6 * 13 +: 13] |
+        map_group_data[7 * 13 +: 13] |
+        map_group_data[8 * 13 +: 13] |
+        map_group_data[9 * 13 +: 13] |
+        map_group_data[10 * 13 +: 13] |
+        map_group_data[11 * 13 +: 13] |
+        map_group_data[12 * 13 +: 13] |
+        map_group_data[13 * 13 +: 13] |
+        map_group_data[14 * 13 +: 13] |
+        map_group_data[15 * 13 +: 13];
     genvar bank, map_group;
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
@@ -184,19 +199,13 @@ module afdx_rx_core #(
                 .read_data(data)
             );
         end
-        // 复用引擎原来保存映射结果的那一拍，每八个 bank 在附近合并并寄存。
-        for (map_group = 0; map_group < 4; map_group = map_group + 1) begin : map_read_group
+        // 返回拍数不变：每两个 bank 在附近合并并寄存，避免存储器输出跨八个 bank 后才遇到寄存器。
+        for (map_group = 0; map_group < MAP_GROUPS; map_group = map_group + 1) begin : map_read_group
             always @(posedge clk) begin
                 if (reset) map_group_data[map_group * 13 +: 13] <= 0;
                 else map_group_data[map_group * 13 +: 13] <=
-                    map_bank_data[(map_group * 8 + 0) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 1) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 2) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 3) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 4) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 5) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 6) * 13 +: 13]
-                    | map_bank_data[(map_group * 8 + 7) * 13 +: 13];
+                    map_bank_data[(map_group * 2) * 13 +: 13]
+                    | map_bank_data[(map_group * 2 + 1) * 13 +: 13];
             end
         end
     endgenerate
@@ -272,7 +281,7 @@ module afdx_rx_core #(
         // 时钟和复位
         .clk(clk),
         .reset(reset),
-        .now_c(now_c),
+        .now_c(now_c[15:0]),
         // 配置和初始化
         .enable(init_done),
         // 数据和握手
@@ -298,7 +307,7 @@ module afdx_rx_core #(
         // 时钟和复位
         .clk(clk),
         .reset(reset),
-        .now_c(now_c),
+        .now_c(now_c[15:0]),
         // 配置和初始化
         .enable(init_done),
         // 数据和握手
@@ -320,12 +329,12 @@ module afdx_rx_core #(
         .resolve_commit(commit_b),
         .ev(parse_ev_b)
     );
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1)) engine (
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now_c(now_c),
-        // 配置和初始化
+                // 配置和初始化
         .enable(init_done),
         .initialized(engine_initialized),
         .cfg_re(cfg_re),

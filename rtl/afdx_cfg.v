@@ -18,7 +18,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     input wire [17:0] mib_read_addr,
     input wire [2:0] host_read_addr,
     input wire host_read,
-    output reg cfg_ready, cfg_rvalid,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg cfg_ready, cfg_rvalid,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。

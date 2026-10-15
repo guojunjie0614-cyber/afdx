@@ -5,12 +5,13 @@
 // 冗余管理（Redundancy Management）在两路网络送来的同一帧中只保留先到的一份。
 // 虚拟链路（Virtual Link，VL）把一组消息归到同一个配置项。
 module afdx_rx_engine #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5, LOCAL_MAP_READ = 0) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5, LOCAL_MAP_READ = 0, REGISTERED_TIME_TICK = 0) (
 
     // enable 为高时允许处理帧，now_c 给出粗粒度时间。
     // initialized 为高表示接收状态表已初始化。
     input wire clk, reset, enable,
-    input wire [15:0] now_c,
+    // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
+    input wire [15 + REGISTERED_TIME_TICK:0] now_c,
     output reg initialized,
 
     // desc_a/b_* 提供完整帧的信息，take 表示已取走这些信息。
@@ -24,12 +25,12 @@ module afdx_rx_engine #(
     output wire map_re,
     output wire [15:0] map_ra,
     input wire [12:0] map_q,
-    output reg cfg_re,
-    output reg [11:0] cfg_ra,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg cfg_re,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] cfg_ra,
     input wire [31:0] cfg_q,
-    output reg state_re, state_we,
-    output reg [11:0] state_ra, state_wa,
-    output reg [43:0] state_wd,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg state_re, state_we,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] state_ra, state_wa,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [43:0] state_wd,
     input wire [43:0] state_q,
 
     // dq_we 为高时，dq_wd 是写入 dq_wa 的交付信息。
@@ -47,6 +48,8 @@ module afdx_rx_engine #(
 
     // cfg_ok 为高时允许外部写配置，此时没有等待处理的帧。
     output wire cfg_ok);
+
+    wire [15:0] now_c_value = now_c[15:0];
 
     localparam RX_ACCEPTED = 0;
     localparam RX_UNMAPPED = 1;
@@ -79,7 +82,7 @@ module afdx_rx_engine #(
 
     // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
     localparam STEP_DELIVER = 9, STEP_WRITE = 10, STEP_FINISH = 11;
-    reg [1:0] op;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [1:0] op;
 
     // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。
     // 独立使用本模块时仍保持原来的一拍请求接口。
@@ -117,7 +120,7 @@ module afdx_rx_engine #(
     // saved_cfg[3] 打开完整性检查，[4] 打开冗余管理。
     // saved_cfg[16:5] 是两网允许的最大到达时间差 SkewMax，单位是 4096 拍（32.768 µs）。
     // saved_cfg[27:17] 是允许的最大帧长（字节）。
-    reg [3:0] phase;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [3:0] phase;
     reg [11:0] init_ptr, age_ptr, op_idx;
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
     reg [RX_RING_AW + 82:0] current_desc;
@@ -152,6 +155,8 @@ module afdx_rx_engine #(
     wire dq_put = op == FRAME && phase == STEP_DELIVER && deliver_allowed && dq_count < DQ_DEPTH;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
+
+    wire age_tick = REGISTERED_TIME_TICK ? (now_c >> 16) : now_c_value != now_previous;
 
     always @(posedge clk) begin
         if (reset) begin
@@ -235,10 +240,10 @@ module afdx_rx_engine #(
             ev_deliver <= 0;
         end
         else begin
-            now_q <= now_c;
-            now_previous <= now_c;
-            // 模块忙时记住过期检查请求，检查完一项后才推进地址。
-            if (now_c != now_previous) age_pending <= 1;
+            now_q <= now_c_value;
+            now_previous <= now_c_value;
+            // 时间基准直接给出同拍变化脉冲；独立模块保持外部 now_c_value 比较语义。
+            if (age_tick) age_pending <= 1;
             take_a <= 0;
             take_b <= 0;
             resolve_a <= 0;
@@ -281,11 +286,11 @@ module afdx_rx_engine #(
                         op <= FRAME;
                         phase <= 0;
                     end
-                    else if (age_pending || now_c != now_previous) begin
+                    else if (age_pending || age_tick) begin
                         state_re <= 1;
                         state_ra <= age_ptr;
                         op_idx <= age_ptr;
-                        age_time <= now_c;
+                        age_time <= now_c_value;
                         op <= AGE;
                         phase <= 0;
                     end
@@ -309,16 +314,19 @@ module afdx_rx_engine #(
 
                         1 : if (!LOCAL_MAP_READ) saved_map <= map_q;
 
-                        2 : if ( ! selected_map[12]) begin
-                            result <= RX_UNMAPPED;
-                            phase <= STEP_FINISH;
-                        end
-                        else begin
-                            op_idx <= selected_map[11:0];
-                            cfg_re <= 1;
+                        2 : begin
+                            // 无效映射只撤销读使能；地址先保存，避免有效位串入宽地址选择器。
                             cfg_ra <= selected_map[11:0];
-                            state_re <= 1;
                             state_ra <= selected_map[11:0];
+                            if (!selected_map[12]) begin
+                                result <= RX_UNMAPPED;
+                                phase <= STEP_FINISH;
+                            end
+                            else begin
+                                op_idx <= selected_map[11:0];
+                                cfg_re <= 1;
+                                state_re <= 1;
+                            end
                         end
 
                         4 : begin
@@ -387,8 +395,8 @@ module afdx_rx_engine #(
                             end
                         end
 
-                        STEP_WRITE : if (state_changed) begin
-                            state_we <= 1;
+                        STEP_WRITE : begin
+                            if (state_changed) state_we <= 1;
                             state_wa <= op_idx;
                             state_wd <= saved_state;
                         end
@@ -433,7 +441,7 @@ module afdx_rx_engine #(
                             2 : ; // 分段时间差在独立寄存器中完成。
                             3 : begin
                                 age_ptr <= age_ptr + 1'b1;
-                                age_pending <= now_c != now_previous;
+                                age_pending <= now_c_value != now_previous;
                                 state_wa <= op_idx;
                                 state_wd <= { saved_state[43:25], 1'b0, saved_state[23:0] };
                                 if (saved_state[24] && age_expired) state_we <= 1;

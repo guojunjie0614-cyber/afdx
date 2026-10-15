@@ -71,21 +71,22 @@ module AFDX_top #(
     output wire [1:0] ev_gdrop);
 
     // tx_ready_q 保存收发核心都已初始化的结果。
-    reg tx_ready_q;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tx_ready_q;
     localparam RX_CONFIG_BANKS = 32;
     // 与 tx_ready_q 同拍更新，分别供接收配置各 bank 使用；末项独供首 bank 的 32 位数据。
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
     // 同一主时钟下的本地时钟使能副本；不产生新时钟。
-    (* preserve = 1, dont_merge = 1 *) reg loader_ce_q, snmp_ce_q;
+    (* preserve = 1, dont_merge = 1 *) reg [69:0] loader_ce_q;
+    (* preserve = 1, dont_merge = 1 *) reg [58:0] snmp_ce_q;
     always @(posedge clk) begin
         if (reset) begin
             loader_ce_q <= 0;
             snmp_ce_q <= 0;
         end
         else begin
-            loader_ce_q <= !loader_ce_q;
-            snmp_ce_q <= !snmp_ce_q;
+            loader_ce_q <= ~loader_ce_q;
+            snmp_ce_q <= ~snmp_ce_q;
         end
     end
 
@@ -95,6 +96,12 @@ module AFDX_top #(
     // 两路核心都初始化完成后，顶层才允许服务开始工作。
     wire [31:0] now;
     wire [15:0] now_c, user_id;
+    // 提前保存粗计时进位，与原来 now_c != now_previous 的触发拍完全一致。
+    reg now_c_tick;
+    always @(posedge clk) begin
+        if (reset) now_c_tick <= 0;
+        else now_c_tick <= &now[11:0];
+    end
     wire byte_en, tx_initialized, rx_initialized;
     wire tx_cfg_ok, rx_cfg_ok, tx_cfg_we, rx_map_we, rx_cfg_we;
     wire [9:0] tx_cfg_addr;
@@ -164,7 +171,7 @@ module AFDX_top #(
     localparam SNMP_PORT = 16'd161;
     wire rtc_select = (bus_addr[17:4] == RTC_ADDR_GROUP);
     afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1), .CE_DIV(CE_DIV)) loader (
-        .ce(CE_DIV == 1 ? 1'b1 : loader_ce_q),
+        .ce(CE_DIV == 1 ? {70{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
@@ -190,7 +197,7 @@ module AFDX_top #(
     afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(1), .CE_DIV(CE_DIV)) snmp (
         .clk(clk),
         .reset(reset),
-        .ce(CE_DIV == 1 ? 1'b1 : snmp_ce_q),
+        .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
         .enable(tx_ready),
         .now(now),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:8] == 0),
@@ -349,14 +356,14 @@ module AFDX_top #(
         .ev_tx_b(ev_tx[6]),
         .cfg_ok(tx_cfg_ok)
     );
-    afdx_rx_core #(
+    afdx_rx_core #(.REGISTERED_TIME_TICK(1),
         .RX_RING_AW(RX_RING_AW),
         .RX_DQ_AW(RX_DQ_AW),
         .CFG_COPIES(32)
     ) rx_core (
         .clk(clk),
         .reset(reset),
-        .now_c(now_c),
+        .now_c({now_c_tick, now_c}),
         .rx_data_a(rx_data),
         .rx_valid_a(rx_valid),
         .rx_data_b(rx_data_b),

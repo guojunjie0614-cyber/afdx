@@ -65,6 +65,61 @@ def matches(name,patterns):
     prefix,stems=matcher(patterns);name=name.lstrip('\\')
     return name.startswith(prefix) and name.endswith('~I') and name[len(prefix):].startswith(stems)
 
+def enable_behavior(cells, registers, phases, source):
+    """Conservatively prove CE-low hold and each phase bit's reset/toggle truth table."""
+    from itertools import product
+    from adapt_gui_vqm import LCELL
+    unknown=frozenset((0,1))
+    aliases={}
+    for m in re.finditer(r'(?m)^assign\s+([^;]+?)\s*=\s*([^;]+);',source):
+        left=signals(m[1])
+        if len(left)==1:aliases[left[0]]=m[2].strip()
+    combinational={}
+    for c in cells:
+        if c['kind']=='stratix_lcell':
+            for n in signals(c['ports'].get('combout','')):combinational[n]=c
+    all_phases=set().union(*phases.values())
+    def evaluator(fixed):
+        @functools.lru_cache(None)
+        def value(expression):
+            expression=expression.strip()
+            if expression in fixed:return frozenset((fixed[expression],))
+            if expression in ("1'b0",'0'):return frozenset((0,))
+            if expression in ("1'b1",'1'):return frozenset((1,))
+            if expression in registers:return unknown
+            if expression in aliases:return value(aliases[expression])
+            if expression in combinational:return lut(combinational[expression])
+            return unknown
+        def lut(cell):
+            params=cell['params']
+            if params.get('operation_mode','normal')!='normal':return unknown
+            mask=params.get('lut_mask')
+            if mask is None:return unknown
+            bits=[value(cell['ports'].get(p,LCELL[p])) for p in ('dataa','datab','datac','datad','inverta')]
+            outputs=set()
+            for a,b,c,d,invert in product(*bits):
+                index=(a^invert)+2*b+4*c+8*d
+                outputs.add((int(mask,16)>>index)&1)
+            return frozenset(outputs)
+        return value,lut
+    value,_=evaluator({**dict.fromkeys(all_phases,0),'reset':0})
+    stalls={net:value(c['ports'].get('ena',"1'b1"))==frozenset((0,)) for net,c in registers.items()
+            if '|half_rate.engine|' in c['native']}
+    phase_failures=[]
+    for net in sorted(all_phases):
+        cell=registers[net];ports=cell['ports'];good=ports.get('clk')=='clk'
+        good &= cell['params'].get('register_cascade_mode','off')=='off'
+        for reset in (0,1):
+            for old in (0,1):
+                evaluate,lut=evaluator({net:old,'reset':reset})
+                possibilities=set()
+                for ena,clear in product(evaluate(ports.get('ena',"1'b1")),evaluate(ports.get('sclr',"1'b0"))):
+                    possibilities.update((old,) if not ena else (0,) if clear else lut(cell))
+                good &= possibilities==({0} if reset else {1-old})
+        if not good:phase_failures.append(cell['native'])
+    return stalls,phase_failures
+
+
 def audit(vqm,sdc,destination):
     data=vqm.read_text(encoding='utf-8').replace('\r\n','\n')
     pairs=constraints(sdc)
@@ -72,7 +127,8 @@ def audit(vqm,sdc,destination):
     for m in CELL.finditer(data):
         kind,name=m['kind'],m['name']
         ports={key:value.strip() for key,value in re.findall(r'\.(\w+)\s*\(([^()]*)\)',m['body'])}
-        cell=dict(kind=kind,name=name,native=native_name(name),ports=ports)
+        params=dict(re.findall(r'\.(\w+)\s*=\s*"([^"]+)"',m['params']))
+        cell=dict(kind=kind,name=name,native=native_name(name),ports=ports,params=params)
         cells.append(cell)
         if kind=='stratix_lcell':
             output=ports.get('regout','')
@@ -91,14 +147,16 @@ def audit(vqm,sdc,destination):
         if len(lhs)==1:drivers[lhs[0]]=rhs
     phase={}
     for module in ('loader','snmp'):
-        phase_matches=[net for net,cell in registers.items() if re.fullmatch(module+r'_ce_q(?:~.*)?',cell['native'])]
-        if len(phase_matches)!=1:raise ValueError('Expected one preserved CE phase register for '+module+': '+str(phase_matches))
-        phase[module]=phase_matches[0]
+        phase_matches=[net for net,cell in registers.items() if re.fullmatch(module+r'_ce_q(?:\[\d+\])?(?:~.*)?',cell['native'])]
+        if not phase_matches:raise ValueError('No preserved CE phase registers for '+module)
+        phase[module]=set(phase_matches)
     @functools.lru_cache(None)
     def leaves(net):
         if net in registers:return frozenset([net])
         if net not in drivers:return frozenset(['unresolved:'+net])
         return frozenset().union(*(leaves(n) for n in drivers[net]))
+    stalls,phase_failures=enable_behavior(cells,registers,phase,data)
+    phase_loads=collections.Counter()
     rows=[];invalid=[];by_module=collections.Counter();uncovered=[];nonregisters=[]
     for cell in cells:
         selected=any(matches(cell['native'],a) or matches(cell['native'],b) for a,b in pairs)
@@ -112,10 +170,13 @@ def audit(vqm,sdc,destination):
         name=cell['native'];module=name.split('|')[0]
         good_scope=module in phase and name.startswith(module+'|half_rate.engine|')
         cone=frozenset().union(*(leaves(n) for n in signals(cell['ports'].get('ena',"1'b1"))))
-        expected_phase=phase.get(module,'missing')
-        valid=good_scope and expected_phase in cone and cell['ports'].get('clk')=='clk'
+        phase_hits=phase.get(module,set()) & cone
+        wrong_phase=set().union(*(v for k,v in phase.items() if k!=module)) & cone
+        expected_phase=';'.join(sorted(phase_hits))
+        valid=good_scope and len(phase_hits)==1 and not wrong_phase and cell['ports'].get('clk')=='clk' and stalls[net]
+        phase_loads.update(phase_hits)
         row=dict(module=module,register=name,enable=cell['ports'].get('ena',"1'b1"),
-                 ce=expected_phase,ce_in_enable_cone=expected_phase in cone,valid=valid,
+                 ce=expected_phase,ce_in_enable_cone=len(phase_hits)==1,disabled_between_ce_ticks=stalls[net],valid=valid,
                  enable_terminals=';'.join(sorted(cone)))
         rows.append(row);by_module[module]+=1
         if not valid:invalid.append(row)
@@ -142,8 +203,10 @@ def audit(vqm,sdc,destination):
                 ram_cells_in_engine=illegal_ram,all_registers=len(registers),ram_cells=len(ram),
                 selected_non_register_cells=nonregisters,uncovered_engine_registers=uncovered,
                 internal_register_arcs=arc_count,uncovered_internal_arcs=len(missing_arcs),
-                patterns=pairs,phase_registers=phase,
-                passed=not invalid and not illegal_ram and not nonregisters and not uncovered and not missing_arcs)
+                patterns=pairs,phase_registers={k:sorted(v) for k,v in phase.items()},
+                phase_reset_toggle_failures=phase_failures,ce_bank_register_loads=dict(phase_loads),
+                max_ce_bank_register_load=max(phase_loads.values(),default=0),
+                passed=not phase_failures and not invalid and not illegal_ram and not nonregisters and not uncovered and not missing_arcs)
     destination.mkdir(parents=True,exist_ok=True)
     with (destination/'registers.csv').open('w',newline='',encoding='utf-8-sig') as f:
         writer=csv.DictWriter(f,list(rows[0]));writer.writeheader();writer.writerows(rows)

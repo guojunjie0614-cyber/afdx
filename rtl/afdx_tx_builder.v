@@ -84,8 +84,9 @@ module afdx_tx_builder #(
     localparam IP_VERSION_TOS = 16'h4500, IP_NO_FRAGMENT = 16'h0000, IP_TTL_PROTOCOL = 16'h0111;
     localparam UDP_NO_CHECKSUM = 16'h0000;
 
-    // time_difference 不小于这个值（即负四及以上）时，离发送时刻已不足四拍。
-    localparam START_LEAD = 32'hfffffffc;
+    // 时间判定再寄存一拍，因此提前五拍比较；准备过程已保证 p_time 稳定。
+    localparam START_LEAD_REGISTERED = 32'hfffffffb;
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg time_due;
 
     // 预读队列里已有这么多字节时，暂停发出新的读请求。
     localparam FIFO_STOP_LEVEL = 5;
@@ -161,6 +162,7 @@ module afdx_tx_builder #(
             sum <= 0;
             now_q <= 0;
             time_difference <= 0;
+            time_due <= 0;
             start_valid <= 0;
             t_start <= 0;
             payload_re <= 0;
@@ -217,6 +219,9 @@ module afdx_tx_builder #(
                     UDP_NO_CHECKSUM };
             now_q <= now;
             time_difference <= now_q - p_time;
+            // 等价于上一版下一拍的有符号“差值 >= -4”，包含 32 位回绕边界。
+            time_due <= !p_timed || time_difference < 32'h7fffffff
+                || time_difference >= START_LEAD_REGISTERED;
             payload_re <= 0;
             pnext_re <= 0;
             start_valid <= 0;
@@ -316,8 +321,7 @@ module afdx_tx_builder #(
                 endcase
             end
             // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
-            if (pending && prepared && ! stream_active && ( ! p_timed || ! time_difference[31]
-                || time_difference >= START_LEAD)) begin
+            if (pending && prepared && ! stream_active && time_due) begin
                 stream_active <= 1;
                 s_valid <= 1;
                 s_last <= 0;

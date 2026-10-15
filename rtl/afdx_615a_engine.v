@@ -1,6 +1,7 @@
 // 协议状态只在 ce 拍更新；所有 RAM 和外部握手均留在全速外壳。
-module afdx_615a_engine #(parameter CE_DIV = 2) (
-    input wire clk, reset, ce_phase,
+module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 70) (
+    input wire clk, reset,
+    input wire [CE_BANKS - 1:0] ce_phase,
     input wire  enable_in,
     input wire  configured_in,
     input wire [15:0] request_port_in,
@@ -57,7 +58,76 @@ module afdx_615a_engine #(parameter CE_DIV = 2) (
     output reg [12:0] load_ra
 );
     // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
-    (* direct_enable = 1, keep = 1 *) wire ce = ce_phase | reset;
+    // 含复位的使能保证复位拍也更新；各局部 CE 只驱动至多 32 位。
+    (* direct_enable = 1, keep = 1 *) wire ce_1 = ce_phase[1] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_2 = ce_phase[2] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_3 = ce_phase[3] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_4 = ce_phase[4] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_5 = ce_phase[5] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_6 = ce_phase[6] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_7 = ce_phase[7] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_8 = ce_phase[8] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_9 = ce_phase[9] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_10 = ce_phase[10] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_11 = ce_phase[11] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_12 = ce_phase[12] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_13 = ce_phase[13] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_14 = ce_phase[14] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_15 = ce_phase[15] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_16 = ce_phase[16] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_17 = ce_phase[17] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_18 = ce_phase[18] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_19 = ce_phase[19] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_20 = ce_phase[20] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_21 = ce_phase[21] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_22 = ce_phase[22] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_23 = ce_phase[23] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_24 = ce_phase[24] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_25 = ce_phase[25] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_26 = ce_phase[26] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_27 = ce_phase[27] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_28 = ce_phase[28] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_29 = ce_phase[29] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_30 = ce_phase[30] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_31 = ce_phase[31] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_32 = ce_phase[32] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_33 = ce_phase[33] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_34 = ce_phase[34] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_35 = ce_phase[35] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_36 = ce_phase[36] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_37 = ce_phase[37] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_38 = ce_phase[38] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_39 = ce_phase[39] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_40 = ce_phase[40] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_41 = ce_phase[41] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_42 = ce_phase[42] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_43 = ce_phase[43] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_44 = ce_phase[44] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_45 = ce_phase[45] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_46 = ce_phase[46] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_47 = ce_phase[47] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_48 = ce_phase[48] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_49 = ce_phase[49] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_50 = ce_phase[50] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_51 = ce_phase[51] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_52 = ce_phase[52] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_53 = ce_phase[53] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_54 = ce_phase[54] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_55 = ce_phase[55] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_56 = ce_phase[56] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_57 = ce_phase[57] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_58 = ce_phase[58] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_59 = ce_phase[59] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_60 = ce_phase[60] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_61 = ce_phase[61] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_62 = ce_phase[62] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_63 = ce_phase[63] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_64 = ce_phase[64] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_65 = ce_phase[65] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_66 = ce_phase[66] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_67 = ce_phase[67] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_68 = ce_phase[68] | reset;
+    (* direct_enable = 1, keep = 1 *) wire ce_69 = ce_phase[69] | reset;
     // 这些状态接收并检查请求。
     localparam REASON_NONE = 0;
     localparam REASON_DESCRIPTION = 1;
@@ -230,7 +300,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2) (
     localparam HEADER_MIN_BYTES = 32, HEADER_DATA_PTR_MIN_WORDS = 13, HEADER_TRAILER_BYTES = 6;
     localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 10;
 
-    localparam FETCH_WAIT_A = 240, FETCH_WAIT_B = 241, DENY_FLUSH = 242, DENY_FINISH = 243, FETCH_WAIT_C = 244;
+    localparam FETCH_WAIT_A = 240, FETCH_WAIT_B = 241, DENY_FLUSH = 242, DENY_FINISH = 243, FETCH_WAIT_C = 244, DATA_DISPATCH = 245;
     reg  enable;
     reg  configured;
     reg [15:0] request_port;
@@ -298,13 +368,167 @@ module afdx_615a_engine #(parameter CE_DIV = 2) (
     reg [3:0] pointer_less, pointer_equal;
     reg  pointer_minimum;
     // 文件长度在读取指针之前已稳定；提前寄存上界，分开减法和范围比较。
+    reg [9:0] next_error_position;
+    reg [9:0] next_lus_description_position;
+    reg [9:0] next_filename_position;
+    reg [9:0] next_wrq_mode_position;
+    reg [9:0] next_rrq_mode_position;
+    reg [12:0] next_rrq_header_read;
+    reg [12:0] next_rrq_data_read;
+    reg  next_enable;
+    reg  next_configured;
+    reg [15:0] next_request_port;
+    reg [31:0] next_timeout_cycles;
+    reg [7:0] next_retry_limit;
+    reg  next_protocol_a4;
+    reg  next_packet_pending;
+    reg [15:0] next_rx_op;
+    reg [15:0] next_rx_block;
+    reg [9:0] next_rx_length;
+    reg [15:0] next_peer_sp;
+    reg [15:0] next_peer_dp;
+    reg [7:0] next_rx_q;
+    reg [7:0] next_lur_q;
+    reg [7:0] next_hdr_q;
+    reg [7:0] next_load_q;
+    reg  next_send_complete;
+    reg  next_send_request;
+    reg  next_send_mode;
+    reg [10:0] next_send_length;
+    reg  next_deny_we;
+    reg [4:0] next_deny_wa;
+    reg [7:0] next_deny_wd;
+    reg [1:0] next_status;
+    reg [7:0] next_reason;
+    reg [7:0] next_state;
+    reg [15:0] next_command_op;
+    reg [15:0] next_command_block;
+    reg [15:0] next_command_sport;
+    reg [15:0] next_command_dport;
+    reg [9:0] next_command_length;
+    reg [7:0] next_dispatch_match;
+    reg [7:0] next_dispatch_action;
+    reg  next_dispatch_current;
+    reg  next_dispatch_repeat;
+    reg [15:0] next_main_tid;
+    reg [15:0] next_status_tid;
+    reg [15:0] next_main_peer;
+    reg [15:0] next_status_peer;
+    reg [15:0] next_tid_sequence;
+    reg [13:0] next_loaded;
+    reg [13:0] next_file_size;
+    reg [13:0] next_available_size;
+    reg [13:0] next_dl_acked;
+    reg [13:0] next_dl_remaining;
+    reg [12:0] next_dl_read_addr;
+    reg  next_download_mode;
+    reg  next_request_download;
+    reg  next_request_unsupported;
+    reg [7:0] next_request_resume;
+    reg  next_deny_empty;
+    reg  next_deny_unsupported;
+    reg [4:0] next_deny_pos;
+    reg [15:0] next_deny_tid;
+    reg [15:0] next_saved_sport;
+    reg [15:0] next_saved_dport;
+    reg [15:0] next_lus_counter;
+    reg [31:0] next_retry_total;
+    reg [15:0] next_tx_sport;
+    reg [15:0] next_tx_dport;
+    reg  next_consume;
+    reg [31:0] next_timer;
+    reg [7:0] next_retries;
+    reg  next_rx_re;
+    reg [9:0] next_rx_ra;
+    reg  next_tx_we;
+    reg [9:0] next_tx_wa;
+    reg [7:0] next_tx_wd;
+    reg  next_lur_we;
+    reg [8:0] next_lur_wa;
+    reg [7:0] next_lur_wd;
+    reg  next_lur_re;
+    reg [8:0] next_lur_ra;
+    reg  next_hdr_we;
+    reg [10:0] next_hdr_wa;
+    reg [7:0] next_hdr_wd;
+    reg  next_hdr_re;
+    reg [10:0] next_hdr_ra;
+    reg  next_load_we;
+    reg [12:0] next_load_wa;
+    reg [7:0] next_load_wd;
+    reg  next_load_re;
+    reg [12:0] next_load_ra;
+    reg  next_manifest;
+    reg [1:0] next_file_kind;
+    reg [15:0] next_block_number;
+    reg [15:0] next_ack_number;
+    reg [15:0] next_data_crc;
+    reg [15:0] next_header_crc;
+    reg [15:0] next_expected_crc;
+    reg [7:0] next_return_state;
+    reg [7:0] next_num_return;
+    reg [7:0] next_after_tx;
+    reg [7:0] next_lus_return;
+    reg [7:0] next_ack_return;
+    reg [2:0] next_wait_kind;
+    reg [2:0] next_packet_type;
+    reg [2:0] next_pending_kind;
+    reg [9:0] next_pending_length;
+    reg [15:0] next_pending_sport;
+    reg [15:0] next_pending_dport;
+    reg [7:0] next_pending_after;
+    reg [1:0] next_fetch_source;
+    reg [12:0] next_fetch_addr;
+    reg [7:0] next_byte_value;
+    reg [31:0] next_number;
+    reg [2:0] next_number_left;
+    reg [9:0] next_packet_len;
+    reg [9:0] next_packet_pos;
+    reg [11:0] next_metadata_size;
+    reg  next_header_pointer_ok;
+    reg [3:0] next_pointer_less;
+    reg [3:0] next_pointer_equal;
+    reg  next_pointer_minimum;
+    reg [11:0] next_header_pointer;
+    reg [11:0] next_header_name_addr;
+    reg [6:0] next_header_name_len;
+    reg [6:0] next_part_len;
+    reg [9:0] next_part_addr;
+    reg [11:0] next_data_name_addr;
+    reg [6:0] next_data_name_len;
+    reg [15:0] next_lus_status;
+    reg [6:0] next_percent;
+    reg [19:0] next_scaled;
+    reg [7:0] next_ratio_h;
+    reg [7:0] next_ratio_t;
+    reg [7:0] next_ratio_u;
+    reg [3:0] next_decimal_tens;
+    reg [6:0] next_decimal_rest;
+    reg [10:0] next_copy_pos;
+    reg [10:0] next_copy_len;
+    reg [10:0] next_scan_pos;
+    reg [4:0] next_name_pos;
+    reg  next_request_write;
+    reg [7:0] next_build_value;
+    reg [9:0] next_lus_partlen_pos;
+    reg [9:0] next_lus_part_pos;
+    reg [9:0] next_lus_tail_pos;
+    reg [9:0] next_lus_packet_len;
+    reg [9:0] next_tail_index;
+    reg [9:0] next_head_index;
+    reg [9:0] next_part_index;
+    reg [9:0] next_name_end;
+    reg [9:0] next_mode_start;
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_1) begin
         if (reset) begin
             header_limit <= 0;
         end
-        else if (ce) begin
+        else begin
 header_limit <= metadata_size - HEADER_TRAILER_BYTES;
         end
+    end
     end
     reg [6:0] header_name_len, part_len, data_name_len;
     reg [9:0] part_addr;
@@ -385,45 +609,90 @@ header_limit <= metadata_size - HEADER_TRAILER_BYTES;
     genvar byte_kind;
     generate
         for (byte_kind = 0; byte_kind < PACKET_KIND_COUNT; byte_kind = byte_kind + 1) begin : byte_position
+            (* direct_enable = 1, keep = 1 *) wire local_ce = ce_phase[2 + byte_kind] | reset;
             always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (local_ce) begin
         if (reset) begin
             build_position[byte_kind] <= 0;
         end
-        else if (ce) begin
+        else begin
 build_position[byte_kind] <= packet_pos;
         end
     end
+    end
         end
     endgenerate
+    // 下一状态保持原非阻塞赋值的旧值语义；每组 CE 最多驱动 32 个数据位。
+    always @* begin
+        next_error_position = error_position;
+        next_lus_description_position = lus_description_position;
+        next_filename_position = filename_position;
+        next_wrq_mode_position = wrq_mode_position;
+        next_rrq_mode_position = rrq_mode_position;
+        next_rrq_header_read = rrq_header_read;
+        next_rrq_data_read = rrq_data_read;
+
+next_error_position = packet_pos - 10'd4;
+        next_lus_description_position = packet_pos - 10'd13;
+        next_filename_position = packet_pos - 10'd2;
+        next_wrq_mode_position = packet_pos - 10'd14;
+        next_rrq_mode_position = packet_pos - mode_start;
+        next_rrq_header_read = header_name_addr + filename_position;
+        next_rrq_data_read = data_name_addr + filename_position;
+    end
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_9) begin
         if (reset) begin
             error_position <= 0;
             lus_description_position <= 0;
             filename_position <= 0;
+        end
+        else begin
+            error_position <= next_error_position;
+            lus_description_position <= next_lus_description_position;
+            filename_position <= next_filename_position;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_10) begin
+        if (reset) begin
             wrq_mode_position <= 0;
             rrq_mode_position <= 0;
+        end
+        else begin
+            wrq_mode_position <= next_wrq_mode_position;
+            rrq_mode_position <= next_rrq_mode_position;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_11) begin
+        if (reset) begin
             rrq_header_read <= 0;
             rrq_data_read <= 0;
         end
-        else if (ce) begin
-error_position <= packet_pos - 10'd4;
-        lus_description_position <= packet_pos - 10'd13;
-        filename_position <= packet_pos - 10'd2;
-        wrq_mode_position <= packet_pos - 10'd14;
-        rrq_mode_position <= packet_pos - mode_start;
-        rrq_header_read <= header_name_addr + filename_position;
-        rrq_data_read <= data_name_addr + filename_position;
+        else begin
+            rrq_header_read <= next_rrq_header_read;
+            rrq_data_read <= next_rrq_data_read;
         end
+    end
     end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_12) begin
         if (reset) begin
             candidate_byte[PK_ACK] <= 0;
             candidate_read[PK_ACK] <= 0;
             candidate_source[PK_ACK] <= 0;
             candidate_address[PK_ACK] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_ACK] <= 0;
             candidate_read[PK_ACK] <= 0;
             case (build_position[PK_ACK])
@@ -433,15 +702,18 @@ error_position <= packet_pos - 10'd4;
             endcase
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_13) begin
         if (reset) begin
             candidate_byte[PK_LUI] <= 0;
             candidate_read[PK_LUI] <= 0;
             candidate_source[PK_LUI] <= 0;
             candidate_address[PK_LUI] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_LUI] <= 0;
             candidate_read[PK_LUI] <= 0;
             case (build_position[PK_LUI])
@@ -454,15 +726,18 @@ error_position <= packet_pos - 10'd4;
             endcase
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_14) begin
         if (reset) begin
             candidate_byte[PK_ERROR] <= 0;
             candidate_read[PK_ERROR] <= 0;
             candidate_source[PK_ERROR] <= 0;
             candidate_address[PK_ERROR] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_ERROR] <= 0;
             candidate_read[PK_ERROR] <= 0;
             case (build_position[PK_ERROR])
@@ -472,15 +747,18 @@ error_position <= packet_pos - 10'd4;
             endcase
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_15) begin
         if (reset) begin
             candidate_byte[PK_LUS_WRQ] <= 0;
             candidate_read[PK_LUS_WRQ] <= 0;
             candidate_source[PK_LUS_WRQ] <= 0;
             candidate_address[PK_LUS_WRQ] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_LUS_WRQ] <= 0;
             candidate_read[PK_LUS_WRQ] <= 0;
             begin
@@ -492,15 +770,18 @@ error_position <= packet_pos - 10'd4;
             end
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_16) begin
         if (reset) begin
             candidate_byte[PK_RRQ] <= 0;
             candidate_read[PK_RRQ] <= 0;
             candidate_source[PK_RRQ] <= 0;
             candidate_address[PK_RRQ] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_RRQ] <= 0;
             candidate_read[PK_RRQ] <= 0;
             begin
@@ -521,15 +802,18 @@ error_position <= packet_pos - 10'd4;
             end
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_17) begin
         if (reset) begin
             candidate_byte[PK_DL_DATA] <= 0;
             candidate_read[PK_DL_DATA] <= 0;
             candidate_source[PK_DL_DATA] <= 0;
             candidate_address[PK_DL_DATA] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_DL_DATA] <= 0;
             candidate_read[PK_DL_DATA] <= 0;
             case (build_position[PK_DL_DATA])
@@ -544,15 +828,18 @@ error_position <= packet_pos - 10'd4;
             endcase
         end
     end
+    end
 
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_18) begin
         if (reset) begin
             candidate_byte[PK_LUS] <= 0;
             candidate_read[PK_LUS] <= 0;
             candidate_source[PK_LUS] <= 0;
             candidate_address[PK_LUS] <= 0;
         end
-        else if (ce) begin
+        else begin
             candidate_byte[PK_LUS] <= 0;
             candidate_read[PK_LUS] <= 0;
             begin
@@ -631,47 +918,143 @@ error_position <= packet_pos - 10'd4;
             end
         end
     end
+    end
 
     // 全速来源先直接采样，随后仅使用本地的 CE 寄存器。
+    // 下一状态保持原非阻塞赋值的旧值语义；每组 CE 最多驱动 32 个数据位。
+    always @* begin
+        next_enable = enable;
+        next_configured = configured;
+        next_request_port = request_port;
+        next_timeout_cycles = timeout_cycles;
+        next_retry_limit = retry_limit;
+        next_protocol_a4 = protocol_a4;
+        next_packet_pending = packet_pending;
+        next_rx_op = rx_op;
+        next_rx_block = rx_block;
+        next_rx_length = rx_length;
+        next_peer_sp = peer_sp;
+        next_peer_dp = peer_dp;
+        next_rx_q = rx_q;
+        next_lur_q = lur_q;
+        next_hdr_q = hdr_q;
+        next_load_q = load_q;
+        next_send_complete = send_complete;
+
+            next_enable = enable_in;
+            next_configured = configured_in;
+            next_request_port = request_port_in;
+            next_timeout_cycles = timeout_cycles_in;
+            next_retry_limit = retry_limit_in;
+            next_protocol_a4 = protocol_a4_in;
+            next_packet_pending = packet_pending_in;
+            next_rx_op = rx_op_in;
+            next_rx_block = rx_block_in;
+            next_rx_length = rx_length_in;
+            next_peer_sp = peer_sp_in;
+            next_peer_dp = peer_dp_in;
+            next_rx_q = rx_q_in;
+            next_lur_q = lur_q_in;
+            next_hdr_q = hdr_q_in;
+            next_load_q = load_q_in;
+            next_send_complete = send_complete_in;
+    end
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_19) begin
         if (reset) begin
             enable <= 0;
             configured <= 0;
             request_port <= 0;
+        end
+        else begin
+            enable <= next_enable;
+            configured <= next_configured;
+            request_port <= next_request_port;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_20) begin
+        if (reset) begin
             timeout_cycles <= 0;
+        end
+        else begin
+            timeout_cycles <= next_timeout_cycles;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_21) begin
+        if (reset) begin
             retry_limit <= 0;
             protocol_a4 <= 0;
             packet_pending <= 0;
             rx_op <= 0;
+        end
+        else begin
+            retry_limit <= next_retry_limit;
+            protocol_a4 <= next_protocol_a4;
+            packet_pending <= next_packet_pending;
+            rx_op <= next_rx_op;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_22) begin
+        if (reset) begin
             rx_block <= 0;
             rx_length <= 0;
+        end
+        else begin
+            rx_block <= next_rx_block;
+            rx_length <= next_rx_length;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_23) begin
+        if (reset) begin
             peer_sp <= 0;
             peer_dp <= 0;
+        end
+        else begin
+            peer_sp <= next_peer_sp;
+            peer_dp <= next_peer_dp;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_24) begin
+        if (reset) begin
             rx_q <= 0;
             lur_q <= 0;
             hdr_q <= 0;
             load_q <= 0;
+        end
+        else begin
+            rx_q <= next_rx_q;
+            lur_q <= next_lur_q;
+            hdr_q <= next_hdr_q;
+            load_q <= next_load_q;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_25) begin
+        if (reset) begin
             send_complete <= 0;
         end
-        else if (ce) begin
-            enable <= enable_in;
-            configured <= configured_in;
-            request_port <= request_port_in;
-            timeout_cycles <= timeout_cycles_in;
-            retry_limit <= retry_limit_in;
-            protocol_a4 <= protocol_a4_in;
-            packet_pending <= packet_pending_in;
-            rx_op <= rx_op_in;
-            rx_block <= rx_block_in;
-            rx_length <= rx_length_in;
-            peer_sp <= peer_sp_in;
-            peer_dp <= peer_dp_in;
-            rx_q <= rx_q_in;
-            lur_q <= lur_q_in;
-            hdr_q <= hdr_q_in;
-            load_q <= load_q_in;
-            send_complete <= send_complete_in;
+        else begin
+            send_complete <= next_send_complete;
         end
+    end
     end
     function [15:0] crc16;
         input [15:0] old;
@@ -788,10 +1171,10 @@ error_position <= packet_pos - 10'd4;
         input [12:0] addr;
         input [7:0] destination;
         begin
-            fetch_source <= src;
-            fetch_addr <= addr;
-            return_state <= destination;
-            state <= FETCH;
+            next_fetch_source = src;
+            next_fetch_addr = addr;
+            next_return_state = destination;
+            next_state = FETCH;
         end
     endtask
 
@@ -801,17 +1184,19 @@ error_position <= packet_pos - 10'd4;
         input [2:0] count;
         input [7:0] destination;
         begin
-            fetch_source <= src;
-            fetch_addr <= addr;
-            number <= 0;
-            number_left <= count;
-            num_return <= destination;
-            state <= NUMBER;
+            next_fetch_source = src;
+            next_fetch_addr = addr;
+            next_number = 0;
+            next_number_left = count;
+            next_num_return = destination;
+            next_state = NUMBER;
         end
     endtask
 
     // 请求字节的读取等待拍用于预先选择目标字符并比较，解析状态只消费一位结果。
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_26) begin
         if (reset) begin
             expected_name <= 0;
             expected_mode <= 0;
@@ -823,7 +1208,7 @@ error_position <= packet_pos - 10'd4;
             mode_terminal <= 0;
             request_reject <= 0;
         end
-        else if (ce) begin
+        else begin
             expected_name <= target_name(name_pos, request_write ? "R" : request_download ? "D" : "I",
                 request_download);
             expected_mode <= octet_byte(name_pos);
@@ -841,11 +1226,15 @@ error_position <= packet_pos - 10'd4;
                 || (!request_write && request_download && available_size == 0);
         end
     end
+    end
 
     // 块号递减独立成一拍，避免与报文比较、优先级和状态选择串成一条长链。
     always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_27) begin
         if (reset) previous_block <= 16'hffff;
-        else if (ce) previous_block <= block_number - 16'd1;
+        else previous_block <= block_number - 16'd1;
+    end
     end
 
     // 开始构造报文时，先保存端口、报文类型和发送后的返回状态。
@@ -855,171 +1244,165 @@ error_position <= packet_pos - 10'd4;
         input [15:0] source_port, dest_port;
         input [7:0] destination;
         begin
-            pending_kind <= kind;
-            pending_length <= length;
-            pending_sport <= source_port;
-            pending_dport <= dest_port;
-            pending_after <= destination;
-            state <= PACKET_START;
+            next_pending_kind = kind;
+            next_pending_length = length;
+            next_pending_sport = source_port;
+            next_pending_dport = dest_port;
+            next_pending_after = destination;
+            next_state = PACKET_START;
         end
     endtask
 
     task fail;
         input [7:0] code;
         begin
-            reason <= code;
-            status <= ST_FAILED;
-            state <= FAILURE;
+            next_reason = code;
+            next_status = ST_FAILED;
+            next_state = FAILURE;
         end
     endtask
 
-    always @(posedge clk) begin
-        if (reset) begin
+    // 下一状态保持原非阻塞赋值的旧值语义；每组 CE 最多驱动 32 个数据位。
+    always @* begin
+        next_send_request = send_request;
+        next_send_mode = send_mode;
+        next_send_length = send_length;
+        next_deny_we = deny_we;
+        next_deny_wa = deny_wa;
+        next_deny_wd = deny_wd;
+        next_status = status;
+        next_reason = reason;
+        next_state = state;
+        next_command_op = command_op;
+        next_command_block = command_block;
+        next_command_sport = command_sport;
+        next_command_dport = command_dport;
+        next_command_length = command_length;
+        next_dispatch_match = dispatch_match;
+        next_dispatch_action = dispatch_action;
+        next_dispatch_current = dispatch_current;
+        next_dispatch_repeat = dispatch_repeat;
+        next_main_tid = main_tid;
+        next_status_tid = status_tid;
+        next_main_peer = main_peer;
+        next_status_peer = status_peer;
+        next_tid_sequence = tid_sequence;
+        next_loaded = loaded;
+        next_file_size = file_size;
+        next_available_size = available_size;
+        next_dl_acked = dl_acked;
+        next_dl_remaining = dl_remaining;
+        next_dl_read_addr = dl_read_addr;
+        next_download_mode = download_mode;
+        next_request_download = request_download;
+        next_request_unsupported = request_unsupported;
+        next_request_resume = request_resume;
+        next_deny_empty = deny_empty;
+        next_deny_unsupported = deny_unsupported;
+        next_deny_pos = deny_pos;
+        next_deny_tid = deny_tid;
+        next_saved_sport = saved_sport;
+        next_saved_dport = saved_dport;
+        next_lus_counter = lus_counter;
+        next_retry_total = retry_total;
+        next_tx_sport = tx_sport;
+        next_tx_dport = tx_dport;
+        next_consume = consume;
+        next_timer = timer;
+        next_retries = retries;
+        next_rx_re = rx_re;
+        next_rx_ra = rx_ra;
+        next_tx_we = tx_we;
+        next_tx_wa = tx_wa;
+        next_tx_wd = tx_wd;
+        next_lur_we = lur_we;
+        next_lur_wa = lur_wa;
+        next_lur_wd = lur_wd;
+        next_lur_re = lur_re;
+        next_lur_ra = lur_ra;
+        next_hdr_we = hdr_we;
+        next_hdr_wa = hdr_wa;
+        next_hdr_wd = hdr_wd;
+        next_hdr_re = hdr_re;
+        next_hdr_ra = hdr_ra;
+        next_load_we = load_we;
+        next_load_wa = load_wa;
+        next_load_wd = load_wd;
+        next_load_re = load_re;
+        next_load_ra = load_ra;
+        next_manifest = manifest;
+        next_file_kind = file_kind;
+        next_block_number = block_number;
+        next_ack_number = ack_number;
+        next_data_crc = data_crc;
+        next_header_crc = header_crc;
+        next_expected_crc = expected_crc;
+        next_return_state = return_state;
+        next_num_return = num_return;
+        next_after_tx = after_tx;
+        next_lus_return = lus_return;
+        next_ack_return = ack_return;
+        next_wait_kind = wait_kind;
+        next_packet_type = packet_type;
+        next_pending_kind = pending_kind;
+        next_pending_length = pending_length;
+        next_pending_sport = pending_sport;
+        next_pending_dport = pending_dport;
+        next_pending_after = pending_after;
+        next_fetch_source = fetch_source;
+        next_fetch_addr = fetch_addr;
+        next_byte_value = byte_value;
+        next_number = number;
+        next_number_left = number_left;
+        next_packet_len = packet_len;
+        next_packet_pos = packet_pos;
+        next_metadata_size = metadata_size;
+        next_header_pointer_ok = header_pointer_ok;
+        next_pointer_less = pointer_less;
+        next_pointer_equal = pointer_equal;
+        next_pointer_minimum = pointer_minimum;
+        next_header_pointer = header_pointer;
+        next_header_name_addr = header_name_addr;
+        next_header_name_len = header_name_len;
+        next_part_len = part_len;
+        next_part_addr = part_addr;
+        next_data_name_addr = data_name_addr;
+        next_data_name_len = data_name_len;
+        next_lus_status = lus_status;
+        next_percent = percent;
+        next_scaled = scaled;
+        next_ratio_h = ratio_h;
+        next_ratio_t = ratio_t;
+        next_ratio_u = ratio_u;
+        next_decimal_tens = decimal_tens;
+        next_decimal_rest = decimal_rest;
+        next_copy_pos = copy_pos;
+        next_copy_len = copy_len;
+        next_scan_pos = scan_pos;
+        next_name_pos = name_pos;
+        next_request_write = request_write;
+        next_build_value = build_value;
+        next_lus_partlen_pos = lus_partlen_pos;
+        next_lus_part_pos = lus_part_pos;
+        next_lus_tail_pos = lus_tail_pos;
+        next_lus_packet_len = lus_packet_len;
+        next_tail_index = tail_index;
+        next_head_index = head_index;
+        next_part_index = part_index;
+        next_name_end = name_end;
+        next_mode_start = mode_start;
 
-            send_request <= 0;
-            send_mode <= 0;
-            send_length <= 0;
-            deny_we <= 0;
-            deny_wa <= 0;
-            deny_wd <= 0;
-            status <= ST_IDLE;
-            reason <= REASON_NONE;
-            state <= IDLE;
-            command_op <= 0;
-            command_block <= 0;
-            command_sport <= 0;
-            command_dport <= 0;
-            command_length <= 0;
-            dispatch_match <= 0;
-            dispatch_action <= 0;
-            dispatch_current <= 0;
-            dispatch_repeat <= 0;
-            main_tid <= MAIN_TID_INIT;
-            status_tid <= STATUS_TID_INIT;
-            main_peer <= 0;
-            status_peer <= 0;
-            tid_sequence <= TID_SEQUENCE_INIT;
-            loaded <= 0;
-            file_size <= 0;
-            available_size <= 0;
-            dl_acked <= 0;
-            dl_remaining <= 0;
-            dl_read_addr <= 0;
-            download_mode <= 0;
-            request_download <= 0;
-            request_unsupported <= 0;
-            request_resume <= IDLE;
-            deny_empty <= 0;
-            deny_unsupported <= 0;
-            deny_pos <= 0;
-            deny_tid <= DENY_TID_INIT;
-            saved_sport <= 0;
-            saved_dport <= 0;
-            lus_counter <= 0;
-            retry_total <= 0;
+            next_deny_we = 0;
+            next_consume = 0;
+            next_rx_re = 0;
+            next_tx_we = 0;
 
-            tx_sport <= 0;
-            tx_dport <= 0;
-            consume <= 0;
-            timer <= 0;
-            retries <= 0;
-
-            rx_re <= 0;
-            rx_ra <= 0;
-            tx_we <= 0;
-            tx_wa <= 0;
-            tx_wd <= 0;
-
-            lur_we <= 0;
-            lur_wa <= 0;
-            lur_wd <= 0;
-            lur_re <= 0;
-            lur_ra <= 0;
-            hdr_we <= 0;
-            hdr_wa <= 0;
-            hdr_wd <= 0;
-            hdr_re <= 0;
-            hdr_ra <= 0;
-            load_we <= 0;
-            load_wa <= 0;
-            load_wd <= 0;
-            load_re <= 0;
-            load_ra <= 0;
-
-            manifest <= 0;
-            file_kind <= FILE_LIST;
-            block_number <= 0;
-            ack_number <= 0;
-            data_crc <= CRC16_INIT;
-            header_crc <= CRC16_INIT;
-            expected_crc <= 0;
-            return_state <= 0;
-            num_return <= 0;
-            after_tx <= 0;
-            lus_return <= 0;
-            ack_return <= 0;
-            wait_kind <= 0;
-            packet_type <= 0;
-            pending_kind <= 0;
-            pending_length <= 0;
-            pending_sport <= 0;
-            pending_dport <= 0;
-            pending_after <= 0;
-            fetch_source <= 0;
-            fetch_addr <= 0;
-            byte_value <= 0;
-            number <= 0;
-            number_left <= 0;
-            packet_len <= 0;
-            packet_pos <= 0;
-            metadata_size <= 0;
-            header_pointer_ok <= 0;
-            pointer_less <= 0;
-            pointer_equal <= 0;
-            pointer_minimum <= 0;
-            header_pointer <= 0;
-            header_name_addr <= 0;
-            header_name_len <= 0;
-            part_len <= 0;
-            part_addr <= 0;
-            data_name_addr <= 0;
-            data_name_len <= 0;
-            lus_status <= LUS_NONE;
-            percent <= 0;
-            scaled <= 0;
-            ratio_h <= 0;
-            ratio_t <= 0;
-            ratio_u <= 0;
-            decimal_tens <= 0;
-            decimal_rest <= 0;
-            copy_pos <= 0;
-            copy_len <= 0;
-            scan_pos <= 0;
-            name_pos <= 0;
-            request_write <= 0;
-            build_value <= 0;
-            lus_partlen_pos <= 0;
-            lus_part_pos <= 0;
-            lus_tail_pos <= 0;
-            lus_packet_len <= 0;
-            tail_index <= 0;
-            head_index <= 0;
-            part_index <= 0;
-            name_end <= 0;
-            mode_start <= 0;
-        end
-        else if (ce) begin
-            deny_we <= 0;
-            consume <= 0;
-            rx_re <= 0;
-            tx_we <= 0;
-
-            lur_we <= 0;
-            lur_re <= 0;
-            hdr_we <= 0;
-            hdr_re <= 0;
-            load_we <= 0;
-            load_re <= 0;
+            next_lur_we = 0;
+            next_lur_re = 0;
+            next_hdr_we = 0;
+            next_hdr_re = 0;
+            next_load_we = 0;
+            next_load_re = 0;
             // 加载操作依次交换初始化、状态、请求列表、头文件和数据文件。
             // 卸载操作依次交换初始化、状态、请求列表和数据文件。
             // 状态名里的缩写：LUS 是加载状态文件，LUR 是加载请求列表，LNR 是卸载请求列表。
@@ -1029,152 +1412,154 @@ error_position <= packet_pos - 10'd4;
                 // ======== 第一部分：接收请求并检查文件名和传输模式 ========
                 // IDLE：等完整请求，服务已启用且收到请求时转 DISPATCH。
                 IDLE : if (packet_pending && enable && configured) begin
-                    consume <= 1;
-                    command_op <= rx_op;
-                    command_block <= rx_block;
-                    command_length <= rx_length;
-                    command_sport <= peer_sp;
-                    command_dport <= peer_dp;
-                    request_resume <= IDLE;
-                    state <= DISPATCH_CHECK;
+                    next_consume = 1;
+                    next_command_op = rx_op;
+                    next_command_block = rx_block;
+                    next_command_length = rx_length;
+                    next_command_sport = peer_sp;
+                    next_command_dport = peer_dp;
+                    next_request_resume = IDLE;
+                    next_state = DISPATCH_CHECK;
                 end
 
                 // WAIT_PACKET：等下一报文，超时则重发，重试耗尽时结束本次操作。
                 WAIT_PACKET : begin
                     if (packet_pending) begin
-                        consume <= 1;
-                        command_op <= rx_op;
-                        command_block <= rx_block;
-                        command_length <= rx_length;
-                        command_sport <= peer_sp;
-                        command_dport <= peer_dp;
-                        request_resume <= WAIT_PACKET;
-                        state <= DISPATCH_CHECK;
-                        timer <= timeout_cycles;
+                        next_consume = 1;
+                        next_command_op = rx_op;
+                        next_command_block = rx_block;
+                        next_command_length = rx_length;
+                        next_command_sport = peer_sp;
+                        next_command_dport = peer_dp;
+                        next_request_resume = WAIT_PACKET;
+                        next_state = DISPATCH_CHECK;
+                        next_timer = timeout_cycles;
                     end
                     else if (timer <= CE_DIV) begin
-                        timer <= 0;
+                        next_timer = 0;
                         if (retries == retry_limit) begin
                             if (wait_kind == WK_LUS_ACK0 || wait_kind == WK_LUS_ACK1) begin
-                                reason <= REASON_RETRY_LIMIT;
-                                status <= ST_FAILED;
-                                state <= DONE;
+                                next_reason = REASON_RETRY_LIMIT;
+                                next_status = ST_FAILED;
+                                next_state = DONE;
                             end
                             else fail (REASON_RETRY_LIMIT);
                         end
                         else begin
-                            retries <= retries + 1'b1;
-                            retry_total <= retry_total + 1'b1;
-                            packet_pos <= 0;
-                            state <= TX_ADDR;
+                            next_retries = retries + 1'b1;
+                            next_retry_total = retry_total + 1'b1;
+                            next_packet_pos = 0;
+                            next_state = TX_ADDR;
                         end
                     end
-                    else timer <= timer - CE_DIV;
+                    else next_timer = timer - CE_DIV;
                 end
 
                 // 比较、优先级和动作各占一拍；选择位互斥，动作不再串接长优先级链。
                 DISPATCH_CHECK : begin
-                    dispatch_match[0] <= command_dport == request_port
+                    next_dispatch_match[0] = command_dport == request_port
                         && (command_op == 1 || command_op == TFTP_OPCODE_WRQ);
-                    dispatch_match[1] <= command_op == TFTP_OPCODE_ERROR && command_dport == main_tid;
-                    dispatch_match[2] <= command_op == TFTP_OPCODE_ERROR && command_dport == status_tid;
-                    dispatch_match[3] <= wait_kind == WK_LUI_ACK && command_dport == main_tid
+                    next_dispatch_match[1] = command_op == TFTP_OPCODE_ERROR && command_dport == main_tid;
+                    next_dispatch_match[2] = command_op == TFTP_OPCODE_ERROR && command_dport == status_tid;
+                    next_dispatch_match[3] = wait_kind == WK_LUI_ACK && command_dport == main_tid
                         && command_sport == main_peer
                         && command_op == TFTP_OPCODE_ACK && command_block == 1;
-                    dispatch_match[4] <= wait_kind == WK_LUS_ACK0 && command_dport == status_tid
+                    next_dispatch_match[4] = wait_kind == WK_LUS_ACK0 && command_dport == status_tid
                         && command_op == TFTP_OPCODE_ACK && command_block == 0;
-                    dispatch_match[5] <= wait_kind == WK_LUS_ACK1 && command_dport == status_tid
+                    next_dispatch_match[5] = wait_kind == WK_LUS_ACK1 && command_dport == status_tid
                         && command_sport == status_peer
                         && command_op == TFTP_OPCODE_ACK && command_block == 1;
-                    dispatch_match[6] <= (wait_kind == WK_DL_ACK0 && command_dport == main_tid
+                    next_dispatch_match[6] = (wait_kind == WK_DL_ACK0 && command_dport == main_tid
                         && command_op == TFTP_OPCODE_ACK && command_block == 0);
-                    dispatch_match[7] <= (wait_kind == WK_DL_ACK && command_dport == main_tid
+                    next_dispatch_match[7] = (wait_kind == WK_DL_ACK && command_dport == main_tid
                         && command_sport == main_peer
                         && command_op == TFTP_OPCODE_ACK && command_block == block_number)
                         || (wait_kind == WK_DATA && command_dport == main_tid && command_op == TFTP_OPCODE_DATA
                         && (main_peer == 0 || command_sport == main_peer));
-                    dispatch_current <= command_block == block_number && command_length >= TFTP_HEADER_BYTES
+                    next_dispatch_current = command_block == block_number && command_length >= TFTP_HEADER_BYTES
                         && command_length <= TFTP_MAX_PACKET_BYTES;
-                    dispatch_repeat <= command_block == previous_block;
-                    state <= DISPATCH_SELECT;
+                    next_dispatch_repeat = command_block == previous_block;
+                    next_state = DISPATCH_SELECT;
                 end
                 DISPATCH_SELECT : begin
-                    dispatch_action <= dispatch_choice;
-                    state <= DISPATCH;
+                    next_dispatch_action = dispatch_choice;
+                    next_state = DISPATCH;
                 end
                 DISPATCH : case (1'b1) // synthesis parallel_case
                     dispatch_action[0] : begin
-                        request_write <= command_op == TFTP_OPCODE_WRQ;
-                        request_download <= 0;
-                        request_unsupported <= 0;
-                        name_pos <= 0;
-                        state <= NAME;
+                        next_request_write = command_op == TFTP_OPCODE_WRQ;
+                        next_request_download = 0;
+                        next_request_unsupported = 0;
+                        next_name_pos = 0;
+                        next_state = NAME;
                     end
                     dispatch_action[1] : fail (REASON_TFTP_ERROR);
                     dispatch_action[2] : begin
-                        reason <= REASON_TFTP_ERROR;
-                        status <= ST_FAILED;
-                        state <= DONE;
+                        next_reason = REASON_TFTP_ERROR;
+                        next_status = ST_FAILED;
+                        next_state = DONE;
                     end
                     dispatch_action[3] : begin
-                        lus_status <= LUS_ACCEPTED;
-                        lus_return <= LUS_DONE;
-                        state <= START_LUS;
+                        next_lus_status = LUS_ACCEPTED;
+                        next_lus_return = LUS_DONE;
+                        next_state = START_LUS;
                     end
                     dispatch_action[4] : begin
-                        status_peer <= command_sport;
-                        state <= LUS_DATA;
+                        next_status_peer = command_sport;
+                        next_state = LUS_DATA;
                     end
-                    dispatch_action[5] : state <= lus_return;
+                    dispatch_action[5] : next_state = lus_return;
                     dispatch_action[6] : begin
-                        main_peer <= command_sport;
-                        block_number <= 1;
-                        state <= DL_BLOCK;
+                        next_main_peer = command_sport;
+                        next_block_number = 1;
+                        next_state = DL_BLOCK;
                     end
-                    dispatch_action[7] : if (wait_kind == WK_DL_ACK) state <= DL_ACK;
+                    dispatch_action[7] : next_state = DATA_DISPATCH;
+                    default : next_state = status == ST_BUSY ? WAIT_PACKET : IDLE;
+                endcase
+
+                DATA_DISPATCH : if (wait_kind == WK_DL_ACK) next_state = DL_ACK;
                     else begin
-                        main_peer <= command_sport;
+                        next_main_peer = command_sport;
                         if (dispatch_current) begin
-                            copy_len <= command_length - TFTP_HEADER_BYTES;
-                            copy_pos <= 0;
-                            state <= DATA_COPY;
+                            next_copy_len = command_length - TFTP_HEADER_BYTES;
+                            next_copy_pos = 0;
+                            next_state = DATA_COPY;
                         end
                         else if (dispatch_repeat) begin
                             // 重复数据块只重新发送确认，不再次写入加载区。
-                            ack_number <= command_block;
+                            next_ack_number = command_block;
                             make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, command_sport, WAIT_PACKET);
                         end
-                        else state <= WAIT_PACKET;
+                        else next_state = WAIT_PACKET;
                     end
-                    default : state <= status == ST_BUSY ? WAIT_PACKET : IDLE;
-                endcase
 
                 // NAME：读取文件名的下一字节，然后转 NAME_BYTE。
                 NAME : get_byte (0, { 6'b0, name_pos } + RRQ_NAME_POS, NAME_BYTE);
 
                 // NAME_BYTE：识别操作文件名，名字读完后转 MODE，非法名字返回错误。
                 NAME_BYTE : if (name_mark) begin
-                    request_download <= byte_value == "N";
-                    request_unsupported <= byte_value == "C";
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
+                    next_request_download = byte_value == "N";
+                    next_request_unsupported = byte_value == "C";
+                    next_name_pos = name_pos + 1'b1;
+                    next_state = NAME;
                 end
                 else if (name_option) begin
-                    request_unsupported <= 1;
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
+                    next_request_unsupported = 1;
+                    next_name_pos = name_pos + 1'b1;
+                    next_state = NAME;
                 end
                 else if (name_bad) begin
-                    reason <= REASON_DESCRIPTION;
+                    next_reason = REASON_DESCRIPTION;
                     make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                 end
                 else if (name_terminal) begin
-                    name_pos <= 0;
-                    state <= MODE;
+                    next_name_pos = 0;
+                    next_state = MODE;
                 end
                 else begin
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
+                    next_name_pos = name_pos + 1'b1;
+                    next_state = NAME;
                 end
 
                 // MODE：读取传输模式的下一字节，然后转 MODE_BYTE。
@@ -1182,210 +1567,210 @@ error_position <= packet_pos - 10'd4;
 
                 // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
                 MODE_BYTE : if (mode_bad) begin
-                    reason <= REASON_TFTP_ERROR;
+                    next_reason = REASON_TFTP_ERROR;
                     make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
                 end
-                else if (mode_terminal) state <= REQUEST_OK;
+                else if (mode_terminal) next_state = REQUEST_OK;
                 else begin
-                    name_pos <= name_pos + 1'b1;
-                    state <= MODE;
+                    next_name_pos = name_pos + 1'b1;
+                    next_state = MODE;
                 end
 
                 // REQUEST_OK：接受请求后启动文件流程，无法接受时转 DENY_SEND。
                 REQUEST_OK : begin
                     if (request_reject) begin
                         // 信息操作和操作员定义卸载返回状态 1002，不启动后续传输。
-                        deny_unsupported <= request_unsupported;
-                        deny_empty <= status != ST_BUSY;
-                        deny_pos <= 0;
-                        deny_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
-                        saved_sport <= tx_sport;
-                        saved_dport <= tx_dport;
-                        tx_sport <= tid_sequence;
-                        tx_dport <= command_sport;
-                        state <= DENY_SEND;
+                        next_deny_unsupported = request_unsupported;
+                        next_deny_empty = status != ST_BUSY;
+                        next_deny_pos = 0;
+                        next_deny_tid = tid_sequence;
+                        next_tid_sequence = tid_sequence + 1'b1;
+                        next_saved_sport = tx_sport;
+                        next_saved_dport = tx_dport;
+                        next_tx_sport = tid_sequence;
+                        next_tx_dport = command_sport;
+                        next_state = DENY_SEND;
                     end
                     else if (request_write && status == ST_BUSY && wait_kind == WK_LUR) begin
-                        main_peer <= command_sport;
-                        main_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
-                        file_kind <= FILE_LIST;
-                        metadata_size <= 0;
-                        block_number <= 1;
-                        ack_number <= 0;
-                        wait_kind <= WK_DATA;
+                        next_main_peer = command_sport;
+                        next_main_tid = tid_sequence;
+                        next_tid_sequence = tid_sequence + 1'b1;
+                        next_file_kind = FILE_LIST;
+                        next_metadata_size = 0;
+                        next_block_number = 1;
+                        next_ack_number = 0;
+                        next_wait_kind = WK_DATA;
                         make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else if ( ! request_write) begin
-                        status <= ST_BUSY;
-                        reason <= REASON_NONE;
-                        download_mode <= request_download;
-                        main_peer <= command_sport;
-                        main_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
+                        next_status = ST_BUSY;
+                        next_reason = REASON_NONE;
+                        next_download_mode = request_download;
+                        next_main_peer = command_sport;
+                        next_main_tid = tid_sequence;
+                        next_tid_sequence = tid_sequence + 1'b1;
                         if ( ! request_download) begin
-                            loaded <= 0;
-                            available_size <= 0;
+                            next_loaded = 0;
+                            next_available_size = 0;
                         end
-                        file_size <= request_download ? available_size : 0;
-                        dl_acked <= 0;
-                        manifest <= 0;
-                        lus_counter <= 0;
-                        wait_kind <= WK_LUI_ACK;
+                        next_file_size = request_download ? available_size : 0;
+                        next_dl_acked = 0;
+                        next_manifest = 0;
+                        next_lus_counter = 0;
+                        next_wait_kind = WK_LUI_ACK;
                         make_packet (PK_LUI, LUI_PACKET_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else begin
-                        reason <= REASON_TFTP_ERROR;
+                        next_reason = REASON_TFTP_ERROR;
                         make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     end
                 end
 
                 // 拒绝报文单独保存，正常报文 RAM 留给原会话重传。
                 DENY_SEND : begin
-                    deny_we <= 1;
-                    deny_wa <= deny_pos;
-                    deny_wd <= denial_byte(deny_pos);
-                    deny_pos <= deny_pos + 1'b1;
-                    if (deny_pos == (deny_unsupported ? 12 : 20)) state <= DENY_FLUSH;
+                    next_deny_we = 1;
+                    next_deny_wa = deny_pos;
+                    next_deny_wd = denial_byte(deny_pos);
+                    next_deny_pos = deny_pos + 1'b1;
+                    if (deny_pos == (deny_unsupported ? 12 : 20)) next_state = DENY_FLUSH;
                 end
                 DENY_FLUSH : begin
-                    send_mode <= 1;
-                    send_length <= deny_unsupported ? 11'd13 : 11'd21;
-                    send_request <= ~send_request;
-                    state <= DENY_FINISH;
+                    next_send_mode = 1;
+                    next_send_length = deny_unsupported ? 11'd13 : 11'd21;
+                    next_send_request = ~send_request;
+                    next_state = DENY_FINISH;
                 end
                 DENY_FINISH : if (send_complete == send_request) begin
-                    tx_sport <= saved_sport;
-                    tx_dport <= saved_dport;
-                    state <= request_resume;
+                    next_tx_sport = saved_sport;
+                    next_tx_dport = saved_dport;
+                    next_state = request_resume;
                 end
 
                 // FETCH：请求读取指定存储区的字节，然后转 FETCH_WAIT。
                 FETCH : begin
                     case (fetch_source)
                         0 : begin
-                            rx_re <= 1;
-                            rx_ra <= fetch_addr[9:0];
+                            next_rx_re = 1;
+                            next_rx_ra = fetch_addr[9:0];
                         end
                         1 : begin
-                            lur_re <= 1;
-                            lur_ra <= fetch_addr[8:0];
+                            next_lur_re = 1;
+                            next_lur_ra = fetch_addr[8:0];
                         end
                         2 : begin
-                            hdr_re <= 1;
-                            hdr_ra <= fetch_addr[10:0];
+                            next_hdr_re = 1;
+                            next_hdr_ra = fetch_addr[10:0];
                         end
                         3 : begin
-                            load_re <= 1;
-                            load_ra <= fetch_addr;
+                            next_load_re = 1;
+                            next_load_ra = fetch_addr;
                         end
                     endcase
-                    state <= FETCH_WAIT;
+                    next_state = FETCH_WAIT;
                 end
 
                 // FETCH_WAIT：等待同步读取，然后转 FETCH_CAPTURE。
-                FETCH_WAIT : state <= FETCH_WAIT_A;
-                FETCH_WAIT_A : state <= FETCH_WAIT_B;
-                FETCH_WAIT_B : state <= FETCH_WAIT_C;
-                FETCH_WAIT_C : state <= FETCH_CAPTURE;
+                FETCH_WAIT : next_state = FETCH_WAIT_A;
+                FETCH_WAIT_A : next_state = FETCH_WAIT_B;
+                FETCH_WAIT_B : next_state = FETCH_WAIT_C;
+                FETCH_WAIT_C : next_state = FETCH_CAPTURE;
 
                 // FETCH_CAPTURE：保存读出的字节，然后转 FETCH_DONE。
                 FETCH_CAPTURE : begin
                     case (fetch_source)
-                        0 : byte_value <= rx_q;
-                        1 : byte_value <= lur_q;
-                        2 : byte_value <= hdr_q;
-                        3 : byte_value <= load_q;
+                        0 : next_byte_value = rx_q;
+                        1 : next_byte_value = lur_q;
+                        2 : next_byte_value = hdr_q;
+                        3 : next_byte_value = load_q;
                     endcase
-                    state <= FETCH_DONE;
+                    next_state = FETCH_DONE;
                 end
 
                 // FETCH_DONE：返回 get_byte 保存的调用状态。
-                FETCH_DONE : state <= return_state;
+                FETCH_DONE : next_state = return_state;
 
                 // NUMBER：读取整数的下一字节，然后转 NUMBER_BYTE。
                 NUMBER : begin
-                    return_state <= NUMBER_BYTE;
-                    state <= FETCH;
+                    next_return_state = NUMBER_BYTE;
+                    next_state = FETCH;
                 end
 
                 // NUMBER_BYTE：拼接整数，读够后返回 num_return，否则转 NUMBER。
                 NUMBER_BYTE : begin
-                    number <= { number[23:0], byte_value };
-                    fetch_addr <= fetch_addr + 1'b1;
-                    number_left <= number_left - 1'b1;
-                    state <= number_left == 1 ? num_return : NUMBER;
+                    next_number = { number[23:0], byte_value };
+                    next_fetch_addr = fetch_addr + 1'b1;
+                    next_number_left = number_left - 1'b1;
+                    next_state = number_left == 1 ? num_return : NUMBER;
                 end
 
                 // 字段位置先算好并寄存，下一拍再选择字节，以缩短组合路径。
                 // ======== 第三部分：构造并发送一个报文 ========
                 // 报文请求与实际启动分开，参数在本地寄存后再驱动构造器与计数器。
                 PACKET_START : begin
-                    packet_type <= pending_kind;
-                    packet_len <= pending_length;
-                    packet_pos <= 0;
-                    tx_sport <= pending_sport;
-                    tx_dport <= pending_dport;
-                    after_tx <= pending_after;
-                    retries <= 0;
-                    timer <= 0;
-                    state <= BUILD_PREP;
+                    next_packet_type = pending_kind;
+                    next_packet_len = pending_length;
+                    next_packet_pos = 0;
+                    next_tx_sport = pending_sport;
+                    next_tx_dport = pending_dport;
+                    next_after_tx = pending_after;
+                    next_retries = 0;
+                    next_timer = 0;
+                    next_state = BUILD_PREP;
                 end
 
                 // BUILD_PREP：计算本字节使用的地址，然后转 BUILD。
                 BUILD_PREP : begin
-                    tail_index <= packet_pos - lus_tail_pos;
-                    head_index <= packet_pos - LUS_NAME_POS;
-                    part_index <= packet_pos - lus_part_pos;
-                    name_end <= packet_len - RRQ_SUFFIX_BYTES;
-                    mode_start <= packet_len - OCTET_MODE_BYTES;
-                    dl_read_addr <= dl_acked[12:0] + packet_pos - TFTP_DATA_POS;
-                    state <= BUILD_CANDIDATE;
+                    next_tail_index = packet_pos - lus_tail_pos;
+                    next_head_index = packet_pos - LUS_NAME_POS;
+                    next_part_index = packet_pos - lus_part_pos;
+                    next_name_end = packet_len - RRQ_SUFFIX_BYTES;
+                    next_mode_start = packet_len - OCTET_MODE_BYTES;
+                    next_dl_read_addr = dl_acked[12:0] + packet_pos - TFTP_DATA_POS;
+                    next_state = BUILD_CANDIDATE;
                 end
 
                 // 并行候选值需要一拍寄存，随后选择当前报文类型的结果。
-                BUILD_CANDIDATE : state <= BUILD;
+                BUILD_CANDIDATE : next_state = BUILD;
 
                 // BUILD：选择本字节内容，需读存储器时先读取，随后转 EMIT。
                 BUILD : begin
-                    build_value <= 0;
-                    state <= EMIT;
+                    next_build_value = 0;
+                    next_state = EMIT;
                     case (packet_type) // synthesis parallel_case
                         PK_ACK : begin
-                            build_value <= candidate_byte[PK_ACK];
+                            next_build_value = candidate_byte[PK_ACK];
                             if (candidate_read[PK_ACK])
                                 get_byte(candidate_source[PK_ACK], candidate_address[PK_ACK], EMIT);
                         end
                         PK_LUI : begin
-                            build_value <= candidate_byte[PK_LUI];
+                            next_build_value = candidate_byte[PK_LUI];
                             if (candidate_read[PK_LUI])
                                 get_byte(candidate_source[PK_LUI], candidate_address[PK_LUI], EMIT);
                         end
                         PK_ERROR : begin
-                            build_value <= candidate_byte[PK_ERROR];
+                            next_build_value = candidate_byte[PK_ERROR];
                             if (candidate_read[PK_ERROR])
                                 get_byte(candidate_source[PK_ERROR], candidate_address[PK_ERROR], EMIT);
                         end
                         PK_LUS_WRQ : begin
-                            build_value <= candidate_byte[PK_LUS_WRQ];
+                            next_build_value = candidate_byte[PK_LUS_WRQ];
                             if (candidate_read[PK_LUS_WRQ])
                                 get_byte(candidate_source[PK_LUS_WRQ], candidate_address[PK_LUS_WRQ], EMIT);
                         end
                         PK_RRQ : begin
-                            build_value <= candidate_byte[PK_RRQ];
+                            next_build_value = candidate_byte[PK_RRQ];
                             if (candidate_read[PK_RRQ])
                                 get_byte(candidate_source[PK_RRQ],
                                     candidate_source[PK_RRQ] == 1 ? rrq_header_read : rrq_data_read, EMIT);
                         end
                         PK_DL_DATA : begin
-                            build_value <= candidate_byte[PK_DL_DATA];
+                            next_build_value = candidate_byte[PK_DL_DATA];
                             if (candidate_read[PK_DL_DATA])
                                 get_byte(candidate_source[PK_DL_DATA], candidate_address[PK_DL_DATA], EMIT);
                         end
                         PK_LUS : begin
-                            build_value <= candidate_byte[PK_LUS];
+                            next_build_value = candidate_byte[PK_LUS];
                             if (candidate_read[PK_LUS])
                                 get_byte(candidate_source[PK_LUS], candidate_address[PK_LUS], EMIT);
                         end
@@ -1394,103 +1779,103 @@ error_position <= packet_pos - 10'd4;
 
                 // EMIT：写入待发字节，未写完转 BUILD_PREP，写完转 BUILD_FLUSH。
                 EMIT : begin
-                    tx_we <= 1;
-                    tx_wa <= packet_pos;
-                    tx_wd <= return_state == EMIT ? byte_value : build_value;
-                    return_state <= 0;
-                    packet_pos <= packet_pos + 1'b1;
-                    state <= packet_pos + 1'b1 == packet_len ? BUILD_FLUSH : BUILD_PREP;
+                    next_tx_we = 1;
+                    next_tx_wa = packet_pos;
+                    next_tx_wd = return_state == EMIT ? byte_value : build_value;
+                    next_return_state = 0;
+                    next_packet_pos = packet_pos + 1'b1;
+                    next_state = packet_pos + 1'b1 == packet_len ? BUILD_FLUSH : BUILD_PREP;
                 end
 
                 // BUILD_FLUSH：等最后一次写入完成，然后转 TX_ADDR。
                 BUILD_FLUSH : begin
-                    packet_pos <= 0;
-                    state <= TX_ADDR;
+                    next_packet_pos = 0;
+                    next_state = TX_ADDR;
                 end
 
                 // 整帧交给全速发送器，末字节握手后再启动重传计时。
                 TX_ADDR : begin
-                    send_mode <= 0;
-                    send_length <= {1'b0, packet_len};
-                    send_request <= ~send_request;
-                    state <= TX_SEND;
+                    next_send_mode = 0;
+                    next_send_length = {1'b0, packet_len};
+                    next_send_request = ~send_request;
+                    next_state = TX_SEND;
                 end
                 TX_SEND : if (send_complete == send_request) begin
-                    state <= after_tx;
-                    timer <= timeout_cycles;
+                    next_state = after_tx;
+                    next_timer = timeout_cycles;
                 end
 
                 // ======== 第四部分：计算进度并发送状态文件 ========
                 // START_LUS：准备状态文件的端口和进度，然后转 RATIO_SCALE。
                 START_LUS : begin
-                    lus_counter <= lus_counter + 1'b1;
-                    status_tid <= tid_sequence;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    percent <= 0;
-                    scaled <= download_mode ? {6'b0, dl_acked} : {6'b0, loaded};
-                    state <= RATIO_SCALE;
+                    next_lus_counter = lus_counter + 1'b1;
+                    next_status_tid = tid_sequence;
+                    next_tid_sequence = tid_sequence + 1'b1;
+                    next_percent = 0;
+                    next_scaled = download_mode ? {6'b0, dl_acked} : {6'b0, loaded};
+                    next_state = RATIO_SCALE;
                 end
 
                 // RATIO_SCALE：把已完成字节数乘 100，然后转 RATIO_SUB。
                 RATIO_SCALE : begin
-                    scaled <= (scaled << 6) + (scaled << 5) + (scaled << 2);
-                    state <= RATIO_SUB;
+                    next_scaled = (scaled << 6) + (scaled << 5) + (scaled << 2);
+                    next_state = RATIO_SUB;
                 end
 
                 // RATIO_SUB：用反复相减求百分比，求完后转 RATIO_DEC。
                 RATIO_SUB : begin
                     if (file_size != 0 && scaled >= file_size && percent < MAX_PROGRESS_PERCENT) begin
-                        scaled <= scaled - file_size;
-                        percent <= percent + 1'b1;
+                        next_scaled = scaled - file_size;
+                        next_percent = percent + 1'b1;
                     end
                     else begin
-                        decimal_tens <= 0;
-                        decimal_rest <= lus_status == LUS_COMPLETED ? 0 : percent;
-                        ratio_h <= lus_status == LUS_COMPLETED ? "1" : " ";
-                        state <= RATIO_DEC;
+                        next_decimal_tens = 0;
+                        next_decimal_rest = lus_status == LUS_COMPLETED ? 0 : percent;
+                        next_ratio_h = lus_status == LUS_COMPLETED ? "1" : " ";
+                        next_state = RATIO_DEC;
                     end
                 end
 
                 // RATIO_DEC：把百分比变成十进制数字，完成后转 LUS_WRQ。
                 RATIO_DEC : if (decimal_rest >= DECIMAL_BASE) begin
-                    decimal_rest <= decimal_rest - DECIMAL_BASE;
-                    decimal_tens <= decimal_tens + 1'b1;
+                    next_decimal_rest = decimal_rest - DECIMAL_BASE;
+                    next_decimal_tens = decimal_tens + 1'b1;
                 end
                 else begin
-                    ratio_t <= lus_status == LUS_COMPLETED ? "0" : decimal_tens == 0 ? " " : ASCII_ZERO + decimal_tens;
-                    ratio_u <= ASCII_ZERO + decimal_rest;
-                    state <= LUS_WRQ;
+                    next_ratio_t = lus_status == LUS_COMPLETED ? "0" : decimal_tens == 0 ? " " : ASCII_ZERO + decimal_tens;
+                    next_ratio_u = ASCII_ZERO + decimal_rest;
+                    next_state = LUS_WRQ;
                 end
 
                 // LUS_WRQ：请求发送状态文件，发完后等待第零块确认。
                 LUS_WRQ : begin
-                    wait_kind <= WK_LUS_ACK0;
+                    next_wait_kind = WK_LUS_ACK0;
                     make_packet (PK_LUS_WRQ, LUS_WRQ_PACKET_BYTES, status_tid, request_port, WAIT_PACKET);
                 end
 
                 // LUS_DATA：发送状态文件数据，发完后等待第一块确认。
                 LUS_DATA : begin
-                    wait_kind <= WK_LUS_ACK1;
+                    next_wait_kind = WK_LUS_ACK1;
                     make_packet (PK_LUS, manifest ? lus_packet_len : LUS_SHORT_PACKET_BYTES, status_tid,
                                  status_peer, WAIT_PACKET);
                 end
 
                 // LUS_DONE：初始状态文件获确认后转 IDLE，等待文件列表。
                 LUS_DONE : begin
-                    wait_kind <= WK_LUR;
-                    state <= IDLE;
+                    next_wait_kind = WK_LUR;
+                    next_state = IDLE;
                 end
 
                 // ACK_MAIN：构造当前数据块的确认，发送后返回 ack_return。
                 ACK_MAIN : begin
-                    wait_kind <= WK_DATA;
+                    next_wait_kind = WK_DATA;
                     make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, main_peer, ack_return);
                 end
 
                 // ======== 第五部分：接收并保存文件的一块数据 ========
                 // DATA_COPY：读下一有效字节，转 DATA_BYTE；全部读完转 DATA_END。
                 DATA_COPY : begin
-                    if (copy_pos == copy_len) state <= DATA_END;
+                    if (copy_pos == copy_len) next_state = DATA_END;
                     else get_byte (0, copy_pos + TFTP_HEADER_BYTES, DATA_BYTE);
                 end
 
@@ -1499,60 +1884,60 @@ error_position <= packet_pos - 10'd4;
                     if (file_kind == FILE_LIST) begin
                         if (metadata_size >= LUR_BUFFER_BYTES) fail (REASON_LENGTH);
                         else begin
-                            lur_we <= 1;
-                            lur_wa <= metadata_size[8:0];
-                            lur_wd <= byte_value;
-                            metadata_size <= metadata_size + 1'b1;
-                            state <= DATA_COPY;
+                            next_lur_we = 1;
+                            next_lur_wa = metadata_size[8:0];
+                            next_lur_wd = byte_value;
+                            next_metadata_size = metadata_size + 1'b1;
+                            next_state = DATA_COPY;
                         end
                     end
                     else if (file_kind == FILE_HEADER) begin
                         if (metadata_size >= HEADER_BUFFER_BYTES) fail (REASON_LENGTH);
                         else begin
-                            hdr_we <= 1;
-                            hdr_wa <= metadata_size[10:0];
-                            hdr_wd <= byte_value;
-                            metadata_size <= metadata_size + 1'b1;
-                            state <= DATA_COPY;
+                            next_hdr_we = 1;
+                            next_hdr_wa = metadata_size[10:0];
+                            next_hdr_wd = byte_value;
+                            next_metadata_size = metadata_size + 1'b1;
+                            next_state = DATA_COPY;
                         end
                     end
                     else begin
                         if (loaded >= LOAD_BUFFER_BYTES) fail (REASON_LENGTH);
                         else begin
-                            load_we <= 1;
-                            load_wa <= loaded[12:0];
-                            load_wd <= byte_value;
-                            loaded <= loaded + 1'b1;
-                            data_crc <= crc16 (data_crc, byte_value);
-                            state <= DATA_COPY;
+                            next_load_we = 1;
+                            next_load_wa = loaded[12:0];
+                            next_load_wd = byte_value;
+                            next_loaded = loaded + 1'b1;
+                            next_data_crc = crc16 (data_crc, byte_value);
+                            next_state = DATA_COPY;
                         end
                     end
-                    copy_pos <= copy_pos + 1'b1;
+                    next_copy_pos = copy_pos + 1'b1;
                 end
 
                 // DATA_END：确认当前块；短块结束文件，再转对应的文件检查过程。
                 DATA_END : begin
-                    block_number <= block_number + 1'b1;
-                    ack_number <= command_block;
+                    next_block_number = block_number + 1'b1;
+                    next_ack_number = command_block;
                     if (copy_len < TFTP_BLOCK_BYTES) begin
                         if (file_kind == FILE_LIST) begin
-                            ack_return <= LUR_START;
-                            state <= ACK_MAIN;
+                            next_ack_return = LUR_START;
+                            next_state = ACK_MAIN;
                         end
                         else if (file_kind == FILE_HEADER) begin
-                            ack_return <= HEADER_START;
-                            state <= ACK_MAIN;
+                            next_ack_return = HEADER_START;
+                            next_state = ACK_MAIN;
                         end
-                        else state <= DATA_CHECK;
+                        else next_state = DATA_CHECK;
                     end
                     else begin
-                        ack_return <= WAIT_PACKET;
+                        next_ack_return = WAIT_PACKET;
                         if (file_kind == FILE_DATA && block_number == 1) begin
-                            lus_status <= LUS_IN_PROGRESS;
-                            lus_return <= ACK_MAIN;
-                            state <= START_LUS;
+                            next_lus_status = LUS_IN_PROGRESS;
+                            next_lus_return = ACK_MAIN;
+                            next_state = START_LUS;
                         end
-                        else state <= ACK_MAIN;
+                        else next_state = ACK_MAIN;
                     end
                 end
 
@@ -1575,48 +1960,48 @@ error_position <= packet_pos - 10'd4;
                 // LUR_HLEN：检查文件名长度，加载时继续读件号，卸载时转 LNR_USER。
                 LUR_HLEN : if (byte_value < 2 || byte_value > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
                 else begin
-                    header_name_len <= byte_value[6:0];
-                    header_name_addr <= 9;
+                    next_header_name_len = byte_value[6:0];
+                    next_header_name_addr = 9;
                     get_byte (1, 11'd9 + byte_value, download_mode ? LNR_USER : LUR_PLEN);
                 end
 
                 // LUR_PLEN：检查件号长度，通过后转 LUR_OFFSETS，否则报告失败。
                 LUR_PLEN : if (byte_value < 2 || byte_value > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
                 else begin
-                    part_len <= byte_value[6:0];
-                    part_addr <= 10 + header_name_len;
-                    lus_partlen_pos <= LUS_NAME_POS + header_name_len;
-                    lus_part_pos <= LUS_PART_POS_BASE + header_name_len;
-                    state <= LUR_OFFSETS;
+                    next_part_len = byte_value[6:0];
+                    next_part_addr = 10 + header_name_len;
+                    next_lus_partlen_pos = LUS_NAME_POS + header_name_len;
+                    next_lus_part_pos = LUS_PART_POS_BASE + header_name_len;
+                    next_state = LUR_OFFSETS;
                 end
 
                 // LUR_OFFSETS：计算状态文件中变长字段的位置，然后转 LUR_READY。
                 LUR_OFFSETS : begin
-                    lus_tail_pos <= lus_part_pos + part_len;
-                    state <= LUR_READY;
+                    next_lus_tail_pos = lus_part_pos + part_len;
+                    next_state = LUR_READY;
                 end
 
                 // LUR_READY：报告列表已接受，状态获确认后转 RRQ_HEADER。
                 LUR_READY : begin
-                    lus_packet_len <= lus_tail_pos + LUS_TAIL_BYTES;
-                    manifest <= 1;
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= RRQ_HEADER;
-                    state <= START_LUS;
+                    next_lus_packet_len = lus_tail_pos + LUS_TAIL_BYTES;
+                    next_manifest = 1;
+                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_return = RRQ_HEADER;
+                    next_state = START_LUS;
                 end
 
                 // 卸载列表的文件名之后是用户数据，卸载状态不含加载件号字段。
                 // LNR_USER：检查卸载列表的用户数据长度，通过后转 LNR_NAME。
                 LNR_USER : begin
-                    manifest <= 1;
-                    lus_partlen_pos <= LUS_NAME_POS + header_name_len;
-                    lus_tail_pos <= LUS_NAME_POS + header_name_len;
-                    lus_packet_len <= LUS_DOWNLOAD_LENGTH_BASE + header_name_len;
-                    scan_pos <= 0;
+                    next_manifest = 1;
+                    next_lus_partlen_pos = LUS_NAME_POS + header_name_len;
+                    next_lus_tail_pos = LUS_NAME_POS + header_name_len;
+                    next_lus_packet_len = LUS_DOWNLOAD_LENGTH_BASE + header_name_len;
+                    next_scan_pos = 0;
                     if (metadata_size != LUR_FIXED_BYTES + header_name_len + byte_value
                         || header_name_len != TARGET_NAME_BYTES)
                         fail(REASON_DESCRIPTION);
-                    else state <= LNR_NAME;
+                    else next_state = LNR_NAME;
                 end
 
                 // LNR_NAME：读取卸载文件名的下一字节，然后转 LNR_BYTE。
@@ -1624,38 +2009,38 @@ error_position <= packet_pos - 10'd4;
 
                 // LNR_BYTE：核对 MEMORY.BIN，完全匹配后转 LNR_READY，否则报告失败。
                 LNR_BYTE : if (byte_value != memory_name(scan_pos[6:0])) fail(REASON_DESCRIPTION);
-                else if (scan_pos == TARGET_DOWNLOAD_MARK_POS) state <= LNR_READY;
+                else if (scan_pos == TARGET_DOWNLOAD_MARK_POS) next_state = LNR_READY;
                 else begin
-                    scan_pos <= scan_pos + 1'b1;
-                    state <= LNR_NAME;
+                    next_scan_pos = scan_pos + 1'b1;
+                    next_state = LNR_NAME;
                 end
 
                 // LNR_READY：报告卸载列表已接受，状态获确认后转 DL_WRQ。
                 LNR_READY : begin
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= DL_WRQ;
-                    state <= START_LUS;
+                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_return = DL_WRQ;
+                    next_state = START_LUS;
                 end
 
                 // DL_WRQ：请求发送 MEMORY.BIN，发完后等待第零块确认。
                 DL_WRQ : begin
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    wait_kind <= WK_DL_ACK0;
+                    next_main_tid = tid_sequence;
+                    next_main_peer = 0;
+                    next_tid_sequence = tid_sequence + 1'b1;
+                    next_wait_kind = WK_DL_ACK0;
                     make_packet(PK_RRQ, DOWNLOAD_RRQ_PACKET_BYTES, tid_sequence, request_port, WAIT_PACKET);
                 end
 
                 // DL_BLOCK：计算剩余待卸载字节数，然后转 DL_SIZE。
                 DL_BLOCK : begin
-                    dl_remaining <= file_size - dl_acked;
-                    state <= DL_SIZE;
+                    next_dl_remaining = file_size - dl_acked;
+                    next_state = DL_SIZE;
                 end
 
                 // DL_SIZE：发送最多 512 字节，发完后等待对应块的确认。
                 DL_SIZE : begin
-                    copy_len <= dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_BLOCK_BYTES : dl_remaining[10:0];
-                    wait_kind <= WK_DL_ACK;
+                    next_copy_len = dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_BLOCK_BYTES : dl_remaining[10:0];
+                    next_wait_kind = WK_DL_ACK;
                     make_packet(PK_DL_DATA,
                                 dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_MAX_PACKET_BYTES
                                                                 : dl_remaining[9:0] + TFTP_DATA_POS,
@@ -1664,31 +2049,31 @@ error_position <= packet_pos - 10'd4;
 
                 // DL_ACK：更新已确认字节数，未完转 DL_BLOCK，完成则发送成功状态。
                 DL_ACK : begin
-                    dl_acked <= dl_acked + copy_len;
-                    block_number <= block_number + 1'b1;
+                    next_dl_acked = dl_acked + copy_len;
+                    next_block_number = block_number + 1'b1;
                     if (copy_len < TFTP_BLOCK_BYTES) begin
-                        lus_status <= LUS_COMPLETED;
-                        lus_return <= DONE;
-                        state <= START_LUS;
+                        next_lus_status = LUS_COMPLETED;
+                        next_lus_return = DONE;
+                        next_state = START_LUS;
                     end
                     else if (block_number == 1) begin
-                        lus_status <= LUS_IN_PROGRESS;
-                        lus_return <= DL_BLOCK;
-                        state <= START_LUS;
+                        next_lus_status = LUS_IN_PROGRESS;
+                        next_lus_return = DL_BLOCK;
+                        next_state = START_LUS;
                     end
-                    else state <= DL_BLOCK;
+                    else next_state = DL_BLOCK;
                 end
 
                 // ======== 第七部分：获取并检查头文件和数据文件 ========
                 // RRQ_HEADER：请求加载头文件，发完后等待第一块数据。
                 RRQ_HEADER : begin
-                    file_kind <= FILE_HEADER;
-                    metadata_size <= 0;
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    block_number <= 1;
-                    wait_kind <= WK_DATA;
+                    next_file_kind = FILE_HEADER;
+                    next_metadata_size = 0;
+                    next_main_tid = tid_sequence;
+                    next_main_peer = 0;
+                    next_tid_sequence = tid_sequence + 1'b1;
+                    next_block_number = 1;
+                    next_wait_kind = WK_DATA;
                     make_packet (PK_RRQ, header_name_len + 8, tid_sequence, request_port, WAIT_PACKET);
                 end
 
@@ -1706,33 +2091,33 @@ error_position <= packet_pos - 10'd4;
 
                 // HEADER_PTR：先逐字节比较指针与上界，再合并比较结果。
                 HEADER_PTR : begin
-                    pointer_minimum <= number >= HEADER_DATA_PTR_MIN_WORDS;
-                    pointer_less[0] <= pointer_bytes[7:0] < header_limit[7:0];
-                    pointer_equal[0] <= pointer_bytes[7:0] == header_limit[7:0];
-                    pointer_less[1] <= pointer_bytes[15:8] < header_limit[15:8];
-                    pointer_equal[1] <= pointer_bytes[15:8] == header_limit[15:8];
-                    pointer_less[2] <= pointer_bytes[23:16] < header_limit[23:16];
-                    pointer_equal[2] <= pointer_bytes[23:16] == header_limit[23:16];
-                    pointer_less[3] <= pointer_bytes[31:24] < header_limit[31:24];
-                    pointer_equal[3] <= pointer_bytes[31:24] == header_limit[31:24];
-                    state <= HEADER_PTR_MERGE;
+                    next_pointer_minimum = number >= HEADER_DATA_PTR_MIN_WORDS;
+                    next_pointer_less[0] = pointer_bytes[7:0] < header_limit[7:0];
+                    next_pointer_equal[0] = pointer_bytes[7:0] == header_limit[7:0];
+                    next_pointer_less[1] = pointer_bytes[15:8] < header_limit[15:8];
+                    next_pointer_equal[1] = pointer_bytes[15:8] == header_limit[15:8];
+                    next_pointer_less[2] = pointer_bytes[23:16] < header_limit[23:16];
+                    next_pointer_equal[2] = pointer_bytes[23:16] == header_limit[23:16];
+                    next_pointer_less[3] = pointer_bytes[31:24] < header_limit[31:24];
+                    next_pointer_equal[3] = pointer_bytes[31:24] == header_limit[31:24];
+                    next_state = HEADER_PTR_MERGE;
                 end
 
                 HEADER_PTR_MERGE : begin
-                    header_pointer_ok <= pointer_minimum && (pointer_less[3]
+                    next_header_pointer_ok = pointer_minimum && (pointer_less[3]
                         || (pointer_equal[3] && pointer_less[2])
                         || (pointer_equal[3] && pointer_equal[2] && pointer_less[1])
                         || (pointer_equal[3] && pointer_equal[2] && pointer_equal[1] && pointer_less[0]));
-                    state <= HEADER_PTR_CHECK;
+                    next_state = HEADER_PTR_CHECK;
                 end
 
                 // HEADER_PTR_CHECK：合法时开始 HEADER_CRC，否则报告失败。
                 HEADER_PTR_CHECK : if ( ! header_pointer_ok) fail (REASON_DESCRIPTION);
                 else begin
-                    header_pointer <= number[10:0] << 1;
-                    header_crc <= CRC16_INIT;
-                    scan_pos <= 0;
-                    state <= HEADER_CRC;
+                    next_header_pointer = number[10:0] << 1;
+                    next_header_crc = CRC16_INIT;
+                    next_scan_pos = 0;
+                    next_state = HEADER_CRC;
                 end
 
                 // HEADER_CRC：读取下一校验字节；读完覆盖区后读取预期校验值。
@@ -1742,9 +2127,9 @@ error_position <= packet_pos - 10'd4;
 
                 // HEADER_CRC_BYTE：更新头文件校验值，再转 HEADER_CRC。
                 HEADER_CRC_BYTE : begin
-                    header_crc <= crc16 (header_crc, byte_value);
-                    scan_pos <= scan_pos + 1'b1;
-                    state <= HEADER_CRC;
+                    next_header_crc = crc16 (header_crc, byte_value);
+                    next_scan_pos = scan_pos + 1'b1;
+                    next_state = HEADER_CRC;
                 end
 
                 // HEADER_CRC_CHECK：核对头文件校验值，通过后读取数据文件数量。
@@ -1758,16 +2143,16 @@ error_position <= packet_pos - 10'd4;
                 // HEADER_NLEN：检查文件名长度，通过后定位件号字段。
                 HEADER_NLEN : if (number == 0 || number > MAX_HEADER_NAME_CHARS) fail (REASON_DESCRIPTION);
                 else begin
-                    data_name_len <= number[6:0];
-                    data_name_addr <= header_pointer + 6;
+                    next_data_name_len = number[6:0];
+                    next_data_name_addr = header_pointer + 6;
                     get_number (2, header_pointer + 6 + ((number + 1) & EVEN_MASK), 2, HEADER_PLEN);
                 end
 
                 // HEADER_PLEN：检查件号长度并处理偶数字节对齐，然后转 HEADER_SIZE。
                 HEADER_PLEN : if (number > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
                 else begin
-                    scan_pos <= fetch_addr + ((number + 1) & EVEN_MASK);
-                    state <= HEADER_SIZE;
+                    next_scan_pos = fetch_addr + ((number + 1) & EVEN_MASK);
+                    next_state = HEADER_SIZE;
                 end
 
                 // HEADER_SIZE：读取数据文件的字数，然后转 HEADER_DCRC。
@@ -1776,28 +2161,28 @@ error_position <= packet_pos - 10'd4;
                 // HEADER_DCRC：检查数据量不超过 8 KiB，通过后读取预期校验值。
                 HEADER_DCRC : if (number == 0 || number > MAX_DATA_WORDS) fail (REASON_LENGTH);
                 else begin
-                    file_size <= number[12:0] << 1;
+                    next_file_size = number[12:0] << 1;
                     get_number (2, scan_pos + 4, 2, HEADER_READY);
                 end
 
                 // HEADER_READY：保存预期校验值并报告进度，获确认后转 RRQ_DATA。
                 HEADER_READY : begin
-                    expected_crc <= number[15:0];
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= RRQ_DATA;
-                    state <= START_LUS;
+                    next_expected_crc = number[15:0];
+                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_return = RRQ_DATA;
+                    next_state = START_LUS;
                 end
 
                 // RRQ_DATA：请求数据文件，发完后等待第一块数据。
                 RRQ_DATA : begin
-                    file_kind <= FILE_DATA;
-                    loaded <= 0;
-                    data_crc <= CRC16_INIT;
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    block_number <= 1;
-                    wait_kind <= WK_DATA;
+                    next_file_kind = FILE_DATA;
+                    next_loaded = 0;
+                    next_data_crc = CRC16_INIT;
+                    next_main_tid = tid_sequence;
+                    next_main_peer = 0;
+                    next_tid_sequence = tid_sequence + 1'b1;
+                    next_block_number = 1;
+                    next_wait_kind = WK_DATA;
                     make_packet (PK_RRQ, data_name_len + 9, tid_sequence, request_port, WAIT_PACKET);
                 end
 
@@ -1805,16 +2190,16 @@ error_position <= packet_pos - 10'd4;
                 DATA_CHECK : if (loaded != file_size) fail (REASON_LENGTH);
                 else if (data_crc != expected_crc) fail (REASON_CHECKSUM);
                 else begin
-                    ack_return <= DATA_SUCCESS;
-                    state <= ACK_MAIN;
+                    next_ack_return = DATA_SUCCESS;
+                    next_state = ACK_MAIN;
                 end
 
                 // DATA_SUCCESS：公布加载区有效长度并报告成功，获确认后转 DONE。
                 DATA_SUCCESS : begin
-                    available_size <= loaded;
-                    lus_status <= LUS_COMPLETED;
-                    lus_return <= DONE;
-                    state <= START_LUS;
+                    next_available_size = loaded;
+                    next_lus_status = LUS_COMPLETED;
+                    next_lus_return = DONE;
+                    next_state = START_LUS;
                 end
 
                 // ======== 第八部分：报告失败并结束本次操作 ========
@@ -1826,21 +2211,652 @@ error_position <= packet_pos - 10'd4;
 
                 // FAILURE_SENT：发送失败状态，确认或重试结束后转 DONE。
                 FAILURE_SENT : begin
-                    lus_status <= LUS_ABORTED;
-                    lus_return <= DONE;
-                    state <= START_LUS;
+                    next_lus_status = LUS_ABORTED;
+                    next_lus_return = DONE;
+                    next_state = START_LUS;
                 end
 
                 // DONE：保存最终结果，然后转 IDLE 等待下一次操作。
                 DONE : begin
-                    status <= reason == REASON_NONE ? ST_SUCCESS : ST_FAILED;
-                    state <= IDLE;
-                    wait_kind <= WK_LUR;
+                    next_status = reason == REASON_NONE ? ST_SUCCESS : ST_FAILED;
+                    next_state = IDLE;
+                    next_wait_kind = WK_LUR;
                 end
 
-                default : state <= IDLE;
+                default : next_state = IDLE;
             endcase
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_28) begin
+        if (reset) begin
+            send_request <= 0;
+            send_mode <= 0;
+            send_length <= 0;
+            deny_we <= 0;
+            deny_wa <= 0;
+            deny_wd <= 0;
+            status <= ST_IDLE;
         end
+        else begin
+            send_request <= next_send_request;
+            send_mode <= next_send_mode;
+            send_length <= next_send_length;
+            deny_we <= next_deny_we;
+            deny_wa <= next_deny_wa;
+            deny_wd <= next_deny_wd;
+            status <= next_status;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_29) begin
+        if (reset) begin
+            reason <= REASON_NONE;
+            state <= IDLE;
+            command_op <= 0;
+        end
+        else begin
+            reason <= next_reason;
+            state <= next_state;
+            command_op <= next_command_op;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_30) begin
+        if (reset) begin
+            command_block <= 0;
+            command_sport <= 0;
+        end
+        else begin
+            command_block <= next_command_block;
+            command_sport <= next_command_sport;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_31) begin
+        if (reset) begin
+            command_dport <= 0;
+            command_length <= 0;
+        end
+        else begin
+            command_dport <= next_command_dport;
+            command_length <= next_command_length;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_32) begin
+        if (reset) begin
+            dispatch_match <= 0;
+            dispatch_action <= 0;
+            dispatch_current <= 0;
+            dispatch_repeat <= 0;
+        end
+        else begin
+            dispatch_match <= next_dispatch_match;
+            dispatch_action <= next_dispatch_action;
+            dispatch_current <= next_dispatch_current;
+            dispatch_repeat <= next_dispatch_repeat;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_33) begin
+        if (reset) begin
+            main_tid <= MAIN_TID_INIT;
+            status_tid <= STATUS_TID_INIT;
+        end
+        else begin
+            main_tid <= next_main_tid;
+            status_tid <= next_status_tid;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_34) begin
+        if (reset) begin
+            main_peer <= 0;
+            status_peer <= 0;
+        end
+        else begin
+            main_peer <= next_main_peer;
+            status_peer <= next_status_peer;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_35) begin
+        if (reset) begin
+            tid_sequence <= TID_SEQUENCE_INIT;
+            loaded <= 0;
+        end
+        else begin
+            tid_sequence <= next_tid_sequence;
+            loaded <= next_loaded;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_36) begin
+        if (reset) begin
+            file_size <= 0;
+            available_size <= 0;
+        end
+        else begin
+            file_size <= next_file_size;
+            available_size <= next_available_size;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_37) begin
+        if (reset) begin
+            dl_acked <= 0;
+            dl_remaining <= 0;
+        end
+        else begin
+            dl_acked <= next_dl_acked;
+            dl_remaining <= next_dl_remaining;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_38) begin
+        if (reset) begin
+            dl_read_addr <= 0;
+            download_mode <= 0;
+            request_download <= 0;
+            request_unsupported <= 0;
+            request_resume <= IDLE;
+            deny_empty <= 0;
+            deny_unsupported <= 0;
+            deny_pos <= 0;
+        end
+        else begin
+            dl_read_addr <= next_dl_read_addr;
+            download_mode <= next_download_mode;
+            request_download <= next_request_download;
+            request_unsupported <= next_request_unsupported;
+            request_resume <= next_request_resume;
+            deny_empty <= next_deny_empty;
+            deny_unsupported <= next_deny_unsupported;
+            deny_pos <= next_deny_pos;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_39) begin
+        if (reset) begin
+            deny_tid <= DENY_TID_INIT;
+            saved_sport <= 0;
+        end
+        else begin
+            deny_tid <= next_deny_tid;
+            saved_sport <= next_saved_sport;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_40) begin
+        if (reset) begin
+            saved_dport <= 0;
+            lus_counter <= 0;
+        end
+        else begin
+            saved_dport <= next_saved_dport;
+            lus_counter <= next_lus_counter;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_41) begin
+        if (reset) begin
+            retry_total <= 0;
+        end
+        else begin
+            retry_total <= next_retry_total;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_42) begin
+        if (reset) begin
+            tx_sport <= 0;
+            tx_dport <= 0;
+        end
+        else begin
+            tx_sport <= next_tx_sport;
+            tx_dport <= next_tx_dport;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_43) begin
+        if (reset) begin
+            consume <= 0;
+        end
+        else begin
+            consume <= next_consume;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_44) begin
+        if (reset) begin
+            timer <= 0;
+        end
+        else begin
+            timer <= next_timer;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_45) begin
+        if (reset) begin
+            retries <= 0;
+            rx_re <= 0;
+            rx_ra <= 0;
+            tx_we <= 0;
+            tx_wa <= 0;
+        end
+        else begin
+            retries <= next_retries;
+            rx_re <= next_rx_re;
+            rx_ra <= next_rx_ra;
+            tx_we <= next_tx_we;
+            tx_wa <= next_tx_wa;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_46) begin
+        if (reset) begin
+            tx_wd <= 0;
+            lur_we <= 0;
+            lur_wa <= 0;
+            lur_wd <= 0;
+            lur_re <= 0;
+        end
+        else begin
+            tx_wd <= next_tx_wd;
+            lur_we <= next_lur_we;
+            lur_wa <= next_lur_wa;
+            lur_wd <= next_lur_wd;
+            lur_re <= next_lur_re;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_47) begin
+        if (reset) begin
+            lur_ra <= 0;
+            hdr_we <= 0;
+            hdr_wa <= 0;
+            hdr_wd <= 0;
+            hdr_re <= 0;
+        end
+        else begin
+            lur_ra <= next_lur_ra;
+            hdr_we <= next_hdr_we;
+            hdr_wa <= next_hdr_wa;
+            hdr_wd <= next_hdr_wd;
+            hdr_re <= next_hdr_re;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_48) begin
+        if (reset) begin
+            hdr_ra <= 0;
+            load_we <= 0;
+            load_wa <= 0;
+        end
+        else begin
+            hdr_ra <= next_hdr_ra;
+            load_we <= next_load_we;
+            load_wa <= next_load_wa;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_49) begin
+        if (reset) begin
+            load_wd <= 0;
+            load_re <= 0;
+            load_ra <= 0;
+            manifest <= 0;
+            file_kind <= FILE_LIST;
+        end
+        else begin
+            load_wd <= next_load_wd;
+            load_re <= next_load_re;
+            load_ra <= next_load_ra;
+            manifest <= next_manifest;
+            file_kind <= next_file_kind;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_50) begin
+        if (reset) begin
+            block_number <= 0;
+            ack_number <= 0;
+        end
+        else begin
+            block_number <= next_block_number;
+            ack_number <= next_ack_number;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_51) begin
+        if (reset) begin
+            data_crc <= CRC16_INIT;
+            header_crc <= CRC16_INIT;
+        end
+        else begin
+            data_crc <= next_data_crc;
+            header_crc <= next_header_crc;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_52) begin
+        if (reset) begin
+            expected_crc <= 0;
+            return_state <= 0;
+            num_return <= 0;
+        end
+        else begin
+            expected_crc <= next_expected_crc;
+            return_state <= next_return_state;
+            num_return <= next_num_return;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_53) begin
+        if (reset) begin
+            after_tx <= 0;
+            lus_return <= 0;
+            ack_return <= 0;
+            wait_kind <= 0;
+            packet_type <= 0;
+        end
+        else begin
+            after_tx <= next_after_tx;
+            lus_return <= next_lus_return;
+            ack_return <= next_ack_return;
+            wait_kind <= next_wait_kind;
+            packet_type <= next_packet_type;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_54) begin
+        if (reset) begin
+            pending_kind <= 0;
+            pending_length <= 0;
+            pending_sport <= 0;
+        end
+        else begin
+            pending_kind <= next_pending_kind;
+            pending_length <= next_pending_length;
+            pending_sport <= next_pending_sport;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_55) begin
+        if (reset) begin
+            pending_dport <= 0;
+            pending_after <= 0;
+            fetch_source <= 0;
+        end
+        else begin
+            pending_dport <= next_pending_dport;
+            pending_after <= next_pending_after;
+            fetch_source <= next_fetch_source;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_56) begin
+        if (reset) begin
+            fetch_addr <= 0;
+            byte_value <= 0;
+        end
+        else begin
+            fetch_addr <= next_fetch_addr;
+            byte_value <= next_byte_value;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_57) begin
+        if (reset) begin
+            number <= 0;
+        end
+        else begin
+            number <= next_number;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_58) begin
+        if (reset) begin
+            number_left <= 0;
+            packet_len <= 0;
+            packet_pos <= 0;
+        end
+        else begin
+            number_left <= next_number_left;
+            packet_len <= next_packet_len;
+            packet_pos <= next_packet_pos;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_59) begin
+        if (reset) begin
+            metadata_size <= 0;
+            header_pointer_ok <= 0;
+            pointer_less <= 0;
+            pointer_equal <= 0;
+            pointer_minimum <= 0;
+        end
+        else begin
+            metadata_size <= next_metadata_size;
+            header_pointer_ok <= next_header_pointer_ok;
+            pointer_less <= next_pointer_less;
+            pointer_equal <= next_pointer_equal;
+            pointer_minimum <= next_pointer_minimum;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_60) begin
+        if (reset) begin
+            header_pointer <= 0;
+            header_name_addr <= 0;
+            header_name_len <= 0;
+        end
+        else begin
+            header_pointer <= next_header_pointer;
+            header_name_addr <= next_header_name_addr;
+            header_name_len <= next_header_name_len;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_61) begin
+        if (reset) begin
+            part_len <= 0;
+            part_addr <= 0;
+            data_name_addr <= 0;
+        end
+        else begin
+            part_len <= next_part_len;
+            part_addr <= next_part_addr;
+            data_name_addr <= next_data_name_addr;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_62) begin
+        if (reset) begin
+            data_name_len <= 0;
+            lus_status <= LUS_NONE;
+            percent <= 0;
+        end
+        else begin
+            data_name_len <= next_data_name_len;
+            lus_status <= next_lus_status;
+            percent <= next_percent;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_63) begin
+        if (reset) begin
+            scaled <= 0;
+            ratio_h <= 0;
+        end
+        else begin
+            scaled <= next_scaled;
+            ratio_h <= next_ratio_h;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_64) begin
+        if (reset) begin
+            ratio_t <= 0;
+            ratio_u <= 0;
+            decimal_tens <= 0;
+            decimal_rest <= 0;
+        end
+        else begin
+            ratio_t <= next_ratio_t;
+            ratio_u <= next_ratio_u;
+            decimal_tens <= next_decimal_tens;
+            decimal_rest <= next_decimal_rest;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_65) begin
+        if (reset) begin
+            copy_pos <= 0;
+            copy_len <= 0;
+        end
+        else begin
+            copy_pos <= next_copy_pos;
+            copy_len <= next_copy_len;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_66) begin
+        if (reset) begin
+            scan_pos <= 0;
+            name_pos <= 0;
+            request_write <= 0;
+            build_value <= 0;
+        end
+        else begin
+            scan_pos <= next_scan_pos;
+            name_pos <= next_name_pos;
+            request_write <= next_request_write;
+            build_value <= next_build_value;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_67) begin
+        if (reset) begin
+            lus_partlen_pos <= 0;
+            lus_part_pos <= 0;
+            lus_tail_pos <= 0;
+        end
+        else begin
+            lus_partlen_pos <= next_lus_partlen_pos;
+            lus_part_pos <= next_lus_part_pos;
+            lus_tail_pos <= next_lus_tail_pos;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_68) begin
+        if (reset) begin
+            lus_packet_len <= 0;
+            tail_index <= 0;
+            head_index <= 0;
+        end
+        else begin
+            lus_packet_len <= next_lus_packet_len;
+            tail_index <= next_tail_index;
+            head_index <= next_head_index;
+        end
+    end
+    end
+    always @(posedge clk) begin
+        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+        if (ce_69) begin
+        if (reset) begin
+            part_index <= 0;
+            name_end <= 0;
+            mode_start <= 0;
+        end
+        else begin
+            part_index <= next_part_index;
+            name_end <= next_name_end;
+            mode_start <= next_mode_start;
+        end
+    end
     end
 
 endmodule

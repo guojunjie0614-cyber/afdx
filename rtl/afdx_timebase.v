@@ -8,7 +8,7 @@ module afdx_timebase (
 
     // now 每拍加一，到 32 位上限后回零。
     // 复位结束后，byte_en 每拍都有效。
-    output reg [31:0] now,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [31:0] now,
     output reg byte_en,
 
     // now_c 每 4096 拍加一，供重复帧比较和过期检查使用。

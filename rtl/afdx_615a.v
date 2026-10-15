@@ -3,10 +3,11 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 70) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
-    input wire clk, reset, enable, ce,
+    input wire clk, reset, enable,
+    input wire [CE_BANKS - 1:0] ce,
 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
@@ -308,49 +309,49 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
         end
         else begin
             cmd_deny_we <= deny_we;
-            ram_deny_we <= cmd_deny_we && (CE_DIV == 1 || !ce);
+            ram_deny_we <= cmd_deny_we && (CE_DIV == 1 || !ce[0]);
             cmd_deny_wa <= deny_wa;
             ram_deny_wa <= cmd_deny_wa;
             cmd_deny_wd <= deny_wd;
             ram_deny_wd <= cmd_deny_wd;
             cmd_rx_re <= rx_re;
-            ram_rx_re <= cmd_rx_re && (CE_DIV == 1 || !ce);
+            ram_rx_re <= cmd_rx_re && (CE_DIV == 1 || !ce[0]);
             cmd_rx_ra <= rx_ra;
             ram_rx_ra <= cmd_rx_ra;
             cmd_tx_we <= tx_we;
-            ram_tx_we <= cmd_tx_we && (CE_DIV == 1 || !ce);
+            ram_tx_we <= cmd_tx_we && (CE_DIV == 1 || !ce[0]);
             cmd_tx_wa <= tx_wa;
             ram_tx_wa <= cmd_tx_wa;
             cmd_tx_wd <= tx_wd;
             ram_tx_wd <= cmd_tx_wd;
             cmd_lur_we <= lur_we;
-            ram_lur_we <= cmd_lur_we && (CE_DIV == 1 || !ce);
+            ram_lur_we <= cmd_lur_we && (CE_DIV == 1 || !ce[0]);
             cmd_lur_wa <= lur_wa;
             ram_lur_wa <= cmd_lur_wa;
             cmd_lur_wd <= lur_wd;
             ram_lur_wd <= cmd_lur_wd;
             cmd_lur_re <= lur_re;
-            ram_lur_re <= cmd_lur_re && (CE_DIV == 1 || !ce);
+            ram_lur_re <= cmd_lur_re && (CE_DIV == 1 || !ce[0]);
             cmd_lur_ra <= lur_ra;
             ram_lur_ra <= cmd_lur_ra;
             cmd_hdr_we <= hdr_we;
-            ram_hdr_we <= cmd_hdr_we && (CE_DIV == 1 || !ce);
+            ram_hdr_we <= cmd_hdr_we && (CE_DIV == 1 || !ce[0]);
             cmd_hdr_wa <= hdr_wa;
             ram_hdr_wa <= cmd_hdr_wa;
             cmd_hdr_wd <= hdr_wd;
             ram_hdr_wd <= cmd_hdr_wd;
             cmd_hdr_re <= hdr_re;
-            ram_hdr_re <= cmd_hdr_re && (CE_DIV == 1 || !ce);
+            ram_hdr_re <= cmd_hdr_re && (CE_DIV == 1 || !ce[0]);
             cmd_hdr_ra <= hdr_ra;
             ram_hdr_ra <= cmd_hdr_ra;
             cmd_load_we <= load_we;
-            ram_load_we <= cmd_load_we && (CE_DIV == 1 || !ce);
+            ram_load_we <= cmd_load_we && (CE_DIV == 1 || !ce[0]);
             cmd_load_wa <= load_wa;
             ram_load_wa <= cmd_load_wa;
             cmd_load_wd <= load_wd;
             ram_load_wd <= cmd_load_wd;
             cmd_load_re <= load_re;
-            ram_load_re <= status != ST_BUSY || (cmd_load_re && (CE_DIV == 1 || !ce));
+            ram_load_re <= status != ST_BUSY || (cmd_load_re && (CE_DIV == 1 || !ce[0]));
             cmd_load_ra <= load_ra;
             ram_load_ra <= status != ST_BUSY ? memory_addr : cmd_load_ra;
         end
@@ -389,7 +390,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
 
     generate
         if (CE_DIV == 2) begin : half_rate
-            afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
+            afdx_615a_engine #(.CE_DIV(CE_DIV), .CE_BANKS(CE_BANKS)) engine (
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),
@@ -450,7 +451,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             );
         end
         else begin : full_rate
-            afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
+            afdx_615a_engine #(.CE_DIV(CE_DIV), .CE_BANKS(CE_BANKS)) engine (
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),

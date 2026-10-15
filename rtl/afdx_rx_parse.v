@@ -26,7 +26,7 @@ module afdx_rx_parse #(
 
     // desc_valid 为高时提交完整帧信息，desc_take 表示引擎已取走。
     // resolve_valid 为高时，commit 决定保留还是释放本帧数据。
-    output reg desc_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg desc_valid,
     output reg [RX_RING_AW + 82:0] desc_data,
     input wire desc_take,
     input wire resolve_valid, resolve_commit,
@@ -85,6 +85,7 @@ module afdx_rx_parse #(
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
+    reg [15:0] last_data;
 
     // IPv4 头校验和与 UDP 校验和分别累加。
     // 两次处理进位后，结果应为 0xffff。
@@ -133,6 +134,7 @@ module afdx_rx_parse #(
             n_ok <= 0;
             ip_expected <= 0;
             end_data <= 0;
+            last_data <= 0;
             sn_position <= 0;
             expected_len <= 0;
             space_limit <= 0;
@@ -183,6 +185,7 @@ module afdx_rx_parse #(
                 end
                 LEN_LIMITS : begin
                     end_data <= n + HEADER_LENGTH;
+                    last_data <= n + HEADER_LENGTH - 16'd1;
                     sn_position <= n < MIN_PAYLOAD ? MIN_SN_POSITION : n + HEADER_LENGTH;
                     expected_len <= n < MIN_PAYLOAD ? MIN_FRAME_LENGTH : n + FRAME_OVERHEAD;
                     space_limit <= CAPACITY - n;
@@ -238,7 +241,7 @@ module afdx_rx_parse #(
                         udp_sum <= udp_sum + { high_byte, m_data };
                     if (n_ok && position >= POS_PAYLOAD && position < end_data) begin
                         if (position[0]) udp_sum <= udp_sum + { high_byte, m_data };
-                        else if (position == end_data - 1'b1) udp_sum <= udp_sum + { m_data, 8'b0 };
+                        else if (position == last_data) udp_sum <= udp_sum + { m_data, 8'b0 };
                         if (position == POS_PAYLOAD) begin
                             // 第 42 字节到达时，检查缓存剩余空间能否容纳本帧用户数据。
                             frame_begin <= committed;
