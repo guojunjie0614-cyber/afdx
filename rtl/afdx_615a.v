@@ -3,7 +3,7 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a (
+module afdx_615a #(parameter SPLIT_CFG_ADDR = 0) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input wire clk, reset, enable,
@@ -11,7 +11,7 @@ module afdx_615a (
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
     input wire cfg_we,
-    input wire [7:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata, cfg_extra_data,
 
@@ -32,6 +32,10 @@ module afdx_615a (
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
 
+    // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
+    // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
+    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+
     // 这些状态接收并检查请求。
     localparam REASON_NONE = 0;
     localparam REASON_DESCRIPTION = 1;
@@ -42,6 +46,7 @@ module afdx_615a (
     localparam IDLE = 0;
     localparam WAIT_PACKET = 1;
     localparam DISPATCH = 2;
+    localparam DISPATCH_CHECK = 72, DISPATCH_SELECT = 73, PACKET_START = 74;
     localparam NAME = 3;
     localparam NAME_BYTE = 4;
     localparam MODE = 5;
@@ -262,6 +267,27 @@ module afdx_615a (
     reg [2:0] number_left;
     reg [9:0] packet_len, packet_pos, rx_length, rx_index;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
+    // 接纳报文时保存头字段，后续接收不能改写正在译码的命令。
+    reg [15:0] command_op, command_block, command_sport, command_dport;
+    reg [9:0] command_length;
+    reg [15:0] previous_block;
+    reg [7:0] dispatch_match, dispatch_action;
+    reg dispatch_current, dispatch_repeat;
+    (* preserve = 1 *) reg [7:0] expected_name, expected_mode;
+    (* preserve = 1 *) reg name_mark, name_option, name_bad, name_terminal, mode_bad, mode_terminal;
+    (* preserve = 1 *) reg request_reject;
+    reg [2:0] pending_kind;
+    reg [9:0] pending_length;
+    reg [15:0] pending_sport, pending_dport;
+    reg [7:0] pending_after;
+    wire [7:0] dispatch_choice = {
+        dispatch_match[7] && !(|dispatch_match[6:0]),
+        dispatch_match[6] && !(|dispatch_match[5:0]),
+        dispatch_match[5] && !(|dispatch_match[4:0]),
+        dispatch_match[4] && !(|dispatch_match[3:0]),
+        dispatch_match[3] && !(|dispatch_match[2:0]),
+        dispatch_match[2] && !(|dispatch_match[1:0]),
+        dispatch_match[1] && !dispatch_match[0], dispatch_match[0] };
     reg [9:0] lus_partlen_pos, lus_part_pos, lus_tail_pos, lus_packet_len;
     reg [9:0] tail_index, head_index, part_index, name_end, mode_start;
     reg packet_pending, consume, receiving;
@@ -480,6 +506,44 @@ module afdx_615a (
         end
     endtask
 
+    // 请求字节的读取等待拍用于预先选择目标字符并比较，解析状态只消费一位结果。
+    always @(posedge clk) begin
+        if (reset) begin
+            expected_name <= 0;
+            expected_mode <= 0;
+            name_mark <= 0;
+            name_option <= 0;
+            name_bad <= 0;
+            name_terminal <= 0;
+            mode_bad <= 0;
+            mode_terminal <= 0;
+            request_reject <= 0;
+        end
+        else begin
+            expected_name <= target_name(name_pos, request_write ? "R" : request_download ? "D" : "I",
+                request_download);
+            expected_mode <= octet_byte(name_pos);
+            name_mark <= name_pos == 9 && (byte_value == "U" || byte_value == "N"
+                || (!request_write && byte_value == "C"));
+            name_option <= name_pos == TARGET_DOWNLOAD_MARK_POS && !request_write && request_download
+                && byte_value == "O";
+            name_bad <= byte_value != expected_name;
+            name_terminal <= name_pos == TARGET_NAME_BYTES;
+            mode_bad <= (byte_value | ASCII_CASE_BIT) != (expected_mode | ASCII_CASE_BIT)
+                || (name_pos == 5 && byte_value != 0);
+            mode_terminal <= name_pos == 5;
+            request_reject <= request_unsupported || (!request_write && status == ST_BUSY)
+                || (request_write && status == ST_BUSY && request_download != download_mode)
+                || (!request_write && request_download && available_size == 0);
+        end
+    end
+
+    // 块号递减独立成一拍，避免与报文比较、优先级和状态选择串成一条长链。
+    always @(posedge clk) begin
+        if (reset) previous_block <= 16'hffff;
+        else previous_block <= block_number - 16'd1;
+    end
+
     // 开始构造报文时，先保存端口、报文类型和发送后的返回状态。
     task make_packet;
         input [2:0] kind;
@@ -487,15 +551,12 @@ module afdx_615a (
         input [15:0] source_port, dest_port;
         input [7:0] destination;
         begin
-            packet_type <= kind;
-            packet_len <= length;
-            packet_pos <= 0;
-            tx_sport <= source_port;
-            tx_dport <= dest_port;
-            after_tx <= destination;
-            retries <= 0;
-            timer <= 0;
-            state <= BUILD_PREP;
+            pending_kind <= kind;
+            pending_length <= length;
+            pending_sport <= source_port;
+            pending_dport <= dest_port;
+            pending_after <= destination;
+            state <= PACKET_START;
         end
     endtask
 
@@ -561,6 +622,15 @@ module afdx_615a (
             status <= ST_IDLE;
             reason <= REASON_NONE;
             state <= IDLE;
+            command_op <= 0;
+            command_block <= 0;
+            command_sport <= 0;
+            command_dport <= 0;
+            command_length <= 0;
+            dispatch_match <= 0;
+            dispatch_action <= 0;
+            dispatch_current <= 0;
+            dispatch_repeat <= 0;
             main_tid <= MAIN_TID_INIT;
             status_tid <= STATUS_TID_INIT;
             main_peer <= 0;
@@ -636,6 +706,11 @@ module afdx_615a (
             ack_return <= 0;
             wait_kind <= 0;
             packet_type <= 0;
+            pending_kind <= 0;
+            pending_length <= 0;
+            pending_sport <= 0;
+            pending_dport <= 0;
+            pending_after <= 0;
             fetch_source <= 0;
             fetch_addr <= 0;
             byte_value <= 0;
@@ -690,7 +765,7 @@ module afdx_615a (
             load_re <= status != ST_BUSY;
             load_ra <= memory_addr;
             load_sample <= load_q;
-            if (cfg_we) case (cfg_addr)
+            if (cfg_we) case (cfg_write_addr)
                 REG_ENABLE : if (status != ST_BUSY) configured <= cfg_wdata[0];
                 REG_TX_VL : if (status != ST_BUSY) tx_vl <= cfg_wdata[6:0];
                 REG_MEMORY_ADDRESS : memory_addr <= cfg_wdata[12:0];
@@ -727,16 +802,26 @@ module afdx_615a (
                 // IDLE：等完整请求，服务已启用且收到请求时转 DISPATCH。
                 IDLE : if (packet_pending && enable && configured) begin
                     consume <= 1;
+                    command_op <= rx_op;
+                    command_block <= rx_block;
+                    command_length <= rx_length;
+                    command_sport <= peer_sp;
+                    command_dport <= peer_dp;
                     request_resume <= IDLE;
-                    state <= DISPATCH;
+                    state <= DISPATCH_CHECK;
                 end
 
                 // WAIT_PACKET：等下一报文，超时则重发，重试耗尽时结束本次操作。
                 WAIT_PACKET : begin
                     if (packet_pending) begin
                         consume <= 1;
+                        command_op <= rx_op;
+                        command_block <= rx_block;
+                        command_length <= rx_length;
+                        command_sport <= peer_sp;
+                        command_dport <= peer_dp;
                         request_resume <= WAIT_PACKET;
-                        state <= DISPATCH;
+                        state <= DISPATCH_CHECK;
                         timer <= timeout_cycles;
                     end
                     else if (timer == 1) begin
@@ -759,86 +844,103 @@ module afdx_615a (
                     else timer <= timer - 1'b1;
                 end
 
-                // DISPATCH：核对报文类型、块号和端口，再进入相应处理状态。
-                DISPATCH : begin
-                    if (peer_dp == request_port && (rx_op == 1 || rx_op == TFTP_OPCODE_WRQ)) begin
-                        request_write <= rx_op == TFTP_OPCODE_WRQ;
+                // 比较、优先级和动作各占一拍；选择位互斥，动作不再串接长优先级链。
+                DISPATCH_CHECK : begin
+                    dispatch_match[0] <= command_dport == request_port
+                        && (command_op == 1 || command_op == TFTP_OPCODE_WRQ);
+                    dispatch_match[1] <= command_op == TFTP_OPCODE_ERROR && command_dport == main_tid;
+                    dispatch_match[2] <= command_op == TFTP_OPCODE_ERROR && command_dport == status_tid;
+                    dispatch_match[3] <= wait_kind == WK_LUI_ACK && command_dport == main_tid
+                        && command_sport == main_peer
+                        && command_op == TFTP_OPCODE_ACK && command_block == 1;
+                    dispatch_match[4] <= wait_kind == WK_LUS_ACK0 && command_dport == status_tid
+                        && command_op == TFTP_OPCODE_ACK && command_block == 0;
+                    dispatch_match[5] <= wait_kind == WK_LUS_ACK1 && command_dport == status_tid
+                        && command_sport == status_peer
+                        && command_op == TFTP_OPCODE_ACK && command_block == 1;
+                    dispatch_match[6] <= (wait_kind == WK_DL_ACK0 && command_dport == main_tid
+                        && command_op == TFTP_OPCODE_ACK && command_block == 0);
+                    dispatch_match[7] <= (wait_kind == WK_DL_ACK && command_dport == main_tid
+                        && command_sport == main_peer
+                        && command_op == TFTP_OPCODE_ACK && command_block == block_number)
+                        || (wait_kind == WK_DATA && command_dport == main_tid && command_op == TFTP_OPCODE_DATA
+                        && (main_peer == 0 || command_sport == main_peer));
+                    dispatch_current <= command_block == block_number && command_length >= TFTP_HEADER_BYTES
+                        && command_length <= TFTP_MAX_PACKET_BYTES;
+                    dispatch_repeat <= command_block == previous_block;
+                    state <= DISPATCH_SELECT;
+                end
+                DISPATCH_SELECT : begin
+                    dispatch_action <= dispatch_choice;
+                    state <= DISPATCH;
+                end
+                DISPATCH : case (1'b1) // synthesis parallel_case
+                    dispatch_action[0] : begin
+                        request_write <= command_op == TFTP_OPCODE_WRQ;
                         request_download <= 0;
                         request_unsupported <= 0;
                         name_pos <= 0;
                         state <= NAME;
                     end
-                    else if (rx_op == TFTP_OPCODE_ERROR && peer_dp == main_tid) fail (REASON_TFTP_ERROR);
-                    else if (rx_op == TFTP_OPCODE_ERROR && peer_dp == status_tid) begin
+                    dispatch_action[1] : fail (REASON_TFTP_ERROR);
+                    dispatch_action[2] : begin
                         reason <= REASON_TFTP_ERROR;
                         status <= ST_FAILED;
                         state <= DONE;
                     end
-                    else if (wait_kind == WK_LUI_ACK && peer_dp == main_tid && peer_sp == main_peer
-                             && rx_op == TFTP_OPCODE_ACK
-                             && rx_block == 1) begin
+                    dispatch_action[3] : begin
                         lus_status <= LUS_ACCEPTED;
                         lus_return <= LUS_DONE;
                         state <= START_LUS;
                     end
-                    else if (wait_kind == WK_LUS_ACK0 && peer_dp == status_tid && rx_op == TFTP_OPCODE_ACK
-                             && rx_block == 0) begin
-                        status_peer <= peer_sp;
+                    dispatch_action[4] : begin
+                        status_peer <= command_sport;
                         state <= LUS_DATA;
                     end
-                    else if (wait_kind == WK_LUS_ACK1 && peer_dp == status_tid && peer_sp == status_peer
-                        && rx_op == TFTP_OPCODE_ACK && rx_block == 1) state <= lus_return;
-                    else if (wait_kind == WK_DL_ACK0 && peer_dp == main_tid && rx_op == TFTP_OPCODE_ACK
-                             && rx_block == 0) begin
-                        main_peer <= peer_sp;
+                    dispatch_action[5] : state <= lus_return;
+                    dispatch_action[6] : begin
+                        main_peer <= command_sport;
                         block_number <= 1;
                         state <= DL_BLOCK;
                     end
-                    else if (wait_kind == WK_DL_ACK && peer_dp == main_tid && peer_sp == main_peer
-                             && rx_op == TFTP_OPCODE_ACK
-                             && rx_block == block_number) state <= DL_ACK;
-                    else if (wait_kind == WK_DATA && peer_dp == main_tid && rx_op == TFTP_OPCODE_DATA && (main_peer == 0
-                        || peer_sp == main_peer)) begin
-                        main_peer <= peer_sp;
-                        if (rx_block == block_number && rx_length >= TFTP_HEADER_BYTES
-                            && rx_length <= TFTP_MAX_PACKET_BYTES) begin
-                            copy_len <= rx_length - TFTP_HEADER_BYTES;
+                    dispatch_action[7] : if (wait_kind == WK_DL_ACK) state <= DL_ACK;
+                    else begin
+                        main_peer <= command_sport;
+                        if (dispatch_current) begin
+                            copy_len <= command_length - TFTP_HEADER_BYTES;
                             copy_pos <= 0;
                             state <= DATA_COPY;
                         end
-                        else if (rx_block == block_number - 1'b1) begin
+                        else if (dispatch_repeat) begin
                             // 重复数据块只重新发送确认，不再次写入加载区。
-                            ack_number <= rx_block;
-                            make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, peer_sp, WAIT_PACKET);
+                            ack_number <= command_block;
+                            make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, command_sport, WAIT_PACKET);
                         end
                         else state <= WAIT_PACKET;
                     end
-                    else state <= status == ST_BUSY ? WAIT_PACKET : IDLE;
-                end
+                    default : state <= status == ST_BUSY ? WAIT_PACKET : IDLE;
+                endcase
 
                 // NAME：读取文件名的下一字节，然后转 NAME_BYTE。
                 NAME : get_byte (0, { 6'b0, name_pos } + RRQ_NAME_POS, NAME_BYTE);
 
                 // NAME_BYTE：识别操作文件名，名字读完后转 MODE，非法名字返回错误。
-                NAME_BYTE : if (name_pos == 9 && (byte_value == "U" || byte_value == "N" || ( ! request_write
-                    && byte_value == "C"))) begin
+                NAME_BYTE : if (name_mark) begin
                     request_download <= byte_value == "N";
                     request_unsupported <= byte_value == "C";
                     name_pos <= name_pos + 1'b1;
                     state <= NAME;
                 end
-                else if (name_pos == TARGET_DOWNLOAD_MARK_POS && ! request_write && request_download
-                         && byte_value == "O") begin
+                else if (name_option) begin
                     request_unsupported <= 1;
                     name_pos <= name_pos + 1'b1;
                     state <= NAME;
                 end
-                else if (byte_value != target_name (name_pos, request_write ? "R" : request_download ? "D" : "I",
-                    request_download)) begin
+                else if (name_bad) begin
                     reason <= REASON_DESCRIPTION;
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, peer_sp, IDLE);
+                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                 end
-                else if (name_pos == TARGET_NAME_BYTES) begin
+                else if (name_terminal) begin
                     name_pos <= 0;
                     state <= MODE;
                 end
@@ -851,14 +953,12 @@ module afdx_615a (
                 MODE : get_byte (0, { 6'b0, name_pos } + RRQ_MODE_POS, MODE_BYTE);
 
                 // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
-                MODE_BYTE : if ((byte_value | ASCII_CASE_BIT) != (octet_byte (name_pos) | ASCII_CASE_BIT)
-                    || (name_pos == 5
-                    && byte_value != 0)) begin
+                MODE_BYTE : if (mode_bad) begin
                     reason <= REASON_TFTP_ERROR;
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, peer_sp, IDLE);
+                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
                 end
-                else if (name_pos == 5) state <= REQUEST_OK;
+                else if (mode_terminal) state <= REQUEST_OK;
                 else begin
                     name_pos <= name_pos + 1'b1;
                     state <= MODE;
@@ -866,10 +966,7 @@ module afdx_615a (
 
                 // REQUEST_OK：接受请求后启动文件流程，无法接受时转 DENY_SEND。
                 REQUEST_OK : begin
-                    if (request_unsupported || ( ! request_write && status == ST_BUSY)
-                        || (request_write && status == ST_BUSY
-                        && request_download != download_mode) ||
-                        ( ! request_write && request_download && available_size == 0)) begin
+                    if (request_reject) begin
                         // 信息操作和操作员定义卸载返回状态 1002，不启动后续传输。
                         deny_unsupported <= request_unsupported;
                         deny_empty <= status != ST_BUSY;
@@ -879,11 +976,11 @@ module afdx_615a (
                         saved_sport <= tx_sport;
                         saved_dport <= tx_dport;
                         tx_sport <= tid_sequence;
-                        tx_dport <= peer_sp;
+                        tx_dport <= command_sport;
                         state <= DENY_SEND;
                     end
                     else if (request_write && status == ST_BUSY && wait_kind == WK_LUR) begin
-                        main_peer <= peer_sp;
+                        main_peer <= command_sport;
                         main_tid <= tid_sequence;
                         tid_sequence <= tid_sequence + 1'b1;
                         file_kind <= FILE_LIST;
@@ -891,13 +988,13 @@ module afdx_615a (
                         block_number <= 1;
                         ack_number <= 0;
                         wait_kind <= WK_DATA;
-                        make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, peer_sp, WAIT_PACKET);
+                        make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else if ( ! request_write) begin
                         status <= ST_BUSY;
                         reason <= REASON_NONE;
                         download_mode <= request_download;
-                        main_peer <= peer_sp;
+                        main_peer <= command_sport;
                         main_tid <= tid_sequence;
                         tid_sequence <= tid_sequence + 1'b1;
                         if ( ! request_download) begin
@@ -909,11 +1006,11 @@ module afdx_615a (
                         manifest <= 0;
                         lus_counter <= 0;
                         wait_kind <= WK_LUI_ACK;
-                        make_packet (PK_LUI, LUI_PACKET_BYTES, tid_sequence, peer_sp, WAIT_PACKET);
+                        make_packet (PK_LUI, LUI_PACKET_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else begin
                         reason <= REASON_TFTP_ERROR;
-                        make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, peer_sp, IDLE);
+                        make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     end
                 end
 
@@ -991,6 +1088,19 @@ module afdx_615a (
 
                 // 字段位置先算好并寄存，下一拍再选择字节，以缩短组合路径。
                 // ======== 第三部分：构造并发送一个报文 ========
+                // 报文请求与实际启动分开，参数在本地寄存后再驱动构造器与计数器。
+                PACKET_START : begin
+                    packet_type <= pending_kind;
+                    packet_len <= pending_length;
+                    packet_pos <= 0;
+                    tx_sport <= pending_sport;
+                    tx_dport <= pending_dport;
+                    after_tx <= pending_after;
+                    retries <= 0;
+                    timer <= 0;
+                    state <= BUILD_PREP;
+                end
+
                 // BUILD_PREP：计算本字节使用的地址，然后转 BUILD。
                 BUILD_PREP : begin
                     tail_index <= packet_pos - lus_tail_pos;
@@ -1285,7 +1395,7 @@ module afdx_615a (
                 // DATA_END：确认当前块；短块结束文件，再转对应的文件检查过程。
                 DATA_END : begin
                     block_number <= block_number + 1'b1;
-                    ack_number <= rx_block;
+                    ack_number <= command_block;
                     if (copy_len < TFTP_BLOCK_BYTES) begin
                         if (file_kind == FILE_LIST) begin
                             ack_return <= LUR_START;

@@ -142,12 +142,12 @@ module AFDX_top #(
     // 网络管理回应使用的 UDP 源端口。
     localparam SNMP_PORT = 16'd161;
     wire rtc_select = (bus_addr[17:4] == RTC_ADDR_GROUP);
-    afdx_615a loader (
+    afdx_615a #(.SPLIT_CFG_ADDR(1)) loader (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == LOAD_ADDR_GROUP),
-        .cfg_addr(bus_addr[7:0]),
+        .cfg_addr({cfg_addr[7:0], bus_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
         .cfg_extra_data(load_extra_data),
