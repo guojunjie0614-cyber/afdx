@@ -1,6 +1,6 @@
 // 协议状态只在 ce 拍更新；所有 RAM 和外部握手均留在全速外壳。
 module afdx_615a_engine #(parameter CE_DIV = 2) (
-    input wire clk, reset, ce,
+    input wire clk, reset, ce_phase,
     input wire  enable_in,
     input wire  configured_in,
     input wire [15:0] request_port_in,
@@ -56,6 +56,8 @@ module afdx_615a_engine #(parameter CE_DIV = 2) (
     output reg  load_re,
     output reg [12:0] load_ra
 );
+    // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
+    (* direct_enable = 1, keep = 1 *) wire ce = ce_phase | reset;
     // 这些状态接收并检查请求。
     localparam REASON_NONE = 0;
     localparam REASON_DESCRIPTION = 1;
@@ -258,8 +260,10 @@ module afdx_615a_engine #(parameter CE_DIV = 2) (
     // return_state/num_return 保存读取完成后应回到的状态。
     // after_tx/lus_return/ack_return 保存发送或确认后的返回状态。
     reg [7:0] state, return_state, num_return, after_tx, lus_return, ack_return;
-    reg [2:0] wait_kind, packet_type;
-    reg [1:0] file_kind, fetch_source;
+    (* preserve = 1, dont_merge = 1 *) reg [2:0] wait_kind;
+    reg [2:0] packet_type;
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] file_kind;
+    reg [1:0] fetch_source;
 
     // main_tid/main_peer 保存传数据文件时本端和对端的 UDP 端口。
     // status_tid/status_peer 保存传状态文件时本端和对端的 UDP 端口。
@@ -325,7 +329,7 @@ header_limit <= metadata_size - HEADER_TRAILER_BYTES;
     reg [15:0] previous_block;
     reg [7:0] dispatch_match, dispatch_action;
     reg  dispatch_current, dispatch_repeat;
-    (* preserve = 1 *) reg [7:0] expected_name, expected_mode;
+    (* preserve = 1 *) reg [6:0] expected_name, expected_mode;
     (* preserve = 1 *) reg  name_mark, name_option, name_bad, name_terminal, mode_bad, mode_terminal;
     (* preserve = 1 *) reg  request_reject;
     reg [2:0] pending_kind;

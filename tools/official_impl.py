@@ -62,6 +62,14 @@ def main():
         if not synthesis.get('completed'):
             raise RuntimeError('Run synth.ps1 successfully before impl.ps1')
         check_inputs(synthesis)
+        constraint = ROOT / 'elinx/constraints.edc'
+        if 'set_multicycle_path' in constraint.read_text(encoding='utf-8-sig'):
+            from check_multicycle import audit
+            audit_path = flow.folder / 'multicycle_audit'
+            proof = audit(Path(synthesis['netlist']), constraint, audit_path)
+            flow.result['multicycle_audit'] = str(audit_path)
+            if not proof['passed']:
+                raise RuntimeError('Multicycle register/enable/cone audit failed: ' + str(audit_path))
         directory = Path(synthesis['folder']).resolve() / 'project'
         directory.relative_to((ROOT / 'out').resolve())
         project = ROOT / synthesis['project']

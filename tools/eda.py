@@ -197,6 +197,7 @@ def sim(options):
         f.result["parameters"]=options.param
         # 加载后卸载使五功能场景达到约70万拍；网表预算8小时，仍受Deadline截断。
         sim_budget=28800 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
+        if options.test == "tb_sys_perf" and not netlists:sim_budget=max(sim_budget,1800)
         if options.coverage:sim_budget=max(sim_budget,3600)
         log=f.job("simulation",[MS/"vsim.exe","-c",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
         if options.coverage:
@@ -356,7 +357,7 @@ def synth(options):
             f.result["native_identifier_repairs"]=canonicalize(f.folder/"mapped.il",f.folder/"import.il")
             (f.folder/"export.ys").write_text('read_ilang "'+(f.folder/"import.il").as_posix()+'"\nwrite_verilog -noattr -defparam -nohex -decimal -renameprefix syn_ "'+(f.folder/"design.vqm").as_posix()+'"\n',encoding="utf-8")
             f.job("export",[BIN/"eLinx_synthesis.exe","-s",f.folder/"export.ys"],120)
-            (f.folder/"constraints.sdc").write_text("create_clock -name clk -period 8.000 [get_ports {clk}]\n",encoding="ascii")
+            shutil.copy2(ROOT/"elinx/constraints.edc",f.folder/"constraints.sdc")
             tcl=r'''if {[catch {
 set run {@RUN@}
 set base {@BASE@}

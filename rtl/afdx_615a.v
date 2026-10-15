@@ -392,7 +392,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
                 .clk(clk),
                 .reset(reset),
-                .ce(ce),
+                .ce_phase(ce),
                 .enable_in(enable),
                 .configured_in(configured),
                 .request_port_in(request_port),
@@ -453,7 +453,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
                 .clk(clk),
                 .reset(reset),
-                .ce(ce),
+                .ce_phase(ce),
                 .enable_in(enable),
                 .configured_in(configured),
                 .request_port_in(request_port),

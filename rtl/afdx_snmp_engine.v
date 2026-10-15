@@ -1,6 +1,6 @@
 // 所有协议寄存器只在 ce 拍更新；RAM 和外部接口位于全速外壳。
 module afdx_snmp_engine (
-    input wire clk, reset, ce,
+    input wire clk, reset, ce_phase,
     input wire  enable_in,
     input wire [31:0] now_in,
     input wire  configured_in,
@@ -40,6 +40,8 @@ module afdx_snmp_engine (
     output reg  mib_request,
     output reg  mib_write
 );
+    // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
+    (* direct_enable = 1, keep = 1 *) wire ce = ce_phase | reset;
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
 
     // 下面是主状态机的状态，按用途分组。
@@ -224,7 +226,8 @@ module afdx_snmp_engine (
     // output_count 记录回应写到哪里，tx_pos 记录发到哪里。
     // part/part_pos 记录当前构造哪个字段及字段内的位置。
     reg [8:0] output_count;
-    reg [4:0] part, part_pos;
+    (* preserve = 1, dont_merge = 1 *) reg [4:0] part;
+    reg [4:0] part_pos;
 
     // 来自全速段的寄存器和 RAM 输出先采样，再进入协议逻辑。
     always @(posedge clk) begin

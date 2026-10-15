@@ -335,7 +335,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             afdx_snmp_engine engine (
                 .clk(clk),
                 .reset(reset),
-                .ce(ce),
+                .ce_phase(ce),
                 .enable_in(enable),
                 .now_in(now),
                 .configured_in(configured),
@@ -380,7 +380,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) 
             afdx_snmp_engine engine (
                 .clk(clk),
                 .reset(reset),
-                .ce(ce),
+                .ce_phase(ce),
                 .enable_in(enable),
                 .now_in(now),
                 .configured_in(configured),

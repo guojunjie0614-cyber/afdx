@@ -1,0 +1,212 @@
+"""Audit the exact MCP register set and its clock-enable cones in an official VQM."""
+import argparse
+import collections
+import csv
+import fnmatch
+import functools
+import hashlib
+import json
+from pathlib import Path
+import re
+import sqlite3
+import sys
+
+from adapt_gui_vqm import CELL, OUTPUTS
+
+def native_name(name):
+    return '|'.join(token.split(':')[-1] for token in name.lstrip('\\').split('|'))
+
+def signals(value):
+    value=re.sub(r"\b\d+'[sS]?[bBoOdDhH][0-9a-fA-FxXzZ_]+",'',value)
+    return tuple(re.findall(r'\\[^\s{},]+|\b[A-Za-z_$][\w$]*(?:\[\d+\])?',value))
+
+def constraints(path):
+    source=path.read_text(encoding='utf-8-sig')
+    source='\n'.join(line for line in source.splitlines() if not line.lstrip().startswith('#'))
+    collections_by_name={}
+    collection=re.compile(r'set (\w+) \[get_cells \{([^}]+)\}\]',re.S)
+    for m in collection.finditer(source):
+        if m[1] in collections_by_name:raise ValueError('Duplicate register collection')
+        collections_by_name[m[1]]=m[2].split()
+    source=collection.sub('',source)
+    lines=[line.strip() for line in source.splitlines() if line.strip()]
+    clock='create_clock -name clk -period 8.000 [get_ports {clk}]'
+    if lines.count(clock)!=1:raise ValueError('Exactly one 8 ns main clock is required')
+    rule=re.compile(r'set_multicycle_path -(setup|hold) ([012]) -from \$(\w+) -to \$(\w+)')
+    pairs=collections.defaultdict(dict)
+    for line in lines:
+        if line==clock:continue
+        m=rule.fullmatch(line)
+        if not m:raise ValueError('Unrecognized timing exception: '+line)
+        kind,multiplier,start,end=m.groups()
+        if start not in collections_by_name or end not in collections_by_name:raise ValueError('Unknown register collection')
+        def scope(name):
+            roots=set()
+            for pattern in collections_by_name[name]:
+                match=re.fullmatch(r'\*(loader|snmp)\|\*half_rate\.engine\|[A-Za-z_][A-Za-z_0-9]*\*~I',pattern)
+                if not match:raise ValueError('Collection must select an engine register stem: '+pattern)
+                roots.add(match[1])
+            if len(roots)!=1:raise ValueError('A collection may not cross engines')
+            return next(iter(roots))
+        if scope(start)!=scope(end):raise ValueError('MCP crosses engine boundaries')
+        if int(multiplier)!=(2 if kind=='setup' else 0):raise ValueError('This eLinx version requires setup 2 / hold 0 for same-edge hold')
+        if kind in pairs[(start,end)]:raise ValueError('Duplicate MCP')
+        pairs[(start,end)][kind]=int(multiplier)
+    if not pairs or any(set(v)!={'setup','hold'} for v in pairs.values()):raise ValueError('Every MCP needs setup and hold')
+    if set(collections_by_name)!={n for pair in pairs for n in pair}:raise ValueError('Unused register collection')
+    return [(tuple(collections_by_name[a]),tuple(collections_by_name[b])) for a,b in pairs]
+
+@functools.lru_cache(None)
+def matcher(patterns):
+    module=patterns[0].split('|')[0].lstrip('*')
+    return module+'|half_rate.engine|',tuple(p.rsplit('|',1)[1][:-3] for p in patterns)
+
+def matches(name,patterns):
+    prefix,stems=matcher(patterns);name=name.lstrip('\\')
+    return name.startswith(prefix) and name.endswith('~I') and name[len(prefix):].startswith(stems)
+
+def audit(vqm,sdc,destination):
+    data=vqm.read_text(encoding='utf-8').replace('\r\n','\n')
+    pairs=constraints(sdc)
+    cells=[];drivers={};registers={};ram=[]
+    for m in CELL.finditer(data):
+        kind,name=m['kind'],m['name']
+        ports={key:value.strip() for key,value in re.findall(r'\.(\w+)\s*\(([^()]*)\)',m['body'])}
+        cell=dict(kind=kind,name=name,native=native_name(name),ports=ports)
+        cells.append(cell)
+        if kind=='stratix_lcell':
+            output=ports.get('regout','')
+            if output:
+                if len(signals(output))!=1:raise ValueError('Unparsed register output: '+output)
+                registers[signals(output)[0]]=cell
+            dependencies=tuple(n for p in ('dataa','datab','datac','datad','cin','cin0','cin1','inverta') for n in signals(ports.get(p,'')))
+            for pin in ('combout','cout','cout0','cout1'):
+                for net in signals(ports.get(pin,'')):drivers[net]=dependencies
+        else:
+            ram.append(cell)
+    expected=len(re.findall(r'(?m)^(?:stratix_lcell|stratix_ram_block)\s',data))
+    if expected!=len(cells) or not registers:raise ValueError('Incomplete VQM parse')
+    for m in re.finditer(r'(?m)^assign\s+([^;]+?)\s*=\s*([^;]+);',data):
+        lhs=signals(m[1]);rhs=signals(m[2])
+        if len(lhs)==1:drivers[lhs[0]]=rhs
+    phase={}
+    for module in ('loader','snmp'):
+        phase_matches=[net for net,cell in registers.items() if re.fullmatch(module+r'_ce_q(?:~.*)?',cell['native'])]
+        if len(phase_matches)!=1:raise ValueError('Expected one preserved CE phase register for '+module+': '+str(phase_matches))
+        phase[module]=phase_matches[0]
+    @functools.lru_cache(None)
+    def leaves(net):
+        if net in registers:return frozenset([net])
+        if net not in drivers:return frozenset(['unresolved:'+net])
+        return frozenset().union(*(leaves(n) for n in drivers[net]))
+    rows=[];invalid=[];by_module=collections.Counter();uncovered=[];nonregisters=[]
+    for cell in cells:
+        selected=any(matches(cell['native'],a) or matches(cell['native'],b) for a,b in pairs)
+        if selected and not cell['ports'].get('regout'):nonregisters.append(cell['native'])
+    for net,cell in registers.items():
+        start='\\'+cell['native'];end=start
+        selected=[pair for pair in pairs if matches(start,pair[0]) or matches(end,pair[1])]
+        if not selected:
+            if '|half_rate.engine|' in cell['native']:uncovered.append(cell['native'])
+            continue
+        name=cell['native'];module=name.split('|')[0]
+        good_scope=module in phase and name.startswith(module+'|half_rate.engine|')
+        cone=frozenset().union(*(leaves(n) for n in signals(cell['ports'].get('ena',"1'b1"))))
+        expected_phase=phase.get(module,'missing')
+        valid=good_scope and expected_phase in cone and cell['ports'].get('clk')=='clk'
+        row=dict(module=module,register=name,enable=cell['ports'].get('ena',"1'b1"),
+                 ce=expected_phase,ce_in_enable_cone=expected_phase in cone,valid=valid,
+                 enable_terminals=';'.join(sorted(cone)))
+        rows.append(row);by_module[module]+=1
+        if not valid:invalid.append(row)
+    illegal_ram=[c['native'] for c in ram if '|half_rate.engine|' in c['native']]
+    if not rows or set(by_module)!={'loader','snmp'}:raise ValueError('Both engine register sets must be nonempty')
+    allowed=collections.defaultdict(set)
+    for from_patterns,to_patterns in pairs:
+        starts={net for net,c in registers.items() if matches(c['native'],from_patterns)}
+        for net,c in registers.items():
+            if matches(c['native'],to_patterns):allowed[net].update(starts)
+    missing_arcs=[];arc_count=0
+    for net,cell in registers.items():
+        if '|half_rate.engine|' not in cell['native']:continue
+        module=cell['native'].split('|')[0]
+        inputs=(n for p in ('dataa','datab','datac','datad','cin','cin0','cin1','inverta',
+                           'regcascin','ena','sclr','sload','aclr') for n in signals(cell['ports'].get(p,'')))
+        cone=frozenset().union(*(leaves(n) for n in inputs))
+        internal={n for n in cone if n in registers and registers[n]['native'].startswith(module+'|half_rate.engine|')}
+        arc_count+=len(internal)
+        missing_arcs.extend((registers[n]['native'],cell['native']) for n in internal-allowed[net])
+    result=dict(netlist_sha256=hashlib.sha256(vqm.read_bytes()).hexdigest(),
+                constraints_sha256=hashlib.sha256(sdc.read_bytes()).hexdigest(),
+                constrained_registers=len(rows),by_module=dict(by_module),invalid_registers=len(invalid),
+                ram_cells_in_engine=illegal_ram,all_registers=len(registers),ram_cells=len(ram),
+                selected_non_register_cells=nonregisters,uncovered_engine_registers=uncovered,
+                internal_register_arcs=arc_count,uncovered_internal_arcs=len(missing_arcs),
+                patterns=pairs,phase_registers=phase,
+                passed=not invalid and not illegal_ram and not nonregisters and not uncovered and not missing_arcs)
+    destination.mkdir(parents=True,exist_ok=True)
+    with (destination/'registers.csv').open('w',newline='',encoding='utf-8-sig') as f:
+        writer=csv.DictWriter(f,list(rows[0]));writer.writeheader();writer.writerows(rows)
+    (destination/'netlist.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    (destination/'uncovered_arcs.json').write_text(json.dumps(missing_arcs,indent=2)+'\n')
+    return result
+
+def timing(database,pairs,destination):
+    connection=sqlite3.connect(database.resolve().as_uri()+'?mode=ro',uri=True)
+    connection.row_factory=sqlite3.Row
+    clocks=[dict(r) for r in connection.execute('SELECT * FROM elinx_intra_clock_summary')]
+    expected=sum(r['setup_total_ends'] for r in clocks)
+    groups={};invalid=[];invalid_count=0;endpoints=set();failed_endpoints=set();hold_count=0
+    for kind,table in [('setup','longest'),('hold','shortest')]:
+        query='SELECT * FROM elinx_intra_clock_'+table+'_sync_path_report'
+        for r in connection.execute(query):
+            start=native_name(re.sub(r'\|ff/[QD]$','',r['from_cell_name']))
+            end=native_name(re.sub(r'\|ff/[QD]$','',r['to_cell_name']))
+            # Independently require every same-engine register path to have 16 ns,
+            # even if an erroneous generated collection omitted that pair.
+            applies=any(start.startswith(m+'|half_rate.engine|') and end.startswith(m+'|half_rate.engine|')
+                        for m in ('loader','snmp'))
+            group='multicycle' if applies else 'single_cycle'
+            requirement=r['capture_edge']-r['launch_edge']
+            wanted=(16000 if applies else 8000) if kind=='setup' else 0
+            if requirement!=wanted:
+                invalid_count+=1
+                if len(invalid)<30:invalid.append(dict(r,kind=kind,expected_edge_ps=wanted))
+            if kind=='hold':
+                hold_count+=1
+                continue
+            g=groups.setdefault(group,dict(paths=0,worst_setup_ns=1e9,failed_paths=0))
+            g['paths']+=1;g['worst_setup_ns']=min(g['worst_setup_ns'],r['slack']/1000)
+            g['failed_paths']+=r['slack']<0
+            endpoints.add(r['to_cell_name'])
+            if r['slack']<0:failed_endpoints.add(r['to_cell_name'])
+    if len(endpoints)!=expected:raise ValueError('Timing report must cover every endpoint')
+    result=dict(endpoint_count=len(endpoints),failed_endpoints=len(failed_endpoints),
+                counting='all native reported paths; every unique endpoint covered',
+                invalid_requirements=invalid_count,groups=groups,hold_paths_checked=hold_count,clocks=clocks,
+                passed=not invalid_count and 'multicycle' in groups)
+    (destination/'timing.json').write_text(json.dumps(result,indent=2)+'\n')
+    (destination/'invalid_timing.json').write_text(json.dumps(invalid,indent=2)+'\n')
+    connection.close()
+    return result
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('netlist',type=Path)
+    parser.add_argument('--constraints',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--timing',type=Path)
+    parser.add_argument('--refresh',action='store_true',help='Regenerate the SDC register groups from this VQM before auditing')
+    args=parser.parse_args()
+    if args.refresh:
+        from generate_multicycle import generate
+        print(json.dumps(generate(args.netlist,args.constraints),indent=2))
+    result=audit(args.netlist,args.constraints,args.output)
+    print(json.dumps({k:v for k,v in result.items() if k!='patterns'},ensure_ascii=False,indent=2))
+    passed=result['passed']
+    if args.timing:
+        measured=timing(args.timing,result['patterns'],args.output)
+        print(json.dumps(measured,ensure_ascii=False,indent=2));passed &= measured['passed']
+    return 0 if passed else 1
+
+if __name__=='__main__':raise SystemExit(main())

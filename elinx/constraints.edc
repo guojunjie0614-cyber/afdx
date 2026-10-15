@@ -1,1 +1,3038 @@
+# Main clock stays at 125 MHz; capture/configuration/RAM/output paths keep 8 ns.
 create_clock -name clk -period 8.000 [get_ports {clk}]
+
+# Register-only groups follow actual mapped fan-in, avoiding a dense all-to-all matrix.
+# Refresh with the netlist checker after RTL changes; all internal arcs must be covered.
+# Native eLinx hold 0 preserves the same-edge check (conventional SDC setup 2 / hold 1).
+
+set from_loader_ack_number [get_cells {
+    *loader|*half_rate.engine|ack_number*~I
+    *loader|*half_rate.engine|command_block*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_ack_number [get_cells {*loader|*half_rate.engine|ack_number*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ack_number -to $to_loader_ack_number
+set_multicycle_path -hold 0 -from $from_loader_ack_number -to $to_loader_ack_number
+
+set from_loader_ack_return [get_cells {
+    *loader|*half_rate.engine|ack_return*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|data_crc*~I
+    *loader|*half_rate.engine|expected_crc*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_ack_return [get_cells {*loader|*half_rate.engine|ack_return*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ack_return -to $to_loader_ack_return
+set_multicycle_path -hold 0 -from $from_loader_ack_return -to $to_loader_ack_return
+
+set from_loader_after_tx [get_cells {
+    *loader|*half_rate.engine|after_tx*~I
+    *loader|*half_rate.engine|pending_after*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_after_tx [get_cells {*loader|*half_rate.engine|after_tx*~I}]
+set_multicycle_path -setup 2 -from $from_loader_after_tx -to $to_loader_after_tx
+set_multicycle_path -hold 0 -from $from_loader_after_tx -to $to_loader_after_tx
+
+set from_loader_available_size [get_cells {
+    *loader|*half_rate.engine|available_size*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_available_size [get_cells {*loader|*half_rate.engine|available_size*~I}]
+set_multicycle_path -setup 2 -from $from_loader_available_size -to $to_loader_available_size
+set_multicycle_path -hold 0 -from $from_loader_available_size -to $to_loader_available_size
+
+set from_loader_block_number [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_block_number [get_cells {*loader|*half_rate.engine|block_number*~I}]
+set_multicycle_path -setup 2 -from $from_loader_block_number -to $to_loader_block_number
+set_multicycle_path -hold 0 -from $from_loader_block_number -to $to_loader_block_number
+
+set from_loader_build_position [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_build_position [get_cells {*loader|*half_rate.engine|build_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_build_position -to $to_loader_build_position
+set_multicycle_path -hold 0 -from $from_loader_build_position -to $to_loader_build_position
+
+set from_loader_build_value [get_cells {
+    *loader|*half_rate.engine|build_value*~I
+    *loader|*half_rate.engine|candidate_byte*~I
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_build_value [get_cells {*loader|*half_rate.engine|build_value*~I}]
+set_multicycle_path -setup 2 -from $from_loader_build_value -to $to_loader_build_value
+set_multicycle_path -hold 0 -from $from_loader_build_value -to $to_loader_build_value
+
+set from_loader_byte_value [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|hdr_q*~I
+    *loader|*half_rate.engine|load_q*~I
+    *loader|*half_rate.engine|lur_q*~I
+    *loader|*half_rate.engine|rx_q*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_byte_value [get_cells {*loader|*half_rate.engine|byte_value*~I}]
+set_multicycle_path -setup 2 -from $from_loader_byte_value -to $to_loader_byte_value
+set_multicycle_path -hold 0 -from $from_loader_byte_value -to $to_loader_byte_value
+
+set from_loader_candidate_address [get_cells {
+    *loader|*half_rate.engine|build_position*~I
+    *loader|*half_rate.engine|candidate_address*~I
+    *loader|*half_rate.engine|dl_read_addr*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|head_index*~I
+    *loader|*half_rate.engine|header_name_addr*~I
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|lus_partlen_pos*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|part_addr*~I
+    *loader|*half_rate.engine|part_index*~I
+}]
+set to_loader_candidate_address [get_cells {*loader|*half_rate.engine|candidate_address*~I}]
+set_multicycle_path -setup 2 -from $from_loader_candidate_address -to $to_loader_candidate_address
+set_multicycle_path -hold 0 -from $from_loader_candidate_address -to $to_loader_candidate_address
+
+set from_loader_candidate_byte [get_cells {
+    *loader|*half_rate.engine|ack_number*~I
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|build_position*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|error_position*~I
+    *loader|*half_rate.engine|filename_position*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_counter*~I
+    *loader|*half_rate.engine|lus_description_position*~I
+    *loader|*half_rate.engine|lus_partlen_pos*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|manifest*~I
+    *loader|*half_rate.engine|mode_start*~I
+    *loader|*half_rate.engine|name_end*~I
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|part_len*~I
+    *loader|*half_rate.engine|protocol_a4*~I
+    *loader|*half_rate.engine|ratio_h*~I
+    *loader|*half_rate.engine|ratio_t*~I
+    *loader|*half_rate.engine|ratio_u*~I
+    *loader|*half_rate.engine|reason*~I
+    *loader|*half_rate.engine|rrq_mode_position*~I
+    *loader|*half_rate.engine|tail_index*~I
+    *loader|*half_rate.engine|wrq_mode_position*~I
+}]
+set to_loader_candidate_byte [get_cells {*loader|*half_rate.engine|candidate_byte*~I}]
+set_multicycle_path -setup 2 -from $from_loader_candidate_byte -to $to_loader_candidate_byte
+set_multicycle_path -hold 0 -from $from_loader_candidate_byte -to $to_loader_candidate_byte
+
+set from_loader_candidate_read [get_cells {
+    *loader|*half_rate.engine|build_position*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|lus_partlen_pos*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|name_end*~I
+}]
+set to_loader_candidate_read [get_cells {*loader|*half_rate.engine|candidate_read*~I}]
+set_multicycle_path -setup 2 -from $from_loader_candidate_read -to $to_loader_candidate_read
+set_multicycle_path -hold 0 -from $from_loader_candidate_read -to $to_loader_candidate_read
+
+set from_loader_candidate_source [get_cells {
+    *loader|*half_rate.engine|build_position*~I
+    *loader|*half_rate.engine|candidate_source*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|lus_partlen_pos*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|name_end*~I
+}]
+set to_loader_candidate_source [get_cells {*loader|*half_rate.engine|candidate_source*~I}]
+set_multicycle_path -setup 2 -from $from_loader_candidate_source -to $to_loader_candidate_source
+set_multicycle_path -hold 0 -from $from_loader_candidate_source -to $to_loader_candidate_source
+
+set from_loader_command_block [get_cells {
+    *loader|*half_rate.engine|command_block*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|rx_block*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_command_block [get_cells {*loader|*half_rate.engine|command_block*~I}]
+set_multicycle_path -setup 2 -from $from_loader_command_block -to $to_loader_command_block
+set_multicycle_path -hold 0 -from $from_loader_command_block -to $to_loader_command_block
+
+set from_loader_command_dport [get_cells {
+    *loader|*half_rate.engine|command_dport*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|peer_dp*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_command_dport [get_cells {*loader|*half_rate.engine|command_dport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_command_dport -to $to_loader_command_dport
+set_multicycle_path -hold 0 -from $from_loader_command_dport -to $to_loader_command_dport
+
+set from_loader_command_length [get_cells {
+    *loader|*half_rate.engine|command_length*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|rx_length*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_command_length [get_cells {*loader|*half_rate.engine|command_length*~I}]
+set_multicycle_path -setup 2 -from $from_loader_command_length -to $to_loader_command_length
+set_multicycle_path -hold 0 -from $from_loader_command_length -to $to_loader_command_length
+
+set from_loader_command_op [get_cells {
+    *loader|*half_rate.engine|command_op*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|rx_op*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_command_op [get_cells {*loader|*half_rate.engine|command_op*~I}]
+set_multicycle_path -setup 2 -from $from_loader_command_op -to $to_loader_command_op
+set_multicycle_path -hold 0 -from $from_loader_command_op -to $to_loader_command_op
+
+set from_loader_command_sport [get_cells {
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|peer_sp*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_command_sport [get_cells {*loader|*half_rate.engine|command_sport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_command_sport -to $to_loader_command_sport
+set_multicycle_path -hold 0 -from $from_loader_command_sport -to $to_loader_command_sport
+
+set from_loader_consume [get_cells {
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_consume [get_cells {*loader|*half_rate.engine|consume*~I}]
+set_multicycle_path -setup 2 -from $from_loader_consume -to $to_loader_consume
+set_multicycle_path -hold 0 -from $from_loader_consume -to $to_loader_consume
+
+set from_loader_copy_len [get_cells {
+    *loader|*half_rate.engine|command_length*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dl_remaining*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_copy_len [get_cells {*loader|*half_rate.engine|copy_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_copy_len -to $to_loader_copy_len
+set_multicycle_path -hold 0 -from $from_loader_copy_len -to $to_loader_copy_len
+
+set from_loader_copy_pos [get_cells {
+    *loader|*half_rate.engine|copy_pos*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_copy_pos [get_cells {*loader|*half_rate.engine|copy_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_copy_pos -to $to_loader_copy_pos
+set_multicycle_path -hold 0 -from $from_loader_copy_pos -to $to_loader_copy_pos
+
+set from_loader_data_crc [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|data_crc*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_data_crc [get_cells {*loader|*half_rate.engine|data_crc*~I}]
+set_multicycle_path -setup 2 -from $from_loader_data_crc -to $to_loader_data_crc
+set_multicycle_path -hold 0 -from $from_loader_data_crc -to $to_loader_data_crc
+
+set from_loader_data_name_addr [get_cells {
+    *loader|*half_rate.engine|data_name_addr*~I
+    *loader|*half_rate.engine|header_pointer*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_data_name_addr [get_cells {*loader|*half_rate.engine|data_name_addr*~I}]
+set_multicycle_path -setup 2 -from $from_loader_data_name_addr -to $to_loader_data_name_addr
+set_multicycle_path -hold 0 -from $from_loader_data_name_addr -to $to_loader_data_name_addr
+
+set from_loader_data_name_len [get_cells {
+    *loader|*half_rate.engine|data_name_len*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_data_name_len [get_cells {*loader|*half_rate.engine|data_name_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_data_name_len -to $to_loader_data_name_len
+set_multicycle_path -hold 0 -from $from_loader_data_name_len -to $to_loader_data_name_len
+
+set from_loader_decimal_rest [get_cells {
+    *loader|*half_rate.engine|decimal_rest*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_decimal_rest [get_cells {*loader|*half_rate.engine|decimal_rest*~I}]
+set_multicycle_path -setup 2 -from $from_loader_decimal_rest -to $to_loader_decimal_rest
+set_multicycle_path -hold 0 -from $from_loader_decimal_rest -to $to_loader_decimal_rest
+
+set from_loader_decimal_tens [get_cells {
+    *loader|*half_rate.engine|decimal_rest*~I
+    *loader|*half_rate.engine|decimal_tens*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_decimal_tens [get_cells {*loader|*half_rate.engine|decimal_tens*~I}]
+set_multicycle_path -setup 2 -from $from_loader_decimal_tens -to $to_loader_decimal_tens
+set_multicycle_path -hold 0 -from $from_loader_decimal_tens -to $to_loader_decimal_tens
+
+set from_loader_deny_empty [get_cells {
+    *loader|*half_rate.engine|deny_empty*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+}]
+set to_loader_deny_empty [get_cells {*loader|*half_rate.engine|deny_empty*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_empty -to $to_loader_deny_empty
+set_multicycle_path -hold 0 -from $from_loader_deny_empty -to $to_loader_deny_empty
+
+set from_loader_deny_pos [get_cells {
+    *loader|*half_rate.engine|deny_pos*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_deny_pos [get_cells {*loader|*half_rate.engine|deny_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_pos -to $to_loader_deny_pos
+set_multicycle_path -hold 0 -from $from_loader_deny_pos -to $to_loader_deny_pos
+
+set from_loader_deny_tid [get_cells {
+    *loader|*half_rate.engine|deny_tid*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+}]
+set to_loader_deny_tid [get_cells {*loader|*half_rate.engine|deny_tid*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_tid -to $to_loader_deny_tid
+set_multicycle_path -hold 0 -from $from_loader_deny_tid -to $to_loader_deny_tid
+
+set from_loader_deny_unsupported [get_cells {
+    *loader|*half_rate.engine|deny_unsupported*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_unsupported*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_deny_unsupported [get_cells {*loader|*half_rate.engine|deny_unsupported*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_unsupported -to $to_loader_deny_unsupported
+set_multicycle_path -hold 0 -from $from_loader_deny_unsupported -to $to_loader_deny_unsupported
+
+set from_loader_deny_wa [get_cells {
+    *loader|*half_rate.engine|deny_pos*~I
+    *loader|*half_rate.engine|deny_wa*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_deny_wa [get_cells {*loader|*half_rate.engine|deny_wa*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_wa -to $to_loader_deny_wa
+set_multicycle_path -hold 0 -from $from_loader_deny_wa -to $to_loader_deny_wa
+
+set from_loader_deny_wd [get_cells {
+    *loader|*half_rate.engine|deny_empty*~I
+    *loader|*half_rate.engine|deny_pos*~I
+    *loader|*half_rate.engine|deny_unsupported*~I
+    *loader|*half_rate.engine|deny_wd*~I
+    *loader|*half_rate.engine|protocol_a4*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_deny_wd [get_cells {*loader|*half_rate.engine|deny_wd*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_wd -to $to_loader_deny_wd
+set_multicycle_path -hold 0 -from $from_loader_deny_wd -to $to_loader_deny_wd
+
+set from_loader_deny_we [get_cells {
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_deny_we [get_cells {*loader|*half_rate.engine|deny_we*~I}]
+set_multicycle_path -setup 2 -from $from_loader_deny_we -to $to_loader_deny_we
+set_multicycle_path -hold 0 -from $from_loader_deny_we -to $to_loader_deny_we
+
+set from_loader_dispatch_action [get_cells {
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_match*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dispatch_action [get_cells {*loader|*half_rate.engine|dispatch_action*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dispatch_action -to $to_loader_dispatch_action
+set_multicycle_path -hold 0 -from $from_loader_dispatch_action -to $to_loader_dispatch_action
+
+set from_loader_dispatch_current [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|command_block*~I
+    *loader|*half_rate.engine|command_length*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dispatch_current [get_cells {*loader|*half_rate.engine|dispatch_current*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dispatch_current -to $to_loader_dispatch_current
+set_multicycle_path -hold 0 -from $from_loader_dispatch_current -to $to_loader_dispatch_current
+
+set from_loader_dispatch_match [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|command_block*~I
+    *loader|*half_rate.engine|command_dport*~I
+    *loader|*half_rate.engine|command_op*~I
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|dispatch_match*~I
+    *loader|*half_rate.engine|main_peer*~I
+    *loader|*half_rate.engine|main_tid*~I
+    *loader|*half_rate.engine|request_port*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status_peer*~I
+    *loader|*half_rate.engine|status_tid*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_dispatch_match [get_cells {*loader|*half_rate.engine|dispatch_match*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dispatch_match -to $to_loader_dispatch_match
+set_multicycle_path -hold 0 -from $from_loader_dispatch_match -to $to_loader_dispatch_match
+
+set from_loader_dispatch_repeat [get_cells {
+    *loader|*half_rate.engine|command_block*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|previous_block*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dispatch_repeat [get_cells {*loader|*half_rate.engine|dispatch_repeat*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dispatch_repeat -to $to_loader_dispatch_repeat
+set_multicycle_path -hold 0 -from $from_loader_dispatch_repeat -to $to_loader_dispatch_repeat
+
+set from_loader_dl_acked [get_cells {
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|dl_acked*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dl_acked [get_cells {*loader|*half_rate.engine|dl_acked*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dl_acked -to $to_loader_dl_acked
+set_multicycle_path -hold 0 -from $from_loader_dl_acked -to $to_loader_dl_acked
+
+set from_loader_dl_read_addr [get_cells {
+    *loader|*half_rate.engine|dl_acked*~I
+    *loader|*half_rate.engine|dl_read_addr*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dl_read_addr [get_cells {*loader|*half_rate.engine|dl_read_addr*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dl_read_addr -to $to_loader_dl_read_addr
+set_multicycle_path -hold 0 -from $from_loader_dl_read_addr -to $to_loader_dl_read_addr
+
+set from_loader_dl_remaining [get_cells {
+    *loader|*half_rate.engine|dl_acked*~I
+    *loader|*half_rate.engine|dl_remaining*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_dl_remaining [get_cells {*loader|*half_rate.engine|dl_remaining*~I}]
+set_multicycle_path -setup 2 -from $from_loader_dl_remaining -to $to_loader_dl_remaining
+set_multicycle_path -hold 0 -from $from_loader_dl_remaining -to $to_loader_dl_remaining
+
+set from_loader_download_mode [get_cells {
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_download_mode [get_cells {*loader|*half_rate.engine|download_mode*~I}]
+set_multicycle_path -setup 2 -from $from_loader_download_mode -to $to_loader_download_mode
+set_multicycle_path -hold 0 -from $from_loader_download_mode -to $to_loader_download_mode
+
+set from_loader_error_position [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_error_position [get_cells {*loader|*half_rate.engine|error_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_error_position -to $to_loader_error_position
+set_multicycle_path -hold 0 -from $from_loader_error_position -to $to_loader_error_position
+
+set from_loader_expected_crc [get_cells {
+    *loader|*half_rate.engine|expected_crc*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_expected_crc [get_cells {*loader|*half_rate.engine|expected_crc*~I}]
+set_multicycle_path -setup 2 -from $from_loader_expected_crc -to $to_loader_expected_crc
+set_multicycle_path -hold 0 -from $from_loader_expected_crc -to $to_loader_expected_crc
+
+set from_loader_expected_mode [get_cells {
+    *loader|*half_rate.engine|name_pos*~I
+}]
+set to_loader_expected_mode [get_cells {*loader|*half_rate.engine|expected_mode*~I}]
+set_multicycle_path -setup 2 -from $from_loader_expected_mode -to $to_loader_expected_mode
+set_multicycle_path -hold 0 -from $from_loader_expected_mode -to $to_loader_expected_mode
+
+set from_loader_expected_name [get_cells {
+    *loader|*half_rate.engine|name_pos*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_write*~I
+}]
+set to_loader_expected_name [get_cells {*loader|*half_rate.engine|expected_name*~I}]
+set_multicycle_path -setup 2 -from $from_loader_expected_name -to $to_loader_expected_name
+set_multicycle_path -hold 0 -from $from_loader_expected_name -to $to_loader_expected_name
+
+set from_loader_fetch_addr [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|candidate_address*~I
+    *loader|*half_rate.engine|candidate_read*~I
+    *loader|*half_rate.engine|candidate_source*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|copy_pos*~I
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|header_pointer*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|name_pos*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|rrq_data_read*~I
+    *loader|*half_rate.engine|rrq_header_read*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_fetch_addr [get_cells {*loader|*half_rate.engine|fetch_addr*~I}]
+set_multicycle_path -setup 2 -from $from_loader_fetch_addr -to $to_loader_fetch_addr
+set_multicycle_path -hold 0 -from $from_loader_fetch_addr -to $to_loader_fetch_addr
+
+set from_loader_fetch_source [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|candidate_read*~I
+    *loader|*half_rate.engine|candidate_source*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|copy_pos*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_fetch_source [get_cells {*loader|*half_rate.engine|fetch_source*~I}]
+set_multicycle_path -setup 2 -from $from_loader_fetch_source -to $to_loader_fetch_source
+set_multicycle_path -hold 0 -from $from_loader_fetch_source -to $to_loader_fetch_source
+
+set from_loader_file_kind [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_file_kind [get_cells {*loader|*half_rate.engine|file_kind*~I}]
+set_multicycle_path -setup 2 -from $from_loader_file_kind -to $to_loader_file_kind
+set_multicycle_path -hold 0 -from $from_loader_file_kind -to $to_loader_file_kind
+
+set from_loader_file_size [get_cells {
+    *loader|*half_rate.engine|available_size*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_file_size [get_cells {*loader|*half_rate.engine|file_size*~I}]
+set_multicycle_path -setup 2 -from $from_loader_file_size -to $to_loader_file_size
+set_multicycle_path -hold 0 -from $from_loader_file_size -to $to_loader_file_size
+
+set from_loader_filename_position [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_filename_position [get_cells {*loader|*half_rate.engine|filename_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_filename_position -to $to_loader_filename_position
+set_multicycle_path -hold 0 -from $from_loader_filename_position -to $to_loader_filename_position
+
+set from_loader_hdr_ra [get_cells {
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|hdr_ra*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_hdr_ra [get_cells {*loader|*half_rate.engine|hdr_ra*~I}]
+set_multicycle_path -setup 2 -from $from_loader_hdr_ra -to $to_loader_hdr_ra
+set_multicycle_path -hold 0 -from $from_loader_hdr_ra -to $to_loader_hdr_ra
+
+set from_loader_hdr_re [get_cells {
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_hdr_re [get_cells {*loader|*half_rate.engine|hdr_re*~I}]
+set_multicycle_path -setup 2 -from $from_loader_hdr_re -to $to_loader_hdr_re
+set_multicycle_path -hold 0 -from $from_loader_hdr_re -to $to_loader_hdr_re
+
+set from_loader_hdr_wa [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|hdr_wa*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_hdr_wa [get_cells {*loader|*half_rate.engine|hdr_wa*~I}]
+set_multicycle_path -setup 2 -from $from_loader_hdr_wa -to $to_loader_hdr_wa
+set_multicycle_path -hold 0 -from $from_loader_hdr_wa -to $to_loader_hdr_wa
+
+set from_loader_hdr_wd [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|hdr_wd*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_hdr_wd [get_cells {*loader|*half_rate.engine|hdr_wd*~I}]
+set_multicycle_path -setup 2 -from $from_loader_hdr_wd -to $to_loader_hdr_wd
+set_multicycle_path -hold 0 -from $from_loader_hdr_wd -to $to_loader_hdr_wd
+
+set from_loader_hdr_we [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_hdr_we [get_cells {*loader|*half_rate.engine|hdr_we*~I}]
+set_multicycle_path -setup 2 -from $from_loader_hdr_we -to $to_loader_hdr_we
+set_multicycle_path -hold 0 -from $from_loader_hdr_we -to $to_loader_hdr_we
+
+set from_loader_head_index [get_cells {
+    *loader|*half_rate.engine|head_index*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_head_index [get_cells {*loader|*half_rate.engine|head_index*~I}]
+set_multicycle_path -setup 2 -from $from_loader_head_index -to $to_loader_head_index
+set_multicycle_path -hold 0 -from $from_loader_head_index -to $to_loader_head_index
+
+set from_loader_header_crc [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_header_crc [get_cells {*loader|*half_rate.engine|header_crc*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_crc -to $to_loader_header_crc
+set_multicycle_path -hold 0 -from $from_loader_header_crc -to $to_loader_header_crc
+
+set from_loader_header_limit [get_cells {
+    *loader|*half_rate.engine|metadata_size*~I
+}]
+set to_loader_header_limit [get_cells {*loader|*half_rate.engine|header_limit*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_limit -to $to_loader_header_limit
+set_multicycle_path -hold 0 -from $from_loader_header_limit -to $to_loader_header_limit
+
+set from_loader_header_name_addr [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_addr*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_header_name_addr [get_cells {*loader|*half_rate.engine|header_name_addr*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_name_addr -to $to_loader_header_name_addr
+set_multicycle_path -hold 0 -from $from_loader_header_name_addr -to $to_loader_header_name_addr
+
+set from_loader_header_name_len [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_header_name_len [get_cells {*loader|*half_rate.engine|header_name_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_name_len -to $to_loader_header_name_len
+set_multicycle_path -hold 0 -from $from_loader_header_name_len -to $to_loader_header_name_len
+
+set from_loader_header_pointer [get_cells {
+    *loader|*half_rate.engine|header_pointer*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_header_pointer [get_cells {*loader|*half_rate.engine|header_pointer*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_pointer -to $to_loader_header_pointer
+set_multicycle_path -hold 0 -from $from_loader_header_pointer -to $to_loader_header_pointer
+
+set from_loader_header_pointer_ok [get_cells {
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|pointer_equal*~I
+    *loader|*half_rate.engine|pointer_less*~I
+    *loader|*half_rate.engine|pointer_minimum*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_header_pointer_ok [get_cells {*loader|*half_rate.engine|header_pointer_ok*~I}]
+set_multicycle_path -setup 2 -from $from_loader_header_pointer_ok -to $to_loader_header_pointer_ok
+set_multicycle_path -hold 0 -from $from_loader_header_pointer_ok -to $to_loader_header_pointer_ok
+
+set from_loader_load_ra [get_cells {
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|load_ra*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_load_ra [get_cells {*loader|*half_rate.engine|load_ra*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_ra -to $to_loader_load_ra
+set_multicycle_path -hold 0 -from $from_loader_load_ra -to $to_loader_load_ra
+
+set from_loader_load_re [get_cells {
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_load_re [get_cells {*loader|*half_rate.engine|load_re*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_re -to $to_loader_load_re
+set_multicycle_path -hold 0 -from $from_loader_load_re -to $to_loader_load_re
+
+set from_loader_load_wa [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|load_wa*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_load_wa [get_cells {*loader|*half_rate.engine|load_wa*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_wa -to $to_loader_load_wa
+set_multicycle_path -hold 0 -from $from_loader_load_wa -to $to_loader_load_wa
+
+set from_loader_load_wd [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|load_wd*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_load_wd [get_cells {*loader|*half_rate.engine|load_wd*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_wd -to $to_loader_load_wd
+set_multicycle_path -hold 0 -from $from_loader_load_wd -to $to_loader_load_wd
+
+set from_loader_load_we [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_load_we [get_cells {*loader|*half_rate.engine|load_we*~I}]
+set_multicycle_path -setup 2 -from $from_loader_load_we -to $to_loader_load_we
+set_multicycle_path -hold 0 -from $from_loader_load_we -to $to_loader_load_we
+
+set from_loader_loaded [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_loaded [get_cells {*loader|*half_rate.engine|loaded*~I}]
+set_multicycle_path -setup 2 -from $from_loader_loaded -to $to_loader_loaded
+set_multicycle_path -hold 0 -from $from_loader_loaded -to $to_loader_loaded
+
+set from_loader_lur_ra [get_cells {
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|lur_ra*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lur_ra [get_cells {*loader|*half_rate.engine|lur_ra*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lur_ra -to $to_loader_lur_ra
+set_multicycle_path -hold 0 -from $from_loader_lur_ra -to $to_loader_lur_ra
+
+set from_loader_lur_re [get_cells {
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lur_re [get_cells {*loader|*half_rate.engine|lur_re*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lur_re -to $to_loader_lur_re
+set_multicycle_path -hold 0 -from $from_loader_lur_re -to $to_loader_lur_re
+
+set from_loader_lur_wa [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|lur_wa*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lur_wa [get_cells {*loader|*half_rate.engine|lur_wa*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lur_wa -to $to_loader_lur_wa
+set_multicycle_path -hold 0 -from $from_loader_lur_wa -to $to_loader_lur_wa
+
+set from_loader_lur_wd [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|lur_wd*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lur_wd [get_cells {*loader|*half_rate.engine|lur_wd*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lur_wd -to $to_loader_lur_wd
+set_multicycle_path -hold 0 -from $from_loader_lur_wd -to $to_loader_lur_wd
+
+set from_loader_lur_we [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lur_we [get_cells {*loader|*half_rate.engine|lur_we*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lur_we -to $to_loader_lur_we
+set_multicycle_path -hold 0 -from $from_loader_lur_we -to $to_loader_lur_we
+
+set from_loader_lus_counter [get_cells {
+    *loader|*half_rate.engine|lus_counter*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_counter [get_cells {*loader|*half_rate.engine|lus_counter*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_counter -to $to_loader_lus_counter
+set_multicycle_path -hold 0 -from $from_loader_lus_counter -to $to_loader_lus_counter
+
+set from_loader_lus_description_position [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_lus_description_position [get_cells {*loader|*half_rate.engine|lus_description_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_description_position -to $to_loader_lus_description_position
+set_multicycle_path -hold 0 -from $from_loader_lus_description_position -to $to_loader_lus_description_position
+
+set from_loader_lus_packet_len [get_cells {
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_packet_len*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_packet_len [get_cells {*loader|*half_rate.engine|lus_packet_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_packet_len -to $to_loader_lus_packet_len
+set_multicycle_path -hold 0 -from $from_loader_lus_packet_len -to $to_loader_lus_packet_len
+
+set from_loader_lus_part_pos [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_part_pos [get_cells {*loader|*half_rate.engine|lus_part_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_part_pos -to $to_loader_lus_part_pos
+set_multicycle_path -hold 0 -from $from_loader_lus_part_pos -to $to_loader_lus_part_pos
+
+set from_loader_lus_partlen_pos [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_partlen_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_partlen_pos [get_cells {*loader|*half_rate.engine|lus_partlen_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_partlen_pos -to $to_loader_lus_partlen_pos
+set_multicycle_path -hold 0 -from $from_loader_lus_partlen_pos -to $to_loader_lus_partlen_pos
+
+set from_loader_lus_return [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_return [get_cells {*loader|*half_rate.engine|lus_return*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_return -to $to_loader_lus_return
+set_multicycle_path -hold 0 -from $from_loader_lus_return -to $to_loader_lus_return
+
+set from_loader_lus_status [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_status [get_cells {*loader|*half_rate.engine|lus_status*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_status -to $to_loader_lus_status
+set_multicycle_path -hold 0 -from $from_loader_lus_status -to $to_loader_lus_status
+
+set from_loader_lus_tail_pos [get_cells {
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|part_len*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_lus_tail_pos [get_cells {*loader|*half_rate.engine|lus_tail_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_lus_tail_pos -to $to_loader_lus_tail_pos
+set_multicycle_path -hold 0 -from $from_loader_lus_tail_pos -to $to_loader_lus_tail_pos
+
+set from_loader_main_peer [get_cells {
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|main_peer*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_main_peer [get_cells {*loader|*half_rate.engine|main_peer*~I}]
+set_multicycle_path -setup 2 -from $from_loader_main_peer -to $to_loader_main_peer
+set_multicycle_path -hold 0 -from $from_loader_main_peer -to $to_loader_main_peer
+
+set from_loader_main_tid [get_cells {
+    *loader|*half_rate.engine|main_tid*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_main_tid [get_cells {*loader|*half_rate.engine|main_tid*~I}]
+set_multicycle_path -setup 2 -from $from_loader_main_tid -to $to_loader_main_tid
+set_multicycle_path -hold 0 -from $from_loader_main_tid -to $to_loader_main_tid
+
+set from_loader_manifest [get_cells {
+    *loader|*half_rate.engine|manifest*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_manifest [get_cells {*loader|*half_rate.engine|manifest*~I}]
+set_multicycle_path -setup 2 -from $from_loader_manifest -to $to_loader_manifest
+set_multicycle_path -hold 0 -from $from_loader_manifest -to $to_loader_manifest
+
+set from_loader_metadata_size [get_cells {
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_metadata_size [get_cells {*loader|*half_rate.engine|metadata_size*~I}]
+set_multicycle_path -setup 2 -from $from_loader_metadata_size -to $to_loader_metadata_size
+set_multicycle_path -hold 0 -from $from_loader_metadata_size -to $to_loader_metadata_size
+
+set from_loader_mode_bad [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|expected_mode*~I
+    *loader|*half_rate.engine|name_pos*~I
+}]
+set to_loader_mode_bad [get_cells {*loader|*half_rate.engine|mode_bad*~I}]
+set_multicycle_path -setup 2 -from $from_loader_mode_bad -to $to_loader_mode_bad
+set_multicycle_path -hold 0 -from $from_loader_mode_bad -to $to_loader_mode_bad
+
+set from_loader_mode_start [get_cells {
+    *loader|*half_rate.engine|mode_start*~I
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_mode_start [get_cells {*loader|*half_rate.engine|mode_start*~I}]
+set_multicycle_path -setup 2 -from $from_loader_mode_start -to $to_loader_mode_start
+set_multicycle_path -hold 0 -from $from_loader_mode_start -to $to_loader_mode_start
+
+set from_loader_mode_terminal [get_cells {
+    *loader|*half_rate.engine|name_pos*~I
+}]
+set to_loader_mode_terminal [get_cells {*loader|*half_rate.engine|mode_terminal*~I}]
+set_multicycle_path -setup 2 -from $from_loader_mode_terminal -to $to_loader_mode_terminal
+set_multicycle_path -hold 0 -from $from_loader_mode_terminal -to $to_loader_mode_terminal
+
+set from_loader_name_bad [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|expected_name*~I
+}]
+set to_loader_name_bad [get_cells {*loader|*half_rate.engine|name_bad*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_bad -to $to_loader_name_bad
+set_multicycle_path -hold 0 -from $from_loader_name_bad -to $to_loader_name_bad
+
+set from_loader_name_end [get_cells {
+    *loader|*half_rate.engine|name_end*~I
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_name_end [get_cells {*loader|*half_rate.engine|name_end*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_end -to $to_loader_name_end
+set_multicycle_path -hold 0 -from $from_loader_name_end -to $to_loader_name_end
+
+set from_loader_name_mark [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|name_pos*~I
+    *loader|*half_rate.engine|request_write*~I
+}]
+set to_loader_name_mark [get_cells {*loader|*half_rate.engine|name_mark*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_mark -to $to_loader_name_mark
+set_multicycle_path -hold 0 -from $from_loader_name_mark -to $to_loader_name_mark
+
+set from_loader_name_option [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|name_pos*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_write*~I
+}]
+set to_loader_name_option [get_cells {*loader|*half_rate.engine|name_option*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_option -to $to_loader_name_option
+set_multicycle_path -hold 0 -from $from_loader_name_option -to $to_loader_name_option
+
+set from_loader_name_pos [get_cells {
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|mode_terminal*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|name_pos*~I
+    *loader|*half_rate.engine|name_terminal*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_name_pos [get_cells {*loader|*half_rate.engine|name_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_pos -to $to_loader_name_pos
+set_multicycle_path -hold 0 -from $from_loader_name_pos -to $to_loader_name_pos
+
+set from_loader_name_terminal [get_cells {
+    *loader|*half_rate.engine|name_pos*~I
+}]
+set to_loader_name_terminal [get_cells {*loader|*half_rate.engine|name_terminal*~I}]
+set_multicycle_path -setup 2 -from $from_loader_name_terminal -to $to_loader_name_terminal
+set_multicycle_path -hold 0 -from $from_loader_name_terminal -to $to_loader_name_terminal
+
+set from_loader_num_return [get_cells {
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|num_return*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_num_return [get_cells {*loader|*half_rate.engine|num_return*~I}]
+set_multicycle_path -setup 2 -from $from_loader_num_return -to $to_loader_num_return
+set_multicycle_path -hold 0 -from $from_loader_num_return -to $to_loader_num_return
+
+set from_loader_number [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_number [get_cells {*loader|*half_rate.engine|number*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number -to $to_loader_number
+set_multicycle_path -hold 0 -from $from_loader_number -to $to_loader_number
+
+set from_loader_number_left [get_cells {
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_left*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_number_left [get_cells {*loader|*half_rate.engine|number_left*~I}]
+set_multicycle_path -setup 2 -from $from_loader_number_left -to $to_loader_number_left
+set_multicycle_path -hold 0 -from $from_loader_number_left -to $to_loader_number_left
+
+set from_loader_packet_len [get_cells {
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|pending_length*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_packet_len [get_cells {*loader|*half_rate.engine|packet_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_packet_len -to $to_loader_packet_len
+set_multicycle_path -hold 0 -from $from_loader_packet_len -to $to_loader_packet_len
+
+set from_loader_packet_pos [get_cells {
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|timer*~I
+}]
+set to_loader_packet_pos [get_cells {*loader|*half_rate.engine|packet_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_packet_pos -to $to_loader_packet_pos
+set_multicycle_path -hold 0 -from $from_loader_packet_pos -to $to_loader_packet_pos
+
+set from_loader_packet_type [get_cells {
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|pending_kind*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_packet_type [get_cells {*loader|*half_rate.engine|packet_type*~I}]
+set_multicycle_path -setup 2 -from $from_loader_packet_type -to $to_loader_packet_type
+set_multicycle_path -hold 0 -from $from_loader_packet_type -to $to_loader_packet_type
+
+set from_loader_part_addr [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|part_addr*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_part_addr [get_cells {*loader|*half_rate.engine|part_addr*~I}]
+set_multicycle_path -setup 2 -from $from_loader_part_addr -to $to_loader_part_addr
+set_multicycle_path -hold 0 -from $from_loader_part_addr -to $to_loader_part_addr
+
+set from_loader_part_index [get_cells {
+    *loader|*half_rate.engine|lus_part_pos*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|part_index*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_part_index [get_cells {*loader|*half_rate.engine|part_index*~I}]
+set_multicycle_path -setup 2 -from $from_loader_part_index -to $to_loader_part_index
+set_multicycle_path -hold 0 -from $from_loader_part_index -to $to_loader_part_index
+
+set from_loader_part_len [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|part_len*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_part_len [get_cells {*loader|*half_rate.engine|part_len*~I}]
+set_multicycle_path -setup 2 -from $from_loader_part_len -to $to_loader_part_len
+set_multicycle_path -hold 0 -from $from_loader_part_len -to $to_loader_part_len
+
+set from_loader_pending_after [get_cells {
+    *loader|*half_rate.engine|ack_return*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|pending_after*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_pending_after [get_cells {*loader|*half_rate.engine|pending_after*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pending_after -to $to_loader_pending_after
+set_multicycle_path -hold 0 -from $from_loader_pending_after -to $to_loader_pending_after
+
+set from_loader_pending_dport [get_cells {
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|main_peer*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|pending_dport*~I
+    *loader|*half_rate.engine|request_port*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status_peer*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_pending_dport [get_cells {*loader|*half_rate.engine|pending_dport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pending_dport -to $to_loader_pending_dport
+set_multicycle_path -hold 0 -from $from_loader_pending_dport -to $to_loader_pending_dport
+
+set from_loader_pending_kind [get_cells {
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|pending_kind*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_pending_kind [get_cells {*loader|*half_rate.engine|pending_kind*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pending_kind -to $to_loader_pending_kind
+set_multicycle_path -hold 0 -from $from_loader_pending_kind -to $to_loader_pending_kind
+
+set from_loader_pending_length [get_cells {
+    *loader|*half_rate.engine|data_name_len*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|dl_remaining*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|lus_packet_len*~I
+    *loader|*half_rate.engine|manifest*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|pending_length*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_pending_length [get_cells {*loader|*half_rate.engine|pending_length*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pending_length -to $to_loader_pending_length
+set_multicycle_path -hold 0 -from $from_loader_pending_length -to $to_loader_pending_length
+
+set from_loader_pending_sport [get_cells {
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|main_tid*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|pending_sport*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status_tid*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_pending_sport [get_cells {*loader|*half_rate.engine|pending_sport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pending_sport -to $to_loader_pending_sport
+set_multicycle_path -hold 0 -from $from_loader_pending_sport -to $to_loader_pending_sport
+
+set from_loader_percent [get_cells {
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_percent [get_cells {*loader|*half_rate.engine|percent*~I}]
+set_multicycle_path -setup 2 -from $from_loader_percent -to $to_loader_percent
+set_multicycle_path -hold 0 -from $from_loader_percent -to $to_loader_percent
+
+set from_loader_pointer_equal [get_cells {
+    *loader|*half_rate.engine|header_limit*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|pointer_equal*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_pointer_equal [get_cells {*loader|*half_rate.engine|pointer_equal*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pointer_equal -to $to_loader_pointer_equal
+set_multicycle_path -hold 0 -from $from_loader_pointer_equal -to $to_loader_pointer_equal
+
+set from_loader_pointer_less [get_cells {
+    *loader|*half_rate.engine|header_limit*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|pointer_less*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_pointer_less [get_cells {*loader|*half_rate.engine|pointer_less*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pointer_less -to $to_loader_pointer_less
+set_multicycle_path -hold 0 -from $from_loader_pointer_less -to $to_loader_pointer_less
+
+set from_loader_pointer_minimum [get_cells {
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|pointer_minimum*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_pointer_minimum [get_cells {*loader|*half_rate.engine|pointer_minimum*~I}]
+set_multicycle_path -setup 2 -from $from_loader_pointer_minimum -to $to_loader_pointer_minimum
+set_multicycle_path -hold 0 -from $from_loader_pointer_minimum -to $to_loader_pointer_minimum
+
+set from_loader_previous_block [get_cells {
+    *loader|*half_rate.engine|block_number*~I
+}]
+set to_loader_previous_block [get_cells {*loader|*half_rate.engine|previous_block*~I}]
+set_multicycle_path -setup 2 -from $from_loader_previous_block -to $to_loader_previous_block
+set_multicycle_path -hold 0 -from $from_loader_previous_block -to $to_loader_previous_block
+
+set from_loader_ratio_h [get_cells {
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|ratio_h*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_ratio_h [get_cells {*loader|*half_rate.engine|ratio_h*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ratio_h -to $to_loader_ratio_h
+set_multicycle_path -hold 0 -from $from_loader_ratio_h -to $to_loader_ratio_h
+
+set from_loader_ratio_t [get_cells {
+    *loader|*half_rate.engine|decimal_rest*~I
+    *loader|*half_rate.engine|decimal_tens*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|lus_status*~I
+    *loader|*half_rate.engine|ratio_t*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_ratio_t [get_cells {*loader|*half_rate.engine|ratio_t*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ratio_t -to $to_loader_ratio_t
+set_multicycle_path -hold 0 -from $from_loader_ratio_t -to $to_loader_ratio_t
+
+set from_loader_ratio_u [get_cells {
+    *loader|*half_rate.engine|decimal_rest*~I
+    *loader|*half_rate.engine|ratio_u*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_ratio_u [get_cells {*loader|*half_rate.engine|ratio_u*~I}]
+set_multicycle_path -setup 2 -from $from_loader_ratio_u -to $to_loader_ratio_u
+set_multicycle_path -hold 0 -from $from_loader_ratio_u -to $to_loader_ratio_u
+
+set from_loader_reason [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|data_crc*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|expected_crc*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|reason*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|timer*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_reason [get_cells {*loader|*half_rate.engine|reason*~I}]
+set_multicycle_path -setup 2 -from $from_loader_reason -to $to_loader_reason
+set_multicycle_path -hold 0 -from $from_loader_reason -to $to_loader_reason
+
+set from_loader_request_download [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_request_download [get_cells {*loader|*half_rate.engine|request_download*~I}]
+set_multicycle_path -setup 2 -from $from_loader_request_download -to $to_loader_request_download
+set_multicycle_path -hold 0 -from $from_loader_request_download -to $to_loader_request_download
+
+set from_loader_request_reject [get_cells {
+    *loader|*half_rate.engine|available_size*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|request_download*~I
+    *loader|*half_rate.engine|request_unsupported*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|status*~I
+}]
+set to_loader_request_reject [get_cells {*loader|*half_rate.engine|request_reject*~I}]
+set_multicycle_path -setup 2 -from $from_loader_request_reject -to $to_loader_request_reject
+set_multicycle_path -hold 0 -from $from_loader_request_reject -to $to_loader_request_reject
+
+set from_loader_request_resume [get_cells {
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|request_resume*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_request_resume [get_cells {*loader|*half_rate.engine|request_resume*~I}]
+set_multicycle_path -setup 2 -from $from_loader_request_resume -to $to_loader_request_resume
+set_multicycle_path -hold 0 -from $from_loader_request_resume -to $to_loader_request_resume
+
+set from_loader_request_unsupported [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|request_unsupported*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_request_unsupported [get_cells {*loader|*half_rate.engine|request_unsupported*~I}]
+set_multicycle_path -setup 2 -from $from_loader_request_unsupported -to $to_loader_request_unsupported
+set_multicycle_path -hold 0 -from $from_loader_request_unsupported -to $to_loader_request_unsupported
+
+set from_loader_request_write [get_cells {
+    *loader|*half_rate.engine|command_op*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_request_write [get_cells {*loader|*half_rate.engine|request_write*~I}]
+set_multicycle_path -setup 2 -from $from_loader_request_write -to $to_loader_request_write
+set_multicycle_path -hold 0 -from $from_loader_request_write -to $to_loader_request_write
+
+set from_loader_retries [get_cells {
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|timer*~I
+}]
+set to_loader_retries [get_cells {*loader|*half_rate.engine|retries*~I}]
+set_multicycle_path -setup 2 -from $from_loader_retries -to $to_loader_retries
+set_multicycle_path -hold 0 -from $from_loader_retries -to $to_loader_retries
+
+set from_loader_retry_total [get_cells {
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|retry_total*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|timer*~I
+}]
+set to_loader_retry_total [get_cells {*loader|*half_rate.engine|retry_total*~I}]
+set_multicycle_path -setup 2 -from $from_loader_retry_total -to $to_loader_retry_total
+set_multicycle_path -hold 0 -from $from_loader_retry_total -to $to_loader_retry_total
+
+set from_loader_return_state [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|candidate_read*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|copy_pos*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|return_state*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_return_state [get_cells {*loader|*half_rate.engine|return_state*~I}]
+set_multicycle_path -setup 2 -from $from_loader_return_state -to $to_loader_return_state
+set_multicycle_path -hold 0 -from $from_loader_return_state -to $to_loader_return_state
+
+set from_loader_rrq_data_read [get_cells {
+    *loader|*half_rate.engine|data_name_addr*~I
+    *loader|*half_rate.engine|error_position*~I
+    *loader|*half_rate.engine|filename_position*~I
+    *loader|*half_rate.engine|wrq_mode_position*~I
+}]
+set to_loader_rrq_data_read [get_cells {*loader|*half_rate.engine|rrq_data_read*~I}]
+set_multicycle_path -setup 2 -from $from_loader_rrq_data_read -to $to_loader_rrq_data_read
+set_multicycle_path -hold 0 -from $from_loader_rrq_data_read -to $to_loader_rrq_data_read
+
+set from_loader_rrq_header_read [get_cells {
+    *loader|*half_rate.engine|error_position*~I
+    *loader|*half_rate.engine|filename_position*~I
+    *loader|*half_rate.engine|header_name_addr*~I
+    *loader|*half_rate.engine|wrq_mode_position*~I
+}]
+set to_loader_rrq_header_read [get_cells {*loader|*half_rate.engine|rrq_header_read*~I}]
+set_multicycle_path -setup 2 -from $from_loader_rrq_header_read -to $to_loader_rrq_header_read
+set_multicycle_path -hold 0 -from $from_loader_rrq_header_read -to $to_loader_rrq_header_read
+
+set from_loader_rrq_mode_position [get_cells {
+    *loader|*half_rate.engine|mode_start*~I
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_rrq_mode_position [get_cells {*loader|*half_rate.engine|rrq_mode_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_rrq_mode_position -to $to_loader_rrq_mode_position
+set_multicycle_path -hold 0 -from $from_loader_rrq_mode_position -to $to_loader_rrq_mode_position
+
+set from_loader_rx_ra [get_cells {
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|rx_ra*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_rx_ra [get_cells {*loader|*half_rate.engine|rx_ra*~I}]
+set_multicycle_path -setup 2 -from $from_loader_rx_ra -to $to_loader_rx_ra
+set_multicycle_path -hold 0 -from $from_loader_rx_ra -to $to_loader_rx_ra
+
+set from_loader_rx_re [get_cells {
+    *loader|*half_rate.engine|fetch_source*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_rx_re [get_cells {*loader|*half_rate.engine|rx_re*~I}]
+set_multicycle_path -setup 2 -from $from_loader_rx_re -to $to_loader_rx_re
+set_multicycle_path -hold 0 -from $from_loader_rx_re -to $to_loader_rx_re
+
+set from_loader_saved_dport [get_cells {
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|saved_dport*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tx_dport*~I
+}]
+set to_loader_saved_dport [get_cells {*loader|*half_rate.engine|saved_dport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_saved_dport -to $to_loader_saved_dport
+set_multicycle_path -hold 0 -from $from_loader_saved_dport -to $to_loader_saved_dport
+
+set from_loader_saved_sport [get_cells {
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|saved_sport*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tx_sport*~I
+}]
+set to_loader_saved_sport [get_cells {*loader|*half_rate.engine|saved_sport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_saved_sport -to $to_loader_saved_sport
+set_multicycle_path -hold 0 -from $from_loader_saved_sport -to $to_loader_saved_sport
+
+set from_loader_scaled [get_cells {
+    *loader|*half_rate.engine|dl_acked*~I
+    *loader|*half_rate.engine|download_mode*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_scaled [get_cells {*loader|*half_rate.engine|scaled*~I}]
+set_multicycle_path -setup 2 -from $from_loader_scaled -to $to_loader_scaled
+set_multicycle_path -hold 0 -from $from_loader_scaled -to $to_loader_scaled
+
+set from_loader_scan_pos [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|fetch_addr*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_scan_pos [get_cells {*loader|*half_rate.engine|scan_pos*~I}]
+set_multicycle_path -setup 2 -from $from_loader_scan_pos -to $to_loader_scan_pos
+set_multicycle_path -hold 0 -from $from_loader_scan_pos -to $to_loader_scan_pos
+
+set from_loader_send_length [get_cells {
+    *loader|*half_rate.engine|deny_unsupported*~I
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|send_length*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_send_length [get_cells {*loader|*half_rate.engine|send_length*~I}]
+set_multicycle_path -setup 2 -from $from_loader_send_length -to $to_loader_send_length
+set_multicycle_path -hold 0 -from $from_loader_send_length -to $to_loader_send_length
+
+set from_loader_send_mode [get_cells {
+    *loader|*half_rate.engine|send_mode*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_send_mode [get_cells {*loader|*half_rate.engine|send_mode*~I}]
+set_multicycle_path -setup 2 -from $from_loader_send_mode -to $to_loader_send_mode
+set_multicycle_path -hold 0 -from $from_loader_send_mode -to $to_loader_send_mode
+
+set from_loader_send_request [get_cells {
+    *loader|*half_rate.engine|send_request*~I
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_send_request [get_cells {*loader|*half_rate.engine|send_request*~I}]
+set_multicycle_path -setup 2 -from $from_loader_send_request -to $to_loader_send_request
+set_multicycle_path -hold 0 -from $from_loader_send_request -to $to_loader_send_request
+
+set from_loader_state [get_cells {
+    *loader|*half_rate.engine|after_tx*~I
+    *loader|*half_rate.engine|block_number*~I
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|candidate_read*~I
+    *loader|*half_rate.engine|configured*~I
+    *loader|*half_rate.engine|copy_len*~I
+    *loader|*half_rate.engine|copy_pos*~I
+    *loader|*half_rate.engine|data_crc*~I
+    *loader|*half_rate.engine|decimal_rest*~I
+    *loader|*half_rate.engine|deny_pos*~I
+    *loader|*half_rate.engine|deny_unsupported*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|dispatch_current*~I
+    *loader|*half_rate.engine|dispatch_repeat*~I
+    *loader|*half_rate.engine|enable*~I
+    *loader|*half_rate.engine|expected_crc*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|lus_return*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|mode_bad*~I
+    *loader|*half_rate.engine|mode_terminal*~I
+    *loader|*half_rate.engine|name_bad*~I
+    *loader|*half_rate.engine|name_mark*~I
+    *loader|*half_rate.engine|name_option*~I
+    *loader|*half_rate.engine|name_terminal*~I
+    *loader|*half_rate.engine|num_return*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|number_left*~I
+    *loader|*half_rate.engine|packet_len*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|packet_type*~I
+    *loader|*half_rate.engine|percent*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_resume*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|return_state*~I
+    *loader|*half_rate.engine|scaled*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|send_complete*~I
+    *loader|*half_rate.engine|send_request*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|timer*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_state [get_cells {*loader|*half_rate.engine|state*~I}]
+set_multicycle_path -setup 2 -from $from_loader_state -to $to_loader_state
+set_multicycle_path -hold 0 -from $from_loader_state -to $to_loader_state
+
+set from_loader_status [get_cells {
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|data_crc*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|expected_crc*~I
+    *loader|*half_rate.engine|file_kind*~I
+    *loader|*half_rate.engine|file_size*~I
+    *loader|*half_rate.engine|header_crc*~I
+    *loader|*half_rate.engine|header_name_len*~I
+    *loader|*half_rate.engine|header_pointer_ok*~I
+    *loader|*half_rate.engine|loaded*~I
+    *loader|*half_rate.engine|metadata_size*~I
+    *loader|*half_rate.engine|number*~I
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|reason*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|retries*~I
+    *loader|*half_rate.engine|retry_limit*~I
+    *loader|*half_rate.engine|scan_pos*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|timer*~I
+}]
+set to_loader_status [get_cells {*loader|*half_rate.engine|status*~I}]
+set_multicycle_path -setup 2 -from $from_loader_status -to $to_loader_status
+set_multicycle_path -hold 0 -from $from_loader_status -to $to_loader_status
+
+set from_loader_status_peer [get_cells {
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|dispatch_action*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status_peer*~I
+}]
+set to_loader_status_peer [get_cells {*loader|*half_rate.engine|status_peer*~I}]
+set_multicycle_path -setup 2 -from $from_loader_status_peer -to $to_loader_status_peer
+set_multicycle_path -hold 0 -from $from_loader_status_peer -to $to_loader_status_peer
+
+set from_loader_status_tid [get_cells {
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status_tid*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+}]
+set to_loader_status_tid [get_cells {*loader|*half_rate.engine|status_tid*~I}]
+set_multicycle_path -setup 2 -from $from_loader_status_tid -to $to_loader_status_tid
+set_multicycle_path -hold 0 -from $from_loader_status_tid -to $to_loader_status_tid
+
+set from_loader_tail_index [get_cells {
+    *loader|*half_rate.engine|lus_tail_pos*~I
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tail_index*~I
+}]
+set to_loader_tail_index [get_cells {*loader|*half_rate.engine|tail_index*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tail_index -to $to_loader_tail_index
+set_multicycle_path -hold 0 -from $from_loader_tail_index -to $to_loader_tail_index
+
+set from_loader_tid_sequence [get_cells {
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_tid_sequence [get_cells {*loader|*half_rate.engine|tid_sequence*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tid_sequence -to $to_loader_tid_sequence
+set_multicycle_path -hold 0 -from $from_loader_tid_sequence -to $to_loader_tid_sequence
+
+set from_loader_timer [get_cells {
+    *loader|*half_rate.engine|packet_pending*~I
+    *loader|*half_rate.engine|send_complete*~I
+    *loader|*half_rate.engine|send_request*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|timeout_cycles*~I
+    *loader|*half_rate.engine|timer*~I
+}]
+set to_loader_timer [get_cells {*loader|*half_rate.engine|timer*~I}]
+set_multicycle_path -setup 2 -from $from_loader_timer -to $to_loader_timer
+set_multicycle_path -hold 0 -from $from_loader_timer -to $to_loader_timer
+
+set from_loader_tx_dport [get_cells {
+    *loader|*half_rate.engine|command_sport*~I
+    *loader|*half_rate.engine|pending_dport*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|saved_dport*~I
+    *loader|*half_rate.engine|send_complete*~I
+    *loader|*half_rate.engine|send_request*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tx_dport*~I
+}]
+set to_loader_tx_dport [get_cells {*loader|*half_rate.engine|tx_dport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tx_dport -to $to_loader_tx_dport
+set_multicycle_path -hold 0 -from $from_loader_tx_dport -to $to_loader_tx_dport
+
+set from_loader_tx_sport [get_cells {
+    *loader|*half_rate.engine|pending_sport*~I
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|saved_sport*~I
+    *loader|*half_rate.engine|send_complete*~I
+    *loader|*half_rate.engine|send_request*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tid_sequence*~I
+    *loader|*half_rate.engine|tx_sport*~I
+}]
+set to_loader_tx_sport [get_cells {*loader|*half_rate.engine|tx_sport*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tx_sport -to $to_loader_tx_sport
+set_multicycle_path -hold 0 -from $from_loader_tx_sport -to $to_loader_tx_sport
+
+set from_loader_tx_wa [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tx_wa*~I
+}]
+set to_loader_tx_wa [get_cells {*loader|*half_rate.engine|tx_wa*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tx_wa -to $to_loader_tx_wa
+set_multicycle_path -hold 0 -from $from_loader_tx_wa -to $to_loader_tx_wa
+
+set from_loader_tx_wd [get_cells {
+    *loader|*half_rate.engine|build_value*~I
+    *loader|*half_rate.engine|byte_value*~I
+    *loader|*half_rate.engine|return_state*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|tx_wd*~I
+}]
+set to_loader_tx_wd [get_cells {*loader|*half_rate.engine|tx_wd*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tx_wd -to $to_loader_tx_wd
+set_multicycle_path -hold 0 -from $from_loader_tx_wd -to $to_loader_tx_wd
+
+set from_loader_tx_we [get_cells {
+    *loader|*half_rate.engine|state*~I
+}]
+set to_loader_tx_we [get_cells {*loader|*half_rate.engine|tx_we*~I}]
+set_multicycle_path -setup 2 -from $from_loader_tx_we -to $to_loader_tx_we
+set_multicycle_path -hold 0 -from $from_loader_tx_we -to $to_loader_tx_we
+
+set from_loader_wait_kind [get_cells {
+    *loader|*half_rate.engine|request_reject*~I
+    *loader|*half_rate.engine|request_write*~I
+    *loader|*half_rate.engine|state*~I
+    *loader|*half_rate.engine|status*~I
+    *loader|*half_rate.engine|wait_kind*~I
+}]
+set to_loader_wait_kind [get_cells {*loader|*half_rate.engine|wait_kind*~I}]
+set_multicycle_path -setup 2 -from $from_loader_wait_kind -to $to_loader_wait_kind
+set_multicycle_path -hold 0 -from $from_loader_wait_kind -to $to_loader_wait_kind
+
+set from_loader_wrq_mode_position [get_cells {
+    *loader|*half_rate.engine|packet_pos*~I
+}]
+set to_loader_wrq_mode_position [get_cells {*loader|*half_rate.engine|wrq_mode_position*~I}]
+set_multicycle_path -setup 2 -from $from_loader_wrq_mode_position -to $to_loader_wrq_mode_position
+set_multicycle_path -hold 0 -from $from_loader_wrq_mode_position -to $to_loader_wrq_mode_position
+
+set from_snmp_arc_equal_byte [get_cells {
+    *snmp|*half_rate.engine|arc_equal_byte*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|expected_arc*~I
+    *snmp|*half_rate.engine|oid_acc*~I
+    *snmp|*half_rate.engine|req_q*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_arc_equal_byte [get_cells {*snmp|*half_rate.engine|arc_equal_byte*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_arc_equal_byte -to $to_snmp_arc_equal_byte
+set_multicycle_path -hold 0 -from $from_snmp_arc_equal_byte -to $to_snmp_arc_equal_byte
+
+set from_snmp_arc_greater [get_cells {
+    *snmp|*half_rate.engine|arc_equal_byte*~I
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less_byte*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_arc_greater [get_cells {*snmp|*half_rate.engine|arc_greater*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_arc_greater -to $to_snmp_arc_greater
+set_multicycle_path -hold 0 -from $from_snmp_arc_greater -to $to_snmp_arc_greater
+
+set from_snmp_arc_index [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_index*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_arc_index [get_cells {*snmp|*half_rate.engine|arc_index*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_arc_index -to $to_snmp_arc_index
+set_multicycle_path -hold 0 -from $from_snmp_arc_index -to $to_snmp_arc_index
+
+set from_snmp_arc_less [get_cells {
+    *snmp|*half_rate.engine|arc_equal_byte*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|arc_less_byte*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_arc_less [get_cells {*snmp|*half_rate.engine|arc_less*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_arc_less -to $to_snmp_arc_less
+set_multicycle_path -hold 0 -from $from_snmp_arc_less -to $to_snmp_arc_less
+
+set from_snmp_arc_less_byte [get_cells {
+    *snmp|*half_rate.engine|arc_less_byte*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|expected_arc*~I
+    *snmp|*half_rate.engine|oid_acc*~I
+    *snmp|*half_rate.engine|req_q*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_arc_less_byte [get_cells {*snmp|*half_rate.engine|arc_less_byte*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_arc_less_byte -to $to_snmp_arc_less_byte
+set_multicycle_path -hold 0 -from $from_snmp_arc_less_byte -to $to_snmp_arc_less_byte
+
+set from_snmp_auth_pending [get_cells {
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+    *snmp|*half_rate.engine|trap_grant*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_auth_pending [get_cells {*snmp|*half_rate.engine|auth_pending*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_auth_pending -to $to_snmp_auth_pending
+set_multicycle_path -hold 0 -from $from_snmp_auth_pending -to $to_snmp_auth_pending
+
+set from_snmp_bad_community [get_cells {
+    *snmp|*half_rate.engine|bad_community*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_bad_community [get_cells {*snmp|*half_rate.engine|bad_community*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_bad_community -to $to_snmp_bad_community
+set_multicycle_path -hold 0 -from $from_snmp_bad_community -to $to_snmp_bad_community
+
+set from_snmp_binding_end [get_cells {
+    *snmp|*half_rate.engine|binding_end*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_binding_end [get_cells {*snmp|*half_rate.engine|binding_end*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_binding_end -to $to_snmp_binding_end
+set_multicycle_path -hold 0 -from $from_snmp_binding_end -to $to_snmp_binding_end
+
+set from_snmp_binding_length [get_cells {
+    *snmp|*half_rate.engine|binding_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|response_oid_length*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_length*~I
+}]
+set to_snmp_binding_length [get_cells {*snmp|*half_rate.engine|binding_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_binding_length -to $to_snmp_binding_length
+set_multicycle_path -hold 0 -from $from_snmp_binding_length -to $to_snmp_binding_length
+
+set from_snmp_byte_value [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|community_word*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|req_q*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_byte_value [get_cells {*snmp|*half_rate.engine|byte_value*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_byte_value -to $to_snmp_byte_value
+set_multicycle_path -hold 0 -from $from_snmp_byte_value -to $to_snmp_byte_value
+
+set from_snmp_candidate [get_cells {
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
+}]
+set to_snmp_candidate [get_cells {*snmp|*half_rate.engine|candidate*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_candidate -to $to_snmp_candidate
+set_multicycle_path -hold 0 -from $from_snmp_candidate -to $to_snmp_candidate
+
+set from_snmp_capture_consumed [get_cells {
+    *snmp|*half_rate.engine|capture_consumed*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_capture_consumed [get_cells {*snmp|*half_rate.engine|capture_consumed*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_capture_consumed -to $to_snmp_capture_consumed
+set_multicycle_path -hold 0 -from $from_snmp_capture_consumed -to $to_snmp_capture_consumed
+
+set from_snmp_capture_idle [get_cells {
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_capture_idle [get_cells {*snmp|*half_rate.engine|capture_idle*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_capture_idle -to $to_snmp_capture_idle
+set_multicycle_path -hold 0 -from $from_snmp_capture_idle -to $to_snmp_capture_idle
+
+set from_snmp_cold_ack [get_cells {
+    *snmp|*half_rate.engine|cold_request*~I
+}]
+set to_snmp_cold_ack [get_cells {*snmp|*half_rate.engine|cold_ack*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_cold_ack -to $to_snmp_cold_ack
+set_multicycle_path -hold 0 -from $from_snmp_cold_ack -to $to_snmp_cold_ack
+
+set from_snmp_cold_pending [get_cells {
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|cold_ack*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|cold_request*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+    *snmp|*half_rate.engine|trap_grant*~I
+}]
+set to_snmp_cold_pending [get_cells {*snmp|*half_rate.engine|cold_pending*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_cold_pending -to $to_snmp_cold_pending
+set_multicycle_path -hold 0 -from $from_snmp_cold_pending -to $to_snmp_cold_pending
+
+set from_snmp_community_bad [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|configured_length*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_community_bad [get_cells {*snmp|*half_rate.engine|community_bad*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_community_bad -to $to_snmp_community_bad
+set_multicycle_path -hold 0 -from $from_snmp_community_bad -to $to_snmp_community_bad
+
+set from_snmp_community_expected [get_cells {
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_word*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_community_expected [get_cells {*snmp|*half_rate.engine|community_expected*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_community_expected -to $to_snmp_community_expected
+set_multicycle_path -hold 0 -from $from_snmp_community_expected -to $to_snmp_community_expected
+
+set from_snmp_community_length [get_cells {
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|configured_length*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_community_length [get_cells {*snmp|*half_rate.engine|community_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_community_length -to $to_snmp_community_length
+set_multicycle_path -hold 0 -from $from_snmp_community_length -to $to_snmp_community_length
+
+set from_snmp_community_start [get_cells {
+    *snmp|*half_rate.engine|community_start*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_community_start [get_cells {*snmp|*half_rate.engine|community_start*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_community_start -to $to_snmp_community_start
+set_multicycle_path -hold 0 -from $from_snmp_community_start -to $to_snmp_community_start
+
+set from_snmp_community_word [get_cells {
+    *snmp|*half_rate.engine|community0*~I
+    *snmp|*half_rate.engine|community1*~I
+    *snmp|*half_rate.engine|community2*~I
+    *snmp|*half_rate.engine|community3*~I
+    *snmp|*half_rate.engine|community_word*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_community_word [get_cells {*snmp|*half_rate.engine|community_word*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_community_word -to $to_snmp_community_word
+set_multicycle_path -hold 0 -from $from_snmp_community_word -to $to_snmp_community_word
+
+set from_snmp_cursor [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|community_start*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|oid_start*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_start*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_cursor [get_cells {*snmp|*half_rate.engine|cursor*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_cursor -to $to_snmp_cursor
+set_multicycle_path -hold 0 -from $from_snmp_cursor -to $to_snmp_cursor
+
+set from_snmp_descr_shift [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|descr_shift*~I
+    *snmp|*half_rate.engine|description_value*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_descr_shift [get_cells {*snmp|*half_rate.engine|descr_shift*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_descr_shift -to $to_snmp_descr_shift
+set_multicycle_path -hold 0 -from $from_snmp_descr_shift -to $to_snmp_descr_shift
+
+set from_snmp_description_value [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|description_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_description_value [get_cells {*snmp|*half_rate.engine|description_value*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_description_value -to $to_snmp_description_value
+set_multicycle_path -hold 0 -from $from_snmp_description_value -to $to_snmp_description_value
+
+set from_snmp_echo_value [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_echo_value [get_cells {*snmp|*half_rate.engine|echo_value*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_echo_value -to $to_snmp_echo_value
+set_multicycle_path -hold 0 -from $from_snmp_echo_value -to $to_snmp_echo_value
+
+set from_snmp_error_status [get_cells {
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|error_status*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|version*~I
+}]
+set to_snmp_error_status [get_cells {*snmp|*half_rate.engine|error_status*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_error_status -to $to_snmp_error_status
+set_multicycle_path -hold 0 -from $from_snmp_error_status -to $to_snmp_error_status
+
+set from_snmp_expected_arc [get_cells {
+    *snmp|*half_rate.engine|arc_index*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|expected_arc*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_expected_arc [get_cells {*snmp|*half_rate.engine|expected_arc*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_expected_arc -to $to_snmp_expected_arc
+set_multicycle_path -hold 0 -from $from_snmp_expected_arc -to $to_snmp_expected_arc
+
+set from_snmp_field [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_field [get_cells {*snmp|*half_rate.engine|field*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_field -to $to_snmp_field
+set_multicycle_path -hold 0 -from $from_snmp_field -to $to_snmp_field
+
+set from_snmp_field_accept [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|tag_value*~I
+}]
+set to_snmp_field_accept [get_cells {*snmp|*half_rate.engine|field_accept*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_field_accept -to $to_snmp_field_accept
+set_multicycle_path -hold 0 -from $from_snmp_field_accept -to $to_snmp_field_accept
+
+set from_snmp_field_bounds_ok [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_field_bounds_ok [get_cells {*snmp|*half_rate.engine|field_bounds_ok*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_field_bounds_ok -to $to_snmp_field_bounds_ok
+set_multicycle_path -hold 0 -from $from_snmp_field_bounds_ok -to $to_snmp_field_bounds_ok
+
+set from_snmp_field_end [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_field_end [get_cells {*snmp|*half_rate.engine|field_end*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_field_end -to $to_snmp_field_end
+set_multicycle_path -hold 0 -from $from_snmp_field_end -to $to_snmp_field_end
+
+set from_snmp_field_length [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_field_length [get_cells {*snmp|*half_rate.engine|field_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_field_length -to $to_snmp_field_length
+set_multicycle_path -hold 0 -from $from_snmp_field_length -to $to_snmp_field_length
+
+set from_snmp_get_next [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|get_next*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|tag_value*~I
+}]
+set to_snmp_get_next [get_cells {*snmp|*half_rate.engine|get_next*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_get_next -to $to_snmp_get_next
+set_multicycle_path -hold 0 -from $from_snmp_get_next -to $to_snmp_get_next
+
+set from_snmp_get_set [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|tag_value*~I
+}]
+set to_snmp_get_set [get_cells {*snmp|*half_rate.engine|get_set*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_get_set -to $to_snmp_get_set
+set_multicycle_path -hold 0 -from $from_snmp_get_set -to $to_snmp_get_set
+
+set from_snmp_id_shift [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|id_shift*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|request_id*~I
+    *snmp|*half_rate.engine|request_id_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_id_shift [get_cells {*snmp|*half_rate.engine|id_shift*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_id_shift -to $to_snmp_id_shift
+set_multicycle_path -hold 0 -from $from_snmp_id_shift -to $to_snmp_id_shift
+
+set from_snmp_length_left [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|length_left*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_length_left [get_cells {*snmp|*half_rate.engine|length_left*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_length_left -to $to_snmp_length_left
+set_multicycle_path -hold 0 -from $from_snmp_length_left -to $to_snmp_length_left
+
+set from_snmp_list_end [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|list_end*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_list_end [get_cells {*snmp|*half_rate.engine|list_end*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_list_end -to $to_snmp_list_end
+set_multicycle_path -hold 0 -from $from_snmp_list_end -to $to_snmp_list_end
+
+set from_snmp_list_length [get_cells {
+    *snmp|*half_rate.engine|binding_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|list_length*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_list_length [get_cells {*snmp|*half_rate.engine|list_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_list_length -to $to_snmp_list_length
+set_multicycle_path -hold 0 -from $from_snmp_list_length -to $to_snmp_list_length
+
+set from_snmp_message_length [get_cells {
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|message_length*~I
+    *snmp|*half_rate.engine|pdu_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_message_length [get_cells {*snmp|*half_rate.engine|message_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_message_length -to $to_snmp_message_length
+set_multicycle_path -hold 0 -from $from_snmp_message_length -to $to_snmp_message_length
+
+set from_snmp_mib_addr [get_cells {
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|mib_addr*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_mib_addr [get_cells {*snmp|*half_rate.engine|mib_addr*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_mib_addr -to $to_snmp_mib_addr
+set_multicycle_path -hold 0 -from $from_snmp_mib_addr -to $to_snmp_mib_addr
+
+set from_snmp_mib_request [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|mib_request*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_mib_request [get_cells {*snmp|*half_rate.engine|mib_request*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_mib_request -to $to_snmp_mib_request
+set_multicycle_path -hold 0 -from $from_snmp_mib_request -to $to_snmp_mib_request
+
+set from_snmp_mib_wdata [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|mib_wdata*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_mib_wdata [get_cells {*snmp|*half_rate.engine|mib_wdata*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_mib_wdata -to $to_snmp_mib_wdata
+set_multicycle_path -hold 0 -from $from_snmp_mib_wdata -to $to_snmp_mib_wdata
+
+set from_snmp_mib_write [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|mib_write*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_mib_write [get_cells {*snmp|*half_rate.engine|mib_write*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_mib_write -to $to_snmp_mib_write
+set_multicycle_path -hold 0 -from $from_snmp_mib_write -to $to_snmp_mib_write
+
+set from_snmp_missing [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_missing [get_cells {*snmp|*half_rate.engine|missing*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_missing -to $to_snmp_missing
+set_multicycle_path -hold 0 -from $from_snmp_missing -to $to_snmp_missing
+
+set from_snmp_object_index [get_cells {
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_object_index [get_cells {*snmp|*half_rate.engine|object_index*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_object_index -to $to_snmp_object_index
+set_multicycle_path -hold 0 -from $from_snmp_object_index -to $to_snmp_object_index
+
+set from_snmp_oid_acc [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|oid_acc*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_acc [get_cells {*snmp|*half_rate.engine|oid_acc*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_acc -to $to_snmp_oid_acc
+set_multicycle_path -hold 0 -from $from_snmp_oid_acc -to $to_snmp_oid_acc
+
+set from_snmp_oid_last_arc [get_cells {
+    *snmp|*half_rate.engine|arc_index*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_last_arc [get_cells {*snmp|*half_rate.engine|oid_last_arc*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_last_arc -to $to_snmp_oid_last_arc
+set_multicycle_path -hold 0 -from $from_snmp_oid_last_arc -to $to_snmp_oid_last_arc
+
+set from_snmp_oid_last_byte [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|oid_length*~I
+    *snmp|*half_rate.engine|oid_pos*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_last_byte [get_cells {*snmp|*half_rate.engine|oid_last_byte*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_last_byte -to $to_snmp_oid_last_byte
+set_multicycle_path -hold 0 -from $from_snmp_oid_last_byte -to $to_snmp_oid_last_byte
+
+set from_snmp_oid_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|oid_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_length [get_cells {*snmp|*half_rate.engine|oid_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_length -to $to_snmp_oid_length
+set_multicycle_path -hold 0 -from $from_snmp_oid_length -to $to_snmp_oid_length
+
+set from_snmp_oid_pos [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|oid_pos*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_pos [get_cells {*snmp|*half_rate.engine|oid_pos*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_pos -to $to_snmp_oid_pos
+set_multicycle_path -hold 0 -from $from_snmp_oid_pos -to $to_snmp_oid_pos
+
+set from_snmp_oid_shift [get_cells {
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|oid_shift*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_shift [get_cells {*snmp|*half_rate.engine|oid_shift*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_shift -to $to_snmp_oid_shift
+set_multicycle_path -hold 0 -from $from_snmp_oid_shift -to $to_snmp_oid_shift
+
+set from_snmp_oid_start [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|oid_start*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_oid_start [get_cells {*snmp|*half_rate.engine|oid_start*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_oid_start -to $to_snmp_oid_start
+set_multicycle_path -hold 0 -from $from_snmp_oid_start -to $to_snmp_oid_start
+
+set from_snmp_out_wa [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|out_wa*~I
+    *snmp|*half_rate.engine|output_count*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_out_wa [get_cells {*snmp|*half_rate.engine|out_wa*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_out_wa -to $to_snmp_out_wa
+set_multicycle_path -hold 0 -from $from_snmp_out_wa -to $to_snmp_out_wa
+
+set from_snmp_out_wdata [get_cells {
+    *snmp|*half_rate.engine|binding_length*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|descr_shift*~I
+    *snmp|*half_rate.engine|description_value*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|error_status*~I
+    *snmp|*half_rate.engine|id_shift*~I
+    *snmp|*half_rate.engine|list_length*~I
+    *snmp|*half_rate.engine|message_length*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|oid_shift*~I
+    *snmp|*half_rate.engine|out_wdata*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|pdu_length*~I
+    *snmp|*half_rate.engine|request_id_length*~I
+    *snmp|*half_rate.engine|response_oid_length*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_word*~I
+    *snmp|*half_rate.engine|value_length*~I
+    *snmp|*half_rate.engine|value_shift*~I
+    *snmp|*half_rate.engine|value_tag*~I
+    *snmp|*half_rate.engine|version*~I
+}]
+set to_snmp_out_wdata [get_cells {*snmp|*half_rate.engine|out_wdata*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_out_wdata -to $to_snmp_out_wdata
+set_multicycle_path -hold 0 -from $from_snmp_out_wdata -to $to_snmp_out_wdata
+
+set from_snmp_out_we [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_out_we [get_cells {*snmp|*half_rate.engine|out_we*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_out_we -to $to_snmp_out_we
+set_multicycle_path -hold 0 -from $from_snmp_out_we -to $to_snmp_out_we
+
+set from_snmp_outer_end [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|outer_end*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_outer_end [get_cells {*snmp|*half_rate.engine|outer_end*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_outer_end -to $to_snmp_outer_end
+set_multicycle_path -hold 0 -from $from_snmp_outer_end -to $to_snmp_outer_end
+
+set from_snmp_output_count [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|output_count*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_output_count [get_cells {*snmp|*half_rate.engine|output_count*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_output_count -to $to_snmp_output_count
+set_multicycle_path -hold 0 -from $from_snmp_output_count -to $to_snmp_output_count
+
+set from_snmp_part [get_cells {
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|request_id_length*~I
+    *snmp|*half_rate.engine|response_oid_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_part [get_cells {*snmp|*half_rate.engine|part*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_part -to $to_snmp_part
+set_multicycle_path -hold 0 -from $from_snmp_part -to $to_snmp_part
+
+set from_snmp_part_pos [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_length*~I
+}]
+set to_snmp_part_pos [get_cells {*snmp|*half_rate.engine|part_pos*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_part_pos -to $to_snmp_part_pos
+set_multicycle_path -hold 0 -from $from_snmp_part_pos -to $to_snmp_part_pos
+
+set from_snmp_pdu_end [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|pdu_end*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_pdu_end [get_cells {*snmp|*half_rate.engine|pdu_end*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_pdu_end -to $to_snmp_pdu_end
+set_multicycle_path -hold 0 -from $from_snmp_pdu_end -to $to_snmp_pdu_end
+
+set from_snmp_pdu_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|list_length*~I
+    *snmp|*half_rate.engine|pdu_length*~I
+    *snmp|*half_rate.engine|request_id_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_pdu_length [get_cells {*snmp|*half_rate.engine|pdu_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_pdu_length -to $to_snmp_pdu_length
+set_multicycle_path -hold 0 -from $from_snmp_pdu_length -to $to_snmp_pdu_length
+
+set from_snmp_req_ra [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|req_ra*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_req_ra [get_cells {*snmp|*half_rate.engine|req_ra*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_req_ra -to $to_snmp_req_ra
+set_multicycle_path -hold 0 -from $from_snmp_req_ra -to $to_snmp_req_ra
+
+set from_snmp_req_re [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_req_re [get_cells {*snmp|*half_rate.engine|req_re*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_req_re -to $to_snmp_req_re
+set_multicycle_path -hold 0 -from $from_snmp_req_re -to $to_snmp_req_re
+
+set from_snmp_request_id [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|request_id*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_request_id [get_cells {*snmp|*half_rate.engine|request_id*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_request_id -to $to_snmp_request_id
+set_multicycle_path -hold 0 -from $from_snmp_request_id -to $to_snmp_request_id
+
+set from_snmp_request_id_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|request_id_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_request_id_length [get_cells {*snmp|*half_rate.engine|request_id_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_request_id_length -to $to_snmp_request_id_length
+set_multicycle_path -hold 0 -from $from_snmp_request_id_length -to $to_snmp_request_id_length
+
+set from_snmp_request_length [get_cells {
+    *snmp|*half_rate.engine|capture_length*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_request_length [get_cells {*snmp|*half_rate.engine|request_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_request_length -to $to_snmp_request_length
+set_multicycle_path -hold 0 -from $from_snmp_request_length -to $to_snmp_request_length
+
+set from_snmp_response_length [get_cells {
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|pdu_length*~I
+    *snmp|*half_rate.engine|response_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_response_length [get_cells {*snmp|*half_rate.engine|response_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_response_length -to $to_snmp_response_length
+set_multicycle_path -hold 0 -from $from_snmp_response_length -to $to_snmp_response_length
+
+set from_snmp_response_oid_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|oid_length*~I
+    *snmp|*half_rate.engine|response_oid_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_response_oid_length [get_cells {*snmp|*half_rate.engine|response_oid_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_response_oid_length -to $to_snmp_response_oid_length
+set_multicycle_path -hold 0 -from $from_snmp_response_oid_length -to $to_snmp_response_oid_length
+
+set from_snmp_response_port [get_cells {
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|capture_port*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|response_port*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_response_port [get_cells {*snmp|*half_rate.engine|response_port*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_response_port -to $to_snmp_response_port
+set_multicycle_path -hold 0 -from $from_snmp_response_port -to $to_snmp_response_port
+
+set from_snmp_return_state [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|length_left*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|return_state*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_return_state [get_cells {*snmp|*half_rate.engine|return_state*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_return_state -to $to_snmp_return_state
+set_multicycle_path -hold 0 -from $from_snmp_return_state -to $to_snmp_return_state
+
+set from_snmp_sample_cycle [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|now*~I
+    *snmp|*half_rate.engine|sample_cycle*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_sample_cycle [get_cells {*snmp|*half_rate.engine|sample_cycle*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_sample_cycle -to $to_snmp_sample_cycle
+set_multicycle_path -hold 0 -from $from_snmp_sample_cycle -to $to_snmp_sample_cycle
+
+set from_snmp_send_request [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|send_request*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_send_request [get_cells {*snmp|*half_rate.engine|send_request*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_send_request -to $to_snmp_send_request
+set_multicycle_path -hold 0 -from $from_snmp_send_request -to $to_snmp_send_request
+
+set from_snmp_sending_trap [get_cells {
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+    *snmp|*half_rate.engine|trap_grant*~I
+}]
+set to_snmp_sending_trap [get_cells {*snmp|*half_rate.engine|sending_trap*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_sending_trap -to $to_snmp_sending_trap
+set_multicycle_path -hold 0 -from $from_snmp_sending_trap -to $to_snmp_sending_trap
+
+set from_snmp_set_negative [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_set_negative [get_cells {*snmp|*half_rate.engine|set_negative*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_set_negative -to $to_snmp_set_negative
+set_multicycle_path -hold 0 -from $from_snmp_set_negative -to $to_snmp_set_negative
+
+set from_snmp_set_number [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_set_number [get_cells {*snmp|*half_rate.engine|set_number*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_set_number -to $to_snmp_set_number
+set_multicycle_path -hold 0 -from $from_snmp_set_number -to $to_snmp_set_number
+
+set from_snmp_set_value_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|field_length*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
+}]
+set to_snmp_set_value_length [get_cells {*snmp|*half_rate.engine|set_value_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_set_value_length -to $to_snmp_set_value_length
+set_multicycle_path -hold 0 -from $from_snmp_set_value_length -to $to_snmp_set_value_length
+
+set from_snmp_set_value_start [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|set_value_start*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
+}]
+set to_snmp_set_value_start [get_cells {*snmp|*half_rate.engine|set_value_start*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_set_value_start -to $to_snmp_set_value_start
+set_multicycle_path -hold 0 -from $from_snmp_set_value_start -to $to_snmp_set_value_start
+
+set from_snmp_set_value_tag [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|tag_value*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
+}]
+set to_snmp_set_value_tag [get_cells {*snmp|*half_rate.engine|set_value_tag*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_set_value_tag -to $to_snmp_set_value_tag
+set_multicycle_path -hold 0 -from $from_snmp_set_value_tag -to $to_snmp_set_value_tag
+
+set from_snmp_state [get_cells {
+    *snmp|*half_rate.engine|arc_greater*~I
+    *snmp|*half_rate.engine|arc_less*~I
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|community_bad*~I
+    *snmp|*half_rate.engine|community_expected*~I
+    *snmp|*half_rate.engine|community_length*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|cursor*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field*~I
+    *snmp|*half_rate.engine|field_accept*~I
+    *snmp|*half_rate.engine|field_bounds_ok*~I
+    *snmp|*half_rate.engine|get_next*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|length_left*~I
+    *snmp|*half_rate.engine|mib_complete*~I
+    *snmp|*half_rate.engine|mib_request*~I
+    *snmp|*half_rate.engine|missing*~I
+    *snmp|*half_rate.engine|oid_last_arc*~I
+    *snmp|*half_rate.engine|oid_last_byte*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|return_state*~I
+    *snmp|*half_rate.engine|send_complete*~I
+    *snmp|*half_rate.engine|send_request*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|set_negative*~I
+    *snmp|*half_rate.engine|set_number*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+    *snmp|*half_rate.engine|trap_grant*~I
+    *snmp|*half_rate.engine|value_chain_ok*~I
+    *snmp|*half_rate.engine|value_length*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_state [get_cells {*snmp|*half_rate.engine|state*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_state -to $to_snmp_state
+set_multicycle_path -hold 0 -from $from_snmp_state -to $to_snmp_state
+
+set from_snmp_tag_value [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|tag_value*~I
+}]
+set to_snmp_tag_value [get_cells {*snmp|*half_rate.engine|tag_value*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_tag_value -to $to_snmp_tag_value
+set_multicycle_path -hold 0 -from $from_snmp_tag_value -to $to_snmp_tag_value
+
+set from_snmp_trap_event [get_cells {
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|capture_pending*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+    *snmp|*half_rate.engine|trap_event*~I
+    *snmp|*half_rate.engine|trap_grant*~I
+}]
+set to_snmp_trap_event [get_cells {*snmp|*half_rate.engine|trap_event*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_trap_event -to $to_snmp_trap_event
+set_multicycle_path -hold 0 -from $from_snmp_trap_event -to $to_snmp_trap_event
+
+set from_snmp_trap_offer [get_cells {
+    *snmp|*half_rate.engine|auth_pending*~I
+    *snmp|*half_rate.engine|cold_pending*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_enabled*~I
+}]
+set to_snmp_trap_offer [get_cells {*snmp|*half_rate.engine|trap_offer*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_trap_offer -to $to_snmp_trap_offer
+set_multicycle_path -hold 0 -from $from_snmp_trap_offer -to $to_snmp_trap_offer
+
+set from_snmp_trap_word [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|trap_event*~I
+    *snmp|*half_rate.engine|trap_word*~I
+}]
+set to_snmp_trap_word [get_cells {*snmp|*half_rate.engine|trap_word*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_trap_word -to $to_snmp_trap_word
+set_multicycle_path -hold 0 -from $from_snmp_trap_word -to $to_snmp_trap_word
+
+set from_snmp_traps_sent [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|send_complete*~I
+    *snmp|*half_rate.engine|send_request*~I
+    *snmp|*half_rate.engine|sending_trap*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|traps_sent*~I
+}]
+set to_snmp_traps_sent [get_cells {*snmp|*half_rate.engine|traps_sent*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_traps_sent -to $to_snmp_traps_sent
+set_multicycle_path -hold 0 -from $from_snmp_traps_sent -to $to_snmp_traps_sent
+
+set from_snmp_value_chain_ok [get_cells {
+    *snmp|*half_rate.engine|binding_end*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|field_end*~I
+    *snmp|*half_rate.engine|list_end*~I
+    *snmp|*half_rate.engine|outer_end*~I
+    *snmp|*half_rate.engine|pdu_end*~I
+    *snmp|*half_rate.engine|request_length*~I
+    *snmp|*half_rate.engine|state*~I
+}]
+set to_snmp_value_chain_ok [get_cells {*snmp|*half_rate.engine|value_chain_ok*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_chain_ok -to $to_snmp_value_chain_ok
+set_multicycle_path -hold 0 -from $from_snmp_value_chain_ok -to $to_snmp_value_chain_ok
+
+set from_snmp_value_length [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_length*~I
+    *snmp|*half_rate.engine|value_number*~I
+}]
+set to_snmp_value_length [get_cells {*snmp|*half_rate.engine|value_length*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_length -to $to_snmp_value_length
+set_multicycle_path -hold 0 -from $from_snmp_value_length -to $to_snmp_value_length
+
+set from_snmp_value_number [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|mib_complete*~I
+    *snmp|*half_rate.engine|mib_rdata*~I
+    *snmp|*half_rate.engine|mib_request*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|uptime*~I
+    *snmp|*half_rate.engine|value_number*~I
+}]
+set to_snmp_value_number [get_cells {*snmp|*half_rate.engine|value_number*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_number -to $to_snmp_value_number
+set_multicycle_path -hold 0 -from $from_snmp_value_number -to $to_snmp_value_number
+
+set from_snmp_value_pos [get_cells {
+    *snmp|*half_rate.engine|candidate*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|set_value_length*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_pos*~I
+}]
+set to_snmp_value_pos [get_cells {*snmp|*half_rate.engine|value_pos*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_pos -to $to_snmp_value_pos
+set_multicycle_path -hold 0 -from $from_snmp_value_pos -to $to_snmp_value_pos
+
+set from_snmp_value_shift [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|description_value*~I
+    *snmp|*half_rate.engine|echo_value*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|part*~I
+    *snmp|*half_rate.engine|part_pos*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_length*~I
+    *snmp|*half_rate.engine|value_number*~I
+    *snmp|*half_rate.engine|value_shift*~I
+}]
+set to_snmp_value_shift [get_cells {*snmp|*half_rate.engine|value_shift*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_shift -to $to_snmp_value_shift
+set_multicycle_path -hold 0 -from $from_snmp_value_shift -to $to_snmp_value_shift
+
+set from_snmp_value_tag [get_cells {
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|get_next*~I
+    *snmp|*half_rate.engine|get_set*~I
+    *snmp|*half_rate.engine|object_index*~I
+    *snmp|*half_rate.engine|set_value_tag*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|value_tag*~I
+    *snmp|*half_rate.engine|version*~I
+}]
+set to_snmp_value_tag [get_cells {*snmp|*half_rate.engine|value_tag*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_value_tag -to $to_snmp_value_tag
+set_multicycle_path -hold 0 -from $from_snmp_value_tag -to $to_snmp_value_tag
+
+set from_snmp_version [get_cells {
+    *snmp|*half_rate.engine|byte_value*~I
+    *snmp|*half_rate.engine|configured*~I
+    *snmp|*half_rate.engine|enable*~I
+    *snmp|*half_rate.engine|state*~I
+    *snmp|*half_rate.engine|version*~I
+}]
+set to_snmp_version [get_cells {*snmp|*half_rate.engine|version*~I}]
+set_multicycle_path -setup 2 -from $from_snmp_version -to $to_snmp_version
+set_multicycle_path -hold 0 -from $from_snmp_version -to $to_snmp_version

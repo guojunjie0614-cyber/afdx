@@ -6,7 +6,7 @@
 
 ## 目录
 
-- `rtl/`：可综合的设计源码，共 21 个文件，模块分工见“模块一览”。
+- `rtl/`：可综合的设计源码，共 24 个文件，模块分工见“模块一览”。
 - `tb/`：自检测试平台；`tb/lib/` 是测试平台共用的端点和链路模型。
 - `sim/`：ModelSim do 文件、回归入口、测试清单和固定向量。
 - `tools/`：Python 参考模型、独立检查器和工具运行脚本。
@@ -110,6 +110,16 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
    预期：末尾表格中的 38 项都为 `PASS`（一次实测约 20 分钟）；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
 
+管理协议引擎使用同一个 125 MHz 时钟，通过时钟使能（Clock Enable，CE）每两拍更新；接收捕获、发送输出、配置口、RAM 端口和 RTC 计时保持全速。顶层参数 `CE_DIV` 可取 1 或 2，默认 2。两种配置的完整回归和评委入口可分别运行：
+
+```powershell
+$env:AFDX_CE_DIV='1' # 第二轮改为 2
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
+vsim -c -do 'do sim/run_judge.do'
+```
+
+该环境变量仅选择 RTL 仿真参数；官方综合使用工程中顶层参数的默认值 2。吞吐用例的仿真墙钟预算为 1800 秒，测试中的周期数和判定条件保持原值。
+
 ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执行 `vlog -lint -vlog01compat -work out/lint_work rtl/*.v`；ModelSim 工具目录需在 PATH 中。
 2026-10-15 对全部 21 个 RTL 模块实跑，结果为 `Errors: 0, Warnings: 0`。
 
@@ -126,6 +136,18 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
    ```
 
    预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
+
+综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方默认布局布线。两个入口及旧版实现模板均使用 `elinx/constraints.edc` 这一份约束源；输出目录中的 `constraints.sdc` 是它的副本。
+
+协议引擎的同域寄存器路径使用 16 ns；跨引擎、捕获、配置、RAM、发送输出及数据面内部路径仍为 8 ns。本版 eLinx 的 `-hold 0` 对应原同沿保持检查；小网表实测 `-hold 1` 会把检查移到前一拍，因此采用经过原始报告核实的写法。约束按真实网表依赖分组，避免工具建立大规模全连接矩阵。
+
+综合和实现入口自动检查寄存器的 CE 逻辑锥、时钟、集合边界和内部连接覆盖。RTL 改动导致集合变化时，先使用失败运行留下的 VQM 更新这一份约束，再重新综合：
+
+```powershell
+python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constraints.edc --output out/multicycle_audit --refresh
+```
+
+布线完成后执行 `python tools/report_routed_timing.py`，复用已布线图和延迟导出全部端点，核对每条报告路径的 16 ns／8 ns 要求以及同沿 hold，产物放在 `out/timing/`。它不会重新布局布线。综合、实现和全量时序报告入口均支持硬截止时间保护；用 `--deadline` 传入 ISO 时间。
 
 也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。两个入口使用同一套官方引擎，默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。命令行不需要先运行界面；已有 `.qsf` 时保留其中的综合设置，干净检出时按 `.epr` 的当前设置生成运行副本。网表验证见“综合后网表仿真”。
 

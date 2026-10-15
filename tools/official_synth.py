@@ -213,6 +213,13 @@ def main():
                            '--vqm=' + str(netlist)], 300, cwd=directory)
         if not netlist.is_file() or not netlist.stat().st_size:
             raise RuntimeError('VQM export is missing')
+        if 'set_multicycle_path' in constraint.read_text(encoding='utf-8-sig'):
+            from check_multicycle import audit
+            audit_path = flow.folder / 'multicycle_audit'
+            proof = audit(netlist, constraint, audit_path)
+            flow.result['multicycle_audit'] = str(audit_path)
+            if not proof['passed']:
+                raise RuntimeError('Multicycle register/enable/cone audit failed: ' + str(audit_path))
         implementation_stage(flow, home, directory, output, project, run, options, 'pack')
         implementation_stage(flow, home, directory, output, project, run, options, 'timing')
         resources, timing, resource_file, database = reports(output, project.stem)

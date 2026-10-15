@@ -36,6 +36,7 @@ udm_parse_vqm [file join $run design.vqm]
 set model [file nativename $device]
 append model "\\"
 load_time_model $model
+# constraints.sdc is an output copy of the single source elinx/constraints.edc.
 read_sdc [file join $run constraints.sdc]
 read_drc_config_file [file join $device elinx_drc.dat]
 excute_check_prepack
