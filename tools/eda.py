@@ -159,6 +159,10 @@ def sim(options):
         (f.folder/"run.do").write_text(run_do+"run -all\nquit -code 0\n",encoding="ascii")
         f.job("vlib",[MS/"vlib.exe","work"],30)
         defines=["+define+PROBE_P2"] if "probe_p2_array" in replaced else []
+        ce_div=os.environ.get("AFDX_CE_DIV","2")
+        if ce_div not in ("1","2"):raise ValueError("AFDX_CE_DIV must be 1 or 2")
+        defines.append("+define+AFDX_CE_DIV="+ce_div)
+        f.result["ce_div"]=int(ce_div)
         if "AFDX_top" in replaced:
             defines.append("+define+SYS_TOP_NETLIST")
             defaults={"TX_PAGE_AW":"8","TX_OFF_AW":"9","LOOKAHEAD":"512","RX_RING_AW":"12","RX_DQ_AW":"5"}
@@ -180,7 +184,7 @@ def sim(options):
                 raise ValueError("afdx_rx_core mapped netlist has fixed default parameters")
         if options.coverage:
             # t 记录翻转；测试平台另编译，不把激励与检查器计入 RTL 覆盖率。
-            compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*rtl],120)
+            compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*defines,*rtl],120)
             if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("RTL compile diagnostic; see compile_rtl.log")
             compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources[len(rtl):]],120)
         else:

@@ -97,8 +97,10 @@ def prepare_project(folder, project, run, options, sources, constraint):
                     value = tcl(output)
                 line = prefix + key + ' ' + value
             lines.append(line)
-        if used_sources != set(by_name):
-            raise RuntimeError('The project and generated QSF source lists differ')
+        # 工程新增的源文件可能尚未写入界面缓存 QSF；以 EPR 的源文件集补齐运行副本。
+        for path in sources:
+            if path.name not in used_sources:
+                lines.append('set_global_assignment -name VERILOG_FILE ' + tcl(path))
     else:
         # QSF 是界面运行产物，干净检出时按 EPR 的当前器件、语言和优化设置生成。
         if options['Series'] != 'eHiChip6' or options['LanguageVersion'] != 'VERILOG_2001':

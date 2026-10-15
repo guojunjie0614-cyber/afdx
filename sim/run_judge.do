@@ -122,8 +122,12 @@ proc judge_main {root} {
     transcript on
     set sources [concat [lsort [glob [file join $root rtl *.v]]] [lsort [glob [file join $root tb lib *.v]]]]
     foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
+    set ce_div 2
+    if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
+    if {$ce_div ni {1 2}} {error "AFDX_CE_DIV must be 1 or 2"}
+    puts "JUDGE CE_DIV=$ce_div"
     set failed [catch {
-        vlog -modelsimini $ini -work work -vlog01compat +incdir+[file join $root tb lib] {*}$sources
+        vlog -modelsimini $ini -work work -vlog01compat +define+AFDX_CE_DIV=$ce_div +incdir+[file join $root tb lib] {*}$sources
     } message options]
     transcript file ""
     set compiled [judge_read [file join $output compile.log]]

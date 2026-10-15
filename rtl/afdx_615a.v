@@ -3,10 +3,10 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
-    input wire clk, reset, enable,
+    input wire clk, reset, enable, ce,
 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
@@ -17,12 +17,12 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     // tx_valid 和 tx_ready 同为高时发送一个报文字节。
     // tx_last 标记末字节，tx_vl 选择发送配置，tx_sport/dport 给出两端端口。
-    output reg tx_valid,
+    output wire tx_valid,
     input wire tx_ready,
-    output reg [7:0] tx_data,
-    output reg tx_last,
-    output reg [6:0] tx_vl,
-    output reg [15:0] tx_sport, tx_dport,
+    output wire [7:0] tx_data,
+    output wire tx_last,
+    output wire [6:0] tx_vl,
+    output wire [15:0] tx_sport, tx_dport,
 
     // rx_valid 为高时必须接收当前字节，rx_last 标记报文末字节。
     // 目的端口匹配当前服务或传输任务时，rx_claim 为高。
@@ -36,590 +36,101 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
     wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
 
-    // 这些状态接收并检查请求。
-    localparam REASON_NONE = 0;
-    localparam REASON_DESCRIPTION = 1;
-    localparam REASON_LENGTH = 2;
-    localparam REASON_CHECKSUM = 3;
-    localparam REASON_TFTP_ERROR = 4;
-    localparam REASON_RETRY_LIMIT = 5;
-    localparam IDLE = 0;
-    localparam WAIT_PACKET = 1;
-    localparam DISPATCH = 2;
-    localparam DISPATCH_CHECK = 72, DISPATCH_SELECT = 73, PACKET_START = 74, BUILD_CANDIDATE = 75;
-    localparam NAME = 3;
-    localparam NAME_BYTE = 4;
-    localparam MODE = 5;
-    localparam MODE_BYTE = 6;
-    localparam REQUEST_OK = 7;
-    localparam DENY_SEND = 70;
-
-    // 这些状态从存储器读取字节或数字。
-    localparam FETCH = 8;
-    localparam FETCH_WAIT = 9;
-    localparam FETCH_CAPTURE = 10;
-    localparam FETCH_DONE = 11;
-    localparam NUMBER = 12;
-    localparam NUMBER_BYTE = 13;
-
-    // 这些状态构造并发送报文。
-    localparam BUILD = 14;
-    localparam BUILD_PREP = 60;
-    localparam EMIT = 15;
-    localparam BUILD_FLUSH = 16;
-    localparam TX_ADDR = 17;
-    localparam TX_WAIT = 18;
-    localparam TX_CAPTURE = 19;
-    localparam TX_SEND = 20;
-    localparam ACK_MAIN = 28;
-
-    // 这些状态计算进度并报告加载状态。
-    localparam START_LUS = 21;
-    localparam RATIO_SCALE = 22;
-    localparam RATIO_SUB = 23;
-    localparam RATIO_DEC = 24;
-    localparam LUS_WRQ = 25;
-    localparam LUS_DATA = 26;
-    localparam LUS_DONE = 27;
-
-    // 这些状态接收并保存文件内容。
-    localparam DATA_COPY = 29;
-    localparam DATA_BYTE = 30;
-    localparam DATA_END = 31;
-
-    // 这些状态检查上传请求列表。
-    localparam LUR_START = 32;
-    localparam LUR_LENGTH = 33;
-    localparam LUR_VERSION = 34;
-    localparam LUR_COUNT = 35;
-    localparam LUR_HLEN = 36;
-    localparam LUR_PLEN = 37;
-    localparam LUR_OFFSETS = 61;
-    localparam LUR_READY = 38;
-
-    // 这些状态获取并检查头文件。
-    localparam RRQ_HEADER = 39;
-    localparam HEADER_START = 40;
-    localparam HEADER_LENGTH = 41;
-    localparam HEADER_VERSION = 42;
-    localparam HEADER_PTR = 43;
-    localparam HEADER_PTR_CHECK = 71;
-    localparam HEADER_PTR_MERGE = 76;
-    localparam HEADER_CRC = 44;
-    localparam HEADER_CRC_BYTE = 45;
-    localparam HEADER_CRC_EXPECT = 46;
-    localparam HEADER_CRC_CHECK = 47;
-    localparam HEADER_COUNT = 48;
-    localparam HEADER_NLEN = 49;
-    localparam HEADER_PLEN = 50;
-    localparam HEADER_SIZE = 51;
-    localparam HEADER_DCRC = 52;
-    localparam HEADER_READY = 53;
-
-    // 这些状态获取并校验数据文件。
-    localparam RRQ_DATA = 54;
-    localparam DATA_CHECK = 55;
-    localparam DATA_SUCCESS = 56;
-
-    // 这些状态检查卸载请求并传送加载区内容。
-    localparam LNR_USER = 62;
-    localparam LNR_NAME = 63;
-    localparam LNR_BYTE = 64;
-    localparam LNR_READY = 65;
-    localparam DL_WRQ = 66;
-    localparam DL_BLOCK = 67;
-    localparam DL_SIZE = 68;
-    localparam DL_ACK = 69;
-
-    // 这些状态报告失败或结束本次操作。
-    localparam FAILURE = 57;
-    localparam FAILURE_SENT = 58;
-    localparam DONE = 59;
-
-    // state 记录当前文件处理步骤，HEADER_CRC_EXPECT 是未使用的编码。
-    // wait_kind 记录当前等待哪一种确认或文件，packet_type 选择待发报文。
-    localparam WK_LUI_ACK = 0, WK_LUR = 1, WK_DATA = 2, WK_LUS_ACK0 = 3, WK_LUS_ACK1 = 4,
-        WK_DL_ACK0 = 5, WK_DL_ACK = 6;
-
-    localparam PK_ACK = 0, PK_LUI = 1, PK_RRQ = 2, PK_LUS_WRQ = 3, PK_LUS = 4, PK_ERROR = 5, PK_DL_DATA = 6;
-
-    // status 寄存器的取值：空闲、进行中、成功、失败。
+    // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
-
-    // 状态文件里的操作状态码：已接受、进行中、已完成，以及目标端中止（0x1003）。
-    localparam LUS_NONE = 0, LUS_ACCEPTED = 1, LUS_IN_PROGRESS = 2, LUS_COMPLETED = 3, LUS_ABORTED = 16'h1003;
-
-    // 目标端中止时，状态文件里逐文件的状态码是 0x1007，下面是它的高、低字节。
-    localparam FILE_ABORTED_HIGH = 8'h10, FILE_ABORTED_LOW = 7;
-
-    // 状态文件里头文件名字段的起始位置。
-    localparam LUS_NAME_POS = 10'd33;
-
-    // file_kind 的取值：正在接收请求列表、头文件还是数据文件。
-    localparam FILE_LIST = 0, FILE_HEADER = 1, FILE_DATA = 2;
-
-    // 协议文件版本是两个 ASCII 字符 A3 或 A4；头文件格式版本固定为 0x8002。
     localparam VERSION_A3 = 16'h4133, VERSION_A4 = 16'h4134, HEADER_FILE_VERSION = 16'h8002;
     localparam VERSION_A3_WORD = 32'h4133, VERSION_A4_WORD = 32'h4134;
-
-    // 文件校验用 16 位循环冗余校验：多项式 0x1021，初值全 1。
-    localparam CRC16_POLY = 16'h1021, CRC16_INIT = 16'hffff;
-
-    // 本端各类传输使用的 UDP 端口起始值，每开始一次新传输换一个端口。
     localparam MAIN_TID_INIT = 16'h8000, STATUS_TID_INIT = 16'h9000, TID_SEQUENCE_INIT = 16'h8100;
     localparam DENY_TID_INIT = 16'ha000;
-
-    // 复位后的请求端口、超时（250000000 拍即 2 秒）和重传次数上限。
     localparam DEFAULT_REQUEST_PORT = 59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 1;
-
-    // 本模块的配置寄存器地址（低 8 位）。
     localparam REG_ENABLE = 8'hb0, REG_TX_VL = 8'hb1, REG_MEMORY_ADDRESS = 8'hb4, REG_REQUEST_PORT = 8'hb8;
     localparam REG_TIMEOUT = 8'hb9, REG_RETRY_LIMIT = 8'hba, REG_VERSION = 8'hbb;
 
-    // ASCII 字符 0；字母或上 ASCII_CASE_BIT 后变成小写，用于不分大小写的比较。
-    localparam ASCII_ZERO = 8'h30, ASCII_CASE_BIT = 8'h20;
-
-    // 与上它可把长度向下取到偶数。
-    localparam EVEN_MASK = 32'hfffffffe;
-
-    // TFTP 数据块最多 512 字节，数据和确认报文都从四字节报头开始。
-    localparam TFTP_OPCODE_WRQ = 2, TFTP_OPCODE_DATA = 3, TFTP_OPCODE_ACK = 4, TFTP_OPCODE_ERROR = 5;
-    localparam TFTP_HEADER_BYTES = 4, TFTP_BLOCK_BYTES = 512, TFTP_MAX_PACKET_BYTES = 516;
-    localparam TFTP_DATA_POS = 10'd4, PACKET_BUFFER_BYTES = 1024;
-
-    // 请求列表、头文件和数据文件各自的存储容量；数据长度字段按双字节计。
-    localparam LUR_BUFFER_BYTES = 512, HEADER_BUFFER_BYTES = 2048, LOAD_BUFFER_BYTES = 8192;
-    localparam MAX_DATA_WORDS = 4096, MAX_FILENAME_BYTES = 64, MAX_HEADER_NAME_CHARS = 63;
-
-    // 状态报文的固定字段和尾部长度，文件名、部件名插在这些字段之间。
-    localparam LUS_PART_POS_BASE = 10'd34, LUS_DOWNLOAD_LENGTH_BASE = 10'd44, LUS_TAIL_BYTES = 10'd14;
-    localparam LUR_FIXED_BYTES = 12'd10, LNR_NAME_POS = 13'd9;
-
-    // 固定请求文件名及 octet 模式字段的位置和长度。
-    localparam RRQ_NAME_POS = 11'd2, RRQ_MODE_POS = 11'd14;
-    localparam RRQ_SUFFIX_BYTES = 10'd7, OCTET_MODE_BYTES = 10'd6;
-    localparam TARGET_NAME_BYTES = 11, TARGET_DOWNLOAD_MARK_POS = 10;
-
-    // 固定回应长度；确认报文只包含 TFTP 报头。
-    localparam ERROR_PACKET_BYTES = 11, LUI_PACKET_BYTES = 13, LUS_SHORT_PACKET_BYTES = 32;
-    localparam LUS_WRQ_PACKET_BYTES = 20, DOWNLOAD_RRQ_PACKET_BYTES = 19;
-
-    // 头文件指针按双字节计，末尾六字节保存校验字段。
-    localparam HEADER_MIN_BYTES = 32, HEADER_DATA_PTR_MIN_WORDS = 13, HEADER_TRAILER_BYTES = 6;
-    localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 10;
-
-    // REASON_DESCRIPTION：文件描述内容错误。
-    // REASON_LENGTH：容量或长度错误。
-    // REASON_CHECKSUM：校验值错误。
-    // REASON_TFTP_ERROR：收到 TFTP 错误报文。
-    // REASON_RETRY_LIMIT：重试次数已用完。
     reg configured, protocol_a4;
+    reg [6:0] configured_vl;
+    reg [12:0] memory_addr;
+    reg [15:0] request_port;
+    reg [31:0] timeout_cycles;
+    reg [7:0] retry_limit, load_sample;
     reg [1:0] status;
     reg [7:0] reason;
-
-    // return_state/num_return 保存读取完成后应回到的状态。
-    // after_tx/lus_return/ack_return 保存发送或确认后的返回状态。
-    reg [7:0] state, return_state, num_return, after_tx, lus_return, ack_return;
-    reg [2:0] wait_kind, packet_type;
-    reg [1:0] file_kind, fetch_source;
-
-    // main_tid/main_peer 保存传数据文件时本端和对端的 UDP 端口。
-    // status_tid/status_peer 保存传状态文件时本端和对端的 UDP 端口。
-    reg [15:0] main_tid, main_peer, status_tid, status_peer, tid_sequence;
-    reg [15:0] block_number, ack_number, lus_counter, request_port;
-
-    // timer 在等待报文时倒计时，超时后重发 packet_tx 中的内容。
-    // retry_total 统计累计重发次数。
-    reg [31:0] timer, retry_total, timeout_cycles;
-    reg [7:0] retries, retry_limit;
-
-    // loaded/file_size 保存本次已加载字节数和期望大小。
-    // 校验成功后才更新 available_size，供卸载读取。
-    reg [13:0] loaded, file_size;
-    reg [13:0] available_size, dl_acked, dl_remaining;
-    reg [12:0] dl_read_addr;
-    reg download_mode, request_download, request_unsupported, deny_empty, deny_unsupported;
-    reg [7:0] request_resume;
-    reg [4:0] deny_pos;
-    reg [15:0] deny_tid, saved_sport, saved_dport;
-
-    // data_crc/expected_crc 用于核对数据文件，header_crc 用于核对头文件。
-    // 16 位校验使用多项式 0x1021。
-    reg [15:0] data_crc, expected_crc, header_crc;
-
-    // metadata_size 保存列表或头文件的长度。
-    // name_addr/len 和 header_pointer 定位变长字段。
-    // 文件里的指针以两个字节为单位，使用前先乘二。
-    reg [11:0] metadata_size, header_pointer, header_name_addr, data_name_addr;
-    reg header_pointer_ok;
-    reg [31:0] header_limit;
-    reg [3:0] pointer_less, pointer_equal;
-    reg pointer_minimum;
-    // 文件长度在读取指针之前已稳定；提前寄存上界，分开减法和范围比较。
-    always @(posedge clk) header_limit <= metadata_size - HEADER_TRAILER_BYTES;
-    reg [6:0] header_name_len, part_len, data_name_len;
-    reg [9:0] part_addr;
-    reg manifest;
-    reg [15:0] lus_status;
-    reg [6:0] percent;
-    reg [19:0] scaled;
-    reg [7:0] ratio_h, ratio_t, ratio_u;
-    reg [3:0] decimal_tens;
-    reg [6:0] decimal_rest;
-    reg [12:0] fetch_addr;
-    reg [10:0] copy_pos, copy_len, scan_pos;
-    reg [7:0] byte_value, build_value;
-    reg [31:0] number;
-    wire [31:0] pointer_bytes = {number[30:0], 1'b0};
-    reg [2:0] number_left;
-    reg [9:0] packet_len, packet_pos, rx_length, rx_index;
-    reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
-    // 接纳报文时保存头字段，后续接收不能改写正在译码的命令。
-    reg [15:0] command_op, command_block, command_sport, command_dport;
-    reg [9:0] command_length;
-    reg [15:0] previous_block;
-    reg [7:0] dispatch_match, dispatch_action;
-    reg dispatch_current, dispatch_repeat;
-    (* preserve = 1 *) reg [7:0] expected_name, expected_mode;
-    (* preserve = 1 *) reg name_mark, name_option, name_bad, name_terminal, mode_bad, mode_terminal;
-    (* preserve = 1 *) reg request_reject;
-    reg [2:0] pending_kind;
-    reg [9:0] pending_length;
-    reg [15:0] pending_sport, pending_dport;
-    reg [7:0] pending_after;
-    wire [7:0] dispatch_choice = {
-        dispatch_match[7] && !(|dispatch_match[6:0]),
-        dispatch_match[6] && !(|dispatch_match[5:0]),
-        dispatch_match[5] && !(|dispatch_match[4:0]),
-        dispatch_match[4] && !(|dispatch_match[3:0]),
-        dispatch_match[3] && !(|dispatch_match[2:0]),
-        dispatch_match[2] && !(|dispatch_match[1:0]),
-        dispatch_match[1] && !dispatch_match[0], dispatch_match[0] };
-    reg [9:0] lus_partlen_pos, lus_part_pos, lus_tail_pos, lus_packet_len;
-    reg [9:0] tail_index, head_index, part_index, name_end, mode_start;
-    reg packet_pending, consume, receiving;
-    reg [4:0] name_pos;
-    reg request_write;
-    reg [12:0] memory_addr;
-    reg rx_we, rx_re;
-    reg [9:0] rx_wa, rx_ra;
+    reg [13:0] loaded;
+    reg [15:0] lus_counter, main_tid, status_tid, deny_tid;
+    reg [31:0] retry_total;
+    reg consume_q, consume_previous;
+    reg rx_we, packet_pending, receiving;
+    reg [9:0] rx_wa, rx_index, rx_length;
     reg [7:0] rx_wd;
-    wire [7:0] rx_q;
-    reg tx_we, tx_re;
-    reg [9:0] tx_wa, tx_ra;
-    reg [7:0] tx_wd;
-    wire [7:0] tx_q;
-    reg lur_we, lur_re;
-    reg [8:0] lur_wa, lur_ra;
-    reg [7:0] lur_wd;
-    wire [7:0] lur_q;
-    reg hdr_we, hdr_re;
-    reg [10:0] hdr_wa, hdr_ra;
-    reg [7:0] hdr_wd;
-    wire [7:0] hdr_q;
-    reg load_we, load_re;
-    reg [12:0] load_wa, load_ra;
-    reg [7:0] load_wd, load_sample;
-    wire [7:0] load_q;
-
-    // packet_rx 保存收到的报文，容量为 1 KiB。
-    // packet_tx 保存待发报文，容量为 1 KiB。
-    // lur_ram 保存请求列表，容量为 512 字节。
-    // header_ram 保存头文件，容量为 2 KiB。
-    // load_ram 保存加载数据，容量为 8 KiB。
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PACKET_BUFFER_BYTES)) packet_rx (
-        .clk(clk),
-        .write_enable(rx_we),
-        .write_address(rx_wa),
-        .write_data(rx_wd),
-        .read_enable(rx_re),
-        .read_address(rx_ra),
-        .read_data(rx_q)
-    );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PACKET_BUFFER_BYTES)) packet_tx (
-        .clk(clk),
-        .write_enable(tx_we),
-        .write_address(tx_wa),
-        .write_data(tx_wd),
-        .read_enable(tx_re),
-        .read_address(tx_ra),
-        .read_data(tx_q)
-    );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(LUR_BUFFER_BYTES)) lur_ram (
-        .clk(clk),
-        .write_enable(lur_we),
-        .write_address(lur_wa),
-        .write_data(lur_wd),
-        .read_enable(lur_re),
-        .read_address(lur_ra),
-        .read_data(lur_q)
-    );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(HEADER_BUFFER_BYTES)) header_ram (
-        .clk(clk),
-        .write_enable(hdr_we),
-        .write_address(hdr_wa),
-        .write_data(hdr_wd),
-        .read_enable(hdr_re),
-        .read_address(hdr_ra),
-        .read_data(hdr_q)
-    );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(LOAD_BUFFER_BYTES)) load_ram (
-        .clk(clk),
-        .write_enable(load_we),
-        .write_address(load_wa),
-        .write_data(load_wd),
-        .read_enable(load_re),
-        .read_address(load_ra),
-        .read_data(load_q)
-    );
-
-    // 顶层交付口提前三拍给出端口，两级局部寄存分摊跨模块布线。
-    // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
+    reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
-    // 各报文类型并行准备一个字节，下一拍只选择已寄存的结果。
-    // 位置和常量偏移先寄存，避免位置加减、字符表和报文类型选择串在同一路径上。
-    localparam PACKET_KIND_COUNT = 7;
-    (* preserve = 1, dont_merge = 1 *) reg [9:0] build_position [0:PACKET_KIND_COUNT - 1];
-    reg [7:0] candidate_byte [0:PACKET_KIND_COUNT - 1];
-    reg [PACKET_KIND_COUNT - 1:0] candidate_read;
-    reg [1:0] candidate_source [0:PACKET_KIND_COUNT - 1];
-    reg [12:0] candidate_address [0:PACKET_KIND_COUNT - 1];
-    reg [9:0] error_position, lus_description_position, filename_position;
-    reg [9:0] wrq_mode_position, rrq_mode_position;
-    reg [12:0] rrq_header_read, rrq_data_read;
-    genvar byte_kind;
-    generate
-        for (byte_kind = 0; byte_kind < PACKET_KIND_COUNT; byte_kind = byte_kind + 1) begin : byte_position
-            always @(posedge clk) build_position[byte_kind] <= packet_pos;
-        end
-    endgenerate
-    always @(posedge clk) begin
-        error_position <= packet_pos - 10'd4;
-        lus_description_position <= packet_pos - 10'd13;
-        filename_position <= packet_pos - 10'd2;
-        wrq_mode_position <= packet_pos - 10'd14;
-        rrq_mode_position <= packet_pos - mode_start;
-        rrq_header_read <= header_name_addr + filename_position;
-        rrq_data_read <= data_name_addr + filename_position;
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_ACK] <= 0;
-            candidate_read[PK_ACK] <= 0;
-            candidate_source[PK_ACK] <= 0;
-            candidate_address[PK_ACK] <= 0;
-        end
-        else begin
-            candidate_byte[PK_ACK] <= 0;
-            candidate_read[PK_ACK] <= 0;
-            case (build_position[PK_ACK])
-                1 : candidate_byte[PK_ACK] <= 4;
-                2 : candidate_byte[PK_ACK] <= ack_number[15:8];
-                3 : candidate_byte[PK_ACK] <= ack_number[7:0];
-            endcase
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_LUI] <= 0;
-            candidate_read[PK_LUI] <= 0;
-            candidate_source[PK_LUI] <= 0;
-            candidate_address[PK_LUI] <= 0;
-        end
-        else begin
-            candidate_byte[PK_LUI] <= 0;
-            candidate_read[PK_LUI] <= 0;
-            case (build_position[PK_LUI])
-                1 : candidate_byte[PK_LUI] <= 3;
-                3 : candidate_byte[PK_LUI] <= 1;
-                7 : candidate_byte[PK_LUI] <= 9;
-                8 : candidate_byte[PK_LUI] <= "A";
-                9 : candidate_byte[PK_LUI] <= protocol_a4 ? "4" : "3";
-                11 : candidate_byte[PK_LUI] <= 1;
-            endcase
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_ERROR] <= 0;
-            candidate_read[PK_ERROR] <= 0;
-            candidate_source[PK_ERROR] <= 0;
-            candidate_address[PK_ERROR] <= 0;
-        end
-        else begin
-            candidate_byte[PK_ERROR] <= 0;
-            candidate_read[PK_ERROR] <= 0;
-            case (build_position[PK_ERROR])
-                1 : candidate_byte[PK_ERROR] <= 5;
-                3 : candidate_byte[PK_ERROR] <= reason == REASON_DESCRIPTION ? 1 : reason == REASON_TFTP_ERROR ? 4 : 0;
-                default : if (build_position[PK_ERROR] >= 4) candidate_byte[PK_ERROR] <= description (error_position);
-            endcase
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_LUS_WRQ] <= 0;
-            candidate_read[PK_LUS_WRQ] <= 0;
-            candidate_source[PK_LUS_WRQ] <= 0;
-            candidate_address[PK_LUS_WRQ] <= 0;
-        end
-        else begin
-            candidate_byte[PK_LUS_WRQ] <= 0;
-            candidate_read[PK_LUS_WRQ] <= 0;
-            begin
-                if (build_position[PK_LUS_WRQ] == 1) candidate_byte[PK_LUS_WRQ] <= 2;
-                else if (build_position[PK_LUS_WRQ] >= 2 && build_position[PK_LUS_WRQ] < 14)
-                    candidate_byte[PK_LUS_WRQ] <= target_name (filename_position,
-                    "S", download_mode);
-                else if (build_position[PK_LUS_WRQ] >= 14) candidate_byte[PK_LUS_WRQ] <= octet_byte (wrq_mode_position);
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_RRQ] <= 0;
-            candidate_read[PK_RRQ] <= 0;
-            candidate_source[PK_RRQ] <= 0;
-            candidate_address[PK_RRQ] <= 0;
-        end
-        else begin
-            candidate_byte[PK_RRQ] <= 0;
-            candidate_read[PK_RRQ] <= 0;
-            begin
-                if (build_position[PK_RRQ] == 1) candidate_byte[PK_RRQ] <= download_mode ? 2 : 1;
-                else if (build_position[PK_RRQ] >= 2 && build_position[PK_RRQ] < name_end) begin
-                    if (download_mode) candidate_byte[PK_RRQ] <= memory_name(filename_position);
-                    else if (file_kind == FILE_HEADER)
-                        begin
-                            candidate_read[PK_RRQ] <= 1;
-                            candidate_source[PK_RRQ] <= 1;
-                            end
-                    else begin
-                        candidate_read[PK_RRQ] <= 1;
-                        candidate_source[PK_RRQ] <= 2;
-                    end
-                end
-                else if (build_position[PK_RRQ] >= mode_start) candidate_byte[PK_RRQ] <= octet_byte (rrq_mode_position);
-            end
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_DL_DATA] <= 0;
-            candidate_read[PK_DL_DATA] <= 0;
-            candidate_source[PK_DL_DATA] <= 0;
-            candidate_address[PK_DL_DATA] <= 0;
-        end
-        else begin
-            candidate_byte[PK_DL_DATA] <= 0;
-            candidate_read[PK_DL_DATA] <= 0;
-            case (build_position[PK_DL_DATA])
-                1 : candidate_byte[PK_DL_DATA] <= 3;
-                2 : candidate_byte[PK_DL_DATA] <= block_number[15:8];
-                3 : candidate_byte[PK_DL_DATA] <= block_number[7:0];
-                default : if (build_position[PK_DL_DATA] >= 4) begin
-                    candidate_read[PK_DL_DATA] <= 1;
-                    candidate_source[PK_DL_DATA] <= 3;
-                    candidate_address[PK_DL_DATA] <= dl_read_addr;
-                end
-            endcase
-        end
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            candidate_byte[PK_LUS] <= 0;
-            candidate_read[PK_LUS] <= 0;
-            candidate_source[PK_LUS] <= 0;
-            candidate_address[PK_LUS] <= 0;
-        end
-        else begin
-            candidate_byte[PK_LUS] <= 0;
-            candidate_read[PK_LUS] <= 0;
-            begin
-                case (build_position[PK_LUS])
-
-                    1 : candidate_byte[PK_LUS] <= 3;
-
-                    3 : candidate_byte[PK_LUS] <= 1;
-
-                    7 : candidate_byte[PK_LUS] <= packet_len - 4;
-
-                    8 : candidate_byte[PK_LUS] <= "A";
-
-                    9 : candidate_byte[PK_LUS] <= protocol_a4 ? "4" : "3";
-
-                    10 : candidate_byte[PK_LUS] <= lus_status[15:8];
-
-                    11 : candidate_byte[PK_LUS] <= lus_status[7:0];
-
-                    12 : candidate_byte[PK_LUS] <= 8;
-
-                    21 : candidate_byte[PK_LUS] <= lus_counter[15:8];
-
-                    22 : candidate_byte[PK_LUS] <= lus_counter[7:0];
-
-                    25, 26 : candidate_byte[PK_LUS] <= lus_status == LUS_IN_PROGRESS ? 8'hff : 0;
-
-                    27 : candidate_byte[PK_LUS] <= ratio_h;
-
-                    28 : candidate_byte[PK_LUS] <= ratio_t;
-
-                    29 : candidate_byte[PK_LUS] <= ratio_u;
-
-                    31 : candidate_byte[PK_LUS] <= manifest;
-
-                    32 : candidate_byte[PK_LUS] <= header_name_len;
-
-                    default : begin
-                        if (build_position[PK_LUS] >= 13
-                            && build_position[PK_LUS] <= 20)
-                                candidate_byte[PK_LUS] <= description (lus_description_position);
-                        else if (build_position[PK_LUS] >= 33 && build_position[PK_LUS] < lus_partlen_pos) begin
-                            candidate_read[PK_LUS] <= 1;
-                            candidate_source[PK_LUS] <= 1;
-                            candidate_address[PK_LUS] <= header_name_addr + head_index;
-                        end
-                        else if ( ! download_mode && build_position[PK_LUS] == lus_partlen_pos)
-                            candidate_byte[PK_LUS] <= part_len;
-                        else if ( ! download_mode && build_position[PK_LUS] >= lus_part_pos
-                            && build_position[PK_LUS] < lus_tail_pos) begin
-                                candidate_read[PK_LUS] <= 1;
-                                candidate_source[PK_LUS] <= 1;
-                                candidate_address[PK_LUS] <= part_addr + part_index;
-                            end
-                        else if (download_mode && build_position[PK_LUS] >= 33
-                            && build_position[PK_LUS] >= lus_tail_pos) case (tail_index)
-                            0 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
-                            1 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
-                                : lus_status[7:0];
-                            2 : candidate_byte[PK_LUS] <= 8;
-                            default : candidate_byte[PK_LUS] <= description(tail_index - 10'd3);
-                        endcase
-                        else if (build_position[PK_LUS] >= 33 && build_position[PK_LUS] >= lus_tail_pos)
-                            case (tail_index)
-                            0 : candidate_byte[PK_LUS] <= ratio_h;
-                            1 : candidate_byte[PK_LUS] <= ratio_t;
-                            2 : candidate_byte[PK_LUS] <= ratio_u;
-                            3 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
-                            4 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
-                                : lus_status[7:0];
-                            5 : candidate_byte[PK_LUS] <= 8;
-                            default : candidate_byte[PK_LUS] <= description (tail_index - 10'd6);
-                        endcase
-                    end
-                endcase
-            end
-        end
-    end
-
+    wire send_complete, tx_re, read_mode;
+    wire [9:0] tx_ra;
+    wire [7:0] tx_q, deny_q;
+    wire  consume;
+    wire [1:0] engine_status;
+    wire [7:0] engine_reason;
+    wire [13:0] engine_loaded;
+    wire [15:0] engine_lus_counter;
+    wire [31:0] engine_retry_total;
+    wire [15:0] engine_main_tid;
+    wire [15:0] engine_status_tid;
+    wire [15:0] engine_deny_tid;
+    wire [15:0] engine_tx_sport;
+    wire [15:0] engine_tx_dport;
+    wire  send_request;
+    wire  send_mode;
+    wire [10:0] send_length;
+    wire  deny_we;
+    wire [4:0] deny_wa;
+    wire [7:0] deny_wd;
+    wire  rx_re;
+    wire [9:0] rx_ra;
+    wire  tx_we;
+    wire [9:0] tx_wa;
+    wire [7:0] tx_wd;
+    wire  lur_we;
+    wire [8:0] lur_wa;
+    wire [7:0] lur_wd;
+    wire  lur_re;
+    wire [8:0] lur_ra;
+    wire  hdr_we;
+    wire [10:0] hdr_wa;
+    wire [7:0] hdr_wd;
+    wire  hdr_re;
+    wire [10:0] hdr_ra;
+    wire  load_we;
+    wire [12:0] load_wa;
+    wire [7:0] load_wd;
+    wire  load_re;
+    wire [12:0] load_ra;
+    wire [7:0] rx_q;
+    wire [7:0] lur_q;
+    wire [7:0] hdr_q;
+    wire [7:0] load_q;
+    reg  ram_deny_we, cmd_deny_we;
+    reg [4:0] ram_deny_wa, cmd_deny_wa;
+    reg [7:0] ram_deny_wd, cmd_deny_wd;
+    reg  ram_rx_re, cmd_rx_re;
+    reg [9:0] ram_rx_ra, cmd_rx_ra;
+    reg  ram_tx_we, cmd_tx_we;
+    reg [9:0] ram_tx_wa, cmd_tx_wa;
+    reg [7:0] ram_tx_wd, cmd_tx_wd;
+    reg  ram_lur_we, cmd_lur_we;
+    reg [8:0] ram_lur_wa, cmd_lur_wa;
+    reg [7:0] ram_lur_wd, cmd_lur_wd;
+    reg  ram_lur_re, cmd_lur_re;
+    reg [8:0] ram_lur_ra, cmd_lur_ra;
+    reg  ram_hdr_we, cmd_hdr_we;
+    reg [10:0] ram_hdr_wa, cmd_hdr_wa;
+    reg [7:0] ram_hdr_wd, cmd_hdr_wd;
+    reg  ram_hdr_re, cmd_hdr_re;
+    reg [10:0] ram_hdr_ra, cmd_hdr_ra;
+    reg  ram_load_we, cmd_load_we;
+    reg [12:0] ram_load_wa, cmd_load_wa;
+    reg [7:0] ram_load_wd, cmd_load_wd;
+    reg  ram_load_re, cmd_load_re;
+    reg [12:0] ram_load_ra, cmd_load_ra;
     always @(posedge clk) begin
         if (reset) begin
             rx_port_stage <= 0;
@@ -633,206 +144,6 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     assign rx_claim = enable && configured && (incoming_port == request_port || incoming_port == main_tid
         || incoming_port == status_tid || incoming_port == deny_tid);
-
-    function [15:0] crc16;
-        input [15:0] old;
-        input [7:0] value;
-        reg [15:0] c;
-        integer k;
-        begin
-            c = old ^ { value, 8'b0 };
-            for (k = 0; k < 8; k = k + 1) c = c[15] ? (c << 1) ^ CRC16_POLY : c << 1;
-            crc16 = c;
-        end
-    endfunction
-
-    function [7:0] target_name;
-        input [4:0] p;
-        input [7:0] suffix;
-        input is_download;
-        begin
-            case (p)
-                0 : target_name = "D";
-                1 : target_name = "E";
-                2 : target_name = "M";
-                3 : target_name = "C";
-                4 : target_name = "3";
-                5 : target_name = "_";
-                6 : target_name = "1";
-                7 : target_name = ".";
-                8 : target_name = "L";
-                9 : target_name = is_download ? "N" : "U";
-                10 : target_name = suffix;
-                default : target_name = 0;
-            endcase
-        end
-    endfunction
-
-    function [7:0] memory_name;
-        input [6:0] p;
-        begin
-            case (p)
-                0 : memory_name = "M";
-                1 : memory_name = "E";
-                2 : memory_name = "M";
-                3 : memory_name = "O";
-                4 : memory_name = "R";
-                5 : memory_name = "Y";
-                6 : memory_name = ".";
-                7 : memory_name = "B";
-                8 : memory_name = "I";
-                9 : memory_name = "N";
-                default : memory_name = 0;
-            endcase
-        end
-    endfunction
-
-    // 拒绝新请求时使用独立输出，避免覆盖仍需重发的报文。
-    function [7:0] denial_byte;
-        input [4:0] p;
-        begin
-            denial_byte = 0;
-            case (p)
-                1 : denial_byte = 3;
-                3 : denial_byte = 1;
-                7 : denial_byte = deny_unsupported ? 9 : 17;
-                8 : denial_byte = "A";
-                9 : denial_byte = protocol_a4 ? "4" : "3";
-                10 : denial_byte = 8'h10;
-                11 : denial_byte = deny_unsupported ? 2 : 0;
-                12 : denial_byte = deny_unsupported ? 0 : 8;
-                13 : denial_byte = deny_empty ? "N" : "B";
-                14 : denial_byte = deny_empty ? "O" : "U";
-                15 : denial_byte = deny_empty ? " " : "S";
-                16 : denial_byte = deny_empty ? "D" : "Y";
-                17 : denial_byte = deny_empty ? "A" : 0;
-                18 : denial_byte = deny_empty ? "T" : 0;
-                19 : denial_byte = deny_empty ? "A" : 0;
-            endcase
-        end
-    endfunction
-
-    function [7:0] octet_byte;
-        input [4:0] p;
-        begin
-            case (p)
-                0 : octet_byte = "o";
-                1 : octet_byte = "c";
-                2 : octet_byte = "t";
-                3 : octet_byte = "e";
-                4 : octet_byte = "t";
-                default : octet_byte = 0;
-            endcase
-        end
-    endfunction
-
-    function [7:0] description;
-        input [3:0] p;
-        begin
-            if (reason == REASON_NONE) description = 0;
-            else case (p)
-                0 : description = "F";
-                1 : description = "A";
-                2 : description = "I";
-                3 : description = "L";
-                4 : description = " ";
-                5 : description = ASCII_ZERO + reason;
-                default : description = 0;
-            endcase
-        end
-    endfunction
-
-    // get_byte 读取一个字节，get_number 读取高字节在前的整数。
-    // 两者先保存返回状态，再进入同步读取过程。
-    task get_byte;
-        input [1:0] src;
-        input [12:0] addr;
-        input [7:0] destination;
-        begin
-            fetch_source <= src;
-            fetch_addr <= addr;
-            return_state <= destination;
-            state <= FETCH;
-        end
-    endtask
-
-    task get_number;
-        input [1:0] src;
-        input [12:0] addr;
-        input [2:0] count;
-        input [7:0] destination;
-        begin
-            fetch_source <= src;
-            fetch_addr <= addr;
-            number <= 0;
-            number_left <= count;
-            num_return <= destination;
-            state <= NUMBER;
-        end
-    endtask
-
-    // 请求字节的读取等待拍用于预先选择目标字符并比较，解析状态只消费一位结果。
-    always @(posedge clk) begin
-        if (reset) begin
-            expected_name <= 0;
-            expected_mode <= 0;
-            name_mark <= 0;
-            name_option <= 0;
-            name_bad <= 0;
-            name_terminal <= 0;
-            mode_bad <= 0;
-            mode_terminal <= 0;
-            request_reject <= 0;
-        end
-        else begin
-            expected_name <= target_name(name_pos, request_write ? "R" : request_download ? "D" : "I",
-                request_download);
-            expected_mode <= octet_byte(name_pos);
-            name_mark <= name_pos == 9 && (byte_value == "U" || byte_value == "N"
-                || (!request_write && byte_value == "C"));
-            name_option <= name_pos == TARGET_DOWNLOAD_MARK_POS && !request_write && request_download
-                && byte_value == "O";
-            name_bad <= byte_value != expected_name;
-            name_terminal <= name_pos == TARGET_NAME_BYTES;
-            mode_bad <= (byte_value | ASCII_CASE_BIT) != (expected_mode | ASCII_CASE_BIT)
-                || (name_pos == 5 && byte_value != 0);
-            mode_terminal <= name_pos == 5;
-            request_reject <= request_unsupported || (!request_write && status == ST_BUSY)
-                || (request_write && status == ST_BUSY && request_download != download_mode)
-                || (!request_write && request_download && available_size == 0);
-        end
-    end
-
-    // 块号递减独立成一拍，避免与报文比较、优先级和状态选择串成一条长链。
-    always @(posedge clk) begin
-        if (reset) previous_block <= 16'hffff;
-        else previous_block <= block_number - 16'd1;
-    end
-
-    // 开始构造报文时，先保存端口、报文类型和发送后的返回状态。
-    task make_packet;
-        input [2:0] kind;
-        input [9:0] length;
-        input [15:0] source_port, dest_port;
-        input [7:0] destination;
-        begin
-            pending_kind <= kind;
-            pending_length <= length;
-            pending_sport <= source_port;
-            pending_dport <= dest_port;
-            pending_after <= destination;
-            state <= PACKET_START;
-        end
-    endtask
-
-    task fail;
-        input [7:0] code;
-        begin
-            reason <= code;
-            status <= ST_FAILED;
-            state <= FAILURE;
-        end
-    endtask
 
     // 接收口不能暂停发送方，每次只处理一个等待确认的数据块。
     always @(posedge clk) begin
@@ -851,7 +162,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
         end
         else begin
             rx_we <= 0;
-            if (consume) packet_pending <= 0;
+            if (consume_q && !consume_previous) packet_pending <= 0;
             if (rx_valid && (receiving || (rx_claim && ! packet_pending))) begin
                 rx_we <= 1;
                 rx_wa <= rx_index;
@@ -880,162 +191,45 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
         end
     end
 
+    // 配置读口保持两拍协议，加载区空闲读也保持主时钟速度。
     always @(posedge clk) begin
         if (reset) begin
             configured <= 0;
-            tx_vl <= 0;
-            status <= ST_IDLE;
-            reason <= REASON_NONE;
-            state <= IDLE;
-            command_op <= 0;
-            command_block <= 0;
-            command_sport <= 0;
-            command_dport <= 0;
-            command_length <= 0;
-            dispatch_match <= 0;
-            dispatch_action <= 0;
-            dispatch_current <= 0;
-            dispatch_repeat <= 0;
-            main_tid <= MAIN_TID_INIT;
-            status_tid <= STATUS_TID_INIT;
-            main_peer <= 0;
-            status_peer <= 0;
-            tid_sequence <= TID_SEQUENCE_INIT;
-            loaded <= 0;
-            file_size <= 0;
-            available_size <= 0;
-            dl_acked <= 0;
-            dl_remaining <= 0;
-            dl_read_addr <= 0;
-            download_mode <= 0;
-            request_download <= 0;
-            request_unsupported <= 0;
-            request_resume <= IDLE;
-            deny_empty <= 0;
-            deny_unsupported <= 0;
-            deny_pos <= 0;
-            deny_tid <= DENY_TID_INIT;
-            saved_sport <= 0;
-            saved_dport <= 0;
-            lus_counter <= 0;
-            retry_total <= 0;
-            tx_valid <= 0;
-            tx_last <= 0;
-            tx_data <= 0;
-            tx_sport <= 0;
-            tx_dport <= 0;
-            consume <= 0;
-            timer <= 0;
-            retries <= 0;
+            configured_vl <= 0;
+            memory_addr <= 0;
             request_port <= DEFAULT_REQUEST_PORT;
             timeout_cycles <= DEFAULT_TIMEOUT_CYCLES;
             retry_limit <= DEFAULT_RETRY_LIMIT;
             protocol_a4 <= 1;
-            cfg_extra_data <= 0;
-            rx_re <= 0;
-            rx_ra <= 0;
-            tx_we <= 0;
-            tx_wa <= 0;
-            tx_wd <= 0;
-            tx_re <= 0;
-            tx_ra <= 0;
-            lur_we <= 0;
-            lur_wa <= 0;
-            lur_wd <= 0;
-            lur_re <= 0;
-            lur_ra <= 0;
-            hdr_we <= 0;
-            hdr_wa <= 0;
-            hdr_wd <= 0;
-            hdr_re <= 0;
-            hdr_ra <= 0;
-            load_we <= 0;
-            load_wa <= 0;
-            load_wd <= 0;
-            load_re <= 0;
-            load_ra <= 0;
             load_sample <= 0;
-            memory_addr <= 0;
             cfg_rdata <= 0;
-            manifest <= 0;
-            file_kind <= FILE_LIST;
-            block_number <= 0;
-            ack_number <= 0;
-            data_crc <= CRC16_INIT;
-            header_crc <= CRC16_INIT;
-            expected_crc <= 0;
-            return_state <= 0;
-            num_return <= 0;
-            after_tx <= 0;
-            lus_return <= 0;
-            ack_return <= 0;
-            wait_kind <= 0;
-            packet_type <= 0;
-            pending_kind <= 0;
-            pending_length <= 0;
-            pending_sport <= 0;
-            pending_dport <= 0;
-            pending_after <= 0;
-            fetch_source <= 0;
-            fetch_addr <= 0;
-            byte_value <= 0;
-            number <= 0;
-            number_left <= 0;
-            packet_len <= 0;
-            packet_pos <= 0;
-            metadata_size <= 0;
-            header_pointer_ok <= 0;
-            pointer_less <= 0;
-            pointer_equal <= 0;
-            pointer_minimum <= 0;
-            header_pointer <= 0;
-            header_name_addr <= 0;
-            header_name_len <= 0;
-            part_len <= 0;
-            part_addr <= 0;
-            data_name_addr <= 0;
-            data_name_len <= 0;
-            lus_status <= LUS_NONE;
-            percent <= 0;
-            scaled <= 0;
-            ratio_h <= 0;
-            ratio_t <= 0;
-            ratio_u <= 0;
-            decimal_tens <= 0;
-            decimal_rest <= 0;
-            copy_pos <= 0;
-            copy_len <= 0;
-            scan_pos <= 0;
-            name_pos <= 0;
-            request_write <= 0;
-            build_value <= 0;
-            lus_partlen_pos <= 0;
-            lus_part_pos <= 0;
-            lus_tail_pos <= 0;
-            lus_packet_len <= 0;
-            tail_index <= 0;
-            head_index <= 0;
-            part_index <= 0;
-            name_end <= 0;
-            mode_start <= 0;
+            cfg_extra_data <= 0;
+            consume_q <= 0;
+            consume_previous <= 0;
+            status <= 0;
+            reason <= 0;
+            lus_counter <= 0;
+            main_tid <= MAIN_TID_INIT;
+            retry_total <= 0;
+            loaded <= 0;
+            status_tid <= STATUS_TID_INIT;
+            deny_tid <= DENY_TID_INIT;
         end
         else begin
-            consume <= 0;
-            rx_re <= 0;
-            tx_we <= 0;
-            tx_re <= 0;
-            lur_we <= 0;
-            lur_re <= 0;
-            hdr_we <= 0;
-            hdr_re <= 0;
-            load_we <= 0;
-            // 配置口写 B4 后等四拍再读 B5，且只能在加载停止后读加载区。
-            load_re <= status != ST_BUSY;
-            load_ra <= memory_addr;
+            consume_q <= consume;
+            consume_previous <= consume_q;
             load_sample <= load_q;
+            deny_tid <= engine_deny_tid;
+            loaded <= engine_loaded;
+            lus_counter <= engine_lus_counter;
+            main_tid <= engine_main_tid;
+            reason <= engine_reason;
+            retry_total <= engine_retry_total;
+            status <= engine_status;
+            status_tid <= engine_status_tid;
             if (cfg_we) case (cfg_write_addr)
                 REG_ENABLE : if (status != ST_BUSY) configured <= cfg_wdata[0];
-                REG_TX_VL : if (status != ST_BUSY) tx_vl <= cfg_wdata[6:0];
+                REG_TX_VL : if (status != ST_BUSY) configured_vl <= cfg_wdata[6:0];
                 REG_MEMORY_ADDRESS : memory_addr <= cfg_wdata[12:0];
                 REG_REQUEST_PORT : if (status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
                 REG_TIMEOUT : if (status != ST_BUSY && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
@@ -1045,7 +239,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
             endcase
             case (cfg_addr[2:0])
                 0 : cfg_rdata <= { 31'b0, configured };
-                1 : cfg_rdata <= { 25'b0, tx_vl };
+                1 : cfg_rdata <= { 25'b0, configured_vl };
                 2 : cfg_rdata <= { 16'b0, reason, 6'b0, status };
                 3 : cfg_rdata <= { 18'b0, loaded };
                 4 : cfg_rdata <= { 19'b0, memory_addr };
@@ -1060,844 +254,261 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                 3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
                 default : cfg_extra_data <= 0;
             endcase
-            // 加载操作依次交换初始化、状态、请求列表、头文件和数据文件。
-            // 卸载操作依次交换初始化、状态、请求列表和数据文件。
-            // 状态名里的缩写：LUS 是加载状态文件，LUR 是加载请求列表，LNR 是卸载请求列表。
-            // WRQ 和 RRQ 是 TFTP 的写请求和读请求，DL 表示卸载。
-            case (state)
-
-                // ======== 第一部分：接收请求并检查文件名和传输模式 ========
-                // IDLE：等完整请求，服务已启用且收到请求时转 DISPATCH。
-                IDLE : if (packet_pending && enable && configured) begin
-                    consume <= 1;
-                    command_op <= rx_op;
-                    command_block <= rx_block;
-                    command_length <= rx_length;
-                    command_sport <= peer_sp;
-                    command_dport <= peer_dp;
-                    request_resume <= IDLE;
-                    state <= DISPATCH_CHECK;
-                end
-
-                // WAIT_PACKET：等下一报文，超时则重发，重试耗尽时结束本次操作。
-                WAIT_PACKET : begin
-                    if (packet_pending) begin
-                        consume <= 1;
-                        command_op <= rx_op;
-                        command_block <= rx_block;
-                        command_length <= rx_length;
-                        command_sport <= peer_sp;
-                        command_dport <= peer_dp;
-                        request_resume <= WAIT_PACKET;
-                        state <= DISPATCH_CHECK;
-                        timer <= timeout_cycles;
-                    end
-                    else if (timer == 1) begin
-                        timer <= 0;
-                        if (retries == retry_limit) begin
-                            if (wait_kind == WK_LUS_ACK0 || wait_kind == WK_LUS_ACK1) begin
-                                reason <= REASON_RETRY_LIMIT;
-                                status <= ST_FAILED;
-                                state <= DONE;
-                            end
-                            else fail (REASON_RETRY_LIMIT);
-                        end
-                        else begin
-                            retries <= retries + 1'b1;
-                            retry_total <= retry_total + 1'b1;
-                            packet_pos <= 0;
-                            state <= TX_ADDR;
-                        end
-                    end
-                    else timer <= timer - 1'b1;
-                end
-
-                // 比较、优先级和动作各占一拍；选择位互斥，动作不再串接长优先级链。
-                DISPATCH_CHECK : begin
-                    dispatch_match[0] <= command_dport == request_port
-                        && (command_op == 1 || command_op == TFTP_OPCODE_WRQ);
-                    dispatch_match[1] <= command_op == TFTP_OPCODE_ERROR && command_dport == main_tid;
-                    dispatch_match[2] <= command_op == TFTP_OPCODE_ERROR && command_dport == status_tid;
-                    dispatch_match[3] <= wait_kind == WK_LUI_ACK && command_dport == main_tid
-                        && command_sport == main_peer
-                        && command_op == TFTP_OPCODE_ACK && command_block == 1;
-                    dispatch_match[4] <= wait_kind == WK_LUS_ACK0 && command_dport == status_tid
-                        && command_op == TFTP_OPCODE_ACK && command_block == 0;
-                    dispatch_match[5] <= wait_kind == WK_LUS_ACK1 && command_dport == status_tid
-                        && command_sport == status_peer
-                        && command_op == TFTP_OPCODE_ACK && command_block == 1;
-                    dispatch_match[6] <= (wait_kind == WK_DL_ACK0 && command_dport == main_tid
-                        && command_op == TFTP_OPCODE_ACK && command_block == 0);
-                    dispatch_match[7] <= (wait_kind == WK_DL_ACK && command_dport == main_tid
-                        && command_sport == main_peer
-                        && command_op == TFTP_OPCODE_ACK && command_block == block_number)
-                        || (wait_kind == WK_DATA && command_dport == main_tid && command_op == TFTP_OPCODE_DATA
-                        && (main_peer == 0 || command_sport == main_peer));
-                    dispatch_current <= command_block == block_number && command_length >= TFTP_HEADER_BYTES
-                        && command_length <= TFTP_MAX_PACKET_BYTES;
-                    dispatch_repeat <= command_block == previous_block;
-                    state <= DISPATCH_SELECT;
-                end
-                DISPATCH_SELECT : begin
-                    dispatch_action <= dispatch_choice;
-                    state <= DISPATCH;
-                end
-                DISPATCH : case (1'b1) // synthesis parallel_case
-                    dispatch_action[0] : begin
-                        request_write <= command_op == TFTP_OPCODE_WRQ;
-                        request_download <= 0;
-                        request_unsupported <= 0;
-                        name_pos <= 0;
-                        state <= NAME;
-                    end
-                    dispatch_action[1] : fail (REASON_TFTP_ERROR);
-                    dispatch_action[2] : begin
-                        reason <= REASON_TFTP_ERROR;
-                        status <= ST_FAILED;
-                        state <= DONE;
-                    end
-                    dispatch_action[3] : begin
-                        lus_status <= LUS_ACCEPTED;
-                        lus_return <= LUS_DONE;
-                        state <= START_LUS;
-                    end
-                    dispatch_action[4] : begin
-                        status_peer <= command_sport;
-                        state <= LUS_DATA;
-                    end
-                    dispatch_action[5] : state <= lus_return;
-                    dispatch_action[6] : begin
-                        main_peer <= command_sport;
-                        block_number <= 1;
-                        state <= DL_BLOCK;
-                    end
-                    dispatch_action[7] : if (wait_kind == WK_DL_ACK) state <= DL_ACK;
-                    else begin
-                        main_peer <= command_sport;
-                        if (dispatch_current) begin
-                            copy_len <= command_length - TFTP_HEADER_BYTES;
-                            copy_pos <= 0;
-                            state <= DATA_COPY;
-                        end
-                        else if (dispatch_repeat) begin
-                            // 重复数据块只重新发送确认，不再次写入加载区。
-                            ack_number <= command_block;
-                            make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, command_sport, WAIT_PACKET);
-                        end
-                        else state <= WAIT_PACKET;
-                    end
-                    default : state <= status == ST_BUSY ? WAIT_PACKET : IDLE;
-                endcase
-
-                // NAME：读取文件名的下一字节，然后转 NAME_BYTE。
-                NAME : get_byte (0, { 6'b0, name_pos } + RRQ_NAME_POS, NAME_BYTE);
-
-                // NAME_BYTE：识别操作文件名，名字读完后转 MODE，非法名字返回错误。
-                NAME_BYTE : if (name_mark) begin
-                    request_download <= byte_value == "N";
-                    request_unsupported <= byte_value == "C";
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
-                end
-                else if (name_option) begin
-                    request_unsupported <= 1;
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
-                end
-                else if (name_bad) begin
-                    reason <= REASON_DESCRIPTION;
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
-                end
-                else if (name_terminal) begin
-                    name_pos <= 0;
-                    state <= MODE;
-                end
-                else begin
-                    name_pos <= name_pos + 1'b1;
-                    state <= NAME;
-                end
-
-                // MODE：读取传输模式的下一字节，然后转 MODE_BYTE。
-                MODE : get_byte (0, { 6'b0, name_pos } + RRQ_MODE_POS, MODE_BYTE);
-
-                // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
-                MODE_BYTE : if (mode_bad) begin
-                    reason <= REASON_TFTP_ERROR;
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
-                    // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
-                end
-                else if (mode_terminal) state <= REQUEST_OK;
-                else begin
-                    name_pos <= name_pos + 1'b1;
-                    state <= MODE;
-                end
-
-                // REQUEST_OK：接受请求后启动文件流程，无法接受时转 DENY_SEND。
-                REQUEST_OK : begin
-                    if (request_reject) begin
-                        // 信息操作和操作员定义卸载返回状态 1002，不启动后续传输。
-                        deny_unsupported <= request_unsupported;
-                        deny_empty <= status != ST_BUSY;
-                        deny_pos <= 0;
-                        deny_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
-                        saved_sport <= tx_sport;
-                        saved_dport <= tx_dport;
-                        tx_sport <= tid_sequence;
-                        tx_dport <= command_sport;
-                        state <= DENY_SEND;
-                    end
-                    else if (request_write && status == ST_BUSY && wait_kind == WK_LUR) begin
-                        main_peer <= command_sport;
-                        main_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
-                        file_kind <= FILE_LIST;
-                        metadata_size <= 0;
-                        block_number <= 1;
-                        ack_number <= 0;
-                        wait_kind <= WK_DATA;
-                        make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, command_sport, WAIT_PACKET);
-                    end
-                    else if ( ! request_write) begin
-                        status <= ST_BUSY;
-                        reason <= REASON_NONE;
-                        download_mode <= request_download;
-                        main_peer <= command_sport;
-                        main_tid <= tid_sequence;
-                        tid_sequence <= tid_sequence + 1'b1;
-                        if ( ! request_download) begin
-                            loaded <= 0;
-                            available_size <= 0;
-                        end
-                        file_size <= request_download ? available_size : 0;
-                        dl_acked <= 0;
-                        manifest <= 0;
-                        lus_counter <= 0;
-                        wait_kind <= WK_LUI_ACK;
-                        make_packet (PK_LUI, LUI_PACKET_BYTES, tid_sequence, command_sport, WAIT_PACKET);
-                    end
-                    else begin
-                        reason <= REASON_TFTP_ERROR;
-                        make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
-                    end
-                end
-
-                // DENY_SEND：发送拒绝回应，末字节握手后恢复原等待状态。
-                DENY_SEND : if ( ! tx_valid) begin
-                    tx_valid <= 1;
-                    tx_data <= denial_byte(deny_pos);
-                    tx_last <= deny_pos == (deny_unsupported ? 12 : 20);
-                end
-                else if (tx_ready) begin
-                    tx_valid <= 0;
-                    tx_last <= 0;
-                    deny_pos <= deny_pos + 1'b1;
-                    if (deny_pos == (deny_unsupported ? 12 : 20)) begin
-                        tx_sport <= saved_sport;
-                        tx_dport <= saved_dport;
-                        state <= request_resume;
-                    end
-                end
-
-                // ======== 第二部分：从各存储区读一个字节或一个多字节整数 ========
-                // FETCH：请求读取指定存储区的字节，然后转 FETCH_WAIT。
-                FETCH : begin
-                    case (fetch_source)
-                        0 : begin
-                            rx_re <= 1;
-                            rx_ra <= fetch_addr[9:0];
-                        end
-                        1 : begin
-                            lur_re <= 1;
-                            lur_ra <= fetch_addr[8:0];
-                        end
-                        2 : begin
-                            hdr_re <= 1;
-                            hdr_ra <= fetch_addr[10:0];
-                        end
-                        3 : begin
-                            load_re <= 1;
-                            load_ra <= fetch_addr;
-                        end
-                    endcase
-                    state <= FETCH_WAIT;
-                end
-
-                // FETCH_WAIT：等待同步读取，然后转 FETCH_CAPTURE。
-                FETCH_WAIT : state <= FETCH_CAPTURE;
-
-                // FETCH_CAPTURE：保存读出的字节，然后转 FETCH_DONE。
-                FETCH_CAPTURE : begin
-                    case (fetch_source)
-                        0 : byte_value <= rx_q;
-                        1 : byte_value <= lur_q;
-                        2 : byte_value <= hdr_q;
-                        3 : byte_value <= load_q;
-                    endcase
-                    state <= FETCH_DONE;
-                end
-
-                // FETCH_DONE：返回 get_byte 保存的调用状态。
-                FETCH_DONE : state <= return_state;
-
-                // NUMBER：读取整数的下一字节，然后转 NUMBER_BYTE。
-                NUMBER : begin
-                    return_state <= NUMBER_BYTE;
-                    state <= FETCH;
-                end
-
-                // NUMBER_BYTE：拼接整数，读够后返回 num_return，否则转 NUMBER。
-                NUMBER_BYTE : begin
-                    number <= { number[23:0], byte_value };
-                    fetch_addr <= fetch_addr + 1'b1;
-                    number_left <= number_left - 1'b1;
-                    state <= number_left == 1 ? num_return : NUMBER;
-                end
-
-                // 字段位置先算好并寄存，下一拍再选择字节，以缩短组合路径。
-                // ======== 第三部分：构造并发送一个报文 ========
-                // 报文请求与实际启动分开，参数在本地寄存后再驱动构造器与计数器。
-                PACKET_START : begin
-                    packet_type <= pending_kind;
-                    packet_len <= pending_length;
-                    packet_pos <= 0;
-                    tx_sport <= pending_sport;
-                    tx_dport <= pending_dport;
-                    after_tx <= pending_after;
-                    retries <= 0;
-                    timer <= 0;
-                    state <= BUILD_PREP;
-                end
-
-                // BUILD_PREP：计算本字节使用的地址，然后转 BUILD。
-                BUILD_PREP : begin
-                    tail_index <= packet_pos - lus_tail_pos;
-                    head_index <= packet_pos - LUS_NAME_POS;
-                    part_index <= packet_pos - lus_part_pos;
-                    name_end <= packet_len - RRQ_SUFFIX_BYTES;
-                    mode_start <= packet_len - OCTET_MODE_BYTES;
-                    dl_read_addr <= dl_acked[12:0] + packet_pos - TFTP_DATA_POS;
-                    state <= BUILD_CANDIDATE;
-                end
-
-                // 并行候选值需要一拍寄存，随后选择当前报文类型的结果。
-                BUILD_CANDIDATE : state <= BUILD;
-
-                // BUILD：选择本字节内容，需读存储器时先读取，随后转 EMIT。
-                BUILD : begin
-                    build_value <= 0;
-                    state <= EMIT;
-                    case (packet_type) // synthesis parallel_case
-                        PK_ACK : begin
-                            build_value <= candidate_byte[PK_ACK];
-                            if (candidate_read[PK_ACK])
-                                get_byte(candidate_source[PK_ACK], candidate_address[PK_ACK], EMIT);
-                        end
-                        PK_LUI : begin
-                            build_value <= candidate_byte[PK_LUI];
-                            if (candidate_read[PK_LUI])
-                                get_byte(candidate_source[PK_LUI], candidate_address[PK_LUI], EMIT);
-                        end
-                        PK_ERROR : begin
-                            build_value <= candidate_byte[PK_ERROR];
-                            if (candidate_read[PK_ERROR])
-                                get_byte(candidate_source[PK_ERROR], candidate_address[PK_ERROR], EMIT);
-                        end
-                        PK_LUS_WRQ : begin
-                            build_value <= candidate_byte[PK_LUS_WRQ];
-                            if (candidate_read[PK_LUS_WRQ])
-                                get_byte(candidate_source[PK_LUS_WRQ], candidate_address[PK_LUS_WRQ], EMIT);
-                        end
-                        PK_RRQ : begin
-                            build_value <= candidate_byte[PK_RRQ];
-                            if (candidate_read[PK_RRQ])
-                                get_byte(candidate_source[PK_RRQ],
-                                    candidate_source[PK_RRQ] == 1 ? rrq_header_read : rrq_data_read, EMIT);
-                        end
-                        PK_DL_DATA : begin
-                            build_value <= candidate_byte[PK_DL_DATA];
-                            if (candidate_read[PK_DL_DATA])
-                                get_byte(candidate_source[PK_DL_DATA], candidate_address[PK_DL_DATA], EMIT);
-                        end
-                        PK_LUS : begin
-                            build_value <= candidate_byte[PK_LUS];
-                            if (candidate_read[PK_LUS])
-                                get_byte(candidate_source[PK_LUS], candidate_address[PK_LUS], EMIT);
-                        end
-                    endcase
-                end
-
-                // EMIT：写入待发字节，未写完转 BUILD_PREP，写完转 BUILD_FLUSH。
-                EMIT : begin
-                    tx_we <= 1;
-                    tx_wa <= packet_pos;
-                    tx_wd <= return_state == EMIT ? byte_value : build_value;
-                    return_state <= 0;
-                    packet_pos <= packet_pos + 1'b1;
-                    state <= packet_pos + 1'b1 == packet_len ? BUILD_FLUSH : BUILD_PREP;
-                end
-
-                // BUILD_FLUSH：等最后一次写入完成，然后转 TX_ADDR。
-                BUILD_FLUSH : begin
-                    packet_pos <= 0;
-                    state <= TX_ADDR;
-                end
-
-                // TX_ADDR：请求读取待发字节，然后转 TX_WAIT。
-                TX_ADDR : begin
-                    tx_re <= 1;
-                    tx_ra <= packet_pos;
-                    state <= TX_WAIT;
-                end
-
-                // TX_WAIT：等待同步读取，然后转 TX_CAPTURE。
-                TX_WAIT : state <= TX_CAPTURE;
-
-                // TX_CAPTURE：保存待发字节，然后转 TX_SEND。
-                TX_CAPTURE : begin
-                    tx_data <= tx_q;
-                    state <= TX_SEND;
-                end
-
-                // TX_SEND：等待握手，未发完转 TX_ADDR，发完返回 after_tx。
-                TX_SEND : begin
-                    if ( ! tx_valid) begin
-                        tx_valid <= 1;
-                        tx_last <= packet_pos + 1'b1 == packet_len;
-                    end
-                    else if (tx_ready) begin
-                        tx_valid <= 0;
-                        tx_last <= 0;
-                        packet_pos <= packet_pos + 1'b1;
-                        if (tx_last) begin
-                            state <= after_tx;
-                            timer <= timeout_cycles;
-                        end
-                        else state <= TX_ADDR;
-                    end
-                end
-
-                // ======== 第四部分：计算进度并发送状态文件 ========
-                // START_LUS：准备状态文件的端口和进度，然后转 RATIO_SCALE。
-                START_LUS : begin
-                    lus_counter <= lus_counter + 1'b1;
-                    status_tid <= tid_sequence;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    percent <= 0;
-                    scaled <= download_mode ? {6'b0, dl_acked} : {6'b0, loaded};
-                    state <= RATIO_SCALE;
-                end
-
-                // RATIO_SCALE：把已完成字节数乘 100，然后转 RATIO_SUB。
-                RATIO_SCALE : begin
-                    scaled <= (scaled << 6) + (scaled << 5) + (scaled << 2);
-                    state <= RATIO_SUB;
-                end
-
-                // RATIO_SUB：用反复相减求百分比，求完后转 RATIO_DEC。
-                RATIO_SUB : begin
-                    if (file_size != 0 && scaled >= file_size && percent < MAX_PROGRESS_PERCENT) begin
-                        scaled <= scaled - file_size;
-                        percent <= percent + 1'b1;
-                    end
-                    else begin
-                        decimal_tens <= 0;
-                        decimal_rest <= lus_status == LUS_COMPLETED ? 0 : percent;
-                        ratio_h <= lus_status == LUS_COMPLETED ? "1" : " ";
-                        state <= RATIO_DEC;
-                    end
-                end
-
-                // RATIO_DEC：把百分比变成十进制数字，完成后转 LUS_WRQ。
-                RATIO_DEC : if (decimal_rest >= DECIMAL_BASE) begin
-                    decimal_rest <= decimal_rest - DECIMAL_BASE;
-                    decimal_tens <= decimal_tens + 1'b1;
-                end
-                else begin
-                    ratio_t <= lus_status == LUS_COMPLETED ? "0" : decimal_tens == 0 ? " " : ASCII_ZERO + decimal_tens;
-                    ratio_u <= ASCII_ZERO + decimal_rest;
-                    state <= LUS_WRQ;
-                end
-
-                // LUS_WRQ：请求发送状态文件，发完后等待第零块确认。
-                LUS_WRQ : begin
-                    wait_kind <= WK_LUS_ACK0;
-                    make_packet (PK_LUS_WRQ, LUS_WRQ_PACKET_BYTES, status_tid, request_port, WAIT_PACKET);
-                end
-
-                // LUS_DATA：发送状态文件数据，发完后等待第一块确认。
-                LUS_DATA : begin
-                    wait_kind <= WK_LUS_ACK1;
-                    make_packet (PK_LUS, manifest ? lus_packet_len : LUS_SHORT_PACKET_BYTES, status_tid,
-                                 status_peer, WAIT_PACKET);
-                end
-
-                // LUS_DONE：初始状态文件获确认后转 IDLE，等待文件列表。
-                LUS_DONE : begin
-                    wait_kind <= WK_LUR;
-                    state <= IDLE;
-                end
-
-                // ACK_MAIN：构造当前数据块的确认，发送后返回 ack_return。
-                ACK_MAIN : begin
-                    wait_kind <= WK_DATA;
-                    make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, main_peer, ack_return);
-                end
-
-                // ======== 第五部分：接收并保存文件的一块数据 ========
-                // DATA_COPY：读下一有效字节，转 DATA_BYTE；全部读完转 DATA_END。
-                DATA_COPY : begin
-                    if (copy_pos == copy_len) state <= DATA_END;
-                    else get_byte (0, copy_pos + TFTP_HEADER_BYTES, DATA_BYTE);
-                end
-
-                // DATA_BYTE：保存一个文件字节并更新校验，再转 DATA_COPY。
-                DATA_BYTE : begin
-                    if (file_kind == FILE_LIST) begin
-                        if (metadata_size >= LUR_BUFFER_BYTES) fail (REASON_LENGTH);
-                        else begin
-                            lur_we <= 1;
-                            lur_wa <= metadata_size[8:0];
-                            lur_wd <= byte_value;
-                            metadata_size <= metadata_size + 1'b1;
-                            state <= DATA_COPY;
-                        end
-                    end
-                    else if (file_kind == FILE_HEADER) begin
-                        if (metadata_size >= HEADER_BUFFER_BYTES) fail (REASON_LENGTH);
-                        else begin
-                            hdr_we <= 1;
-                            hdr_wa <= metadata_size[10:0];
-                            hdr_wd <= byte_value;
-                            metadata_size <= metadata_size + 1'b1;
-                            state <= DATA_COPY;
-                        end
-                    end
-                    else begin
-                        if (loaded >= LOAD_BUFFER_BYTES) fail (REASON_LENGTH);
-                        else begin
-                            load_we <= 1;
-                            load_wa <= loaded[12:0];
-                            load_wd <= byte_value;
-                            loaded <= loaded + 1'b1;
-                            data_crc <= crc16 (data_crc, byte_value);
-                            state <= DATA_COPY;
-                        end
-                    end
-                    copy_pos <= copy_pos + 1'b1;
-                end
-
-                // DATA_END：确认当前块；短块结束文件，再转对应的文件检查过程。
-                DATA_END : begin
-                    block_number <= block_number + 1'b1;
-                    ack_number <= command_block;
-                    if (copy_len < TFTP_BLOCK_BYTES) begin
-                        if (file_kind == FILE_LIST) begin
-                            ack_return <= LUR_START;
-                            state <= ACK_MAIN;
-                        end
-                        else if (file_kind == FILE_HEADER) begin
-                            ack_return <= HEADER_START;
-                            state <= ACK_MAIN;
-                        end
-                        else state <= DATA_CHECK;
-                    end
-                    else begin
-                        ack_return <= WAIT_PACKET;
-                        if (file_kind == FILE_DATA && block_number == 1) begin
-                            lus_status <= LUS_IN_PROGRESS;
-                            lus_return <= ACK_MAIN;
-                            state <= START_LUS;
-                        end
-                        else state <= ACK_MAIN;
-                    end
-                end
-
-                // ======== 第六部分：检查加载请求列表和卸载请求列表 ========
-                // LUR_START：读取加载列表总长，然后转 LUR_LENGTH。
-                LUR_START : get_number (1, 0, 4, LUR_LENGTH);
-
-                // LUR_LENGTH：核对总长，通过后读取协议版本，否则报告失败。
-                LUR_LENGTH : if (number != metadata_size) fail (REASON_DESCRIPTION);
-                else get_number (1, 4, 2, LUR_VERSION);
-
-                // LUR_VERSION：检查 A3/A4 版本，通过后读取文件数量，否则报告失败。
-                LUR_VERSION : if (number != VERSION_A3 && number != VERSION_A4) fail (REASON_DESCRIPTION);
-                else get_number (1, 6, 2, LUR_COUNT);
-
-                // LUR_COUNT：检查文件数量为一，通过后读取文件名长度，否则报告失败。
-                LUR_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
-                else get_byte (1, 8, LUR_HLEN);
-
-                // LUR_HLEN：检查文件名长度，加载时继续读件号，卸载时转 LNR_USER。
-                LUR_HLEN : if (byte_value < 2 || byte_value > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
-                else begin
-                    header_name_len <= byte_value[6:0];
-                    header_name_addr <= 9;
-                    get_byte (1, 11'd9 + byte_value, download_mode ? LNR_USER : LUR_PLEN);
-                end
-
-                // LUR_PLEN：检查件号长度，通过后转 LUR_OFFSETS，否则报告失败。
-                LUR_PLEN : if (byte_value < 2 || byte_value > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
-                else begin
-                    part_len <= byte_value[6:0];
-                    part_addr <= 10 + header_name_len;
-                    lus_partlen_pos <= LUS_NAME_POS + header_name_len;
-                    lus_part_pos <= LUS_PART_POS_BASE + header_name_len;
-                    state <= LUR_OFFSETS;
-                end
-
-                // LUR_OFFSETS：计算状态文件中变长字段的位置，然后转 LUR_READY。
-                LUR_OFFSETS : begin
-                    lus_tail_pos <= lus_part_pos + part_len;
-                    state <= LUR_READY;
-                end
-
-                // LUR_READY：报告列表已接受，状态获确认后转 RRQ_HEADER。
-                LUR_READY : begin
-                    lus_packet_len <= lus_tail_pos + LUS_TAIL_BYTES;
-                    manifest <= 1;
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= RRQ_HEADER;
-                    state <= START_LUS;
-                end
-
-                // 卸载列表的文件名之后是用户数据，卸载状态不含加载件号字段。
-                // LNR_USER：检查卸载列表的用户数据长度，通过后转 LNR_NAME。
-                LNR_USER : begin
-                    manifest <= 1;
-                    lus_partlen_pos <= LUS_NAME_POS + header_name_len;
-                    lus_tail_pos <= LUS_NAME_POS + header_name_len;
-                    lus_packet_len <= LUS_DOWNLOAD_LENGTH_BASE + header_name_len;
-                    scan_pos <= 0;
-                    if (metadata_size != LUR_FIXED_BYTES + header_name_len + byte_value
-                        || header_name_len != TARGET_NAME_BYTES)
-                        fail(REASON_DESCRIPTION);
-                    else state <= LNR_NAME;
-                end
-
-                // LNR_NAME：读取卸载文件名的下一字节，然后转 LNR_BYTE。
-                LNR_NAME : get_byte(1, LNR_NAME_POS + scan_pos, LNR_BYTE);
-
-                // LNR_BYTE：核对 MEMORY.BIN，完全匹配后转 LNR_READY，否则报告失败。
-                LNR_BYTE : if (byte_value != memory_name(scan_pos[6:0])) fail(REASON_DESCRIPTION);
-                else if (scan_pos == TARGET_DOWNLOAD_MARK_POS) state <= LNR_READY;
-                else begin
-                    scan_pos <= scan_pos + 1'b1;
-                    state <= LNR_NAME;
-                end
-
-                // LNR_READY：报告卸载列表已接受，状态获确认后转 DL_WRQ。
-                LNR_READY : begin
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= DL_WRQ;
-                    state <= START_LUS;
-                end
-
-                // DL_WRQ：请求发送 MEMORY.BIN，发完后等待第零块确认。
-                DL_WRQ : begin
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    wait_kind <= WK_DL_ACK0;
-                    make_packet(PK_RRQ, DOWNLOAD_RRQ_PACKET_BYTES, tid_sequence, request_port, WAIT_PACKET);
-                end
-
-                // DL_BLOCK：计算剩余待卸载字节数，然后转 DL_SIZE。
-                DL_BLOCK : begin
-                    dl_remaining <= file_size - dl_acked;
-                    state <= DL_SIZE;
-                end
-
-                // DL_SIZE：发送最多 512 字节，发完后等待对应块的确认。
-                DL_SIZE : begin
-                    copy_len <= dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_BLOCK_BYTES : dl_remaining[10:0];
-                    wait_kind <= WK_DL_ACK;
-                    make_packet(PK_DL_DATA,
-                                dl_remaining >= TFTP_BLOCK_BYTES ? TFTP_MAX_PACKET_BYTES
-                                                                : dl_remaining[9:0] + TFTP_DATA_POS,
-                                main_tid, main_peer, WAIT_PACKET);
-                end
-
-                // DL_ACK：更新已确认字节数，未完转 DL_BLOCK，完成则发送成功状态。
-                DL_ACK : begin
-                    dl_acked <= dl_acked + copy_len;
-                    block_number <= block_number + 1'b1;
-                    if (copy_len < TFTP_BLOCK_BYTES) begin
-                        lus_status <= LUS_COMPLETED;
-                        lus_return <= DONE;
-                        state <= START_LUS;
-                    end
-                    else if (block_number == 1) begin
-                        lus_status <= LUS_IN_PROGRESS;
-                        lus_return <= DL_BLOCK;
-                        state <= START_LUS;
-                    end
-                    else state <= DL_BLOCK;
-                end
-
-                // ======== 第七部分：获取并检查头文件和数据文件 ========
-                // RRQ_HEADER：请求加载头文件，发完后等待第一块数据。
-                RRQ_HEADER : begin
-                    file_kind <= FILE_HEADER;
-                    metadata_size <= 0;
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    block_number <= 1;
-                    wait_kind <= WK_DATA;
-                    make_packet (PK_RRQ, header_name_len + 8, tid_sequence, request_port, WAIT_PACKET);
-                end
-
-                // HEADER_START：读取头文件字数，然后转 HEADER_LENGTH。
-                HEADER_START : get_number (2, 0, 4, HEADER_LENGTH);
-
-                // HEADER_LENGTH：核对字数与实际长度，通过后读取格式版本。
-                HEADER_LENGTH : if ((number << 1) != metadata_size
-                                    || metadata_size < HEADER_MIN_BYTES) fail (REASON_DESCRIPTION);
-                else get_number (2, 4, 2, HEADER_VERSION);
-
-                // HEADER_VERSION：检查版本为 0x8002，通过后读取数据文件指针。
-                HEADER_VERSION : if (number != HEADER_FILE_VERSION) fail (REASON_DESCRIPTION);
-                else get_number (2, 14, 4, HEADER_PTR);
-
-                // HEADER_PTR：先逐字节比较指针与上界，再合并比较结果。
-                HEADER_PTR : begin
-                    pointer_minimum <= number >= HEADER_DATA_PTR_MIN_WORDS;
-                    pointer_less[0] <= pointer_bytes[7:0] < header_limit[7:0];
-                    pointer_equal[0] <= pointer_bytes[7:0] == header_limit[7:0];
-                    pointer_less[1] <= pointer_bytes[15:8] < header_limit[15:8];
-                    pointer_equal[1] <= pointer_bytes[15:8] == header_limit[15:8];
-                    pointer_less[2] <= pointer_bytes[23:16] < header_limit[23:16];
-                    pointer_equal[2] <= pointer_bytes[23:16] == header_limit[23:16];
-                    pointer_less[3] <= pointer_bytes[31:24] < header_limit[31:24];
-                    pointer_equal[3] <= pointer_bytes[31:24] == header_limit[31:24];
-                    state <= HEADER_PTR_MERGE;
-                end
-
-                HEADER_PTR_MERGE : begin
-                    header_pointer_ok <= pointer_minimum && (pointer_less[3]
-                        || (pointer_equal[3] && pointer_less[2])
-                        || (pointer_equal[3] && pointer_equal[2] && pointer_less[1])
-                        || (pointer_equal[3] && pointer_equal[2] && pointer_equal[1] && pointer_less[0]));
-                    state <= HEADER_PTR_CHECK;
-                end
-
-                // HEADER_PTR_CHECK：合法时开始 HEADER_CRC，否则报告失败。
-                HEADER_PTR_CHECK : if ( ! header_pointer_ok) fail (REASON_DESCRIPTION);
-                else begin
-                    header_pointer <= number[10:0] << 1;
-                    header_crc <= CRC16_INIT;
-                    scan_pos <= 0;
-                    state <= HEADER_CRC;
-                end
-
-                // HEADER_CRC：读取下一校验字节；读完覆盖区后读取预期校验值。
-                HEADER_CRC : if (scan_pos == metadata_size - HEADER_TRAILER_BYTES)
-                    get_number (2, scan_pos, 2, HEADER_CRC_CHECK);
-                else get_byte (2, scan_pos, HEADER_CRC_BYTE);
-
-                // HEADER_CRC_BYTE：更新头文件校验值，再转 HEADER_CRC。
-                HEADER_CRC_BYTE : begin
-                    header_crc <= crc16 (header_crc, byte_value);
-                    scan_pos <= scan_pos + 1'b1;
-                    state <= HEADER_CRC;
-                end
-
-                // HEADER_CRC_CHECK：核对头文件校验值，通过后读取数据文件数量。
-                HEADER_CRC_CHECK : if (number != header_crc) fail (REASON_CHECKSUM);
-                else get_number (2, header_pointer, 2, HEADER_COUNT);
-
-                // HEADER_COUNT：要求只有一个数据文件，通过后读取文件名长度。
-                HEADER_COUNT : if (number != 1) fail (REASON_DESCRIPTION);
-                else get_number (2, header_pointer + 4, 2, HEADER_NLEN);
-
-                // HEADER_NLEN：检查文件名长度，通过后定位件号字段。
-                HEADER_NLEN : if (number == 0 || number > MAX_HEADER_NAME_CHARS) fail (REASON_DESCRIPTION);
-                else begin
-                    data_name_len <= number[6:0];
-                    data_name_addr <= header_pointer + 6;
-                    get_number (2, header_pointer + 6 + ((number + 1) & EVEN_MASK), 2, HEADER_PLEN);
-                end
-
-                // HEADER_PLEN：检查件号长度并处理偶数字节对齐，然后转 HEADER_SIZE。
-                HEADER_PLEN : if (number > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
-                else begin
-                    scan_pos <= fetch_addr + ((number + 1) & EVEN_MASK);
-                    state <= HEADER_SIZE;
-                end
-
-                // HEADER_SIZE：读取数据文件的字数，然后转 HEADER_DCRC。
-                HEADER_SIZE : get_number (2, scan_pos, 4, HEADER_DCRC);
-
-                // HEADER_DCRC：检查数据量不超过 8 KiB，通过后读取预期校验值。
-                HEADER_DCRC : if (number == 0 || number > MAX_DATA_WORDS) fail (REASON_LENGTH);
-                else begin
-                    file_size <= number[12:0] << 1;
-                    get_number (2, scan_pos + 4, 2, HEADER_READY);
-                end
-
-                // HEADER_READY：保存预期校验值并报告进度，获确认后转 RRQ_DATA。
-                HEADER_READY : begin
-                    expected_crc <= number[15:0];
-                    lus_status <= LUS_IN_PROGRESS;
-                    lus_return <= RRQ_DATA;
-                    state <= START_LUS;
-                end
-
-                // RRQ_DATA：请求数据文件，发完后等待第一块数据。
-                RRQ_DATA : begin
-                    file_kind <= FILE_DATA;
-                    loaded <= 0;
-                    data_crc <= CRC16_INIT;
-                    main_tid <= tid_sequence;
-                    main_peer <= 0;
-                    tid_sequence <= tid_sequence + 1'b1;
-                    block_number <= 1;
-                    wait_kind <= WK_DATA;
-                    make_packet (PK_RRQ, data_name_len + 9, tid_sequence, request_port, WAIT_PACKET);
-                end
-
-                // DATA_CHECK：核对文件大小和校验值，通过并确认末块后转 DATA_SUCCESS。
-                DATA_CHECK : if (loaded != file_size) fail (REASON_LENGTH);
-                else if (data_crc != expected_crc) fail (REASON_CHECKSUM);
-                else begin
-                    ack_return <= DATA_SUCCESS;
-                    state <= ACK_MAIN;
-                end
-
-                // DATA_SUCCESS：公布加载区有效长度并报告成功，获确认后转 DONE。
-                DATA_SUCCESS : begin
-                    available_size <= loaded;
-                    lus_status <= LUS_COMPLETED;
-                    lus_return <= DONE;
-                    state <= START_LUS;
-                end
-
-                // ======== 第八部分：报告失败并结束本次操作 ========
-                // FAILURE：发送文件传输错误，发送完成后转 FAILURE_SENT。
-                FAILURE : begin
-                    make_packet (PK_ERROR, ERROR_PACKET_BYTES, main_tid,
-                                 main_peer == 0 ? request_port : main_peer, FAILURE_SENT);
-                end
-
-                // FAILURE_SENT：发送失败状态，确认或重试结束后转 DONE。
-                FAILURE_SENT : begin
-                    lus_status <= LUS_ABORTED;
-                    lus_return <= DONE;
-                    state <= START_LUS;
-                end
-
-                // DONE：保存最终结果，然后转 IDLE 等待下一次操作。
-                DONE : begin
-                    status <= reason == REASON_NONE ? ST_SUCCESS : ST_FAILED;
-                    state <= IDLE;
-                    wait_kind <= WK_LUR;
-                end
-
-                default : state <= IDLE;
-            endcase
         end
     end
+    // 引擎输出保持到下一个 CE 拍，RAM 端口在本地寄存后使用。
+    always @(posedge clk) begin
+        if (reset) begin
+            ram_deny_we <= 0;
+            cmd_deny_we <= 0;
+            ram_deny_wa <= 0;
+            cmd_deny_wa <= 0;
+            ram_deny_wd <= 0;
+            cmd_deny_wd <= 0;
+            ram_rx_re <= 0;
+            cmd_rx_re <= 0;
+            ram_rx_ra <= 0;
+            cmd_rx_ra <= 0;
+            ram_tx_we <= 0;
+            cmd_tx_we <= 0;
+            ram_tx_wa <= 0;
+            cmd_tx_wa <= 0;
+            ram_tx_wd <= 0;
+            cmd_tx_wd <= 0;
+            ram_lur_we <= 0;
+            cmd_lur_we <= 0;
+            ram_lur_wa <= 0;
+            cmd_lur_wa <= 0;
+            ram_lur_wd <= 0;
+            cmd_lur_wd <= 0;
+            ram_lur_re <= 0;
+            cmd_lur_re <= 0;
+            ram_lur_ra <= 0;
+            cmd_lur_ra <= 0;
+            ram_hdr_we <= 0;
+            cmd_hdr_we <= 0;
+            ram_hdr_wa <= 0;
+            cmd_hdr_wa <= 0;
+            ram_hdr_wd <= 0;
+            cmd_hdr_wd <= 0;
+            ram_hdr_re <= 0;
+            cmd_hdr_re <= 0;
+            ram_hdr_ra <= 0;
+            cmd_hdr_ra <= 0;
+            ram_load_we <= 0;
+            cmd_load_we <= 0;
+            ram_load_wa <= 0;
+            cmd_load_wa <= 0;
+            ram_load_wd <= 0;
+            cmd_load_wd <= 0;
+            ram_load_re <= 0;
+            cmd_load_re <= 0;
+            ram_load_ra <= 0;
+            cmd_load_ra <= 0;
+        end
+        else begin
+            cmd_deny_we <= deny_we;
+            ram_deny_we <= cmd_deny_we && (CE_DIV == 1 || !ce);
+            cmd_deny_wa <= deny_wa;
+            ram_deny_wa <= cmd_deny_wa;
+            cmd_deny_wd <= deny_wd;
+            ram_deny_wd <= cmd_deny_wd;
+            cmd_rx_re <= rx_re;
+            ram_rx_re <= cmd_rx_re && (CE_DIV == 1 || !ce);
+            cmd_rx_ra <= rx_ra;
+            ram_rx_ra <= cmd_rx_ra;
+            cmd_tx_we <= tx_we;
+            ram_tx_we <= cmd_tx_we && (CE_DIV == 1 || !ce);
+            cmd_tx_wa <= tx_wa;
+            ram_tx_wa <= cmd_tx_wa;
+            cmd_tx_wd <= tx_wd;
+            ram_tx_wd <= cmd_tx_wd;
+            cmd_lur_we <= lur_we;
+            ram_lur_we <= cmd_lur_we && (CE_DIV == 1 || !ce);
+            cmd_lur_wa <= lur_wa;
+            ram_lur_wa <= cmd_lur_wa;
+            cmd_lur_wd <= lur_wd;
+            ram_lur_wd <= cmd_lur_wd;
+            cmd_lur_re <= lur_re;
+            ram_lur_re <= cmd_lur_re && (CE_DIV == 1 || !ce);
+            cmd_lur_ra <= lur_ra;
+            ram_lur_ra <= cmd_lur_ra;
+            cmd_hdr_we <= hdr_we;
+            ram_hdr_we <= cmd_hdr_we && (CE_DIV == 1 || !ce);
+            cmd_hdr_wa <= hdr_wa;
+            ram_hdr_wa <= cmd_hdr_wa;
+            cmd_hdr_wd <= hdr_wd;
+            ram_hdr_wd <= cmd_hdr_wd;
+            cmd_hdr_re <= hdr_re;
+            ram_hdr_re <= cmd_hdr_re && (CE_DIV == 1 || !ce);
+            cmd_hdr_ra <= hdr_ra;
+            ram_hdr_ra <= cmd_hdr_ra;
+            cmd_load_we <= load_we;
+            ram_load_we <= cmd_load_we && (CE_DIV == 1 || !ce);
+            cmd_load_wa <= load_wa;
+            ram_load_wa <= cmd_load_wa;
+            cmd_load_wd <= load_wd;
+            ram_load_wd <= cmd_load_wd;
+            cmd_load_re <= load_re;
+            ram_load_re <= status != ST_BUSY || (cmd_load_re && (CE_DIV == 1 || !ce));
+            cmd_load_ra <= load_ra;
+            ram_load_ra <= status != ST_BUSY ? memory_addr : cmd_load_ra;
+        end
+    end
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_rx (
+        .clk(clk), .write_enable(rx_we), .write_address(rx_wa), .write_data(rx_wd),
+        .read_enable(ram_rx_re), .read_address(ram_rx_ra), .read_data(rx_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (
+        .clk(clk), .write_enable(ram_tx_we), .write_address(ram_tx_wa), .write_data(ram_tx_wd),
+        .read_enable(tx_re), .read_address(tx_ra), .read_data(tx_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (
+        .clk(clk), .write_enable(ram_lur_we), .write_address(ram_lur_wa), .write_data(ram_lur_wd),
+        .read_enable(ram_lur_re), .read_address(ram_lur_ra), .read_data(lur_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (
+        .clk(clk), .write_enable(ram_hdr_we), .write_address(ram_hdr_wa), .write_data(ram_hdr_wd),
+        .read_enable(ram_hdr_re), .read_address(ram_hdr_ra), .read_data(hdr_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (
+        .clk(clk), .write_enable(ram_load_we), .write_address(ram_load_wa), .write_data(ram_load_wd),
+        .read_enable(ram_load_re), .read_address(ram_load_ra), .read_data(load_q)
+    );
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(32)) denial_ram (
+        .clk(clk), .write_enable(ram_deny_we), .write_address(ram_deny_wa), .write_data(ram_deny_wd),
+        .read_enable(tx_re), .read_address(tx_ra[4:0]), .read_data(deny_q)
+    );
+    afdx_mgmt_tx #(.AW(10)) sender (
+        .clk(clk), .reset(reset), .request(send_request), .length(send_length), .vl(configured_vl),
+        .sport(engine_tx_sport), .dport(engine_tx_dport), .mode(send_mode), .complete(send_complete),
+        .read_enable(tx_re), .read_address(tx_ra), .read_data(read_mode ? deny_q : tx_q), .read_mode(read_mode),
+        .tx_valid(tx_valid), .tx_ready(tx_ready), .tx_data(tx_data), .tx_last(tx_last),
+        .tx_vl(tx_vl), .tx_sport(tx_sport), .tx_dport(tx_dport)
+    );
 
+    generate
+        if (CE_DIV == 2) begin : half_rate
+            afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
+                .clk(clk),
+                .reset(reset),
+                .ce(ce),
+                .enable_in(enable),
+                .configured_in(configured),
+                .request_port_in(request_port),
+                .timeout_cycles_in(timeout_cycles),
+                .retry_limit_in(retry_limit),
+                .protocol_a4_in(protocol_a4),
+                .packet_pending_in(packet_pending),
+                .rx_op_in(rx_op),
+                .rx_block_in(rx_block),
+                .rx_length_in(rx_length),
+                .peer_sp_in(peer_sp),
+                .peer_dp_in(peer_dp),
+                .rx_q_in(rx_q),
+                .lur_q_in(lur_q),
+                .hdr_q_in(hdr_q),
+                .load_q_in(load_q),
+                .send_complete_in(send_complete),
+                .consume(consume),
+                .status(engine_status),
+                .reason(engine_reason),
+                .loaded(engine_loaded),
+                .lus_counter(engine_lus_counter),
+                .retry_total(engine_retry_total),
+                .main_tid(engine_main_tid),
+                .status_tid(engine_status_tid),
+                .deny_tid(engine_deny_tid),
+                .tx_sport(engine_tx_sport),
+                .tx_dport(engine_tx_dport),
+                .send_request(send_request),
+                .send_mode(send_mode),
+                .send_length(send_length),
+                .deny_we(deny_we),
+                .deny_wa(deny_wa),
+                .deny_wd(deny_wd),
+                .rx_re(rx_re),
+                .rx_ra(rx_ra),
+                .tx_we(tx_we),
+                .tx_wa(tx_wa),
+                .tx_wd(tx_wd),
+                .lur_we(lur_we),
+                .lur_wa(lur_wa),
+                .lur_wd(lur_wd),
+                .lur_re(lur_re),
+                .lur_ra(lur_ra),
+                .hdr_we(hdr_we),
+                .hdr_wa(hdr_wa),
+                .hdr_wd(hdr_wd),
+                .hdr_re(hdr_re),
+                .hdr_ra(hdr_ra),
+                .load_we(load_we),
+                .load_wa(load_wa),
+                .load_wd(load_wd),
+                .load_re(load_re),
+                .load_ra(load_ra)
+            );
+        end
+        else begin : full_rate
+            afdx_615a_engine #(.CE_DIV(CE_DIV)) engine (
+                .clk(clk),
+                .reset(reset),
+                .ce(ce),
+                .enable_in(enable),
+                .configured_in(configured),
+                .request_port_in(request_port),
+                .timeout_cycles_in(timeout_cycles),
+                .retry_limit_in(retry_limit),
+                .protocol_a4_in(protocol_a4),
+                .packet_pending_in(packet_pending),
+                .rx_op_in(rx_op),
+                .rx_block_in(rx_block),
+                .rx_length_in(rx_length),
+                .peer_sp_in(peer_sp),
+                .peer_dp_in(peer_dp),
+                .rx_q_in(rx_q),
+                .lur_q_in(lur_q),
+                .hdr_q_in(hdr_q),
+                .load_q_in(load_q),
+                .send_complete_in(send_complete),
+                .consume(consume),
+                .status(engine_status),
+                .reason(engine_reason),
+                .loaded(engine_loaded),
+                .lus_counter(engine_lus_counter),
+                .retry_total(engine_retry_total),
+                .main_tid(engine_main_tid),
+                .status_tid(engine_status_tid),
+                .deny_tid(engine_deny_tid),
+                .tx_sport(engine_tx_sport),
+                .tx_dport(engine_tx_dport),
+                .send_request(send_request),
+                .send_mode(send_mode),
+                .send_length(send_length),
+                .deny_we(deny_we),
+                .deny_wa(deny_wa),
+                .deny_wd(deny_wd),
+                .rx_re(rx_re),
+                .rx_ra(rx_ra),
+                .tx_we(tx_we),
+                .tx_wa(tx_wa),
+                .tx_wd(tx_wd),
+                .lur_we(lur_we),
+                .lur_wa(lur_wa),
+                .lur_wd(lur_wd),
+                .lur_re(lur_re),
+                .lur_ra(lur_ra),
+                .hdr_we(hdr_we),
+                .hdr_wa(hdr_wa),
+                .hdr_wd(hdr_wd),
+                .hdr_re(hdr_re),
+                .hdr_ra(hdr_ra),
+                .load_we(load_we),
+                .load_wa(load_wa),
+                .load_wd(load_wd),
+                .load_re(load_re),
+                .load_ra(load_ra)
+            );
+        end
+    endgenerate
 endmodule

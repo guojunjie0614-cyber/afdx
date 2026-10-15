@@ -12,10 +12,12 @@
     <FileSets>
         <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
             <File Path="/../rtl/afdx_615a.v"/>
+            <File Path="/../rtl/afdx_615a_engine.v"/>
             <File Path="/../rtl/afdx_cfg.v"/>
             <File Path="/../rtl/afdx_crc32_d8.v"/>
             <File Path="/../rtl/afdx_mac_rx.v"/>
             <File Path="/../rtl/afdx_mac_tx.v"/>
+            <File Path="/../rtl/afdx_mgmt_tx.v"/>
             <File Path="/../rtl/afdx_ntp_fraction.v"/>
             <File Path="/../rtl/afdx_ram_sdp.v"/>
             <File Path="/../rtl/afdx_rtc.v"/>
@@ -24,6 +26,7 @@
             <File Path="/../rtl/afdx_rx_engine.v"/>
             <File Path="/../rtl/afdx_rx_parse.v"/>
             <File Path="/../rtl/afdx_snmp.v"/>
+            <File Path="/../rtl/afdx_snmp_engine.v"/>
             <File Path="/../rtl/afdx_svc.v"/>
             <File Path="/../rtl/afdx_timebase.v"/>
             <File Path="/../rtl/AFDX_top.v"/>
