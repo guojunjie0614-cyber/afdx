@@ -23,7 +23,7 @@
 |---|---|
 | `AFDX_PYTHON` | 完整 `python.exe` 路径；否则用 PATH 中的 `python` |
 | `MODELSIM_HOME` | 含 `vsim.exe`、`vlog.exe`、`vlib.exe` 的目录，如安装中的 `win64`；否则从 PATH 找 `vsim.exe` |
-| `ELINX_HOME` | 含 `bin/Passkey/bin` 和 `bin/shell/bin` 的 eLinx 安装根目录；否则从 PATH 找 `Implementation.exe` |
+| `ELINX_HOME` | eLinx 安装根目录，即 `eLinx3.0.exe` 所在目录，其下应有 `bin/Passkey/bin` 和 `bin/shell/bin`；否则从 PATH 找 `Implementation.exe` |
 | `AFDX_MEM_FLOOR_GB` | 系统可用内存下限，默认 5 GiB；0 关闭此项保护 |
 | `AFDX_MEM_LIMIT_GB` | 本次工具进程树内存上限，默认 10 GiB；0 关闭此项保护 |
 
@@ -115,7 +115,7 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
-   先设置 `ELINX_HOME` 为 eLinx 安装根目录，该目录应含 `bin/Passkey/bin` 和 `bin/shell/bin`。把下面的占位文字换成实际路径：
+   先设置 `ELINX_HOME` 为 eLinx 安装根目录，即 `eLinx3.0.exe` 所在目录（可在桌面快捷方式上右键“打开文件所在的位置”找到），其下应有 `bin/Passkey/bin` 和 `bin/shell/bin`。把下面的占位文字换成实际路径；未设置时脚本会提示 `Set ELINX_HOME` 并退出：
 
    ```powershell
    $env:ELINX_HOME='eLinx安装根目录'
