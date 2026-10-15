@@ -6,5 +6,6 @@ foreach name {app_tx_valid app_tx_ready app_tx_data app_tx_last app_tx_vl tx_val
     wave_signal $dut/$name $name
 }
 run 800us
-wave cursor add -time 688108ns -name {Dual GMII start}
-wave_print 685900ns 688900ns
+wave cursor add -time 688108ns -name GMII_start
+wave_snapshot tx_dual_1 685900ns 688900ns
+wave_snapshot tx_dual_2 688100ns 688420ns

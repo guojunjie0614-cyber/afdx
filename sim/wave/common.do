@@ -1,8 +1,7 @@
-# 在仓库根目录调用场景脚本；工作库、日志与原生打印文件只写 out/wave。
+# 在仓库根目录调用场景脚本；工作库、日志和原始截图只写 out/wave。
 proc wave_setup {scenario test} {
-    global wave_root wave_output wave_height PrefWave
+    global wave_root wave_output
     set wave_root [file normalize [pwd]]
-    set wave_height 2.8
     if {![file exists [file join $wave_root rtl AFDX_top.v]]} {
         error "First cd to the package root, then do sim/wave/<scene>.do"
     }
@@ -37,43 +36,48 @@ proc wave_setup {scenario test} {
     vlog -modelsimini $ini -work work -vlog01compat +incdir+[file join $wave_root tb lib] {*}$sources
     vsim -modelsimini $ini -t 1ps -voptargs=+acc -onfinish stop \
         -wlf [file join $wave_output simulation.wlf] work.$test
-    # 设置白底、深色文字和信号，便于打印。
-    set PrefWave(waveBackground) White
-    set PrefWave(waveStripBackground) White
-    set PrefWave(background) White
-    set PrefWave(background2) White
-    set PrefWave(textColor) Black
-    set PrefWave(foreground) Black
-    set PrefWave(waveForeground) Black
-    set PrefWave(displayfreq) 0
-    set PrefWave(vectorColor) navy
-    set PrefWave(timeColor) Black
-    set PrefWave(cursorColor) red
-    set PrefWave(cursorDeltaColor) Black
-    set PrefWave(gridColor) grey75
-    set PrefWave(activeRowBackground) White
-    view wave
-    catch {wm geometry . 1800x800+0+0}
+    # 只设置窗口布局，颜色沿用 ModelSim 默认值。
+    set wave_window [view wave -undock -title Wave -width 1880 -height 650 -x 0 -y 0]
+    set wave_top [winfo toplevel $wave_window]
+    set width [expr {min(1880, [winfo screenwidth $wave_window] - 32)}]
+    set height [expr {min(650, [winfo screenheight $wave_window] - 100)}]
+    wm maxsize $wave_top $width $height
+    wm geometry $wave_top ${width}x${height}+0+0
     catch {delete wave *}
-    configure wave -foreground Black -wavebackground White -wavestripbackground White \
-        -textcolor Black -timecolor Black -cursorcolor red -cursordeltacolor Black \
-        -displayfreq 0 -namecolwidth 205 -valuecolwidth 85 -signalnamewidth 0 -timelineunits us
+    catch {wave cursor delete 1}
+    configure wave -displayfreq 0 -namecolwidth 180 -valuecolwidth 100 \
+        -signalnamewidth 0 -timelineunits us
 }
 
 proc wave_signal {path label {radix hexadecimal}} {
     log $path
-    add wave -label $label -radix $radix -color navy $path
+    add wave -label $label -radix $radix $path
 }
 
-proc wave_print {start end {name wave.ps}} {
-    global wave_root wave_output wave_height
+proc wave_snapshot {name start end} {
+    global wave_output
     wave zoom range $start $end
     update
-    write wave [file join $wave_output $name] -start $start -end $end \
-        -portrait -width 14 -height $wave_height -margin 0.2
-    puts "WAVE_OUTPUT $wave_output"
-    puts "WAVE_WINDOW $start $end"
-    set fh [open [file join $wave_output ready.txt] w]
-    puts $fh "$start $end"
+    puts "WAVE_WINDOW $name $start $end"
+    set fh [open [file join $wave_output windows.txt] a]
+    puts $fh "$name $start $end"
     close $fh
+    # 手工 do 时停留在同样的真实 Wave 视图；自动导出时由 PrintWindow 截图。
+    if {[info exists ::env(AFDX_WAVE_CAPTURE_DIR)]} {
+        set directory $::env(AFDX_WAVE_CAPTURE_DIR)
+        set done [file join $directory ${name}.done]
+        set request [file join $directory capture_request.txt]
+        set fh [open ${request}.tmp w]
+        puts $fh [pid]
+        puts $fh $name
+        puts $fh "$start $end"
+        close $fh
+        file rename -force ${request}.tmp $request
+        set deadline [expr {[clock seconds] + 60}]
+        while {![file exists $done]} {
+            if {[clock seconds] >= $deadline} {error "Wave window capture timed out: $name"}
+            after 100
+            update
+        }
+    }
 }

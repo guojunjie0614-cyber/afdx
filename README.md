@@ -54,8 +54,21 @@
 
    指标见下面的表，汇总保存在 `out/modelsim/judge_<时间>_<进程>/result.txt`，各用例目录里有原始日志。吞吐测试会运行较久，可从 `performance/simulation.log` 查看已到达的测试阶段。
 
-报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示白底波形，生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。PNG 在 `sim/wave/png/`，FCS 图包含错误帧和稍后配置读回的两段窗口，BAG 图包含双游标和两个帧起点的放大图。
-批量重新导出用 `python sim/wave/export.py`；另需 Ghostscript 和 PATH 中的 ImageMagick `magick`，用 `AFDX_GHOSTSCRIPT` 指向 Ghostscript 可执行文件（也可传 `--ghostscript`）。工作库、WLF、原生打印和日志保存在 `out/wave/`。
+报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
+批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。PNG 在 `sim/wave/png/`；工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
+
+| 图片 | 时间窗口（us） | 观察内容 |
+|---|---:|---|
+| `tx_dual_1.png` | 685.900–688.900 | 应用输入与 A、B 双网发送的时序总览 |
+| `tx_dual_2.png` | 688.100–688.420 | 放大双网帧起点和部分帧头字节 |
+| `rx_redundancy_1.png` | 3013.980–3014.240 | A 网交付事件及交付给应用的字节 |
+| `rx_redundancy_2.png` | 3029.820–3030.080 | B 网帧尾字节与副本丢弃事件，光标间隔 16.016 us |
+| `rx_fcs_error_1.png` | 798.350–799.600 | A 网 FCS 错误计数从 0 变为 1，B 网正常交付 |
+| `rx_fcs_error_2.png` | 798.700–799.020 | 放大错误帧的部分字节 |
+| `rx_fcs_error_3.png` | 972.992–973.040 | 独立读地址 0x49，一拍请求经两级流水后有效返回 1 |
+| `tx_bag.png` | 10.000–830.000 | 两个帧起点的光标间隔为 800 us |
+| `snmp_get_1.png` | 525.280–525.600 | Get 请求的双网帧起点及部分帧头字节 |
+| `snmp_get_2.png` | 531.660–531.980 | Response 的双网帧起点及部分帧头字节 |
 
 一次七用例实测如下（ModelSim SE-64 2020.4）；耗时会随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
 

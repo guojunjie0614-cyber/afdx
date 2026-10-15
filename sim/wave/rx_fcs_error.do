@@ -3,13 +3,12 @@ source [file join [pwd] sim wave common.do]
 wave_setup rx_fcs_error tb_sys_net
 set dut /tb_sys_net/suite/es2/dut
 set host /tb_sys_net/suite/es2
-set wave_height 3.3
 foreach name {rx_valid rx_data rx_valid_b app_rx_valid ev_a cfg_rd cfg_addr cfg_rvalid cfg_rdata} {
     wave_signal $dut/$name $name
 }
-wave_signal $dut/app_rx_net {app_rx_net (1=B)} binary
-wave_signal $dut/ev_a(1) {ev_a[1] FCS error} binary
-wave_signal $dut/cfg_regs/count_a_fcs {A FCS error count} unsigned
+wave_signal $dut/app_rx_net app_rx_net binary
+wave_signal $dut/ev_a(1) ev_a_fcs_error binary
+wave_signal $dut/cfg_regs/count_a_fcs count_a_fcs unsigned
 log $dut/clk $dut/host_read_pipe
 # 测试平台在 972.532--972.742 us 连续逐拍读多个地址，rvalid 因此连续为高。
 # 此端点在错误帧前没有读过 0x49。等原读突发结束后追加一个独立请求，
@@ -30,18 +29,22 @@ if {[examine -radix unsigned $dut/cfg_rvalid] != 1 ||
     error "The second sampling edge must return cfg_rvalid=1 and cfg_rdata=1"
 }
 run 27ns
-wave_print 798350ns 799600ns
+set cursor_error [wave cursor add -time 799180ns -name FCS_error]
+wave_snapshot rx_fcs_error_1 798350ns 799600ns
+set cursor_byte [wave cursor add -time 798800ns -name Wire_byte]
+wave_snapshot rx_fcs_error_2 798700ns 799020ns
 delete wave *
-add wave -divider {Read 0x49: two clock edges}
+catch {wave cursor delete $cursor_byte}
+catch {wave cursor delete $cursor_error}
 wave_signal $dut/clk clk binary
-wave_signal $dut/cfg_rd {cfg_rd (one clock)} binary
-wave_signal $dut/cfg_addr {cfg_addr (hex)}
-wave_signal $dut/host_read_pipe {host_read_pipe [1:0]} binary
+wave_signal $dut/cfg_rd cfg_rd binary
+wave_signal $dut/cfg_addr cfg_addr
+wave_signal $dut/host_read_pipe host_read_pipe binary
 wave_signal $dut/cfg_rvalid cfg_rvalid binary
-wave_signal $dut/cfg_rdata {cfg_rdata (hex)}
-wave_signal $dut/cfg_regs/count_a_fcs {A FCS error count} unsigned
-set wave_height 2.5
-wave_print 972992ns 973040ns counter_read.ps
+wave_signal $dut/cfg_rdata cfg_rdata
+wave_signal $dut/cfg_regs/count_a_fcs count_a_fcs unsigned
+wave cursor add -time 973013ns -name Read_response
+wave_snapshot rx_fcs_error_3 972992ns 973040ns
 run -all
 if {[examine -radix unsigned /tb_sys_net/suite/errors] != 0 ||
     [examine -radix unsigned $host/errors] != 0} {

@@ -1,16 +1,18 @@
-"""运行真实 ModelSim GUI，把原生 PostScript 波形转换为 PNG。"""
+"""运行真实 ModelSim GUI，用 PrintWindow 保存默认配色的 Wave 窗口截图。"""
 import argparse
+from datetime import datetime
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import time
-from datetime import datetime
 
 import psutil
 
 ROOT = Path(__file__).resolve().parents[2]
-SCENES = ("tx_dual", "rx_redundancy", "rx_fcs_error", "tx_bag", "snmp_get")
+SCENES = {"tx_dual": 2, "rx_redundancy": 2, "rx_fcs_error": 3,
+          "tx_bag": 1, "snmp_get": 2}
 
 
 def tcl_path(path):
@@ -31,134 +33,97 @@ def run_gui(scene, exe):
     driver_dir = ROOT / "out" / "wave" / ("export_" + scene + "_" + stamp)
     driver_dir.mkdir(parents=True)
     result = driver_dir / "result.txt"
-    capture_ready = driver_dir / "capture_ready.txt"
-    capture_done = driver_dir / "capture_done.txt"
-    capture = ""
-    if scene == "tx_bag":
-        # 原生打印不带游标；此场景保留真实 GUI 的两个游标和间隔读数。
-        capture = (
-            "set window [view wave -undock -title {Wave tx_bag} -width 1400 -height 500 -x 0 -y 0]\n"
-            "update\nwave zoom range 10000ns 830000ns\nupdate\n"
-            "set capture_file [open " + tcl_path(capture_ready) + " w]\n"
-            "puts $capture_file [pid]\n"
-            "close $capture_file\n"
-            "while {![file exists " + tcl_path(capture_done) + "]} {after 100; update}\n")
+    request = driver_dir / "capture_request.txt"
     (driver_dir / "export.do").write_text(
         "set wave_preferences [array get PrefWave]\n"
-        "onerror {array set PrefWave $wave_preferences; quit -f -code 1}\n"
-        + "cd " + tcl_path(ROOT) + "\n"
-        + "do " + tcl_path(ROOT / "sim" / "wave" / (scene + ".do")) + "\n"
-        + capture
-        + "set output_file [open " + tcl_path(result) + " w]\n"
-        + "puts $output_file $wave_output\nclose $output_file\n"
-        + "array set PrefWave $wave_preferences\nquit -f -code 0\n",
+        "onerror {catch {array set PrefWave $wave_preferences}; quit -f -code 1}\n"
+        "cd " + tcl_path(ROOT) + "\n"
+        "do " + tcl_path(ROOT / "sim" / "wave" / (scene + ".do")) + "\n"
+        "set output_file [open " + tcl_path(result) + " w]\n"
+        "puts $output_file $wave_output\nclose $output_file\n"
+        "array set PrefWave $wave_preferences\n"
+        "catch {view wave -dock}\nupdate\nquit -f -code 0\n",
         encoding="utf-8")
-    startup = None
-    flags = 0
-    if os.name == "nt":
-        startup = subprocess.STARTUPINFO()
-        startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startup.wShowWindow = 0
-        flags = subprocess.CREATE_NO_WINDOW
+    environment = dict(os.environ, AFDX_WAVE_CAPTURE_DIR=str(driver_dir))
+    # 仅给本次 GUI 进程启用原生 DPI 绘制，不改变系统缩放或安装设置。
+    environment["__COMPAT_LAYER"] = (
+        environment.get("__COMPAT_LAYER", "") + " HIGHDPIAWARE").strip()
+    startup = subprocess.STARTUPINFO()
+    startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startup.wShowWindow = 0
+    flags = subprocess.CREATE_NO_WINDOW
+    powershell = str(Path(os.environ["SystemRoot"]) /
+                     "System32/WindowsPowerShell/v1.0/powershell.exe")
     owned = {}
-    captured = False
+    captured = []
     with (driver_dir / "launch.log").open("wb") as log:
         process = psutil.Popen(
             [exe, "-gui", "-l", "export.log", "-do", "do export.do"],
-            cwd=driver_dir, stdout=log, stderr=subprocess.STDOUT,
+            cwd=driver_dir, env=environment, stdout=log, stderr=subprocess.STDOUT,
             startupinfo=startup, creationflags=flags)
         limit = time.monotonic() + 600
         try:
             while process.poll() is None:
                 for child in [process] + process.children(recursive=True):
                     owned[child.pid] = child.create_time()
-                if capture_ready.is_file() and not captured:
-                    gui_pid = int(capture_ready.read_text().strip())
-                    if gui_pid not in owned:
-                        raise RuntimeError("Unexpected GUI process identity")
-                    subprocess.run([
-                        "powershell", "-NoProfile", "-File", str(ROOT / "sim/wave/capture.ps1"),
-                        "-SessionProcessIds", ",".join(map(str, owned)),
-                        "-Destination", str(driver_dir / "gui.png")], check=True)
-                    capture_done.write_text("captured\n")
-                    captured = True
+                if request.is_file():
+                    fields = request.read_text(encoding="utf-8").splitlines()
+                    gui_pid, name, window = fields
+                    if int(gui_pid) not in owned or not re.fullmatch(
+                            re.escape(scene) + r"(?:_[123])?", name):
+                        raise RuntimeError("Unexpected Wave capture identity")
+                    if name not in captured:
+                        subprocess.run([
+                            powershell, "-NoProfile", "-ExecutionPolicy", "Bypass",
+                            "-File", str(ROOT / "sim/wave/capture.ps1"),
+                            "-SessionProcessIds", ",".join(map(str, owned)),
+                            "-Destination", str(driver_dir / (name + ".png"))],
+                            check=True, timeout=30, startupinfo=startup, creationflags=flags)
+                        captured.append(name)
+                        (driver_dir / (name + ".done")).write_text("captured\n")
+                        print("Captured " + name + ": " + window, flush=True)
                 if time.monotonic() >= limit:
                     raise TimeoutError(scene + " GUI export exceeded 600 seconds")
                 time.sleep(1)
-            if process.returncode or not result.is_file():
-                raise RuntimeError(scene + " GUI export failed; inspect " + str(driver_dir))
+            if process.returncode or not result.is_file() or len(captured) != SCENES[scene]:
+                raise RuntimeError(scene + " GUI export failed; inspect " +
+                                   str(driver_dir.relative_to(ROOT)))
         finally:
-            # 仅在异常退出时关闭本次启动且身份仍相同的子进程。
-            if process.poll() is None:
-                victims = []
-                for pid, created in reversed(list(owned.items())):
-                    try:
-                        child = psutil.Process(pid)
-                        if child.create_time() == created:
-                            child.terminate()
-                            victims.append(child)
-                    except psutil.NoSuchProcess:
-                        pass
-                _, alive = psutil.wait_procs(victims, timeout=5)
-                for child in alive:
-                    child.kill()
+            # 仅关闭本次启动且身份仍相同的进程，不影响其他 ModelSim 会话。
+            victims = []
+            for pid, created in reversed(list(owned.items())):
+                try:
+                    child = psutil.Process(pid)
+                    if child.create_time() == created:
+                        child.terminate()
+                        victims.append(child)
+                except psutil.NoSuchProcess:
+                    pass
+            _, alive = psutil.wait_procs(victims, timeout=5)
+            for child in alive:
+                child.kill()
     folder = Path(result.read_text().strip())
-    if captured:
-        shutil.copyfile(driver_dir / "gui.png", folder / "gui.png")
-    return folder
-
-
-def rasterize(ps, gs, magick, dpi):
-    output = ps.with_suffix(".png")
-    command = [gs]
-    # TeX Live 的私有 Ghostscript 需要显式指定随附资源；普通安装无需此项。
-    base = Path(gs).resolve().parent.parent
-    if (base / "Resource" / "Init" / "gs_init.ps").is_file():
-        command.append("-I" + ";".join(str(base / part) for part in
-                                      ("Resource/Init", "lib", "Resource", "kanji")))
-    command += ["-dBATCH", "-dNOPAUSE", "-sDEVICE=png16m", "-r" + str(dpi),
-                "-dTextAlphaBits=4", "-dGraphicsAlphaBits=4",
-                "-sOutputFile=" + str(output), str(ps)]
-    with ps.with_suffix(".conversion.log").open("wb") as log:
-        subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
-    cropped = ps.with_name(ps.stem + "_cropped.png")
-    # 只裁白边；不重绘、不修改波形、信号名或游标。
-    subprocess.run([magick, str(output), "-trim", "+repage", "-alpha", "off",
-                    str(cropped)], check=True)
-    return cropped
+    for name in captured:
+        shutil.copyfile(driver_dir / (name + ".png"), folder / (name + ".png"))
+    return folder, captured
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scene", choices=SCENES)
-    parser.add_argument("--ghostscript", default=os.environ.get("AFDX_GHOSTSCRIPT"))
-    parser.add_argument("--dpi", type=int, default=180)
     args = parser.parse_args()
-    gs = args.ghostscript or shutil.which("gswin64c.exe") or shutil.which("gs")
-    if not gs:
-        raise RuntimeError("Set AFDX_GHOSTSCRIPT or pass --ghostscript")
-    magick = shutil.which("magick.exe") or shutil.which("magick")
-    if not magick:
-        raise RuntimeError("Put ImageMagick's magick executable on PATH")
-    destination = ROOT / "sim" / "wave" / "png"
+    destination = ROOT / "sim/wave/png"
     destination.mkdir(exist_ok=True)
     for scene in (args.scene,) if args.scene else SCENES:
-        print("Exporting " + scene, flush=True)
-        folder = run_gui(scene, simulator())
-        if scene == "tx_bag":
-            # 裁掉 PrintWindow 在缩放屏幕上留下的空黑边；保留整个真实 Wave 窗口。
-            cropped = folder / "gui_cropped.png"
-            subprocess.run([magick, str(folder / "gui.png"), "-trim", "+repage",
-                            "-resize", "180%", str(cropped)], check=True)
-            pictures = [cropped, rasterize(folder / "frame1.ps", gs, magick, args.dpi),
-                        rasterize(folder / "frame2.ps", gs, magick, args.dpi)]
-        else:
-            pictures = [rasterize(folder / "wave.ps", gs, magick, args.dpi)]
-        if scene == "rx_fcs_error":
-            pictures.append(rasterize(folder / "counter_read.ps", gs, magick, args.dpi))
-        subprocess.run([magick, *map(str, pictures), "-background", "white", "-append",
-                        str(destination / (scene + ".png"))], check=True)
-        print("Saved sim/wave/png/" + scene + ".png", flush=True)
+        print("Capturing " + scene, flush=True)
+        folder, captured = run_gui(scene, simulator())
+        for name in captured:
+            shutil.copyfile(folder / (name + ".png"), destination / (name + ".png"))
+            print("Saved sim/wave/png/" + name + ".png", flush=True)
+        # 分图场景替换原来的拼接打印稿，不保留已废弃的同名 PNG。
+        previous = destination / (scene + ".png")
+        if scene not in captured and previous.is_file():
+            previous.unlink()
 
 
 if __name__ == "__main__":

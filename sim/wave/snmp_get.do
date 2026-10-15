@@ -7,4 +7,9 @@ foreach name {rx_valid rx_data rx_valid_b rx_data_b tx_valid tx_data tx_valid_b 
 }
 wave_signal $dut/snmp/requests SNMP_requests unsigned
 run 550us
-wave_print 524500ns 540000ns
+set cursor_request [wave cursor add -time 525300ns -name Get_request]
+set cursor_response [wave cursor add -time 531684ns -name Get_response]
+wave cursor active $cursor_request
+wave_snapshot snmp_get_1 525280ns 525600ns
+wave cursor active $cursor_response
+wave_snapshot snmp_get_2 531660ns 531980ns

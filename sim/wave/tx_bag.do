@@ -7,10 +7,6 @@ wave_signal $dut/engine/pend_bag BAG_ticks unsigned
 foreach name {tx_valid_a tx_data_a tx_valid_b tx_data_b} {wave_signal $dut/$name $name}
 wave_signal $dut/engine/grant_sn SN unsigned
 run 830us
-catch {wave cursor delete 1}
-wave cursor add -time 17076ns -name {Frame 1 start}
-wave cursor add -time 817076ns -name {Frame 2 start}
-wave_print 10000ns 830000ns
-wave_print 17000ns 17800ns frame1.ps
-wave_print 817000ns 817800ns frame2.ps
-wave zoom range 10000ns 830000ns
+wave cursor add -time 17076ns -name Frame_1_start
+wave cursor add -time 817076ns -name Frame_2_start
+wave_snapshot tx_bag 10000ns 830000ns
