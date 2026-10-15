@@ -51,7 +51,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
 
     // 解析请求的各字段：
     localparam TAG = 7, LENGTH = 8, LONG_LENGTH = 9, DISPATCH = 10, VERSION = 11, COMMUNITY = 12;
-    localparam INTEGER_VALUE = 13;
+    localparam INTEGER_VALUE = 13, DISPATCH_SUM = 45, DISPATCH_CHECK = 46;
 
     // 查找对象，再读取或设置它的值：
     localparam LOOK_START = 14, LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17, MISSING = 18;
@@ -172,6 +172,10 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     reg [15:0] field_length;
     reg [1:0] length_left;
     reg [3:0] field;
+    reg [15:0] field_end;
+    reg field_bounds_ok;
+    reg [FIELD_VALUE:0] field_accept;
+    reg value_chain_ok;
     reg [4:0] value_pos, community_length, oid_length;
     reg [7:0] community_start, oid_start;
     reg [31:0] community_word;
@@ -653,7 +657,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                     cursor <= cursor + 9'd1;
                     if ( ! byte_value[7]) begin
                         field_length <= { 9'b0, byte_value[6:0] };
-                        state <= DISPATCH;
+                        state <= DISPATCH_SUM;
                     end
                     else if (byte_value == LENGTH_1_BYTE || byte_value == LENGTH_2_BYTES) begin
                         length_left <= byte_value[1:0];
@@ -668,28 +672,56 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                     field_length <= { field_length[7:0], byte_value };
                     cursor <= cursor + 9'd1;
                     length_left <= length_left - 2'd1;
-                    if (length_left == 1) state <= DISPATCH;
+                    if (length_left == 1) state <= DISPATCH_SUM;
                     else fetch (LONG_LENGTH);
+                end
+
+                // 字段结束位置、格式条件和边界分拍准备，解析拍只消费局部标记。
+                DISPATCH_SUM : begin
+                    field_end <= cursor + field_length;
+                    field_accept[FIELD_MESSAGE] <= tag_value == TAG_SEQUENCE;
+                    field_accept[FIELD_VERSION] <= tag_value == TAG_INTEGER && field_length == 1;
+                    field_accept[FIELD_COMMUNITY] <= tag_value == TAG_OCTET_STRING
+                        && field_length >= 1 && field_length <= MAX_COMMUNITY_LENGTH;
+                    field_accept[FIELD_PDU] <= tag_value == PDU_GET || tag_value == PDU_GET_NEXT
+                        || tag_value == PDU_SET;
+                    field_accept[FIELD_REQUEST_ID] <= tag_value == TAG_INTEGER
+                        && field_length >= 1 && field_length <= 4;
+                    field_accept[FIELD_ERROR_STATUS] <= 0;
+                    field_accept[FIELD_ERROR_INDEX] <= 0;
+                    field_accept[FIELD_BINDING_LIST] <= 0;
+                    field_accept[FIELD_BINDING] <= 0;
+                    field_accept[FIELD_OID] <= tag_value == TAG_OID
+                        && field_length >= 1 && field_length <= MAX_OID_LENGTH;
+                    field_accept[FIELD_VALUE] <= (get_set && field_length <= 16)
+                        || (tag_value == TAG_NULL && field_length == 0);
+                    state <= DISPATCH_CHECK;
+                end
+
+                DISPATCH_CHECK : begin
+                    field_bounds_ok <= field_length <= PACKET_BUFFER_BYTES && field_end <= request_length;
+                    value_chain_ok <= field_end == binding_end && binding_end == list_end
+                        && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length;
+                    state <= DISPATCH;
                 end
 
                 // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
                 DISPATCH : begin
                     value_pos <= 0;
-                    if (field_length > PACKET_BUFFER_BYTES || cursor + field_length > request_length) state <= IDLE;
-                    else case (field)
+                    if (!field_bounds_ok) state <= IDLE;
+                    else case (field) // synthesis parallel_case
 
-                        FIELD_MESSAGE : if (tag_value == TAG_SEQUENCE) begin
-                            outer_end <= cursor + field_length;
+                        FIELD_MESSAGE : if (field_accept[FIELD_MESSAGE]) begin
+                            outer_end <= field_end;
                             field <= FIELD_VERSION;
                             fetch (TAG);
                         end
                         else state <= IDLE;
 
-                        FIELD_VERSION : if (tag_value == TAG_INTEGER && field_length == 1) fetch (VERSION);
+                        FIELD_VERSION : if (field_accept[FIELD_VERSION]) fetch (VERSION);
                         else state <= IDLE;
 
-                        FIELD_COMMUNITY : if (tag_value == TAG_OCTET_STRING && field_length >= 1
-                            && field_length <= MAX_COMMUNITY_LENGTH) begin
+                        FIELD_COMMUNITY : if (field_accept[FIELD_COMMUNITY]) begin
                             community_length <= field_length[4:0];
                             community_start <= cursor[7:0];
                             community_bad <= (field_length != configured_length);
@@ -701,50 +733,46 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                             state <= IDLE;
                         end
 
-                        FIELD_PDU : if (tag_value == PDU_GET || tag_value == PDU_GET_NEXT || tag_value == PDU_SET) begin
+                        FIELD_PDU : if (field_accept[FIELD_PDU]) begin
                             get_next <= (tag_value == PDU_GET_NEXT);
                             get_set <= (tag_value == PDU_SET);
-                            pdu_end <= cursor + field_length;
+                            pdu_end <= field_end;
                             field <= FIELD_REQUEST_ID;
                             fetch (TAG);
                         end
                         else state <= IDLE;
 
-                        FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX : if (tag_value == TAG_INTEGER
-                            && field_length >= 1 && field_length <= 4) begin
+                        FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX :
+                            if (field_accept[FIELD_REQUEST_ID]) begin
                             if (field == FIELD_REQUEST_ID) request_id_length <= field_length[2:0];
                             fetch (INTEGER_VALUE);
                         end
                         else state <= IDLE;
 
-                        FIELD_BINDING_LIST : if (tag_value == TAG_SEQUENCE) begin
-                            list_end <= cursor + field_length;
+                        FIELD_BINDING_LIST : if (field_accept[FIELD_MESSAGE]) begin
+                            list_end <= field_end;
                             field <= FIELD_BINDING;
                             fetch (TAG);
                         end
                         else state <= IDLE;
 
-                        FIELD_BINDING : if (tag_value == TAG_SEQUENCE) begin
-                            binding_end <= cursor + field_length;
+                        FIELD_BINDING : if (field_accept[FIELD_MESSAGE]) begin
+                            binding_end <= field_end;
                             field <= FIELD_OID;
                             fetch (TAG);
                         end
                         else state <= IDLE;
 
-                        FIELD_OID : if (tag_value == TAG_OID && field_length >= 1
-                            && field_length <= MAX_OID_LENGTH) begin
+                        FIELD_OID : if (field_accept[FIELD_OID]) begin
                             oid_start <= cursor[7:0];
                             oid_length <= field_length[4:0];
-                            cursor <= cursor + field_length;
+                            cursor <= field_end;
                             field <= FIELD_VALUE;
                             fetch (TAG);
                         end
                         else state <= IDLE;
 
-                        FIELD_VALUE : if (((get_set && field_length <= 16)
-                            || (tag_value == TAG_NULL && field_length == 0))
-                            && cursor + field_length == binding_end && binding_end == list_end
-                            && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length) begin
+                        FIELD_VALUE : if (field_accept[FIELD_VALUE] && value_chain_ok) begin
                             set_value_start <= cursor[7:0];
                             set_value_tag <= tag_value;
                             set_value_length <= field_length[7:0];
