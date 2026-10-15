@@ -165,13 +165,13 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp snmp (
+    afdx_snmp #(.SPLIT_CFG_ADDR(1)) snmp (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
         .now(now),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:8] == 0),
-        .cfg_addr(bus_addr[7:0]),
+        .cfg_addr({cfg_addr[7:0], bus_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_control_data(snmp_control_data),
         .cfg_status_data(snmp_status_data),

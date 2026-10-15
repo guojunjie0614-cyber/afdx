@@ -3,7 +3,7 @@
 // 本模块对应赛题的 SNMP（Simple Network Management Protocol，
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
-module afdx_snmp (
+module afdx_snmp #(parameter SPLIT_CFG_ADDR = 0) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
@@ -12,7 +12,7 @@ module afdx_snmp (
     // cfg_* 配置代理开关、团体名和 Trap 通知，并读取状态。
     // 团体名（community）是 SNMP 报文里携带的访问口令。
     input wire cfg_we,
-    input wire [7:0] cfg_addr,
+    input wire [(SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_control_data, cfg_status_data, cfg_descr_data,
 
@@ -39,6 +39,9 @@ module afdx_snmp (
     input wire rx_last,
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
+
+    // 高 8 位专供主机写译码，低 3 位保持共享读地址。
+    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
 
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
 
@@ -186,6 +189,11 @@ module afdx_snmp (
     reg [3:0] arc_index;
     reg [31:0] oid_acc, expected_arc;
     wire [31:0] decoded_arc = { oid_acc[24:0], byte_value[6:0] };
+    wire [31:0] fetched_arc = { oid_acc[24:0], req_q[6:0] };
+    reg [3:0] arc_less_byte, arc_equal_byte;
+    reg arc_less, arc_greater, oid_last_byte, oid_last_arc;
+    (* preserve = 1 *) reg description_value;
+    reg [87:0] oid_shift;
     reg missing;
     reg [7:0] error_status, value_tag, value_length, response_oid_length;
     reg [31:0] value_number, value_shift;
@@ -266,6 +274,29 @@ module afdx_snmp (
         end
     endfunction
 
+    // 编码后的 OID 预先装入移位寄存器，构造回应时只取首字节。
+    // 对象选择、字节位置选择和回应字段选择因此不再落在同一拍。
+    genvar oid_byte;
+    generate
+        for (oid_byte = 0; oid_byte < PRIVATE_OID_BYTES; oid_byte = oid_byte + 1) begin : oid_encoding
+            wire [7:0] next_byte;
+            if (oid_byte == PRIVATE_OID_BYTES - 1) begin : tail
+                assign next_byte = 0;
+            end
+            else begin : body
+                assign next_byte = oid_shift[79 - oid_byte * 8 -: 8];
+            end
+            always @(posedge clk) begin
+                if (reset) oid_shift[87 - oid_byte * 8 -: 8] <= 0;
+                else if (state == LEN4)
+                    oid_shift[87 - oid_byte * 8 -: 8] <= mib_oid_byte(object_index, oid_byte);
+                else if (state == BUILD && part == B_OID && !missing) begin
+                    oid_shift[87 - oid_byte * 8 -: 8] <= next_byte;
+                end
+            end
+        end
+    endgenerate
+
     // 私有对象对应配置或统计地址，只有索引 3 的 user_id 允许设置。
     // 对象 0–5 依次是描述、运行时间、版本、user_id、时钟秒和同步次数。
     // 对象 6–12 是发送计数，13–20 和 21–28 是 A、B 网接收计数，29–32 是两网合计的计数，
@@ -336,7 +367,7 @@ module afdx_snmp (
                 uptime <= uptime + 32'd1;
             end
             else uptime_cycles <= uptime_cycles + 32'd1;
-            if (cfg_we) case (cfg_addr)
+            if (cfg_we) case (cfg_write_addr)
                 REG_ENABLE : configured <= cfg_wdata[0];
                 REG_TX_VL : response_vl <= cfg_wdata[6:0];
                 REG_COMMUNITY_LENGTH : configured_length <= cfg_wdata[4:0];
@@ -378,6 +409,13 @@ module afdx_snmp (
         if (reset) begin
             state <= IDLE;
             return_state <= IDLE;
+            arc_less_byte <= 0;
+            arc_equal_byte <= 0;
+            arc_less <= 0;
+            arc_greater <= 0;
+            oid_last_byte <= 0;
+            oid_last_arc <= 0;
+            description_value <= 0;
             req_we <= 0;
             req_re <= 0;
             out_we <= 0;
@@ -558,14 +596,34 @@ module afdx_snmp (
                     state <= FETCH2;
                 end
 
-                // FETCH2：保存读出的字节，然后转 FETCH3。
+                // 利用原有读取等待拍，先比较四个字节，再合并比较结果。
                 FETCH2 : begin
                     byte_value <= req_q;
+                    arc_less_byte[3] <= fetched_arc[31:24] < expected_arc[31:24];
+                    arc_less_byte[2] <= fetched_arc[23:16] < expected_arc[23:16];
+                    arc_less_byte[1] <= fetched_arc[15:8] < expected_arc[15:8];
+                    arc_less_byte[0] <= fetched_arc[7:0] < expected_arc[7:0];
+                    arc_equal_byte[3] <= fetched_arc[31:24] == expected_arc[31:24];
+                    arc_equal_byte[2] <= fetched_arc[23:16] == expected_arc[23:16];
+                    arc_equal_byte[1] <= fetched_arc[15:8] == expected_arc[15:8];
+                    arc_equal_byte[0] <= fetched_arc[7:0] == expected_arc[7:0];
                     state <= FETCH3;
                 end
 
                 // FETCH3：返回调用读取操作时保存的状态。
-                FETCH3 : state <= return_state;
+                FETCH3 : begin
+                    arc_less <= arc_less_byte[3] || (arc_equal_byte[3] && arc_less_byte[2])
+                        || (&arc_equal_byte[3:2] && arc_less_byte[1])
+                        || (&arc_equal_byte[3:1] && arc_less_byte[0]);
+                    arc_greater <= (!arc_less_byte[3] && !arc_equal_byte[3])
+                        || (arc_equal_byte[3] && !arc_less_byte[2] && !arc_equal_byte[2])
+                        || (&arc_equal_byte[3:2] && !arc_less_byte[1] && !arc_equal_byte[1])
+                        || (&arc_equal_byte[3:1] && !arc_less_byte[0] && !arc_equal_byte[0]);
+                    oid_last_byte <= {1'b0, oid_pos} + 6'd1 == {1'b0, oid_length};
+                    oid_last_arc <= arc_index == (candidate < SYSTEM_OBJECT_COUNT
+                        ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC);
+                    state <= return_state;
+                end
 
                 // ======== 第二部分：逐个字段解析请求 ========
                 // TAG：保存字段类型，然后读取 LENGTH。
@@ -739,7 +797,7 @@ module afdx_snmp (
                 // LOOK_COMPARE：逐个数字比较对象编号，匹配转 FOUND，否则转 LOOK_NEXT。
                 LOOK_COMPARE : begin
                     if (byte_value[7]) begin
-                        if (oid_pos + 1 == oid_length) state <= IDLE;
+                        if (oid_last_byte) state <= IDLE;
                         else begin
                             oid_acc <= decoded_arc;
                             cursor <= cursor + 9'd1;
@@ -747,16 +805,14 @@ module afdx_snmp (
                             fetch (LOOK_COMPARE);
                         end
                     end
-                    else if (decoded_arc < expected_arc) state <= get_next ? FOUND : LOOK_NEXT;
-                    else if (decoded_arc > expected_arc) state <= LOOK_NEXT;
-                    else if (oid_pos + 1 == oid_length) begin
-                        if (arc_index == (candidate < SYSTEM_OBJECT_COUNT
-                                          ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC))
+                    else if (arc_less) state <= get_next ? FOUND : LOOK_NEXT;
+                    else if (arc_greater) state <= LOOK_NEXT;
+                    else if (oid_last_byte) begin
+                        if (oid_last_arc)
                             state <= get_next ? LOOK_NEXT : FOUND;
                         else state <= get_next ? FOUND : LOOK_NEXT;
                     end
-                    else if (arc_index == (candidate < SYSTEM_OBJECT_COUNT
-                                           ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC))
+                    else if (oid_last_arc)
                         state <= LOOK_NEXT;
                     else begin
                         oid_acc <= 0;
@@ -935,6 +991,7 @@ module afdx_snmp (
 
                 // LEN4：计算整条消息的长度，然后转 BUILD。
                 LEN4 : begin
+                    description_value <= object_index == 0 && !missing;
                     message_length <= pdu_length + { 3'b0, community_length } + 8'd7;
                     response_length <= pdu_length + { 4'b0, community_length } + 9'd9;
                     id_shift <= request_id << ((4 - request_id_length) * 8);
@@ -1085,7 +1142,7 @@ module afdx_snmp (
                             fetch (COPY_OID);
                         end
                         else begin
-                            emit (mib_oid_byte (object_index, part_pos));
+                            emit (oid_shift[87:80]);
                             part_pos <= part_pos + 5'd1;
                             if (part_pos + 1 == response_oid_length) part <= B_VALUE_TAG;
                         end
@@ -1108,7 +1165,7 @@ module afdx_snmp (
                         fetch (COPY_VALUE);
                     end
                     else begin
-                        if (object_index == 0 && ! missing) begin
+                        if (description_value) begin
                             emit (descr_shift[127:120]);
                             descr_shift <= { descr_shift[119:0], 8'b0 };
                         end
@@ -1261,7 +1318,8 @@ module afdx_snmp (
                 cold_pending <= 0;
                 auth_pending <= 0;
             end
-            if (cfg_we && cfg_addr == REG_ENABLE && cfg_wdata[0] && ! configured && trap_enabled) cold_pending <= 1;
+            if (cfg_we && cfg_write_addr == REG_ENABLE && cfg_wdata[0] && ! configured
+                    && trap_enabled) cold_pending <= 1;
         end
     end
 
