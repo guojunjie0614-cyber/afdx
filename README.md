@@ -115,11 +115,14 @@ JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
+   先设置 `ELINX_HOME` 为 eLinx 安装根目录，该目录应含 `bin/Passkey/bin` 和 `bin/shell/bin`。把下面的占位文字换成实际路径：
+
    ```powershell
+   $env:ELINX_HOME='eLinx安装根目录'
    powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1
    ```
 
-   预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。入口按工程设置依次运行官方分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
+   预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
 
 也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。两个入口使用同一套官方引擎，默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。命令行不需要先运行界面；已有 `.qsf` 时保留其中的综合设置，干净检出时按 `.epr` 的当前设置生成运行副本。网表验证见“综合后网表仿真”。
 
