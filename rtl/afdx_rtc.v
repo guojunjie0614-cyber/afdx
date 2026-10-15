@@ -3,7 +3,7 @@
 // 本模块对应赛题的 RTC（Real-Time Clock，实时时钟）同步功能。
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
-module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
+module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0) (
 
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
     input wire clk, reset, enable,
@@ -117,6 +117,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
     // 报文的 12 个 32 位字段保存在寄存器中。
     reg [383:0] rx_packet;
     reg rx_busy, rx_done;
+    reg rx_done_delayed;
+    wire packet_done = BANKED_RX ? rx_done_delayed : rx_done;
     reg [5:0] rx_index;
     reg [31:0] received_sec, received_ns;
 
@@ -200,6 +202,38 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
         .done(decode_done),
         .result(decode_result)
     );
+
+    // 接收数据按 24 位分组，各组用独立的写使能寄存器，避免单个使能跨过整个报文寄存器。
+    // 首字节时间仍在原接口拍采样；完整报文标记延后一拍，与分组数据对齐。
+    genvar packet_group;
+    generate
+        if (BANKED_RX) begin : local_receive
+            reg [7:0] data_stage;
+            wire [383:0] shifted_packet = {rx_packet[375:0], data_stage};
+            always @(posedge clk) data_stage <= rx_data;
+            for (packet_group = 0; packet_group < 16; packet_group = packet_group + 1) begin : word
+                (* preserve = 1, dont_merge = 1 *) reg write_byte;
+                always @(posedge clk) begin
+                    if (reset) write_byte <= 0;
+                    else write_byte <= active && enable && !load_time && rx_valid && rx_claim;
+                    if (reset) rx_packet[packet_group * 24 +: 24] <= 0;
+                    else if (write_byte)
+                        rx_packet[packet_group * 24 +: 24] <= shifted_packet[packet_group * 24 +: 24];
+                end
+            end
+        end
+        else begin : direct_receive
+            always @(posedge clk) begin
+                if (reset) rx_packet <= 0;
+                else if (active && enable && !load_time && rx_valid && rx_claim)
+                    rx_packet <= {rx_packet[375:0], rx_data};
+            end
+        end
+    endgenerate
+    always @(posedge clk) begin
+        if (reset || !active || !enable || load_time) rx_done_delayed <= 0;
+        else rx_done_delayed <= rx_done;
+    end
 
     always @(posedge clk) begin
         if (reset) begin
@@ -334,7 +368,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
             rx_busy <= 0;
             rx_done <= 0;
             rx_index <= 0;
-            rx_packet <= 0;
             received_sec <= 0;
             received_ns <= 0;
             req_sec <= 0;
@@ -383,7 +416,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
             decode_start <= 0;
             if (countdown != 0) countdown <= countdown - 32'd1;
             if (rx_valid && rx_claim) begin
-                rx_packet <= { rx_packet[375:0], rx_data };
                 rx_busy <= ! rx_last;
                 if ( ! rx_busy) begin
                     received_sec <= seconds;
@@ -395,7 +427,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
             end
             // 客户端只接受版本、模式及请求时间都匹配的回应。
             // Originate 是回应中回送的请求时间，必须等于当前请求的 Transmit 字段。
-            if (rx_done && rx_packet[381:379] == NTP_VERSION) begin
+            if (packet_done && rx_packet[381:379] == NTP_VERSION) begin
                 if (master && rx_packet[378:376] == MODE_CLIENT) begin
                     // 服务端逐位复制请求的发送时间，避免换算改变匹配字段。
                     echo_sec <= rx_packet[63:32];
@@ -514,7 +546,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0) (
                         tx_state <= TX_GROUPS;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if ( ! master && countdown == 0 && calc_state == CALC_IDLE && ! rx_done) begin
+                    else if ( ! master && countdown == 0 && calc_state == CALC_IDLE && !rx_done && !packet_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;

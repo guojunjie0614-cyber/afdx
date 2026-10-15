@@ -196,13 +196,13 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(snmp_claim)
     );
-    afdx_rtc #(.LOCAL_RX_PORT(1)) rtc (
+    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(1)) rtc (
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
         .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == RTC_ADDR_GROUP),
         .cfg_re(bus_rd && rtc_select),
-        .cfg_addr(bus_addr[3:0]),
+        .cfg_addr({cfg_addr[3:0], bus_addr[3:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(rtc_rdata),
         .sync_count(rtc_sync_count),
