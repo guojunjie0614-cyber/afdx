@@ -80,27 +80,16 @@ module afdx_rx_core #(
     generate
         for (i = 0; i < 32; i = i + 1) begin : queue_slot
             if (i < (1 << RX_DQ_AW)) begin : present
-                (* preserve = 1, dont_merge = 1 *) reg [DQ_WIDTH - 1:0] entry;
+                reg [DQ_WIDTH - 1:0] entry;
 
-                // 写目标与数据同拍预译码，原字段按至多 24 位分片，读镜像复用对应写片使能。
+                // 写目标与数据同拍预译码，局部使能各驱动不超过 24 位。
                 for (dq_word = 0; dq_word < DQ_WRITE_SLICES; dq_word = dq_word + 1) begin : word
                     localparam WORD_WIDTH = DQ_WIDTH - dq_word * 24 >= 24 ? 24 : DQ_WIDTH - dq_word * 24;
                     always @(posedge clk) if (dq_we[i * DQ_WRITE_SLICES + dq_word])
                         entry[dq_word * 24 +: WORD_WIDTH] <= dq_wd[dq_word * 24 +: WORD_WIDTH];
                 end
 
-                if (i >= 8 && i < 16) begin : read_mirror
-                    // 仅为 bank1 的第二字节保留本地读副本，避免整组消息信息盲目复制。
-                    // 与 entry 使用同一拍的数据和第 0 个写片使能，不从 entry 再寄存一拍。
-                    (* preserve = 1, dont_merge = 1 *) reg [7:0] entry_m;
-                    always @(posedge clk) if (dq_we[i * DQ_WRITE_SLICES])
-                        entry_m <= dq_wd[15:8];
-                    assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] =
-                        {entry[DQ_WIDTH - 1:16], entry_m, entry[7:0]};
-                end
-                else begin : direct_read
-                    assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = entry;
-                end
+                assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = entry;
             end
             else begin : absent
 

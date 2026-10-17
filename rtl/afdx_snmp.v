@@ -100,8 +100,6 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [17:0] engine_mib_addr;
     wire [31:0] engine_mib_wdata;
     reg mib_request_q, mib_write_q, mib_complete, mib_transaction;
-    // 受理拍锁存读方向，发起拍消费后清零，供读选通的本地数据端使用。
-    (* preserve = 1, dont_merge = 1 *) reg mib_read_q;
     reg [17:0] mib_addr_q;
     reg [31:0] mib_wdata_q, mib_result;
     reg [1:0] mib_state;
@@ -312,29 +310,18 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         .tx_vl(tx_vl), .tx_sport(), .tx_dport(tx_dport)
     );
 
-    // 地址比较经 mib_ready 返回；显式原生 CE 避免该长锥进入 mib_rd 的数据端。
-    // 读方向只在状态 3 为高：该拍置位，随后等待 ready 的原拍次写入零。
-    // 空闲时 ready 只会重复写零；复位并入 CE，保持同步复位优先级。
-    (* direct_enable = 1, keep = 1 *) wire mib_rd_ce = reset || mib_read_q || mib_ready;
-    always @(posedge clk) begin
-        if (mib_rd_ce) begin
-            if (reset) mib_rd <= 0;
-            else mib_rd <= mib_read_q;
-        end
-    end
-
     // 一次请求只在主总线上执行一次；返回数据保持到下一次请求。
     always @(posedge clk) begin
         if (reset) begin
             mib_request_q <= 0;
             mib_write_q <= 0;
-            mib_read_q <= 0;
             mib_addr_q <= 0;
             mib_wdata_q <= 0;
             mib_transaction <= 0;
             mib_complete <= 0;
             mib_result <= 0;
             mib_state <= 0;
+            mib_rd <= 0;
             mib_wr <= 0;
             mib_addr <= 0;
             mib_wdata <= 0;
@@ -347,18 +334,18 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             case (mib_state)
                 0 : if (mib_request_q != mib_complete) begin
                     mib_transaction <= mib_request_q;
-                    mib_read_q <= !mib_write_q;
                     mib_addr <= mib_addr_q;
                     mib_wdata <= mib_wdata_q;
                     // 地址先稳定一拍，供全速配置读口预译码。
                     mib_state <= 3;
                 end
                 3 : begin
-                    mib_read_q <= 0;
+                    mib_rd <= !mib_write_q;
                     mib_wr <= mib_write_q;
                     mib_state <= 1;
                 end
                 1 : if (mib_ready) begin
+                    mib_rd <= 0;
                     mib_wr <= 0;
                     if (mib_wr) begin
                         mib_complete <= mib_transaction;
