@@ -13,3 +13,15 @@
 /elinx/log4cpp.property
 
 __pycache__/
+.DS_Store
+
+# LaTeX temporary files
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+
+# Local backups and preview caches
+.backup/
+.preview/
