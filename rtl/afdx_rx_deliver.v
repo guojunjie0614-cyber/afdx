@@ -59,6 +59,9 @@ module afdx_rx_deliver #(
 
     // 每 8 个消息信息位独立保存读指针，避免组内译码驱动整片队列。
     // 副本和 rd_ptr 同拍复位、递增；选择仍在请求拍完成，不增加交付延迟。
+    // 空队列入队时 entry 与 dq_count 同拍更新，下一拍 HEAD_IDLE 转入 HEAD_SELECT，
+    // 再下一拍消费 selected；中间仅有一个预取沿，本级不能拆成两级寄存选择。
+    // bank1 的敏感字节由 rx_core 提供同拍源端镜像，保留这里的单级选择及指针拍次。
     genvar queue_bit;
     generate
         for (queue_bit = 0; queue_bit < DQ_WIDTH; queue_bit = queue_bit + 8) begin : queue_bank0
