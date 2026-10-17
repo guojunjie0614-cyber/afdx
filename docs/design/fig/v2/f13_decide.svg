@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="96pt" viewBox="0 0 450 96">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="33.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Good frame</text>
+<text x="33.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">rx_parse A / B</text>
+<rect x="76.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="109.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_map[VLID]</text>
+<text x="109.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">valid?</text>
+<rect x="152.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="185.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_cfg[idx]</text>
+<text x="185.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">en, net, len</text>
+<rect x="228.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="261.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Integrity</text>
+<text x="261.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">SN vs PSN</text>
+<rect x="304.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="337.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Redundancy</text>
+<text x="337.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">processing order</text>
+<rect x="380.00" y="6.00" width="66.00" height="30.00" rx="0" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="413.00" y="20.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Commit</text>
+<text x="413.00" y="28.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ring + rx_dq</text>
+<path d="M 66.00 21.00 L 76.00 21.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="76.00,21.00 71.00,23.10 71.00,18.90" fill="#000"/>
+<path d="M 142.00 21.00 L 152.00 21.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="152.00,21.00 147.00,23.10 147.00,18.90" fill="#000"/>
+<path d="M 218.00 21.00 L 228.00 21.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="228.00,21.00 223.00,23.10 223.00,18.90" fill="#000"/>
+<path d="M 294.00 21.00 L 304.00 21.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="304.00,21.00 299.00,23.10 299.00,18.90" fill="#000"/>
+<path d="M 370.00 21.00 L 380.00 21.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="380.00,21.00 375.00,23.10 375.00,18.90" fill="#000"/>
+<rect x="76.00" y="66.00" width="66.00" height="26.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
+<text x="109.00" y="78.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Unknown VL</text>
+<text x="109.00" y="86.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">a/b_unk</text>
+<path d="M 109.00 36.00 L 109.00 66.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="109.00,66.00 106.90,61.00 111.10,61.00" fill="#000"/>
+<text x="112.00" y="54.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">miss</text>
+<rect x="152.00" y="66.00" width="66.00" height="26.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
+<text x="185.00" y="78.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Config reject</text>
+<text x="185.00" y="86.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">a/b_cfg</text>
+<path d="M 185.00 36.00 L 185.00 66.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="185.00,66.00 182.90,61.00 187.10,61.00" fill="#000"/>
+<text x="188.00" y="54.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">deny</text>
+<rect x="228.00" y="66.00" width="66.00" height="26.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
+<text x="261.00" y="78.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">IC drop</text>
+<text x="261.00" y="86.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">a/b_ic</text>
+<path d="M 261.00 36.00 L 261.00 66.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="261.00,66.00 258.90,61.00 263.10,61.00" fill="#000"/>
+<text x="264.00" y="54.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">fail</text>
+<rect x="304.00" y="66.00" width="66.00" height="26.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
+<text x="337.00" y="78.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">RM drop</text>
+<text x="337.00" y="86.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">rm_drop</text>
+<path d="M 337.00 36.00 L 337.00 66.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="337.00,66.00 334.90,61.00 339.10,61.00" fill="#000"/>
+<text x="340.00" y="54.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">dup</text>
+<rect x="380.00" y="66.00" width="66.00" height="26.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
+<text x="413.00" y="78.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Queue full</text>
+<text x="413.00" y="86.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">a/b_ovf</text>
+<path d="M 413.00 36.00 L 413.00 66.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="413.00,66.00 410.90,61.00 415.10,61.00" fill="#000"/>
+<text x="416.00" y="54.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">full</text>
+<text x="0.00" y="54.00" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">ic_en / rm_en = 0</text>
+<text x="0.00" y="62.00" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">skips that step</text>
+</svg>

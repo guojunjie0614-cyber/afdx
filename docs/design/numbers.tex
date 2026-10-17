@@ -1,0 +1,43 @@
+% 全文引用的实测数字。最终版本重跑回归和综合后只改这里。
+% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/。
+\newcommand{\CodeVer}{12cb849}
+% 性能（tb_sys_perf，77 条 VL，1471 字节，BAG = 1 ms，双向，稳定测量 21 ms）
+\newcommand{\Thru}{906.136}
+\newcommand{\ThruEightyOne}{953.208}
+\newcommand{\ThruTen}{117.680}
+\newcommand{\Lat}{24.408}
+\newcommand{\Jit}{0}
+\newcommand{\Ttx}{0.248}
+\newcommand{\Trx}{11.952}
+% 突发（tb_gbe_burst）
+\newcommand{\BurstSevSeven}{959.272}
+\newcommand{\BurstEightOne}{1008.488}
+% RTC（tb_sys_rtc）
+\newcommand{\RtcIdle}{0}
+\newcommand{\RtcLoad}{10788}
+% 综合（eLinx 界面 Run Synthesis，EQ6HL130 / CSG484\_H，未布线估算）
+\newcommand{\Lut}{32847}
+\newcommand{\FF}{13869}
+\newcommand{\Clb}{4620}
+\newcommand{\Mem}{340}
+\newcommand{\Pins}{259}
+\newcommand{\LutPct}{24.12}
+\newcommand{\FFPct}{10.19}
+\newcommand{\ClbPct}{33.93}
+\newcommand{\MemPct}{28.33}
+\newcommand{\PinPct}{76.40}
+\newcommand{\Setup}{2.522}
+\newcommand{\Fmax}{182.548}
+\newcommand{\Hold}{0.068}
+% 命令行综合
+\newcommand{\CliCells}{29963}
+\newcommand{\CliSetup}{2.749}
+\newcommand{\CliFmax}{190.440}
+% 验证
+\newcommand{\RegCount}{38}
+\newcommand{\RegChecks}{1183249131}
+\newcommand{\RegIndep}{2305780}
+\newcommand{\SvcChecks}{1123}
+\newcommand{\CapChecks}{49924}
+\newcommand{\SnmpChecks}{699}
+\newcommand{\ElinxChecks}{9238}

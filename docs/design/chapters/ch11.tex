@@ -1,0 +1,26 @@
+\chapter{设计边界与后续工作}\label{ch:limit}
+
+\section{设计边界}
+
+\textbf{协议与容量边界。}
+\begin{itemize}
+  \item AFDX/IP：子 VL、IP 分片与重组、采样端口与队列端口语义、ICMP；发送的 UDP 校验和为 0，接收不按目的 IP 过滤。
+  \item SNMP：未实现 GetBulk、单请求多个变量绑定、v1 格式 Trap，noSuchInstance 语义尚不完整；私有对象使用演示用命名空间。
+  \item 615A：未实现信息操作和操作员定义卸载的后续传输、FIND、WAIT、ABORT、整文件重试、多文件加载，以及第 3 版新增 TFTP 选项的协商；TFTP ERROR 不核对来源端口，截断请求的长度检查尚不完整；LUH 不核对件号和硬件 ID，不处理支持文件、用户数据、扩展点、Load CRC-32、解压和解密。
+  \item RTC：不检查服务器 stratum 和全零时间戳。
+  \item 上板接口：接实体 PHY 所需的 RX\_CLK 弹性缓冲和 GTX\_CLK 输出（第~\ref{sec:clkrst}~节）；外部复位同步器。
+  \item 容量与调度：页池可驻留 85 条最长消息；跨 VL 不保证全局入队顺序，提前候选可使小帧等待；双网非冗余满速输入可填满环或 DQ，溢出时计数；到达间隔超过 \code{skew_max} 的副本可能再次交付。
+\end{itemize}
+
+\textbf{指标的适用条件。}抖动和时延的设计值以第~\ref{sec:cfgrule}~节的配置约束为前提：带宽不超过线速、任一 VL 前面可能排着的帧按式~(\ref{eq:jitter}) 不超过 5828 拍、交付总率低于每拍一字节。配置之间的组合关系由主机保证，硬件不检查。
+
+\textbf{验证范围。}本设计的功能验证基于 RTL 和综合后网表仿真（第~\ref{ch:verif}~章）；综合时序为未布线估算。尚未完成完整性能矩阵的网表仿真，布局布线网表仍有 RAM 位序与配套模型不一致的问题；本设计未进行布局布线时序签核和实体硬件测量，RTC 未在独立晶振和非对称链路下验证。
+
+\section{后续工作}
+
+\begin{enumerate}
+  \item 完成布局布线，针对服务模块中的长组合路径（表~\ref{tab:critpath}）做流水切分，完成 125~MHz 时序收敛。
+  \item 上板测试 GMII 接口，在实体网络上测量吞吐、时延和对时误差。
+  \item 在 \code{tx_cfg} 保留字中增加每条 VL 的初始相位，由硬件错开同时启用的 VL，取代主机错开提交时刻。
+  \item 补充 SNMP GetBulk、615A 多文件加载等协议功能。
+\end{enumerate}

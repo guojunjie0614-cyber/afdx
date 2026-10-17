@@ -1,0 +1,55 @@
+\chapter{概述}\label{ch:intro}
+
+\section{设计目标}
+
+AFDX 端系统是航电网络中主机与交换网络之间的接口：它要按每条虚拟链路（VL）的带宽分配间隔（BAG）把应用消息装成以太网帧，同时从 A、B 两路网络发出；接收时逐帧检查完整性，把两路冗余副本合并为唯一一份交付给应用。赛题要求端系统支持 ARINC 664 Part 7 通信、高完整性通信、SNMP 网络管理、ARINC 615A 数据加卸载和 RTC 时钟同步五项功能，并给出传输速率 100~Mbps、端到端时延 1--2~ms、抖动几十微秒、128 条发送 VL 和 4096 条接收 VL 的技术指标。
+
+在 FPGA 上实现这些要求，核心矛盾在于逐链路状态的规模与逐字节线速通路之间：4096 条接收 VL 和 128 条发送 VL 的配置、序号与定时状态若放进触发器，资源随链路数线性膨胀；若放进块 RAM，每帧的查表、比较和回写又会落到关键路径上，难以在每拍一字节的数据通路下保持确定的发送时刻。
+
+本设计实现了完整的 AFDX 端系统 \code{AFDX_top}，以单一 125~MHz 时钟驱动两路八位 GMII，全部由 Verilog RTL 自主实现，经 eLinx~3.0.7 综合、ModelSim 仿真验证。设计有三项关键技术：
+\begin{enumerate}
+  \item \textbf{表加单主状态机。}为在线速下同时支撑 128 条发送 VL 和 4096 条接收 VL，所有逐 VL 配置和状态存放在块 RAM 中，每张表只由一个状态机按固定流水读写，数据通路每拍处理一个字节。这一结构在 EQ6HL130 上只占用 \LutPct\% 的 LUT 和 \MemPct\% 的存储块。
+  \item \textbf{提前选、到点发的发送调度。}为使发送时刻严格对齐 BAG，发送引擎在到期前 512 拍选出候选 VL 并预先组好帧头，到点即发。只要没有其他 VL 的帧争用线路，帧的第一个前导字节就恰在允许时刻出现，调度本身不引入抖动。
+  \item \textbf{自研双网 MAC。}一个状态机驱动 A、B 两套 CRC 与输出寄存器，两网天然同拍。不经用户侧 FIFO，空闲发送延迟为 0 拍；与 eLinx 生成的三速以太网 IP 配置相比，单口 LUT 用量为 556 对 1400。
+\end{enumerate}
+在此基础上，端系统每网每方向的线速载荷容量为 956.44~Mbps，是赛题门限的 9.5 倍；线路空闲时应用到应用的时延上界为 26.360~µs，比 1~ms 要求低近两个数量级（推导见第~\ref{sec:budget}~节）。
+
+\section{主要成果}
+
+表~\ref{tab:func} 列出赛题五项功能的实现要点，表~\ref{tab:perf} 给出技术指标的设计值。设计值均由结构参数推导，推导过程见第~\ref{sec:budget}~节；仿真实测结果见测试报告。
+
+\begin{table}\centering\small
+\caption{赛题功能与实现要点}\label{tab:func}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.4cm}L>{\raggedright\arraybackslash}p{2.0cm}}
+\toprule
+赛题功能 & 实现要点 & 详见 \\
+\midrule
+ARINC 664 P7 通信 & 128 条发送 VL 按 BAG 调度，UDP/IP 封装，A、B 双网同时发送；4096 条接收 VL 按 VLID 直接查表 & 第~\ref{ch:tx}、\ref{ch:rx}~章 \\
+高完整性通信 & FCS、帧长、IP/UDP 头逐帧检查；每网独立的序号完整性检查；按处理顺序交付首个有效副本的冗余管理 & 第~\ref{ch:rx}~章 \\
+SNMP 网络管理 & v1/v2c 的 Get、GetNext、Set 和 v2 Trap，36 个管理对象，BER 逐字节编解码 & 第~\ref{sec:snmp}~节 \\
+615A 数据加卸载 & 基于 TFTP 的上传（LUI、LUS、LUR、LUH、数据文件）与介质定义卸载，8~KiB 加载区，CRC-16 校验 & 第~\ref{sec:a615}~节 \\
+RTC 时钟同步 & SNTPv4 主从对时，32 位秒加纳秒，8~ns 分辨率，无乘除法器的时间戳换算 & 第~\ref{sec:rtc}~节 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}\centering\small
+\caption{技术指标与设计值}\label{tab:perf}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{4.2cm}L}
+\toprule
+指标 & 选题指南要求 & 设计值 & 依据 \\
+\midrule
+传输速率 & 100~Mbps & 每网每方向载荷容量 956.44~Mbps & 每拍一字节；1471 字节满载帧连同前导、FCS 和帧间隔占 1538 拍（第~\ref{sec:budget}~节） \\
+端到端时延 & $<$1--2~ms & 线路空闲时 $\le$26.360~µs & 发送 $\le$100 拍、线路 1525 拍、接收首字节 $\le$200 拍、逐字节交付 $n-1$ 拍；线路争用另加式~(\ref{eq:jitter}) 的等待 \\
+发送抖动 & $\le$ 几十微秒 & 无线路争用时为 0；争用时不超过前面帧的占线、提前授权等待与扫描开销之和，满足配置约束时不超过 50~µs & 提前 512 拍选出、到点起始；BAG 为 $2^k$~ms 时争用只造成一次相位后移（第~\ref{sec:jitter}~节） \\
+帧格式 & VLID、SN 1--255，载荷 $\le$1471~B，帧长 $\le$1518~B & 全部按规定生成和检查 & 帧长 $47+\max(n,17)$，64--1518 字节（第~\ref{sec:frame}~节） \\
+VL 容量 & 128 发送 / 4096 接收 & 128 / 4096，接收 VLID 任意 & 逐 VL 状态存块 RAM；65536 项 VLID 映射表 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+综合后估算方面，占用 LUT \Lut、触发器 \FF、CLB \Clb、存储块 \Mem，8~ns 约束下建立裕量 +\Setup~ns，估算最高频率 \Fmax~MHz（第~\ref{ch:timing}~章）。
+
+\section{文档结构}
+
+第~\ref{ch:req}~章：赛题要求和官方答疑到可验证设计规格的分解；第~\ref{ch:arch}~章：总体架构与关键设计决策；第~\ref{ch:if}~章：顶层接口、线路帧格式与模块间接口；第~\ref{ch:tx}、\ref{ch:rx}~章：收发通路；第~\ref{ch:svc}~章：RTC、SNMP、615A 三项服务；第~\ref{ch:cfg}~章：配置表、异常处理、主机编程流程与配置约束；第~\ref{ch:timing}~章：时序设计规则与资源；第~\ref{ch:verif}~章：验证观察手段；第~\ref{ch:limit}~章：设计边界与后续工作。附录：源文件、参数、服务寄存器、内部接口信号表与术语和参考文献。

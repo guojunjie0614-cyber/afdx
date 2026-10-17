@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="350pt" height="166pt" viewBox="0 0 350 166">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="74.00" width="52.00" height="26.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="26.00" y="86.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">INIT</text>
+<text x="26.00" y="94.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">clear tables</text>
+<rect x="94.00" y="66.00" width="64.00" height="42.00" rx="4" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="126.00" y="81.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">IDLE</text>
+<text x="126.00" y="90.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">scan 1 VL</text>
+<text x="126.00" y="99.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">per 2 cycles</text>
+<rect x="230.00" y="18.00" width="120.00" height="26.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="290.00" y="30.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">(1) START</text>
+<text x="290.00" y="38.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">next_time = t + BAG</text>
+<rect x="230.00" y="74.00" width="120.00" height="26.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="290.00" y="86.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">(2) ENQ</text>
+<text x="290.00" y="94.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">check, link to queue</text>
+<rect x="230.00" y="130.00" width="120.00" height="26.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="290.00" y="142.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">(3) GRANT</text>
+<text x="290.00" y="150.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">read cfg, dequeue, SN</text>
+<path d="M 52.00 87.00 L 94.00 87.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="94.00,87.00 89.00,89.10 89.00,84.90" fill="#000"/>
+<text x="73.00" y="84.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">init</text>
+<text x="162.00" y="64.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">START &gt; ENQ &gt; GRANT</text>
+<path d="M 110.00 66.00 L 110.00 25.00 L 230.00 25.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="230.00,25.00 225.00,27.10 225.00,22.90" fill="#000"/>
+<text x="172.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ack_pending</text>
+<text x="172.00" y="22.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">(t_start latched)</text>
+<path d="M 230.00 37.00 L 138.00 37.00 L 138.00 66.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="138.00,66.00 135.90,61.00 140.10,61.00" fill="#000"/>
+<text x="184.00" y="47.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">next_time written, 3 cycles</text>
+<path d="M 158.00 81.00 L 230.00 81.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="230.00,81.00 225.00,83.10 225.00,78.90" fill="#000"/>
+<text x="194.00" y="78.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">want_enq</text>
+<path d="M 230.00 93.00 L 158.00 93.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="158.00,93.00 163.00,90.90 163.00,95.10" fill="#000"/>
+<text x="194.00" y="104.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">enq_ack, 5 cycles</text>
+<path d="M 110.00 108.00 L 110.00 149.00 L 230.00 149.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="230.00,149.00 225.00,151.10 225.00,146.90" fill="#000"/>
+<text x="184.00" y="162.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">want_grant</text>
+<path d="M 230.00 137.00 L 138.00 137.00 L 138.00 108.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="138.00,108.00 140.10,113.00 135.90,113.00" fill="#000"/>
+<text x="184.00" y="133.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">grant_valid, 8 cycles</text>
+</svg>

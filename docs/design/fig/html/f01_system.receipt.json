@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/mac_max/Desktop/afdx/docs/design/fig/src/f01_system.architecture.json",
+  "output": "/Users/mac_max/Desktop/afdx/docs/design/fig/html/f01_system.html",
+  "specification": {
+    "sha256": "4f23aec12589c7e772ec4f087134af6b5a6e71435271f952ac7a7a35d8477ad0",
+    "bytes": 4262
+  },
+  "artifact": {
+    "sha256": "a9c5f38f9329abfff8e52c7d301a7aa5ff3b6cedd11cb477343ed290898df8be",
+    "bytes": 711741
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

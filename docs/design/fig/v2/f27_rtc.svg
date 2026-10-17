@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="341pt" viewBox="0 0 450 341">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="26.00" width="62.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="31.00" y="39.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">TX_IDLE</text>
+<text x="31.00" y="47.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">reply or period</text>
+<rect x="92.00" y="26.00" width="62.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="123.00" y="39.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">TX_GROUPS</text>
+<text x="123.00" y="47.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">two 8:1 / 4:1</text>
+<rect x="184.00" y="26.00" width="62.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="215.00" y="39.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">TX_WORD</text>
+<text x="215.00" y="47.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">pick word</text>
+<rect x="276.00" y="26.00" width="62.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="307.00" y="39.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">TX_BYTE</text>
+<text x="307.00" y="47.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">pick byte</text>
+<rect x="368.00" y="26.00" width="78.00" height="28.00" rx="4" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="407.00" y="39.02" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">TX_HANDSHAKE</text>
+<text x="407.00" y="47.03" font-size="6.5" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_ready</text>
+<path d="M 62.00 40.00 L 92.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="92.00,40.00 87.00,42.10 87.00,37.90" fill="#000"/>
+<path d="M 154.00 40.00 L 184.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="184.00,40.00 179.00,42.10 179.00,37.90" fill="#000"/>
+<path d="M 246.00 40.00 L 276.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="276.00,40.00 271.00,42.10 271.00,37.90" fill="#000"/>
+<path d="M 338.00 40.00 L 368.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="368.00,40.00 363.00,42.10 363.00,37.90" fill="#000"/>
+<path d="M 403.00 54.00 L 403.00 68.00 L 123.00 68.00 L 123.00 54.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="123.00,54.00 125.10,59.00 120.90,59.00" fill="#000"/>
+<text x="263.00" y="65.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">tx_ready &amp;&amp; tx_index &lt; 47</text>
+<path d="M 442.00 26.00 L 442.00 12.00 L 31.00 12.00 L 31.00 26.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="31.00,26.00 28.90,21.00 33.10,21.00" fill="#000"/>
+<text x="240.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">tx_ready &amp;&amp; tx_index == 47</text>
+<text x="225.00" y="83.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Transmit</text>
+<rect x="12.00" y="118.00" width="98.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="61.00" y="131.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
+<text x="61.00" y="139.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">await matched reply</text>
+<rect x="122.00" y="118.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="171.00" y="131.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">START_T2</text>
+<text x="171.00" y="139.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">decode_start</text>
+<rect x="232.00" y="118.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="281.00" y="131.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">WAIT_T2</text>
+<text x="281.00" y="139.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">wait decode_done</text>
+<rect x="342.00" y="118.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="391.00" y="131.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">START_T3</text>
+<text x="391.00" y="139.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">decode_start</text>
+<rect x="342.00" y="176.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="391.00" y="189.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">WAIT_T3</text>
+<text x="391.00" y="197.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">wait decode_done</text>
+<rect x="232.00" y="176.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="281.00" y="189.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">DIFFERENCES</text>
+<text x="281.00" y="197.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">t2−t1, t3−t4</text>
+<rect x="122.00" y="176.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="171.00" y="189.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">SUM</text>
+<text x="171.00" y="197.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">seconds, nanoseconds</text>
+<rect x="12.00" y="176.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="61.00" y="189.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">HALF</text>
+<text x="61.00" y="197.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">&gt;&gt;&gt; 1</text>
+<rect x="12.00" y="234.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="61.00" y="247.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">HALF_SECOND</text>
+<text x="61.00" y="255.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">+0.5 s if odd</text>
+<rect x="122.00" y="234.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="171.00" y="247.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">NORMALIZE_OFFSET</text>
+<text x="171.00" y="255.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">borrow / carry</text>
+<rect x="232.00" y="234.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="281.00" y="247.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ADD_OFFSET</text>
+<text x="281.00" y="255.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">clock + offset</text>
+<rect x="342.00" y="234.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="391.00" y="247.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">NORMALIZE_TIME</text>
+<text x="391.00" y="255.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">carry</text>
+<rect x="342.00" y="292.00" width="98.00" height="28.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="391.00" y="305.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">LATENCY</text>
+<text x="391.00" y="313.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">+32 ns</text>
+<rect x="232.00" y="292.00" width="98.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="281.00" y="305.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">APPLY</text>
+<text x="281.00" y="313.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">load, count</text>
+<path d="M 110.00 132.00 L 122.00 132.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="122.00,132.00 117.00,134.10 117.00,129.90" fill="#000"/>
+<text x="116.00" y="114.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">matched reply</text>
+<path d="M 220.00 132.00 L 232.00 132.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="232.00,132.00 227.00,134.10 227.00,129.90" fill="#000"/>
+<path d="M 330.00 132.00 L 342.00 132.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="342.00,132.00 337.00,134.10 337.00,129.90" fill="#000"/>
+<text x="336.00" y="114.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">decode_done</text>
+<path d="M 391.00 146.00 L 391.00 176.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="391.00,176.00 388.90,171.00 393.10,171.00" fill="#000"/>
+<path d="M 342.00 190.00 L 330.00 190.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="330.00,190.00 335.00,187.90 335.00,192.10" fill="#000"/>
+<text x="336.00" y="172.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">decode_done</text>
+<path d="M 232.00 190.00 L 220.00 190.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="220.00,190.00 225.00,187.90 225.00,192.10" fill="#000"/>
+<path d="M 122.00 190.00 L 110.00 190.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="110.00,190.00 115.00,187.90 115.00,192.10" fill="#000"/>
+<path d="M 61.00 204.00 L 61.00 234.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="61.00,234.00 58.90,229.00 63.10,229.00" fill="#000"/>
+<path d="M 110.00 248.00 L 122.00 248.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="122.00,248.00 117.00,250.10 117.00,245.90" fill="#000"/>
+<path d="M 220.00 248.00 L 232.00 248.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="232.00,248.00 227.00,250.10 227.00,245.90" fill="#000"/>
+<path d="M 330.00 248.00 L 342.00 248.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="342.00,248.00 337.00,250.10 337.00,245.90" fill="#000"/>
+<path d="M 391.00 262.00 L 391.00 292.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="391.00,292.00 388.90,287.00 393.10,287.00" fill="#000"/>
+<path d="M 342.00 306.00 L 330.00 306.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="330.00,306.00 335.00,303.90 335.00,308.10" fill="#000"/>
+<path d="M 232.00 306.00 L 5.00 306.00 L 5.00 132.00 L 12.00 132.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="12.00,132.00 7.00,134.10 7.00,129.90" fill="#000"/>
+<text x="225.00" y="337.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) Offset calculation</text>
+</svg>

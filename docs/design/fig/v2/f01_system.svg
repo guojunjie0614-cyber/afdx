@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="300pt" viewBox="0 0 450 300">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="70.00" y="0.00" width="316.00" height="300.00" rx="4" fill="none" stroke="#7F7F7F" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="74.00" y="8.60" font-size="7.0" text-anchor="start" fill="#333" font-weight="bold">AFDX_top  (125 MHz, single clock)</text>
+<rect x="78.00" y="16.00" width="146.00" height="92.00" rx="4" fill="none" stroke="#A9C6EA" stroke-width="1.2"/>
+<text x="82.00" y="24.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_svc</text>
+<polygon points="164.00,32.00 182.00,39.20 182.00,64.80 164.00,72.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
+<text x="173.00" y="54.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4:1</text>
+<text x="143.00" y="34.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">app</text>
+<path d="M 78.00 37.00 L 164.00 37.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="164.00,37.00 159.00,39.10 159.00,34.90" fill="#000"/>
+<text x="143.00" y="44.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">RTC</text>
+<path d="M 146.00 47.00 L 164.00 47.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="164.00,47.00 159.00,49.10 159.00,44.90" fill="#000"/>
+<text x="143.00" y="54.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">SNMP</text>
+<path d="M 146.00 57.00 L 164.00 57.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="164.00,57.00 159.00,59.10 159.00,54.90" fill="#000"/>
+<text x="143.00" y="64.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">615A</text>
+<path d="M 146.00 67.00 L 164.00 67.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="164.00,67.00 159.00,69.10 159.00,64.90" fill="#000"/>
+<text x="184.00" y="38.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">TX arbiter</text>
+<rect x="82.00" y="82.00" width="92.00" height="22.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
+<text x="128.00" y="91.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">RX dispatch</text>
+<text x="128.00" y="100.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">port claim</text>
+<rect x="258.00" y="18.00" width="120.00" height="26.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="318.00" y="30.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_rtc</text>
+<text x="318.00" y="38.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">SNTPv4 sync</text>
+<rect x="258.00" y="48.00" width="120.00" height="26.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="318.00" y="60.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_snmp</text>
+<text x="318.00" y="68.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">v1/v2c agent</text>
+<rect x="258.00" y="78.00" width="120.00" height="26.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="318.00" y="90.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_615a</text>
+<text x="318.00" y="98.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">615A target</text>
+<path d="M 258.00 25.00 L 224.00 25.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="224.00,25.00 229.00,22.90 229.00,27.10" fill="#000"/>
+<path d="M 224.00 37.00 L 258.00 37.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="258.00,37.00 253.00,39.10 253.00,34.90" fill="#000"/>
+<text x="241.00" y="33.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">tx / rx</text>
+<path d="M 258.00 55.00 L 224.00 55.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="224.00,55.00 229.00,52.90 229.00,57.10" fill="#000"/>
+<path d="M 224.00 67.00 L 258.00 67.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="258.00,67.00 253.00,69.10 253.00,64.90" fill="#000"/>
+<text x="241.00" y="63.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">tx / rx</text>
+<path d="M 258.00 85.00 L 224.00 85.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="224.00,85.00 229.00,82.90 229.00,87.10" fill="#000"/>
+<path d="M 224.00 97.00 L 258.00 97.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="258.00,97.00 253.00,99.10 253.00,94.90" fill="#000"/>
+<text x="241.00" y="93.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">tx / rx</text>
+<rect x="74.00" y="118.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#D9813F" stroke-width="1.2"/>
+<text x="78.00" y="126.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_tx_core</text>
+<rect x="78.00" y="132.00" width="62.00" height="22.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="109.00" y="146.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_buf</text>
+<rect x="146.00" y="132.00" width="104.00" height="22.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="198.00" y="146.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_engine</text>
+<rect x="256.00" y="132.00" width="70.00" height="22.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="291.00" y="146.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_builder</text>
+<rect x="332.00" y="132.00" width="46.00" height="22.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="355.00" y="146.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">mac_tx</text>
+<rect x="78.00" y="160.00" width="62.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="109.00" y="169.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_free</text>
+<text x="109.00" y="178.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">256-page FIFO</text>
+<rect x="146.00" y="160.00" width="104.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="198.00" y="169.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">cfg · state</text>
+<text x="198.00" y="178.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">mnext · desc</text>
+<rect x="256.00" y="160.00" width="70.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="291.00" y="169.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">payload 128 KiB</text>
+<text x="291.00" y="178.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pnext</text>
+<rect x="74.00" y="196.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#2F9688" stroke-width="1.2"/>
+<text x="78.00" y="204.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_rx_core</text>
+<rect x="78.00" y="210.00" width="62.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="109.00" y="224.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_deliver</text>
+<rect x="146.00" y="210.00" width="104.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="198.00" y="224.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_engine</text>
+<rect x="256.00" y="210.00" width="70.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="291.00" y="224.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_parse ×2</text>
+<rect x="332.00" y="210.00" width="46.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="355.00" y="224.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">mac_rx ×2</text>
+<rect x="146.00" y="238.00" width="104.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="198.00" y="247.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">map 65536 × 13</text>
+<text x="198.00" y="256.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">cfg · state</text>
+<rect x="256.00" y="238.00" width="70.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="291.00" y="247.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ring_a / b</text>
+<text x="291.00" y="256.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">2 × 4 KiB</text>
+<rect x="0.00" y="28.00" width="62.00" height="76.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="31.00" y="60.81" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Application</text>
+<text x="31.00" y="69.63" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">app_tx_*</text>
+<text x="31.00" y="78.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">app_rx_*</text>
+<rect x="394.00" y="132.00" width="56.00" height="100.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="422.00" y="176.81" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Network</text>
+<text x="422.00" y="185.63" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">A / B</text>
+<text x="422.00" y="194.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">8-bit GMII</text>
+<rect x="0.00" y="274.00" width="62.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="31.00" y="285.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Host</text>
+<text x="31.00" y="293.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">cfg_* bus</text>
+<path d="M 62.00 37.00 L 78.00 37.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<path d="M 82.00 93.00 L 62.00 93.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="62.00,93.00 67.00,90.90 67.00,95.10" fill="#000"/>
+<path d="M 182.00 52.00 L 196.00 52.00 L 196.00 116.00 L 132.00 116.00 L 132.00 132.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="132.00,132.00 129.90,127.00 134.10,127.00" fill="#000"/>
+<path d="M 78.00 221.00 L 66.00 221.00 L 66.00 110.00 L 178.00 110.00 L 178.00 93.00 L 174.00 93.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="174.00,93.00 179.00,90.90 179.00,95.10" fill="#000"/>
+<path d="M 378.00 143.00 L 394.00 143.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="394.00,143.00 389.00,145.10 389.00,140.90" fill="#000"/>
+<path d="M 394.00 221.00 L 378.00 221.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="378.00,221.00 383.00,218.90 383.00,223.10" fill="#000"/>
+<rect x="78.00" y="274.00" width="184.00" height="24.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
+<text x="170.00" y="285.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_cfg</text>
+<text x="170.00" y="293.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">registers · 27 counters · table writes</text>
+<rect x="268.00" y="274.00" width="114.00" height="24.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
+<text x="325.00" y="285.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_timebase</text>
+<text x="325.00" y="293.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">now[31:0] · now_c[15:0]</text>
+<path d="M 62.00 286.00 L 78.00 286.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="78.00,286.00 73.00,288.10 73.00,283.90" fill="#000"/>
+<polygon points="62.00,286.00 67.00,283.90 67.00,288.10" fill="#000"/>
+</svg>

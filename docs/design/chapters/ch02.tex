@@ -1,0 +1,97 @@
+\chapter{需求分析与规格分解}\label{ch:req}
+
+本章把选题指南的功能、指标和接口要求，连同官方答疑的口径，分解为编号的设计规格，并给出规格到设计章节和测试用例的追溯关系。下文以 R$n$ 表示官方《FPGA 创新大赛问题汇总》（1010 版）Sheet1 的第 $n$ 行。
+
+\section{赛题需求}
+
+选题指南（正文第 2--4 页）对 AFDX 端系统提出三类要求：
+\begin{itemize}
+  \item \textbf{功能：}ARINC 664 Part 7 通信、高完整性数据通信、SNMP 网络管理、615A 数据加卸载、RTC 时钟同步。
+  \item \textbf{技术指标：}传输速率 100~Mbps；帧格式基于 IEEE 802.3 加 ARINC 664 扩展，含 VLID 和 1--255 的序列号，有效载荷不超过 1471 字节，总帧长不超过 1518 字节；端到端时延小于 1--2~ms，抖动不超过几十微秒；最多 128 条发送 VL、4096 条接收 VL。
+  \item \textbf{接口与编码：}顶层模块统一采用 \code{AFDX_top} 模板的 8 个端口；端口、信号和寄存器用小写，参数用大写，重要代码段简洁注释。
+\end{itemize}
+
+\section{官方答疑口径}
+
+表~\ref{tab:qa} 汇总与本设计相关的答疑及本设计的处理方式。
+
+\begin{table}\centering\small
+\caption{官方答疑与本设计的处理}\label{tab:qa}
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{5.2cm}L}
+\toprule
+答疑 & 要点 & 本设计的处理 \\
+\midrule
+R3、R61 & MAC 接口为 GMII，即 PHY 接口；MII 可能达不到吞吐 & 顶层 8 个端口承载 A 网八位 GMII 字节流，含前导和 FCS \\
+R30 & 不绑定器件型号 & 选用 eLinx 中的 EQ6HL130，CSG484\_H 封装 \\
+R46 & MAC 可调用 eLinx IP & 自研双网 MAC（第~\ref{sec:mactx}~节） \\
+R47、R48 & 不规定协议版本，参考协议规范 & 按表~\ref{tab:proto} 所列规范实现 \\
+R49 & 可酌情增加接口 & 新增 B 网、应用、配置和事件端口（第~\ref{ch:if}~章） \\
+R50、R62 & ready 信号可不用；valid 即本拍字节有效 & \code{rx_ready} 不使用；\code{tx_ready} 表示初始化完成 \\
+R58 & 吞吐率达到 100~Mbps & 以去重后有效载荷计，设计容量 956.44~Mbps（第~\ref{sec:budget}~节） \\
+R59 & 时钟频率与接口速率匹配 & 125~MHz 时钟，GMII 每拍一字节 \\
+R60 & GMII 接口时延不超过 2~ms & 以应用口到应用口计时，包含收发两侧全部处理；线路空闲上界 26.360~µs \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+关于 R60 的计时边界：本设计从应用提交消息末字节量到对端应用交付末字节，只扣除测试设定的线路延迟。这一区间包含发送排队、组帧、MAC、线路串行和接收检查的全部时间，覆盖了 GMII 到 GMII 的区间，因此是更严格的口径。
+
+\section{设计规格}
+
+表~\ref{tab:spec} 把上述需求分解为编号规格。F 为功能规格，P 为性能规格，I 为接口规格，C 为实现约束。
+
+\begin{longtable}{>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{10.2cm}}
+\caption{设计规格}\label{tab:spec}\\
+\longtablehead{3}{编号 & 规格 & 内容}
+F1 & 用户数据发送 & 每端 128 条发送 VL，每条独立配置 BAG（以时钟周期计，不超过 $2^{30}$）、VLID、源/目的 IP 与端口、最大载荷和队列深度；消息 1--1471 字节；按 VL 配置从 A、B 一网或两网发送 \\
+F2 & 用户数据接收 & 4096 条接收 VL，任意 16 位 VLID 可映射；检查前导、FCS、帧长、IP 头校验和、UDP 长度与校验和；每网独立的完整性检查；启用冗余管理且副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次 \\
+F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；community 校验 \\
+F4 & 615A 数据加卸载 & 基于 TFTP 的上传操作和介质定义卸载；LUH 头文件与数据文件 CRC-16 校验；超时重传 \\
+F5 & RTC 时钟同步 & SNTPv4 主从对时；32 位秒加 32 位纳秒；回应须回显本次请求的 Transmit 时间戳 \\
+P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps \\
+P2 & 端到端时延 & 不超过 2000~µs \\
+P3 & 发送抖动 & 不超过 50~µs（“几十微秒”的检查取值） \\
+P4 & 帧格式 & 帧长 64--1518 字节（含 FCS）；SN 复位后首帧为 0，之后 1--255 循环 \\
+P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用 \\
+I1 & 官方端口 & \code{AFDX_top} 的 8 个端口名称、方向和位宽不变 \\
+I2 & 线路接口 & A、B 两路八位 GMII，每拍一字节，帧间隔不少于 12 拍 \\
+I3 & 扩展接口 & 应用发送/接收、配置总线、统计事件端口 \\
+C1 & 时钟 & 单一 125~MHz 时钟，8~ns 约束下综合建立裕量不小于 2.0~ns \\
+C2 & 编码规范 & 信号小写、参数大写；每个模块开头说明作用、接口和关键时序 \\
+\end{longtable}
+
+\Needspace{8\baselineskip}
+\section{协议依据}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.2cm-6\tabcolsep\relax}}
+\caption{协议依据与版本}\label{tab:proto}\\
+\longtablehead{3}{功能 & 依据 & 实现范围}
+AFDX 网络 & ARINC 664 Part 7（2005-06-27） & 帧格式、VL 与 BAG、完整性检查、冗余管理 \\
+数据加卸载 & ARINC 615A-2（2002-05-10）、ARINC 665-1、RFC 1350 & 上传、介质定义卸载；协议文件版本 A4，兼容 A3 \\
+网络管理 & RFC 1157、RFC 3416、RFC 3418 & SNMPv1/v2c，BER 编码 \\
+时钟同步 & RFC 4330 & SNTPv4 48 字节报文 \\
+\end{longtable}
+
+\section{追溯矩阵}
+
+表~\ref{tab:trace} 给出每条规格对应的设计章节和验证用例，测试用例的结果见测试报告。
+
+\begin{table}\centering\small
+\caption{规格追溯矩阵}\label{tab:trace}
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{3.0cm}L}
+\toprule
+规格 & 设计章节 & 验证用例 \\
+\midrule
+F1 & \ref{sec:txbuf}--\ref{sec:mactx} & \code{tb_tx_basic}、\code{tb_tx_bag}、\code{tb_tx_multi}、\code{tb_tx_drop}、\code{tb_sys_load} \\
+F2 & \ref{sec:macrx}--\ref{sec:rxdeliver} & \code{tb_rx_basic}、\code{tb_rx_fault}、\code{tb_rx_icrm}、\code{tb_rm_phase}、\code{tb_sys_fault} \\
+F3 & \ref{sec:snmp} & \code{tb_sys_snmp}、\code{tb_sys_snmp_settrap}、\code{tb_judge_snmp} \\
+F4 & \ref{sec:a615} & \code{tb_sys_615a}、\code{tb_net_services} \\
+F5 & \ref{sec:rtc} & \code{tb_sys_rtc}、\code{tb_rtc_recovery}、\code{tb_rtc_originate} \\
+P1--P3 & \ref{sec:budget}、\ref{sec:txeng} & \code{tb_sys_perf}、\code{tb_gbe_burst} \\
+P4 & \ref{sec:frame} & \code{tb_mac_tx}、\code{tb_mac_rx}、\code{tb_rx_icrm} \\
+P5 & \ref{sec:txtables}、\ref{sec:rxtables} & \code{tb_judge_capacity}、\code{tb_rx_load} \\
+I1--I3 & 第~\ref{ch:if}~章 & \code{tb_sys_net}、\code{tb_sys_cfg}、\code{tb_elinx} \\
+C1、C2 & 第~\ref{ch:timing}~章 & 综合时序报告、网表仿真 \\
+\bottomrule
+\end{tabularx}
+\end{table}

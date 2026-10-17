@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="160pt" viewBox="0 0 450 160">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="4.00" width="62.00" height="18.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="31.00" y="16.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">Application</text>
+<rect x="0.00" y="26.00" width="62.00" height="18.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="31.00" y="38.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_rtc</text>
+<rect x="0.00" y="48.00" width="62.00" height="18.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="31.00" y="60.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_snmp</text>
+<rect x="0.00" y="70.00" width="62.00" height="18.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="31.00" y="82.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_615a</text>
+<polygon points="96.00,12.00 114.00,24.96 114.00,71.04 96.00,84.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
+<text x="105.00" y="50.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4:1</text>
+<path d="M 62.00 13.00 L 96.00 13.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="96.00,13.00 91.00,15.10 91.00,10.90" fill="#000"/>
+<path d="M 62.00 35.00 L 96.00 35.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="96.00,35.00 91.00,37.10 91.00,32.90" fill="#000"/>
+<path d="M 62.00 57.00 L 96.00 57.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="96.00,57.00 91.00,59.10 91.00,54.90" fill="#000"/>
+<path d="M 62.00 79.00 L 96.00 79.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="96.00,79.00 91.00,81.10 91.00,76.90" fill="#000"/>
+<rect x="56.00" y="104.00" width="98.00" height="22.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
+<text x="105.00" y="118.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">busy · owner · turn</text>
+<path d="M 105.00 104.00 L 105.00 84.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<path d="M 105.00 84.00 L 105.00 77.52" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="105.00,77.52 107.10,82.52 102.90,82.52" fill="#000"/>
+<rect x="140.00" y="33.00" width="60.00" height="30.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="170.00" y="47.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_core</text>
+<text x="170.00" y="55.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">m_*</text>
+<path d="M 114.00 48.00 L 140.00 48.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="140.00,48.00 135.00,50.10 135.00,45.90" fill="#000"/>
+<text x="127.00" y="45.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">m_*</text>
+<text x="100.00" y="156.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Transmit arbitration</text>
+<rect x="228.00" y="4.00" width="62.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="259.00" y="13.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_core</text>
+<text x="259.00" y="22.23" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">d_*</text>
+<rect x="388.00" y="4.00" width="62.00" height="22.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="419.00" y="18.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">Services</text>
+<rect x="228.00" y="52.00" width="78.00" height="30.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="267.00" y="66.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">Port claim</text>
+<text x="267.00" y="74.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">RTC · SNMP · 615A</text>
+<path d="M 290.00 15.00 L 388.00 15.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="388.00,15.00 383.00,17.10 383.00,12.90" fill="#000"/>
+<text x="338.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">broadcast</text>
+<path d="M 296.00 15.00 L 296.00 44.00 L 240.00 44.00 L 240.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="240.00,52.00 237.90,47.00 242.10,47.00" fill="#000"/>
+<text x="264.00" y="41.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">d_dport</text>
+<rect x="328.00" y="86.00" width="6.00" height="20.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<path d="M 329.00 106.00 L 331.00 103.00 L 333.00 106.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<text x="334.00" y="83.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">Hold claim</text>
+<polygon points="360.00,42.00 374.00,49.56 374.00,76.44 360.00,84.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
+<text x="367.00" y="65.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">2:1</text>
+<path d="M 306.00 67.00 L 346.00 67.00 L 346.00 50.00 L 360.00 50.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="360.00,50.00 355.00,52.10 355.00,47.90" fill="#000"/>
+<text x="326.00" y="64.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">claim (OR)</text>
+<path d="M 314.00 67.00 L 314.00 92.00 L 328.00 92.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="328.00,92.00 323.00,94.10 323.00,89.90" fill="#000"/>
+<path d="M 334.00 96.00 L 352.00 96.00 L 352.00 74.00 L 360.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="360.00,74.00 355.00,76.10 355.00,71.90" fill="#000"/>
+<text x="354.00" y="47.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">0</text>
+<text x="357.00" y="71.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">1</text>
+<path d="M 340.00 96.00 L 340.00 114.00 L 320.00 114.00 L 320.00 100.00 L 328.00 100.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="328.00,100.00 323.00,102.10 323.00,97.90" fill="#000"/>
+<path d="M 367.00 124.00 L 367.00 84.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<path d="M 367.00 84.00 L 367.00 80.22" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="367.00,80.22 369.10,85.22 364.90,85.22" fill="#000"/>
+<text x="373.00" y="137.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">rx_active</text>
+<path d="M 390 34 H 397.2 A 12.0 12.0 0 0 1 397.2 58 H 390 Z" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<circle cx="388.3" cy="52.0" r="1.7" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<path d="M 302.00 15.00 L 302.00 40.00 L 390.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="390.00,40.00 385.00,42.10 385.00,37.90" fill="#000"/>
+<text x="346.00" y="37.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">d_valid</text>
+<path d="M 374.00 63.00 L 378.00 63.00 L 378.00 52.00 L 386.60 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="386.60,52.00 381.60,54.10 381.60,49.90" fill="#000"/>
+<rect x="420.00" y="34.00" width="30.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="435.00" y="49.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">App</text>
+<path d="M 409.20 46.00 L 420.00 46.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="420.00,46.00 415.00,48.10 415.00,43.90" fill="#000"/>
+<circle cx="296" cy="15" r="1.2" fill="#000"/>
+<circle cx="302" cy="15" r="1.2" fill="#000"/>
+<circle cx="314" cy="67" r="1.2" fill="#000"/>
+<circle cx="340" cy="96" r="1.2" fill="#000"/>
+<text x="343.00" y="156.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) Receive dispatch</text>
+</svg>

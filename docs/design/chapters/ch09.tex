@@ -1,0 +1,124 @@
+\chapter{时序与资源}\label{ch:timing}
+
+\section{时序设计规则}
+
+为使 4096 条 VL 的查表通路和逐字节数据通路都能在 8~ns 内完成，全部 RTL 遵守表~\ref{tab:rules} 的十一条规则。规则在编码前确定，并在每次综合后用时序报告复核。
+
+\begin{table}\centering\small
+\caption{时序设计规则}\label{tab:rules}
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{0.8cm}L}
+\toprule
+编号 & 规则 \\
+\midrule
+1 & 单时钟。 \\
+2 & 逐 VL 数据只放 RAM，不出现按 VL 数展开的触发器阵列或并行比较。 \\
+3 & 所有 RAM 只通过 \code{afdx_ram_sdp} 例化，地址、写数据和使能直接来自寄存器。小寄存器组注明用途（载荷 FIFO 8 项、归还 FIFO 4 项、接收描述 32 项）。 \\
+4 & RAM 读出先进寄存器，再做加、减、比较；中间最多一级不超过 4 选 1 的选择。综合估算：RAM 读出到寄存器 2.7~ns，直接接 32 位减法则为 4.4~ns。 \\
+5 & 一拍最多一级 32 位算术；不用乘法器和除法器，地址用位拼接。 \\
+6 & 多于 8 选 1 的多路选择分两拍。 \\
+7 & 数据逐拍推进，不在两字节之间插入额外处理周期；RAM 和算术用寄存流水，帧头期间预读。 \\
+8 & 同一拍读写同一地址的结果视为不确定，设计不依赖它。 \\
+9 & 模块输出以寄存器为主；组合例外为 ready 握手、\code{cfg_ok}，以及 \code{afdx_svc} 的数据选择与接收分发直通，后者只做选择和门控。 \\
+10 & 单一 125~MHz、8~ns 约束下综合 setup 裕量不小于 2.0~ns，不加 false path 或多周期例外。 \\
+11 & 综合报告的 RAM 写数据 hold 值逐项记录并分析来源。 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+规则 2 和 4 是“表加单主状态机”结构的基础：逐 VL 状态全部在 RAM 中，每张表只由一个状态机按固定流水访问，每拍的逻辑深度与 VL 数量无关。规则 5 使 RTC 的时间戳换算和偏差计算也拆成每拍一级加减，因此三个服务模块的路径深度与收发核心处于同一量级。
+
+\section{存储预算}
+
+全部存储都由 \code{afdx_ram_sdp} 例化，按声明的深度和位宽计算逻辑存储位数，见表~\ref{tab:ram}。综合工具把这些逻辑 RAM 映射到器件的存储块，报告共用 \Mem/1200 个（\MemPct\%）。
+
+\begin{table}\centering\small
+\caption{存储预算（逻辑位数）}\label{tab:ram}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedleft\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{2.2cm}L}
+\toprule
+表 & 深度$\times$位宽 & 位数 & 说明 \\
+\midrule
+\code{tx_payload} & 131072$\times$8 & 1048576 & 256 页 $\times$ 512 字节 \\
+\code{tx_cfg} & 1024$\times$32 & 32768 & 128 条 VL $\times$ 8 字 \\
+\code{tx_desc} & 256$\times$44 & 11264 & 每页一项 \\
+\code{tx_state} & 128$\times$63 & 8064 & 每条 VL 一项 \\
+\code{tx_mnext/pnext/free} & 3$\times$256$\times$8 & 6144 & 链表与空闲页 FIFO \\
+\midrule
+\code{rx_map} & 65536$\times$13 & 851968 & 任意 VLID 直接映射 \\
+\code{rx_state} & 4096$\times$44 & 180224 & 每条 VL 一项 \\
+\code{rx_cfg} & 4096$\times$32 & 131072 & 每条 VL 一字 \\
+\code{rx_ring_a/b} & 2$\times$4096$\times$8 & 65536 & 每网 4~KiB \\
+\midrule
+SNMP 请求、回应 & 2$\times$256$\times$8 & 4096 & \\
+615A 五块 & --- & 102400 & 收发报文各 1~KiB，LUR 512~B，LUH 2~KiB，加载区 8~KiB \\
+\midrule
+合计 & --- & 2442112 & 发送 1106816，接收 1228800，服务 106496 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\code{tx_payload} 和 \code{rx_map} 两张深表占去四分之三。
+
+\section{综合结果}
+
+综合使用 eLinx~3.0.7，器件 EQ6HL130、CSG484\_H 封装，约束为单一 125~MHz 时钟，资源见表~\ref{tab:synth}。
+
+\begin{table}\centering\small
+\caption{综合资源（综合后估算）}\label{tab:synth}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.0cm}RRR}
+\toprule
+资源 & 用量 & 器件总量 & 占比 \\
+\midrule
+LUT & \Lut & 136160 & \LutPct\% \\
+FF & \FF & 136160 & \FFPct\% \\
+CLB & \Clb & 13616 & \ClbPct\% \\
+存储块 & \Mem & 1200 & \MemPct\% \\
+DSP / PLL & 0 / 0 & 48 / 8 & 0\% \\
+用户引脚 & \Pins & 339 & \PinPct\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+时序方面，8~ns 约束下 setup 裕量为 +\Setup~ns，估算最高频率 \Fmax~MHz，满足规则 10 的 2.0~ns 裕量要求。
+
+表~\ref{tab:modres} 是主要模块的资源分布（综合层次报告，含子模块）。收发核心承担了 4096 条接收 VL 和 128 条发送 VL 的全部数据通路，逻辑单元合计约 14.5k；其中接收引擎和发送引擎分别只有 1127 和 1790 个逻辑单元，体现了逐 VL 状态放 RAM、引擎只保留一份流水的结构。
+
+\begin{table}\centering\small
+\caption{主要模块资源（综合后估算，含子模块）}\label{tab:modres}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedleft\arraybackslash}p{1.2cm}RRR}
+\toprule
+模块 & 实例数 & 逻辑单元 & FF & 存储位数 \\
+\midrule
+\code{afdx_tx_core} & 1 & 5677 & 2975 & 1106816 \\
+\quad \code{afdx_tx_engine} & 1 & 1790 & 1029 & 0 \\
+\quad \code{afdx_tx_builder} & 1 & 2091 & 962 & 0 \\
+\quad \code{afdx_mac_tx} & 1 & 597 & 155 & 0 \\
+\code{afdx_rx_core} & 1 & 8814 & 4964 & 1208320 \\
+\quad \code{afdx_rx_parse} & 2 & 2466 & 1220 & 0 \\
+\quad \code{afdx_rx_engine} & 1 & 1127 & 489 & 0 \\
+\quad \code{afdx_rx_deliver} & 1 & 1975 & 481 & 0 \\
+\quad \code{afdx_mac_rx} & 2 & 371 & 222 & 0 \\
+\code{afdx_rtc} & 1 & 4573 & 2190 & 0 \\
+\code{afdx_snmp} & 1 & 4463 & 1261 & 4096 \\
+\code{afdx_615a} & 1 & 7171 & 1358 & 102400 \\
+\code{afdx_cfg} & 1 & 1954 & 1076 & 0 \\
+\code{afdx_svc} & 1 & 120 & 7 & 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{关键路径}
+
+按最小 setup 裕量选出的最慢路径见表~\ref{tab:critpath}。最慢路径在服务模块的报文解析状态机中，而不在线速收发通路上；收发核心的路径由规则 2--6 限定在 RAM 输出寄存、一级 32 位算术和分拍选择之内。
+
+\begin{table}\centering\small
+\caption{综合后最慢路径}\label{tab:critpath}
+\begin{tabularx}{\linewidth}{L>{\raggedleft\arraybackslash}p{1.5cm}>{\raggedleft\arraybackslash}p{2.4cm}>{\raggedleft\arraybackslash}p{2.4cm}}
+\toprule
+模块与起点 $\rightarrow$ 终点 & 逻辑级数 & 逻辑延迟 (ns) & setup 裕量 (ns) \\
+\midrule
+\code{afdx_615a}：\code{name_pos[1]} $\rightarrow$ \code{packet_type[1]} & 15 & 5.403 & +2.522 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+RAM 写数据寄存器输入端的 hold 裕量为 $-$\Hold~ns，在零走线延迟且时钟到 RAM 比到触发器晚 0.754~ns 的固定时钟偏斜模型下，估算增加约 0.07~ns 数据路径延迟即可满足 hold，但这不是布线保证，当前尚无布线后时序签核。

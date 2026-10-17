@@ -1,0 +1,200 @@
+% AFDX 端系统测试报告
+% 数字宏与设计文档共用 ../design/numbers.tex；图由 fig/tfigs.py 生成（sh fig/mk.sh）。
+% 占位清单：t10–t16 波形示意图最终替换为 ModelSim 截图（issue #6）；第 3 章覆盖率表待实测（issue #7）。
+% 编译：在本目录执行 tectonic AFDX端系统FPGA测试报告.tex（或 xelatex 两遍）
+\documentclass[a4paper,zihao=-4,fontset=none,oneside,openany]{ctexrep}
+
+% ---------- 字体 ----------
+\setmainfont{Times New Roman}
+\setsansfont{Helvetica}
+\setmonofont{Menlo}[Scale=0.82]
+% Kaiti SC 是按需下载字体，部分沙箱环境读不到，读不到时退回宋体
+\IfFontExistsTF{Kaiti SC}{\def\kaifont{Kaiti SC}}{\def\kaifont{Songti SC}}
+\setCJKmainfont{Songti SC}[BoldFont=Heiti SC, ItalicFont=\kaifont]
+\setCJKsansfont{Heiti SC}
+\setCJKmonofont{Heiti SC}
+\setCJKfamilyfont{zhsong}{Songti SC}[BoldFont=Heiti SC]
+\setCJKfamilyfont{zhhei}{Heiti SC}
+\setCJKfamilyfont{zhkai}{\kaifont}
+\providecommand{\songti}{\CJKfamily{zhsong}}
+\providecommand{\heiti}{\CJKfamily{zhhei}}
+\providecommand{\kaishu}{\CJKfamily{zhkai}}
+
+% ---------- 版式 ----------
+\usepackage[a4paper,top=2.6cm,bottom=2.5cm,left=2.6cm,right=2.4cm,headheight=15pt]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{etoolbox}
+\usepackage{needspace}
+\usepackage{placeins}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage[font=small,labelsep=quad,skip=6pt]{caption}
+\usepackage[hidelinks,bookmarksnumbered]{hyperref}
+
+\linespread{1.3}
+\setlength{\parskip}{2pt}
+\emergencystretch=3em
+\raggedbottom
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\setlist{topsep=4pt plus 1pt minus 1pt,itemsep=0pt,parsep=0pt,leftmargin=2em}
+\AtBeginDocument{%
+  \setlength{\abovedisplayskip}{9pt plus 2pt minus 2pt}%
+  \setlength{\belowdisplayskip}{9pt plus 2pt minus 2pt}%
+  \setlength{\abovedisplayshortskip}{3pt plus 2pt}%
+  \setlength{\belowdisplayshortskip}{6pt plus 2pt minus 2pt}}
+% 表格统一用 small、紧凑行距；正文和原尺寸插图不变。
+\newcommand{\tablestyle}{\small\linespread{1.08}\selectfont
+  \renewcommand{\arraystretch}{1.18}}
+\AtBeginEnvironment{table}{\tablestyle}
+\BeforeBeginEnvironment{longtable}{\FloatBarrier\begingroup\tablestyle}
+\AfterEndEnvironment{longtable}{\endgroup}
+\setlength{\LTpre}{8pt}
+\setlength{\LTpost}{8pt}
+\setlength{\LTcapwidth}{\textwidth}
+\captionsetup{font={small,stretch=1.08},format=hang,justification=raggedright,
+  singlelinecheck=true}
+\captionsetup[table]{position=top}
+% 浮动体可贴近引文；仅在长表等不可浮动内容前清空队列。
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\makeatletter
+\def\fps@table{!htbp}
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
+\ctexset{
+  chapter = {format=\zihao{3}\heiti\raggedright, name={第,章}, number=\arabic{chapter},
+             beforeskip=0pt, afterskip=18pt},
+  section = {format=\zihao{4}\heiti, beforeskip=14pt, afterskip=8pt,
+             break=\Needspace{3\baselineskip}},
+  subsection = {format=\zihao{-4}\heiti, beforeskip=10pt, afterskip=6pt,
+                break=\Needspace{3\baselineskip}},
+}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+\renewcommand{\theequation}{\thechapter-\arabic{equation}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small AFDX 端系统 FPGA 测试报告}
+\fancyhead[R]{\small\leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+% ---------- 命令 ----------
+% 代码名不连字，但允许在下划线和斜杠后断行（测试报告中长文件名多）
+\ExplSyntaxOn
+\NewDocumentCommand{\code}{m}{\texttt{\hyphenchar\font=-1\relax
+  \str_map_inline:nn {#1} { ##1 \str_if_in:nnT {_/} {##1} { \penalty 200 \relax } }}}
+\ExplSyntaxOff
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcommand{\longtablehead}[2]{%
+  \toprule #2 \\ \midrule \endfirsthead
+  \caption[]{（续）}\\
+  \toprule #2 \\ \midrule \endhead
+  \midrule \multicolumn{#1}{r}{接下页}\\ \endfoot
+  \bottomrule \endlastfoot}
+% 测试项表：#1 表题，#2 标签。列为编号、配置与激励、判据、检查数/错误数（上行自检，下行独立核对）、结果
+\newenvironment{items}[2]{\FloatBarrier\tablestyle\setlength{\tabcolsep}{4pt}%
+  \longtable{@{}>{\raggedright\arraybackslash}p{1.55cm}>{\raggedright\arraybackslash}p{5.55cm}%
+    >{\raggedright\arraybackslash}p{4.45cm}>{\raggedleft\arraybackslash}p{1.95cm}%
+    >{\centering\arraybackslash}p{0.8cm}@{}}
+  \caption{#1}\label{#2}\\
+  \longtablehead{5}{编号 & 配置与激励 & 判据 & 检查数/错误数 & 结果}}{\endlongtable}
+% 插图：#1 文件名（fig/pdf/ 下），#2 宽度系数，#3 图题，#4 标签
+\newcommand{\fig}[4]{%
+  \begin{figure}[!htbp]\centering
+  \includegraphics[width=#2\linewidth]{fig/pdf/#1.pdf}
+  \caption{#3}\label{#4}
+  \end{figure}}
+% 按印刷尺寸绘制的图：原尺寸插入，不缩放，保证全文字号一致
+\NewDocumentCommand{\figN}{o m m m}{%
+  \begin{figure}[!htbp]\centering
+  \includegraphics{fig/pdf/#2.pdf}
+  \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
+  \end{figure}}
+\input{../design/numbers}
+
+\begin{document}
+
+% ---------- 封面 ----------
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{2.2cm}
+{\zihao{4}\heiti 全国大学生嵌入式芯片与系统设计竞赛\par}
+\vspace{4pt}
+{\zihao{5} FPGA 创新设计赛道 \quad 中科亿海微 \quad 选题一：基于以太网 MAC 总线实现 AFDX\par}
+\vspace{3cm}
+{\zihao{1}\heiti AFDX 端系统\par}
+\vspace{10pt}
+{\zihao{2}\heiti FPGA 测试报告\par}
+\vspace{18pt}
+{\zihao{4} 仿真验证与技术指标测试\par}
+\vfill
+\begin{tabular}{rl}
+\heiti 队伍名称： & \underline{\makebox[6cm][l]{[待填写]}} \\[6pt]
+\heiti 参赛成员： & \underline{\makebox[6cm][l]{[待填写]}} \\[6pt]
+\heiti 指导教师： & \underline{\makebox[6cm][l]{[待填写]}} \\[6pt]
+\heiti 目标器件： & \underline{\makebox[6cm][l]{EQ6HL130，CSG484\_H 封装}} \\[6pt]
+\heiti 开发环境： & \underline{\makebox[6cm][l]{eLinx 3.0.7，ModelSim SE-64 2020.4}} \\[6pt]
+\heiti 对应代码： & \underline{\makebox[6cm][l]{\texttt{master@\CodeVer}}} \\
+\end{tabular}
+\vspace{2cm}
+
+{\zihao{4} 2026 年 10 月\par}
+\end{titlepage}
+
+\pagenumbering{Roman}
+\hypersetup{pageanchor=true}
+\setcounter{tocdepth}{1}
+\begingroup
+\small\linespread{1.08}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\clearpage
+\begingroup
+\small\linespread{1.08}\selectfont
+\setlength{\parskip}{0pt}
+\makeatletter\let\addvspace\@gobble\makeatother
+\listoffigures
+\listoftables
+\endgroup
+\clearpage
+\pagenumbering{arabic}
+
+\input{chapters/ch01}
+\input{chapters/ch02}
+\input{chapters/ch03}
+\input{chapters/ch04}
+\input{chapters/ch05}
+\input{chapters/ch06}
+\input{chapters/ch07}
+\appendix
+\input{chapters/appendix}
+
+\end{document}
