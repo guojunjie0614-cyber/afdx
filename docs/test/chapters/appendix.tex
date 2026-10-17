@@ -176,23 +176,7 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 
 \Needspace{12\baselineskip}
 \section{专项测试记录}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.6cm-2\tabcolsep\relax}@{}}
-\caption{设计取舍与专项实验的归档索引}\\
-\longtablehead{2}{\thead{文件} & \thead{实验内容与字段}}
-\code{contention.json} & 多条 VL 同时获准发送与服务报文并发测试；\code{runs[].measurements}，方向数据见其中的 \code{directions}。 \\
-\code{route_default.json} & 默认布局布线实验；\code{started}、\code{settings}、\code{utilization}、\code{timing}。 \\
-\code{route_timing.json} & 同实验的数据库查询；\code{table}、\code{time_unit}、\code{rows[]}。 \\
-\code{vo_functional.json} & 完整端系统 \code{.vo} 网表功能仿真；\code{sdf}、\code{result_rows}、\code{first_failure}、\code{passed}。 \\
-\code{vo_ram.json} & 不同位宽 RAM 对照；各项的 \code{width}、\code{rtl}、\code{vo_sim} 中检查数、错误数及失败记录。 \\
-\code{vo_ram_bits.json} & RAM 位序分析；\code{width}、\code{input_bit_to_source_bit}、\code{output_source_index_identity}、\code{permuted}。 \\
-\code{mac_results.json} & 自研 MAC 与厂商 MAC IP 对照；\code{baseline}、\code{idle_crc} 的 \code{latencies}，各工况的 \code{summary}；\code{estimates} 为估算字段。 \\
-\code{mac_official_resources.json} & 厂商 MAC IP 资源；\code{utilization} 与 \code{packed_utilization} 分别保存综合和逻辑单元打包报告。 \\
-\code{mac_self_resources.json} & 自研 MAC 资源；同上两个字段，单口统计。 \\
-\code{mac_official_stress.json} & 厂商 MAC IP 持续收发；\code{analysis.metrics/summary}、\code{jobs} 和 \code{tail}。 \\
-\code{mac_self_rtl.json} & 自研 MAC 的 RTL 持续收发；\code{analysis.metrics/summary}、\code{jobs}。 \\
-\code{mac_self_net.json} & 自研 MAC 的网表持续收发；\code{analysis.metrics/summary}、\code{jobs}。 \\
-\code{mac_bad_crc.json} & 厂商 MAC IP 的错误 FCS 注入测试；\code{tail} 中捕获记录及后续分析字段。 \\
-\end{longtable}
+\code{contention.json} 保存多条 VL 同时获准发送与服务报文并发测试结果；各组测量见 \code{runs[].measurements}，方向数据见其中的 \code{directions}。
 
 \section{参考汇总与补充记录}
 \code{sim/reference/} 中的 \code{regression.json} 汇总完整回归结果（表~\ref{tab:regress}）；\code{judge_result.txt} 汇总批量测试各用例的结果、耗时及性能、RTC 和突发指标。

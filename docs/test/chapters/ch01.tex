@@ -2,7 +2,7 @@
 
 \section{测试结论}
 
-AFDX 端系统通过选题指南规定的 5 项功能、4 项技术指标及答疑 R46 要求的综合后仿真测试，结论见表~\ref{tab:summary}。被测对象为顶层模块 \code{AFDX_top}。
+AFDX 端系统的 5 项功能、4 项技术指标及综合后仿真测试均通过，结论见表~\ref{tab:summary}。被测对象为顶层模块 \code{AFDX_top}。
 
 \begin{table}[!htbp]\centering
 \caption{赛题要求与测试结论}\label{tab:summary}
@@ -23,7 +23,7 @@ RTC 时钟同步 & 支持 & 空载/满载同步误差 \RtcIdle{}/\RtcLoad{}~ns�
 时延与抖动 & 端到端 $<$1--2~ms（最坏情况），抖动不超过几十微秒 & 稳态最大 \Lat{}~µs、抖动 \Jit{}~µs；RTC、SNMP、615A 叠加 77 条 VL 满载时，间隔增加至多约 2.5~µs；同时到期上界 1.15~ms，81 条最长帧实测 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
 VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全部发送；4096 条接收 VL 全部配置，模块级逐条交付（\ref{sec:p-vl}~节） & 符合 \\
 \midrule
-综合后仿真（R46） & 综合后仿真 & eLinx 界面综合网表运行五项功能联合测试，端口记录与 RTL 逐字节相同（第~\ref{ch:netlist}~章） & 符合 \\
+综合后仿真 & 综合后仿真 & eLinx 界面综合网表运行五项功能联合测试，端口记录与 RTL 逐字节相同（第~\ref{ch:netlist}~章） & 符合 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -48,8 +48,7 @@ eLinx 行为仿真 & 复用双向通信测试 SYS-09（\code{tb_elinx}） & 通�
 
 被测对象为 \code{AFDX_top} 及其全部子模块，目标器件 EQ6HL130（CSG484\_H 封装），时钟 125~MHz，GMII 接口。测试依据如下：
 \begin{itemize}
-  \item 选题指南（中科亿海微）规定的 5 项功能和 4 项技术指标；
-  \item 赛题答疑：激励、协议版本与验证由参赛者确定和完成（R2、R5、R47）；测试基于 FPGA 仿真（R13），评测运行参赛者的测试平台，以综合后仿真验收（R46）；
+  \item 选题指南（中科亿海微）及官方补充说明：5 项功能、4 项技术指标和综合后仿真要求；
   \item 协议标准：ARINC 664 Part 7、ARINC 615A-2、RFC 1157/3416（SNMP）、RFC 4330（SNTP）、RFC 1350（TFTP）。
 \end{itemize}
 
@@ -57,4 +56,4 @@ eLinx 行为仿真 & 复用双向通信测试 SYS-09（\code{tb_elinx}） & 通�
 
 \section{报告结构}
 
-第~\ref{ch:env}~章说明测试环境、方法、通过判据和运行方式。第~\ref{ch:strategy}~章给出测试点分解、用例清单和覆盖率。第~\ref{ch:func}~章按 5 项功能报告功能测试，第~\ref{ch:perf}~章按 4 项技术指标报告指标测试，第~\ref{ch:netlist}~章报告综合后仿真，第~\ref{ch:conclusion}~章汇总测试结论。附录 A 至 D 为回归结果、复现命令、测试记录索引和原始仿真截图。
+第~\ref{ch:env}~章说明测试环境、方法、通过判据和运行方式。第~\ref{ch:strategy}~章给出测试点分解、用例清单和覆盖率。第~\ref{ch:func}~章按 5 项功能报告功能测试，第~\ref{ch:perf}~章按 4 项技术指标报告指标测试，第~\ref{ch:netlist}~章报告综合资源、时序与网表功能，第~\ref{ch:conclusion}~章汇总测试结论。附录 A 至 D 为回归结果、复现命令、测试记录索引和原始仿真截图。

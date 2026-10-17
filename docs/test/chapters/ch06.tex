@@ -1,14 +1,76 @@
-\chapter{综合后仿真}\label{ch:netlist}
+\chapter{综合结果与综合后仿真}\label{ch:netlist}
 
-eLinx 界面综合网表通过双向通信测试（NET-01）和五项功能联合测试（NET-02），满足测试点 N-01（答疑 R46）的判据。网表由 Run Synthesis 导出，采用 VQM 格式。
+eLinx 完成 \code{AFDX_top} 综合并导出 VQM 网表。综合后网表通过双向通信测试（NET-01）和五项功能联合测试（NET-02）。
 
-\section{仿真方法}
+\section{综合配置与资源}
+
+综合使用 eLinx~3.0.7，顶层为 \code{AFDX_top}，目标器件 EQ6HL130、CSG484\_H 封装，优化模式为 Speed，时钟 \code{clk} 为 125~MHz、周期 8~ns。Run Synthesis 成功并导出 VQM 网表，总体资源见表~\ref{tab:test-synth-res}。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
+\captionof{table}{总体综合资源}\label{tab:test-synth-res}
+\begin{tabularx}{\linewidth}{LRRR}
+\toprule
+\thead{资源} & \thead{用量} & \thead{器件总量} & \thead{占比} \\
+\midrule
+LUT & \Lut & 136160 & \LutPct\% \\
+FF & \FF & 136160 & \FFPct\% \\
+CLB & \Clb & 13616 & \ClbPct\% \\
+存储块 & \Mem & 1200 & \MemPct\% \\
+DSP & 0 & 48 & 0\% \\
+PLL & 0 & 8 & 0\% \\
+用户引脚 & \Pins & 339 & \PinPct\% \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
+
+逻辑资源与存储块的占用均低于 35\%；用户引脚占用 \PinPct\%。
+
+表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块，数字包含各自子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要承载 VL 配置、状态、描述符和报文数据。615A、SNMP 和 RTC 服务分别使用 7171、4463 和 4573 个逻辑单元。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
+\captionof{table}{主要模块资源}\label{tab:test-synth-mod}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.5cm}RRR}
+\toprule
+\thead{模块} & \thead{逻辑单元} & \thead{FF} & \thead{存储位数} \\
+\midrule
+\code{afdx_tx_core} & 5677 & 2975 & 1106816 \\
+\code{afdx_rx_core} & 8814 & 4964 & 1208320 \\
+\code{afdx_rtc} & 4573 & 2190 & 0 \\
+\code{afdx_snmp} & 4463 & 1261 & 4096 \\
+\code{afdx_615a} & 7171 & 1358 & 102400 \\
+\code{afdx_cfg} & 1954 & 1076 & 0 \\
+\code{afdx_svc} & 120 & 7 & 0 \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
+
+分模块表按综合层次报告统计，逻辑单元包括仅使用寄存器的单元，与总体资源表的 LUT 分别计数；存储位数表示有效数据位数。
+
+\section{综合时序}
+
+时钟 \code{clk} 的综合时序摘要见表~\ref{tab:test-synth-time}。本节按综合后的单元延迟与时钟模型统计，数据路径的布线延迟为 0。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
+\captionof{table}{8~ns 时钟约束下的综合时序摘要}\label{tab:test-synth-time}
+\begin{tabularx}{\linewidth}{LRR}
+\toprule
+\thead{检查项} & \thead{最差裕量 (ns)} & \thead{违例端点/检查端点} \\
+\midrule
+setup & +\Setup & 0/44216 \\
+hold & $-$\Hold & 538/44216 \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
+
+setup 检查的 44216 个端点均满足 8~ns 约束，工具给出的最高频率估计为 \Fmax~MHz。按最小 setup 裕量选出的路径位于 \code{afdx_615a}，从 \code{name_pos[1]} 到 \code{packet_type[1]}，共 15 级逻辑，逻辑延迟 5.403~ns，裕量 +\Setup~ns。
+
+hold 检查有 538 个违例端点，最差裕量为 $-$\Hold~ns。最差路径由发送缓冲的 \code{payload_wd} 寄存器到 RAM 写数据寄存器，数据路径延迟为 0.696~ns；模型中 RAM 时钟比源触发器时钟晚 0.754~ns。
+
+\section{网表功能结果}
 
 RTL 与网表采用同一套激励，网表采用原厂单元功能模型进行逻辑功能仿真。网表副本按原厂单元声明补齐仿真所需输入和参数，处理方法见附录~\ref{sec:repro-netlist}。
 
 NET-01 由测试平台自检；NET-02 执行自检、参考检查和 RTL 端口记录比较，比较内容包含记录中的时钟周期编号。两项测试均按 \ref{sec:criteria}~节判据通过，仿真诊断无 Error、Fatal 或 Warning。
-
-\section{结果}
 
 \begin{items}{综合后仿真测试项}{tab:net-result}
 NET-01 & 界面综合网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 仅自检 & 通过 \\

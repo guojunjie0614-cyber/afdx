@@ -16,11 +16,11 @@
 \begin{equation}
   T_{\mathrm{tx}}=S-M,\qquad T_{\mathrm{rx}}=D-E,\qquad T_{\mathrm{e2e}}=D-M-L.
 \end{equation}
-$T_{\mathrm{e2e}}$ 按应用口至应用口测量，包含排队、线路串行发送、接收检查和交付，扣除设定的线路延迟。该区间覆盖答疑 R60 规定的 GMII 至 GMII 计时区间。
+$T_{\mathrm{e2e}}$ 按应用口至应用口测量，包含排队、线路串行发送、接收检查和交付，扣除设定的线路延迟。
 
 \textbf{抖动：}同一 VL 相邻两帧发送起点间隔与 BAG 之差 $\Delta_i=(S_i-S_{i-1})-\mathrm{BAG}$，抖动 $J=\max_i|\Delta_i|$。
 
-\textbf{判定门限：}$R\ge100$~Mbps，$T_{\mathrm{e2e}}\le2000$~µs，$J\le50$~µs。前两项取自选题指南；抖动“不超过几十微秒”取 50~µs 作为检查门限。
+\textbf{判定门限：}$R\ge100$~Mbps，$T_{\mathrm{e2e}}\le2000$~µs，$J\le50$~µs。抖动“不超过几十微秒”取 50~µs 作为检查门限。
 
 \section{传输速率}\label{sec:p-rate}
 
@@ -58,7 +58,10 @@ PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 �
 \end{tabular*}
 \end{table}
 
-\figN[各 VL 规模的有效载荷吞吐]{t20_thru}{10、77、81 条 VL 的每方向有效载荷吞吐，虚线为 100~Mbps 要求。只统计接收应用口去重后的有效载荷}{fig:thru}
+\begin{figure}[!htbp]\centering
+\includegraphics[width=0.84\linewidth,keepaspectratio]{fig/pdf/t20_thru.pdf}
+\caption[各 VL 规模的有效载荷吞吐]{10、77、81 条 VL 的每方向有效载荷吞吐，虚线为 100~Mbps 要求。只统计接收应用口去重后的有效载荷}\label{fig:thru}
+\end{figure}
 
 \section{帧格式}\label{sec:p-frame}
 
@@ -106,14 +109,14 @@ VLID & 帧中携带 VLID & 目的地址携带 VLID；接收侧 VLID 0 与 65535 
 
 \par\addvspace{\intextsep}\noindent\begin{minipage}{\linewidth}
 \centering
-\includegraphics[width=0.96\linewidth,keepaspectratio]{fig/pdf/t21_lat.pdf}
+\includegraphics[width=0.84\linewidth,keepaspectratio]{fig/pdf/t21_lat.pdf}
 \captionof{figure}[端到端时延与消息长度]{轻载下端到端时延与消息长度的关系。每种长度 8 个样本，最大值与平均值相同}\label{fig:lat}
 \end{minipage}
 \par\addvspace{\intextsep}
 
 \subsection{最坏情况时延}\label{sec:p-worst}
 
-本节检查多条 VL 同时到期、争用同一条线路时的排队时延，以选题指南的 1--2~ms 要求为判据。每帧须等待排在其前面的帧发送完毕；以下给出上界与突发测试结果。
+本节检查多条 VL 同时到期、争用同一条线路时的排队时延，以 1--2~ms 要求为判据。每帧须等待排在其前面的帧发送完毕；以下给出上界与突发测试结果。
 
 \textbf{上界。}设计文档式（3-3）给出 VL $v$ 的帧因争用而推迟的上界：
 \begin{equation}
@@ -153,18 +156,48 @@ BAG 为 1~ms、消息为最长时，线路在一个 BAG 内至多容纳 81 帧�
 
 \subsection{发送抖动}
 
-稳态发送抖动测试通过。PERF-01 满载工况下，同一 VL 相邻两帧的发送起点间隔均等于 BAG，抖动为 \Jit~µs（图~\ref{fig:wbag}）；TX-03 的模块级测试核对 BAG 最小间隔。按设计文档 3.7.3 节，首次争用使发送相位后移，此后各 VL 按 BAG 前进，稳定后起点间隔恢复为 BAG。
+稳态发送抖动测试通过。PERF-01 满载工况下，同一 VL 相邻两帧的发送起点间隔均等于 BAG，抖动为 \Jit~µs（图~\ref{fig:wbag}）；TX-03 的模块级测试核对 BAG 最小间隔。
 
-服务报文叠加测试中，RTC、SNMP、615A 报文与 77 条 VL 满载同时运行，同一 VL 的发送间隔在 BAG 基础上增加至多约 2.5~µs。
-
-\par\addvspace{\intextsep}\noindent\begin{minipage}{\linewidth}
-\centering
+\begin{figure}[!htbp]\centering
 \includegraphics{fig/pdf/t13_w_bag.pdf}
-\captionof{figure}[同一 VL 的相邻发送起点]{RTL 信号波形：同一 VL 两帧分别在 17.076~µs、817.076~µs 开始发送，起点相隔 800~µs（100000 拍 BAG），A、B 两网同拍；长空闲段用断轴压缩}\label{fig:wbag}
-\end{minipage}
-\par\addvspace{\intextsep}
+\caption[同一 VL 的相邻发送起点]{RTL 信号波形：同一 VL 两帧分别在 17.076~µs、817.076~µs 开始发送，起点相隔 800~µs（100000 拍 BAG），A、B 两网同拍；长空闲段用断轴压缩}\label{fig:wbag}
+\end{figure}
 
-\Needspace{12\baselineskip}
+\textbf{同拍释放的争用。}补充专项测量分别采用 8、77 条 VL 和 17、1471 字节消息，每组运行 24 轮，BAG 均为 1~ms（125000 拍）。各 VL 首轮同时释放，后续允许发送时刻按上一帧的实际发送起点加 BAG 推进。表~\ref{tab:jitter-contention} 列出相对各轮共同理想起点的最大相位偏差，以及同一 VL 相邻两帧的间隔变化；共同理想起点按首轮释放时刻加轮次乘 BAG 计算，相位偏差包含各 VL 依次占用线路的排队时间。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
+\captionof{table}{同拍释放下的相位偏差与发送间隔（专项测量）}\label{tab:jitter-contention}
+\begin{tabularx}{\linewidth}{@{}>{\hsize=.45\hsize}C>{\hsize=.8\hsize}C>{\hsize=1.2\hsize}R>{\hsize=1.5\hsize}R>{\hsize=1.05\hsize}R@{}}
+\toprule
+\thead{VL 数} & \thead{消息长度\newline （字节）} & \thead{最大相位偏差\newline （µs）} & \thead{相邻起点间隔\newline （µs）} & \thead{最大抖动\newline （µs）} \\
+\midrule
+8 & 1471 & 86.144 & 1000.000 & 0 \\
+8 & 17 & 4.752 & 1000.000 & 0 \\
+77 & 1471 & 935.120 & 1000.000 & 0 \\
+77 & 17 & 52.432 & 1000.000--1034.944 & 34.944 \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
+
+四组工况的最大抖动均低于 50~µs。77 条短消息工况的相邻发送间隔最大增加 4368 拍；其余三组在首轮排队后，相邻发送间隔保持为 BAG。
+
+\textbf{服务报文并发。}RTC、SNMP、615A 报文叠加 77 条 VL 的 1471 字节消息，连续运行 24 轮；每方向发送 1848 条业务帧，并传输 RTC 22 帧、SNMP 20 帧、TFTP 26 帧。两个方向的有效载荷吞吐均保持 \Thru{}~Mbps，测量错误数为 0。相邻发送间隔的最大增加分别为 258、312 拍，即 2.064、2.496~µs（表~\ref{tab:jitter-services}）。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
+\captionof{table}{服务报文并发时的业务发送结果（专项测量）}\label{tab:jitter-services}
+\begin{tabularx}{\linewidth}{@{}l R R R@{}}
+\toprule
+\thead{方向} & \thead{相邻起点间隔\newline （拍）} & \thead{最大抖动\newline （µs）} & \thead{有效载荷吞吐\newline （Mbps）} \\
+\midrule
+端 1 → 端 2 & 125000--125258 & 2.064 & \Thru \\
+端 2 → 端 1 & 125000--125312 & 2.496 & \Thru \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
+
+上述专项测量见附录~\ref{app:evidence} 的 \code{contention.json}；标准回归的稳态结果取自 PERF-01。
+
+\FloatBarrier
 \section{VL 支持能力}\label{sec:p-vl}
 
 \begin{items}{VL 支持能力测试项}{tab:p-vl}

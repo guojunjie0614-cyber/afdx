@@ -10,11 +10,11 @@
   \item \textbf{指标级：}吞吐、时延、抖动、突发排队和 VL 容量；
   \item \textbf{网表级：}以同一激励仿真综合后网表，与 RTL 记录对照。
 \end{enumerate}
-各层均包含正常行为、错误输入、资源边界、复位和时序扰动五类激励。
+测试用例整体覆盖正常行为、错误输入、资源边界、复位和时序扰动五类激励。
 
 \section{测试点分解}\label{sec:points}
 
-按选题指南的 5 项功能和 4 项技术指标，以及答疑 R46 的综合后仿真要求，分解为 46 个测试点（表~\ref{tab:points}）。每个测试点至少由一个用例覆盖，用例定义见表~\ref{tab:cases}。
+围绕 5 项功能、4 项技术指标及综合后仿真，设置 46 个测试点（表~\ref{tab:points}）。每个测试点至少由一个用例覆盖，用例定义见表~\ref{tab:cases}。
 
 \begingroup\setlength{\tabcolsep}{5pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.35cm}>{\raggedright\arraybackslash}p{7.0cm}>{\raggedright\arraybackslash}p{5.55cm}>{\raggedright\arraybackslash}p{1.0cm}@{}}
@@ -77,7 +77,7 @@ P-04 & 发送抖动 & PERF-01，TX-03 & \ref{sec:p-lat} \\
 P-05 & 128 条发送 VL & CAP-01，TX-04，SYS-04 & \ref{sec:p-vl} \\
 P-06 & 4096 条接收 VL & CAP-01，RX-01 & \ref{sec:p-vl} \\
 \midrule
-N-01 & 综合后网表的功能与 RTL 一致（R46） & NET-01、NET-02 & \ref{ch:netlist} 章 \\
+N-01 & 综合后网表的功能与 RTL 一致 & NET-01、NET-02 & \ref{ch:netlist} 章 \\
 \end{longtable}
 \endgroup
 
@@ -154,7 +154,7 @@ ModelSim 批量测试包含 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-0
 
 以下用例通过调整参数测试资源边界和突发工况：
 \begin{itemize}
-  \item TX-02：发送缓存改为 32 页、每页 2048 字节，检验分页逻辑与页尺寸无关；
+  \item TX-02：发送缓存改为 32 页、每页 2048 字节，检查该配置下的分页存储与发送结果；
   \item RX-05、SYS-07：每网接收环形缓存缩为 512 字节，使最长消息无法存入；
   \item RX-06：交付队列缩为 2 项，使队列在长消息交付期间填满；
   \item PERF-02、PERF-03：77、81 条 VL 的最长消息同时到期。
@@ -184,11 +184,11 @@ ModelSim SE-64 2020.4 对 38 项 RTL 回归统计覆盖率，21 个 RTL 模块�
 \bottomrule
 \end{tabularx}
 \par\vspace{6pt}
-\begin{tabular}{@{}cc@{}}
+\begin{tabular}{@{}ccc@{}}
 \toprule
-\thead{全设计状态覆盖} & \thead{全设计转换覆盖} \\
+\thead{全设计状态覆盖} & \thead{全设计转换覆盖} & \thead{全设计表达式覆盖} \\
 \midrule
-104 / 104（\CovFsmState\%） & 131 / 296（\CovFsmTrans\%） \\
+104 / 104（\CovFsmState\%） & 131 / 296（\CovFsmTrans\%） & 164 / 177 \\
 \bottomrule
 \end{tabular}
 \end{table}
