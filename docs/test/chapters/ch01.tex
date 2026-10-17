@@ -18,7 +18,7 @@ SNMP 网络管理 & 支持 & Get、GetNext、Set、Trap 解码正确，数值与
 RTC 时钟同步 & 支持 & 空载/满载同步误差 \RtcIdle{}/\RtcLoad{}~ns；响应丢失可恢复，错误响应不校时（\ref{sec:f-rtc}~节） & 符合 \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\
-传输速率 & 100~Mbps & 每方向有效载荷 \Thru{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
+传输速率 & 100~Mbps & 125~MHz GMII 仿真下，每方向有效载荷吞吐 \Thru{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
 帧格式 & 载荷 $\le$1471 字节，帧长 $\le$1518 字节，含 VLID 和 1--255 序号 & 1--1471 字节消息逐字节正确；VLID、序号回绕与复位首帧正确（\ref{sec:p-frame}~节） & 符合 \\
 时延与抖动 & 端到端 $<$1--2~ms（最坏情况），抖动不超过几十微秒 & 稳态最大 \Lat{}~µs、抖动 \Jit{}~µs；RTC、SNMP、615A 叠加 77 条 VL 满载时，间隔增加至多约 2.5~µs；同时到期上界 1.15~ms，81 条最长帧实测 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
 VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全部发送；4096 条接收 VL 全部配置，模块级逐条交付（\ref{sec:p-vl}~节） & 符合 \\

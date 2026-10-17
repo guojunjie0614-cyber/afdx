@@ -43,7 +43,8 @@ PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 �
 \end{tabularx}
 \end{table}
 
-传输速率测试通过。77 条 VL 时每方向吞吐为 \Thru{}~Mbps，达到要求值的 9 倍。两种线路延迟、单向与双向工况的对应结果相同。各 VL 规模的实测值与要求见表~\ref{tab:p-rate-res} 和图~\ref{fig:thru}。
+\Needspace{6\baselineskip}
+本测试采用 125~MHz、8 位 GMII，帧内每拍传送一字节，对应接口数据速率为 1~Gbps。吞吐按接收应用口完成去重后的有效载荷统计。77 条 VL 双向满载时，每方向吞吐为 \Thru{}~Mbps，满足 100~Mbps 要求。两种线路延迟、单向与双向工况的对应结果相同。各 VL 规模的实测值与要求见表~\ref{tab:p-rate-res} 和图~\ref{fig:thru}。
 
 \begin{table}[!htbp]\centering
 \caption{每方向有效载荷吞吐}\label{tab:p-rate-res}

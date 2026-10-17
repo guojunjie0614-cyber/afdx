@@ -48,16 +48,17 @@ PLL & 0 & 8 & 0\% \\
 
 \section{综合时序}
 
-时钟 \code{clk} 的综合时序摘要见表~\ref{tab:test-synth-time}。本节按综合后的单元延迟与时钟模型统计，数据路径的布线延迟为 0。
+时钟 \code{clk} 的目标频率为 125~MHz、周期为 8~ns，综合时序摘要见表~\ref{tab:test-synth-time}。报告采用综合阶段的单元延迟与时钟延迟模型，数据路径的布线延迟按 0~ns 统计。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
-\captionof{table}{8~ns 时钟约束下的综合时序摘要}\label{tab:test-synth-time}
-\begin{tabularx}{\linewidth}{LRR}
+\captionof{table}{8~ns（125~MHz）时钟约束下的综合时序摘要}\label{tab:test-synth-time}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedleft\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{2.8cm}L@{}}
 \toprule
-\thead{检查项} & \thead{最差裕量 (ns)} & \thead{违例端点/检查端点} \\
+\thead{检查项} & \thead{综合报告值} & \thead{违例端点/\newline 检查端点} & \thead{说明} \\
 \midrule
-setup & +\Setup & 0/44216 \\
-hold & $-$\Hold & 538/44216 \\
+最高频率估计 & \Fmax~MHz & — & 高于 125~MHz 目标频率 \\
+Setup 最差裕量 & +\Setup~ns & 0/44216 & 综合模型下满足 8~ns 周期约束 \\
+Hold 最差裕量 & $-$\Hold~ns & 538/44216 & 零布线延迟模型下的检查结果 \\
 \bottomrule
 \end{tabularx}
 \end{minipage}\par\medskip
