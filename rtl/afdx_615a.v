@@ -557,23 +557,28 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
             for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
                 (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+                // 常规读值与附加读值各用本地选择副本，直接镜像同一译码，不增加流水拍次。
+                (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane_r;
                 wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
+                wire [7:0] lane_r = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane_r;
                 always @(posedge clk) begin
                     if (reset) begin
                         mib_lane <= 8'b1;
+                        mib_lane_r <= 8'b1;
                         cfg_rdata[read_nibble * 4 +: 4] <= 0;
                         cfg_extra_data[read_nibble * 4 +: 4] <= 0;
                     end
                     else begin
                         mib_lane <= 8'b1 << cfg_addr[2:0];
-                        cfg_rdata[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
-                            ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]) |
-                            ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
-                            ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]) |
-                            ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
-                            ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]) |
-                            ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
-                            ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                        mib_lane_r <= 8'b1 << cfg_addr[2:0];
+                        cfg_rdata[read_nibble * 4 +: 4] <= ({4{lane_r[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
                         cfg_extra_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_extra_data_0[read_nibble * 4 +: 4]) |
                             ({4{lane[1]}} & word_cfg_extra_data_1[read_nibble * 4 +: 4]) |
                             ({4{lane[2]}} & word_cfg_extra_data_2[read_nibble * 4 +: 4]) |
