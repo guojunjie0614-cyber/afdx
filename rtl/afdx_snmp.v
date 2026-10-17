@@ -101,6 +101,8 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     end
 
     assign rx_claim = configured && (LOCAL_RX_PORT ? local_port_match : incoming_port == SNMP_PORT);
+    // 捕获启动的本地前提一次会合，远端字节有效位只进末级与门。
+    wire accept_armed = rx_claim && idle_q && ! capture_pending && ! consumed_q && ! trap_grant;
 
     always @(posedge clk) begin
         if (reset) begin
@@ -214,7 +216,8 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 capture_pending <= 0;
             end
             else if (!receiving) begin
-                if (idle_q && !capture_pending && !consumed_q && !trap_grant && rx_valid && rx_claim) begin
+                // accept_armed 是全本地项，远端 rx_valid 只进末级与门。
+                if (accept_armed && rx_valid) begin
                     req_we <= 1;
                     req_wa <= 0;
                     req_wdata <= rx_data;

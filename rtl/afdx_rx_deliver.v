@@ -44,6 +44,8 @@ module afdx_rx_deliver #(
     // HEAD_RELEASE：等待 dq_req 撤销，然后转 HEAD_IDLE。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [1:0] head_phase;
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] head_bank;
+    // dq_data_we 在进入选择拍时置位，dq_data 的写使能只看这个本地位。
+    reg dq_data_we;
     wire [DQ_WIDTH - 1:0] group0, group1, group2, group3;
     reg [DQ_WIDTH - 1:0] dq_data;
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg dq_req, dq_valid;
@@ -173,6 +175,7 @@ module afdx_rx_deliver #(
             rd_ptr <= 0;
             head_phase <= HEAD_IDLE;
             head_bank <= 0;
+            dq_data_we <= 0;
             dq_data <= 0;
             ring_a_re <= 0;
             ring_b_re <= 0;
@@ -197,6 +200,7 @@ module afdx_rx_deliver #(
         else begin
             dq_valid <= 0;
             dq_pop <= 0;
+            dq_data_we <= 0;
             case (head_phase)
 
                 HEAD_IDLE : if (dq_req && dq_count != 0) begin
@@ -204,10 +208,11 @@ module afdx_rx_deliver #(
 
                     head_bank <= read_index[4:3];
                     head_phase <= HEAD_SELECT;
+                    dq_data_we <= 1;
                 end
 
                 HEAD_SELECT : begin
-                    case (head_bank)
+                    if (dq_data_we) case (head_bank)
                         0 : dq_data <= group0;
                         1 : dq_data <= group1;
                         2 : dq_data <= group2;

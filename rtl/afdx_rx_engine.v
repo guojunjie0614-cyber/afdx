@@ -138,6 +138,8 @@ module afdx_rx_engine #(
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [3:0] phase;
     reg [11:0] init_ptr, age_ptr, op_idx;
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
+    // phase 7 先行寄存 phase 8 的比较结论，交付判断不再串接宽比较器。
+    reg skew_expired, sn_match, zero_shortcut, forward_ok;
     reg map_missing, config_reject, sequence_reject;
     reg [RX_RING_AW + 82:0] current_desc;
     reg [12:0] saved_map;
@@ -173,7 +175,9 @@ module afdx_rx_engine #(
         if (reset) delivery_phase <= 0;
         else delivery_phase <= op == FRAME && phase == STEP_DELIVER - 1 && !sequence_reject;
     end
-    wire dq_put = delivery_phase && deliver_allowed && dq_count < DQ_DEPTH;
+    // dq_room 随计数同步寄存，队列满的常数比较不再进入交付写使能锥。
+    reg dq_room;
+    wire dq_put = delivery_phase && deliver_allowed && dq_room;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
 
@@ -206,7 +210,7 @@ module afdx_rx_engine #(
     wire write_saved_a = op == FRAME && phase == 7 && saved_cfg[3] && !op_net;
     wire write_saved_b = op == FRAME && phase == 7 && saved_cfg[3] && op_net;
     wire write_saved_rm = op == FRAME && phase == STEP_DELIVER && deliver_allowed
-        && dq_count != DQ_DEPTH && saved_cfg[4];
+        && dq_room && saved_cfg[4];
     always @(posedge clk) begin
         if (reset) saved_state <= 0;
         else begin
@@ -243,6 +247,7 @@ module afdx_rx_engine #(
             dq_commit <= 0;
             dq_wa <= 0;
             dq_wd <= 0;
+            dq_room <= 1;
         end
         else begin
             dq_commit <= dq_put;
@@ -251,10 +256,16 @@ module afdx_rx_engine #(
                 dq_wd <= dq_input;
                 wr_ptr <= wr_ptr + 1'b1;
             end
-            // dq_count 在消息信息实际写入的那一拍增加。
+            // dq_count 在消息信息实际写入的那一拍增加，dq_room 同步记录是否还有空位。
             case ({ dq_commit, dq_pop })
-                2'b10 : dq_count <= dq_count + 1'b1;
-                2'b01 : dq_count <= dq_count - 1'b1;
+                2'b10 : begin
+                    dq_count <= dq_count + 1'b1;
+                    dq_room <= dq_count < DQ_DEPTH - 1;
+                end
+                2'b01 : begin
+                    dq_count <= dq_count - 1'b1;
+                    dq_room <= 1;
+                end
                 default : ;
             endcase
         end
@@ -293,6 +304,10 @@ module afdx_rx_engine #(
 
             state_changed <= 0;
             deliver_allowed <= 0;
+            skew_expired <= 0;
+            sn_match <= 0;
+            zero_shortcut <= 0;
+            forward_ok <= 0;
             now_q <= 0;
             now_previous <= 0;
             age_time <= 0;
@@ -435,6 +450,12 @@ module afdx_rx_engine #(
                             sequence_reject <= saved_cfg[3] && psn_valid && sn != 0
                                 && sn != next_sn && sn != second_sn;
                             if (saved_cfg[3]) state_changed <= 1;
+                            // 交付判断的比较项在本拍并行寄存，下一拍只剩本地标志选择。
+                            skew_expired <= elapsed > saved_cfg[16:5];
+                            sn_match <= sn == saved_state[23:16];
+                            zero_shortcut <= sn == 0 || saved_state[23:16] == 0;
+                            forward_ok <= forward_distance >= 1
+                                && forward_distance <= SN_HALF_RANGE;
                         end
 
                         // SkewMax 是两网同一帧允许的最大到达时间差。
@@ -445,15 +466,15 @@ module afdx_rx_engine #(
                                 result <= RX_BAD_SEQUENCE;
                                 phase <= STEP_WRITE;
                             end
-                            if ( ! saved_cfg[4] || ! saved_state[24] || elapsed > saved_cfg[16:5]) deliver_allowed <= 1;
-                            else if (sn == saved_state[23:16]) deliver_allowed <= 0;
-                            else if (sn == 0 || saved_state[23:16] == 0) deliver_allowed <= 1;
-                            else deliver_allowed <= forward_distance >= 1 && forward_distance <= SN_HALF_RANGE;
+                            if ( ! saved_cfg[4] || ! saved_state[24] || skew_expired) deliver_allowed <= 1;
+                            else if (sn_match) deliver_allowed <= 0;
+                            else if (zero_shortcut) deliver_allowed <= 1;
+                            else deliver_allowed <= forward_ok;
                         end
 
                         STEP_DELIVER : begin
                             if ( ! deliver_allowed) result <= RX_DUPLICATE;
-                            else if (dq_count == DQ_DEPTH) result <= RX_QUEUE_FULL;
+                            else if ( ! dq_room) result <= RX_QUEUE_FULL;
                             else begin
                                 result <= RX_ACCEPTED;
                                 if (saved_cfg[4]) begin

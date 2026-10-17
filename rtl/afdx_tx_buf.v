@@ -79,7 +79,11 @@ module afdx_tx_buf #(
     reg boundary, ended, held_last, port_en;
     reg [15:0] sport, dport;
 
-    assign m_ready = init_done && (state == IDLE || state == RECV || state == DRAIN);
+    // init_q 是 init_done 的本地副本；远端 init_done 只进一次寄存器。
+    reg init_q;
+    wire m_accept = m_valid && init_q;
+
+    assign m_ready = init_q && (state == IDLE || state == RECV || state == DRAIN);
 
     always @(posedge clk) begin
         if (reset) begin
@@ -123,8 +127,10 @@ module afdx_tx_buf #(
             ev_drop_full <= 0;
             ev_drop_long <= 0;
             ev_drop_nopage <= 0;
+            init_q <= 0;
         end
         else begin
+            init_q <= init_done;
             // 数据和地址先预存，写使能单独确认真实握手，避免把 ready/valid 串入宽数据路径。
             payload_wd <= state == WAIT_PAGE ? held_data : m_data;
             payload_wa <= state == WAIT_PAGE
@@ -158,7 +164,7 @@ module afdx_tx_buf #(
                     returned <= 0;
                     reason <= ENQ_ACCEPTED;
                     boundary <= 0;
-                    if (m_valid && init_done) state <= ALLOC;
+                    if (m_accept) state <= ALLOC;
                 end
 
                 // ALLOC：发出页申请，下一拍转 WAIT_PAGE。
@@ -203,7 +209,7 @@ module afdx_tx_buf #(
                 end
 
                 // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
-                RECV : if (m_valid && init_done) begin
+                RECV : if (m_accept) begin
                     ended <= m_last;
                     if (enq_len == MAX_PAYLOAD) begin
                         reason <= ENQ_TOO_LONG;
@@ -274,7 +280,7 @@ module afdx_tx_buf #(
                 end
 
                 // DRAIN：继续接收但不保存字节，收到末字节后转 EVENT。
-                DRAIN : if (m_valid && init_done && m_last) state <= EVENT;
+                DRAIN : if (m_accept && m_last) state <= EVENT;
 
                 // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
                 EVENT : begin

@@ -103,7 +103,8 @@ module AFDX_top #(
         else now_c_tick <= &now[11:0];
     end
     wire byte_en, tx_initialized, rx_initialized;
-    wire tx_cfg_ok, tx_cfg_we, rx_map_we, rx_cfg_we;
+    wire tx_cfg_ok, tx_cfg_we, rx_cfg_we;
+    wire [RX_CONFIG_BANKS - 1:0] rx_map_we;
     wire [RX_CONFIG_BANKS - 1:0] rx_cfg_ok;
     wire [9:0] tx_cfg_addr;
     wire [32 * 16 - 1:0] rx_cfg_addr;

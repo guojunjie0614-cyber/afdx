@@ -64,6 +64,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg [7:0] rx_wd;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
+    // svc_port_match 与 rx_port_local 同拍更新，claim 锥只剩本地寄存器的与。
+    reg svc_port_match;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
     wire send_complete, tx_re, read_mode;
     wire [9:0] tx_ra;
@@ -136,15 +138,19 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         if (reset) begin
             rx_port_stage <= 0;
             rx_port_local <= 0;
+            svc_port_match <= 0;
         end
         else begin
             rx_port_stage <= rx_dport;
             rx_port_local <= rx_port_stage;
+            svc_port_match <= rx_port_stage == request_port || rx_port_stage == main_tid
+                || rx_port_stage == status_tid || rx_port_stage == deny_tid;
         end
     end
 
-    assign rx_claim = enable && configured && (incoming_port == request_port || incoming_port == main_tid
-        || incoming_port == status_tid || incoming_port == deny_tid);
+    assign rx_claim = enable && configured && (LOCAL_RX_PORT ? svc_port_match
+        : (rx_dport == request_port || rx_dport == main_tid || rx_dport == status_tid
+            || rx_dport == deny_tid));
 
     // 接收口不能暂停发送方，每次只处理一个等待确认的数据块。
     always @(posedge clk) begin

@@ -32,7 +32,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg tx_cfg_we,
     output reg [9:0] tx_cfg_addr,
     output reg [31:0] tx_cfg_wdata,
-    (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg rx_map_we, rx_cfg_we,
+    // rx_map_we 按总线副本各出一比特，远端 bank 只收本地副本的选通。
+    output wire [RX_BUS_COPIES - 1:0] rx_map_we,
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg rx_cfg_we,
     output wire [RX_BUS_COPIES * 16 - 1:0] rx_cfg_addr,
     output wire [RX_BUS_COPIES * 32 - 1:0] rx_cfg_wdata,
 
@@ -80,6 +82,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             (* preserve = 1, dont_merge = 1 *) reg [15:0] address;
             (* preserve = 1, dont_merge = 1 *) reg [DATA_WIDTH - 1:0] data;
             (* preserve = 1, dont_merge = 1 *) reg ready, transmit_pending, receive_pending;
+            // 本副本的映射写选通：本地握手位会合，长距离状态机锥不进使能端。
+            (* preserve = 1, dont_merge = 1 *) reg map_we_q;
             wire bank_ready = BANKED_READY ? rx_ready_by_bank[bus_copy] : tx_ready;
             wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
             wire capture_address = bank_ready && !transmit_pending && !receive_pending
@@ -88,6 +92,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 && cfg_wr && ready && (select_map || select_rx);
             assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
             assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
+            assign rx_map_we[bus_copy] = map_we_q;
             // 握手状态也按目的地复制；每个 ready 只驱动本 bank 的地址和数据保持端。
             // 和总线主状态同拍更新，避免全局 ready 跨片驱动一千多个寄存器。
             always @(posedge clk) begin
@@ -95,6 +100,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     ready <= 0;
                     transmit_pending <= 0;
                     receive_pending <= 0;
+                    map_we_q <= 0;
                     address <= 0;
                     data <= 0;
                 end
@@ -103,6 +109,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         ready <= 0;
                         transmit_pending <= 0;
                         receive_pending <= 0;
+                        map_we_q <= 0;
                     end
                     else if (transmit_pending) begin
                         if (tx_cfg_ok) begin
@@ -131,6 +138,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     end
                     if (capture_address) address <= cfg_write_addr[15:0];
                     if (capture_data) data <= cfg_wdata[DATA_WIDTH - 1:0];
+                    // 映射写选通在受理拍置位、本副本应答拍清除，与主状态机同拍。
+                    if (capture_address) map_we_q <= select_map;
+                    else if (rx_cfg_ok[bus_copy]) map_we_q <= 0;
                 end
             end
         end
@@ -157,10 +167,14 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
 
     // read_valid/read_select 将读有效标记与两拍后的数据对齐。
-    // read_loader 选择共享地址组中的服务读值。
+    // read_loader 选择共享地址组中的服务读值；
+    // read_sel_* 把共享组二次选择预译码成独热位，第二拍只剩一级选择。
     reg read_valid;
     reg [2:0] read_select;
     reg [1:0] read_loader;
+    reg read_sel_load, read_sel_extra;
+    // rx_pending 表示主机写请求已受理、正在等待接收核心应答。
+    reg rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
 
 
@@ -237,6 +251,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
 
     reg [2:0] mib_group;
     reg [1:0] mib_loader;
+    // 与 read_loader 同拍的共享组独热选择，预译码只进本地寄存器。
+    wire [1:0] read_loader_next = host_read ? loader_select(cfg_write_addr) : mib_loader;
     wire [31:0] status_value = {31'b0, tx_ready};
     wire [31:0] user_value = {16'b0, user_id};
     always @(posedge clk) begin
@@ -380,14 +396,14 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             tx_cfg_we <= 0;
             tx_cfg_addr <= 0;
             tx_cfg_wdata <= 0;
-            rx_map_we <= 0;
+            rx_pending <= 0;
             rx_cfg_we <= 0;
         end
         // 等待核心接收写请求时，模块保持地址和数据，并拉低 cfg_ready。
         else if ( ! tx_ready) begin
             cfg_ready <= 0;
             tx_cfg_we <= 0;
-            rx_map_we <= 0;
+            rx_pending <= 0;
             rx_cfg_we <= 0;
         end
         else if (tx_cfg_we) begin
@@ -397,9 +413,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 cfg_ready <= 1;
             end
         end
-        else if (rx_map_we || rx_cfg_we) begin
+        else if (rx_pending) begin
             if (rx_cfg_ok[0]) begin
-                rx_map_we <= 0;
+                rx_pending <= 0;
                 rx_cfg_we <= 0;
                 cfg_ready <= 1;
             end
@@ -414,7 +430,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     cfg_ready <= 0;
                 end
                 else if (select_map || select_rx) begin
-                    rx_map_we <= select_map;
+                    rx_pending <= 1;
                     rx_cfg_we <= select_rx;
                     cfg_ready <= 0;
                 end
@@ -432,6 +448,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             cfg_rvalid <= 0;
             read_select <= 0;
             read_loader <= 0;
+            read_sel_load <= 0;
+            read_sel_extra <= 0;
             cfg_rdata <= 0;
         end
         else begin
@@ -439,7 +457,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             // 第一拍保存各组读值，第二拍选择本次请求对应的一组。
             read_valid <= cfg_rd;
             read_select <= host_read ? group_select(cfg_write_addr) : mib_group;
-            read_loader <= host_read ? loader_select(cfg_write_addr) : mib_loader;
+            read_loader <= read_loader_next;
+            read_sel_load <= read_loader_next == SHARED_LOAD;
+            read_sel_extra <= read_loader_next == SHARED_LOAD_EXTRA;
             // 读结果分两级选择，并在请求后第二拍返回。
             cfg_rvalid <= read_valid;
             case (read_select)
@@ -450,11 +470,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 SEL_RTC : cfg_rdata <= rtc_rdata;
                 SEL_SNMP_CONTROL : cfg_rdata <= snmp_control_data;
                 SEL_SNMP_STATUS : cfg_rdata <= snmp_status_data;
-                SEL_SHARED : case (read_loader)
-                    SHARED_LOAD : cfg_rdata <= load_rdata;
-                    SHARED_LOAD_EXTRA : cfg_rdata <= load_extra_data;
-                    default : cfg_rdata <= snmp_descr_data;
-                endcase
+                SEL_SHARED : cfg_rdata <= read_sel_load ? load_rdata
+                    : read_sel_extra ? load_extra_data : snmp_descr_data;
             endcase
         end
     end
