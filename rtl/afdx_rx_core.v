@@ -176,7 +176,8 @@ module afdx_rx_core #(
     genvar bank, map_group;
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
-            localparam BUS_COPY = CFG_COPIES > 1 ? bank : 0;
+            // 相邻 bank 共享一份配置/描述符分发；CFG_COPIES 为 MAP_BANKS 的正因数。
+            localparam BUS_COPY = bank / (MAP_BANKS / CFG_COPIES);
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
             (* preserve = 1, dont_merge = 1 *) reg cleared;
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16 +: 16];
