@@ -12,7 +12,8 @@ module AFDX_top #(
     parameter TX_OFF_AW = 9,
     parameter LOOKAHEAD = 512,
     parameter RX_RING_AW = 12,
-    parameter RX_DQ_AW = 5) (
+    parameter RX_DQ_AW = 5,
+    parameter RX_CONFIG_BANKS = 16) (
 
     // 下面八个端口与赛题模板一致，其中的数据口连接 A 网。
     // A 网和 B 网是互为备份的两路以太网，同一帧在两路上各发一份。
@@ -75,8 +76,8 @@ module AFDX_top #(
     // tx_ready_q 保存收发核心都已初始化的结果；加载服务使用同拍的专用副本。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tx_ready_q;
     (* preserve = 1, dont_merge = 1 *) reg loader_ready_q;
-    localparam RX_CONFIG_BANKS = 32;
-    // 与 tx_ready_q 同拍更新，分别供接收配置各 bank 使用；末项独供首 bank 的 32 位数据。
+    // 配置副本数取 32 的正因数；每份服务相邻的一组物理 bank。
+    // 与 tx_ready_q 同拍更新；末项独供首配置副本的 32 位数据。
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
     // 同一主时钟下的本地时钟使能副本；不产生新时钟。
@@ -110,9 +111,9 @@ module AFDX_top #(
     wire [RX_CONFIG_BANKS - 1:0] rx_map_we;
     wire [RX_CONFIG_BANKS - 1:0] rx_cfg_ok;
     wire [9:0] tx_cfg_addr;
-    wire [32 * 16 - 1:0] rx_cfg_addr;
+    wire [RX_CONFIG_BANKS * 16 - 1:0] rx_cfg_addr;
     wire [31:0] tx_cfg_wdata;
-    wire [32 * 32 - 1:0] rx_cfg_wdata;
+    wire [RX_CONFIG_BANKS * 32 - 1:0] rx_cfg_wdata;
 
     // 收发核心直接连接千兆线路，中间没有会丢帧的缓存，所以 ev_gdrop 固定为零。
     assign ev_gdrop = 2'b00;
@@ -393,7 +394,7 @@ module AFDX_top #(
     afdx_rx_core #(.REGISTERED_TIME_TICK(1),
         .RX_RING_AW(RX_RING_AW),
         .RX_DQ_AW(RX_DQ_AW),
-        .CFG_COPIES(32)
+        .CFG_COPIES(RX_CONFIG_BANKS)
     ) rx_core (
         .clk(clk),
         .reset(reset),
