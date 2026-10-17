@@ -57,7 +57,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg [7:0] reason;
     reg [13:0] loaded;
     reg [15:0] lus_counter, main_tid, status_tid, deny_tid;
-    reg [31:0] retry_total;
+    (* preserve = 1, dont_merge = 1 *) reg [31:0] retry_total;
     reg consume_q, consume_previous;
     reg rx_we, packet_pending, receiving;
     reg [9:0] rx_wa, rx_index, rx_length;
@@ -561,6 +561,39 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane_r;
                 wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
                 wire [7:0] lane_r = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane_r;
+                wire [3:0] read_status, read_retry, retry_lane;
+                if (read_nibble == 0) begin : low_word_mirror
+                    // 低四位的长线源就近复制；直接采样引擎输出，与原寄存器同拍同值。
+                    // 不能从 status/retry_total 再寄存，否则主机两拍读会多延迟一拍。
+                    (* preserve = 1, dont_merge = 1 *) reg [1:0] status_m;
+                    (* preserve = 1, dont_merge = 1 *) reg [3:0] retry_total_m;
+                    // 第 7 路为 bit 1 单留一个选择副本，不再与同 nibble 的其余位共用。
+                    // 副本仍采样 MIB 预地址，主机地址保持组合直译，不改变两种读时序。
+                    (* preserve = 1, dont_merge = 1 *) reg mib_retry_bit1_m;
+                    wire [7:0] mib_decode = 8'b1 << cfg_addr[2:0];
+                    wire [7:0] host_decode = 8'b1 << cfg_addr[5:3];
+                    always @(posedge clk) begin
+                        if (reset) begin
+                            status_m <= 0;
+                            retry_total_m <= 0;
+                            mib_retry_bit1_m <= 0;
+                        end
+                        else begin
+                            status_m <= engine_status;
+                            retry_total_m <= engine_retry_total[3:0];
+                            mib_retry_bit1_m <= mib_decode[7];
+                        end
+                    end
+                    assign read_status = {2'b0, status_m};
+                    assign read_retry = retry_total_m;
+                    assign retry_lane = {lane_r[7], lane_r[7],
+                        cfg_addr[6] ? host_decode[7] : mib_retry_bit1_m, lane_r[7]};
+                end
+                else begin : direct_word_read
+                    assign read_status = word_cfg_rdata_2[read_nibble * 4 +: 4];
+                    assign read_retry = word_cfg_rdata_7[read_nibble * 4 +: 4];
+                    assign retry_lane = {4{lane_r[7]}};
+                end
                 always @(posedge clk) begin
                     if (reset) begin
                         mib_lane <= 8'b1;
@@ -573,12 +606,12 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                         mib_lane_r <= 8'b1 << cfg_addr[2:0];
                         cfg_rdata[read_nibble * 4 +: 4] <= ({4{lane_r[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
                             ({4{lane_r[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]) |
-                            ({4{lane_r[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
+                            ({4{lane_r[2]}} & read_status) |
                             ({4{lane_r[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]) |
                             ({4{lane_r[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
                             ({4{lane_r[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]) |
                             ({4{lane_r[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
-                            ({4{lane_r[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                            (retry_lane & read_retry);
                         cfg_extra_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_extra_data_0[read_nibble * 4 +: 4]) |
                             ({4{lane[1]}} & word_cfg_extra_data_1[read_nibble * 4 +: 4]) |
                             ({4{lane[2]}} & word_cfg_extra_data_2[read_nibble * 4 +: 4]) |
