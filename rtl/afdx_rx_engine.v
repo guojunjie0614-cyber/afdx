@@ -82,7 +82,7 @@ module afdx_rx_engine #(
         : (age_high_difference > AGE_LIMIT_HIGH || (age_high_difference == AGE_LIMIT_HIGH && !age_low_equal));
 
     // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
-    localparam STEP_DELIVER = 9, STEP_WRITE = 10, STEP_FINISH = 11;
+    localparam STEP_DELIVER = 11, STEP_WRITE = 12, STEP_FINISH = 13;
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] op;
 
     // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。
@@ -138,7 +138,9 @@ module afdx_rx_engine #(
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [3:0] phase;
     reg [11:0] init_ptr, age_ptr, op_idx;
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
-    // phase 7 先行寄存 phase 8 的比较结论，交付判断不再串接宽比较器。
+    // desc_quiet 保存上一拍“无待处理帧”，AGE 入口与状态装载使能不再直接串接 desc_valid 远端连线。
+    (* preserve = 1, dont_merge = 1 *) reg desc_quiet;
+    // phase 9 先行寄存 phase 10 的比较结论，交付判断不再串接宽比较器。
     reg skew_expired, sn_match, zero_shortcut, forward_ok;
     reg map_missing, config_reject, sequence_reject;
     reg [RX_RING_AW + 82:0] current_desc;
@@ -183,6 +185,11 @@ module afdx_rx_engine #(
 
     wire age_tick = REGISTERED_TIME_TICK ? (now_c >> 16) : now_c_value != now_previous;
 
+    always @(posedge clk) begin
+        if (reset) desc_quiet <= 0;
+        else desc_quiet <= !desc_a_valid[0] && !desc_b_valid[0];
+    end
+
     localparam DQ_WRITE_SLICES = (DQ_WIDTH + 23) / 24;
     reg dq_commit;
     genvar dq_write_copy;
@@ -205,10 +212,10 @@ module afdx_rx_engine #(
     endgenerate
 
     // RAM 捕获与三种修改互斥；分字段直接选择，避免 RAM 输出穿过多层整字优先级。
-    wire load_saved = (op == FRAME && phase == 4)
-        || (op == AGE && phase == 1 && !desc_a_valid[0] && !desc_b_valid[0]);
-    wire write_saved_a = op == FRAME && phase == 7 && saved_cfg[3] && !op_net;
-    wire write_saved_b = op == FRAME && phase == 7 && saved_cfg[3] && op_net;
+    wire load_saved = (op == FRAME && phase == 6)
+        || (op == AGE && phase == 1 && desc_quiet);
+    wire write_saved_a = op == FRAME && phase == 9 && saved_cfg[3] && !op_net;
+    wire write_saved_b = op == FRAME && phase == 9 && saved_cfg[3] && op_net;
     wire write_saved_rm = op == FRAME && phase == STEP_DELIVER && deliver_allowed
         && dq_room && saved_cfg[4];
     always @(posedge clk) begin
@@ -360,6 +367,14 @@ module afdx_rx_engine #(
 
                 // IDLE：有帧时转 FRAME；无帧且需检查旧记录时转 AGE。
                 IDLE : if (enable) begin
+                    if (desc_quiet && (age_pending || age_tick)) begin
+                        state_re <= 1;
+                        state_ra <= age_ptr;
+                        op_idx <= age_ptr;
+                        age_time <= now_c_value;
+                        op <= AGE;
+                        phase <= 0;
+                    end
                     if (desc_a_valid[0] || desc_b_valid[0]) begin
                         // 两网同时提交时先处理 A 网。
                         op_net <= ! desc_a_valid[0];
@@ -371,35 +386,28 @@ module afdx_rx_engine #(
                         op <= FRAME;
                         phase <= 0;
                     end
-                    else if (age_pending || age_tick) begin
-                        state_re <= 1;
-                        state_ra <= age_ptr;
-                        op_idx <= age_ptr;
-                        age_time <= now_c_value;
-                        op <= AGE;
-                        phase <= 0;
-                    end
                 end
 
                 // FRAME：查配置并检查帧，写回结果后转 IDLE。
-                // phase=1：分 bank 接口在表内寄存结果；独立接口保存编号映射，下一拍转 2。
-                // phase=2：有效映射触发配置读取，否则转 11。
-                // phase=3：等待同步读取，下一拍转 4。
-                // phase=4：保存配置和状态，下一拍转 5。
-                // phase=5：检查网络和长度，失败转 11，否则转 6。
-                // phase=6：计算到达时间差和序号距离，下一拍转 7。
-                // phase=7：检查本网络序号，失败转 10，否则转 8。
-                // phase=8：判断是否为重复帧，下一拍转 9。
-                // phase=9：检查交付队列容量并保存决定，下一拍转 10。
-                // phase=10：写回改变的接收状态，下一拍转 11。
-                // phase=11：报告本帧处理结果，主状态转 IDLE。
+                // phase=0..2：等待映射表流水线返回。
+                // phase=3：分 bank 接口在表内寄存结果；独立接口保存编号映射，下一拍转 4。
+                // phase=4：有效映射触发配置读取，否则转 13。
+                // phase=5：等待同步读取，下一拍转 6。
+                // phase=6：保存配置和状态，下一拍转 7。
+                // phase=7：检查网络和长度，失败转 13，否则转 8。
+                // phase=8：计算到达时间差和序号距离，下一拍转 9。
+                // phase=9：检查本网络序号，失败转 12，否则转 10。
+                // phase=10：判断是否为重复帧，下一拍转 11。
+                // phase=11：检查交付队列容量并保存决定，下一拍转 12。
+                // phase=12：写回改变的接收状态，下一拍转 13。
+                // phase=13：报告本帧处理结果，主状态转 IDLE。
                 FRAME : begin
                     phase <= phase + 1'b1;
                     case (phase)
 
-                        1 : if (!LOCAL_MAP_READ) saved_map <= map_q;
+                        3 : if (!LOCAL_MAP_READ) saved_map <= map_q;
 
-                        2 : begin
+                        4 : begin
                             // 无效映射只撤销读使能；地址先保存，避免有效位串入宽地址选择器。
                             cfg_ra <= selected_map[11:0];
                             state_ra <= selected_map[11:0];
@@ -411,12 +419,12 @@ module afdx_rx_engine #(
                             end
                         end
 
-                        3 : if (map_missing) begin
+                        5 : if (map_missing) begin
                             result <= RX_UNMAPPED;
                             phase <= STEP_FINISH;
                         end
 
-                        4 : begin
+                        6 : begin
                             saved_cfg <= cfg_q;
 
                             // 与状态字同拍选择旧序号；下一拍递增不再串接两网选择器。
@@ -424,7 +432,7 @@ module afdx_rx_engine #(
                             psn_valid <= op_net ? state_q[33] : state_q[42];
                         end
 
-                        5 : begin
+                        7 : begin
                             config_reject <= !saved_cfg[0] || !(op_net ? saved_cfg[2] : saved_cfg[1])
                                 || length > saved_cfg[27:17];
                             next_sn <= psn == SN_MAX ? SN_FIRST : psn + 1'b1;
@@ -432,7 +440,7 @@ module afdx_rx_engine #(
                             raw_distance <= { 1'b0, sn } - { 1'b0, saved_state[23:16] };
                         end
 
-                        6 : begin
+                        8 : begin
                             if (config_reject) begin
                                 result <= RX_CONFIG_REJECT;
                                 phase <= STEP_FINISH;
@@ -446,7 +454,7 @@ module afdx_rx_engine #(
 
                         // 序号为零、紧接上一序号或只跳过一个序号时，完整性检查通过。
                         // 无论是否通过，本网络都记录此次收到的序号。
-                        7 : begin
+                        9 : begin
                             sequence_reject <= saved_cfg[3] && psn_valid && sn != 0
                                 && sn != next_sn && sn != second_sn;
                             if (saved_cfg[3]) state_changed <= 1;
@@ -461,7 +469,7 @@ module afdx_rx_engine #(
                         // SkewMax 是两网同一帧允许的最大到达时间差。
                         // 在此时间范围内，已交付过的同序号帧不能再次交付。
                         // 其他序号按模 255 的前向距离判断新旧。
-                        8 : begin
+                        10 : begin
                             if (sequence_reject) begin
                                 result <= RX_BAD_SEQUENCE;
                                 phase <= STEP_WRITE;

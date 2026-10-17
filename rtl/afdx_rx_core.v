@@ -137,7 +137,8 @@ module afdx_rx_core #(
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
     // 32 个 bank 各保存 2048 项；每个局部地址只驱动本 bank 的存储块。
-    // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新，读取不增加交付拍数。
+    // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新。
+    // RAM 口影子与回读输出各增加一级流水线，引擎的 FRAME 相位同步后移两拍。
     localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
     // 读写命中在顶层一次译码成独热位，bank 内只寄存单比特结果；
@@ -160,6 +161,12 @@ module afdx_rx_core #(
         map_group_data[13 * 13 +: 13] |
         map_group_data[14 * 13 +: 13] |
         map_group_data[15 * 13 +: 13];
+    (* preserve = 1, dont_merge = 1 *) reg [12:0] map_q_r;
+    always @(posedge clk) begin
+        if (reset) map_q_r <= 0;
+        else map_q_r <= map_q;
+    end
+
     genvar bank, map_group;
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
@@ -175,6 +182,8 @@ module afdx_rx_core #(
                 && cfg_ok[BUS_COPY] && bank_cfg_addr[15:MAP_BANK_AW] == bank;
             (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
+            (* preserve = 1, dont_merge = 1 *) reg ram_request_q;
+            (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] ram_address_q;
             (* preserve = 1, dont_merge = 1 *) reg [12:0] write_data;
             (* preserve = 1, dont_merge = 1 *) reg selected;
             wire [12:0] data;
@@ -182,14 +191,16 @@ module afdx_rx_core #(
             always @(posedge clk) begin
                 if (reset) begin
                     read_request <= 0;
+                    ram_request_q <= 0;
                     write_request <= 0;
                     selected <= 0;
                     clear_local <= 0;
                     cleared <= 0;
                 end
                 else begin
-                    selected <= read_request;
+                    selected <= ram_request_q;
                     read_request <= map_rd_sel[bank];
+                    ram_request_q <= read_request;
                     // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
                     write_request <= !cleared || map_wr_sel[bank];
                     if (!cleared) begin
@@ -197,19 +208,20 @@ module afdx_rx_core #(
                         if (&clear_local) cleared <= 1;
                     end
                     // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
-                    // 返回选择由局部读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
+                    // 返回选择由 RAM 口读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
                     read_address <= bank_read_addr[MAP_BANK_AW - 1:0];
+                    ram_address_q <= read_address;
                     write_address <= cleared ? bank_cfg_addr[MAP_BANK_AW - 1:0] : clear_local;
                     write_data <= cleared ? bank_cfg_data : 13'b0;
                 end
             end
             afdx_ram_sdp #(.WIDTH(13), .DEPTH(1 << MAP_BANK_AW)) memory (
                 .clk(clk), .write_enable(write_request), .write_address(write_address), .write_data(write_data),
-                .read_enable(read_request), .read_address(read_address),
+                .read_enable(ram_request_q), .read_address(ram_address_q),
                 .read_data(data)
             );
         end
-        // 返回拍数不变：每两个 bank 在附近合并并寄存，避免存储器输出跨八个 bank 后才遇到寄存器。
+        // 每两个 bank 在附近合并并寄存，避免存储器输出跨八个 bank 后才遇到寄存器。
         for (map_group = 0; map_group < MAP_GROUPS; map_group = map_group + 1) begin : map_read_group
             always @(posedge clk) begin
                 if (reset) map_group_data[map_group * 13 +: 13] <= 0;
@@ -364,7 +376,7 @@ module afdx_rx_core #(
         .commit_b(commit_b),
         .map_re(map_re),
         .map_ra(map_ra),
-        .map_q(map_q),
+        .map_q(map_q_r),
         .state_re(state_re),
         .state_we(state_we),
         .state_ra(state_ra),

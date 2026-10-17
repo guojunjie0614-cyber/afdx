@@ -41,6 +41,13 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
 
+    // enable 的本地副本：粘滞电平晚一拍只在初始化边界生效。
+    (* preserve = 1, dont_merge = 1 *) reg en_q;
+    always @(posedge clk) begin
+        if (reset) en_q <= 0;
+        else en_q <= enable;
+    end
+
     wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
     localparam SNMP_PORT = 161, TRAP_PORT = 162;
@@ -211,7 +218,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             if (cold_ack_q) cold_request <= 0;
             if (cfg_we && cfg_write_addr == REG_ENABLE && cfg_wdata[0] && !configured && trap_enabled)
                 cold_request <= 1;
-            if (!configured || !enable) begin
+            if (!configured || !en_q) begin
                 receiving <= 0;
                 capture_pending <= 0;
             end
@@ -349,7 +356,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),
-                .enable_in(enable),
+                .enable_in(en_q),
                 .now_in(now),
                 .configured_in(configured),
                 .trap_enabled_in(trap_enabled),
@@ -394,7 +401,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),
-                .enable_in(enable),
+                .enable_in(en_q),
                 .now_in(now),
                 .configured_in(configured),
                 .trap_enabled_in(trap_enabled),
