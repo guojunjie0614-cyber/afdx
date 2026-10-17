@@ -52,7 +52,7 @@ module afdx_tx_builder #(
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg pending, prepared, stream_active, p_a, p_b, p_timed;
 
-    // prep 用十拍算出 IPv4 头校验和，每拍只做一次加法。
+    // prep 用十拍算出 IPv4 头校验和，每拍只累加一项。
     // prep=0：计算 IPv4 和 UDP 的长度字段，下一拍转 1。
     // prep=1：加上 IPv4 总长度字段，下一拍转 2。
     // prep=2：加上 IPv4 标识字段，下一拍转 3。
@@ -95,9 +95,14 @@ module afdx_tx_builder #(
     reg [10:0] p_len, active_len, payload_index;
     reg [7:0] p_sn, p_page, active_sn;
     reg [19:0] sum;
-    // 校验和的低 16 位与进位分开累加，每步的加法链不超过 16 位。
-    reg [15:0] sum_low;
+    // 加数提前一相位选好，低 16 位分成两个字节，分别使用 9 位加法保留进位。
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] add_term_q;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] sum_b0;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] sum_b1;
     reg [3:0] sum_high;
+    wire [8:0] add_lo9 = {1'b0, sum_b0} + {1'b0, add_term_q[7:0]};
+    wire [8:0] add_hi9 = {1'b0, sum_b1} + {1'b0, add_term_q[15:8]} + {8'b0, add_lo9[8]};
+    wire carry_hi = add_hi9[8];
 
     // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
     // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
@@ -196,7 +201,9 @@ module afdx_tx_builder #(
             udp_length <= 0;
             checksum <= 0;
             sum <= 0;
-            sum_low <= 0;
+            add_term_q <= 0;
+            sum_b0 <= 0;
+            sum_b1 <= 0;
             sum_high <= 0;
             now_q <= 0;
             time_difference <= 0;
@@ -331,24 +338,33 @@ module afdx_tx_builder #(
             end
             else if (pending && ! prepared) begin
                 prep <= prep + 1'b1;
+                // 本拍预选下一相位的加数；相位 0 直接算新长度，不能取 ip_length 的旧值。
+                case (prep)
+                    0 : add_term_q <= p_len + IP_UDP_OVERHEAD;
+                    1 : add_term_q <= p_ident;
+                    2 : add_term_q <= p_src[31:16];
+                    3 : add_term_q <= p_src[15:0];
+                    4 : add_term_q <= p_dst[31:16];
+                    5 : add_term_q <= p_dst[15:0];
+                    default : ;
+                endcase
                 case (prep)
                     0 : begin
                         ip_length <= p_len + IP_UDP_OVERHEAD;
                         udp_length <= p_len + UDP_HEADER_LENGTH;
                         // 校验和从两个固定字段之和开始累加：
                         // 0x4500（版本 4、头长 20 字节）加 0x0111（生存时间 1、协议号 17 即 UDP）。
-                        sum_low <= IP_SUM_SEED[15:0];
+                        sum_b0 <= IP_SUM_SEED[7:0];
+                        sum_b1 <= IP_SUM_SEED[15:8];
                         sum_high <= IP_SUM_SEED[19:16];
                     end
-                    // 低 16 位加法和进位累加并行，进位不再串行穿过整个 20 位加法器；
-                    // 17 位常量把加法提升到 17 位，使 >= 取到真实进位。
-                    1 : begin sum_low <= sum_low + ip_length; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, ip_length} >= 17'h10000); end
-                    2 : begin sum_low <= sum_low + p_ident; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_ident} >= 17'h10000); end
-                    3 : begin sum_low <= sum_low + p_src[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[31:16]} >= 17'h10000); end
-                    4 : begin sum_low <= sum_low + p_src[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[15:0]} >= 17'h10000); end
-                    5 : begin sum_low <= sum_low + p_dst[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[31:16]} >= 17'h10000); end
-                    6 : begin sum_low <= sum_low + p_dst[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[15:0]} >= 17'h10000); end
-                    7 : sum <= { 4'b0, sum_low } + sum_high;
+                    // 两个字节共用已寄存加数，高字节溢出单独累计；准备相位和输出拍次不变。
+                    1, 2, 3, 4, 5, 6 : begin
+                        sum_b0 <= add_lo9[7:0];
+                        sum_b1 <= add_hi9[7:0];
+                        sum_high <= sum_high + carry_hi;
+                    end
+                    7 : sum <= { 4'b0, sum_b1, sum_b0 } + sum_high;
                     8 : sum <= { 4'b0, sum[15:0] } + sum[19:16];
                     9 : begin
                         checksum <= ~ sum[15:0];
