@@ -51,7 +51,9 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     reg [7:0] bytes [0:7];
     reg last_byte [0:7];
     wire issue = active && issued < packet_length && reserved < 8;
-    wire take = active && (!tx_valid || tx_ready) && queued != 0;
+    // 远端 tx_ready 只进末级与门，本地项先行会合。
+    wire take_armed = active && queued != 0;
+    wire take = take_armed && (!tx_valid || tx_ready);
     always @(posedge clk) begin
         if (reset) begin
             active <= 0;

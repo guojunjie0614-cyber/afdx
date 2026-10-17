@@ -114,17 +114,22 @@ module afdx_rx_parse #(
     reg [RX_RING_AW + 82:0] end_desc;
 
     // 先登记本拍校验字，再累加；帧尾检查直接使用累加值的补码关系。
-    // 并行判断当前头字段，再更新一个粘滞错误位；各字段不串接到反馈选择链。
+    // 字段检查先寄存成单比特结论，header_bad 只粘滞合并已寄存的值；
+    // 受检位置都在帧头前段，合并结果远早于帧尾读取。
     reg header_byte_bad;
-    always @* begin
-        case (position)
-            1, 2, 3, POS_ETHERTYPE_LOW, POS_IP_OFFSET_LOW : header_byte_bad = m_data != 0;
-            POS_ETHERTYPE_HIGH : header_byte_bad = m_data != ETHERTYPE_HIGH;
-            POS_IP_HEADER : header_byte_bad = m_data != IP_VERSION_IHL;
-            POS_IP_FLAGS : header_byte_bad = (m_data & IP_FRAGMENT_MASK) != 0;
-            POS_IP_PROTOCOL : header_byte_bad = m_data != IP_PROTOCOL_UDP;
-            default : header_byte_bad = 0;
-        endcase
+    always @(posedge clk) begin
+        if (reset) header_byte_bad <= 0;
+        else if (m_valid && allowed && ! m_first) begin
+            case (position)
+                1, 2, 3, POS_ETHERTYPE_LOW, POS_IP_OFFSET_LOW : header_byte_bad <= m_data != 0;
+                POS_ETHERTYPE_HIGH : header_byte_bad <= m_data != ETHERTYPE_HIGH;
+                POS_IP_HEADER : header_byte_bad <= m_data != IP_VERSION_IHL;
+                POS_IP_FLAGS : header_byte_bad <= (m_data & IP_FRAGMENT_MASK) != 0;
+                POS_IP_PROTOCOL : header_byte_bad <= m_data != IP_PROTOCOL_UDP;
+                default : header_byte_bad <= 0;
+            endcase
+        end
+        else header_byte_bad <= 0;
     end
     always @(posedge clk) begin
         if (reset) header_bad <= 0;
@@ -256,6 +261,10 @@ module afdx_rx_parse #(
                 end
                 else begin
                     position <= position + 1'b1;
+                    // 环写口的数据和地址随字节自由运行，只在 ring_we 提交拍生效；
+                    // 位置比较不再进入写数据与写地址的使能锥。
+                    ring_wd <= m_data;
+                    ring_wa <= has_payload ? trial[RX_RING_AW - 1:0] : committed[RX_RING_AW - 1:0];
                     if ( ! position[0]) high_byte <= m_data;
                     case (position)
                         // 目的地址的第 1–3 字节和类型字段的低字节必须为零。
@@ -290,15 +299,11 @@ module afdx_rx_parse #(
                             overflow <= n > CAPACITY || occupied > space_limit;
                             if (n <= CAPACITY && occupied <= space_limit) begin
                                 ring_we <= 1;
-                                ring_wa <= committed[RX_RING_AW - 1:0];
-                                ring_wd <= m_data;
                                 trial <= committed + 1'b1;
                             end
                         end
                         else if ( ! overflow) begin
                             ring_we <= 1;
-                            ring_wa <= trial[RX_RING_AW - 1:0];
-                            ring_wd <= m_data;
                             trial <= trial + 1'b1;
                         end
                     end

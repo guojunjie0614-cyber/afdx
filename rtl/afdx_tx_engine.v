@@ -128,12 +128,13 @@ module afdx_tx_engine #(
 
     // 轮询分几拍完成：scan_vl0 到 scan_vl4 是各拍正在检查的虚拟链路编号，
     // scan_s0 到 scan_s2 是读出的状态逐拍传递的副本。
-    // scan_d 是当前时间减去下次允许发送时间的差，scan_soon 再加上 LOOKAHEAD。
-    // scan_soon 的最高位为 0，表示这条虚拟链路已到期或即将到期。
+    // scan_d 是当前时间减去下次允许发送时间的差，加上 LOOKAHEAD 后的最高位
+    // 为 0，表示这条虚拟链路已到期或即将到期。
     reg [62:0] scan_s0, scan_s1, scan_s2;
-    reg [31:0] scan_d, scan_soon;
-    reg scan_due;
-    reg scan_has_data, scan_unrestricted, scan_blocked;
+    reg [31:0] scan_d;
+    // enable_q 是 init_done 的本地副本，第四拍寄存准入与清除结论，
+    // 远端使能只进一次寄存器，不再穿过扫描判断的组合锥。
+    reg enable_q, scan_eligible_r, scan_cleanup_r;
 
     // quota 限制连续扫描次数，让新消息也能及时加入队列。
     // ack_pending 表示还有一个实际发送时间需要写回。
@@ -141,8 +142,9 @@ module afdx_tx_engine #(
     wire want_enq = enq_valid_local && ! enq_seen && (candidate || quota >= SCAN_QUOTA);
     wire want_grant = candidate && grant_ready && ! pend_valid;
 
+    // cfg_ok 沿用原 enable 时序；调度内部使用本地副本 enable_q。
     assign cfg_ok = enable && op == IDLE && ! want_enq && ! want_grant;
-    wire scanning = enable && op == IDLE && ! candidate && ! ack_pending && ! want_enq;
+    wire scanning = enable_q && op == IDLE && ! candidate && ! ack_pending && ! want_enq;
 
     // 状态字的加减先并行寄存，提交拍只选择已经算好的整字。
     reg [62:0] state_after_enqueue, state_after_grant;
@@ -182,9 +184,13 @@ module afdx_tx_engine #(
         end
     endtask
 
-    // 第四拍已知队列状态和待发送链路，先寄存比较结果。
-    // 第五拍只组合三个标记，不再把链路比较和调度条件串到存储器地址选择上。
-    wire scan_eligible = scan_has_data && (scan_unrestricted || !scan_soon[31]) && !scan_blocked;
+    // 第四拍已知队列状态和待发送链路，把准入与清除结论一并寄存。
+    // 第五拍只使用已寄存的单比特结论，不再重组合六个条件。
+    wire scan_due_w = ! scan_d[31];
+    wire scan_has_data_w = scan_s1[21:16] != 0;
+    wire scan_unrestricted_w = ! scan_s1[62];
+    wire scan_blocked_w = pend_valid && scan_vl3 == pend_vl;
+    wire [31:0] scan_soon_w = scan_d + LOOKAHEAD;
 
     always @(posedge clk) begin
         if (reset) begin
@@ -254,14 +260,13 @@ module afdx_tx_engine #(
             scan_s1 <= 0;
             scan_s2 <= 0;
             scan_d <= 0;
-            scan_soon <= 0;
-            scan_due <= 0;
-            scan_has_data <= 0;
-            scan_unrestricted <= 0;
-            scan_blocked <= 0;
+            enable_q <= 0;
+            scan_eligible_r <= 0;
+            scan_cleanup_r <= 0;
         end
         else begin
             now_q <= now;
+            enable_q <= enable;
             state_we <= 0;
             state_re <= 0;
             cfg_re <= 0;
@@ -287,11 +292,10 @@ module afdx_tx_engine #(
             end
             if (scan_valid[3]) begin
                 scan_s2 <= scan_s1;
-                scan_soon <= scan_d + LOOKAHEAD;
-                scan_due <= ! scan_d[31];
-                scan_has_data <= scan_s1[21:16] != 0;
-                scan_unrestricted <= !scan_s1[62];
-                scan_blocked <= pend_valid && scan_vl3 == pend_vl;
+                scan_eligible_r <= scan_has_data_w && (scan_unrestricted_w || ! scan_soon_w[31])
+                    && ! scan_blocked_w;
+                scan_cleanup_r <= ! scan_has_data_w && ! scan_unrestricted_w && scan_due_w
+                    && ! scan_blocked_w;
             end
             // 模块只选择有排队消息且已到期或即将到期的虚拟链路。
             // LOOKAHEAD 指定提前准备组帧的周期数，实际发送仍要等到期。
@@ -303,14 +307,14 @@ module afdx_tx_engine #(
             if (scanning && scan_valid[4]) begin
                 scan_commit <= scan_vl4 + 1'b1;
                 if (quota < SCAN_QUOTA) quota <= quota + 1'b1;
-                if (scan_eligible) begin
+                if (scan_eligible_r) begin
                     candidate <= 1;
                     candidate_vl <= scan_vl4;
                     scan_valid <= 0;
                     scan_issue <= scan_vl4 + 1'b1;
                     scan_phase <= 0;
                 end
-                else if (!scan_has_data && !scan_unrestricted && scan_due && !scan_blocked) begin
+                else if (scan_cleanup_r) begin
                     state_we <= 1;
                 end
             end
@@ -333,7 +337,7 @@ module afdx_tx_engine #(
                 end
 
                 // IDLE：按请求转 START、ENQ 或 GRANT；无请求时轮询队列。
-                IDLE : if (enable) begin
+                IDLE : if (enable_q) begin
                     if (ack_pending) begin
                         invalidate_scan;
                         op <= START;
@@ -370,7 +374,7 @@ module afdx_tx_engine #(
                     end
                     else if ( ! candidate) begin
                         scan_phase <= ! scan_phase;
-                        if ( ! scan_phase && ! (scan_valid[4] && scan_eligible)) begin
+                        if ( ! scan_phase && ! (scan_valid[4] && scan_eligible_r)) begin
                             state_re <= 1;
                             state_ra <= scan_issue;
                             scan_vl0 <= scan_issue;

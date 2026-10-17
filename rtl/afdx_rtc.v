@@ -99,6 +99,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
     wire load_time = cfg_we && cfg_write_addr == 0 && cfg_wdata[2];
+    // 远端配置信号只进这一个寄存器，装载生效推迟一拍，各使能锥不再含译码。
+    reg load_pending;
 
     assign tx_vl = vl;
     assign tx_port = port_number;
@@ -168,6 +170,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // CALC_LATENCY：补偿计算经过的 40 ns，下一拍转 CALC_APPLY。
     // CALC_APPLY：应用校正并计数，下一拍转 CALC_IDLE。
     reg [4:0] calc_state;
+    // calc_busy 与 calc_state 同拍影子：进入计算置位、回到空闲清除，
+    // 供发送状态机就近判断，独热位不再跨模块连线。
+    (* preserve = 1, dont_merge = 1 *) reg calc_busy;
     reg signed [31:0] diff_sec1, diff_sec2, diff_ns1, diff_ns2, sum_sec, sum_ns;
     reg signed [31:0] correction_sec, correction_ns;
     reg second_odd;
@@ -184,8 +189,12 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire encode_tx_done, encode_rx_done, decode_done;
     wire [31:0] encode_tx_result, encode_rx_result, decode_result;
     reg [31:0] stamp_tx_sec, stamp_tx_frac, stamp_rx_sec, stamp_rx_frac, reference_sec, reference_frac;
-    wire first_tx = active && enable && tx_state == TX_HANDSHAKE && tx_ready && tx_index == 0;
-    wire first_rx = active && enable && rx_valid && rx_claim && ! rx_busy;
+    // 远端握手信号只进末级与门，本地项先行会合。
+    wire tx_armed = active && enable && tx_state == TX_HANDSHAKE && tx_index == 0;
+    wire first_tx = tx_armed && tx_ready;
+    wire rx_byte = rx_valid && rx_claim;
+    wire rx_armed = enable && rx_claim && ! rx_busy;
+    wire first_rx = rx_armed && rx_valid;
     afdx_ntp_fraction encode_tx (
         // 时钟和复位
         .clk(clk),
@@ -232,7 +241,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 (* preserve = 1, dont_merge = 1 *) reg write_byte;
                 always @(posedge clk) begin
                     if (reset) write_byte <= 0;
-                    else write_byte <= active && enable && rx_valid && rx_claim;
+                    else write_byte <= enable && rx_byte;
                     if (reset) rx_packet[packet_group * 24 +: 24] <= 0;
                     else if (write_byte)
                         rx_packet[packet_group * 24 +: 24] <= shifted_packet[packet_group * 24 +: 24];
@@ -242,14 +251,28 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else begin : direct_receive
             always @(posedge clk) begin
                 if (reset) rx_packet <= 0;
-                else if (active && enable && rx_valid && rx_claim)
+                else if (enable && rx_byte)
                     rx_packet <= {rx_packet[375:0], rx_data};
             end
         end
     endgenerate
     always @(posedge clk) begin
-        if (reset || !active || !enable || load_time) rx_done_delayed <= 0;
+        if (reset || !active || !enable || load_pending) rx_done_delayed <= 0;
         else rx_done_delayed <= rx_done;
+    end
+
+    always @(posedge clk) begin
+        if (reset) load_pending <= 0;
+        else load_pending <= load_time;
+    end
+
+    // Originate 字段在末字节到达前早已稳定，逐拍寄存匹配结果。
+    // 末字节仍在 data_stage 的那一拍报文整体下移 8 位，字段位于 [183:120]。
+    reg reply_match;
+    always @(posedge clk) begin
+        if (reset) reply_match <= 0;
+        else reply_match <= rx_packet[183:152] == stamp_tx_sec
+            && rx_packet[151:120] == stamp_tx_frac;
     end
 
     always @(posedge clk) begin
@@ -275,7 +298,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 encode_tx_value <= nanoseconds;
                 encode_tx_start <= 1;
             end
-            if (load_time) begin
+            if (load_pending) begin
                 reference_sec <= load_sec + NTP_EPOCH;
                 encode_rx_value <= load_ns;
                 encode_rx_reference <= 1;
@@ -359,7 +382,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         end
         // 配置装载优先于同步校正，两者都没有时按拍递增。
         // 纳秒达到十亿时向秒进位。
-        else if (load_time) begin
+        else if (load_pending) begin
             seconds <= load_sec;
             seconds_increment <= load_sec + 32'd1;
 
@@ -431,7 +454,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             tick_dw <= ge32(adjusted_ns, 2 * LAST_TICK_NS);
             tick_an <= ge32(final_ns_wrapped, LAST_TICK_NS - CLOCK_NS);
             tick_aw <= ge32(final_ns_wrapped, 2 * LAST_TICK_NS);
-            if (load_time) begin
+            if (load_pending) begin
                 tick_overflow <= load_overflow;
                 previous_time_mode <= TIME_LOAD;
             end
@@ -478,7 +501,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         end
     end
 
-    wire abort_protocol = !active || !enable || load_time;
+    wire abort_protocol = !active || !enable || load_pending;
     // 预先保存下一拍的提交状态，各副本只驱动一个 32 位对外状态寄存器。
     (* preserve = 1, dont_merge = 1 *) reg apply_seconds, apply_nanoseconds, apply_count;
     always @(posedge clk) begin
@@ -526,6 +549,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             reply_pending <= 0;
             countdown <= 0;
             calc_state <= CALC_IDLE;
+            calc_busy <= 0;
             diff_sec1 <= 0;
             diff_sec2 <= 0;
             diff_ns1 <= 0;
@@ -558,7 +582,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             rx_done <= 0;
             decode_start <= 0;
             if (countdown != 0) countdown <= countdown - 32'd1;
-            if (rx_valid && rx_claim) begin
+            if (rx_byte) begin
                 rx_busy <= ! rx_last;
                 if ( ! rx_busy) begin
                     rx_index <= 1;
@@ -577,10 +601,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
                 // 重发报文还未发完时，不接受旧请求的回应。
                 else if ( ! master && waiting && tx_state == TX_IDLE && rx_packet[378:376] == MODE_SERVER
-                    && rx_packet[191:160] == stamp_tx_sec && rx_packet[159:128] == stamp_tx_frac) begin
+                    && reply_match) begin
                     server_receive_sec <= rx_packet[127:96] - NTP_EPOCH;
                     server_transmit_sec <= rx_packet[63:32] - NTP_EPOCH;
                     calc_state <= CALC_START_T2;
+                    calc_busy <= 1;
                 end
             end
             // 时钟偏差为 ((T2-T1)+(T3-T4))/2。
@@ -696,6 +721,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 CALC_APPLY : begin
                     waiting <= 0;
                     calc_state <= CALC_IDLE;
+                    calc_busy <= 0;
                 end
             endcase
             // 服务端发送待答复的报文，客户端在请求周期到期时重发。
@@ -711,7 +737,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                         tx_state <= TX_GROUPS;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if ( ! master && countdown == 0 && calc_state == CALC_IDLE && !rx_done && !packet_done) begin
+                    else if ( ! master && countdown == 0 && ! calc_busy && !rx_done && !packet_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;
@@ -782,6 +808,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 reply_pending <= 0;
                 countdown <= 0;
                 calc_state <= CALC_IDLE;
+                calc_busy <= 0;
                 decode_start <= 0;
             end
         end

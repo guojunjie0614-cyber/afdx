@@ -15,9 +15,10 @@ module afdx_rx_core #(
     input wire [7:0] rx_data_b,
     input wire rx_valid_b,
 
-    // cfg_map_we 写入线路编号到配置索引的映射。
+    // cfg_map_we 按配置副本写入线路编号到配置索引的映射。
     // cfg_cfg_we 写入接收参数，cfg_ok 为高时允许这些写操作。
-    input wire cfg_map_we, cfg_cfg_we,
+    input wire [CFG_COPIES - 1:0] cfg_map_we,
+    input wire cfg_cfg_we,
     input wire [CFG_COPIES * 16 - 1:0] cfg_addr,
     input wire [CFG_COPIES * 32 - 1:0] cfg_wdata,
 
@@ -115,21 +116,16 @@ module afdx_rx_core #(
             cfg_we <= 0;
             if ( ! init_done) begin
                 if ( ! flush_init) begin
-                    if (clear_addr < 4096) begin
-                        cfg_we <= 1;
-                        cfg_wa <= clear_addr[11:0];
-                        cfg_wd <= 0;
-                    end
+                    if (clear_addr < 4096) cfg_we <= 1;
                     clear_addr <= clear_addr + 1'b1;
                     if (clear_addr == 65535) flush_init <= 1;
                 end
                 else if (engine_initialized) init_done <= 1;
             end
-            else begin
-                cfg_we <= cfg_cfg_we && cfg_ok[0];
-                cfg_wa <= cfg_addr[11:0];
-                cfg_wd <= cfg_wdata[31:0];
-            end
+            else cfg_we <= cfg_cfg_we && cfg_ok[0];
+            // 地址与数据自由运行，写脉冲独立决定提交；清除比较不再出现在写数据锥内。
+            cfg_wa <= init_done ? cfg_addr[11:0] : clear_addr[11:0];
+            cfg_wd <= init_done ? cfg_wdata[31:0] : 32'b0;
             ev_a <= parse_ev_a | engine_ev_a;
             ev_b <= parse_ev_b | engine_ev_b;
             ev_rm_drop <= engine_rm;
@@ -144,6 +140,9 @@ module afdx_rx_core #(
     // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新，读取不增加交付拍数。
     localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
+    // 读写命中在顶层一次译码成独热位，bank 内只寄存单比特结果；
+    // 写选通使用本 bank 所在总线副本的 map_we 位。
+    wire [MAP_BANKS - 1:0] map_rd_sel, map_wr_sel;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
     assign map_q = map_group_data[0 * 13 +: 13] |
         map_group_data[1 * 13 +: 13] |
@@ -170,8 +169,10 @@ module afdx_rx_core #(
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16 +: 16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16 +: 16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32 +: 13];
-            wire bank_write = init_done && cfg_map_we && cfg_ok[BUS_COPY]
-                && bank_cfg_addr[15:MAP_BANK_AW] == bank;
+            assign map_rd_sel[bank] = map_re[BUS_COPY]
+                && bank_read_addr[15:MAP_BANK_AW] == bank;
+            assign map_wr_sel[bank] = init_done && cfg_map_we[BUS_COPY]
+                && cfg_ok[BUS_COPY] && bank_cfg_addr[15:MAP_BANK_AW] == bank;
             (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
             (* preserve = 1, dont_merge = 1 *) reg [12:0] write_data;
@@ -188,9 +189,9 @@ module afdx_rx_core #(
                 end
                 else begin
                     selected <= read_request;
-                    read_request <= map_re[BUS_COPY] && bank_read_addr[15:MAP_BANK_AW] == bank;
+                    read_request <= map_rd_sel[bank];
                     // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
-                    write_request <= !cleared || bank_write;
+                    write_request <= !cleared || map_wr_sel[bank];
                     if (!cleared) begin
                         clear_local <= clear_local + 1'b1;
                         if (&clear_local) cleared <= 1;
