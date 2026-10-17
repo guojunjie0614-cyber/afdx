@@ -136,6 +136,21 @@
   \includegraphics{fig/pdf/#2.pdf}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
   \end{figure}}
+% ModelSim 原生波形截图：单幅
+\NewDocumentCommand{\figWave}{o m m m}{%
+  \begin{figure}[!htbp]\centering
+  \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#2.png}
+  \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
+  \end{figure}}
+% ModelSim 原生波形截图：双幅对照（如宏观与微观、两网到达、请求与响应）
+\NewDocumentCommand{\figWaveDual}{o m m m m m m}{%
+  \begin{figure}[!htbp]\centering
+  \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#2.png}\par\vspace{2pt}
+  {\footnotesize (a) #4}\par\vspace{5pt}
+  \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#3.png}\par\vspace{2pt}
+  {\footnotesize (b) #5}\par\vspace{4pt}
+  \IfValueTF{#1}{\caption[#1]{#6}}{\caption{#6}}\label{#7}
+  \end{figure}}
 \input{../design/numbers}
 
 \begin{document}

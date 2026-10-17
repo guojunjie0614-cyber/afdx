@@ -48,12 +48,11 @@ VL 禁用 & 向禁用的 VL 125 提交 1 条消息 & \code{0x41} = 1 \\
 
 无空闲页一项同时检验页回收。剩余 1 页时，1471 字节消息需要 3 页，在申请第 2 页时失败，已取得的 1 页归还；随后的 512 字节消息使用该页，发送成功；最后的 1 字节消息因页池为空被拒绝。三条消息的结果依次为拒绝、发送、拒绝，与页回收后的预期一致。
 
-\subsection{波形}
+\subsection{仿真波形}
 
-图~\ref{fig:wtx} 为一条消息从应用口提交、在 A、B 两网同拍发出的时序。
+图~\ref{fig:wtx} 为 ModelSim 原生窗口截取的应用消息双网发送仿真波形（\code{sim/wave/png/tx_dual_*.png}）。子图 (a) 显示应用口握手写入 1 字节消息及发送调度过程；子图 (b) 放大显示 A、B 两网 GMII 接口同拍发出前导码和帧数据的时序。
 
-% TODO 替换为 ModelSim 截图（issue #6）
-\figN[应用消息与双网发送]{t10_w_tx}{一条 1 字节消息从应用口进入，随后在 A、B 两网 GMII 上同拍发出}{fig:wtx}
+\figWaveDual[应用消息与双网同拍发送]{tx_dual_1}{tx_dual_2}{宏观时序：应用口写入与发送调度}{微观时序：A、B 两网 GMII 同拍发出前导码与数据}{ModelSim 仿真波形：应用消息与双网同拍发送}{fig:wtx}
 
 \section{高完整性通信}\label{sec:f-ic}
 
@@ -94,15 +93,15 @@ UDP 头错误 & SYS-02 & 校验和字段非零，每端每网 1 帧，共 4 帧 
 
 同网重放的帧序号重复，由 IC 拒绝并计入完整性错误；双网冗余副本通过 IC 后由 RM 丢弃，计入冗余丢弃。两种重复的处理路径和计数器相互独立。正常冗余场景中，SYS-04 的端系统 2 收到 922 组双网消息共 1844 个副本，冗余丢弃计数 \code{0x58} 与交付计数 \code{0x59} 均为 922。
 
-\subsection{波形}
+\subsection{仿真波形}
 
-图~\ref{fig:wrm} 为两网副本先后到达时的处理，图~\ref{fig:wfault} 为 FCS 错误帧的拒绝与计数。
+图~\ref{fig:wrm} 为 ModelSim 原生窗口截取的双网副本去重仿真波形（\code{sim/wave/png/rx_redundancy_*.png}）：A 网副本先到并交付应用口（子图 a）；晚到 2002 拍的 B 网副本到达后被冗余管理（RM）模块丢弃，触发 \code{ev_rm_drop} 脉冲（子图 b）。
 
-% TODO 替换为 ModelSim 截图（issue #6）
-\figN[双网副本接收与去重]{t11_w_rm}{两网副本先后到达：A 网副本先到并交付，B 网副本后到，计入冗余丢弃}{fig:wrm}
+\figWaveDual[双网副本接收与去重]{rx_redundancy_1}{rx_redundancy_2}{A 网副本先到：完整性检查通过并向应用口交付}{晚到 2002 拍的 B 网副本到达：触发冗余丢弃 ev\_rm\_drop}{ModelSim 仿真波形：两网副本先后到达与冗余去重}{fig:wrm}
 
-% TODO 替换为 ModelSim 截图（issue #6）
-\figN[FCS 错误帧的拒绝与计数]{t12_w_fault}{FCS 错误帧的拒绝与计数：帧结束后出现一次 FCS 类别脉冲，应用口无交付，计数器读回加 1}{fig:wfault}
+图~\ref{fig:wfault} 为 FCS 错误帧的拒绝与配置口读回波形（\code{sim/wave/png/rx_fcs_error_*.png}）：坏 FCS 帧到达后触发 \code{ev_a_fcs_error} 脉冲，应用口无交付（子图 a）；随后的独立配置读请求经两拍流水线返回 \code{count_a_fcs = 1}（子图 b）。
+
+\figWaveDual[FCS 错误帧的拒绝与计数]{rx_fcs_error_1}{rx_fcs_error_3}{坏 FCS 帧到达：触发 ev\_a\_fcs\_error，应用口不交付}{配置口读回：经两拍返回 count\_a\_fcs = 1}{ModelSim 仿真波形：FCS 错误帧的拒绝与计数器读回}{fig:wfault}
 
 \section{SNMP 网络管理}\label{sec:f-snmp}
 
@@ -114,8 +113,7 @@ SVC-02 & Set 后读回；向只读对象、错误类型、错误团体名发送�
 SVC-03 & 评委入口；Get、GetNext、Set、Trap 四类交换 & 四类报文字段解码正确，数值与读回一致 & \SnmpChecks/0\newline --- & 通过 \\
 \end{items}
 
-% TODO 替换为 ModelSim 截图（issue #6）
-\figN[SNMP Get 请求与响应]{t14_w_snmp}{一次 SNMP Get 交换：请求帧从 A 网到达，代理处理后在两网发出响应}{fig:wsnmp}
+\figWaveDual[SNMP Get 请求与响应]{snmp_get_1}{snmp_get_2}{管理端 Get 请求到达代理}{代理处理后在 A、B 两网同时发出 Response}{ModelSim 仿真波形：一次完整的 SNMP Get 报文交换}{fig:wsnmp}
 
 \section{615A 数据加卸载}\label{sec:f-615a}
 
@@ -134,7 +132,6 @@ SVC-04 & 加载：LUI、LUR、头文件、数据文件、LUS；卸载：LND、LN
 \end{enumerate}
 1536 字节恰为 3 个整块，按 TFTP 规定须再传一个空数据块结束传输；1500 字节的末块不足 512 字节，直接结束。两种长度分别覆盖这两种结束方式。
 
-% TODO 替换为 ModelSim 截图（issue #6）
 \figN[TFTP 数据块与确认]{t15_w_615a}{加载过程中的 TFTP 数据块与确认：被测端收到 DATA 块后在两网发出对应 ACK，不足 512 字节的块结束传输}{fig:w615a}
 
 \section{RTC 时钟同步}\label{sec:f-rtc}
@@ -162,7 +159,6 @@ SVC-07 & 送入 Originate 错误或过期的回应，之后送入合法回应 & 
 \end{tabularx}
 \end{table}
 
-% TODO 替换为 ModelSim 截图（issue #6）
 \figN[SNTP 请求与响应]{t16_w_rtc}{从端发出时间请求并收到主端回应；回应中的 Originate 等于请求的发送时间戳 T1}{fig:wrtc}
 
 \section{五功能联合测试}\label{sec:f-all}
@@ -173,4 +169,6 @@ SVC-07 & 送入 Originate 错误或过期的回应，之后送入合法回应 & 
 SVC-08 & 依次执行：(1) 两端各发一条用户消息；(2) 向一端注入一个跳号帧；(3) 一次 SNMP Get 读取设备描述；(4) 一次时钟同步；(5) 加载 16 字节文件，读回 RAM 后卸载 & (1) 双网副本去重，各交付一次；(2) 完整性错误计数加 1，交付数不变；(3) 响应经独立 BER 解码正确；(4) 配置口确认同步完成，请求与响应时间戳对应；(5) RAM 与卸载内容均与原文件一致；结束时交付数与错误数无多余增加 & \SvcChecks/0\newline 65/0 & 通过 \\
 \end{items}
 
-独立核对的 65 项中，下载内容核对 41 项。
+独立核对的 65 项中，下载内容核对 41 项。图~\ref{fig:welinx} 为 eLinx 原生环境下运行系统级行为仿真的界面波形截图。
+
+\figWave[eLinx 行为仿真窗口]{tb_elinx}{eLinx 原生环境运行 tb\_elinx 行为仿真界面波形截图}{fig:welinx}

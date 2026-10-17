@@ -148,8 +148,7 @@ BAG 为 1~ms、消息为最长时，线路在一个 BAG 内至多容纳 81 帧�
 
 PERF-01 满载工况中，同一 VL 相邻两帧的发送起点间隔均等于 BAG，抖动为 \Jit~µs（图~\ref{fig:wbag}）。TX-03 另在模块级检查了 BAG 最小间隔。按设计文档 3.7.3 节，争用只造成一次相位后移，此后各 VL 按 BAG 前进，稳定后起点间隔恢复为 BAG。
 
-% TODO 替换为 ModelSim 截图（issue #6）
-\figN[同一 VL 的相邻发送起点]{t13_w_bag}{同一 VL 相邻两帧的发送起点间隔恰为 BAG，两网同拍发送}{fig:wbag}
+\figWave[同一 VL 的相邻发送起点]{tx_bag}{ModelSim 仿真波形：同一 VL 相邻两帧发送起点间隔恰为 800~µs（100000 拍 BAG，对应 Frame\_1\_start 到 Frame\_2\_start 光标标注），A、B 两网同拍发送}{fig:wbag}
 
 \section{VL 支持能力}\label{sec:p-vl}
 
