@@ -121,6 +121,8 @@ module AFDX_top #(
     wire [11:0] d_vl;
     wire [2:0] svc_tx_ready;
     wire [31:0] rtc_rdata, rtc_sync_count;
+    // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
+    wire cfg_ready_m;
     wire snmp_tx_valid, snmp_tx_last, snmp_claim, snmp_mib_rd, snmp_mib_wr, snmp_mib_ready, snmp_grant;
     wire [7:0] snmp_tx_data;
     wire [6:0] snmp_tx_vl;
@@ -193,7 +195,7 @@ module AFDX_top #(
         .clk(clk),
         .reset(reset),
         .enable(tx_ready),
-        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == LOAD_ADDR_GROUP),
+        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == LOAD_ADDR_GROUP),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
@@ -218,7 +220,7 @@ module AFDX_top #(
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
         .enable(tx_ready),
         .now(now),
-        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:8] == 0),
+        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:8] == 0),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_control_data(snmp_control_data),
@@ -249,7 +251,7 @@ module AFDX_top #(
         .reset(reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
         .enable(1'b1),
-        .cfg_we(cfg_wr && cfg_ready && cfg_addr[17:4] == RTC_ADDR_GROUP),
+        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == RTC_ADDR_GROUP),
         .cfg_re(rtc_snapshot_read),
         .cfg_addr({cfg_addr[3:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
@@ -420,6 +422,7 @@ module AFDX_top #(
         .host_read(cfg_rd),
         .host_read_addr(cfg_addr[2:0]),
         .cfg_ready(cfg_ready),
+        .cfg_ready_m(cfg_ready_m),
         .cfg_rvalid(),
         .cfg_rdata(cfg_rdata),
         .user_id(user_id),

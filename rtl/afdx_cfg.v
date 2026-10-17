@@ -19,6 +19,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     input wire [2:0] host_read_addr,
     input wire host_read,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
+    // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块写选通方向的负载。
+    (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
@@ -86,9 +88,11 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             (* preserve = 1, dont_merge = 1 *) reg map_we_q;
             wire bank_ready = BANKED_READY ? rx_ready_by_bank[bus_copy] : tx_ready;
             wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
-            wire capture_address = bank_ready && !transmit_pending && !receive_pending
+            // 就绪电平本地寄存一拍：该电平一旦置位保持到复位，晚一拍只影响初始化边界。
+            (* preserve = 1, dont_merge = 1 *) reg bank_ready_q, data_ready_q;
+            wire capture_address = bank_ready_q && !transmit_pending && !receive_pending
                 && cfg_wr && ready && (select_map || select_rx);
-            wire capture_data = data_ready && !transmit_pending && !receive_pending
+            wire capture_data = data_ready_q && !transmit_pending && !receive_pending
                 && cfg_wr && ready && (select_map || select_rx);
             assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
             assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
@@ -97,6 +101,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             // 和总线主状态同拍更新，避免全局 ready 跨片驱动一千多个寄存器。
             always @(posedge clk) begin
                 if (reset) begin
+                    bank_ready_q <= 0;
+                    data_ready_q <= 0;
                     ready <= 0;
                     transmit_pending <= 0;
                     receive_pending <= 0;
@@ -105,7 +111,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     data <= 0;
                 end
                 else begin
-                    if (!bank_ready) begin
+                    bank_ready_q <= bank_ready;
+                    data_ready_q <= data_ready;
+                    if (!bank_ready_q) begin
                         ready <= 0;
                         transmit_pending <= 0;
                         receive_pending <= 0;
@@ -439,6 +447,22 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 end
             end
             else if (mib_user_wr && cfg_ready) user_id <= mib_user_wdata;
+        end
+    end
+
+    // 镜像寄存器沿用同一递推，保证任何拍都与 cfg_ready 同值。
+    always @(posedge clk) begin
+        if (reset) cfg_ready_m <= 0;
+        else if ( ! tx_ready) cfg_ready_m <= 0;
+        else if (tx_cfg_we) begin
+            if (tx_cfg_ok) cfg_ready_m <= 1;
+        end
+        else if (rx_pending) begin
+            if (rx_cfg_ok[0]) cfg_ready_m <= 1;
+        end
+        else begin
+            cfg_ready_m <= 1;
+            if (cfg_wr && cfg_ready_m && (select_tx || select_map || select_rx)) cfg_ready_m <= 0;
         end
     end
 

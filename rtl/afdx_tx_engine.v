@@ -134,13 +134,16 @@ module afdx_tx_engine #(
     reg [31:0] scan_d;
     // enable_q 是 init_done 的本地副本，第四拍寄存准入与清除结论，
     // 远端使能只进一次寄存器，不再穿过扫描判断的组合锥。
-    reg enable_q, scan_eligible_r, scan_cleanup_r;
+    (* preserve = 1, dont_merge = 1 *) reg enable_q;
+    reg scan_eligible_r, scan_cleanup_r;
+    // grant_ready_q 是组帧空闲标志的本地副本，grant 许可由组帧侧自查 pending，晚一拍安全。
+    (* preserve = 1, dont_merge = 1 *) reg grant_ready_q;
 
     // quota 限制连续扫描次数，让新消息也能及时加入队列。
     // ack_pending 表示还有一个实际发送时间需要写回。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [4:0] quota;
     wire want_enq = enq_valid_local && ! enq_seen && (candidate || quota >= SCAN_QUOTA);
-    wire want_grant = candidate && grant_ready && ! pend_valid;
+    wire want_grant = candidate && grant_ready_q && ! pend_valid;
 
     // cfg_ok 沿用原 enable 时序；调度内部使用本地副本 enable_q。
     assign cfg_ok = enable && op == IDLE && ! want_enq && ! want_grant;
@@ -261,12 +264,14 @@ module afdx_tx_engine #(
             scan_s2 <= 0;
             scan_d <= 0;
             enable_q <= 0;
+            grant_ready_q <= 0;
             scan_eligible_r <= 0;
             scan_cleanup_r <= 0;
         end
         else begin
             now_q <= now;
             enable_q <= enable;
+            grant_ready_q <= grant_ready;
             state_we <= 0;
             state_re <= 0;
             cfg_re <= 0;
@@ -274,7 +279,8 @@ module afdx_tx_engine #(
             mnext_re <= 0;
             desc_re <= 0;
             enq_ack <= 0;
-            grant_valid <= 0;
+            // 许可保持到组帧模块确认接收：晚一拍的本地 ready 副本可能错过真实忙态。
+            grant_valid <= grant_valid && ! grant_ready;
             if ( ! enq_valid_local) enq_seen <= 0;
             if (start_valid) begin
                 ack_pending <= 1;
