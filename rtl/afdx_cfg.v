@@ -77,9 +77,26 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     wire select_map = (cfg_write_addr[17:16] == 2'b01);
     wire select_rx = (cfg_write_addr[17:12] == 6'b100000);
 
+    // 初始化电平就地寄存，与各接收 bank 的本地初始化级同拍，远端就绪不直驱宽写总线。
+    (* preserve = 1, dont_merge = 1 *) reg tx_ready_q;
+    // 发送核心允许写入的组合锥只进本地寄存器，再用于写通道重新武装。
+    (* preserve = 1, dont_merge = 1 *) reg tx_cfg_ok_q;
+    always @(posedge clk) begin
+        if (reset) begin
+            tx_ready_q <= 0;
+            tx_cfg_ok_q <= 0;
+        end
+        else begin
+            tx_ready_q <= tx_ready;
+            tx_cfg_ok_q <= tx_cfg_ok;
+        end
+    end
+    // 必须先由真实同拍握手撤销写请求，不能把请求之前采到的空闲电平误当作应答。
+    wire tx_cfg_rearm = !tx_cfg_we && tx_cfg_ok_q;
+
     // 每个接收 bank 在配置源处有独立副本，不让一个地址寄存器跨越整片存储区。
     // 捕获条件和原写请求相同；忙时保持，因此没有增加写入拍数。
-    genvar bus_copy;
+    genvar bus_copy, data_slice;
     generate
         for (bus_copy = 0; bus_copy < RX_BUS_COPIES; bus_copy = bus_copy + 1) begin : receive_bus
             localparam DATA_WIDTH = bus_copy == 0 ? 32 : 13;
@@ -91,10 +108,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             wire bank_ready = BANKED_READY ? rx_ready_by_bank[bus_copy] : tx_ready;
             wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
             // 就绪电平本地寄存一拍：该电平一旦置位保持到复位，晚一拍只影响初始化边界。
-            (* preserve = 1, dont_merge = 1 *) reg bank_ready_q, data_ready_q;
+            (* preserve = 1, dont_merge = 1 *) reg bank_ready_q;
             wire capture_address = bank_ready_q && !transmit_pending && !receive_pending
-                && cfg_wr && ready && (select_map || select_rx);
-            wire capture_data = data_ready_q && !transmit_pending && !receive_pending
                 && cfg_wr && ready && (select_map || select_rx);
             assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
             assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
@@ -104,17 +119,14 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             always @(posedge clk) begin
                 if (reset) begin
                     bank_ready_q <= 0;
-                    data_ready_q <= 0;
                     ready <= 0;
                     transmit_pending <= 0;
                     receive_pending <= 0;
                     map_we_q <= 0;
                     address <= 0;
-                    data <= 0;
                 end
                 else begin
                     bank_ready_q <= bank_ready;
-                    data_ready_q <= data_ready;
                     if (!bank_ready_q) begin
                         ready <= 0;
                         transmit_pending <= 0;
@@ -122,7 +134,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         map_we_q <= 0;
                     end
                     else if (transmit_pending) begin
-                        if (tx_cfg_ok) begin
+                        if (tx_cfg_rearm) begin
                             transmit_pending <= 0;
                             ready <= 1;
                         end
@@ -147,10 +159,28 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         end
                     end
                     if (capture_address) address <= cfg_write_addr[15:0];
-                    if (capture_data) data <= cfg_wdata[DATA_WIDTH - 1:0];
                     // 映射写选通在受理拍置位、本副本应答拍清除，与主状态机同拍。
                     if (capture_address) map_we_q <= select_map;
                     else if (rx_cfg_ok[bus_copy]) map_we_q <= 0;
+                end
+            end
+            // 每四位数据使用同拍的本地就绪副本，不再让一个使能跨越整个数据字。
+            // 只复制初始化电平；请求、忙状态和写数据仍在原受理拍会合，捕获窗口不后移。
+            for (data_slice = 0; data_slice < (DATA_WIDTH + 3) / 4; data_slice = data_slice + 1) begin : data_lane
+                localparam SLICE_WIDTH = DATA_WIDTH - data_slice * 4 < 4 ? DATA_WIDTH - data_slice * 4 : 4;
+                (* preserve = 1, dont_merge = 1 *) reg data_ready_q;
+                wire capture_data = data_ready_q && !transmit_pending && !receive_pending
+                    && cfg_wr && ready && (select_map || select_rx);
+                always @(posedge clk) begin
+                    if (reset) begin
+                        data_ready_q <= 0;
+                        data[data_slice * 4 +: SLICE_WIDTH] <= 0;
+                    end
+                    else begin
+                        data_ready_q <= data_ready;
+                        if (capture_data)
+                            data[data_slice * 4 +: SLICE_WIDTH] <= cfg_wdata[data_slice * 4 +: SLICE_WIDTH];
+                    end
                 end
             end
         end
@@ -200,14 +230,14 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     reg [2:0] read_select;
     reg [1:0] read_loader;
     reg read_sel_load, read_sel_extra;
-    // rx_pending 表示主机写请求已受理、正在等待接收核心应答。
-    reg rx_pending;
+    // pending 表示主机写请求已受理；发送写在真实应答后一拍恢复就绪，地址和数据继续保持。
+    reg tx_pending, rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
 
     // 主机写任何地址时都优先于 MIB；保留原状态机的忙和初始化屏蔽条件。
     wire user_id_hit = cfg_wr && cfg_write_addr == ADDR_USER_ID;
     wire mib_user_hit = !cfg_wr && mib_user_wr;
-    (* keep = 1 *) wire user_id_write_hit = tx_ready && !tx_cfg_we && !rx_pending
+    (* keep = 1 *) wire user_id_write_hit = tx_ready_q && !tx_pending && !rx_pending
         && (user_id_hit || mib_user_hit);
 
     // 这 27 个计数器分别累计一种事件。
@@ -437,25 +467,36 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     end
 
     always @(posedge clk) begin
+        if (reset) tx_cfg_we <= 0;
+        else if (!tx_ready_q) tx_cfg_we <= 0;
+        else if (tx_cfg_we) begin
+            // 核心仍按原拍受理且只写一次；延迟的是 ready，不是这个逐拍握手。
+            if (tx_cfg_ok) tx_cfg_we <= 0;
+        end
+        else if (!tx_pending && !rx_pending && cfg_wr && cfg_ready && select_tx)
+            tx_cfg_we <= 1;
+    end
+
+    always @(posedge clk) begin
         if (reset) begin
             cfg_ready <= 0;
-            tx_cfg_we <= 0;
+            tx_pending <= 0;
             tx_cfg_addr <= 0;
             tx_cfg_wdata <= 0;
             rx_pending <= 0;
             rx_cfg_we <= 0;
         end
         // 等待核心接收写请求时，模块保持地址和数据，并拉低 cfg_ready。
-        else if ( ! tx_ready) begin
+        else if ( ! tx_ready_q) begin
             cfg_ready <= 0;
-            tx_cfg_we <= 0;
+            tx_pending <= 0;
             rx_pending <= 0;
             rx_cfg_we <= 0;
         end
-        else if (tx_cfg_we) begin
-            // 核心接收请求后，模块重新拉高 cfg_ready。
-            if (tx_cfg_ok) begin
-                tx_cfg_we <= 0;
+        else if (tx_pending) begin
+            // 本地应答确认真实写请求已经完成，三处就绪状态同拍重新武装。
+            if (tx_cfg_rearm) begin
+                tx_pending <= 0;
                 cfg_ready <= 1;
             end
         end
@@ -470,7 +511,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             cfg_ready <= 1;
             if (cfg_wr && cfg_ready) begin
                 if (select_tx) begin
-                    tx_cfg_we <= 1;
+                    tx_pending <= 1;
                     tx_cfg_addr <= cfg_write_addr[9:0];
                     tx_cfg_wdata <= cfg_wdata;
                     cfg_ready <= 0;
@@ -487,9 +528,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // 镜像寄存器沿用同一递推，保证任何拍都与 cfg_ready 同值。
     always @(posedge clk) begin
         if (reset) cfg_ready_m <= 0;
-        else if ( ! tx_ready) cfg_ready_m <= 0;
-        else if (tx_cfg_we) begin
-            if (tx_cfg_ok) cfg_ready_m <= 1;
+        else if ( ! tx_ready_q) cfg_ready_m <= 0;
+        else if (tx_pending) begin
+            if (tx_cfg_rearm) cfg_ready_m <= 1;
         end
         else if (rx_pending) begin
             if (rx_cfg_ok[0]) cfg_ready_m <= 1;

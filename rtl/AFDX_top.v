@@ -70,8 +70,11 @@ module AFDX_top #(
     output wire ev_rm_drop, ev_deliver,
     output wire [1:0] ev_gdrop);
 
-    // tx_ready_q 保存收发核心都已初始化的结果。
+    // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
+    (* preserve = 1, dont_merge = 1 *) reg rx_init_a, rx_init_b, tx_init_a, tx_init_b;
+    // tx_ready_q 保存收发核心都已初始化的结果；加载服务使用同拍的专用副本。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tx_ready_q;
+    (* preserve = 1, dont_merge = 1 *) reg loader_ready_q;
     localparam RX_CONFIG_BANKS = 32;
     // 与 tx_ready_q 同拍更新，分别供接收配置各 bank 使用；末项独供首 bank 的 32 位数据。
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
@@ -195,7 +198,7 @@ module AFDX_top #(
         .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
-        .enable(tx_ready),
+        .enable(loader_ready_q),
         .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == LOAD_ADDR_GROUP),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
@@ -325,12 +328,22 @@ module AFDX_top #(
 
     always @(posedge clk) begin
         if (reset) begin
+            rx_init_a <= 0;
+            rx_init_b <= 0;
+            tx_init_a <= 0;
+            tx_init_b <= 0;
             tx_ready_q <= 0;
+            loader_ready_q <= 0;
             receive_ready_q <= 0;
         end
         else begin
-            tx_ready_q <= tx_initialized && rx_initialized;
-            receive_ready_q <= {(RX_CONFIG_BANKS + 1){tx_initialized && rx_initialized}};
+            rx_init_a <= rx_initialized;
+            rx_init_b <= rx_init_a;
+            tx_init_a <= tx_initialized;
+            tx_init_b <= tx_init_a;
+            tx_ready_q <= tx_init_b && rx_init_b;
+            loader_ready_q <= tx_init_b && rx_init_b;
+            receive_ready_q <= {(RX_CONFIG_BANKS + 1){tx_init_b && rx_init_b}};
         end
     end
 

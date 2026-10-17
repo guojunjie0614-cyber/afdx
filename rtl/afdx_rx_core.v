@@ -141,9 +141,15 @@ module afdx_rx_core #(
     // RAM 口影子与回读输出各增加一级流水线，引擎的 FRAME 相位同步后移两拍。
     localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
-    // 读写命中在顶层一次译码成独热位，bank 内只寄存单比特结果；
+    // 读地址在源端译码并寄存为独热位，bank 内下一拍只合并单比特请求。
+    // 复用原有两级请求流水线，低地址与返回数据的固定相位均不改变。
     // 写选通使用本 bank 所在总线副本的 map_we 位。
     wire [MAP_BANKS - 1:0] map_rd_sel, map_wr_sel;
+    (* preserve = 1, dont_merge = 1 *) reg [MAP_BANKS - 1:0] map_bank_oh;
+    always @(posedge clk) begin
+        if (reset) map_bank_oh <= 0;
+        else map_bank_oh <= map_rd_sel;
+    end
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
     assign map_q = map_group_data[0 * 13 +: 13] |
         map_group_data[1 * 13 +: 13] |
@@ -176,8 +182,7 @@ module afdx_rx_core #(
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16 +: 16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16 +: 16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32 +: 13];
-            assign map_rd_sel[bank] = map_re[BUS_COPY]
-                && bank_read_addr[15:MAP_BANK_AW] == bank;
+            assign map_rd_sel[bank] = bank_read_addr[15:MAP_BANK_AW] == bank;
             assign map_wr_sel[bank] = init_done && cfg_map_we[BUS_COPY]
                 && cfg_ok[BUS_COPY] && bank_cfg_addr[15:MAP_BANK_AW] == bank;
             (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
@@ -199,8 +204,9 @@ module afdx_rx_core #(
                 end
                 else begin
                     selected <= ram_request_q;
-                    read_request <= map_rd_sel[bank];
-                    ram_request_q <= read_request;
+                    // 使能和源端独热位同拍登记，再在 RAM 口前合并，不额外增加读延迟。
+                    read_request <= map_re[BUS_COPY];
+                    ram_request_q <= read_request && map_bank_oh[bank];
                     // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
                     write_request <= !cleared || map_wr_sel[bank];
                     if (!cleared) begin

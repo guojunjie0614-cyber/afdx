@@ -61,6 +61,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg consume_q, consume_previous;
     reg rx_we, packet_pending, receiving;
     reg [9:0] rx_wa, rx_index, rx_length;
+    // 块号字节的前瞻译码随接收索引一起更新；无有效字节时保持，允许字节间有空拍。
+    (* preserve = 1, dont_merge = 1 *) reg capture_hi_q, capture_lo_q;
     reg [7:0] rx_wd;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
@@ -166,6 +168,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             rx_wa <= 0;
             rx_wd <= 0;
             rx_index <= 0;
+            capture_hi_q <= 0;
+            capture_lo_q <= 0;
             packet_pending <= 0;
             receiving <= 0;
             rx_length <= 0;
@@ -179,11 +183,10 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             // RAM 端口预存当前输入，写脉冲独立确认字节；未握手时这些候选值不会被使用。
             rx_wa <= rx_index;
             rx_wd <= rx_data;
-            if (rx_valid && receiving) case (rx_index)
-                1 : rx_op[7:0] <= rx_data;
-                2 : rx_block[15:8] <= rx_data;
-                3 : rx_block[7:0] <= rx_data;
-            endcase
+            if (rx_valid && receiving && rx_index == 1) rx_op[7:0] <= rx_data;
+            // 前瞻位等价于本拍 receiving && rx_index==2/3，逐字节选通和数据不加流水。
+            if (rx_valid && capture_hi_q) rx_block[15:8] <= rx_data;
+            if (rx_valid && capture_lo_q) rx_block[7:0] <= rx_data;
             if (consume_q && !consume_previous) packet_pending <= 0;
             // 尚无待处理报文时预存端口；首字节仍采样同一值，接收及 pending 期间保持。
             if (!receiving && !packet_pending) begin
@@ -196,11 +199,15 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 if (rx_last) begin
                     rx_length <= rx_index + 1'b1;
                     rx_index <= 0;
+                    capture_hi_q <= 0;
+                    capture_lo_q <= 0;
                     receiving <= 0;
                     packet_pending <= 1;
                 end
                 else begin
                     rx_index <= rx_index + 1'b1;
+                    capture_hi_q <= rx_index == 1;
+                    capture_lo_q <= rx_index == 2;
                     receiving <= 1;
                 end
             end
