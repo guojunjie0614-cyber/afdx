@@ -123,6 +123,7 @@ module AFDX_top #(
     wire [31:0] rtc_rdata, rtc_sync_count;
     // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
     wire cfg_ready_m;
+    wire [7:0] snmp_wr_sel;
     wire snmp_tx_valid, snmp_tx_last, snmp_claim, snmp_mib_rd, snmp_mib_wr, snmp_mib_ready, snmp_grant;
     wire [7:0] snmp_tx_data;
     wire [6:0] snmp_tx_vl;
@@ -169,7 +170,7 @@ module AFDX_top #(
 
     // 时钟配置位于 0x80 组。
     // 网络管理配置位于 0x90、0x98 和 0xa0 组。
-    // 网络管理模块会收到地址高位为零的全部写操作，再由模块内部按低 8 位挑出自己的寄存器。
+    // 网络管理写地址在配置模块完整译码，服务端直接接收各寄存器写选通。
     // 加卸载配置位于 0xb0 和 0xb8 组。
     // 每 16 个地址为一组，下面是时钟同步和加卸载两组地址的高 14 位。
     localparam RTC_ADDR_GROUP = 14'h0008, LOAD_ADDR_GROUP = 14'h000b;
@@ -214,13 +215,13 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1)) snmp (
         .clk(clk),
         .reset(reset),
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
         .enable(tx_ready),
         .now(now),
-        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:8] == 0),
+        .cfg_we(snmp_wr_sel),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_control_data(snmp_control_data),
@@ -423,6 +424,7 @@ module AFDX_top #(
         .host_read_addr(cfg_addr[2:0]),
         .cfg_ready(cfg_ready),
         .cfg_ready_m(cfg_ready_m),
+        .snmp_wr_sel(snmp_wr_sel),
         .cfg_rvalid(),
         .cfg_rdata(cfg_rdata),
         .user_id(user_id),

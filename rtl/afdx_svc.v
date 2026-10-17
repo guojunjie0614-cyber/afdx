@@ -66,72 +66,84 @@ module afdx_svc (
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
     reg busy, rx_active, rx_claimed;
     reg [1:0] owner, turn, selected;
-    reg [3:0] granted;
+    (* preserve = 1, dont_merge = 1 *) reg [3:0] served;
+    reg [3:0] next_granted;
     wire [3:0] request = { svc_tx_valid, app_tx_valid };
+    wire finishing = m_valid && m_ready && m_last;
+    wire [3:0] eff_request = finishing ? (request & ~served) : request;
+    wire [1:0] base_turn = finishing ? selected + 2'd1 : turn;
 
-    // 模块从 turn 开始查找待发消息，选中后保持到整条消息发完。
-    // 只有选中的发送方能收到 ready。
-    // 直接生成互斥选择位，避免先编码优先级、再译码数据多路器。
+    // 空闲裁决在下一拍生效；无请求时默认授予应用，保留通道可用电平。
+    // 完成拍跳过刚发完的来源，直接为下一条等待消息准备独热授予位。
     always @* begin
-        granted = 4'b0001;
-        if (busy) granted = 4'b0001 << owner;
-        else case (turn)
+        next_granted = 4'b0001;
+        case (base_turn)
             2'd0 : begin
-                granted[0] = (request[0]) || !(|request);
-                granted[1] = request[1] && !request[0];
-                granted[2] = request[2] && !request[0] && !request[1];
-                granted[3] = request[3] && !request[0] && !request[1] && !request[2];
+                next_granted[0] = (eff_request[0]) || !(|eff_request);
+                next_granted[1] = eff_request[1] && !eff_request[0];
+                next_granted[2] = eff_request[2] && !eff_request[0] && !eff_request[1];
+                next_granted[3] = eff_request[3] && !eff_request[0] && !eff_request[1] && !eff_request[2];
             end
             2'd1 : begin
-                granted[0] = (request[0] && !request[1] && !request[2] && !request[3]) || !(|request);
-                granted[1] = request[1];
-                granted[2] = request[2] && !request[1];
-                granted[3] = request[3] && !request[1] && !request[2];
+                next_granted[0] = (eff_request[0] && !eff_request[1] && !eff_request[2] && !eff_request[3]) || !(|eff_request);
+                next_granted[1] = eff_request[1];
+                next_granted[2] = eff_request[2] && !eff_request[1];
+                next_granted[3] = eff_request[3] && !eff_request[1] && !eff_request[2];
             end
             2'd2 : begin
-                granted[0] = (request[0] && !request[2] && !request[3]) || !(|request);
-                granted[1] = request[1] && !request[2] && !request[3] && !request[0];
-                granted[2] = request[2];
-                granted[3] = request[3] && !request[2];
+                next_granted[0] = (eff_request[0] && !eff_request[2] && !eff_request[3]) || !(|eff_request);
+                next_granted[1] = eff_request[1] && !eff_request[2] && !eff_request[3] && !eff_request[0];
+                next_granted[2] = eff_request[2];
+                next_granted[3] = eff_request[3] && !eff_request[2];
             end
             2'd3 : begin
-                granted[0] = (request[0] && !request[3]) || !(|request);
-                granted[1] = request[1] && !request[3] && !request[0];
-                granted[2] = request[2] && !request[3] && !request[0] && !request[1];
-                granted[3] = request[3];
+                next_granted[0] = (eff_request[0] && !eff_request[3]) || !(|eff_request);
+                next_granted[1] = eff_request[1] && !eff_request[3] && !eff_request[0];
+                next_granted[2] = eff_request[2] && !eff_request[3] && !eff_request[0] && !eff_request[1];
+                next_granted[3] = eff_request[3];
             end
         endcase
-        selected = {granted[2] | granted[3], granted[1] | granted[3]};
-        // 空闲时只要任一来源有效就必定选中有效来源，valid 无需穿过优先级链。
-        m_valid = busy ? request[owner] : |request;
-        svc_tx_ready = granted[3:1] & {3{m_ready}};
-        m_data = ({8{granted[0]}} & app_tx_data) |
-            ({8{granted[1]}} & svc_tx_data[0 +: 8]) |
-            ({8{granted[2]}} & svc_tx_data[8 +: 8]) |
-            ({8{granted[3]}} & svc_tx_data[16 +: 8]);
-        m_last = ({1{granted[0]}} & app_tx_last) |
-            ({1{granted[1]}} & svc_tx_last[0]) |
-            ({1{granted[2]}} & svc_tx_last[1]) |
-            ({1{granted[3]}} & svc_tx_last[2]);
-        m_vl = ({7{granted[0]}} & app_tx_vl) |
-            ({7{granted[1]}} & svc_tx_vl[0 +: 7]) |
-            ({7{granted[2]}} & svc_tx_vl[7 +: 7]) |
-            ({7{granted[3]}} & svc_tx_vl[14 +: 7]);
-        m_port_en = ({1{granted[0]}} & app_tx_port_en) |
-            ({1{granted[1]}} & svc_tx_port_en[0]) |
-            ({1{granted[2]}} & svc_tx_port_en[1]) |
-            ({1{granted[3]}} & svc_tx_port_en[2]);
-        m_sport = ({16{granted[0]}} & app_tx_sport) |
-            ({16{granted[1]}} & svc_tx_sport[0 +: 16]) |
-            ({16{granted[2]}} & svc_tx_sport[16 +: 16]) |
-            ({16{granted[3]}} & svc_tx_sport[32 +: 16]);
-        m_dport = ({16{granted[0]}} & app_tx_dport) |
-            ({16{granted[1]}} & svc_tx_dport[0 +: 16]) |
-            ({16{granted[2]}} & svc_tx_dport[16 +: 16]) |
-            ({16{granted[3]}} & svc_tx_dport[32 +: 16]);
     end
 
-    assign app_tx_ready = granted[0] && m_ready;
+    // 首次有效拍与 busy 同时锁定，避免首字节后被新到的高优先级请求抢占。
+    // 消息保持期间不改选，末字节握手后或尚无有效候选时允许重新裁决。
+    always @(posedge clk) begin
+        if (reset) served <= 4'b0001;
+        else if (!((busy || m_valid) && !finishing)) served <= next_granted;
+    end
+
+    // 消费端只使用寄存后的独热位，隔断 turn/owner 到跨模块数据和 ready 的译码链。
+    always @* begin
+        selected = {served[2] | served[3], served[1] | served[3]};
+        m_valid = |(request & served);
+        svc_tx_ready = served[3:1] & {3{m_ready}};
+        m_data = ({8{served[0]}} & app_tx_data) |
+            ({8{served[1]}} & svc_tx_data[0 +: 8]) |
+            ({8{served[2]}} & svc_tx_data[8 +: 8]) |
+            ({8{served[3]}} & svc_tx_data[16 +: 8]);
+        m_last = ({1{served[0]}} & app_tx_last) |
+            ({1{served[1]}} & svc_tx_last[0]) |
+            ({1{served[2]}} & svc_tx_last[1]) |
+            ({1{served[3]}} & svc_tx_last[2]);
+        m_vl = ({7{served[0]}} & app_tx_vl) |
+            ({7{served[1]}} & svc_tx_vl[0 +: 7]) |
+            ({7{served[2]}} & svc_tx_vl[7 +: 7]) |
+            ({7{served[3]}} & svc_tx_vl[14 +: 7]);
+        m_port_en = ({1{served[0]}} & app_tx_port_en) |
+            ({1{served[1]}} & svc_tx_port_en[0]) |
+            ({1{served[2]}} & svc_tx_port_en[1]) |
+            ({1{served[3]}} & svc_tx_port_en[2]);
+        m_sport = ({16{served[0]}} & app_tx_sport) |
+            ({16{served[1]}} & svc_tx_sport[0 +: 16]) |
+            ({16{served[2]}} & svc_tx_sport[16 +: 16]) |
+            ({16{served[3]}} & svc_tx_sport[32 +: 16]);
+        m_dport = ({16{served[0]}} & app_tx_dport) |
+            ({16{served[1]}} & svc_tx_dport[0 +: 16]) |
+            ({16{served[2]}} & svc_tx_dport[16 +: 16]) |
+            ({16{served[3]}} & svc_tx_dport[32 +: 16]);
+    end
+
+    assign app_tx_ready = served[0] && m_ready;
     assign svc_rx_valid = d_valid;
     assign svc_rx_data = d_data;
     assign svc_rx_last = d_last;

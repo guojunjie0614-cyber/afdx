@@ -44,12 +44,15 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     end
 
     // 八字节预取队列包含在途读请求；反压时仍为已发出的读保留位置。
-    reg active, packet_request, read_last, return_valid, return_last;
+    reg active, packet_request, return_valid;
     reg [AW:0] packet_length, issued;
+    // 字节严格按发起顺序出队，剩余数量可在前一次出队时预判下一字节是否为末字节。
+    // 标志不再随八项小 RAM 寻址读取；反压时计数与标志一起保持。
+    (* preserve = 1, dont_merge = 1 *) reg [AW:0] output_left;
+    (* preserve = 1, dont_merge = 1 *) reg at_last;
     reg [3:0] queued, reserved;
     reg [2:0] write_pos, read_pos;
     reg [7:0] bytes [0:7];
-    reg last_byte [0:7];
     wire issue = active && issued < packet_length && reserved < 8;
     // 远端 tx_ready 只进末级与门，本地项先行会合。
     wire take_armed = active && queued != 0;
@@ -60,15 +63,15 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             packet_request <= 0;
             packet_length <= 0;
             issued <= 0;
+            output_left <= 0;
+            at_last <= 0;
             queued <= 0;
             reserved <= 0;
             write_pos <= 0;
             read_pos <= 0;
             read_enable <= 0;
             read_address <= 0;
-            read_last <= 0;
             return_valid <= 0;
-            return_last <= 0;
             complete <= 0;
             read_mode <= 0;
             tx_valid <= 0;
@@ -81,10 +84,8 @@ module afdx_mgmt_tx #(parameter AW = 10) (
         else begin
             read_enable <= issue;
             return_valid <= read_enable;
-            return_last <= read_last;
             if (issue) begin
                 read_address <= issued[AW - 1:0];
-                read_last <= issued + 1'b1 == packet_length;
                 issued <= issued + 1'b1;
             end
             case ({issue, take})
@@ -97,14 +98,15 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             endcase
             if (return_valid) begin
                 bytes[write_pos] <= read_data;
-                last_byte[write_pos] <= return_last;
                 write_pos <= write_pos + 1'b1;
             end
             if (!tx_valid || tx_ready) begin
                 tx_valid <= take;
                 if (take) begin
                     tx_data <= bytes[read_pos];
-                    tx_last <= last_byte[read_pos];
+                    tx_last <= at_last;
+                    output_left <= output_left - 1'b1;
+                    at_last <= output_left == 2;
                     read_pos <= read_pos + 1'b1;
                 end
             end
@@ -119,6 +121,8 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 packet_request <= request_q;
                 packet_length <= length_q;
                 issued <= 0;
+                output_left <= length_q;
+                at_last <= length_q == 1;
                 queued <= 0;
                 reserved <= 0;
                 write_pos <= 0;

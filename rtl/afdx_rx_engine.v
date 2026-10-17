@@ -173,15 +173,41 @@ module afdx_rx_engine #(
     // 检查通过且交付队列有空位时，才写入消息信息。
     // 队列满时不更新最近交付的序号。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg delivery_phase;
+    // 提前一拍登记结果写入相位，拒绝标志仍在原判定拍取值。
+    // 结果寄存器的使能和数据选择均不再直接译码远端 op/phase。
+    (* preserve = 1, dont_merge = 1 *) reg result_map_phase, result_config_phase, result_sequence_phase;
     always @(posedge clk) begin
-        if (reset) delivery_phase <= 0;
-        else delivery_phase <= op == FRAME && phase == STEP_DELIVER - 1 && !sequence_reject;
+        if (reset) begin
+            delivery_phase <= 0;
+            result_map_phase <= 0;
+            result_config_phase <= 0;
+            result_sequence_phase <= 0;
+        end
+        else begin
+            delivery_phase <= op == FRAME && phase == STEP_DELIVER - 1 && !sequence_reject;
+            result_map_phase <= op == FRAME && phase == 4;
+            result_config_phase <= op == FRAME && phase == 7;
+            result_sequence_phase <= op == FRAME && phase == 9;
+        end
     end
     // dq_room 随计数同步寄存，队列满的常数比较不再进入交付写使能锥。
     reg dq_room;
     wire dq_put = delivery_phase && deliver_allowed && dq_room;
     wire [DQ_WIDTH - 1:0] dq_input = { op_net, current_desc[RX_RING_AW + 15:16], length, op_idx,
         current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27] };
+
+    // 四种相位标志互斥，写入仍分别发生在原 phase=5/8/10/11。
+    always @(posedge clk) begin
+        if (reset) result <= RX_ACCEPTED;
+        else if (result_map_phase && map_missing) result <= RX_UNMAPPED;
+        else if (result_config_phase && config_reject) result <= RX_CONFIG_REJECT;
+        else if (result_sequence_phase && sequence_reject) result <= RX_BAD_SEQUENCE;
+        else if (delivery_phase) begin
+            if (!deliver_allowed) result <= RX_DUPLICATE;
+            else if (!dq_room) result <= RX_QUEUE_FULL;
+            else result <= RX_ACCEPTED;
+        end
+    end
 
     wire age_tick = REGISTERED_TIME_TICK ? (now_c >> 16) : now_c_value != now_previous;
 
@@ -212,24 +238,36 @@ module afdx_rx_engine #(
     endgenerate
 
     // RAM 捕获与三种修改互斥；分字段直接选择，避免 RAM 输出穿过多层整字优先级。
-    wire load_saved = (op == FRAME && phase == 6)
-        || (op == AGE && phase == 1 && desc_quiet);
-    wire write_saved_a = op == FRAME && phase == 9 && saved_cfg[3] && !op_net;
-    wire write_saved_b = op == FRAME && phase == 9 && saved_cfg[3] && op_net;
-    wire write_saved_rm = op == FRAME && phase == STEP_DELIVER && deliver_allowed
-        && dq_room && saved_cfg[4];
+    // 预译码保留 FRAME/6、AGE/1 的原装载拍，不推迟 RAM 数据采样。
+    // FRAME 的拒绝跳转禁止后继使能；AGE/0 的描述符有效位同时决定
+    // 是否进入 AGE/1 和下一拍 desc_quiet，因此中断检查时也保持原语义。
+    (* preserve = 1, dont_merge = 1 *) reg load_saved_q, write_saved_a, write_saved_b;
+    always @(posedge clk) begin
+        if (reset) begin
+            load_saved_q <= 0;
+            write_saved_a <= 0;
+            write_saved_b <= 0;
+        end
+        else begin
+            load_saved_q <= (op == FRAME && phase == 5 && !map_missing)
+                || (op == AGE && phase == 0 && !desc_a_valid[0] && !desc_b_valid[0]);
+            write_saved_a <= op == FRAME && phase == 8 && !config_reject && saved_cfg[3] && !op_net;
+            write_saved_b <= op == FRAME && phase == 8 && !config_reject && saved_cfg[3] && op_net;
+        end
+    end
+    wire write_saved_rm = delivery_phase && deliver_allowed && dq_room && saved_cfg[4];
     always @(posedge clk) begin
         if (reset) saved_state <= 0;
         else begin
-            if (load_saved) saved_state[43] <= state_q[43];
-            if (load_saved || write_saved_a)
-                saved_state[42:34] <= ({9{load_saved}} & state_q[42:34])
+            if (load_saved_q) saved_state[43] <= state_q[43];
+            if (load_saved_q || write_saved_a)
+                saved_state[42:34] <= ({9{load_saved_q}} & state_q[42:34])
                     | ({9{write_saved_a}} & {1'b1, sn});
-            if (load_saved || write_saved_b)
-                saved_state[33:25] <= ({9{load_saved}} & state_q[33:25])
+            if (load_saved_q || write_saved_b)
+                saved_state[33:25] <= ({9{load_saved_q}} & state_q[33:25])
                     | ({9{write_saved_b}} & {1'b1, sn});
-            if (load_saved || write_saved_rm)
-                saved_state[24:0] <= ({25{load_saved}} & state_q[24:0])
+            if (load_saved_q || write_saved_rm)
+                saved_state[24:0] <= ({25{load_saved_q}} & state_q[24:0])
                     | ({25{write_saved_rm}} & {1'b1, sn, arrival});
         end
     end
@@ -325,7 +363,6 @@ module afdx_rx_engine #(
             second_sn <= 0;
             raw_distance <= 0;
             forward_distance <= 0;
-            result <= RX_ACCEPTED;
             ev_a <= EV_NONE;
             ev_b <= EV_NONE;
             ev_rm_drop <= 0;
@@ -420,7 +457,6 @@ module afdx_rx_engine #(
                         end
 
                         5 : if (map_missing) begin
-                            result <= RX_UNMAPPED;
                             phase <= STEP_FINISH;
                         end
 
@@ -442,7 +478,6 @@ module afdx_rx_engine #(
 
                         8 : begin
                             if (config_reject) begin
-                                result <= RX_CONFIG_REJECT;
                                 phase <= STEP_FINISH;
                             end
                             // 旧记录会在半个计数周期前失效，因此可以取时间差的绝对值。
@@ -471,7 +506,6 @@ module afdx_rx_engine #(
                         // 其他序号按模 255 的前向距离判断新旧。
                         10 : begin
                             if (sequence_reject) begin
-                                result <= RX_BAD_SEQUENCE;
                                 phase <= STEP_WRITE;
                             end
                             if ( ! saved_cfg[4] || ! saved_state[24] || skew_expired) deliver_allowed <= 1;
@@ -481,15 +515,7 @@ module afdx_rx_engine #(
                         end
 
                         STEP_DELIVER : begin
-                            if ( ! deliver_allowed) result <= RX_DUPLICATE;
-                            else if ( ! dq_room) result <= RX_QUEUE_FULL;
-                            else begin
-                                result <= RX_ACCEPTED;
-                                if (saved_cfg[4]) begin
-
-                                    state_changed <= 1;
-                                end
-                            end
+                            if (deliver_allowed && dq_room && saved_cfg[4]) state_changed <= 1;
                         end
 
                         STEP_WRITE : begin

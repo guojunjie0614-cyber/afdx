@@ -64,8 +64,10 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg [7:0] rx_wd;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
-    // svc_port_match 与 rx_port_local 同拍更新，claim 锥只剩本地寄存器的与。
-    reg svc_port_match;
+    // 四个端口分别寄存比较结果，避免跨端口的或逻辑串在输入比较后。
+    // 合并后的匹配仍与 rx_port_local 同拍有效，不增加接收延迟。
+    (* preserve = 1, dont_merge = 1 *) reg svc_request_match, svc_main_match, svc_status_match, svc_deny_match;
+    wire svc_port_match = svc_request_match || svc_main_match || svc_status_match || svc_deny_match;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
     wire send_complete, tx_re, read_mode;
     wire [9:0] tx_ra;
@@ -138,13 +140,18 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         if (reset) begin
             rx_port_stage <= 0;
             rx_port_local <= 0;
-            svc_port_match <= 0;
+            svc_request_match <= 0;
+            svc_main_match <= 0;
+            svc_status_match <= 0;
+            svc_deny_match <= 0;
         end
         else begin
             rx_port_stage <= rx_dport;
             rx_port_local <= rx_port_stage;
-            svc_port_match <= rx_port_stage == request_port || rx_port_stage == main_tid
-                || rx_port_stage == status_tid || rx_port_stage == deny_tid;
+            svc_request_match <= rx_port_stage == request_port;
+            svc_main_match <= rx_port_stage == main_tid;
+            svc_status_match <= rx_port_stage == status_tid;
+            svc_deny_match <= rx_port_stage == deny_tid;
         end
     end
 

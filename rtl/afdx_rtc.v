@@ -189,8 +189,10 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire encode_tx_done, encode_rx_done, decode_done;
     wire [31:0] encode_tx_result, encode_rx_result, decode_result;
     reg [31:0] stamp_tx_sec, stamp_tx_frac, stamp_rx_sec, stamp_rx_frac, reference_sec, reference_frac;
-    // 远端握手信号只进末级与门，本地项先行会合。
-    wire tx_armed = active && enable && tx_state == TX_HANDSHAKE && tx_index == 0;
+    // 首字节进入握手态时预置，握手或中止时清除；不在时间戳使能端再译码下标。
+    // active/enable 仍在事件拍直接门控，保持停用当拍不采样的语义。
+    (* preserve = 1, dont_merge = 1 *) reg tx_first_armed;
+    wire tx_armed = active && enable && tx_first_armed;
     wire first_tx = tx_armed && tx_ready;
     wire rx_byte = rx_valid && rx_claim;
     wire rx_armed = enable && rx_claim && ! rx_busy;
@@ -266,13 +268,19 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else load_pending <= load_time;
     end
 
-    // Originate 字段在末字节到达前早已稳定，逐拍寄存匹配结果。
-    // 末字节仍在 data_stage 的那一拍报文整体下移 8 位，字段位于 [183:120]。
-    reg reply_match;
+    // 报文整包移位，末字节写入前 Originate 位于 [183:120]，不能再晚一拍取该切片。
+    // 秒与小数各自寄存比较结果，再组合相与，保持原来恰好一拍的匹配延迟。
+    (* preserve = 1, dont_merge = 1 *) reg reply_sec_match, reply_frac_match;
+    wire reply_match = reply_sec_match && reply_frac_match;
     always @(posedge clk) begin
-        if (reset) reply_match <= 0;
-        else reply_match <= rx_packet[183:152] == stamp_tx_sec
-            && rx_packet[151:120] == stamp_tx_frac;
+        if (reset) begin
+            reply_sec_match <= 0;
+            reply_frac_match <= 0;
+        end
+        else begin
+            reply_sec_match <= rx_packet[183:152] == stamp_tx_sec;
+            reply_frac_match <= rx_packet[151:120] == stamp_tx_frac;
+        end
     end
 
     always @(posedge clk) begin
@@ -473,7 +481,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg [31:0] timestamp_seconds, timestamp_nanoseconds;
     (* preserve = 1, dont_merge = 1 *) reg receive_seconds_event, receive_nanoseconds_event;
     (* preserve = 1, dont_merge = 1 *) reg request_seconds_event, request_nanoseconds_event;
-    wire request_event = tx_state == TX_HANDSHAKE && tx_ready && tx_index == 0 && !tx_reply;
+    wire request_event = tx_first_armed && tx_ready && !tx_reply;
     always @(posedge clk) begin
         if (reset) begin
             timestamp_seconds <= 0;
@@ -530,6 +538,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             tx_last <= 0;
             tx_state <= TX_IDLE;
             tx_index <= 0;
+            tx_first_armed <= 0;
             tx_word <= 0;
             tx_word_low <= 0;
             tx_word_high <= 0;
@@ -731,6 +740,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     tx_valid <= 0;
                     tx_last <= 0;
                     tx_index <= 0;
+                    tx_first_armed <= 0;
                     if (master && reply_pending) begin
                         tx_reply <= 1;
                         reply_pending <= 0;
@@ -785,11 +795,13 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     tx_valid <= 1;
                     tx_last <= (tx_index == PACKET_LAST);
                     tx_state <= TX_HANDSHAKE;
+                    tx_first_armed <= tx_index == 0;
                 end
 
                 TX_HANDSHAKE : if (tx_ready) begin
                     tx_valid <= 0;
                     tx_last <= 0;
+                    tx_first_armed <= 0;
                     if (tx_index == PACKET_LAST) tx_state <= TX_IDLE;
                     else begin
                         tx_index <= tx_index + 6'd1;
@@ -802,6 +814,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 tx_valid <= 0;
                 tx_last <= 0;
                 tx_state <= TX_IDLE;
+                tx_first_armed <= 0;
                 rx_busy <= 0;
                 rx_done <= 0;
                 waiting <= 0;
