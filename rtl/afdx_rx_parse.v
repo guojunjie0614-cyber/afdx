@@ -88,6 +88,8 @@ module afdx_rx_parse #(
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
+    // 长度是否超过整环容量提前登记；占用量仍按首个用户字节提交拍的读指针判断。
+    (* preserve = 1, dont_merge = 1 *) reg fits_q;
     reg [15:0] last_data;
 
     // IPv4 头校验和与 UDP 校验和分别累加。
@@ -102,14 +104,15 @@ module afdx_rx_parse #(
     reg [15:0] udp_add_word;
     // low16 + high10 == 0xffff 等价于这组补码比较，无需串接两次进位相加。
     wire udp_checksum_good = (&udp_sum[15:10]) && ((udp_sum[9:0] ^ udp_sum[25:16]) == 10'h3ff);
+    (* preserve = 1, dont_merge = 1 *) reg udp_bad_q;
 
     // LEN_WAIT：等到报文长度字段，收到后转 LEN_SIZES。
     // LEN_SIZES：计算用户数据和网络报文长度，然后转 LEN_LIMITS。
-    // LEN_LIMITS：计算序号位置与所需缓存空间，然后转 LEN_WAIT。
+    // LEN_LIMITS：计算序号位置与所需缓存空间，并登记容量比较，然后转 LEN_WAIT。
     reg [2:0] length_phase;
 
     // FIN_WAIT：等待帧结束，收到后转 FIN_SETTLE。
-    // FIN_SETTLE：等待末字节校验和稳定，然后转 FIN_REPORT。
+    // FIN_SETTLE：合并已寄存的 UDP 校验结论，然后转 FIN_REPORT。
     // FIN_REPORT：报告错误或提交完整帧信息，然后转 FIN_WAIT。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
@@ -191,6 +194,7 @@ module afdx_rx_parse #(
             sn_position <= 0;
             expected_len <= 0;
             space_limit <= 0;
+            fits_q <= 0;
             overflow <= 0;
             has_payload <= 0;
             ip_add_valid <= 0;
@@ -199,6 +203,7 @@ module afdx_rx_parse #(
             udp_add_valid <= 0;
             udp_seed <= 0;
             udp_add_word <= 0;
+            udp_bad_q <= 0;
             length_phase <= LEN_WAIT;
             finish_phase <= FIN_WAIT;
             err_saved <= 0;
@@ -241,6 +246,7 @@ module afdx_rx_parse #(
                     sn_position <= n < MIN_PAYLOAD ? MIN_SN_POSITION : n + HEADER_LENGTH;
                     expected_len <= n < MIN_PAYLOAD ? MIN_FRAME_LENGTH : n + FRAME_OVERHEAD;
                     space_limit <= CAPACITY - n;
+                    fits_q <= n <= CAPACITY;
                     length_phase <= LEN_WAIT;
                 end
                 default : ;
@@ -257,6 +263,7 @@ module afdx_rx_parse #(
                     begin ip_add_valid <= 1; ip_seed <= 1; ip_add_word <= 0; end
                     begin udp_add_valid <= 1; udp_seed <= 1; udp_add_word <= 0; end
                     n_ok <= 0;
+                    fits_q <= 0;
                     length_phase <= LEN_WAIT;
                     vlid <= 0;
                     sport <= 0;
@@ -305,10 +312,10 @@ module afdx_rx_parse #(
                         if (position[0]) begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
                         else if (position == last_data) begin udp_add_valid <= 1; udp_add_word <= { m_data, 8'b0 }; end
                         if (position == POS_PAYLOAD) begin
-                            // 第 42 字节到达时，检查缓存剩余空间能否容纳本帧用户数据。
+                            // 容量比较已在前一相登记；本拍新释放的空间仍立即参与接纳判断。
                             has_payload <= 1;
-                            overflow <= n > CAPACITY || occupied > space_limit;
-                            if (n <= CAPACITY && occupied <= space_limit) begin
+                            overflow <= !fits_q || occupied > space_limit;
+                            if (fits_q && occupied <= space_limit) begin
                                 ring_we <= 1;
                                 trial <= committed + 1'b1;
                             end
@@ -331,14 +338,17 @@ module afdx_rx_parse #(
                 end_alloc <= has_payload;
                 end_bad <= header_bad || ! n_ok || !ip_checksum_good || ip_len != ip_expected
                     || f_len != expected_len;
+                // 有效长度帧的末次 UDP 累加在序号拍完成，f_end 拍的 udp_sum 已稳定。
+                // 截短帧即使还有待累加字，也已被上述长度检查拒绝，不影响报告拍次。
+                udp_bad_q <= udp_check != 0 && !udp_checksum_good;
                 end_desc <= { vlid, sn, sport, dport, n[10:0], frame_begin[RX_RING_AW - 1:0], now_c };
                 desc_finish <= trial;
                 finish_phase <= FIN_SETTLE;
             end
             else if (finish_phase != FIN_WAIT) begin
                 finish_phase <= finish_phase + 1'b1;
-                // 连续收字节时，末字节校验和要到帧尾后的下一拍才稳定。
-                if (finish_phase == FIN_SETTLE && udp_check != 0 && !udp_checksum_good) end_bad <= 1;
+                // 校验结论提前一拍登记，报告与描述符提交仍保持原来的相位。
+                if (finish_phase == FIN_SETTLE && udp_bad_q) end_bad <= 1;
                 if (finish_phase == FIN_REPORT) begin
                     finish_phase <= FIN_WAIT;
                     if (err_saved == ERR_FCS) ev <= EV_FCS;

@@ -63,6 +63,8 @@ module afdx_tx_buf #(
     localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
         EVENT = 9;
     reg [3:0] state;
+    // 从前一拍预告等待页状态，页号写使能和地址选择不再直接扇出独热态位。
+    (* preserve = 1, dont_merge = 1 *) reg wait_page_q;
 
     // 一条消息最多占六页，六个寄存器保存这些页号。
     // 显式列出六个寄存器，避免综合工具为小数组额外分配存储块。
@@ -79,6 +81,14 @@ module afdx_tx_buf #(
     reg boundary, ended, held_last, port_en;
     reg [15:0] sport, dport;
 
+    // 输入先无条件寄存；地址、写使能和页首选择同步保存原拍信息。
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] m_data_q;
+    (* preserve = 1, dont_merge = 1 *) reg held_capture_q, payload_wait_d;
+    reg payload_we_d;
+    reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_wa_d;
+    // 页首缓存贯穿 WAIT_PAGE 及紧接的一拍保持不变，选择位必须随写口延迟。
+    wire [7:0] payload_wd_d = payload_wait_d ? held_data : m_data_q;
+
     // init_q 是 init_done 的本地副本；远端 init_done 只进一次寄存器。
     reg init_q;
     wire m_accept = m_valid && init_q;
@@ -88,9 +98,11 @@ module afdx_tx_buf #(
     always @(posedge clk) begin
         if (reset) begin
             state <= IDLE;
+            wait_page_q <= 0;
             pop_req <= 0;
             enq_valid <= 0;
             payload_we <= 0;
+            payload_we_d <= 0;
             pnext_we <= 0;
             desc_we <= 0;
             ret_valid <= 0;
@@ -103,6 +115,10 @@ module afdx_tx_buf #(
             page5 <= 0;
             payload_wa <= 0;
             payload_wd <= 0;
+            payload_wa_d <= 0;
+            payload_wait_d <= 0;
+            m_data_q <= 0;
+            held_capture_q <= 0;
             pnext_wa <= 0;
             pnext_wd <= 0;
             desc_wa <= 0;
@@ -131,15 +147,34 @@ module afdx_tx_buf #(
         end
         else begin
             init_q <= init_done;
-            // 数据和地址先预存，写使能单独确认真实握手，避免把 ready/valid 串入宽数据路径。
-            payload_wd <= state == WAIT_PAGE ? held_data : m_data;
-            payload_wa <= state == WAIT_PAGE
+            wait_page_q <= (state == ALLOC) || (state == WAIT_PAGE && ! pop_ack);
+            m_data_q <= m_data;
+            held_capture_q <= state == IDLE || state == RECV;
+            // 首字节和跨页字节晚一拍进入缓存；ALLOC 留出这一拍，进入 WAIT_PAGE 前已就绪。
+            if (held_capture_q) held_data <= m_data_q;
+            payload_wait_d <= wait_page_q;
+            payload_wa_d <= wait_page_q
                 ? {pop_page[TX_PAGE_AW - 1:0], {TX_OFF_AW{1'b0}}} : {current_page[TX_PAGE_AW - 1:0], offset};
+            // 三个写口信号统一比原来晚一拍，末字节在 ENQUEUE 拍与描述符同时写入同步 RAM。
+            // tx_core 的提前入队请求还须采样、读表后才可调度，故握手拍次不必改变。
+            payload_we <= payload_we_d;
+            payload_wa <= payload_wa_d;
+            payload_wd <= payload_wd_d;
+            if (wait_page_q && pop_ack && pop_ok) begin
+                case (used)
+                    0 : page0 <= pop_page;
+                    1 : page1 <= pop_page;
+                    2 : page2 <= pop_page;
+                    3 : page3 <= pop_page;
+                    4 : page4 <= pop_page;
+                    5 : page5 <= pop_page;
+                    default : ;
+                endcase
+            end
             if (state == RECV) begin
-                held_data <= m_data;
                 held_last <= m_last;
             end
-            payload_we <= 0;
+            payload_we_d <= 0;
             pnext_we <= 0;
             desc_we <= 0;
             ev_accept <= 0;
@@ -149,14 +184,13 @@ module afdx_tx_buf #(
             ev_drop_nopage <= 0;
             case (state)
 
-                // IDLE：接收并保存首字节，握手后转 ALLOC。
-                // 空闲时预存首字节候选，真实握手拍仍保存同一值；只有握手改变状态。
+                // IDLE：接收首字节，握手后转 ALLOC；数据经输入寄存器在下一拍存入缓存。
+                // 空闲时预存首字节标志和端口；只有握手改变状态。
                 IDLE : begin
                     enq_vl <= m_vl;
                     port_en <= m_port_en;
                     sport <= m_sport;
                     dport <= m_dport;
-                    held_data <= m_data;
                     held_last <= m_last;
                     ended <= m_last;
                     enq_len <= 1;
@@ -183,15 +217,6 @@ module afdx_tx_buf #(
                             state <= RETURN;
                         end
                         else begin
-                            case (used)
-                                0 : page0 <= pop_page;
-                                1 : page1 <= pop_page;
-                                2 : page2 <= pop_page;
-                                3 : page3 <= pop_page;
-                                4 : page4 <= pop_page;
-                                5 : page5 <= pop_page;
-                                default : ;
-                            endcase
                             used <= used + 1'b1;
                             if (used == 0) enq_head <= pop_page;
                             else begin
@@ -202,7 +227,7 @@ module afdx_tx_buf #(
                             current_page <= pop_page;
                             offset <= 1;
                             boundary <= 0;
-                            payload_we <= 1;
+                            payload_we_d <= 1;
                             state <= held_last ? DESC : RECV;
                         end
                     end
@@ -222,7 +247,7 @@ module afdx_tx_buf #(
                             state <= ALLOC;
                         end
                         else begin
-                            payload_we <= 1;
+                            payload_we_d <= 1;
                             offset <= offset + 1'b1;
                             if ( & offset) boundary <= 1;
                             if (m_last) state <= DESC;

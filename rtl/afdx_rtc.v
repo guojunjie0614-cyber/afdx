@@ -92,6 +92,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
+    // 校正加法使用同拍本地镜像；复制下一拍值而非延迟采样，避免秒源跨区布线后再串加法。
+    (* preserve = 1, dont_merge = 1 *) reg [31:0] seconds_calc, nanoseconds_calc;
+    reg [31:0] timestamp_seconds, timestamp_nanoseconds;
     // seconds_increment 恒为 seconds + 1；tick_overflow 恒表示当前纳秒到达秒边界。
     reg [31:0] seconds_increment;
     reg load_overflow;
@@ -147,6 +150,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg waiting, reply_pending, tx_reply;
     reg [31:0] countdown, tx_word, tx_word_low, tx_word_high;
     reg [5:0] tx_index;
+    (* preserve = 1, dont_merge = 1 *) reg [5:0] tx_index_next;
+    (* preserve = 1, dont_merge = 1 *) reg tx_index_first_q, tx_index_last_q, countdown_zero_q;
 
     // TX_IDLE：等待回应任务或请求到期，满足条件后转 TX_GROUPS。
     // TX_GROUPS：选出两组候选字，下一拍转 TX_WORD。
@@ -173,8 +178,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // calc_busy 与 calc_state 同拍影子：进入计算置位、回到空闲清除，
     // 供发送状态机就近判断，独热位不再跨模块连线。
     (* preserve = 1, dont_merge = 1 *) reg calc_busy;
+    // 线性转移的前瞻位与当前状态同拍，宽数据通路不再直接由远处独热状态位驱动。
+    (* preserve = 1, dont_merge = 1 *) reg in_add_offset_q, in_normalize_time_q, in_latency_q, in_apply_q;
     reg signed [31:0] diff_sec1, diff_sec2, diff_ns1, diff_ns2, sum_sec, sum_ns;
     reg signed [31:0] correction_sec, correction_ns;
+    (* preserve = 1, dont_merge = 1 *) reg signed [31:0] correction_sec_calc, correction_ns_calc;
     reg second_odd;
     reg offset_negative, offset_overflow, time_overflow;
     reg signed [31:0] offset_ns_plus, offset_ns_minus, offset_sec_plus, offset_sec_minus;
@@ -197,6 +205,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire rx_byte = rx_valid && rx_claim;
     wire rx_armed = enable && rx_claim && ! rx_busy;
     wire first_rx = rx_armed && rx_valid;
+    (* preserve = 1, dont_merge = 1 *) reg first_tx_q, first_rx_q;
+    reg reference_event_q;
+    reg [31:0] reference_nanoseconds_q;
     afdx_ntp_fraction encode_tx (
         // 时钟和复位
         .clk(clk),
@@ -283,6 +294,24 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         end
     end
 
+    // ready/valid 的远端组合链只到单比特事件寄存器，下一拍再驱动时间戳和换算输入。
+    // RX 在事件拍确定 master 和装载优先级，避免下一拍配置改变时丢失或补采事件。
+    // TX 与装载原本就是独立分支；RX 换算器的装载命令也等量延后，保持命令先后顺序。
+    always @(posedge clk) begin
+        if (reset) begin
+            first_tx_q <= 0;
+            first_rx_q <= 0;
+            reference_event_q <= 0;
+            reference_nanoseconds_q <= 0;
+        end
+        else begin
+            first_tx_q <= first_tx;
+            first_rx_q <= first_rx && master && !load_pending;
+            reference_event_q <= load_pending;
+            reference_nanoseconds_q <= load_ns;
+        end
+    end
+
     always @(posedge clk) begin
         if (reset) begin
             encode_tx_start <= 0;
@@ -300,21 +329,22 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         else begin
             encode_tx_start <= 0;
             encode_rx_start <= 0;
-            // 采样时间后，独立换算模块将纳秒转换为报文的小数格式。
-            if (first_tx) begin
-                stamp_tx_sec <= seconds + NTP_EPOCH;
-                encode_tx_value <= nanoseconds;
+            // timestamp_* 保存事件拍的原时间，延后使能不改变报文时间戳数值。
+            if (first_tx_q) begin
+                stamp_tx_sec <= timestamp_seconds + NTP_EPOCH;
+                encode_tx_value <= timestamp_nanoseconds;
                 encode_tx_start <= 1;
             end
-            if (load_pending) begin
-                reference_sec <= load_sec + NTP_EPOCH;
-                encode_rx_value <= load_ns;
+            // 参考秒和实际时间装载仍在原拍生效，仅共享换算器的命令延后一拍。
+            if (load_pending) reference_sec <= load_sec + NTP_EPOCH;
+            if (reference_event_q) begin
+                encode_rx_value <= reference_nanoseconds_q;
                 encode_rx_reference <= 1;
                 encode_rx_start <= 1;
             end
-            else if (first_rx && master) begin
-                stamp_rx_sec <= seconds + NTP_EPOCH;
-                encode_rx_value <= nanoseconds;
+            else if (first_rx_q) begin
+                stamp_rx_sec <= timestamp_seconds + NTP_EPOCH;
+                encode_rx_value <= timestamp_nanoseconds;
                 encode_rx_reference <= 0;
                 encode_rx_start <= 1;
             end
@@ -384,41 +414,51 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     always @(posedge clk) begin
         if (reset) begin
             seconds <= 0;
+            seconds_calc <= 0;
             seconds_increment <= 1;
 
             nanoseconds <= 0;
+            nanoseconds_calc <= 0;
         end
         // 配置装载优先于同步校正，两者都没有时按拍递增。
         // 纳秒达到十亿时向秒进位。
         else if (load_pending) begin
             seconds <= load_sec;
+            seconds_calc <= load_sec;
             seconds_increment <= load_sec + 32'd1;
 
             nanoseconds <= load_ns;
+            nanoseconds_calc <= load_ns;
         end
-        else if (calc_state == CALC_APPLY) begin
+        else if (in_apply_q) begin
             if (final_overflow) begin
                 seconds <= final_sec_increment;
+                seconds_calc <= final_sec_increment;
                 seconds_increment <= final_sec_twice;
 
                 nanoseconds <= final_ns_wrapped;
+                nanoseconds_calc <= final_ns_wrapped;
             end
             else begin
                 seconds <= adjusted_sec;
+                seconds_calc <= adjusted_sec;
                 seconds_increment <= final_sec_increment;
 
                 nanoseconds <= adjusted_ns;
+                nanoseconds_calc <= adjusted_ns;
             end
         end
         else if (tick_overflow) begin
             seconds <= seconds_increment;
+            seconds_calc <= seconds_increment;
             seconds_increment <= seconds_increment + 32'd1;
 
             nanoseconds <= nanoseconds - LAST_TICK_NS;
+            nanoseconds_calc <= nanoseconds_calc - LAST_TICK_NS;
         end
         else begin
             nanoseconds <= nanoseconds + CLOCK_NS;
-
+            nanoseconds_calc <= nanoseconds_calc + CLOCK_NS;
         end
     end
 
@@ -466,7 +506,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 tick_overflow <= load_overflow;
                 previous_time_mode <= TIME_LOAD;
             end
-            else if (calc_state == CALC_APPLY) begin
+            else if (in_apply_q) begin
                 tick_overflow <= final_overflow ? final_tick_wrapped : final_tick_direct;
                 previous_time_mode <= final_overflow ? TIME_APPLY_WRAP : TIME_APPLY_DIRECT;
             end
@@ -478,7 +518,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     end
 
     // 事件拍先同时保存时间和局部写使能，下一拍分发到各 32 位时间戳；采样时刻不变。
-    reg [31:0] timestamp_seconds, timestamp_nanoseconds;
     (* preserve = 1, dont_merge = 1 *) reg receive_seconds_event, receive_nanoseconds_event;
     (* preserve = 1, dont_merge = 1 *) reg request_seconds_event, request_nanoseconds_event;
     wire request_event = tx_first_armed && tx_ready && !tx_reply;
@@ -510,6 +549,56 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     end
 
     wire abort_protocol = !active || !enable || load_pending;
+    always @(posedge clk) begin
+        if (reset || abort_protocol) begin
+            in_add_offset_q <= 0;
+            in_normalize_time_q <= 0;
+            in_latency_q <= 0;
+            in_apply_q <= 0;
+        end
+        else begin
+            in_add_offset_q <= calc_state == CALC_NORMALIZE_OFFSET;
+            in_normalize_time_q <= calc_state == CALC_TIME_CANDIDATES;
+            in_latency_q <= calc_state == CALC_NORMALIZE_TIME;
+            in_apply_q <= calc_state == CALC_LATENCY;
+        end
+    end
+
+    // 与原状态机写入拍完全相同；不要再套 calc_state 的 case，否则会重新引入独热位长线。
+    // 当拍中止仍允许宽中间结果更新，保持原有“只清控制位”的语义。
+    always @(posedge clk) begin
+        if (reset) begin
+            adjusted_sec <= 0;
+            adjusted_ns <= 0;
+        end
+        else if (in_add_offset_q) begin
+            adjusted_sec <= seconds_calc + correction_sec_calc;
+            adjusted_ns <= nanoseconds_calc + correction_ns_calc;
+        end
+        else if (in_normalize_time_q) begin
+            if (time_overflow) begin
+                adjusted_sec <= time_sec_plus;
+                adjusted_ns <= time_ns_minus;
+            end
+        end
+        else if (in_latency_q) adjusted_ns <= adjusted_ns + PIPELINE_NS;
+    end
+
+    // 下标只在 IDLE 清零、HANDSHAKE 推进；到 BYTE/下一次 HANDSHAKE 前至少稳定两拍。
+    // 利用原有 GROUPS/WORD/BYTE 准备拍预计算，不增加字节间隔或握手延迟。
+    always @(posedge clk) begin
+        if (reset) begin
+            tx_index_next <= 6'd1;
+            tx_index_first_q <= 1;
+            tx_index_last_q <= 0;
+        end
+        else begin
+            tx_index_next <= tx_index + 6'd1;
+            tx_index_first_q <= tx_index == 0;
+            tx_index_last_q <= tx_index == PACKET_LAST;
+        end
+    end
+
     // 预先保存下一拍的提交状态，各副本只驱动一个 32 位对外状态寄存器。
     (* preserve = 1, dont_merge = 1 *) reg apply_seconds, apply_nanoseconds, apply_count;
     always @(posedge clk) begin
@@ -557,6 +646,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             waiting <= 0;
             reply_pending <= 0;
             countdown <= 0;
+            countdown_zero_q <= 1;
             calc_state <= CALC_IDLE;
             calc_busy <= 0;
             diff_sec1 <= 0;
@@ -567,6 +657,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             sum_ns <= 0;
             correction_sec <= 0;
             correction_ns <= 0;
+            correction_sec_calc <= 0;
+            correction_ns_calc <= 0;
             offset_negative <= 0;
             offset_overflow <= 0;
             time_overflow <= 0;
@@ -583,14 +675,13 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             final_tick_direct <= 0;
             final_tick_wrapped <= 0;
             second_odd <= 0;
-            adjusted_sec <= 0;
-            adjusted_ns <= 0;
-
         end
         else begin
             rx_done <= 0;
             decode_start <= 0;
-            if (countdown != 0) countdown <= countdown - 32'd1;
+            // 零标志描述本拍减一后的值；装载和中止在各自分支覆盖，始终与 countdown 同拍。
+            countdown_zero_q <= countdown_zero_q || countdown == 32'd1;
+            if (!countdown_zero_q) countdown <= countdown - 32'd1;
             if (rx_byte) begin
                 rx_busy <= ! rx_last;
                 if ( ! rx_busy) begin
@@ -660,12 +751,15 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 CALC_HALF : begin
                     correction_sec <= sum_sec >>> 1;
                     correction_ns <= sum_ns >>> 1;
+                    correction_sec_calc <= sum_sec >>> 1;
+                    correction_ns_calc <= sum_ns >>> 1;
                     second_odd <= sum_sec[0];
                     calc_state <= CALC_HALF_SECOND;
                 end
 
                 CALC_HALF_SECOND : begin
                     correction_ns <= correction_ns + (second_odd ? HALF_SECOND_NS_S : 32'sd0);
+                    correction_ns_calc <= correction_ns_calc + (second_odd ? HALF_SECOND_NS_S : 32'sd0);
                     calc_state <= CALC_OFFSET_CANDIDATES;
                 end
 
@@ -683,17 +777,19 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     if (offset_negative) begin
                         correction_ns <= offset_ns_plus;
                         correction_sec <= offset_sec_minus;
+                        correction_ns_calc <= offset_ns_plus;
+                        correction_sec_calc <= offset_sec_minus;
                     end
                     else if (offset_overflow) begin
                         correction_ns <= offset_ns_minus;
                         correction_sec <= offset_sec_plus;
+                        correction_ns_calc <= offset_ns_minus;
+                        correction_sec_calc <= offset_sec_plus;
                     end
                     calc_state <= CALC_ADD_OFFSET;
                 end
 
                 CALC_ADD_OFFSET : begin
-                    adjusted_sec <= seconds + correction_sec;
-                    adjusted_ns <= nanoseconds + correction_ns;
                     calc_state <= CALC_TIME_CANDIDATES;
                 end
 
@@ -705,10 +801,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
 
                 CALC_NORMALIZE_TIME : begin
-                    if (time_overflow) begin
-                        adjusted_ns <= time_ns_minus;
-                        adjusted_sec <= time_sec_plus;
-                    end
                     calc_state <= CALC_LATENCY;
                 end
 
@@ -723,7 +815,6 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     final_ns_wrapped <= adjusted_ns + PIPELINE_NS - NS_PER_SECOND;
                     final_sec_increment <= adjusted_sec + 32'd1;
                     final_sec_twice <= adjusted_sec + 32'd2;
-                    adjusted_ns <= adjusted_ns + PIPELINE_NS;
                     calc_state <= CALC_APPLY;
                 end
 
@@ -747,10 +838,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                         tx_state <= TX_GROUPS;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if ( ! master && countdown == 0 && ! calc_busy && !rx_done && !packet_done) begin
+                    else if ( ! master && countdown_zero_q && ! calc_busy && !rx_done && !packet_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;
+                        countdown_zero_q <= period == 0;
                         tx_state <= TX_GROUPS;
                     end
                 end
@@ -793,18 +885,18 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                         3 : tx_data <= tx_word[7:0];
                     endcase
                     tx_valid <= 1;
-                    tx_last <= (tx_index == PACKET_LAST);
+                    tx_last <= tx_index_last_q;
                     tx_state <= TX_HANDSHAKE;
-                    tx_first_armed <= tx_index == 0;
+                    tx_first_armed <= tx_index_first_q;
                 end
 
                 TX_HANDSHAKE : if (tx_ready) begin
                     tx_valid <= 0;
                     tx_last <= 0;
                     tx_first_armed <= 0;
-                    if (tx_index == PACKET_LAST) tx_state <= TX_IDLE;
+                    if (tx_index_last_q) tx_state <= TX_IDLE;
                     else begin
-                        tx_index <= tx_index + 6'd1;
+                        tx_index <= tx_index_next;
                         tx_state <= TX_GROUPS;
                     end
                 end
@@ -820,6 +912,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 waiting <= 0;
                 reply_pending <= 0;
                 countdown <= 0;
+                countdown_zero_q <= 1;
                 calc_state <= CALC_IDLE;
                 calc_busy <= 0;
                 decode_start <= 0;

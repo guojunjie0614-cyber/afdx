@@ -123,6 +123,9 @@ module afdx_tx_engine #(
     // 配置字 0 的 [0] 是使能位，[1] 和 [2] 分别允许从 A 网和 B 网发送。
     // 配置字 0 的 [8:3] 是最多排队的消息数，[19:9] 是允许的最大消息长度（字节）。
     reg [31:0] words[0:5];
+    // 配置和状态在 ENQ 的 phase=1 保存，phase=3 预计算，phase=4 只消费本地标志。
+    // 长度比较也提前寄存，避免配置字 [19:9] 经拒绝优先级链驱动写使能。
+    (* preserve = 1, dont_merge = 1 *) reg enq_disabled_q, enq_too_long_q, q_full_q, mnext_wr_q;
     // cfg_re/地址先寄存，下一拍 RAM 更新 cfg_q，再下一拍才采样配置字。
     // 只把采样使能提前一相位译码；连续读取时 cfg_q 每拍变化，数据采样拍不能后移。
     genvar cfg_word;
@@ -265,6 +268,10 @@ module afdx_tx_engine #(
             saved_state <= 0;
             saved_desc <= 0;
             saved_next <= 0;
+            enq_disabled_q <= 0;
+            enq_too_long_q <= 0;
+            q_full_q <= 0;
+            mnext_wr_q <= 0;
             scan_issue <= 0;
             scan_commit <= 0;
             scan_phase <= 0;
@@ -409,7 +416,7 @@ module afdx_tx_engine #(
                 // ENQ：检查配置并把消息加入队尾，返回结果后转 IDLE。
                 // phase=1：保存配置和状态，下一拍转 2。
                 // phase=2：计算距到期时间的差，下一拍转 3。
-                // phase=3：检查是否已进入提前准备范围，下一拍转 4。
+                // phase=3：检查提前准备范围，并寄存入队条件，下一拍转 4。
                 // phase=4：接纳或拒绝消息，随后主状态转 IDLE。
                 // enq_result 为 1 表示虚拟链路未启用，为 2 表示队列已满，为 3 表示消息过长。
                 ENQ : begin
@@ -422,7 +429,13 @@ module afdx_tx_engine #(
 
                         2 : difference <= now_q - saved_state[61:30];
 
-                        3 : soon_difference <= difference + LOOKAHEAD;
+                        3 : begin
+                            soon_difference <= difference + LOOKAHEAD;
+                            enq_disabled_q <= ! words[0] [0] || words[0] [2:1] == 0;
+                            enq_too_long_q <= op_len > words[0] [19:9];
+                            q_full_q <= saved_state[21:16] >= words[0] [8:3];
+                            mnext_wr_q <= saved_state[21:16] != 0;
+                        end
 
                         4 : begin
                             // 地址和内容独立准备，只有写使能受接纳判断控制。
@@ -430,14 +443,14 @@ module afdx_tx_engine #(
 
                             enq_ack <= 1;
                             op <= IDLE;
-                            if ( ! words[0] [0] || words[0] [2:1] == 0) enq_result <= ENQ_DISABLED;
-                            else if (op_len > words[0] [19:9]) enq_result <= ENQ_TOO_LONG;
-                            else if (saved_state[21:16] >= words[0] [8:3]) enq_result <= ENQ_FULL;
+                            if (enq_disabled_q) enq_result <= ENQ_DISABLED;
+                            else if (enq_too_long_q) enq_result <= ENQ_TOO_LONG;
+                            else if (q_full_q) enq_result <= ENQ_FULL;
                             else begin
                                 enq_result <= ENQ_ACCEPTED;
                                 state_we <= 1;
 
-                                if (saved_state[21:16] != 0) begin
+                                if (mnext_wr_q) begin
                                     mnext_we <= 1;
                                     mnext_wa <= saved_state[7:0];
                                     mnext_wd <= op_head;
