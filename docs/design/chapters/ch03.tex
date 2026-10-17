@@ -2,9 +2,9 @@
 
 \section{系统框图}
 
-图~\ref{fig:system} 是 \code{AFDX_top} 的系统框图。端系统由八个一级模块组成：发送核心和接收核心构成线速数据通路；服务通道把应用口与 RTC、SNMP、615A 三个服务接到同一对收发核心上；配置模块提供寄存器、统计计数器和三张配置表的写入口；时间基准为全设计提供自由运行的周期计数。各模块的分工见表~\ref{tab:modules}。
+图~\ref{fig:system} 是 \code{AFDX_top} 的系统框图。端系统由八个一级模块组成：发送核心和接收核心构成线速数据通路；服务通道把应用口与 RTC、SNMP、615A 三个服务复用到同一对收发核心上；配置模块提供寄存器、统计计数器和三张配置表的访问接口；时间基准为整个设计提供自由运行的周期计数。各模块的分工见表~\ref{tab:modules}。
 
-\figN[AFDX\_top 系统框图]{f01_system}{AFDX\_top 系统框图。橙、绿、紫、黄、蓝色分别标识发送通路、接收通路、服务、块 RAM 与配置控制，虚线框为片外对象；表块放在主要访问它的模块下方，表名省略 \texttt{tx\_}、\texttt{rx\_} 前缀；省略配置写入与统计脉冲连线}{fig:system}
+\figN[AFDX\_top 系统框图]{f01_system}{AFDX\_top 系统架构：应用与服务共用双网收发通路，配置模块与时间基准提供控制和计时。}{fig:system}
 
 \begin{table}\centering\small
 \caption{一级模块分工}\label{tab:modules}
@@ -27,76 +27,90 @@
 \FloatBarrier
 \section{模块层次}
 
-\code{AFDX_top} 例化八个一级模块；发送核心和接收核心各自例化其子模块和全部配置表。所有 RAM 都通过同一个简单双口 RAM 模块 \code{afdx_ram_sdp} 例化，共 19 个实例。层次如下：
+\code{AFDX_top} 例化八个一级模块，模块归属与实例数量见表~\ref{tab:hierarchy}。全设计共使用 19 个 \code{afdx_ram_sdp} 实例，其中发送核心 7 个、接收核心 5 个、SNMP 2 个、615A 5 个。
 
-\medskip\noindent\hspace*{2em}\begin{minipage}{\dimexpr\linewidth-2em}
-\small\linespread{1.08}\selectfont
-\begin{verbatim}
-AFDX_top
- +- afdx_timebase
- +- afdx_cfg
- +- afdx_svc
- +- afdx_tx_core
- |   +- afdx_tx_buf      +- afdx_tx_free
- |   +- afdx_tx_engine   +- afdx_tx_builder
- |   +- afdx_mac_tx      +- afdx_crc32_d8 x2
- |   +- afdx_ram_sdp x7: tx_cfg tx_state tx_desc tx_mnext
- |                       tx_pnext tx_payload tx_free
- +- afdx_rx_core
- |   +- afdx_mac_rx x2   +- afdx_rx_parse x2
- |   +- afdx_rx_engine   +- afdx_rx_deliver
- |   +- afdx_ram_sdp x5: rx_map rx_cfg rx_state rx_ring_a rx_ring_b
- +- afdx_rtc
- |   +- afdx_ntp_fraction x3
- +- afdx_snmp
- |   +- afdx_ram_sdp x2: request_ram response_ram
- +- afdx_615a
-     +- afdx_ram_sdp x5: packet_rx packet_tx lur_ram header_ram load_ram
-\end{verbatim}
-\end{minipage}
-\medskip
+\par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle
+\setlength{\tabcolsep}{5pt}
+\setlength{\heavyrulewidth}{0.8pt}
+\setlength{\lightrulewidth}{0.35pt}
+\captionof{table}{一级模块及下级实例}\label{tab:hierarchy}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.2cm}L>{\raggedleft\arraybackslash}p{1.3cm}@{}}
+\toprule
+\textbf{一级模块} & \textbf{子模块及下级关系} & \textbf{RAM\newline 实例数} \\
+\midrule
+\textbf{\code{afdx_timebase}} & 无下级模块 & 0 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_cfg}} & 无下级模块 & 0 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_svc}} & 无下级模块 & 0 \\
+\addlinespace[5pt]
+\textbf{\code{afdx_tx_core}} &
+\code{afdx_tx_buf}、\code{afdx_tx_engine}、\code{afdx_tx_builder}\newline
+\code{afdx_tx_free}\newline
+\hspace*{1em}\(\hookrightarrow\) \code{afdx_ram_sdp}：\code{tx_free}\newline
+\code{afdx_mac_tx}\newline
+\hspace*{1em}\(\hookrightarrow\) \code{afdx_crc32_d8} $\times$2\newline
+\code{afdx_ram_sdp} $\times$6：\code{tx_cfg}、\code{tx_state}、\code{tx_desc}、\newline
+\hspace*{1em}\code{tx_mnext}、\code{tx_pnext}、\code{tx_payload} & 7 \\
+\addlinespace[5pt]
+\textbf{\code{afdx_rx_core}} &
+\code{afdx_mac_rx} $\times$2\newline
+\hspace*{1em}\(\hookrightarrow\) 每个 MAC 含 1 个 \code{afdx_crc32_d8}\newline
+\code{afdx_rx_parse} $\times$2、\code{afdx_rx_engine}、\code{afdx_rx_deliver}\newline
+\code{afdx_ram_sdp} $\times$5：\code{rx_map}、\code{rx_cfg}、\code{rx_state}、\newline
+\hspace*{1em}\code{rx_ring_a}、\code{rx_ring_b} & 5 \\
+\addlinespace[5pt]
+\textbf{\code{afdx_rtc}} & \code{afdx_ntp_fraction} $\times$3 & 0 \\
+\addlinespace[5pt]
+\textbf{\code{afdx_snmp}} &
+\code{afdx_ram_sdp} $\times$2：\code{request_ram}、\code{response_ram} & 2 \\
+\addlinespace[5pt]
+\textbf{\code{afdx_615a}} &
+\code{afdx_ram_sdp} $\times$5：\code{packet_rx}、\code{packet_tx}、\newline
+\hspace*{1em}\code{lur_ram}、\code{header_ram}、\code{load_ram} & 5 \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\medskip
 
 各源文件的作用见附录~\ref{app:files}。
 
 \section{关键设计决策}
 
-表~\ref{tab:decisions} 列出影响全局的设计决策。
-
 \begin{table}\centering\small
 \caption{关键设计决策}\label{tab:decisions}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.4cm}L}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.4cm}L}
 \toprule
-决策 & 备选方案 & 选择理由 \\
+决策 & 选择理由 \\
 \midrule
-单一 125~MHz 时钟 & 收发分时钟、MII 25~MHz & R59 要求时钟与接口速率匹配；R61 指出 MII 可能达不到吞吐。单时钟消除跨时钟域，GMII 每拍一字节 \\
-官方 8 个端口承载真实 GMII & 端口只做握手示意 & R3 明确 MAC 接口为 GMII；端口直接输出带前导和 FCS 的线路字节，便于评测 testbench 直接对接 \\
-自研 MAC & 调用 eLinx 三速以太网 IP & R46 允许调用 IP 但不强制。自研 MAC 单口 LUT 556、空闲发送延迟 0 拍，且 A、B 两网共用一个状态机天然同拍（第~\ref{sec:mactx}~节） \\
-逐 VL 状态存块 RAM、单主状态机 & 逐 VL 寄存器阵列、并行比较 & 4096 条接收 VL 用寄存器会使资源随 VL 数线性增长；每张表只归一个状态机，读写冲突在结构上消除 \\
-提前选、到点发 & 到期后再扫描 & 128 条 VL 扫描一遍 256 拍，长于最短帧时隙 84 拍；提前 512 拍选出并预备帧头，发送时刻精确对齐 BAG \\
-接收先试写后提交 & 整帧缓存后再检查 & 不需要整帧缓存，检查失败一步回退，坏帧不占缓存 \\
-服务按消息轮询共享发送核心 & 每个服务独立的 MAC 或 VL 通道 & 服务报文与用户报文遵守同一 BAG 调度；无服务报文时应用直通，零附加延迟 \\
-三项服务用硬件状态机实现 & 软核处理器加协议软件 & EQ6HL130 没有硬核处理器，软核需另占程序存储和总线，且 RTC 的时间戳必须在报文握手那一拍由硬件采样；状态机方案的时序在 RTL 中逐拍确定，与收发核心用同一套设计规则和验证平台。代价是三项服务合计约 16.2k 个逻辑单元，与收发核心（约 14.5k）相当，其中 615A 占比最大，约 7.2k LC（第~\ref{ch:timing}~章） \\
+单一 125~MHz 时钟 & 125~MHz 八位 GMII 每拍一字节，帧内数据速率 1~Gbps；单时钟消除核心内部的跨时钟域路径 \\
+模板 8 个端口承载 GMII & 端口直接传送带前导和 FCS 的线路字节，与 GMII 的逐字节语义一致 \\
+自研 MAC & MAC 输出寄存器直接驱动 GMII，空闲发送延迟 0 拍；A、B 两网共用一个状态机，同拍起始（第~\ref{sec:mactx}~节） \\
+逐 VL 状态存块 RAM、单主控状态机 & 4096 条接收 VL 用寄存器会使资源随 VL 数线性增长；每张表只归一个状态机，读写冲突在结构上消除 \\
+提前候选、准点发送 & 128 条 VL 扫描一遍 256 拍，长于最短帧时隙 84 拍；提前 512 拍选出并预备帧头，发送时刻精确对齐 BAG \\
+接收先试写后提交 & 载荷边接收边试写，检查失败时回退试写指针、释放本帧空间 \\
+服务按消息轮询共享发送核心 & 服务报文与用户报文遵守同一 BAG 调度；无服务报文时应用直通，零附加延迟 \\
+三项服务用硬件状态机实现 & 在 EQ6HL130 上采用处理器方案需增加软核、程序存储和总线；RTC 的时间戳在报文握手当拍由硬件采样。硬件状态机的时序在 RTL 中逐拍确定，并与收发核心共用设计规则和验证平台 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{时钟与复位}\label{sec:clkrst}
 
-全设计只有 \code{clk} 一个时钟，频率 125~MHz，周期 8~ns，所有寄存器在其上升沿更新，没有跨时钟域路径。\code{reset} 为高有效的同步复位，设计内部不再同步，要求外部复位的释放与 \code{clk} 同步；上板时由板级复位同步器提供。
+全设计使用单一时钟 \code{clk}，频率 125~MHz，周期 8~ns，所有寄存器在其上升沿更新。\code{reset} 为高有效的同步复位，外部须保证其释放与 \code{clk} 同步；上板时由板级复位同步器提供。
 
-单时钟的前提是 GMII 收发数据都与 \code{clk} 同步。赛题以单一时钟下的 GMII 字节流定义接口（R3、R59），仿真平台满足这一点。实体 PHY 的接收数据随 PHY 恢复的 RX\_CLK 变化，发送需要输出 GTX\_CLK；上板时须在接收侧加一个以帧为单位的弹性缓冲，把 RX\_CLK 域的字节流转到 \code{clk} 域，发送侧由 \code{clk} 经输出寄存器驱动 GTX\_CLK。两者都在 GMII 引脚与收发核心之间，不改变核心设计（第~\ref{sec:gmii}~节）。
+核心接口采用与 \code{clk} 同步的 GMII 字节流。实体 PHY 的接收数据随 PHY 恢复的 RX\_CLK 变化，发送需要输出 GTX\_CLK；上板时须在接收侧加一个以帧为单位的弹性缓冲，把 RX\_CLK 域的字节流转到 \code{clk} 域，发送侧由 \code{clk} 经输出寄存器驱动 GTX\_CLK。收发时钟适配位于 GMII 引脚与收发核心之间（第~\ref{sec:gmii}~节）。
 
-块 RAM 的内容不受复位影响，设计也不依赖其上电初值。复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg} 并装好 256 个空闲页；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}。最长的 \code{rx_map} 有 65536 项，清表需 65536 拍。两个核心的 \code{init_done} 相与后寄存一拍成为顶层的 \code{tx_ready}，从解除复位到 \code{tx_ready} 为 1 共 65538 拍，即 524.304~µs。清表完成之前，\code{cfg_ready} 保持 0、配置写不被接受，第一个前导字节在此之前出现的线路帧整帧忽略，清表完成时也不会把半帧当作新帧。
+复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg} 并装好 256 个空闲页；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}。最长的 \code{rx_map} 有 65536 项，清表需 65536 拍。两个核心的 \code{init_done} 相与后寄存一拍成为顶层的 \code{tx_ready}，从解除复位到 \code{tx_ready} 为 1 共 65538 拍，即 524.304~µs。清表完成之前，\code{cfg_ready} 保持 0、配置写不被接受，凡在此期间开始接收的线路帧均整帧忽略。
 
 \section{时间基准}\label{sec:timebase}
 
 \code{afdx_timebase} 为全设计产生三个信号：
 \begin{itemize}
-  \item \code{now[31:0]}：自由运行的周期计数，复位为 0，每拍加 1，约 34.36~s 回绕。所有早晚比较一律用“相减看符号位”，因此 BAG 不超过 $2^{30}$ 拍（约 8.59~s）。
+  \item \code{now[31:0]}：自由运行的周期计数，复位为 0，每拍加 1，约 34.36~s 回绕。所有时间戳的先后比较均采用作差判符号位的方式实现，因此 BAG 不超过 $2^{30}$ 拍（约 8.59~s）。
   \item \code{now_c[15:0]}：粗计时，等于 \code{now[27:12]}，每 4096 拍（32.768~µs）加 1，只给接收侧冗余管理使用。
   \item \code{byte_en}：字节使能，复位期间为 0，此后恒为 1，即每拍都是字节边界。
 \end{itemize}
-每个时钟周期都是发送字节边界，帧起点与 BAG 不量化到 8 的倍数，BAG 可取任意整数拍（例如 100003 拍）。
+帧起点以 1 拍（8~ns）为粒度，BAG 可配置为任意整数拍（例如 100003 拍）。
 
 \section{端到端数据通路}\label{sec:path}
 
@@ -104,13 +118,13 @@ AFDX_top
 
 \figN[一条用户消息的端到端路径]{f02_path}{一条用户消息的端到端路径。上排为发送端 ES1，下排为接收端 ES2}{fig:path}
 
-全通路每拍处理一个字节，帧内速率 1~Gbit/s，不缓存整帧：发送侧消息先进分页缓存，到点后边读边发；接收侧边收边试写环形缓冲，检查通过即开始交付。各段的拍数和上界在第~\ref{sec:budget}~节推导。
+帧内数据通路每拍处理一个字节，对应 1~Gbit/s。发送侧先把应用消息写入分页缓存，调度到期后边读取载荷边生成线路帧；接收侧边接收边试写环形缓冲，帧检查通过后提交交付。各段的拍数和上界在第~\ref{sec:budget}~节推导。
 
 \section{设计预算}\label{sec:budget}
 
 本节由各模块的状态机拍数推导吞吐、时延、抖动、缓存和握手等待的设计值，作为第~\ref{ch:tx}--\ref{ch:cfg}~章模块设计的约束。拍数均以 125~MHz 时钟计，1 拍 = 8~ns；仿真实测结果见测试报告。
 
-\textbf{计拍口径。}本节和第~\ref{ch:tx}--\ref{ch:cfg}~章的区段拍数，都从上一级输出有效的那一拍量到本级输出有效的那一拍。状态机从 IDLE 派发一个操作要用 1 拍，所以区段拍数比模块操作表中的操作拍数多 1：例如引擎入队区段 6 拍，等于派发 1 拍加 ENQ 操作 5 拍。
+本节及第~\ref{ch:tx}--\ref{ch:cfg}~章中各处理阶段的耗时周期数，统一定义为当前级输出有效时刻与上一级输出有效时刻之间的周期差。由于状态机从 IDLE 态响应并启动一次操作需消耗 1 个周期，各阶段的实际传递延迟比模块内部操作耗时多 1 拍：例如调度引擎入队阶段耗时 6 拍，由状态跳变 1 拍与 ENQ 执行 5 拍共同构成。
 
 \subsection{吞吐}
 
@@ -122,20 +136,22 @@ C(n) = 8 + 47 + \max(n,17) + 12 = 67 + \max(n,17)\ \text{拍}.
 \begin{equation}
 R_\text{max} = \frac{1471 \times 8~\text{bit}}{1538 \times 8~\text{ns}} = 956.44~\text{Mbps}.
 \end{equation}
-$N$ 条 VL 各以 BAG 发满载帧时，提供的载荷率为 $N \times 1471 \times 8 / \text{BAG}$，可调度条件为 $N \times C \le \text{BAG}$。BAG 为 1~ms（125000 拍）时 $N \le \lfloor 125000/1538 \rfloor = 81$，此时载荷率 953.208~Mbps；77 条 VL 为 906.136~Mbps，占线 94.7\%。
+设 BAG 为 $B$ 拍，$N$ 条 VL 各以该间隔发满载帧时，提供的载荷率为 $N \times 1471 \times 8~\text{bit}/(B \times 8~\text{ns})$，可调度条件为 $N \times C \le B$。BAG 为 1~ms 时 $B=125000$，$N \le \lfloor 125000/1538 \rfloor = 81$，此时载荷率 953.208~Mbps；77 条 VL 为 906.136~Mbps，占线 94.7\%。
 
-线速通路上的其余环节都不低于线路速率：
+线速通路上各环节的吞吐预算如下：
 \begin{itemize}
-  \item \textbf{应用口收消息。}\code{afdx_tx_buf} 每拍收一字节，每取一页停 6 拍，消息末尾入队应答停 10 拍。一条 1471 字节消息占 3 页，在应用口共用 $1471 + 3\times 6 + 10 = 1499$ 拍，短于其线路占用 1538 拍。
-  \item \textbf{授权与准备。}引擎授权一帧用 9 拍，组帧器准备用 11 拍，合计 20 拍，在当前帧发送期间完成，小于最短帧的 84 拍时隙。
-  \item \textbf{接收交付。}交付口每拍一字节；单网到达的载荷率至多 $1471/1538$ 字节每拍，低于交付速率，环形缓冲不会持续积压。
+  \item \textbf{应用口收消息：}\code{afdx_tx_buf} 正常每拍接收一字节，每次申请新缓存页暂停 6 拍，消息末尾写描述符及入队应答暂停 10 拍。一条占 3 页的 1471 字节消息在应用口共耗时 $1471 + 3\times 6 + 10 = 1499$ 拍，短于其线路占用 1538 拍。
+  \item \textbf{授权与准备：}引擎授权一帧用 9 拍，组帧器准备用 11 拍，合计 20 拍，在当前帧发送期间完成，小于最短帧的 84 拍时隙。
+  \item \textbf{接收交付：}交付口每拍一字节；单网到达的载荷率至多 $1471/1538$ 字节每拍，低于交付速率。
 \end{itemize}
 
 \subsection{端到端时延}
 
-时延从应用口末字节被收下的那一拍量到对端应用口交付末字节的那一拍，各区段都按两端事件所在拍号相减，并以“线路空闲、该 VL 间隔已到”为条件。按 RTL 逐拍追踪，各区段的名义拍数和设计上界见表~\ref{tab:latbudget}，发送侧和接收侧的逐拍分解见图~\ref{fig:pipe}。
+端到端时延自发送端应用接口接收末字节的周期起，测量至接收端应用接口输出末字节的周期止。各阶段耗时均按首尾事件触发的时钟周期号相减计算，并以“线路空闲且当前 VL 已满足 BAG 发送间隔”为基准条件。按 RTL 逐拍追踪，各区段的名义拍数和设计上界见表~\ref{tab:latbudget}，发送侧和接收侧的逐拍分解见图~\ref{fig:pipe}。
 
-\figN[收发两侧的逐拍时序（线路空闲、VL 已到期）]{f20_pipe}{收发两侧的逐拍时序（线路空闲、VL 已到期）：(a) 发送侧，从末字节被接受到首个前导字节共 31 拍，入队时直接定为候选，适用于末字节在 RECV 正常收下且无需尾部分页的多字节消息；单字节或末字节跨页时多约 6 拍；(b) 接收侧，单网单帧从 GMII 最后一个 FCS 字节到首个交付字节共 24 拍}{fig:pipe}
+图~\ref{fig:pipe}(a) 中，消息入队时直接成为候选；末字节在 RECV 正常接收且无需尾部分页时，末字节至首个前导字节共 31 拍。单字节消息或末字节跨页时多约 6 拍。图~\ref{fig:pipe}(b) 给出单网单帧的接收过程，从 GMII 最后一个 FCS 字节到首个交付字节共 24 拍。
+
+\figN[收发两侧的逐拍时序（线路空闲、VL 已到期）]{f20_pipe}{线路空闲、VL 已到期时的流水时序：(a) 发送准备与起始；(b) 接收检查与交付}{fig:pipe}
 
 \begin{table}\centering\small
 \caption{端到端时延预算（拍）}\label{tab:latbudget}
@@ -153,24 +169,25 @@ $N$ 条 VL 各以 BAG 发满载帧时，提供的载荷率为 $N \times 1471 \ti
 \end{tabularx}
 \end{table}
 
-线路上有其他帧争用时，另加排在前面的帧的占线时间；端到端时延的上界由各 VL 的 BAG 和帧长配置决定，与 ARINC 664 P7 的计算方法一致。
+线路上有其他帧争用时，另加排在前面的帧的占线时间；端到端时延的上界由各 VL 的 BAG 和帧长配置决定。
 
+\FloatBarrier
 \subsection{发送抖动}\label{sec:jitter}
 
 记 VL $v$ 的帧允许时刻为 $T_v$（上一帧实际起始时刻加 BAG），实际起始时刻为 $S_v$，发送抖动为 $J_v = S_v - T_v$。
 
-\textbf{无争用时为 0。}调度器能否让帧恰在 $T$ 起始，取决于候选是否在 $T$ 之前完成授权和准备。一条 VL 在 $T-512$ 进入提前窗口，此后：
+线路空闲时，发送抖动为 0。调度器能否让帧恰在 $T$ 起始，取决于候选是否在 $T$ 之前完成授权和准备。一条 VL 在 $T-512$ 进入提前窗口，此后：
 \begin{itemize}
-  \item \textbf{扫描回访。}无候选时扫描每 2 拍检查一条 VL，128 条一遍 256 拍；入队每扫描 16 条至多插入一次，每次连同重扫流水约 12 拍；起始确认每帧一次，每次约 10 拍。合计任一 VL 相邻两次被检查的间隔约 400 拍。
-  \item \textbf{授权与准备。}授权 9 拍、组帧器准备 11 拍、起始判断 2 拍，共 22 拍。
+  \item \textbf{扫描回访：}无候选时扫描每 2 拍检查一条 VL，128 条一遍 256 拍；入队每扫描 16 条至多插入一次，每次连同重扫流水约 12 拍；起始确认每帧一次，每次约 10 拍。合计任一 VL 相邻两次被检查的间隔约 400 拍。
+  \item \textbf{授权与准备：}授权 9 拍、组帧器准备 11 拍、起始判断 2 拍，共 22 拍。
 \end{itemize}
-$400 + 22 = 422 < 512$，留有 90 拍裕量。因此只要线路上没有其他帧，第一个前导字节恰在 $T$ 出现，调度本身不引入抖动。
+$400 + 22 = 422 < 512$，留有 90 拍裕量。因此在线路空闲时，第一个前导字节恰在 $T$ 出现。
 
-\textbf{争用时的上界。}线路一次只发一帧，组帧器也只有一个“下一帧”位置。$v$ 到期且消息已排队时，可能因三种原因晚发：
+线路争用时，物理链路同一时刻只能发送一帧，组帧器也仅设一个待发槽位。$v$ 到期且消息已排队时，可能因以下三种原因推迟发送：
 \begin{itemize}
-  \item \textbf{占线。}排在它前面的帧逐个发完，每帧占线 $C(n_u)=67+\max(n_u,17)$ 拍。
-  \item \textbf{提前授权的等待。}扫描按 VL 序号轮转，候选判据是“已到期或在 512 拍内到期”，不是“最早到期”。扫描先遇到一条尚未到期的 VL $u$ 时会先授权它，组帧器持有 $u$ 等到 $T_u$ 才发，期间 $v$ 不能被授权。每个这样的 $u$ 带来的空等 $w_u < 512$ 拍。
-  \item \textbf{扫描行程。}扫描从上次选中处向后轮转，到达 $v$ 之前选中的 VL 正是排在 $v$ 前面的那些；扫描与这些帧的发送重叠进行，总行程不超过一圈，连同 $v$ 自身的授权和准备不超过约 422 拍。
+  \item \textbf{占线：}排在 $v$ 前面的帧逐个发完，每帧占线 $C(n_u)=67+\max(n_u,17)$ 拍。
+  \item \textbf{预授权占槽等待：}扫描按 VL 序号轮转，选中首条已到期或将在 512 拍内到期的候选 VL。若扫描先遇到一条尚未到期的 VL $u$ 并发出授权，组帧器将被 $u$ 占用并等待至 $T_u$ 时刻才启动发送，期间 $v$ 无法获得授权。每个这样的 $u$ 带来的等待 $w_u < 512$ 拍。
+  \item \textbf{轮询扫描延迟：}扫描从上次选中位置继续向后轮询，在遍历到 $v$ 之前所选中的 VL 均先于 $v$ 发送；扫描与这些帧的发送重叠进行，总行程不超过一圈，连同 $v$ 自身的授权和准备不超过约 422 拍。
 \end{itemize}
 记 $Q_v$ 为在 $v$ 之前发出的其他 VL 的帧，则
 \begin{equation}
@@ -179,38 +196,42 @@ J_v \le \Big(\sum_{u \in Q_v} \big(C(n_u) + w_u\big) + 422\Big) \times 8~\text{n
 \end{equation}
 其中 $w_u$ 只对在自身允许时刻之前被授权的帧非零。服务报文各走自己的 VL，同样按 BAG 调度，已包含在 $Q_v$ 中。
 
-\textbf{一次争用只造成一次相位后移。}下一次允许时刻按实际起始时刻加 BAG 计算（第~\ref{sec:txeng}~节）。几条 VL 相撞后，后发的 VL 相位后移，此后各自按 BAG 前进。这种错开能一直保持需要两个条件：
+一次争用只造成一次相位后移。下一次允许时刻按实际起始时刻加 BAG 计算（第~\ref{sec:txeng}~节）。几条 VL 相撞后，后发的 VL 相位后移，此后各自按 BAG 前进。这种错开能一直保持需要两个条件：
 \begin{itemize}
   \item 各 VL 的 BAG 互为整数倍。ARINC 664 P7 规定 BAG 取 $2^k$~ms，满足这一点；任取整数拍的 BAG 会使相位相互漂移，周期性地再次相撞。
   \item VL 在允许时刻之前已有消息排队。队列空时到期，\code{timer_active} 被清除，下一条消息到达即发，相位改由应用的提交时刻决定。
 \end{itemize}
 两个条件都满足时，相撞只在启动时发生，稳定后同一 VL 相邻两帧的起始间隔恰为 BAG。
 
-\textbf{满足 50~µs 的配置条件。}按式~(\ref{eq:jitter})，P3 的 50~µs 对应 $\sum_{u\in Q_v}(C(n_u)+w_u) \le 6250-422 = 5828$ 拍。例如：
+按式~(\ref{eq:jitter})，P3 的 50~µs 对应 $\sum_{u\in Q_v}(C(n_u)+w_u) \le 6250-422 = 5828$ 拍。例如：
 \begin{itemize}
   \item 同时到期的其他 VL 至多 3 条最长帧（$w_u=0$）：$3\times 1538 = 4614$ 拍，满足；
   \item 前面有 2 条最长帧且都被提前授权：$2\times(1538+512) = 4100$ 拍，满足；
   \item 77 条最短帧同时到期：$76 \times 84 = 6384$ 拍，不满足。
 \end{itemize}
-VL 数多于上述数量时，主机应错开各 VL 首条消息的提交时刻，使任一 VL 前面可能排着的帧满足该条件；在上述两个条件下，错开只需在启动时做一次（第~\ref{sec:cfgrule}~节）。
+VL 数多于上述数量时，主机须错开各 VL 首条消息的提交时刻，使任一 VL 之前排队发送的帧满足该条件；在上述两个条件下，错开只需在启动时做一次（第~\ref{sec:cfgrule}~节）。
 
 与 ARINC 664 P7 的抖动公式 $40~\text{µs} + \sum(20+L_\text{max})\times 8~\text{bit}/1~\text{Gbps}$ 相比，$C(n)\times 8~\text{ns}$ 恰等于公式中的求和项；本设计的扫描开销 422 拍（3.4~µs）与至多 8 次提前授权等待（共 4096 拍）之和小于公式中的 40~µs 项。因此满足 P7 公式、且排在前面的提前授权帧不超过 8 个的配置，抖动不超过 P7 的 500~µs 上限。
 
+\Needspace{27\baselineskip}
 \subsection{缓存容量}
 
-\begin{itemize}
-  \item \textbf{发送载荷缓存。}256 页 $\times$ 512 字节。最长消息占 $\lceil 1471/512 \rceil = 3$ 页，可同时驻留 85 条最长消息；77 条和 81 条 VL 各排一条最长消息时分别占 231 页和 243 页。页耗尽时经有界暂停后丢弃消息并计数，不会让应用无限等待。
-  \item \textbf{接收环形缓冲。}每网 4096 字节，按已提交写指针计算剩余空间，第 42 字节到来时检查能否放下本帧 $n$ 字节。帧尾到首个交付字节约 24 拍，交付速率不低于单网到达速率，单网满载时环内驻留不超过一帧载荷加一段在途数据，4096 字节可容纳两个最长载荷。
-  \item \textbf{交付描述队列 \code{rx_dq}。}32 项。最坏情况是一条最长消息正在交付（1471 拍），其间单网最多到达 $\lceil 1471/84 \rceil = 18$ 个最短帧；启用冗余管理时另一网的副本被判重复，不入队，32 项足够。两网独立满速且都要交付时，单个交付口无法保证无积压，此时按溢出计数并回退。
-\end{itemize}
+发送载荷缓存为 256 页 $\times$ 512 字节。最长消息占 $\lceil 1471/512 \rceil = 3$ 页，可同时驻留 85 条最长消息；77 条和 81 条 VL 各排一条最长消息时分别占 231 页和 243 页。当空闲页耗尽时，模块在等待固定上限拍数后丢弃当前消息并计入统计。
 
+每网的接收环形缓冲为 4096 字节，按已提交写指针计算剩余空间，第 42 字节到来时检查能否放下本帧 $n$ 字节。帧尾到首个交付字节约 24 拍，交付速率不低于单网到达速率，单网满载时环内驻留不超过一帧载荷加一段在途数据，4096 字节可容纳两个最长载荷。
+
+交付描述队列 \code{rx_dq} 包含 32 项。最坏情况是一条最长消息正在交付（1471 拍），其间单网最多到达 $\lceil 1471/84 \rceil = 18$ 个最短帧；启用冗余管理时，另一网的重复副本被丢弃。两网独立满速且都要交付时，输入总率超过单个交付口的处理能力，超出部分按溢出计数并回退。
+
+\Needspace{8\baselineskip}
 \subsection{握手等待}
 
-\begin{itemize}
-  \item \textbf{入队应答。}引擎一次只做一种操作，最长的授权 9 拍；入队在扫描满 16 次或已有候选时插入，应答 $\le$64 拍。
-  \item \textbf{\code{m_ready}。}这是发送核心消息接口的 ready。取页停 6 拍；消息末尾写描述、入队应答、退页（至多 3 页，每页 3 拍）和事件共停 $2 + 64 + 9 + 1 = 76$ 拍。设计约束取 \code{m_ready} 连续为 0 不超过 96 拍。
-  \item \textbf{应用口等待。}\code{app_tx_ready} 还受服务通道仲裁控制（第~\ref{sec:svcch}~节）。三个服务都有消息时，应用至多等其各传完一条：RTC 报文 48 字节、每字节 4 拍，SNMP 回应不超过 256 字节、每字节 4 拍，615A 报文不超过 516 字节、每字节 5 拍，连同各自的取页和入队，共约 3850 拍（约 31~µs）。服务报文是低速管理流量，这种等待只在三者恰好同时有报文时出现。
-  \item \textbf{配置写。}写哪张表就等哪个核心的 \code{cfg_ok}：发送引擎最坏连续执行起始确认、入队和授权约 25 拍，接收引擎最坏处理两网各一份描述 26 拍，等待上界取 64 拍（第~\ref{sec:cfgok}~节）。
-  \item \textbf{初始化。}最大的 \code{rx_map} 有 65536 项，每拍清一项，加最后一次写入和 \code{tx_ready} 的输出寄存器，共 65538 拍（524.304~µs）。
-\end{itemize}
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-2.4cm-4\tabcolsep\relax}}
+\caption{握手等待与初始化预算}\label{tab:handshakebudget}\\
+\longtablehead{2}{接口或操作 & 等待上界与计算依据}
+入队应答 & 引擎一次只做一种操作，最长的授权 9 拍；入队在扫描满 16 次或已有候选时插入，应答 $\le$64 拍。 \\
+\code{m_ready} & 这是发送核心消息接口的 ready。取页停 6 拍；消息末尾写描述、入队应答、退页（至多 3 页，每页 3 拍）和事件共停 $2 + 64 + 9 + 1 = 76$ 拍。设计约束取 \code{m_ready} 连续为 0 不超过 96 拍。 \\
+应用口等待 & \code{app_tx_ready} 还受服务通道仲裁控制（第~\ref{sec:svcch}~节）。三个服务都有消息时，应用至多等其各传完一条：RTC 报文 48 字节、每字节 4 拍，SNMP 回应不超过 256 字节、每字节 4 拍，615A 报文不超过 516 字节、每字节 5 拍，连同各自的取页和入队，共约 3850 拍（约 31~µs）。 \\
+配置写 & 向配置表写入时，需等待对应收发核心释放 \code{cfg_ok} 许可。发送引擎最坏连续执行起始确认、入队和授权约 25 拍，接收引擎最坏处理两网各一份描述 26 拍，等待上界取 64 拍（第~\ref{sec:cfgok}~节）。 \\
+初始化 & 最大的 \code{rx_map} 有 65536 项，每拍清一项，加最后一次写入和 \code{tx_ready} 的输出寄存器，共 65538 拍（524.304~µs）。 \\
+\end{longtable}
 

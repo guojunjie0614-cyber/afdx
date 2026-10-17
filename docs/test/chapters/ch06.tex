@@ -23,29 +23,53 @@ PLL & 0 & 8 & 0\% \\
 \end{tabularx}
 \end{minipage}\par\medskip
 
-逻辑资源与存储块的占用均低于 35\%；用户引脚占用 \PinPct\%。
+表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块及收发核心中的主要子模块，数字包含各自子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要承载 VL 配置、状态、描述符和报文数据。
 
-表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块，数字包含各自子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要承载 VL 配置、状态、描述符和报文数据。615A、SNMP 和 RTC 服务分别使用 7171、4463 和 4573 个逻辑单元。
-
-\par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
-\captionof{table}{主要模块资源}\label{tab:test-synth-mod}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.5cm}RRR}
-\toprule
-\thead{模块} & \thead{逻辑单元} & \thead{FF} & \thead{存储位数} \\
-\midrule
+\begingroup\renewcommand{\tablearraystretch}{1.16}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-10.6cm-6\tabcolsep\relax}@{}}
+\caption{主要模块资源}\label{tab:test-synth-mod}\\
+\longtablehead{4}{\thead{模块} & \thead{逻辑单元} & \thead{FF} & \thead{存储位数}}
 \code{afdx_tx_core} & 5677 & 2975 & 1106816 \\
+\quad \code{afdx_tx_engine} & 1790 & 1029 & 0 \\
+\quad \code{afdx_tx_builder} & 2091 & 962 & 0 \\
+\quad \code{afdx_mac_tx} & 597 & 155 & 0 \\
 \code{afdx_rx_core} & 8814 & 4964 & 1208320 \\
+\quad \code{afdx_rx_parse}（2 个） & 2466 & 1220 & 0 \\
+\quad \code{afdx_rx_engine} & 1127 & 489 & 0 \\
+\quad \code{afdx_rx_deliver} & 1975 & 481 & 0 \\
+\quad \code{afdx_mac_rx}（2 个） & 371 & 222 & 0 \\
 \code{afdx_rtc} & 4573 & 2190 & 0 \\
 \code{afdx_snmp} & 4463 & 1261 & 4096 \\
-\code{afdx_615a} & 7171 & 1358 & 102400 \\
-\code{afdx_cfg} & 1954 & 1076 & 0 \\
+\code{afdx_615a} & 7171 & 1358 & 102400 \\*
+\code{afdx_cfg} & 1954 & 1076 & 0 \\*
 \code{afdx_svc} & 120 & 7 & 0 \\
+\end{longtable}
+\endgroup
+
+分模块表按综合层次报告统计，逻辑单元包括仅使用寄存器的单元，与总体资源表的 LUT 分别计数；存储位数表示有效数据位数。缩进项已计入所属核心；标注“2 个”的行为两实例合计。
+
+
+\Needspace{15\baselineskip}
+\subsection{MAC 单口资源对照}
+
+在 EQ6HL130 上分别对自研 MAC 和 eLinx 生成的 TripleSpeedEthernet IP 配置进行单口资源统计，结果见表~\ref{tab:test-mac-res}。数字取自相同器件下的资源打包报告；IP 采用该次生成配置，带用户侧 FIFO。原始记录见附录~\ref{app:evidence}。
+
+\par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
+\captionof{table}{MAC 单口资源对照}\label{tab:test-mac-res}
+\begin{tabularx}{\linewidth}{LRR}
+\toprule
+\thead{资源} & \thead{自研 MAC} & \thead{TripleSpeedEthernet IP 配置} \\
+\midrule
+LUT & 556 & 1400 \\
+FF & 198 & 975 \\
+存储块 & 0 & 24 \\
 \bottomrule
 \end{tabularx}
 \end{minipage}\par\medskip
 
-分模块表按综合层次报告统计，逻辑单元包括仅使用寄存器的单元，与总体资源表的 LUT 分别计数；存储位数表示有效数据位数。
+表中数字对应两个独立单口工程；整机集成后的资源用量按表~\ref{tab:test-synth-res} 统计。
 
+\Needspace{17\baselineskip}
 \section{综合时序}
 
 时钟 \code{clk} 的目标频率为 125~MHz、周期为 8~ns，综合时序摘要见表~\ref{tab:test-synth-time}。报告采用综合阶段的单元延迟与时钟延迟模型，数据路径的布线延迟按 0~ns 统计。
@@ -67,6 +91,7 @@ setup 检查的 44216 个端点均满足 8~ns 约束，工具给出的最高频�
 
 hold 检查有 538 个违例端点，最差裕量为 $-$\Hold~ns。最差路径由发送缓冲的 \code{payload_wd} 寄存器到 RAM 写数据寄存器，数据路径延迟为 0.696~ns；模型中 RAM 时钟比源触发器时钟晚 0.754~ns。
 
+\Needspace{12\baselineskip}
 \section{网表功能结果}
 
 RTL 与网表采用同一套激励，网表采用原厂单元功能模型进行逻辑功能仿真。网表副本按原厂单元声明补齐仿真所需输入和参数，处理方法见附录~\ref{sec:repro-netlist}。

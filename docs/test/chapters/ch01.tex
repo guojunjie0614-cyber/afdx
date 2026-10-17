@@ -46,7 +46,11 @@ eLinx 行为仿真 & 复用双向通信测试 SYS-09（\code{tb_elinx}） & 通�
 
 \section{被测对象与测试依据}
 
-被测对象为 \code{AFDX_top} 及其全部子模块，目标器件 EQ6HL130（CSG484\_H 封装），时钟 125~MHz，GMII 接口。测试依据如下：
+被测对象为 \code{AFDX_top} 及其全部子模块，目标器件 EQ6HL130（CSG484\_H 封装），时钟 125~MHz，GMII 接口。
+
+性能矩阵采用 RTL 仿真测量；综合后 VQM 网表测试覆盖双向通信和五项功能联合场景。本轮范围为 RTL 仿真、逻辑综合和综合后功能仿真，不含实体硬件测量与布局布线时序签核。
+
+测试依据如下：
 \begin{itemize}
   \item 选题指南（中科亿海微）及官方补充说明：5 项功能、4 项技术指标和综合后仿真要求；
   \item 协议标准：ARINC 664 Part 7、ARINC 615A-2、RFC 1157/3416（SNMP）、RFC 4330（SNTP）、RFC 1350（TFTP）。

@@ -2,7 +2,7 @@
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
 <rect x="70.00" y="0.00" width="316.00" height="300.00" rx="4" fill="none" stroke="#7F7F7F" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="74.00" y="8.60" font-size="7.0" text-anchor="start" fill="#333" font-weight="bold">AFDX_top  (125 MHz, single clock)</text>
-<rect x="78.00" y="16.00" width="146.00" height="92.00" rx="4" fill="none" stroke="#A9C6EA" stroke-width="1.2"/>
+<rect x="78.00" y="16.00" width="146.00" height="92.00" rx="4" fill="none" stroke="#000" stroke-width="1.2"/>
 <text x="82.00" y="24.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_svc</text>
 <polygon points="164.00,32.00 182.00,39.20 182.00,64.80 164.00,72.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
 <text x="173.00" y="54.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4:1</text>
@@ -46,7 +46,7 @@
 <path d="M 224.00 97.00 L 258.00 97.00" fill="none" stroke="#000" stroke-width="1.0"/>
 <polygon points="258.00,97.00 253.00,99.10 253.00,94.90" fill="#000"/>
 <text x="241.00" y="93.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">tx / rx</text>
-<rect x="74.00" y="118.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#D9813F" stroke-width="1.2"/>
+<rect x="74.00" y="118.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#000" stroke-width="1.2"/>
 <text x="78.00" y="126.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_tx_core</text>
 <rect x="78.00" y="132.00" width="62.00" height="22.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
 <text x="109.00" y="146.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_buf</text>
@@ -65,7 +65,7 @@
 <rect x="256.00" y="160.00" width="70.00" height="22.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
 <text x="291.00" y="169.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">payload 128 KiB</text>
 <text x="291.00" y="178.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pnext</text>
-<rect x="74.00" y="196.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#2F9688" stroke-width="1.2"/>
+<rect x="74.00" y="196.00" width="308.00" height="70.00" rx="4" fill="none" stroke="#000" stroke-width="1.2"/>
 <text x="78.00" y="204.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_rx_core</text>
 <rect x="78.00" y="210.00" width="62.00" height="22.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
 <text x="109.00" y="224.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_deliver</text>

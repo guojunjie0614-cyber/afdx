@@ -11,14 +11,14 @@ RTL 共 21 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 \code{afdx_timebase.v} & 周期计数 \code{now} 与粗计时 \code{now_c} \\
 \code{afdx_cfg.v} & 地址译码、寄存器、27 个计数器、配置表写握手 \\
 \code{afdx_svc.v} & 应用与服务的消息轮询发送、按端口分发接收 \\
-\code{afdx_tx_core.v} & 发送核心外壳，例化发送侧各模块和 7 张表 \\
+\code{afdx_tx_core.v} & 发送核心集成模块，例化发送侧各模块和 7 张表 \\
 \code{afdx_tx_buf.v} & 消息分页写入、入队请求、失败退页 \\
 \code{afdx_tx_free.v} & 空闲页 FIFO \\
 \code{afdx_tx_engine.v} & BAG 调度：扫描、入队、授权、起始确认 \\
 \code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、页归还 \\
-\code{afdx_mac_tx.v} & 双网发送 MAC：前导、FCS、帧间隔、欠载保底 \\
+\code{afdx_mac_tx.v} & 双网发送 MAC：前导、FCS、帧间隔、欠载检测与异常帧终止 \\
 \code{afdx_crc32_d8.v} & 逐字节 CRC32 组合逻辑 \\
-\code{afdx_rx_core.v} & 接收核心外壳，例化接收侧各模块和 5 张表 \\
+\code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块和 5 张表 \\
 \code{afdx_mac_rx.v} & 接收 MAC：找帧起始符、CRC 校验、剥离 FCS \\
 \code{afdx_rx_parse.v} & 帧头检查、试写环形缓冲、定类别 \\
 \code{afdx_rx_engine.v} & VL 查表、完整性检查、冗余管理、老化 \\
@@ -30,6 +30,7 @@ RTL 共 21 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 \code{afdx_615a.v} & 615A 目标端：TFTP、LUH/数据文件检查、上传与卸载 \\
 \end{longtable}
 
+\Needspace{19\baselineskip}
 \section{默认参数}\label{app:param}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedleft\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.9cm-6\tabcolsep\relax}}
@@ -54,6 +55,9 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 
 基本寄存器、计数器和配置表地址见表~\ref{tab:addrmap}，服务寄存器见表~\ref{tab:regs}。RW 为可读写，RO 为只读。
 
+\begingroup
+\renewcommand{\tablestyle}{\small\linespread{1.04}\selectfont
+  \renewcommand{\arraystretch}{1.10}}
 \begin{longtable}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{3.6cm}>{\centering\arraybackslash}p{0.9cm}>{\raggedright\arraybackslash}p{7.0cm}}
 \caption{服务寄存器}\label{tab:regs}\\
 \longtablehead{4}{地址 & 名称 & 读写 & 含义}
@@ -62,8 +66,8 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{0x81} & \code{PERIOD} & RW & 从端请求间隔（拍），复位 125000 \\
 \code{0x82} & \code{TX_VL} & RW & 发送 VL，低 7 位 \\
 \code{0x83} & \code{UDP_PORT} & RW & UDP 端口，复位 123 \\
-\code{0x84} & \code{SEC} & RW & 写秒暂存值；读当前秒并快照纳秒 \\
-\code{0x85} & \code{NS} & RW & 写纳秒暂存值；读快照纳秒 \\
+\code{0x84} & \code{SEC} & RW & 写秒暂存值；读当前秒并锁存纳秒 \\
+\code{0x85} & \code{NS} & RW & 写纳秒暂存值；读锁存的纳秒值 \\
 \code{0x86} & \code{OFFSET_SEC} & RO & 最近偏差的有符号秒部分 \\
 \code{0x87} & \code{OFFSET_NS} & RO & 最近偏差的纳秒余数 \\
 \code{0x88} & \code{SYNC_COUNT} & RO & 从端校时次数 \\
@@ -95,6 +99,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{0xBA} & \code{RETRY_LIMIT} & RW & 重传上限，复位 1 \\
 \code{0xBB} & \code{PROTOCOL_VERSION} & RW & \code{A4} 或 \code{A3} \\
 \end{longtable}
+\endgroup
 
 \chapter{内部接口信号}\label{app:intif}
 
@@ -127,13 +132,13 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{tx_desc}[43:0] & 44 & \{\code{len}[10:0], \code{port_en}, \code{sport}[15:0], \code{dport}[15:0]\}，以首页号为地址 \\
 \midrule
 \multicolumn{3}{l}{\textit{授权（\code{tx_engine} $\rightarrow$ \code{tx_builder}，单槽交接）}} \\*
-\code{grant_valid}、\code{grant_ready} & 1、1 & \code{grant_ready} $=\neg$\code{pending}，即“下一帧”位置空闲 \\
-\code{grant_a}、\code{grant_b} & 1、1 & 两网启用位（配置字 0 的 [1]、[2]） \\
-\code{grant_timed}、\code{grant_time} & 1、32 & 为 1 时帧不得早于 \code{grant_time} 起始；为 0 表示立即 \\
-\code{grant_vlid} & 16 & 配置字 2 \\
-\code{grant_src}、\code{grant_dst} & 32、32 & 配置字 3、4 \\
-\code{grant_sport}、\code{grant_dport} & 16、16 & \code{port_en} 为 1 取消息自带端口，否则取配置字 5 \\
-\code{grant_len}、\code{grant_sn}、\code{grant_page} & 11、8、8 & 载荷字节数、帧序号、首页号 \\
+\code{grant_valid}、\code{grant_ready} & 1、1 & \code{grant_ready} $=\neg$\code{pending}，即“下一帧”位置空闲 \\*
+\code{grant_a}、\code{grant_b} & 1、1 & 两网启用位（配置字 0 的 [1]、[2]） \\*
+\code{grant_timed}、\code{grant_time} & 1、32 & 为 1 时帧不得早于 \code{grant_time} 起始；为 0 表示立即 \\*
+\code{grant_vlid} & 16 & 配置字 2 \\*
+\code{grant_src}、\code{grant_dst} & 32、32 & 配置字 3、4 \\*
+\code{grant_sport}、\code{grant_dport} & 16、16 & \code{port_en} 为 1 取消息自带端口，否则取配置字 5 \\*
+\code{grant_len}、\code{grant_sn}、\code{grant_page} & 11、8、8 & 载荷字节数、帧序号、首页号 \\*
 \midrule
 \multicolumn{3}{l}{\textit{起始回报（\code{tx_builder} $\rightarrow$ \code{tx_engine}）}} \\*
 \code{start_valid}、\code{t_start} & 1、32 & 单拍脉冲；\code{t_start} 为首个前导字节出现那一拍的 \code{now} \\
@@ -141,7 +146,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 
 \section{组帧器与 MAC}
 
-组帧器以字节流把帧内容（目的 MAC 到 SN，不含前导和 FCS）交给 MAC，MAC 决定何时取走，见表~\ref{tab:ifs}。
+组帧器以字节流把目的 MAC 到 SN 的帧内容交给 MAC，MAC 决定何时取走，见表~\ref{tab:ifs}。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.2cm-6\tabcolsep\relax}}
 \caption{帧字节接口（\texttt{tx\_builder} $\leftrightarrow$ \texttt{mac\_tx}）}\label{tab:ifs}\\
@@ -151,7 +156,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{s_last} & 1 & 与 SN 字节同拍 \\
 \code{s_en_a}、\code{s_en_b} & 1、1 & 起始拍取样，选择本帧发往哪一网 \\
 \code{tx_sof}、\code{tx_eof} & 1、1 & 首个前导字节、帧尾（FCS 发完）的单拍脉冲 \\
-\code{tx_underrun} & 1 & 数据阶段上游未备好字节的保底告警 \\
+\code{tx_underrun} & 1 & 数据阶段上游未备好字节的欠载指示 \\
 \end{longtable}
 
 \section{帧描述与交付队列}
@@ -162,14 +167,14 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \caption{帧描述与交付队列项}\label{tab:ifdesc}\\
 \longtablehead{3}{字段 & 位宽 & 含义}
 \multicolumn{3}{l}{\textit{帧描述（\code{rx_parse} $\rightarrow$ \code{rx_engine}，单槽交接，高位在前）}} \\*
-\code{vlid} & 16 & 目的 MAC 第 4--5 字节 \\
-\code{sn} & 8 & 帧末 SN \\
-\code{sport}、\code{dport} & 16、16 & UDP 端口 \\
-\code{n} & 11 & 载荷字节数 \\
-\code{start} & 12 & 本帧载荷在环形缓冲中的起点 \\
-\code{arrival} & 16 & 帧尾时刻的 \code{now_c} \\
-\code{desc_valid}、\code{desc_take} & 1、1 & 交接握手 \\
-\code{resolve_valid}、\code{resolve_commit} & 1、1 & 引擎判决：提交则 \code{wr_commit} 前进到本帧末，否则 \code{wr_trial} 退回 \\
+\code{vlid} & 16 & 目的 MAC 第 4--5 字节 \\*
+\code{sn} & 8 & 帧末 SN \\*
+\code{sport}、\code{dport} & 16、16 & UDP 端口 \\*
+\code{n} & 11 & 载荷字节数 \\*
+\code{start} & 12 & 本帧载荷在环形缓冲中的起点 \\*
+\code{arrival} & 16 & 帧尾时刻的 \code{now_c} \\*
+\code{desc_valid}、\code{desc_take} & 1、1 & 交接握手 \\*
+\code{resolve_valid}、\code{resolve_commit} & 1、1 & 引擎判决：提交则 \code{wr_commit} 前进到本帧末，否则 \code{wr_trial} 退回 \\*
 \midrule
 \multicolumn{3}{l}{\textit{交付队列项（\code{rx_engine} $\rightarrow$ \code{rx_deliver}，32 项寄存器）}} \\*
 \code{net} & 1 & 0 为 A 网，1 为 B 网 \\
@@ -204,13 +209,12 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 术语 & 含义 \\
 \midrule
 拍 & 一个 125~MHz 时钟周期，8~ns \\
-R$n$ & 官方答疑《FPGA 创新大赛问题汇总》（1010 版）Sheet1 第 $n$ 行 \\
 PSN & 同一网上同一 VL 上一帧的序列号 \\
-试写 / 提交 / 回退 & 载荷先写入环形缓冲但不生效；通过检查则生效，否则撤销 \\
+试写 / 提交 / 回退 & 载荷先暂存于环形缓冲；通过检查后提交生效，拒绝时回退撤销 \\
 候选 & 调度引擎选出、等待授权给组帧器的 VL \\
 \code{pend_vl} & 已授权但尚未开始发送的 VL \\
 \code{cfg_ok} & 引擎在本拍不发出配置表读的指示 \\
-有效份 & 一条消息在某一网上的、未被链路动作改动且接收端允许接收的副本 \\
+有效副本 & 一条消息在某一网上的、未被链路动作改动且接收端允许接收的副本 \\
 \bottomrule
 \end{tabularx}
 \end{table}

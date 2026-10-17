@@ -6,7 +6,7 @@
 
 图~\ref{fig:tx} 是发送核心的框图。应用和服务的消息经 \code{afdx_tx_buf} 分页写入载荷 RAM 并登记入队；\code{afdx_tx_engine} 按 BAG 选出下一帧并授权给 \code{afdx_tx_builder}；组帧器预读载荷、拼接帧头，逐字节交给 \code{afdx_mac_tx} 发往两网。
 
-\figN[发送核心框图]{f07_tx}{发送核心框图。浅黄色为块 RAM 表；上排为调度引擎读写的表，下排为载荷缓存与空闲页池}{fig:tx}
+\figN[发送核心框图]{f07_tx}{发送核心及其配置、状态、载荷存储之间的连接}{fig:tx}
 
 发送侧共 7 张表，全部由 \code{afdx_ram_sdp}（一写一读、同步读）例化，每张表的写口和读口各只归一个模块，见表~\ref{tab:txtables}。
 
@@ -27,22 +27,24 @@
 \end{tabularx}
 \end{table}
 
-\code{tx_cfg} 中每条 VL 占 8 个字，字段见表~\ref{tab:cfgfmt}。六个配置字合成一张 1024$\times$32 的表，比拆成六张浅表少用块 RAM；引擎授权一帧时逐拍读完六个字，时间充裕。
+\code{tx_cfg} 中每条 VL 占 8 个字，其中 6 个配置字有效，字段见表~\ref{tab:cfgfmt}。配置字合并在同一张 1024$\times$32 的表中，相比拆分为六张浅表减少了块 RAM 占用；引擎在授权操作中逐拍读取六个配置字，步骤见表~\ref{tab:txops}。
 
-\textbf{核心外壳。}\code{afdx_tx_core} 例化 7 张表和 5 个子模块，并持有 \code{tx_cfg} 的写口：复位后先用 1024 拍把 \code{tx_cfg} 清零，此后只在 \code{cfg_we} 与引擎的 \code{cfg_ok} 同拍为 1 时把写寄存一拍落表。\code{tx_cfg} 清零、空闲页装满和 \code{tx_state} 清零三者都完成后 \code{init_done} 置 1，引擎和分页缓存才开始工作。
+\code{afdx_tx_core} 例化 7 张表和 5 个子模块，并持有 \code{tx_cfg} 的写口：复位后先用 1024 拍把 \code{tx_cfg} 清零，此后只在 \code{cfg_we} 与引擎的 \code{cfg_ok} 同拍为 1 时寄存写地址与数据，并在下一拍写入配置表。
+
+\code{tx_cfg} 清零、空闲页装满和 \code{tx_state} 清零三者都完成后 \code{init_done} 置 1，引擎和分页缓存才开始工作。
 
 \section{空闲页池}\label{sec:txfree}
 
-\textbf{功能。}\code{afdx_tx_free} 管理载荷缓存的 256 个页号，保证任一页同时只属于一条消息。它是一块 256$\times$8 的 RAM 加读写指针和计数组成的 FIFO，复位后自行把页号 0--255 依次写入，共 257 拍，装完之前不出页。
+\code{afdx_tx_free} 管理载荷缓存的 256 个页号；每页从分配到归还期间由一条消息独占。它是一块 256$\times$8 的 RAM 加读写指针和计数组成的 FIFO，复位后用 257 拍依次写入页号 0--255，装完后开放取页。
 
-\textbf{端口。}一个取页口和两个还页口，均带握手：
+页池提供一个取页口和两个还页口，均带握手：
 \begin{itemize}
   \item 取页口 \code{pop_req}/\code{pop_ready}/\code{pop_ack}/\code{pop_ok}/\code{pop_page} 接 \code{tx_buf}，请求应答式；
   \item 还页口 1 \code{ret1_*} 接 \code{tx_builder}，读完一页还一页；
   \item 还页口 2 \code{ret2_*} 接 \code{tx_buf}，放弃消息时退页。
 \end{itemize}
 
-\textbf{状态机。}取页由四步状态机完成，见表~\ref{tab:freefsm}。从请求被接受到 \code{pop_ack} 共 4 拍，其中 2 拍用于同步 RAM 读出和寄存。
+取页由四步状态机完成，见表~\ref{tab:freefsm}。从请求被接受到 \code{pop_ack} 共 4 拍，其中 2 拍用于同步 RAM 读出和寄存。
 
 \begin{table}\centering\small
 \caption{空闲页池取页状态}\label{tab:freefsm}
@@ -58,23 +60,25 @@
 \end{tabularx}
 \end{table}
 
-\textbf{还页。}每个还页口先把页号收进自己的一个保持寄存器（\code{ret*_ready} 为该寄存器空），再经共用的写口逐个写入 FIFO 尾部，两个寄存器都满时口 1 优先。取页与还页同拍发生时 \code{count} 不变。
+每个还页口先把页号锁存至各自的保持寄存器（\code{ret*_ready} 为该寄存器空），再经共用写口逐个写入 FIFO 尾部；两个寄存器均满时还页口 1 优先。取页与还页同拍发生时 \code{count} 不变。
 
-\textbf{裕量。}FIFO 深度等于页数，任一页号在池中至多出现一次，写入永不溢出；每拍可写入一个页号，两个还页口各自最快每 2 拍还一页，写口不会成为瓶颈。
+FIFO 深度等于页数，任一页号在池中至多出现一次。写口每拍可写入一个页号，两个还页口各自最快每 2 拍还一页。
 
 \section{分页缓存}\label{sec:txbuf}
 
-\textbf{功能。}\code{afdx_tx_buf} 从消息接口逐字节收下消息，按页写入 \code{tx_payload}，在 \code{tx_pnext} 中把同一消息的页串成链，最后写 \code{tx_desc} 并向引擎入队。载荷缓存共 256 页、每页 512 字节，地址为 \{页号[7:0], 偏移[8:0]\}。
+\code{afdx_tx_buf} 从消息接口逐字节收下消息，按页写入 \code{tx_payload}，在 \code{tx_pnext} 中把同一消息的页串成链，最后写 \code{tx_desc} 并向引擎入队。载荷缓存共 256 页、每页 512 字节，地址为 \{页号[7:0], 偏移[8:0]\}。
 
-\textbf{端口。}消息接口 \code{m_*}（表~\ref{tab:ifm}）；取页口和还页口 2；\code{tx_payload}、\code{tx_pnext}、\code{tx_desc} 的写口；入队请求应答口（表~\ref{tab:ifgrant}）；五个统计脉冲 \code{ev_accept}、\code{ev_drop_dis}、\code{ev_drop_full}、\code{ev_drop_long}、\code{ev_drop_nopage}。
+分页缓存的接口包括消息接口 \code{m_*}（表~\ref{tab:ifm}）；取页口和还页口 2；\code{tx_payload}、\code{tx_pnext}、\code{tx_desc} 的写口；入队请求应答口（表~\ref{tab:ifgrant}）；五个统计脉冲 \code{ev_accept}、\code{ev_drop_dis}、\code{ev_drop_full}、\code{ev_drop_long}、\code{ev_drop_nopage}。
 
-\textbf{状态机。}图~\ref{fig:txbuf} 是其状态机，各状态的动作见表~\ref{tab:txbuffsm}。\code{m_ready} 由状态组合产生，只在 IDLE、RECV、DRAIN 三个状态为 1。
+\subsection{消息接收与页分配}
 
-\figN[分页缓存状态机]{f19_txbuf}{分页缓存状态机。粗框在 \texttt{init\_done} 后 \texttt{m\_ready} 为 1，字节转移以 \texttt{m\_valid} 与 \texttt{m\_ready} 同时有效为条件；RETURN、DRAIN 为放弃消息的异常路径，无页与超长转移用标有目标状态的短箭头表示，RETURN 归还全部已用页后退出；省略等待自环}{fig:txbuf}
+图~\ref{fig:txbuf} 是其状态机，各状态的动作见表~\ref{tab:txbuffsm}。\code{m_ready} 由状态组合产生，初始化完成后只在 IDLE、RECV、DRAIN 三个状态为 1；字节传输以 \code{m_valid} 与 \code{m_ready} 同时为 1 为条件。
+
+\figN[分页缓存状态机]{f19_txbuf}{分页缓存的消息接收、页分配、入队与异常退页流程}{fig:txbuf}
 
 \begin{table}\centering\small
 \caption{分页缓存各状态}\label{tab:txbuffsm}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm}L>{\raggedright\arraybackslash}p{3.2cm}}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.1cm}L>{\raggedright\arraybackslash}p{4.0cm}}
 \toprule
 状态 & 动作 & 转移 \\
 \midrule
@@ -92,19 +96,26 @@ EVENT & 按原因给出一个统计脉冲 & $\rightarrow$ IDLE \\
 \end{tabularx}
 \end{table}
 
-\textbf{跨页。}写满一页的下一个字节不直接写，而是先收进 \code{held_data}，取到新页后再写到新页的偏移 0，因此跨页不丢字节，也不需要提前取页。最长消息占 3 页，6 个页寄存器为更小的页长参数留有余量。
+写满一页后，将下一字节暂存于 \code{held_data}，取到新页后写入其偏移 0。取页由跨页字节到达触发。最长消息占 3 页，6 个页寄存器为更小的页长参数留有余量。
 
-\textbf{关键时序。}以首字节被收下为第 0 拍：第 1 拍发取页请求，第 2 拍被空闲页池接受，第 6 拍 \code{pop_ack} 到达并写入首字节，第 7 拍回到 RECV。每取一页 \code{m_ready} 为 0 共 6 拍。消息末字节之后，DESC、ENQUEUE 各 1 拍，引擎入队 6 拍后应答，EVENT 1 拍，\code{m_ready} 共为 0 约 10 拍。
+\FloatBarrier
+\subsection{时序与异常处理}
 
-\textbf{异常处理。}超长（第 1472 个字节到来）、取页失败和入队被拒三种情况都走 RETURN：先退回本消息已用的全部页，再收完剩余字节。被丢弃消息占用的页在其统计脉冲之前全部退回，不影响下一条消息取页。\code{reason} 只记第一次出现的原因，保证每条消息恰好产生一个统计脉冲。
+以首字节被收下为第 0 拍：第 1 拍发取页请求，第 2 拍被空闲页池接受，第 6 拍 \code{pop_ack} 到达并写入首字节，第 7 拍回到 RECV。每取一页 \code{m_ready} 为 0 共 6 拍。消息末字节之后，DESC、ENQUEUE 各 1 拍，引擎入队 6 拍后应答，EVENT 1 拍，\code{m_ready} 共为 0 约 10 拍。
 
-\textbf{裕量。}每条消息的统计脉冲出现在末字节被收下后 96 拍以内、下一条消息末字节之前，因此第 $k$ 个脉冲对应第 $k$ 条消息。\code{m_ready} 连续为 0 的上界由消息末尾决定：$2 + 64 + 9 + 1 = 76$ 拍，取设计约束 96 拍（第~\ref{sec:budget}~节）。一条 1471 字节消息在应用口共占 1499 拍，短于它在线路上的 1538 拍，应用口不是吞吐瓶颈。
+超长（第 1472 个字节到来）、取页失败与入队被拒三种情况均转入 RETURN 态：先退回本消息已用的全部页，再继续接收并丢弃剩余字节。被丢弃消息占用的页在其统计脉冲之前全部退回。\code{reason} 记录首次出现的原因，每条消息在 EVENT 状态产生一个统计脉冲。
+
+每条消息的统计脉冲出现在末字节被收下后 96 拍以内、下一条消息末字节之前，因此第 $k$ 个脉冲对应第 $k$ 条消息。
+
+\code{m_ready} 连续为 0 的上界由消息末尾决定：$2 + 64 + 9 + 1 = 76$ 拍，取设计约束 96 拍（第~\ref{sec:budget}~节）。一条 1471 字节消息在应用口共占 1499 拍，短于它在线路上的 1538 拍。
 
 \section{调度引擎}\label{sec:txeng}
 
-\textbf{功能。}\code{afdx_tx_engine} 是 \code{tx_state} 和 \code{tx_mnext} 的唯一主人，负责入队判决、按 BAG 选帧、授权组帧器和根据实际起始时刻更新下一次允许时刻。
+\code{afdx_tx_engine} 是 \code{tx_state} 和 \code{tx_mnext} 的唯一读写控制模块，负责入队判决、按 BAG 选帧、授权组帧器和根据实际起始时刻更新下一次允许时刻。
 
-\textbf{状态表。}\code{tx_state} 每条 VL 一项 63 位，见表~\ref{tab:txstate}。每条 VL 的消息队列是一条单向链表：\code{q_head}、\code{q_tail} 存首尾消息的首页号，\code{tx_mnext}[首页号] 指向下一条消息，因此 128 条 VL 共用 256 项链表，不需要每 VL 一个 FIFO。
+\subsection{队列状态与操作仲裁}
+
+\code{tx_state} 每条 VL 一项 63 位，见表~\ref{tab:txstate}。每条 VL 的消息队列是一条单向链表：\code{q_head}、\code{q_tail} 存首尾消息的首页号，\code{tx_mnext}[首页号] 指向下一条消息，因此 128 条 VL 共用 256 项链表。
 
 \begin{table}\centering\small
 \caption{\texttt{tx\_state} 字段}\label{tab:txstate}
@@ -122,9 +133,11 @@ EVENT & 按原因给出一个统计脉冲 & $\rightarrow$ IDLE \\
 \end{tabularx}
 \end{table}
 
-\textbf{状态机。}引擎一次只做一种操作，见图~\ref{fig:txfsm}。IDLE 下按“起始确认 $>$ 入队 $>$ 授权 $>$ 扫描”的优先级选择，各操作按 \code{phase} 逐拍推进，做完即回 IDLE，见表~\ref{tab:txops}。
+引擎一次只做一种操作，见图~\ref{fig:txfsm}。IDLE 下按“起始确认 $>$ 入队 $>$ 授权 $>$ 扫描”的优先级选择，各操作按 \code{phase} 逐拍推进，做完即回 IDLE，见表~\ref{tab:txops}。
 
-\figN[发送调度引擎状态机]{f08_txfsm}{发送调度引擎状态机。使能后按 START、ENQ、GRANT 的优先级分派，三个操作态做完即回到 IDLE；无请求时 IDLE 每 2 拍检查一条 VL。\texttt{want\_enq} 要求入队请求有效且未处理，并已有候选或扫描配额已满；\texttt{want\_grant} 要求已有候选、授权端就绪且无待起始帧；省略等待自环与复位转移}{fig:txfsm}
+\code{want_enq} 表示入队请求有效且未处理，并满足已有候选或扫描配额已满；\code{want_grant} 表示已有候选、授权端就绪且无待起始帧。无上述操作时，IDLE 每 2 拍检查一条 VL。
+
+\figN[发送调度引擎状态机]{f08_txfsm}{发送调度引擎的起始确认、消息入队、帧授权与扫描流程}{fig:txfsm}
 
 \begin{table}\centering\small
 \caption{调度引擎的操作}\label{tab:txops}
@@ -140,36 +153,45 @@ GRANT & 有候选且 \code{grant_ready} & 0--4：依次读配置字 1--5；1：�
 \end{tabularx}
 \end{table}
 
-\textbf{入队判决。}按顺序检查：VL 未启用或两网都未启用回 1；$n$ 大于 \code{max_payload} 回 3；\code{q_count} 不小于 \code{qmax} 回 2；否则收下回 0。收下时若当前没有候选、该 VL 不是 \code{pend_vl} 且已在 512 拍窗口内，直接定为候选，省去一次扫描。
+\FloatBarrier
+\subsection{入队与扫描}
 
-\textbf{扫描流水。}扫描每 2 拍发出一条 VL 的 \code{tx_state} 读，结果经图~\ref{fig:scan} 的 5 级流水判定。记 $d=$\code{now}$-$\code{next_time}，判据为：
+入队判决按顺序检查：VL 未启用或两网都未启用时返回结果码 1；$n$ 大于 \code{max_payload} 时返回 3；\code{q_count} 不小于 \code{qmax} 时返回 2；其余情况接受入队并返回 0。收下时若当前没有候选、该 VL 不是 \code{pend_vl} 且已在 512 拍窗口内，直接定为候选，省去一次扫描。
+
+扫描每 2 拍发出一条 VL 的 \code{tx_state} 读，结果经图~\ref{fig:scan} 的 5 级流水判定。记 $d=$\code{now}$-$\code{next_time}，判据为：
 \begin{itemize}
   \item \code{q_count}$\ne 0$、（\code{timer_active}$=0$ 或 $d+$\code{LOOKAHEAD}$\ge 0$）且不是 \code{pend_vl}：定为候选，扫描停在下一条；
   \item \code{q_count}$=0$、\code{timer_active}$=1$ 且 $d\ge 0$：写回 \code{timer_active}$=0$，防止 \code{now} 回绕约 34~s 后把旧时刻误判为将来；
-  \item 判定完成时 \code{scan_commit} 前进；任一操作插入时流水作废，从 \code{scan_commit} 重新发出，正在流水中的 VL 不会因操作改写状态而被误判。
+  \item 判定完成时 \code{scan_commit} 指针前移至下一条 VL；任一操作插入时流水线作废，自 \code{scan_commit} 重新发出，并按更新后的状态重新判定。
 \end{itemize}
 
 \figN[扫描流水]{f21_scan}{扫描流水。每 2 拍发出一条 VL，第 $c+5$ 拍给出判定；START、ENQ 或 GRANT 插入时清空流水，从 \texttt{scan\_commit} 重新扫描}{fig:scan}
 
-\textbf{公平性。}扫描从上次选中的下一条继续，128 条 VL 轮流被检查，不会饿死。入队在已有候选或扫描满 16 条（\code{SCAN_QUOTA}）时才插入，所以连续入队也不能挡住扫描；无候选时任一 VL 相邻两次被检查的间隔约 400 拍（第~\ref{sec:budget}~节）。
+扫描从上次选中的下一条 VL 继续，128 条 VL 轮流被检查。入队操作仅在已有候选或扫描满 16 条（\code{SCAN_QUOTA}）时插入，使持续入队期间仍能推进扫描；无候选时，任一 VL 相邻两次被检查的间隔约 400 拍（第~\ref{sec:budget}~节）。
 
-\textbf{\code{pend_vl}。}一帧从授权到真正起始之间，该 VL 的 \code{next_time} 仍是旧值，扫描和入队都不再选它，否则同一 VL 会连发两帧而违反 BAG。组帧器只有一个“下一帧”位置，一个寄存器就够；起始确认写回新的 \code{next_time} 时清除。
+\subsection{授权状态与发送时刻}
 
-\textbf{提前选、到点发。}128 条 VL 扫描一遍 256 拍，长于最短帧的 84 拍时隙；若到期后才开始找，发送时刻会随扫描位置浮动。引擎在到期前 \code{LOOKAHEAD}$=512$ 拍内选出候选并完成授权，组帧器备好长度和校验和，\code{now} 到达允许时刻 $T$ 时 MAC 恰好发出第一个前导字节。回访约 400 拍加授权和准备 22 拍小于 512，见第~\ref{sec:budget}~节和图~\ref{fig:pipe}。
+一帧从授权到真正起始之间，该 VL 的 \code{next_time} 仍是旧值。\code{pend_vl} 保存该帧的 VL，扫描和入队将其排除在候选之外；起始确认写回新的 \code{next_time} 时清除该标记。组帧器的一个“下一帧”位置对应一个 \code{pend_vl} 寄存器。
 
-\textbf{BAG 的计量。}\code{next_time} 以实际起始时刻 $t_\text{start}$ 加 \code{bag} 计算，而不是以上一次的允许时刻计算。线路争用使某帧晚发时，下一帧的允许时刻随之顺延，同一 VL 相邻两帧的起始间隔始终不小于 BAG。
+128 条 VL 扫描一遍 256 拍，长于最短帧的 84 拍时隙；若到期后才开始找，发送时刻会随扫描位置浮动。引擎在到期前 \code{LOOKAHEAD}$=512$ 拍内选出候选并完成授权，组帧器备好长度和校验和，\code{now} 到达允许时刻 $T$ 时 MAC 恰好发出第一个前导字节。回访约 400 拍加授权和准备 22 拍小于 512，见第~\ref{sec:budget}~节和图~\ref{fig:pipe}。
 
-\textbf{SN。}授权时把当前 \code{sn} 交给组帧器并写回下一值：复位后每条 VL 第一帧为 0，其后 1、2、…、255、1。
+\code{next_time} 以实际起始时刻 $t_\text{start}$ 加 \code{bag} 计算。线路争用使某帧晚发时，下一帧的允许时刻随之顺延，同一 VL 相邻两帧的起始间隔始终不小于 BAG。
+
+授权时把当前 \code{sn} 交给组帧器并写回下一值：复位后每条 VL 第一帧为 0，其后 1、2、…、255、1。
 
 \section{组帧器}\label{sec:txbld}
 
-\textbf{功能。}\code{afdx_tx_builder} 把授权的字段组成完整帧内容（目的 MAC 到 SN），在允许时刻交给 MAC，并把实际起始时刻回报给引擎。它内部最多同时有两帧：一帧在 \code{stream_active} 状态向 MAC 送字节，另一帧在 \code{pending} 位置准备并等待。\code{grant_ready}$=\neg$\code{pending}，\code{pending} 在本帧的 \code{tx_sof} 那拍清除，因此下一帧的授权可在当前帧起始后立即进入，准备在当前帧发送期间完成。
+\code{afdx_tx_builder} 把授权的字段组成完整帧内容（目的 MAC 到 SN），在允许时刻交给 MAC，并把实际起始时刻回报给引擎。
 
-\textbf{数据通路。}组帧器的结构见图~\ref{fig:builder}：帧头走 336 位移位寄存器，载荷走预读流水和 8 项字节 FIFO，补零和 SN 由计数器产生，三者经一个选择器送出。
+它内部最多同时有两帧：一帧在 \code{stream_active} 状态向 MAC 送字节，另一帧在 \code{pending} 位置准备并等待。\code{grant_ready}$=\neg$\code{pending}，\code{pending} 在本帧的 \code{tx_sof} 那拍清除，因此下一帧的授权可在当前帧起始后立即进入，准备在当前帧发送期间完成。
 
-\figN[组帧器数据通路]{f22_builder}{组帧器数据通路。帧头与载荷分两路，在选择器汇合后交给 MAC；页归还由独立的读元数据流水触发，与载荷进入字节 FIFO 同时发生，不等待 FIFO 消费完该页}{fig:builder}
+\subsection{帧头准备与载荷发送}
 
-\textbf{准备。}收下授权的同拍锁存全部字段和 \code{USER_ID}，IP 标识取 16 位计数器并加 1。之后 10 拍算 IP 头校验和，每拍只做一次加法，见表~\ref{tab:prep}。
+组帧器的结构见图~\ref{fig:builder}：帧头走 336 位移位寄存器，载荷走预读流水和 8 项字节 FIFO，补零和 SN 由计数器产生，三者经一个选择器送出。
+
+\figN[组帧器数据通路]{f22_builder}{组帧器数据通路。帧头与载荷分两路，在选择器汇合后交给 MAC；页归还由独立的读元数据流水触发，与载荷进入字节 FIFO 同时发生}{fig:builder}
+
+收下授权的同拍锁存全部字段和 \code{USER_ID}，IP 标识取 16 位计数器并加 1。之后 10 拍算 IP 头校验和，每拍只做一次加法，见表~\ref{tab:prep}。
 
 \begin{table}\centering\small
 \caption{组帧器准备步骤}\label{tab:prep}
@@ -185,29 +207,42 @@ GRANT & 有候选且 \code{grant_ready} & 0--4：依次读配置字 1--5；1：�
 \end{tabularx}
 \end{table}
 
-\textbf{起始。}起始条件为 \code{prepared}、上一帧已送完，且 \code{grant_timed}$=0$、允许时刻已过或距允许时刻至多 4 拍。4 拍提前量补偿起始路径上的四级寄存器：\code{now} 寄存 1 拍、差值 \code{now_q}$-T$ 寄存 1 拍、\code{s_valid} 寄存 1 拍、MAC 判断起始并寄存输出 1 拍。于是线路空闲时第一个前导字节恰在 \code{now}$=T$ 那一拍出现。起始拍把 42 字节帧头并行装入移位寄存器，A、B 两路共用，只在第 11 字节（接口号）B 网换为 \code{40}。
+起始条件为 \code{prepared}、上一帧已送完，且 \code{grant_timed}$=0$、允许时刻已过或距允许时刻至多 4 拍。4 拍提前量补偿起始路径上的四级寄存器：\code{now} 寄存 1 拍、差值 \code{now_q}$-T$ 寄存 1 拍、\code{s_valid} 寄存 1 拍、MAC 判断起始并寄存输出 1 拍。于是线路空闲时第一个前导字节恰在 \code{now}$=T$ 那一拍出现。
 
-\textbf{发送。}MAC 每取一字节，按 \code{part} 依次送出帧头 42 字节、载荷 $n$ 字节、$n<17$ 时补零到 17 字节、带 \code{s_last} 的 SN。\code{tx_sof} 那拍的 \code{now} 作为 $t_\text{start}$ 回报引擎。
+起始拍把 42 字节帧头并行装入移位寄存器，A、B 两路共用，只在第 11 字节（接口号）B 网换为 \code{40}。
 
-\textbf{载荷预读。}起始拍起，只要 FIFO 中不足 5 字节就每拍发出一个 \code{tx_payload} 读；读请求寄存、同步 RAM 和输出寄存共 3 拍后写入 FIFO。当前页与下一页号分开保存：起始时读 \code{tx_pnext}[首页]，每次跨页再读下一页的后继，跨页时请求连续不断。读到页末字节或消息末字节时，该页号随数据一起进入 4 项归还 FIFO，经还页口 1 退回空闲页池。
+MAC 每取一字节，按 \code{part} 依次送出帧头 42 字节、载荷 $n$ 字节、$n<17$ 时补零到 17 字节、带 \code{s_last} 的 SN。\code{tx_sof} 那拍的 \code{now} 作为 $t_\text{start}$ 回报引擎。
 
-\textbf{异常处理。}MAC 报 \code{tx_underrun} 时本帧记为坏帧，不产生 \code{ev_tx_a}/\code{ev_tx_b}；其余帧在 \code{tx_eof} 时按本帧启用的网络各给一个脉冲。
+起始拍起，只要 FIFO 中不足 5 字节就每拍发出一个 \code{tx_payload} 读；读请求寄存、同步 RAM 和输出寄存共 3 拍后写入 FIFO。
 
-\textbf{裕量。}
+当前页与下一页号分开保存：起始时读 \code{tx_pnext}[首页]，每次跨页再读下一页的后继，跨页时请求连续不断。读到页末字节或消息末字节时，该页号随数据一起进入 4 项归还 FIFO，经还页口 1 退回空闲页池。
+
+\subsection{时序与异常处理}
 \begin{itemize}
-  \item \textbf{FIFO 不溢出。}发出读时 FIFO 中至多 4 字节，另有至多 3 个读在途，最多 $4+3+1=8$ 字节，等于 FIFO 深度。
-  \item \textbf{不欠载。}MAC 在起始后第 8 拍才取第 0 个字节，帧头又占 42 拍，第一个载荷字节在起始后第 50 拍才被取走，而 FIFO 在起始后第 4 拍就开始填充；此后每拍补入一字节、取出一字节。下一页号在跨页前 500 拍以上已读出，跨页不产生空拍。
-  \item \textbf{准备时间。}准备 11 拍，远小于当前帧至少 84 拍的发送时间，下一帧在当前帧结束前已就绪。
+  \item \textbf{FIFO 容量：}发出读时 FIFO 中至多 4 字节，另有至多 3 个读在途，最多 $4+3+1=8$ 字节，等于 FIFO 深度。
+  \item \textbf{供数时序：}MAC 在起始后第 8 拍才取第 0 个字节，帧头又占 42 拍，第一个载荷字节在起始后第 50 拍才被取走，而 FIFO 在起始后第 4 拍就开始填充；此后每拍补入一字节、取出一字节。下一页号在跨页前 500 拍以上已读出。
+  \item \textbf{准备时间：}下一帧准备需 11 拍，可与当前帧的发送重叠；最短帧时隙为 84 拍。
 \end{itemize}
 从消息末字节被收下到 \code{tx_sof} 的名义值为 31 拍，上界 100 拍，逐拍分解见第~\ref{sec:budget}~节图~\ref{fig:pipe}。
 
+MAC 报 \code{tx_underrun} 时本帧记为坏帧，不产生 \code{ev_tx_a}/\code{ev_tx_b}；其余帧在 \code{tx_eof} 时按本帧启用的网络各给一个脉冲。
+
+\Needspace{14\baselineskip}
 \section{双网发送 MAC}\label{sec:mactx}
 
-\code{afdx_mac_tx} 用一个状态机驱动 A、B 两套 CRC 和输出寄存器，两网天然同拍。它是发送节拍的主人：上游只负责备好字节，何时取走由 MAC 决定。图~\ref{fig:macfsm}(a) 是其状态机，(b) 是第~\ref{sec:macrx}~节的接收 MAC。
+\code{afdx_mac_tx} 用一个状态机驱动 A、B 两套 CRC 和输出寄存器，两网同拍输出。发送节拍由 MAC 控制，上游按其握手信号提供字节。图~\ref{fig:macfsm}(a) 是其状态机，(b) 是第~\ref{sec:macrx}~节的接收 MAC。
 
-\figN[双网 MAC 状态机]{f10_macfsm}{双网 MAC 状态机：(a) 发送，仅在 \texttt{byte\_en} 有效时转移，虚线为欠载保底路径；(b) 接收，条件使用寄存后的有效标记和数据，PREAMBLE 或 \texttt{BAD\_PRE} 因有效标记撤销而退出时报告前导错误。省略逐字节工作自环、等待自环与复位转移}{fig:macfsm}
+eLinx 生成的三速以太网 IP 带用户侧 FIFO、保留 FCS，且每网一个实例；相同器件下的资源对照见测试报告。
 
-各状态的动作见表~\ref{tab:macfsm}，发送一帧的字节时间见表~\ref{tab:macbyte}，$L$ 为取走的字节数。起始那一拍取样 \code{s_en_a}、\code{s_en_b}；未启用的那一网整帧期间 \code{tx_valid} 和 \code{tx_data} 保持 0，两网都未启用时照常走完节拍，使各帧时序与网络选择无关。上游一直有帧等候时，帧间隔恰为 12 拍。
+发送状态机仅在 \code{byte_en} 有效时推进。接收状态机使用寄存后的有效标记和数据；PREAMBLE 或 \code{BAD_PRE} 因有效标记撤销而退出时，报告前导错误。
+
+各状态的动作见表~\ref{tab:macfsm}，发送一帧的字节时间见表~\ref{tab:macbyte}，$L$ 为取走的字节数。起始那一拍取样 \code{s_en_a}、\code{s_en_b}；未启用的网络在整帧期间 \code{tx_valid} 与 \code{tx_data} 保持为 0；两网均未启用时状态机仍按相同节拍推进，使各帧时序与网络使能无关。上游一直有帧等候时，帧间隔恰为 12 拍。
+
+数据阶段若上游未备好字节（欠载），MAC 给出 \code{tx_underrun} 脉冲，发出 4 字节不取反的错误 FCS，然后继续接收并丢弃上游这一帧的剩余字节。
+
+复位期间线路输出全为 0，复位结束后先等满 12 拍帧间隔再允许首帧。
+
+\figN[双网 MAC 状态机]{f10_macfsm}{双网 MAC 状态机：(a) 发送及欠载处理；(b) 接收及前导检查}{fig:macfsm}
 
 \begin{table}\centering\small
 \caption{发送 MAC 各状态}\label{tab:macfsm}
@@ -219,7 +254,7 @@ GAP & 输出 0；\code{gap_left} 递减 & \code{gap_left}$=0$ 且 \code{s_valid}
 PREAMBLE & 输出 7 个 \code{55} 和 \code{D5}；末拍 \code{s_ready}$=1$ 取走第 0 字节 & 取到字节 $\rightarrow$ DATA；未备好 $\rightarrow$ FCS（欠载） \\
 DATA & 每拍输出一字节并更新两网 CRC & 末字节已出 $\rightarrow$ FCS；未备好 $\rightarrow$ FCS（欠载） \\
 FCS & 输出 4 字节 FCS，低字节先发；第 4 拍后撤 \code{valid}、给 \code{tx_eof}，\code{gap_left}$=11$ & 正常 $\rightarrow$ GAP；欠载 $\rightarrow$ DRAIN \\
-DRAIN & \code{s_ready}$=1$，吞掉上游剩余字节 & 收到 \code{s_last} $\rightarrow$ GAP \\
+DRAIN & \code{s_ready}$=1$，继续接收并丢弃上游剩余字节 & 收到 \code{s_last} $\rightarrow$ GAP \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -234,12 +269,8 @@ DRAIN & \code{s_ready}$=1$，吞掉上游剩余字节 & 收到 \code{s_last} $\r
 0--6 & \code{55} & \\
 7 & \code{D5} & 取走第 0 个字节 \\
 8 至 $8+L-1$ & 第 0 至 $L-1$ 个字节 & 取走下一字节，取走带 \code{s_last} 的字节后停止 \\
-其后 4 拍 & FCS & A、B 各算各的 \\
+其后 4 拍 & FCS & A、B 两网各自更新 CRC32 \\
 再后至少 12 拍 & 空闲 & 第 12 拍可判断下一帧起始 \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-数据阶段若上游未备好字节（欠载），MAC 给出 \code{tx_underrun} 脉冲，发出 4 字节不取反的错误 FCS，使对端必然校验失败，然后吞掉上游这一帧的剩余字节。按设计欠载不会发生，这是保底措施。复位期间线路输出全为 0，复位结束后先等满 12 拍帧间隔再允许首帧。
-
-选择自研 MAC 的依据在于结构：它不经用户侧 FIFO，空闲时上游备好帧即发出前导码，接收侧逐字节剥离 FCS，A、B 两网共用一个状态机而天然同拍。eLinx 生成的三速以太网 IP 带用户侧 FIFO、保留 FCS，且每网一个实例。资源采用 2026-10-11 同器件单口装箱对照：自研 MAC 556 个 LUT、198 个触发器、不占存储块，该份 IP 配置为 1400 个 LUT、975 个触发器、24 个存储块。

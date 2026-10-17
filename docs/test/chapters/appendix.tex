@@ -178,6 +178,8 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \section{专项测试记录}
 \code{contention.json} 保存多条 VL 同时获准发送与服务报文并发测试结果；各组测量见 \code{runs[].measurements}，方向数据见其中的 \code{directions}。
 
+MAC 单口资源对照的原始记录为 \code{mac_self_resources.json} 与 \code{mac_official_resources.json}，表~\ref{tab:test-mac-res} 取各自 \code{packed_utilization} 中的 \code{Total LUTs}、\code{Total FFs} 和 \code{Total Memorys}。
+
 \section{参考汇总与补充记录}
 \code{sim/reference/} 中的 \code{regression.json} 汇总完整回归结果（表~\ref{tab:regress}）；\code{judge_result.txt} 汇总批量测试各用例的结果、耗时及性能、RTC 和突发指标。
 

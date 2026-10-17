@@ -1,24 +1,27 @@
+\addtocontents{toc}{\protect\Needspace{6\baselineskip}}
 \chapter{服务功能}\label{ch:svc}
 
-RTC、SNMP 和 615A 三项服务都以 UDP 报文工作，不另设 MAC 或专用 VL 通道，而是经服务通道 \code{afdx_svc} 与应用共享同一对收发核心。服务报文因此与用户报文遵守同一套 BAG 调度、完整性检查和冗余管理。
+RTC、SNMP 和 615A 均以 UDP 报文工作，经服务通道 \code{afdx_svc} 与应用共享收发核心。服务报文按配置的 VL 参与 BAG 调度、完整性检查和冗余管理。
 
 \section{服务通道}\label{sec:svcch}
 
 \code{afdx_svc} 由组合选择和五个状态寄存器组成：发送侧为 \code{busy}、\code{owner}、\code{turn}，接收侧为 \code{rx_active}、\code{rx_claimed}，结构见图~\ref{fig:svc}。
 
-\figN[服务通道]{f26_svc}{服务通道：(a) 应用与三个服务按整条消息轮询共享发送核心；(b) 交付消息广播给服务，首字节有效时保存认领结果，其余周期保持。\texttt{rx\_active} 选择当前认领或寄存的认领结果，反相后与 \texttt{d\_valid} 相与形成应用口有效信号；图中省略直通应用口的数据与元数据连线}{fig:svc}
+\figN[服务通道]{f26_svc}{服务通道：(a) 应用与服务的整消息发送仲裁；(b) 按 UDP 目的端口进行接收分发}{fig:svc}
 
-\textbf{发送仲裁。}应用口与三个服务发送口按整条消息轮询，次序为应用、RTC、SNMP、615A。选中一条消息后保持到末字节握手，消息中途的停顿不允许其他来源插入；完成后从下一来源开始选择。有服务报文等待时，应用不能连续独占；没有服务发送时，应用的数据和 ready 组合直通发送核心，不增加缓存和流水拍。仲裁状态只有三个寄存器：\code{busy} 表示一条消息正在传送，\code{owner} 记其来源，\code{turn} 记下次从哪个来源开始查找；末字节握手时 \code{busy} 清零、\code{turn} 指向当前来源的下一个。由此任一来源在提出请求后，至多等其余三个来源各传完一条消息。
+应用口与三个服务发送口按整条消息轮询，次序为应用、RTC、SNMP、615A。选中的来源独占消息通路，直至末字节握手，随后从下一来源开始选择。服务发送口均空闲时，应用的数据和 ready 组合直通发送核心。仲裁状态只有三个寄存器：\code{busy} 表示一条消息正在传送，\code{owner} 记其来源，\code{turn} 记下次从哪个来源开始查找；末字节握手时 \code{busy} 清零、\code{turn} 指向当前来源的下一个。由此任一来源在提出请求后，至多等其余三个来源各传完一条消息。
 
-\textbf{接收分发。}接收核心的交付口同时广播给应用和三个服务。各服务按 UDP 目的端口给出认领信号，首字节的认领结果保持到末字节：被认领的消息只送服务，应用口的 valid 和 last 为 0；其余消息原样送给应用。三个服务使用不同的 UDP 端口，且都不对交付口施加反压。认领信号由各服务按 \code{d_dport} 组合产生，首字节那一拍直接决定应用口的 \code{valid}，之后由寄存的 \code{rx_claimed} 保持，所以分发不增加交付延迟。
+接收核心的交付口同时广播给应用和三个服务。各服务按 UDP 目的端口给出认领信号，首字节的认领结果保持到末字节：被认领的消息只送服务，应用口的 valid 和 last 为 0；其余消息原样送给应用。三个服务使用不同的 UDP 端口，且都不对交付口施加反压。认领信号由各服务按 \code{d_dport} 组合产生，首字节当拍直接决定应用口的 \code{valid}，之后由寄存的 \code{rx_claimed} 保持。\code{rx_active} 选择当前认领或寄存的认领结果，其反相信号与 \code{d_valid} 相与形成应用口有效信号。
 
 \section{RTC 时钟同步}\label{sec:rtc}
 
 \code{afdx_rtc} 维护 32 位秒加 32 位纳秒的实时时钟，每拍前进 8~ns，纳秒满 $10^9$ 向秒进位；秒的起点为 2000-01-01 00:00:00 UTC，线上 NTP 秒为其加 3155673600。同步采用 RFC 4330 的 SNTPv4 主从方式，交互见图~\ref{fig:rtc}。
 
-\figN{f14_rtc}{SNTP 主从对时交互。中间灰带合并收发核心与 AFDX 网络；RTC 轴上的实心点为采样时刻，$t_1$、$t_3$ 在消息首字节发送握手时采样，$t_2$、$t_4$ 在核心交付首字节时采样。回应的 Originate 字段逐位复制请求的 Transmit 时间戳}{fig:rtc}
+\figN{f14_rtc}{SNTP 主从对时交互及四个时间戳的采样位置}{fig:rtc}
 
-\textbf{结构。}\code{afdx_rtc} 包含本地时钟、一个 48 字节接收移位寄存器、发送字节状态机、校时计算状态机和三个 \code{afdx_ntp_fraction} 换算器（发送时间戳编码、接收或参考时间戳编码、回应时间戳解码），两个状态机见图~\ref{fig:rtcfsm}。
+\subsection{时间戳采样与收发时序}
+
+\code{afdx_rtc} 包含本地时钟、一个 48 字节接收移位寄存器、发送字节状态机、校时计算状态机和三个 \code{afdx_ntp_fraction} 换算器（发送时间戳编码、接收或参考时间戳编码、回应时间戳解码），两个状态机见图~\ref{fig:rtcfsm}。
 
 从端每隔 \code{PERIOD} 发一个请求，记下发送时刻 $t_1$；主端在收到请求时记 $t_2$，回应发送时记 $t_3$，并把请求的 Transmit 时间戳逐位复制到回应的 Originate 字段；从端收到回应时记 $t_4$。从端只接受 Originate 与本次请求逐位相等的回应，随后计算
 \begin{equation}
@@ -26,17 +29,23 @@ RTC、SNMP 和 615A 三项服务都以 UDP 报文工作，不另设 MAC 或专�
 \end{equation}
 并加到当前时钟。一个周期内未收到有效回应时，下一周期以新的 Transmit 时间戳重发，直至校时成功。
 
-\textbf{时间戳采样。}发送时间戳在消息首字节与发送核心握手时采样，接收时间戳在核心交付首字节时采样；时间戳在握手后开始换算，并在对应字段发出前完成，不预测排队时间。
+发送时间戳取消息首字节与发送核心的握手时刻，接收时间戳取核心交付首字节的时刻。时间戳在握手后开始换算，并在对应字段发出前完成。
 
-\figN[RTC 的两个状态机]{f27_rtc}{RTC 的两个状态机：(a) 报文发送，无反压时每字节 4 拍，主端有待回应请求、从端倒计时归零时启动；(b) 校时计算，由匹配的回应触发，每拍至多一级算术运算。状态名省略 \texttt{CALC\_} 前缀；省略等待自环与复位转移}{fig:rtcfsm}
+\figN[RTC 的两个状态机]{f27_rtc}{RTC 状态机：(a) 报文发送；(b) 回应时间戳解码与时钟校正}{fig:rtcfsm}
 
-\textbf{发送时序。}发送状态机每字节用 4 拍：TX\_GROUPS 先在两组字段中各选一个 32 位字，TX\_WORD 选字，TX\_BYTE 选字节并置 \code{tx_valid}，HANDSHAKE 等 \code{tx_ready}。一个 48 字节报文至少 192 拍。Transmit 字段位于第 40--47 字节，距首字节握手至少 160 拍，而换算只需 65 拍，所以时间戳必在字段发出前就绪。主端的 Receive 字段 $t_2$ 在请求首字节到达时开始换算，回应要等整条请求收完才开始发送，同样有充足余量。
+主端有待回应请求或从端倒计时归零时启动发送。无反压时每字节用 4 拍：TX\_GROUPS 先在两组字段中各选一个 32 位字，TX\_WORD 选字，TX\_BYTE 选字节并置 \code{tx_valid}，HANDSHAKE 等 \code{tx_ready}。一个 48 字节报文至少 192 拍。Transmit 字段位于第 40--47 字节，距首字节握手至少 160 拍，换算耗时 65 拍。主端的 Receive 字段 $t_2$ 在请求首字节到达时开始换算，回应在整条请求收完后开始发送。
 
-\textbf{无乘除法器的换算。}NTP 时间戳的小数部分是 32 位二进制小数，而本地时钟以纳秒计。\code{afdx_ntp_fraction} 用 32 轮、每轮 2 拍的逐位比较减法计算 $\lfloor \text{ns}\times 2^{32}/10^9 \rfloor$，反方向用逐位加与右移并在末轮四舍五入。每拍最多一级 32 位加减，整纳秒时间戳往返换算得到原值。偏差计算也把秒差和纳秒差分开，各拍至多一级 32 位运算，步骤见图~\ref{fig:rtcfsm}(b)：先依次解码回应中的 $t_2$、$t_3$ 小数部分（各 65 拍），再用 9 拍算出两段差、求和、除以 2，并把奇数秒的半秒折入纳秒、处理借位进位。校正量在 ADD 步加到当前时钟，到 APPLY 步写回共经过 4 拍，所以 LATENCY 步补回 32~ns；一次校时约 140 拍，期间时钟照常前进。
+\subsection{时间换算与偏差校正}
 
-\textbf{回应的接受条件。}从端只在下列条件同时成立时启动计算：版本为 4、模式为 4、本端正在等待回应且发送状态机空闲（重发中的请求尚未发完时不接受），Originate 与本次请求的 Transmit 逐位相等。迟到的旧回应因 Originate 不符而被丢弃，不会用旧的 $t_1$ 计算。计算期间或 \code{rx_done} 有效的周期不发起新请求。
+\code{afdx_ntp_fraction} 负责 NTP 的 32 位二进制小数与本地纳秒值之间的换算。纳秒编码为 NTP 小数时，用 32 轮、每轮 2 拍的逐位比较减法计算 $\lfloor \text{ns}\times 2^{32}/10^9 \rfloor$；反方向用逐位加与右移并在末轮四舍五入。每拍最多一级 32 位加减，整纳秒时间戳往返换算得到原值。
 
-\textbf{报文。}请求与回应均为 48 字节，所有多字节字段高字节先发，见表~\ref{tab:sntp}。双方 UDP 源、目的端口均为 \code{UDP_PORT}（默认 123）。
+秒差和纳秒差分开处理，各拍至多一级 32 位运算，步骤见图~\ref{fig:rtcfsm}(b)：先依次解码回应中的 $t_2$、$t_3$ 小数部分（各 65 拍），再用 9 拍算出两段差、求和、除以 2，并把奇数秒的半秒折入纳秒、处理借位进位。校正量在 ADD 步加至当前时钟，至 APPLY 步写回共经过 4 拍，故在 LATENCY 步补偿 32~ns；一次校时约 140 拍，期间时钟正常推进。
+
+从端只在下列条件同时成立时启动计算：版本为 4、模式为 4、本端正在等待回应且发送状态机空闲，Originate 与本次请求的 Transmit 逐位相等。迟到的旧回应因 Originate 不符而被丢弃。计算期间或 \code{rx_done} 有效的周期不发起新请求。接收检查范围不含服务器 stratum 与全零时间戳。
+
+\subsection{报文字段与寄存器}
+
+请求与回应均为 48 字节，所有多字节字段高字节先发，见表~\ref{tab:sntp}。双方 UDP 源、目的端口均为 \code{UDP_PORT}（默认 123）。
 
 \begin{table}\centering\small
 \caption{SNTPv4 报文字段}\label{tab:sntp}
@@ -57,7 +66,7 @@ RTC、SNMP 和 615A 三项服务都以 UDP 报文工作，不另设 MAC 或专�
 \end{tabularx}
 \end{table}
 
-\textbf{寄存器。}RTC 寄存器位于 \code{0x80}--\code{0x88}，见附录表~\ref{tab:regs}。写时间先写 \code{SEC}、\code{NS} 两个暂存字，再以 \code{CTRL} 的装入位一次生效；读 \code{SEC} 时同时快照纳秒，随后读 \code{NS} 得到同一时刻的值。偏差以 \code{OFFSET_SEC}$\times 10^9 +$\code{OFFSET_NS} 纳秒表示。
+RTC 寄存器位于 \code{0x80}--\code{0x88}，见附录表~\ref{tab:regs}。写时间先写 \code{SEC}、\code{NS} 两个暂存字，再以 \code{CTRL} 的装入位一次生效；读 \code{SEC} 时同时锁存纳秒值，随后读 \code{NS} 得到同一时刻的值。偏差以 \code{OFFSET_SEC}$\times 10^9 +$\code{OFFSET_NS} 纳秒表示。
 
 
 \section{SNMP 网络管理}\label{sec:snmp}
@@ -66,48 +75,69 @@ RTC、SNMP 和 615A 三项服务都以 UDP 报文工作，不另设 MAC 或专�
 
 \figN{f15_snmp}{SNMP 代理处理流程}{fig:snmp}
 
-\textbf{状态机。}代理的主状态机有 44 个状态，按功能分为 7 组，见图~\ref{fig:snmpfsm}。请求先完整收进请求 RAM，之后的解析和查找都通过“取字节”子程序读 RAM：调用方把返回状态写入 \code{return_state}，子程序用 4 拍完成越界检查、发读、等同步读出和保存，再跳回调用方。这样每个解析状态只处理一个已就绪的字节，单拍逻辑只有一级比较。
+\subsection{协议对象与操作}
 
-\figN[SNMP 代理状态机（按功能分组）]{f28_snmpfsm}{SNMP 代理状态机（按功能分组）。虚线为共享取字节子程序 Fetch 的调用与返回，该子程序也供 Lookup、Value 和 Encode 使用；异常返回用标有 Receive 的短箭头表示；Set 未命中经 Value 组的 \texttt{SET\_ERROR} 编码错误应答；省略组内转移、等待自环与复位、禁用转移}{fig:snmpfsm}
+MIB 共 36 个对象：sysDescr、sysUpTime 两个系统对象，以及演示用私有子树 \code{1.3.6.1.4.1.424242.3} 下的 34 个对象，覆盖版本号、\code{USER_ID}、RTC 秒和同步次数、全部 27 个收发统计计数器、SNMP 请求数、community 错误数和 Trap 发送数。对象值直接取自寄存器。
 
-\textbf{BER 逐字节编解码。}请求先整条写入 256$\times$8 的请求 RAM，再逐字节解析 SEQUENCE、version、community 和 PDU；PDU 内依次是 request-id、error-status、error-index 和变量绑定表。长度字段支持短形式和 \code{81}、\code{82} 两种定长形式。回应在 256$\times$8 的回应 RAM 中逐字节组装，原样保留 request-id 和 community，再经服务发送口输出。
-
-\textbf{支持的操作。}
+\Needspace{4\baselineskip}
+代理支持以下协议版本和操作：
 \begin{itemize}
   \item \textbf{版本：}SNMPv1（version=0）和 v2c（version=1）。
   \item \textbf{Get / GetNext：}Get 精确匹配标量 OID；GetNext 按子标识符逐个比较，返回严格大于请求 OID 的第一个对象，可从 \code{1.3} 遍历全部对象。查不到时，v1 回 noSuchName，v2c Get 回 noSuchObject，GetNext 到末尾回 endOfMibView。
   \item \textbf{Set：}唯一可写对象为 \code{USER_ID}（Gauge32，0--65535）。代理先检查 OID、类型和取值范围，再经配置总线写入并读回，以读回值组装回应。只读对象、类型不符和越界分别按 v1/v2c 的错误码回应，配置不变。
   \item \textbf{Trap：}发送 SNMPv2-Trap（PDU \code{A7}）到 UDP 端口 162，含 sysUpTime.0 和 snmpTrapOID.0 两个变量绑定。\code{TRAP_ENABLE} 已置位且 \code{ENABLE} 从 0 变为 1 时发 coldStart；community 不符且 \code{TRAP_ENABLE} 已置位时发 authenticationFailure。
 \end{itemize}
-每个请求支持一个变量绑定；community 不符时不回应并计数 \code{BAD_COMMUNITY}。
+每个请求支持一个变量绑定；community 不符时不回应并计数 \code{BAD_COMMUNITY}。当前实现范围：GetBulk、单请求多个变量绑定和 v1 格式 Trap 未实现；v2c 异常对象回应未区分 noSuchInstance 语义。
 
-\textbf{OID 比较。}查找按对象表顺序逐个尝试 36 个候选，每个候选按子标识符逐段比较：多字节子标识符按 BER 的 7 位分组累加还原成整数后再比，而不是按编码字节比较，因此 GetNext 的“严格大于”按 OID 的数值顺序成立。私有子树中 424242 这样的多字节子标识符也正确排序。
+\subsection{请求解析与回应组装}
 
-\textbf{回应组装。}LEN1--LEN4 四拍自内向外算出值、变量绑定、绑定表、PDU 和整条消息的长度，BUILD 再按“类型、长度、内容”逐字段写入回应 RAM；community、OID 和回显的值用 COPY 状态从请求 RAM 逐字节复制。回应写完后由发送状态逐字节读出，每字节 4 拍送入服务发送口。
+代理的主状态机有 44 个状态，按功能分为 7 组，见图~\ref{fig:snmpfsm}。请求先完整收进 256$\times$8 的请求 RAM，之后的解析和查找都通过“取字节”子程序读 RAM：调用方把返回状态写入 \code{return_state}，子程序用 4 拍完成越界检查、发读、等同步读出和保存，再跳回调用方。Fetch 子程序由解析、Lookup、Value 和 Encode 共用；每个解析状态只处理一个已就绪的字节，单拍逻辑只有一级比较。Set 未命中时经 Value 组的 \code{SET_ERROR} 编码错误应答，异常处理完成后返回接收状态。
 
-\textbf{并发。}代理一次处理一个请求，只在 IDLE 接收新请求；处理期间到达的请求仍被认领并计入请求数，但不回应，由管理端按超时重发。超过 256 字节的请求整条丢弃。
+\figN[SNMP 代理状态机（按功能分组）]{f28_snmpfsm}{SNMP 代理的请求解析、对象访问与回应组装状态机}{fig:snmpfsm}
 
-\textbf{管理对象。}MIB 共 36 个对象：sysDescr、sysUpTime 两个系统对象，以及私有子树 \code{1.3.6.1.4.1.424242.3} 下的 34 个对象，覆盖版本号、\code{USER_ID}、RTC 秒和同步次数、全部 27 个收发统计计数器、SNMP 请求数、community 错误数和 Trap 发送数。对象值不另存副本，代理经与主机共享的配置读通路读取寄存器：主机访问其他地址时主机优先，同一地址的主机读和代理读在同一拍合并；代理写只在主机无读写且 \code{cfg_ready} 为 1 时授予。
+代理按 BER 格式依次解析 SEQUENCE、version、community 和 PDU；PDU 内依次是 request-id、error-status、error-index 和变量绑定表。长度字段支持短形式和 \code{81}、\code{82} 两种定长形式。回应在 256$\times$8 的回应 RAM 中逐字节组装，原样保留 request-id 和 community，再经服务发送口输出。
 
-\textbf{寄存器。}SNMP 寄存器位于 \code{0x90}--\code{0xA3}，包括启用、回应 VL、community 长度和内容、请求计数、Trap 开关与计数及 sysDescr，见附录表~\ref{tab:regs}。
+对象查找按对象表顺序逐个尝试 36 个候选，每个候选按子标识符逐段比较：多字节子标识符按 BER 的 7 位分组累加还原成整数后比较数值，使 GetNext 按 OID 的数值顺序选择对象。
+
+LEN1--LEN4 四拍自内向外算出值、变量绑定、绑定表、PDU 和整条消息的长度，BUILD 再按“类型、长度、内容”逐字段写入回应 RAM；community、OID 和回显的值用 COPY 状态从请求 RAM 逐字节复制。回应写完后由发送状态逐字节读出，每字节 4 拍送入服务发送口。
+
+代理一次处理一个请求，只在 IDLE 接收新请求；处理期间到达的请求仍被认领并计入请求数，但不回应，由管理端按超时重发。超过 256 字节的请求整条丢弃。
+
+\subsection{配置访问与寄存器}
+
+代理经与主机共享的配置读通路访问寄存器：主机访问其他地址时主机优先，同一地址的主机读和代理读在同一拍合并；代理写只在主机无读写且 \code{cfg_ready} 为 1 时授予。
+
+SNMP 寄存器位于 \code{0x90}--\code{0xA3}，包括启用、回应 VL、community 长度和内容、请求计数、Trap 开关与计数及 sysDescr，见附录表~\ref{tab:regs}。
 
 \section{615A 数据加卸载}\label{sec:a615}
+\begingroup
+\setlength{\parskip}{0pt}
 
 \code{afdx_615a} 实现 ARINC 615A 的目标端：加载端经 TFTP 送来上传清单，目标主动读取头文件和数据文件，校验后把数据留在 8~KiB 加载区，并通过状态文件报告进度与结果；目标也能以介质定义卸载把加载区作为文件 \code{MEMORY.BIN} 读出。协议文件版本默认 \code{A4}，兼容 \code{A3}；目标标识为 \code{DEMC3_1}。
 
-\subsection{结构}
+当前实现范围为单文件上传和介质定义卸载：信息操作与操作员定义卸载在初始化阶段拒绝，FIND、WAIT、ABORT、整文件重试和多文件加载未实现；请求中的 RFC 2347 选项被忽略（不返回 OACK，也不协商 TFTP 选项），接收 TFTP ERROR 时不核对来源端口，截断请求的长度检查尚未完整覆盖。
 
-\code{afdx_615a} 的主状态机约 70 个状态，按图~\ref{fig:a615fsm} 分组：收到的报文先整条存入 1~KiB 的接收缓冲，由 DISPATCH 按操作码、端口（TID）和块号分派给六类处理过程；处理过程读文件内容时调用“读字节/读整数”子程序，发报文时调用“报文输出”子程序，后者在发送 RAM 中逐字节组好报文、送出后跳回 \code{after_tx} 指定的状态，通常是 WAIT\_PACKET。数据和文件检查失败时调用 \code{fail(reason)}，发送 TFTP ERROR 和失败状态文件；状态文件传输失败（含重试耗尽）直接结束。请求名称或模式错误只回 ERROR；LCI/LNO 在初始化阶段拒绝。
+\subsection{报文分派与异常处理}
 
-\figN[615A 目标状态机（按功能分组）]{f29_615a}{615A 目标状态机（按功能分组）。Transfer/status 合并 List、Header、Data、Download 与 Status 处理；共享读字节和报文输出子程序合置于虚线框，以一对虚线表示调用与返回，两者也供其他组使用；End 完成后用标有 Wait 的短箭头返回；省略组内转移、等待自环与复位转移}{fig:a615fsm}
+\code{afdx_615a} 的主状态机约 70 个状态，按图~\ref{fig:a615fsm} 分组。收到的报文先整条存入 1~KiB 的接收缓冲，由分派状态 DISPATCH 按操作码、端口（TID）和块号分派给六类处理过程。图中的 Transfer/status 包含 List、Header、Data、Download 和 Status 处理；End 完成后返回等待状态。
 
-接收缓冲只存一个报文：报文未被取走时到达的下一报文仍被认领但不写入。TFTP 停等协议保证对端在收到回应前不发下一报文，偶发的重复报文由对端超时重发恢复。
+各过程共用“读字节/读整数”和“报文输出”子程序。后者在发送 RAM 中逐字节组包，发送后按返回状态寄存器 \code{after_tx} 转移，通常返回等待报文状态 \code{WAIT_PACKET}。
 
-\subsection{TFTP}
+数据或文件检查失败时，\code{fail(reason)} 发送 TFTP ERROR 和失败状态文件；状态文件传输失败（含重试耗尽）时结束。请求名称或模式错误只回 ERROR；LCI/LNO 在初始化阶段拒绝。
 
-TFTP 实现 RRQ、WRQ、DATA、ACK、ERROR 五种报文，模式 octet，每块 512 字节，块号从 1 开始，WRQ 以 ACK0 建立传输。初始请求的目的端口为 \code{REQUEST_PORT}（默认 59），此后双方使用各自的传输标识符（TID），目标 TID 从 \code{0x8100} 起递增；主文件传输与状态文件传输各自保存 TID 和块号。报文在 RAM 中保留到回应到达；超时（默认 2~s）后原样重发上一报文，重传上限默认 1 次，耗尽以原因 5 失败。重复 DATA 只重发 ACK，不重复写 RAM。请求中的 RFC 2347 选项被忽略，不返回 OACK。
+\figN[615A 目标状态机（按功能分组）]{f29_615a}{615A 目标端的请求分派、文件传输与状态报告状态机}{fig:a615fsm}
 
-\subsection{上传}
+接收缓冲一次保存一个报文。当前报文未取走时，新到报文仍被认领，但不写入缓冲；对端未收到回应时，按超时机制重发。
+
+\subsection{TFTP 传输与重传}
+
+TFTP 使用 RRQ、WRQ、DATA、ACK、ERROR 五种报文，octet 模式，块长 512 字节，块号从 1 开始；WRQ 以 ACK0 建立传输。请求目的端口为 \code{REQUEST_PORT}（默认 59），建立传输后双方使用各自的传输标识符（TID），目标 TID 从 \code{0x8100} 递增。主文件与状态文件分别保存 TID 和块号。
+
+报文在 RAM 中保留到回应到达；超时（默认 2~s）后原样重发上一报文，重传上限默认 1 次，耗尽以原因 5 失败。重复 DATA 只重发 ACK，不重复写 RAM。
+
+请求中的 RFC 2347 选项按第~\ref{sec:a615}~节开头的实现范围说明处理。
+
+\subsection{上传与文件校验}
 
 上传流程见图~\ref{fig:a615}(a)：
 \begin{enumerate}
@@ -119,18 +149,26 @@ TFTP 实现 RRQ、WRQ、DATA、ACK、ERROR 五种报文，模式 octet，每块 
   \item 末块（短块或空块）到达后，长度和 CRC 均正确才确认，并发送 LUS 0003、进度 100；否则发送 TFTP ERROR 和 LUS 1003。
 \end{enumerate}
 
-\figN[615A 交互]{f16_615a}{615A 交互：(a) 上传，LUH 校验完成后先报告进度，再请求数据文件；(b) 介质定义卸载。两者末块均少于 512 字节，整倍数长度补零长度块；粗线为 RRQ/WRQ 请求，细线为 DATA 与状态文件，虚线为 ACK；省略初始化、列表、头文件的部分 ACK 及重复状态文件的 WRQ/ACK 握手}{fig:a615}
+\figN[615A 交互]{f16_615a}{615A 单文件上传与介质定义卸载交互}{fig:a615}
 
-\textbf{文件检查。}LUH 支持 ARINC 665-1 的 8002 版本：读取头文件字数、数据文件列表指针、数据文件数、文件名、数据文件字数和 CRC-16，检查头文件实际长度、版本、列表数量、头文件 CRC 及数据文件的长度和 CRC。CRC-16 多项式 \code{0x1021}，最高位优先、初值 \code{FFFF}、结果不取反，以 8 位并行的组合函数每拍处理一字节。每份新 LUS 的计数器加 1，重传不加；进度为已写字节占预期总字节的整数百分比，成功前最多 99。百分比不用除法器：先用移位相加把已写字节乘 100，再反复减去预期总字节计商，最后反复减 10 拆成十进制字符。
+两种传输的末块均少于 512 字节；文件长度为 512 字节的整倍数时，补发零长度 DATA 块。上传在 LUH 校验完成后先报告进度，再请求数据文件。
+
+LUH 支持 ARINC 665-1 的 8002 版本：读取头文件字数、数据文件列表指针、数据文件数、文件名、数据文件字数和 CRC-16，检查头文件实际长度、版本、列表数量、头文件 CRC 及数据文件的长度和 CRC。件号和硬件 ID 不参与匹配；支持文件、用户数据、扩展点、Load CRC-32、解压和解密不参与当前加载处理。
+
+CRC-16 的多项式为 \code{0x1021}，最高位优先、初值 \code{FFFF}、结果不取反，以 8 位并行的组合函数每拍处理一字节。
+
+新 LUS 计数加 1，重传不加。进度取已写字节占预期总字节的整数百分比，成功前上限为 99。计算用移位相加乘 100，再反复减预期总字节计商，最后反复减 10 转为十进制字符。
 
 \subsection{介质定义卸载}
 
-卸载流程见图~\ref{fig:a615}(b)。加载端读 \code{DEMC3_1.LND}，目标回应后发初始 LNS；加载端写 LNR 列表，只接受 \code{MEMORY.BIN}；目标发 LNS 0002 后主动写 \code{MEMORY.BIN}，按 512 字节块停等发送最近一次成功上传的内容，首个满块确认后报告一次进度；末块确认后发 LNS 0003。卸载只读加载区，不改变已加载字节数。
+卸载流程见图~\ref{fig:a615}(b)。加载端读 \code{DEMC3_1.LND}，目标回应后发初始 LNS；加载端写 LNR 列表，只接受 \code{MEMORY.BIN}；目标发 LNS 0002 后主动写该文件，按 512 字节块停等发送最近一次成功上传的内容，首个满块确认后报告进度，末块确认后发 LNS 0003。卸载只读加载区，不改变已加载字节数。
 
 上传和卸载互斥，操作在最终状态文件获 ACK 后才记为成功；新上传开始时撤销旧的有效长度。数据仅保存在 RAM 中，不执行程序或写入非易失存储。
 
 
 \subsection{存储与寄存器}
 
-五块 RAM 分别存放接收报文（1~KiB）、发送与重传报文（1~KiB）、LUR（512~B）、LUH（2~KiB）和加载数据（8~KiB），均以 \code{afdx_ram_sdp} 例化。寄存器位于 \code{0xB0}--\code{0xBB}，见附录表~\ref{tab:regs}；\code{STATUS} 给出空闲、进行中、成功、失败和原因码。原因码 0 为无错误，1 为元数据不支持或无效（版本、文件名、数量），2 为容量或长度超限，3 为 CRC 错，4 为对端 TFTP ERROR 或模式错误，5 为重传耗尽。加载区可经 \code{MEMORY_ADDRESS}、\code{MEMORY_DATA} 逐字节读回。
+五块 RAM 分别存放接收报文（1~KiB）、发送与重传报文（1~KiB）、LUR（512~B）、LUH（2~KiB）和加载数据（8~KiB），均以 \code{afdx_ram_sdp} 例化。
 
+寄存器 \code{0xB0}--\code{0xBB} 见表~\ref{tab:regs}。\code{STATUS} 报告空闲、进行中、成功、失败及原因码：0 无错误；1 元数据不支持或无效（版本、文件名、数量）；2 容量或长度超限；3 CRC 错；4 对端 TFTP ERROR 或模式错误；5 重传耗尽。加载区由 \code{MEMORY_ADDRESS} 选字节、\code{MEMORY_DATA} 读回。
+\endgroup

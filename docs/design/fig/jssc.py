@@ -178,9 +178,9 @@ class Fig:
         """在已有框上加粗边框。"""
         self.rect(b.x, b.y, b.w, b.h, 'none', '#000', sw, rx=rx)
 
-    def group(self, x, y, w, h, kind, label, dash=None, label_color=None):
-        """子系统分组框：细同色圆角边框，左上角标签。"""
-        col = PAL[kind][0] if kind in PAL and kind not in ('ext', 'white', 'gray') else '#7F7F7F'
+    def group(self, x, y, w, h, kind, label, dash=None, label_color=None, stroke=None):
+        """子系统分组框：细圆角边框，左上角标签；stroke 可覆盖默认边框颜色。"""
+        col = stroke if stroke is not None else (PAL[kind][0] if kind in PAL and kind not in ('ext', 'white', 'gray') else '#7F7F7F')
         if label_color is None:
             label_color = '#000'
         self.rect(x, y, w, h, 'none', col, 1.2, dash, rx=4)

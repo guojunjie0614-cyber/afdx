@@ -21,7 +21,7 @@ def fig(fn):
 def f01_system():
     f = Fig(450, 300)
     f.group(70, 0, 316, 300, 'gray', 'AFDX_top  (125 MHz, single clock)', dash='3 2', label_color='#333')
-    svc = f.group(78, 16, 146, 92, 'cfg', 'afdx_svc')
+    svc = f.group(78, 16, 146, 92, 'cfg', 'afdx_svc', stroke='#000')
     mx = f.mux(164, 32, 18, 40, '4:1', name='TX message arbiter')
     for i, label in enumerate(('app', 'RTC', 'SNMP', '615A')):
         yy = 37 + i * 10
@@ -36,7 +36,7 @@ def f01_system():
         f.arrow([(svc.r, b.b - 7), (b.l, b.b - 7)])
         f.tag(241, b.cy + 2, 'tx / rx', size=6.5)
     def core(y, kind, label, chips):
-        f.group(74, y, 308, 70, kind, label)
+        f.group(74, y, 308, 70, kind, label, stroke='#000')
         return [f.box(x, y + 14, w, 22, kind, c, tsize=T2, pad=2)
                 for (x, w), c in zip(((78, 62), (146, 104), (256, 70), (332, 46)), chips)]
     tb = core(118, 'tx', 'afdx_tx_core', ['tx_buf', 'tx_engine', 'tx_builder', 'mac_tx'])

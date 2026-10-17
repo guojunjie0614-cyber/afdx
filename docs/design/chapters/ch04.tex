@@ -2,7 +2,7 @@
 
 \section{顶层端口}
 
-\code{AFDX_top} 保留选题模板的 8 个端口，名称、方向和位宽不变，并按 R49 增加 B 网、应用、配置和事件端口。顶层共 40 个端口声明、259 位，低于 EQ6HL130 的 339 个用户 I/O。端口分组见表~\ref{tab:ports}。
+\code{AFDX_top} 保留选题模板的 8 个端口（名称、方向和位宽不变），并按 AFDX 双网冗余与应用接口需求扩展 B 网、应用、配置和事件端口。顶层共 40 个端口声明、259 位，低于 EQ6HL130 的 339 个用户 I/O。端口分组见表~\ref{tab:ports}。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{5.2cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{7.6cm}}
 \caption{顶层端口}\label{tab:ports}\\
@@ -12,8 +12,8 @@
 \code{reset} & 入 & 同步复位，高有效 \\
 \code{tx_data[7:0]}、\code{tx_valid} & 出 & A 网 GMII 发送，相当于 TXD、TX\_EN \\
 \code{rx_data[7:0]}、\code{rx_valid} & 入 & A 网 GMII 接收，相当于 RXD、RX\_DV \\
-\code{tx_ready} & 出 & 收发核心初始化完成，端系统可以工作 \\
-\code{rx_ready} & 入 & 不使用（R50、R62） \\
+\code{tx_ready} & 出 & 收发核心初始化完成 \\
+\code{rx_ready} & 入 & 不使用 \\
 \midrule
 \multicolumn{3}{l}{\textit{冗余网络}} \\*
 \code{tx_data_b}、\code{tx_valid_b}、\code{rx_data_b}、\code{rx_valid_b} & 出/入 & B 网，含义同 A 网 \\
@@ -41,13 +41,13 @@
 
 \section{GMII 接口}\label{sec:gmii}
 
-A、B 两网各有一组八位 GMII，每拍一个字节，\code{valid} 为 1 即表示本拍字节有效，不与 ready 握手（R62）。
+A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一个字节。
 
 \begin{itemize}
-  \item \textbf{发送：}\code{tx_valid} 从第一个前导字节到最后一个 FCS 字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。某条 VL 未启用的那一网，整帧期间 \code{tx_valid} 和 \code{tx_data} 保持为 0。
-  \item \textbf{接收：}\code{rx_valid} 上升开始一帧、下降结束一帧。MAC 先寄存输入，再逐拍找帧起始符、累加 CRC 并剥离 FCS，无需缓存整帧；两帧之间只有 1 个低电平周期也能正确分开。
+  \item \textbf{发送：}\code{tx_valid} 从第一个前导字节到最后一个 FCS 字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的 \code{tx_valid} 与 \code{tx_data} 全程保持为 0。
+  \item \textbf{接收：}\code{rx_valid} 上升开始一帧、下降结束一帧。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始符、累加 CRC 并剥离 FCS。
   \item \textbf{复位：}复位期间输出为 0；清表完成之前开始的帧整帧忽略（第~\ref{sec:clkrst}~节）。
-  \item \textbf{时钟与错误信号：}收发字节都与 \code{clk} 同步，接口不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。全双工交换式网络没有冲突，CRS、COL 不需要；PHY 报告符号错（RX\_ER）的帧，数据通常也已损坏，由 FCS 检查剔除。接实体 PHY 时的时钟处理见第~\ref{sec:clkrst}~节。
+  \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节都与 \code{clk} 同步，接口不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导、帧长和 FCS；接实体 PHY 时，外围适配逻辑须处理 PHY 错误标记，使带错误标记的帧被丢弃。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
 \figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为首个前导字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{20h}、B 为 \texttt{40h}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
@@ -56,7 +56,7 @@ A、B 两网各有一组八位 GMII，每拍一个字节，\code{valid} 为 1 �
 
 图~\ref{fig:frame} 是本设计发送的 AFDX 帧。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{20}、B 网 \code{40}）。其后是 IPv4 头、UDP 头、应用数据、不足 17 字节时的补零，以及 1 字节序列号 SN，最后由 MAC 加 4 字节 FCS。
 
-\figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式。$n$ 为应用数据字节数，$1 \le n \le 1471$；虚线框为线路开销，下方展开目的 MAC 与源 MAC}{fig:frame}
+\figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式与 MAC 地址编码，应用数据长度 $1 \le n \le 1471$ 字节}{fig:frame}
 
 \begin{table}\centering\small
 \caption{帧字段}\label{tab:frame}
@@ -82,31 +82,46 @@ A、B 两网各有一组八位 GMII，每拍一个字节，\code{valid} 为 1 �
 
 由此，含 FCS 的帧长为 $47+\max(n,17)$，范围 64--1518 字节；A、B 两份帧只有第 11 字节和 FCS 不同。SN 在复位后每条 VL 的第一帧为 0，之后按 1、2、…、255、1、… 循环。组播目的 IP 按 Part 7 图 3-38 配置为 \code{224.224.VLID[15:8].VLID[7:0]}，发送核心直接使用配置表中的目的 IP，因此单播服务（如 615A）也能用同一通路。
 
+本设计按 VL 配置传送 UDP 消息，不实现子 VL、IP 分片与重组、采样端口与队列端口语义及 ICMP。发送时 UDP 校验和填 0；接收按 VLID 查表并检查帧与协议字段，不按目的 IP 地址过滤。
+
 CRC32 采用反射多项式 \code{0xEDB88320}、初值全 1、结果取反后低字节先发，覆盖从目的 MAC 到 SN 的全部字节。它实现为组合模块 \code{afdx_crc32_d8}（32 位当前值加 8 位数据，输出新值），收发共用。
 
 \section{应用接口}
 
-\textbf{发送。}应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 序号和 UDP 端口在首字节取样。没有服务报文争用时，\code{app_tx_ready} 就是发送核心的 \code{m_ready}，每拍接收一个字节，仅在分配缓存页或等待入队结果的若干拍内为 0：每取一页 6 拍，消息末尾写描述并入队正常为 10 拍（图~\ref{fig:wapp}(a)），连续为 0 不超过 96 拍。服务报文正在传送时，应用要等它传完，三个服务同时有报文时约等 3850 拍（第~\ref{sec:budget}~节）。缓存页用尽或 VL 队列已满时消息被丢弃并计数，不会让应用无限等待。
+\subsection{发送握手与缓存等待}
 
-\textbf{接收。}一条消息的 $n$ 个字节在连续 $n$ 拍内送出，\code{app_rx_valid} 中间不断，\code{app_rx_last} 与末字节同拍。VL 序号、端口和来源网络在整条消息期间保持不变。接收口不带反压，应用须每拍接收（图~\ref{fig:wapp}(b)）。
+应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 序号和 UDP 端口在首字节取样。
 
-\figN[应用口时序]{f32_wapp}{应用口时序，绿色为完成传输的字节（\texttt{valid} 与 \texttt{ready} 同时有效）：(a) 无服务报文争用时提交一条不跨页的 $n$ 字节消息（$2\le n\le512$），首字节采样 VL 与端口，分页 6 拍，末字节后写描述并入队 10 拍；\texttt{ready} 为 0 期间应用保持当前字节，C0 为下一条消息首字节，单字节或末字节跨页时末尾多约 6 拍；(b) 交付一条消息，$n$ 个字节连续输出，不带反压}{fig:wapp}
+没有服务报文争用时，\code{app_tx_ready} 就是发送核心的 \code{m_ready}，每拍接收一个字节，仅在分配缓存页或等待入队结果时暂停，连续暂停不超过 96 拍。服务报文正在传送时，应用要等它传完，三个服务同时有报文时约等 3850 拍（第~\ref{sec:budget}~节）。
+
+缓存页用尽或 VL 队列已满时，发送核心丢弃消息并计数，退回已分配的缓存页，继续接收并丢弃该消息的剩余字节。
+
+图~\ref{fig:wapp}(a) 以无服务争用、长度为 $2\le n\le512$ 字节且不跨页的消息为例：首字节后分配页需 6 拍，末字节后写描述并入队需 10 拍。\code{app_tx_ready} 为 0 时，应用保持当前字节及其有效标记，直至完成握手；图中的 C0 是下一条消息的首字节。单字节消息或末字节跨页时，末尾处理多约 6 拍。
+
+\subsection{接收消息的连续交付}
+
+接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 序号、端口和来源网络在整条消息期间保持固定。应用须在每个有效周期接收字节（图~\ref{fig:wapp}(b)）。
+
+\figN[应用口时序]{f32_wapp}{应用接口时序：(a) 消息提交与握手；(b) 接收消息连续交付}{fig:wapp}
 
 \section{配置总线}
 
 配置总线用于写寄存器和三张配置表、读寄存器和计数器，时序如下（$t$ 为周期号，图~\ref{fig:wcfg}）：
 \begin{itemize}
-  \item \textbf{读：}$t$ 拍 \code{cfg_rd} 为 1，则 $t+2$ 拍 \code{cfg_rvalid} 为 1、\code{cfg_rdata} 有效。读不受 \code{cfg_ready} 限制，复位结束后可以每拍连续读。同一拍读写同一寄存器读到旧值。
+  \item \textbf{读：}$t$ 拍 \code{cfg_rd} 为 1，则 $t+2$ 拍 \code{cfg_rvalid} 为 1、\code{cfg_rdata} 有效。复位结束后可以每拍连续读。同一拍读写同一寄存器读到旧值。
   \item \textbf{写寄存器：}\code{cfg_wr} 与 \code{cfg_ready} 同拍为 1 即完成。
   \item \textbf{写配置表：}$t+1$ 拍起 \code{cfg_ready} 变 0，待写寄存器保持地址和数据，直到核心在某拍 $u$ 给出 \code{cfg_ok} 时写入，$u+1$ 拍 \code{cfg_ready} 恢复；不受阻时 $u=t+1$，最长等待 64 拍（第~\ref{sec:cfgok}~节）。
 \end{itemize}
 
-\figN[配置总线时序]{f33_wcfg}{配置总线时序：A 为连续寄存器读（$t$ 拍请求、$t+2$ 拍数据），R 为寄存器写（\texttt{cfg\_ready} 保持为 1），T 为表写，分别示出不受阻（\texttt{cfg\_ready} 低 1 拍）和受阻（低至核心给出 \texttt{cfg\_ok} 的拍 $u$）两种情况。\texttt{cfg\_ok} 为核心内部信号，灰色表示与本次写无关}{fig:wcfg}
+图~\ref{fig:wcfg} 中，A、R、T 分别对应连续寄存器读、寄存器写和配置表写；寄存器写期间 \code{cfg_ready} 保持为 1。
+
+\figN[配置总线时序]{f33_wcfg}{配置总线的连续读、寄存器写与配置表写时序}{fig:wcfg}
 
 \section{事件接口}
 
-\code{ev_*} 端口在每个统计事件发生时给出单周期脉冲，与第~\ref{ch:cfg}~章的计数器一一对应，供测试平台逐事件核对。每条发送消息恰好产生 accept 或四种丢弃之一；线上每一帧在其所在网络恰好产生一个类别脉冲，完好帧再恰好产生一个结果脉冲（第~\ref{sec:rxclass}~节）。
+\code{ev_*} 端口在每个统计事件发生时给出单周期脉冲，与第~\ref{ch:cfg}~章的计数器一一对应，供外部逻辑逐事件监视。每条发送消息必定且仅会触发 \code{accept} 或四类丢弃脉冲中的一种；物理链路上的每一帧在其所属网络均会触发一个帧分类脉冲，判定为完好帧时还会进一步触发一个处理结果脉冲（第~\ref{sec:rxclass}~节）。
 
+\Needspace{26\baselineskip}
 \section{内部接口}\label{sec:intif}
 
 一级模块之间和核心内部子模块之间的接口以寄存器输出为主；组合输出包括 ready 握手、\code{cfg_ok}，以及 \code{afdx_svc} 的数据选择与接收分发直通，后者只做选择和门控。接口按下面四种约定之一工作：
@@ -114,7 +129,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}、初值全 1、结果取反后低
   \item \textbf{字节流握手}（\code{valid}/\code{ready}/\code{last}）：两者同拍为 1 传送一个字节；附带字段在首字节取样并保持到末字节。
   \item \textbf{请求应答}（\code{req}/\code{ack}）：请求保持到应答脉冲，应答与结果同拍给出。
   \item \textbf{单槽交接}（\code{valid}/\code{take} 或 \code{valid}/\code{ready}）：生产者置 \code{valid} 并保持字段不变，消费者取走后才能放入下一项。
-  \item \textbf{避让许可}（\code{cfg_ok}）：资源主人用组合信号声明“本拍之后一拍我不访问该表”，写方只在许可拍落下写。
+  \item \textbf{避让许可}（\code{cfg_ok}）：表的读写控制模块通过组合信号给出写许可。许可有效时，核心寄存外部写请求，并在下一拍写入 RAM；该拍不再发出冲突的表读请求（第~\ref{sec:cfgok}~节）。
 \end{itemize}
 
 表~\ref{tab:ifsum} 汇总各内部接口，逐信号定义见附录~\ref{app:intif}。

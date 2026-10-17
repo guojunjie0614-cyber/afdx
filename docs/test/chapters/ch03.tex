@@ -162,7 +162,7 @@ ModelSim 批量测试包含 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-0
 
 \section{代码覆盖率}\label{sec:coverage}
 
-ModelSim SE-64 2020.4 对 38 项 RTL 回归统计覆盖率，21 个 RTL 模块均启用 \code{sbceft} 插桩，统计语句、分支、条件、表达式、状态机和翻转。结果见表~\ref{tab:coverage}，记录见附录~\ref{app:evidence}。
+ModelSim SE-64 2020.4 对完整 38 项 RTL 回归的 21 个模块启用 \code{sbceft} 插桩。各类覆盖率见表~\ref{tab:coverage}，原始记录见附录~\ref{app:evidence}。
 
 \begin{table}[!htbp]\centering
 \caption{主要模块的代码覆盖率（\%）}\label{tab:coverage}
@@ -193,9 +193,9 @@ ModelSim SE-64 2020.4 对 38 项 RTL 回归统计覆盖率，21 个 RTL 模块�
 \end{tabular}
 \end{table}
 
-状态机合并覆盖率按状态与转换的命中项总和计算，为 235 / 400（\CovFsm{}\%）。各类统计说明如下：
+状态机合并覆盖率按状态与转换的命中项合计：235 / 400（\CovFsm{}\%）。
 \begin{itemize}
-  \item \textbf{条件覆盖（\CovCond{}\%）：}按忙状态写配置拒绝、零值端口和超时等保护条件的真假组合统计，包含互斥组合、RAM 编译期函数及禁止碰撞检查项。
-  \item \textbf{状态机转换：}统计包含受外层状态约束的子状态机跨状态无效转移弧。
+  \item \textbf{条件覆盖（\CovCond{}\%）：}本轮未触发忙时配置写、零端口及超时保护的部分分支；RAM 编译期函数和同址碰撞监视计入统计。
+  \item \textbf{状态机转换：}转换统计包含受外层状态约束的子状态机转换，未命中条目保留在覆盖率分母中。
   \item \textbf{翻转覆盖（\CovToggle{}\%）：}\code{afdx_cfg} 中 FCS 错误计数和发送计数器的高位在本轮测试的事件计数范围内保持不变。
 \end{itemize}
