@@ -148,13 +148,24 @@ module afdx_tx_builder #(
     generate
         for (header_group = 0; header_group < 14; header_group = header_group + 1) begin : header_word
             localparam READY_BIT = READY_COPIES > 1 ? header_group + 1 : 0;
+            // 空闲副本与 stream_active 同拍更新，不能简单延迟一拍取反：
+            // 两帧之间可能只有一个空闲拍，必须在下一帧启动拍装好模板。
+            (* preserve = 1, dont_merge = 1 *) reg header_idle;
+            always @(posedge clk) begin
+                if (reset) header_idle <= 1;
+                else begin
+                    if (pending && prepared && !stream_active && time_due) header_idle <= 0;
+                    // 与主控制保持相同优先级，末字节握手覆盖启动条件。
+                    if (s_valid && s_ready[0] && s_last) header_idle <= 1;
+                end
+            end
             // 顶层提供 15 份接纳窗口，bit 0 供控制，其余各驱动 24 位。
             always @(posedge clk) begin
                 if (reset) header[header_group * 24 +: 24] <= 0;
                 else if (s_valid && s_ready[READY_BIT] && !s_last
                     && part == PART_HEADER && header_index < HEADER_LAST)
                     header[header_group * 24 +: 24] <= shifted_header[header_group * 24 +: 24];
-                else if (!stream_active)
+                else if (header_idle)
                     header[header_group * 24 +: 24] <= prepared_header[header_group * 24 +: 24];
             end
         end

@@ -123,6 +123,22 @@ module afdx_tx_engine #(
     // 配置字 0 的 [0] 是使能位，[1] 和 [2] 分别允许从 A 网和 B 网发送。
     // 配置字 0 的 [8:3] 是最多排队的消息数，[19:9] 是允许的最大消息长度（字节）。
     reg [31:0] words[0:5];
+    // cfg_re/地址先寄存，下一拍 RAM 更新 cfg_q，再下一拍才采样配置字。
+    // 只把采样使能提前一相位译码；连续读取时 cfg_q 每拍变化，数据采样拍不能后移。
+    genvar cfg_word;
+    generate
+        for (cfg_word = 0; cfg_word < 6; cfg_word = cfg_word + 1) begin : config_word
+            (* preserve = 1, dont_merge = 1 *) reg capture;
+            always @(posedge clk) begin
+                if (reset) capture <= 0;
+                else begin
+                    capture <= (cfg_word == 0 ? (op == ENQ || op == GRANT) : op == GRANT)
+                        && phase == cfg_word;
+                    if (capture) words[cfg_word] <= cfg_q;
+                end
+            end
+        end
+    endgenerate
     reg [4:0] scan_valid;
     reg [6:0] scan_vl0, scan_vl1, scan_vl2, scan_vl3, scan_vl4;
 
@@ -402,7 +418,6 @@ module afdx_tx_engine #(
 
                         1 : begin
                             saved_state <= state_q;
-                            words[0] <= cfg_q;
                         end
 
                         2 : difference <= now_q - saved_state[61:30];
@@ -457,29 +472,20 @@ module afdx_tx_engine #(
                     case (phase)
 
                         1 : begin
-                            words[0] <= cfg_q;
                             saved_state <= state_q;
                         end
 
                         2 : begin
-                            words[1] <= cfg_q;
                             desc_re <= 1;
                             desc_ra <= saved_state[15:8];
                             mnext_re <= 1;
                             mnext_ra <= saved_state[15:8];
                         end
 
-                        3 : words[2] <= cfg_q;
-
                         4 : begin
-                            words[3] <= cfg_q;
                             saved_desc <= desc_q;
                             saved_next <= mnext_q;
                         end
-
-                        5 : words[4] <= cfg_q;
-
-                        6 : words[5] <= cfg_q;
 
                         7 : begin
                             grant_valid <= 1;

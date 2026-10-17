@@ -3,7 +3,8 @@
 // 本模块对应赛题的 SNMP（Simple Network Management Protocol，
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
-module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 59) (
+module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 59,
+    PREDECODED_CFG_WR = 0) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
@@ -12,7 +13,8 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     // cfg_* 配置代理开关、团体名和 Trap 通知，并读取状态。
     // 团体名（community）是 SNMP 报文里携带的访问口令。
-    input wire cfg_we,
+    // 预译码模式接收八个寄存器的当拍写选通；默认模式保留单比特写使能。
+    input wire [(PREDECODED_CFG_WR ? 8 : 1) - 1:0] cfg_we,
     input wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_control_data, cfg_status_data, cfg_descr_data,
@@ -57,6 +59,18 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     localparam REG_ENABLE = 8'h90, REG_TX_VL = 8'h91, REG_COMMUNITY_LENGTH = 8'h92;
     localparam REG_COMMUNITY0 = 8'h93, REG_COMMUNITY1 = 8'h94, REG_COMMUNITY2 = 8'h95, REG_COMMUNITY3 = 8'h96;
     localparam REG_TRAP_ENABLE = 8'h9b;
+    // 位序与配置模块一致；预译码模式下，团体名使能不再经过远端地址比较。
+    // 读回译码独立于写选通，保持原有采样拍次和写后立即读语义。
+    wire [7:0] cfg_write_sel = PREDECODED_CFG_WR ? cfg_we : {
+        cfg_we[0] && cfg_write_addr == REG_TRAP_ENABLE,
+        cfg_we[0] && cfg_write_addr == REG_COMMUNITY3,
+        cfg_we[0] && cfg_write_addr == REG_COMMUNITY2,
+        cfg_we[0] && cfg_write_addr == REG_COMMUNITY1,
+        cfg_we[0] && cfg_write_addr == REG_COMMUNITY0,
+        cfg_we[0] && cfg_write_addr == REG_COMMUNITY_LENGTH,
+        cfg_we[0] && cfg_write_addr == REG_TX_VL,
+        cfg_we[0] && cfg_write_addr == REG_ENABLE
+    };
     localparam PACKET_BUFFER_BYTES = 256, REQUEST_LAST_POS = 255;
     reg configured, trap_enabled;
     reg [6:0] response_vl;
@@ -135,16 +149,14 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 uptime <= uptime + 32'd1;
             end
             else uptime_cycles <= uptime_cycles + 32'd1;
-            if (cfg_we) case (cfg_write_addr)
-                REG_ENABLE : configured <= cfg_wdata[0];
-                REG_TX_VL : response_vl <= cfg_wdata[6:0];
-                REG_COMMUNITY_LENGTH : configured_length <= cfg_wdata[4:0];
-                REG_COMMUNITY0 : community0 <= cfg_wdata;
-                REG_COMMUNITY1 : community1 <= cfg_wdata;
-                REG_COMMUNITY2 : community2 <= cfg_wdata;
-                REG_COMMUNITY3 : community3 <= cfg_wdata;
-                REG_TRAP_ENABLE : trap_enabled <= cfg_wdata[0];
-            endcase
+            if (cfg_write_sel[0]) configured <= cfg_wdata[0];
+            if (cfg_write_sel[1]) response_vl <= cfg_wdata[6:0];
+            if (cfg_write_sel[2]) configured_length <= cfg_wdata[4:0];
+            if (cfg_write_sel[3]) community0 <= cfg_wdata;
+            if (cfg_write_sel[4]) community1 <= cfg_wdata;
+            if (cfg_write_sel[5]) community2 <= cfg_wdata;
+            if (cfg_write_sel[6]) community3 <= cfg_wdata;
+            if (cfg_write_sel[7]) trap_enabled <= cfg_wdata[0];
             if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_control_data <= { 31'b0, configured };
@@ -216,7 +228,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             if (!idle_q || !offer_q) trap_grant <= 0;
             else if (!receiving && !capture_pending && !consumed_q && !(rx_valid && rx_claim)) trap_grant <= 1;
             if (cold_ack_q) cold_request <= 0;
-            if (cfg_we && cfg_write_addr == REG_ENABLE && cfg_wdata[0] && !configured && trap_enabled)
+            if (cfg_write_sel[0] && cfg_wdata[0] && !configured && trap_enabled)
                 cold_request <= 1;
             if (!configured || !en_q) begin
                 receiving <= 0;

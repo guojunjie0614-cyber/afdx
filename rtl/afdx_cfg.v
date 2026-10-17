@@ -21,6 +21,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
     // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块写选通方向的负载。
     (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
+    // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
+    output wire [7:0] snmp_wr_sel,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
@@ -158,7 +160,24 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     localparam ADDR_VERSION = 18'h00000, ADDR_STATUS = 18'h00001, ADDR_USER_ID = 18'h00002;
     localparam ADDR_RM_DROP = 18'h00058, ADDR_DELIVER = 18'h00059;
     localparam ADDR_A_GDROP = 18'h0005a, ADDR_B_GDROP = 18'h0005b, ADDR_RTC_SYNC_COUNT = 18'h00088;
+    localparam ADDR_SNMP_ENABLE = 18'h00090, ADDR_SNMP_TX_VL = 18'h00091, ADDR_SNMP_COMMUNITY_LENGTH = 18'h00092;
+    localparam ADDR_SNMP_COMMUNITY0 = 18'h00093, ADDR_SNMP_COMMUNITY1 = 18'h00094;
+    localparam ADDR_SNMP_COMMUNITY2 = 18'h00095, ADDR_SNMP_COMMUNITY3 = 18'h00096, ADDR_SNMP_TRAP_ENABLE = 18'h0009b;
     localparam VERSION_VALUE = 32'hc3110000;
+
+    // 位 0..7 依次对应使能、发送虚拟链路、团体名长度、团体名四字和通知使能。
+    // 请求与地址先会合，cfg_ready_m 只进入末级与门；不增加写入拍数。
+    (* keep = 1 *) wire [7:0] snmp_write_hit = {
+        cfg_wr && cfg_write_addr == ADDR_SNMP_TRAP_ENABLE,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY3,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY2,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY1,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY0,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY_LENGTH,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_TX_VL,
+        cfg_wr && cfg_write_addr == ADDR_SNMP_ENABLE
+    };
+    assign snmp_wr_sel = {8{cfg_ready_m}} & snmp_write_hit;
 
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
     // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
@@ -185,6 +204,11 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     reg rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
 
+    // 主机写任何地址时都优先于 MIB；保留原状态机的忙和初始化屏蔽条件。
+    wire user_id_hit = cfg_wr && cfg_write_addr == ADDR_USER_ID;
+    wire mib_user_hit = !cfg_wr && mib_user_wr;
+    (* keep = 1 *) wire user_id_write_hit = tx_ready && !tx_cfg_we && !rx_pending
+        && (user_id_hit || mib_user_hit);
 
     // 这 27 个计数器分别累计一种事件。
     reg [31:0] count_accept;
@@ -274,18 +298,24 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
-    // 每四位计数值使用独立的地址译码寄存器，每个选择位只驱动十二个数据位。
+    // 每四位计数值使用独立的地址译码寄存器，发送和 B 网各用本地副本。
+    // 三组副本同拍更新，每个计数选择位只驱动本组四个数据位。
     // 网络管理先发地址、下一拍再发读请求；主机读口直接译码，仍在两拍后返回。
     genvar read_slice;
     generate
         for (read_slice = 0; read_slice < 8; read_slice = read_slice + 1) begin : counter_read
             (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
+            (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane_tx, mib_lane_b;
             wire [7:0] lane = host_read ? (8'b1 << host_read_addr) : mib_lane;
+            wire [7:0] lane_tx = host_read ? (8'b1 << host_read_addr) : mib_lane_tx;
+            wire [7:0] lane_b = host_read ? (8'b1 << host_read_addr) : mib_lane_b;
             (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_register_lane;
             wire [7:0] reg_lane = host_read ? register_select(cfg_write_addr) : mib_register_lane;
             always @(posedge clk) begin
                 if (reset) begin
                     mib_lane <= 8'b1;
+                    mib_lane_tx <= 8'b1;
+                    mib_lane_b <= 8'b1;
                     mib_register_lane <= 0;
                     read_regs[read_slice * 4 +: 4] <= 0;
                     read_tx[read_slice * 4 +: 4] <= 0;
@@ -294,6 +324,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 end
                 else begin
                     mib_lane <= 8'b1 << mib_read_addr[2:0];
+                    mib_lane_tx <= 8'b1 << mib_read_addr[2:0];
+                    mib_lane_b <= 8'b1 << mib_read_addr[2:0];
                     mib_register_lane <= register_select(mib_read_addr);
                     read_regs[read_slice * 4 +: 4] <=
                         ({4{reg_lane[0]}} & VERSION_VALUE[read_slice * 4 +: 4])
@@ -305,13 +337,13 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         | ({4{reg_lane[6]}} & count_b_gdrop[read_slice * 4 +: 4])
                         | ({4{reg_lane[7]}} & rtc_sync_count[read_slice * 4 +: 4]);
                     read_tx[read_slice * 4 +: 4] <=
-                        ({4{lane[0]}} & count_accept[read_slice * 4 +: 4])
-                        | ({4{lane[1]}} & count_drop_dis[read_slice * 4 +: 4])
-                        | ({4{lane[2]}} & count_drop_full[read_slice * 4 +: 4])
-                        | ({4{lane[3]}} & count_drop_long[read_slice * 4 +: 4])
-                        | ({4{lane[4]}} & count_drop_nopage[read_slice * 4 +: 4])
-                        | ({4{lane[5]}} & count_tx_a[read_slice * 4 +: 4])
-                        | ({4{lane[6]}} & count_tx_b[read_slice * 4 +: 4]);
+                        ({4{lane_tx[0]}} & count_accept[read_slice * 4 +: 4])
+                        | ({4{lane_tx[1]}} & count_drop_dis[read_slice * 4 +: 4])
+                        | ({4{lane_tx[2]}} & count_drop_full[read_slice * 4 +: 4])
+                        | ({4{lane_tx[3]}} & count_drop_long[read_slice * 4 +: 4])
+                        | ({4{lane_tx[4]}} & count_drop_nopage[read_slice * 4 +: 4])
+                        | ({4{lane_tx[5]}} & count_tx_a[read_slice * 4 +: 4])
+                        | ({4{lane_tx[6]}} & count_tx_b[read_slice * 4 +: 4]);
                     read_a[read_slice * 4 +: 4] <=
                         ({4{lane[0]}} & count_a_good[read_slice * 4 +: 4])
                         | ({4{lane[1]}} & count_a_fcs[read_slice * 4 +: 4])
@@ -322,14 +354,14 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         | ({4{lane[6]}} & count_a_ic[read_slice * 4 +: 4])
                         | ({4{lane[7]}} & count_a_ovf[read_slice * 4 +: 4]);
                     read_b[read_slice * 4 +: 4] <=
-                        ({4{lane[0]}} & count_b_good[read_slice * 4 +: 4])
-                        | ({4{lane[1]}} & count_b_fcs[read_slice * 4 +: 4])
-                        | ({4{lane[2]}} & count_b_len[read_slice * 4 +: 4])
-                        | ({4{lane[3]}} & count_b_hdr[read_slice * 4 +: 4])
-                        | ({4{lane[4]}} & count_b_unk[read_slice * 4 +: 4])
-                        | ({4{lane[5]}} & count_b_cfg[read_slice * 4 +: 4])
-                        | ({4{lane[6]}} & count_b_ic[read_slice * 4 +: 4])
-                        | ({4{lane[7]}} & count_b_ovf[read_slice * 4 +: 4]);
+                        ({4{lane_b[0]}} & count_b_good[read_slice * 4 +: 4])
+                        | ({4{lane_b[1]}} & count_b_fcs[read_slice * 4 +: 4])
+                        | ({4{lane_b[2]}} & count_b_len[read_slice * 4 +: 4])
+                        | ({4{lane_b[3]}} & count_b_hdr[read_slice * 4 +: 4])
+                        | ({4{lane_b[4]}} & count_b_unk[read_slice * 4 +: 4])
+                        | ({4{lane_b[5]}} & count_b_ic[read_slice * 4 +: 4])
+                        | ({4{lane_b[6]}} & count_b_ic[read_slice * 4 +: 4])
+                        | ({4{lane_b[7]}} & count_b_ovf[read_slice * 4 +: 4]);
                 end
             end
         end
@@ -397,10 +429,16 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
+    // 数据源和地址预先选择，就绪信号只参与最后一级写使能。
+    always @(posedge clk) begin
+        if (reset) user_id <= 0;
+        else if (user_id_write_hit && cfg_ready)
+            user_id <= cfg_wr ? cfg_wdata[15:0] : mib_user_wdata;
+    end
+
     always @(posedge clk) begin
         if (reset) begin
             cfg_ready <= 0;
-            user_id <= 0;
             tx_cfg_we <= 0;
             tx_cfg_addr <= 0;
             tx_cfg_wdata <= 0;
@@ -442,11 +480,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     rx_cfg_we <= select_rx;
                     cfg_ready <= 0;
                 end
-                else if (cfg_write_addr == ADDR_USER_ID) begin
-                    user_id <= cfg_wdata[15:0];
-                end
             end
-            else if (mib_user_wr && cfg_ready) user_id <= mib_user_wdata;
         end
     end
 
