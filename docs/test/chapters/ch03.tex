@@ -76,7 +76,7 @@ P-04 & 发送抖动 & PERF-01，TX-03 & \ref{sec:p-lat} \\
 P-05 & 128 条发送 VL & CAP-01，TX-04，SYS-04 & \ref{sec:p-vl} \\
 P-06 & 4096 条接收 VL & CAP-01，RX-01 & \ref{sec:p-vl} \\
 \midrule
-N-01 & 综合后网表的功能与 RTL 一致（R46） & NET-01--04 & \ref{ch:netlist} 章 \\
+N-01 & 综合后网表的功能与 RTL 一致（R46） & NET-01、NET-02、NET-04 & \ref{ch:netlist} 章 \\
 \end{longtable}
 
 \section{用例清单}
@@ -134,8 +134,7 @@ CAP-01 & \code{tb_judge_capacity} & 128 条发送、4096 条接收 VL 全部配�
 \midrule
 NET-01 & 界面网表，\code{tb_elinx} & SYS-09 的网表版本 \\
 NET-02 & 界面网表，\code{tb_net_services} & SVC-08 的网表版本，与 RTL 记录对照 \\
-NET-03 & 命令行网表，8 项清单 & MAC、存储器、TX-06、RX-07、SYS-08 的网表版本 \\
-NET-04 & 命令行网表，\code{tb_net_services} & SVC-08 的网表版本，与 RTL 记录对照 \\
+NET-04 & 命令行官方综合网表，\code{tb_net_services} & SVC-08 的网表版本，与 RTL 记录对照 \\
 \end{longtable}
 
 评委入口的 7 个用例为 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-05 和 PERF-01。
@@ -161,25 +160,31 @@ NET-04 & 命令行网表，\code{tb_net_services} & SVC-08 的网表版本，与
 
 \section{代码覆盖率}\label{sec:coverage}
 
-代码覆盖率由 ModelSim 统计语句、分支、条件、状态机和翻转五项，合并完整回归的全部用例。
+使用 ModelSim SE-64 2020.4 对完整 38 项 RTL 回归统计代码覆盖率，对全部 21 个 RTL 模块按 \code{sbceft} 进行插桩（测试平台不计入统计）。数据汇总于表~\ref{tab:coverage}，原始基准见 \code{sim/reference/coverage/} 中的 \code{totals.json} 与 \code{vcover_report.txt}。
 
-% TODO 覆盖率：在 Windows 上以 vsim -coverage 跑完整回归后填入（issue #7）
 \begin{table}[!htbp]\centering
-\caption{主要模块的代码覆盖率}\label{tab:coverage}
+\caption{主要模块的代码覆盖率（\%）}\label{tab:coverage}
 \begin{tabularx}{\linewidth}{>{\hsize=2.5\hsize}L *{5}{>{\hsize=.7\hsize}C}}
 \toprule
 模块 & 语句 & 分支 & 条件 & 状态机 & 翻转 \\
 \midrule
-\code{AFDX_top}、\code{afdx_cfg}、\code{afdx_timebase} & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_mac_tx}、\code{afdx_mac_rx} & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_tx_core} 及子模块 & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_rx_core} 及子模块 & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_svc} & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_snmp} & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_615a} & 待测 & 待测 & 待测 & 待测 & 待测 \\
-\code{afdx_rtc}、\code{afdx_ntp_fraction} & 待测 & 待测 & 待测 & 待测 & 待测 \\
+\code{AFDX_top}、\code{afdx_cfg}、\code{afdx_timebase} & 98.86 & 96.53 & 90.91 & --- & 53.65 \\
+\code{afdx_mac_tx}、\code{afdx_mac_rx} & 99.24 & 94.38 & 92.59 & 96.15 & 95.12 \\
+\code{afdx_tx_core} 及子模块 & 99.20 & 95.87 & 81.71 & 81.16 & 92.85 \\
+\code{afdx_rx_core} 及子模块 & 99.42 & 97.63 & 98.59 & 81.48 & 92.54 \\
+\code{afdx_svc} & 94.02 & 90.69 & 100.00 & --- & 100.00 \\
+\code{afdx_snmp} & 94.62 & 89.00 & 60.57 & 41.72 & 58.92 \\
+\code{afdx_615a} & 94.89 & 90.19 & 51.74 & 41.53 & 62.11 \\
+\code{afdx_rtc}、\code{afdx_ntp_fraction} & 97.60 & 93.71 & 69.44 & 63.51 & 74.17 \\
 \midrule
-全设计 & 待测 & 待测 & 待测 & 待测 & 待测 \\
+全设计（21 个 RTL 模块） & \textbf{\CovStmt} & \textbf{\CovBranch} & \textbf{\CovCond} & \textbf{\CovFsm} & \textbf{\CovToggle} \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+全设计语句覆盖率达 \CovStmt{}\%、分支覆盖率达 \CovBranch{}\%。在状态机（FSM）项中，所有状态均被完全命中（104 / 104，100.00\%），状态转换覆盖为 131 / 296（44.25\%）；表中所列为状态和转换总统计项之和。部分指标说明如下：
+\begin{itemize}
+  \item \textbf{条件覆盖（\CovCond{}\%）：}忙状态写配置拒绝、零值端口以及超时等互斥保护条件未遍历全部真假组合；RAM 编译期函数及禁止碰撞检查项亦计入统计。
+  \item \textbf{状态机转换（\CovFsmTrans{}\%）：}状态全部命中，转换缺项主要源于子状态机中外层状态限制下的跨状态无效转移弧。
+  \item \textbf{翻转覆盖（\CovToggle{}\%）：}现有测试的事件总数不足以翻转 \code{afdx_cfg} 中 FCS 错误计数和发送计数器的高位。
+\end{itemize}

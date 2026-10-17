@@ -115,42 +115,35 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \end{small}
 通过标志：分别打印 \code{GUI NETLIST PASS tb_elinx} 和 \code{GUI NETLIST PASS tb_net_services}；自检 \ElinxChecks/0 和 \SvcChecks/0；五功能独立核对 65/0，7 份记录比较均一致。日志和汇总写入 \code{out/gui_netlist/}。
 
-\section{命令行综合网表}
-先逐个综合清单所需的顶层（见 \code{sim/tests_netlist.txt}），再运行 8 项网表清单（NET-03）。
+\section{命令行官方综合与网表验证}
+执行官方综合引擎脚本，按工程配置直接生成 VQM 格式网表（耗时约 \CliSynthSec{}~s）。
 \begin{small}
 \begin{verbatim}
-$tops = @(
-  'afdx_timebase', 'afdx_mac_tx', 'afdx_mac_rx',
-  'probe_p1_2048x8', 'probe_p2_array',
-  'afdx_tx_core', 'afdx_rx_core', 'AFDX_top'
-)
-foreach ($top in $tops) {
-  powershell -NoProfile -ExecutionPolicy Bypass `
-    -File elinx/synth.ps1 -Top $top -Sta
-}
-$deadline = (Get-Date).AddHours(5).ToString('o')
 powershell -NoProfile -ExecutionPolicy Bypass `
-  -File sim/regress.ps1 -Netlist -Deadline $deadline
+  -File elinx/synth.ps1
 \end{verbatim}
 \end{small}
 
-通过标志：清单 8/8 通过。源码变更后须重新综合，入口会检查源码摘要。随后运行顶层五功能的 RTL 与网表对照（NET-04）；\code{out/latest_AFDX_top.json} 记录最近一次顶层综合目录。
+随后运行顶层五功能联合测试的网表仿真（NET-04），将生成的官方 VQM 网表输入给统一仿真入口：
 \begin{small}
 \begin{verbatim}
-$deadline = (Get-Date).AddHours(5).ToString('o')
+$net = (Get-Content out/latest_AFDX_top.json -Raw | ConvertFrom-Json).netlist
 powershell -NoProfile -ExecutionPolicy Bypass `
-  -File sim/run.ps1 -Test tb_net_services `
-  -Deadline $deadline
-$latest = Get-Content out/latest_AFDX_top.json -Raw |
-  ConvertFrom-Json
-$net = Join-Path $latest.folder 'netlist.v'
-powershell -NoProfile -ExecutionPolicy Bypass `
-  -File sim/run.ps1 -Test tb_net_services `
-  -Netlist $net -Deadline $deadline
+  -File sim/run_gui_netlist.ps1 -Test tb_net_services -Netlist $net
 \end{verbatim}
 \end{small}
 
-通过标志：自检 \code{PASS checks=1123 errors=0}，独立检查 \code{[CHECK] PASS}，6 份端口记录与 RTL 一致。命令中的 5 小时为超时上限，不是预计耗时。复核时比较测试名、参数、通过状态、检查数和指标；耗时、时间戳和输出目录随运行变化。
+通过标志：自检打印 \code{[RESULT] tb_net_services PASS checks=1123 errors=0}，独立检查通过且 7 份端口记录与同激励 RTL 逐字节完全相同，Error、Fatal、Warning 均为 0。
+
+\section{代码覆盖率复现}
+在配置 ModelSim 的环境下，执行以下命令运行完整 38 项回归并开启 \code{sbceft} 代码覆盖率插桩统计：
+\begin{small}
+\begin{verbatim}
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File sim/regress.ps1 -Coverage
+\end{verbatim}
+\end{small}
+覆盖率结果自动汇总于 \code{out/regress/coverage/}，基准存档于 \code{sim/reference/coverage/}。
 
 \chapter{证据文件索引}\label{app:evidence}
 
@@ -177,10 +170,11 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \code{device_capacity.rpt} & 器件资源容量；各资源行斜线后的总量用于计算占比，斜线前为该次布局结果。 \\
 \code{gui_timing.json} & 界面综合时序只读查询；\code{rows[]} 中时钟 \code{clk} 的周期、setup、hold 与 Fmax；时间单位见 \code{time_unit}。 \\
 \code{gui_synthesis_timing.pb} & 界面综合 SQLite 库；\code{elinx_intra_clock_summary} 及 \code{elinx_intra_clock_}\allowbreak\code{longest_sync_path_report}。 \\
-\code{cli_synthesis_summary.json} & 命令行综合；\code{lcells}、\code{ram_blocks}、\code{timing}、\code{completed}。 \\
-\code{cli_resources.rpt} & 命令行综合；\code{Total LUTs/FFs/Memorys} 等资源统计。 \\
-\code{cli_synthesis_timing.pb} & 命令行综合 SQLite 库；时钟汇总及最长同步路径表，表名同界面综合库。 \\
-\code{cli_design_excerpt.txt} & 命令行网表摘录；单元例化的 \code{regout} 将最长路径端点对应到 \code{cursor[0]} 与 \code{state[1]}。 \\
+\code{coverage/totals.json} & 代码覆盖率基准汇总（\code{sim/reference/coverage/}）；语句、分支、条件、状态机和翻转覆盖率及回归耗时。 \\
+\code{coverage/modules.csv} & 21 个 RTL 模块的细分覆盖率明细表。 \\
+\code{coverage/vcover_report.txt} & ModelSim \code{vcover} 导出的完整覆盖率文本报告。 \\
+\code{out/latest_AFDX_top.json} & 命令行官方综合生成摘要；定位最新综合 VQM 网表、资源报告、时序数据库及 \code{tool_metrics.json}。 \\
+\code{latest_tb_net_services_gui} & 命令行官方网表五功能仿真摘要；包含 \code{results}（1123/0）、\code{check}（65/0）、7 份一致记录及耗时 \NetCliTime{}~s。 \\
 \end{longtable}
 
 \section{异常注入证据}
@@ -233,14 +227,15 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \longtablehead{2}{数字或数字组 & 来源与取值位置}
 \RegCount{} 项、\RegChecks{} 自检项、\RegIndep{} 独立项 & \code{sim/reference/regression.json} 的 \code{Runs[]} 长度、\code{Checks} 之和及非空 \code{CheckItems} 之和；逐项数值见完整回归表。 \\
 评委入口 7 项、0 错误、0 Warning；各例耗时及总耗时 626.779 s & \code{sim/reference/judge_result.txt} 的 \code{JUDGE CASE}、\code{JUDGE ENTRY}，不是 README 中另一轮示例耗时。 \\
-\ElinxChecks/0、\SvcChecks/0、65/0；7826.703、3121.109、3323.563 s & 两份界面摘要的 \code{results}，命令行五功能摘要的 \code{checks/errors}；独立项数见 \code{check.items/errors}，耗时见 \code{jobs} 中 \code{name=simulation} 的 \code{seconds}。 \\
-界面 7 份、命令行 6 份一致记录；下载 41 项、16 字节 & 界面五功能摘要的 \code{exact_external_records}；命令行摘要的 \code{check.checks}；两者的 \code{check.download.items} 及 \code{check.download.cases}。 \\
+\ElinxChecks/0、\SvcChecks/0、65/0；\NetElinxTime{}、\NetGuiTime{}、\NetCliTime{} s & 界面摘要与最新命令行五功能摘要的 \code{results}（自检）和 \code{check.items/errors}（独立核对）；耗时见各摘要 \code{jobs} 中 \code{name=simulation} 的 \code{seconds}。 \\
+界面 7 份、命令行 7 份一致记录；下载 41 项、16 字节 & 界面与命令行五功能摘要的 \code{exact_external_records}；两者的 \code{check.download.items} 及 \code{check.download.cases}。 \\
 427486 个输入、3933 个进位参数 & \code{gui_services_summary.json} 的 \code{adaptation} 下 \code{added_input_defaults} 各计数之和，以及 \code{carry_use_parameters_added} 中的 \code{cin_used}。 \\
-命令行网表 8/8 & \code{cli_validation.json:net[]}，与 \code{sim/tests_netlist.txt} 的测试及顶层配置对应。 \\
-网表日期与起止时间；CLB 4626 到 4620 & 各摘要的 \code{started/finished}；整理前后综合变化及命令行网表逐行相同结论来自 \code{docs/FACTS.md} 第四节，当前 CLB 见 \code{gui_resources.rpt}。 \\
+官方综合耗时 \CliSynthSec{} s & \code{out/synth/AFDX_top/.../tool_metrics.json} 的总运行耗时。 \\
+网表日期与起止时间；CLB 4620 & 各摘要的 \code{started/finished}；整理后综合结果来自 \code{docs/FACTS.md} 第三节，当前 CLB 见 \code{gui_resources.rpt}。 \\
 \CapChecks{}、\SnmpChecks{}；128 条发送、4096 条接收配置与抽测索引 & \code{capacity.log} 的 \code{[RESULT]}、\code{[CAPACITY_SUMMARY]} 及 \code{snmp.log} 的 \code{[RESULT]}。 \\
 吞吐 \Thru{}、\ThruEightyOne{}、\ThruTen{} Mbps；时延 \Lat{}、\Ttx{}、\Trx{} µs；抖动 \Jit{} µs & \code{performance.json} 的 \code{reports.system.performance}，对应阶段、方向中的吞吐、\code{T_tx}、\code{T_rx}、\code{T_e2e_link_removed} 及抖动统计。 \\
 突发清空时间 \BurstSevSeven{}、\BurstEightOne{} µs；RTC 误差 \RtcIdle{}、\RtcLoad{} ns & \code{judge_result.txt} 的 \code{JUDGE METRIC}；RTC 另见 \code{rtc.json} 的 \code{idle_max_ns}、\code{loaded_max_ns}、\code{gbe_max_ns}。 \\
-资源、占比和综合时序数字 & \code{gui_resources.rpt}、\code{device_capacity.rpt}、\code{gui_timing.json}；命令行数据见 \code{cli_synthesis_summary.json} 的 \code{lcells/timing}。占比按综合用量除以器件总量计算。 \\
-工具版本、依赖版本与五小时预算 & \code{README.md}“软件准备”、\code{FACTS.md} 第四节；副本中 16 位 LUT 表达及常量取值依据两份适配脚本。 \\
+资源、占比和综合时序数字 & \code{gui_resources.rpt}、\code{device_capacity.rpt}、\code{gui_timing.json} 与官方命令行综合查询结果。占比按综合用量除以器件总量计算。 \\
+覆盖率 \CovStmt{}\% 语句、\CovBranch{}\% 分支、\CovCond{}\% 条件、\CovFsm{}\% 状态机、\CovToggle{}\% 翻转 & \code{sim/reference/coverage/totals.json} 的 \code{metrics} 及 \code{modules.csv} 各模块汇总。 \\
+工具版本、依赖版本与五小时预算 & \code{README.md}“软件准备”、\code{FACTS.md} 第四节；VQM 适配依据 \code{tools/adapt_gui_vqm.py}。 \\
 \end{longtable}
