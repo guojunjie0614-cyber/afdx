@@ -6,10 +6,10 @@
 \caption{测试工具与运行条件}\label{tab:tools}
 \begin{tabularx}{\linewidth}{@{}lL@{}}
 \toprule
-项目 & 内容 \\
+\thead{项目} & \thead{内容} \\
 \midrule
 操作系统 & Windows，PowerShell 5.1 \\
-FPGA 工具 & eLinx 3.0.7（工程、综合、界面行为仿真入口） \\
+FPGA 工具 & eLinx 3.0.7（工程、综合、行为仿真） \\
 仿真器 & ModelSim SE-64 2020.4 \\
 参考检查器 & Python 3.10 及以上，依赖 \code{psutil}、\code{pyasn1} \\
 时钟 & 单一 125~MHz 时钟，每拍 8~ns；GMII 每拍一字节 \\
@@ -22,62 +22,64 @@ FPGA 工具 & eLinx 3.0.7（工程、综合、界面行为仿真入口） \\
 
 系统级测试平台由两个完整的 \code{AFDX_top} 经 A、B 两网互连构成（图~\ref{fig:platform}）。两端之间为四条单向 GMII 链路，链路模型可对任意一帧施加延迟、丢弃、改写字节或重放。
 
-\figN[双端双网测试平台]{t01_platform}{双端双网测试平台。激励经公开端口驱动两个 \texttt{AFDX\_top}；链路模型在四条单向 GMII 链路上施加延迟和故障；端口监视器写出文本记录，由独立检查器重建每条消息和每一帧的去向}{fig:platform}
+\figN[双端双网测试平台]{t01_platform}{双端双网测试平台。激励经公开端口驱动两个 \texttt{AFDX\_top}；链路模型在四条单向 GMII 链路上施加延迟和故障；端口监视器写出文本记录，由参考检查器重建每条消息和每一帧的去向}{fig:platform}
 
-测试平台只通过顶层公开端口访问被测设计：配置口写 VL 参数、读统计计数；应用口提交和接收消息；GMII 口收发帧。同一套激励因此可直接用于 RTL 和综合后网表。端口监视器把握手、线路字节、事件脉冲、配置读回和应用交付连同拍号写入文本记录，供检查器逐条追踪“应用提交 → 线路发送 → 链路变换 → 接收判决 → 应用交付”。
+测试平台通过顶层端口驱动被测设计：配置口写 VL 参数、读统计计数，应用口提交和接收消息，GMII 口收发帧。RTL 和综合后网表采用同一套激励。监视器记录握手、线路字节、事件脉冲、配置读回、应用消息交付及对应的时钟周期编号，用于功能和时序检查。
 
 模块级测试采用相同结构，被测对象换为 MAC、发送核心或接收核心，直接驱动其接口。平台组件见表~\ref{tab:tblib}。
 
 \begin{table}[!htbp]\centering
 \caption{测试平台组件}\label{tab:tblib}
-\begin{tabularx}{\linewidth}{@{}lL@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{6.0cm}L@{}}
 \toprule
-组件 & 作用 \\
+\thead{组件} & \thead{作用} \\
 \midrule
 \code{sys_suite}、\code{sys_endpoint} & 驱动系统级测试的两个端系统，记录配置、提交、交付和事件 \\
 \code{link_model} & 在 GMII 链路上施加延迟、丢帧、改字节、重放，并记录每次操作 \\
 \code{line_driver}、\code{line_monitor} & 向线路送帧；记录线路上的每一帧并检查帧间隔 \\
 \code{mac_tx_suite}、\code{tx_core_suite}、\code{rx_core_suite} & MAC、发送核心、接收核心的模块级测试框架 \\
 \code{snmp_test_endpoint}、\code{load_test_endpoint} & SNMP 管理端和 615A 加载端，收发服务报文 \\
-\code{judge_endpoint} & 评委入口端点，构造消息并逐字节核对交付 \\
+\code{judge_endpoint} & 系统级测试端点，构造消息并逐字节核对交付 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{期望值来源}
+\section{参考检查方法}
 
-期望值由 Python 参考检查器按协议规则独立生成。检查器只读取端口记录，不读取 RTL，不复用 RTL 的解析逻辑。
+Python 参考检查器按协议规则计算期望值，与端口记录比较；其解析和判决逻辑独立于 RTL。
 \begin{itemize}
-  \item \textbf{帧格式与收发判决：}参考模型仅使用 Python 标准库，重新计算 IP 校验和、FCS、填充和每个线路字节；接收侧按配置、序号和冗余规则推出每一帧的判决，与实际分类脉冲和交付比对。
-  \item \textbf{双端系统：}检查器把源端每一帧对应到被接纳的应用消息，按链路记录施加延迟、丢帧和改字节，推出目的端的应有交付，再与实际交付逐条匹配。
-  \item \textbf{服务协议：}SNMP 报文用第三方库 \code{pyasn1} 做 BER 编解码；615A 文件按 ARINC 615A-2 独立生成和解码；SNTP 报文按 RFC 4330 解码，时间换算向量用 Python 整数运算独立生成。
+  \item \textbf{帧格式与收发判决：}使用 Python 标准库计算 IP 校验和、FCS、填充和线路字节；按配置、序号和冗余规则判定各帧的接纳与丢弃，比较分类脉冲和应用交付。
+  \item \textbf{双端系统：}将源端线路帧对应到被接纳的应用消息，按链路记录计入延迟、丢帧和字节改写，计算目的端应交付的消息并逐条比较。
+  \item \textbf{服务协议：}SNMP 报文用 \code{pyasn1} 做 BER 编解码；615A 文件按 ARINC 615A-2 生成和解码；SNTP 报文按 RFC 4330 解码，时间换算的测试数据用 Python 整数运算生成。
 \end{itemize}
-检查范围包括载荷、线路编码、协议字段、判决类别和时序关系。收发两端对同一字段的相同错误在独立解码时可被发现。
-
 \section{通过判据}\label{sec:criteria}
 
 测试项按以下条件判定通过（图~\ref{fig:criteria}）：
 \begin{enumerate}
-  \item 测试平台自检无错误，末行打印 \code{[RESULT] PASS errors=0}；仿真器正常退出不作为通过依据；
-  \item 接入参考检查器的测试，检查器复核无错误；
-  \item 网表测试另要求网表仿真的端口记录与同一激励下的 RTL 记录逐字节相同。
+  \item 测试平台自检无错误，末行打印 \code{[RESULT] PASS errors=0}；
+  \item 接入参考检查器的测试，检查器核对无错误；
+  \item NET-02 的网表端口记录须与同一激励下的 RTL 记录逐字节相同。
 \end{enumerate}
-第~\ref{ch:func}~章至第~\ref{ch:netlist}~章的结果表中，“检查数/错误数”一栏上行为自检，下行为独立核对，“---”表示该用例未接入参考检查器。
+第~\ref{ch:func}~章至第~\ref{ch:netlist}~章的结果表中，“检查数/错误数”上行为平台自检，下行为参考检查器核对；“仅自检”表示该用例由测试平台完成检查和判定。
 
-\figN[测试通过判据]{t02_criteria}{测试通过判据。自检须无错误；接入参考检查器的测试还须复核无错误；网表测试另要求端口记录与 RTL 逐字节相同}{fig:criteria}
+\begin{figure}[!htbp]\centering
+\includegraphics[width=0.88\linewidth,keepaspectratio]{fig/pdf/t02_criteria.pdf}
+\caption[测试通过判据]{测试通过判据。自检须无错误；接入参考检查器的测试还须复核无错误；NET-02 还须满足端口记录与 RTL 逐字节相同}\label{fig:criteria}
+\end{figure}
 
-\section{运行入口}\label{sec:entries}
+\section{运行方式}\label{sec:entries}
 
-按答疑 R46，评测运行参赛者的测试平台。本设计提供三个运行入口（表~\ref{tab:entries}），操作步骤见附录~\ref{app:repro}。
+推荐先运行 ModelSim 批量测试，确认 7 个用例通过；再按附录~\ref{sec:repro-netlist} 运行 NET-01、NET-02，检查综合后功能。完整 RTL 回归用于逐项检查模块、异常和资源边界。三种运行方式见表~\ref{tab:entries}，操作步骤见附录~\ref{app:repro}。
 
 \begin{table}[!htbp]\centering
-\caption{运行入口}\label{tab:entries}
-\begin{tabularx}{\linewidth}{@{}lLlr@{}}
+\caption{运行方式}\label{tab:entries}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{6.10cm}>{\raggedright\arraybackslash}p{4.45cm}>{\raggedleft\arraybackslash}X@{}}
 \toprule
-入口 & 内容 & 通过标志 & 耗时 \\
+\thead{方式} & \thead{内容} & \thead{通过标志} & \thead{耗时} \\
 \midrule
 eLinx 界面 & 打开工程，执行 Run Behavioral Simulation，运行 \code{tb_elinx}：两端双网互发 1、64、1471 字节消息并逐字节核对 & \code{PASS checks=9238 errors=0} & 约 3~min \\
-纯 ModelSim & Transcript 中执行 \code{do sim/run_judge.do}，依次运行五功能、容量、SNMP、两种突发、RTC、性能 7 个用例；不需要 Python & \code{JUDGE ENTRY PASS cases=7} & 约 10~min \\
+ModelSim 批量测试 & Transcript 中执行 \code{do sim/run_judge.do}，依次运行五项功能联合测试、VL 容量、SNMP、两种突发负载、RTC 和性能测试，共 7 个用例；不需要 Python & \code{JUDGE ENTRY PASS cases=7} & 约 10~min \\
 完整回归 & 执行 \code{sim/regress.ps1}，运行全部 \RegCount{} 项测试并调用参考检查器 & \RegCount{} 项均为 PASS & 约 17~min \\
 \bottomrule
 \end{tabularx}

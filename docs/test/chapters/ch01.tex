@@ -2,59 +2,59 @@
 
 \section{测试结论}
 
-被测设计为 AFDX 端系统顶层模块 \code{AFDX_top}，代码版本 \texttt{master@\CodeVer}。测试覆盖选题指南规定的 5 项功能和 4 项技术指标，以及答疑 R46 规定的综合后仿真。全部测试项通过，各项技术指标均满足要求，结论见表~\ref{tab:summary}。
+AFDX 端系统通过选题指南规定的 5 项功能、4 项技术指标及答疑 R46 要求的综合后仿真测试，结论见表~\ref{tab:summary}。被测对象为顶层模块 \code{AFDX_top}。
 
 \begin{table}[!htbp]\centering
 \caption{赛题要求与测试结论}\label{tab:summary}
 \begin{tabularx}{\linewidth}{@{}>{\hsize=.75\hsize}L>{\hsize=.72\hsize}L>{\hsize=1.53\hsize}Lc@{}}
 \toprule
-赛题条目 & 要求 & 测试结果 & 结论 \\
+\thead{赛题条目} & \thead{要求} & \thead{测试结果} & \thead{结论} \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 功能} \\
-ARINC 664 通信 & 支持 P7 规定的通信功能 & UDP/IP 收发、VL 配置、BAG 调度、双网发送与接收交付通过（\ref{sec:f-comm}~节） & 符合 \\
+ARINC 664 通信 & 支持 P7 规定的通信功能 & UDP/IP 收发、VL 配置、BAG 调度与双网交付通过（\ref{sec:f-comm}~节） & 符合 \\
 高完整性通信 & 必须支持 & 14 类异常均被识别、分类和计数；双网副本只交付一次（\ref{sec:f-ic}~节） & 符合 \\
-SNMP 网络管理 & 支持 & Get、GetNext、Set、Trap 字段经第三方库解码正确，数值与寄存器读回一致（\ref{sec:f-snmp}~节） & 符合 \\
-615A 数据加卸载 & 支持 & 文件加载到片内 RAM 后卸载，逐字节一致；校验错误与丢包按协议重试或终止（\ref{sec:f-615a}~节） & 符合 \\
-RTC 时钟同步 & 支持 & 同步误差空载 \RtcIdle{}~ns、满载 \RtcLoad{}~ns；丢回应可恢复，错误回应不校时（\ref{sec:f-rtc}~节） & 符合 \\
+SNMP 网络管理 & 支持 & Get、GetNext、Set、Trap 解码正确，数值与寄存器一致（\ref{sec:f-snmp}~节） & 符合 \\
+615A 数据加卸载 & 支持 & 加载后的 RAM 与卸载文件均正确；校验错误与丢包按协议重试或终止（\ref{sec:f-615a}~节） & 符合 \\
+RTC 时钟同步 & 支持 & 空载/满载同步误差 \RtcIdle{}/\RtcLoad{}~ns；响应丢失可恢复，错误响应不校时（\ref{sec:f-rtc}~节） & 符合 \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\
 传输速率 & 100~Mbps & 每方向有效载荷 \Thru{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
 帧格式 & 载荷 $\le$1471 字节，帧长 $\le$1518 字节，含 VLID 和 1--255 序号 & 1--1471 字节消息逐字节正确；VLID、序号回绕与复位首帧正确（\ref{sec:p-frame}~节） & 符合 \\
-时延与抖动 & 端到端 $<$1--2~ms（最坏情况），抖动不超过几十微秒 & 稳态最大 \Lat{}~µs；各 VL 同时到期的最坏情况上界 1.15~ms，81 条最长帧实测 \BurstEightOne{}~µs；稳态抖动 \Jit{}~µs（\ref{sec:p-lat}~节） & 符合 \\
-VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全部发送；4096 条接收 VL 全部配置并逐条交付（\ref{sec:p-vl}~节） & 符合 \\
+时延与抖动 & 端到端 $<$1--2~ms（最坏情况），抖动不超过几十微秒 & 稳态最大 \Lat{}~µs、抖动 \Jit{}~µs；RTC、SNMP、615A 叠加 77 条 VL 满载时，间隔增加至多约 2.5~µs；同时到期上界 1.15~ms，81 条最长帧实测 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
+VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全部发送；4096 条接收 VL 全部配置，模块级逐条交付（\ref{sec:p-vl}~节） & 符合 \\
 \midrule
-综合后仿真（R46） & 综合后仿真 & 两种综合网表运行五功能测试，端口记录与 RTL 逐字节相同（第~\ref{ch:netlist}~章） & 符合 \\
+综合后仿真（R46） & 综合后仿真 & eLinx 界面综合网表运行五项功能联合测试，端口记录与 RTL 逐字节相同（第~\ref{ch:netlist}~章） & 符合 \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+46 个需求测试点由表~\ref{tab:summary-scale} 中的测试共同覆盖。
 
 \begin{table}[!htbp]\centering
 \caption{测试规模}\label{tab:summary-scale}
 \begin{tabularx}{\linewidth}{@{}lLc@{}}
 \toprule
-测试 & 规模 & 结果 \\
+\thead{测试} & \thead{规模} & \thead{结果} \\
 \midrule
-RTL 回归 & \RegCount{} 项测试；自检 \RegChecks{} 次，独立核对 \RegIndep{} 项 & 全部通过 \\
-评委入口 & 纯 ModelSim 运行 7 个用例 & 全部通过 \\
-eLinx 界面仿真 & \code{tb_elinx}，自检 \ElinxChecks{} 次 & 通过 \\
-综合后仿真 & 界面网表 2 项、命令行网表 9 项 & 全部通过 \\
+RTL 回归 & \RegCount{} 项，覆盖模块、系统、异常与边界行为 & 全部通过 \\
+ModelSim 批量测试 & 7 项：复用 6 项 RTL 回归场景，另含五项功能联合测试（SVC-08） & 全部通过 \\
+eLinx 行为仿真 & 复用双向通信测试 SYS-09（\code{tb_elinx}） & 通过 \\
+综合后仿真 & 2 项，复用双向通信与五项功能联合测试激励 & 全部通过 \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-期望值按协议规则独立生成，不取自 RTL。除测试平台自检外，接入参考检查器的测试还由检查器复核端口记录；检查器不读取 RTL（第~\ref{ch:env}~章）。
 
 \section{被测对象与测试依据}
 
 被测对象为 \code{AFDX_top} 及其全部子模块，目标器件 EQ6HL130（CSG484\_H 封装），时钟 125~MHz，GMII 接口。测试依据如下：
 \begin{itemize}
   \item 选题指南（中科亿海微）规定的 5 项功能和 4 项技术指标；
-  \item 赛题答疑：不提供参考激励、不规定协议版本，激励与验证由参赛者完成（R2、R5、R47）；要求基于 FPGA 仿真（R13）；评测运行参赛者的测试平台，综合后仿真即可（R46）；
+  \item 赛题答疑：激励、协议版本与验证由参赛者确定和完成（R2、R5、R47）；测试基于 FPGA 仿真（R13），评测运行参赛者的测试平台，以综合后仿真验收（R46）；
   \item 协议标准：ARINC 664 Part 7、ARINC 615A-2、RFC 1157/3416（SNMP）、RFC 4330（SNTP）、RFC 1350（TFTP）。
 \end{itemize}
 
-RTL 测试数据来自 2026 年 10 月 14 日在当前代码上的运行，网表仿真的运行日期见第~\ref{ch:netlist}~章，原始记录见附录~\ref{app:evidence}。
+测试记录见附录~\ref{app:evidence}。
 
 \section{报告结构}
 
-第~\ref{ch:env}~章说明测试环境、期望值来源、通过判据和运行入口。第~\ref{ch:strategy}~章给出测试点分解、用例清单和覆盖率。第~\ref{ch:func}~章按 5 项功能报告功能测试，第~\ref{ch:perf}~章按 4 项技术指标报告指标测试，第~\ref{ch:netlist}~章报告综合后仿真，第~\ref{ch:conclusion}~章给出结论与遗留问题。附录 A 至 C 为回归结果、复现命令和证据索引。
+第~\ref{ch:env}~章说明测试环境、方法、通过判据和运行方式。第~\ref{ch:strategy}~章给出测试点分解、用例清单和覆盖率。第~\ref{ch:func}~章按 5 项功能报告功能测试，第~\ref{ch:perf}~章按 4 项技术指标报告指标测试，第~\ref{ch:netlist}~章报告综合后仿真，第~\ref{ch:conclusion}~章汇总测试结论。附录 A 至 D 为回归结果、复现命令、测试记录索引和原始仿真截图。

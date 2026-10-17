@@ -1,6 +1,6 @@
 % AFDX 端系统测试报告
 % 数字宏与设计文档共用 ../design/numbers.tex；图由 fig/tfigs.py 生成（sh fig/mk.sh）。
-% 覆盖率已录入 ModelSim 实测基准；波形图另配 ModelSim 原生窗口自动截取流水线（sim/wave/）。
+% 覆盖率沿用 ModelSim 实测基准；正文波形按原观察窗口的 RTL 信号重绘，原生截图保留在 sim/wave/png/。
 % 编译：在本目录执行 tectonic AFDX端系统FPGA测试报告.tex（或 xelatex 两遍）
 \documentclass[a4paper,zihao=-4,fontset=none,oneside,openany]{ctexrep}
 
@@ -35,6 +35,8 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
 \usepackage{fancyhdr}
 \usepackage[font=small,labelsep=quad,skip=6pt]{caption}
 \usepackage[hidelinks,bookmarksnumbered]{hyperref}
@@ -53,8 +55,14 @@
   \setlength{\abovedisplayshortskip}{3pt plus 2pt}%
   \setlength{\belowdisplayshortskip}{6pt plus 2pt minus 2pt}}
 % 表格统一用 small、紧凑行距；正文和原尺寸插图不变。
-\newcommand{\tablestyle}{\small\linespread{1.08}\selectfont
-  \renewcommand{\arraystretch}{1.18}}
+\newcommand{\tablearraystretch}{1.24}
+\newcommand{\tablestyle}{\small\linespread{1.04}\selectfont
+  \renewcommand{\arraystretch}{\tablearraystretch}%
+  \setlength{\tabcolsep}{5pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\heavyrulewidth}{0.8pt}%
+  \setlength{\lightrulewidth}{0.35pt}%
+  \setlength{\cmidrulewidth}{0.35pt}}
 \AtBeginEnvironment{table}{\tablestyle}
 \BeforeBeginEnvironment{longtable}{\FloatBarrier\begingroup\tablestyle}
 \AfterEndEnvironment{longtable}{\endgroup}
@@ -63,7 +71,7 @@
 \setlength{\LTcapwidth}{\textwidth}
 \captionsetup{font={small,stretch=1.08},format=hang,justification=raggedright,
   singlelinecheck=true}
-\captionsetup[table]{position=top}
+\captionsetup[table]{position=top,skip=5pt}
 % 浮动体可贴近引文；仅在长表等不可浮动内容前清空队列。
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\bottomfraction}{0.8}
@@ -103,6 +111,21 @@
 \fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
 
 % ---------- 命令 ----------
+\newfontfamily\runcommandfont{Menlo}[Scale=1.0]
+\definecolor{commandback}{HTML}{F5F6F7}
+\definecolor{commandframe}{HTML}{D9DDE2}
+\newtcblisting{runcommand}{
+  listing only,
+  colback=commandback, colframe=commandframe,
+  boxrule=0.4pt, arc=0pt, outer arc=0pt,
+  boxsep=0pt, left=7pt, right=7pt, top=6pt, bottom=6pt,
+  before skip=7pt, after skip=7pt,
+  listing options={
+    basicstyle=\linespread{1}\runcommandfont\fontsize{9pt}{12pt}\selectfont,
+    columns=fullflexible, keepspaces=true, showstringspaces=false,
+    breaklines=true, breakatwhitespace=false, upquote=true,
+    literate={-}{{\char45}}1,
+    aboveskip=0pt, belowskip=0pt}}
 % 代码名不连字，但允许在下划线和斜杠后断行（测试报告中长文件名多）
 \ExplSyntaxOn
 \NewDocumentCommand{\code}{m}{\texttt{\hyphenchar\font=-1\relax
@@ -111,6 +134,7 @@
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcommand{\thead}[1]{{\heiti\bfseries #1}}
 \newcommand{\longtablehead}[2]{%
   \toprule #2 \\ \midrule \endfirsthead
   \caption[]{（续）}\\
@@ -119,19 +143,25 @@
   \bottomrule \endlastfoot}
 % 测试项表：#1 表题，#2 标签。列为编号、配置与激励、判据、检查数/错误数（上行自检，下行独立核对）、结果
 \newenvironment{items}[2]{\FloatBarrier\tablestyle\setlength{\tabcolsep}{4pt}%
-  \longtable{@{}>{\raggedright\arraybackslash}p{1.55cm}>{\raggedright\arraybackslash}p{5.55cm}%
-    >{\raggedright\arraybackslash}p{4.45cm}>{\raggedleft\arraybackslash}p{1.95cm}%
-    >{\centering\arraybackslash}p{0.8cm}@{}}
+  \longtable{@{}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{5.6cm}%
+    >{\raggedright\arraybackslash}p{4.6cm}>{\raggedleft\arraybackslash}p{2.05cm}%
+    >{\centering\arraybackslash}p{0.9cm}@{}}
   \caption{#1}\label{#2}\\
-  \longtablehead{5}{编号 & 配置与激励 & 判据 & 检查数/错误数 & 结果}}{\endlongtable}
+  \longtablehead{5}{\thead{编号} & \thead{配置与激励} & \thead{判据} & \thead{检查数/\newline 错误数} & \thead{结果}}}{\endlongtable}
 % 插图：#1 文件名（fig/pdf/ 下），#2 宽度系数，#3 图题，#4 标签
 \newcommand{\fig}[4]{%
   \begin{figure}[!htbp]\centering
   \includegraphics[width=#2\linewidth]{fig/pdf/#1.pdf}
   \caption{#3}\label{#4}
   \end{figure}}
-% 按印刷尺寸绘制的图：原尺寸插入，不缩放，保证全文字号一致
+% 按印刷尺寸绘制的图：适配版心宽度，保证排版整洁对称
 \NewDocumentCommand{\figN}{o m m m}{%
+  \begin{figure}[!htbp]\centering
+  \includegraphics[width=0.96\linewidth,keepaspectratio]{fig/pdf/#2.pdf}
+  \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
+  \end{figure}}
+% 与设计报告相同的 450 pt 原尺寸波形，保持信号与总线字号一致。
+\NewDocumentCommand{\figTiming}{o m m m}{%
   \begin{figure}[!htbp]\centering
   \includegraphics{fig/pdf/#2.pdf}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
@@ -141,15 +171,6 @@
   \begin{figure}[!htbp]\centering
   \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#2.png}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
-  \end{figure}}
-% ModelSim 原生波形截图：双幅对照（如宏观与微观、两网到达、请求与响应）
-\NewDocumentCommand{\figWaveDual}{o m m m m m m}{%
-  \begin{figure}[!htbp]\centering
-  \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#2.png}\par\vspace{2pt}
-  {\footnotesize (a) #4}\par\vspace{5pt}
-  \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#3.png}\par\vspace{2pt}
-  {\footnotesize (b) #5}\par\vspace{4pt}
-  \IfValueTF{#1}{\caption[#1]{#6}}{\caption{#6}}\label{#7}
   \end{figure}}
 \input{../design/numbers}
 
@@ -176,7 +197,6 @@
 \heiti 指导教师： & \underline{\makebox[6cm][l]{[待填写]}} \\[6pt]
 \heiti 目标器件： & \underline{\makebox[6cm][l]{EQ6HL130，CSG484\_H 封装}} \\[6pt]
 \heiti 开发环境： & \underline{\makebox[6cm][l]{eLinx 3.0.7，ModelSim SE-64 2020.4}} \\[6pt]
-\heiti 对应代码： & \underline{\makebox[6cm][l]{\texttt{master@\CodeVer}}} \\
 \end{tabular}
 \vspace{2cm}
 
@@ -192,14 +212,6 @@
 \tableofcontents
 \endgroup
 \clearpage
-\begingroup
-\small\linespread{1.08}\selectfont
-\setlength{\parskip}{0pt}
-\makeatletter\let\addvspace\@gobble\makeatother
-\listoffigures
-\listoftables
-\endgroup
-\clearpage
 \pagenumbering{arabic}
 
 \input{chapters/ch01}
@@ -211,5 +223,6 @@
 \input{chapters/ch07}
 \appendix
 \input{chapters/appendix}
+\input{chapters/appendix_screenshots}
 
 \end{document}

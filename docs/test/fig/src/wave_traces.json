@@ -1,0 +1,3899 @@
+{
+  "provenance": [
+    {
+      "root": "/Users/mac_max/Desktop/afdx",
+      "simulator": "Verilator 5.044",
+      "seed": 20261007,
+      "method": "Original RTL and original testbench, hierarchical signal-change capture wrapper; no RTL/testbench changes. Trace at signal change timestamps, initial state clipped into original .do window.",
+      "time_unit": "ns",
+      "value_encoding": "hex string",
+      "stopped_by_wrapper": true,
+      "verification_scope": "Waveform extraction only; wrappers stop at the original .do run time and do not execute the complete regression.",
+      "source_sha256": {
+        "rtl/afdx_rx_parse.v": "fffa02e32eb70787dc327e6d3e712b73db96ead896e86d3360c1f32f59b9c27f",
+        "rtl/AFDX_top.v": "a5617e45e2e4558cdf296079b1cc8e6813b6c23657628249d3d112176ab848b0",
+        "rtl/afdx_rx_core.v": "ca55fb106529ecc226cdb7a4ee883d1862bd95cf353e0b1c9049e3a7f7c328c6",
+        "rtl/afdx_snmp.v": "477ab555f03becd7ca4c873eeb2e2de017cde1866663425b174f92563d8fee4c",
+        "rtl/afdx_rtc.v": "5b1308475faea5d2a3d71629440b5ac10e8f1f8d55c7ce2bc47b1cdd89672bf4",
+        "rtl/afdx_cfg.v": "05a3a49c35f8c7f8d8079be98919a769697115ff17aa7d3722c846b7c4318139",
+        "rtl/afdx_mac_tx.v": "bd69b8a1566cd34df4d8648bb48f710e4946e0c75de08dbb9f49b78072229e32",
+        "rtl/afdx_rx_deliver.v": "cf305efa4f30c0dd15435ae2a6f26bf9368f6963ab04d549857054632c4577c8",
+        "rtl/afdx_mac_rx.v": "c51aeb33d2a8260d4d5d2936024a84688cb5267fc98383f3391b7a27bc99c45a",
+        "rtl/afdx_615a.v": "5f0920e5838967abafb312cf82c3af03e2737e0de618d4d1ff1ca18f91bbda6b",
+        "rtl/afdx_tx_buf.v": "820dd3ccd7dc2a40b4f66cc397b4b094bc3100875ebee5e1b8cbef9a323a17b3",
+        "rtl/afdx_ntp_fraction.v": "333a5ceb4c11166dbe3dbff90433d2e3e1676af392a4623d842cd0a11e9fcace",
+        "rtl/afdx_timebase.v": "fbdd3ea0b342c40cb07f265a541a2a3cb5b6510ea6247d89eb2d6de6ef1be4f5",
+        "rtl/afdx_ram_sdp.v": "6c89392a4753415ec83457d39264c30d1e391464f45e8376449d2e0424ca469e",
+        "rtl/afdx_tx_free.v": "29497145570de8405d76563d2cd4cd8103b611490fb3d4d91a9f6e44f14ddc02",
+        "rtl/afdx_tx_builder.v": "8c4611f3bc92eef9d66d0b358198de9966fc688c4895d24e8a153369d72c7808",
+        "rtl/afdx_tx_core.v": "2fd6bca694886de28813d92a449dba93d4b370c869418c1f583d65d699dc3594",
+        "rtl/afdx_tx_engine.v": "a3eb496bf80f4a52ec371400d624b42ed4c7828d81813154dd3129737f9692ba",
+        "rtl/afdx_svc.v": "aba0236f7d57484bbd4e0f128320afe45e60d27bf2e3c81508627fb5e47047ab",
+        "rtl/afdx_crc32_d8.v": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+        "rtl/afdx_rx_engine.v": "2578696b4490c68abfbab074f0210091093e68ee94549ecf3958dc9c3d90f661",
+        "tb/tb_sys_615a.v": "8567b556e01a5571c8a76715d5a7dc08c8a69b777822417aa8104972e8bfffeb",
+        "tb/tb_rx_icrm.v": "868a7d4928d0d4a1d09eddb1ddfe84cd4ff32413ad269d8fbc264635090b0a14",
+        "tb/tb_sys_delay.v": "dfc606497e308745578914fd458df00b5c4001173f1c4cb2f4c4a0f56d9b83e0",
+        "tb/tb_sys_snmp_settrap.v": "ae366d3def2cb053651de6cf8ba1711f5b190fd188215acdf6cc65edf095231d",
+        "tb/tb_mac_tx.v": "a219b0fe67f9ba178846eeec59950fe84bf1be57d6f782516c124312052a0b64",
+        "tb/tb_sys_net.v": "dcf7c2cd4920c77925009cba26091df793e7e855bc0b353bb5144c962a11e0ca",
+        "tb/tb_rtc_originate.v": "bc88639a676f54665734f2977c06b024a88c858bd0d96816c82e13093af8b87c",
+        "tb/tb_sys_reset.v": "514a87bd8d8e943700689ad510ada743b497d73db2cf3fd42a861a5a25866dbb",
+        "tb/tb_rx_fault.v": "cb587d38cb3f157ea78bd8c68b88b0fbe8a3e76695b21daba4166499ef9f11d4",
+        "tb/tb_sys_perf.v": "93de264fbf37b8962137362f87227ec87c14bece698bcb51a97224d6bfb194d8",
+        "tb/tb_sys_basic.v": "2a40ee3f89d3726459bd2370f8dd1ea3cd835c3e4b7b6dad6f623197f4c6bfbc",
+        "tb/tb_rx_ovf_ring.v": "34b7f6156f03615b5a0b14aaf0b619707b6e8a2cb1aa4bfaf22008c985cd52bf",
+        "tb/tb_rx_load.v": "3e950f040099ac3968579b52201a7e62936ad61ea85f53f36dc29f522e5d3730",
+        "tb/tb_tx_drop.v": "3ac90049f8f95cb1ec55aae516567f8a1d7d5ad056b4051e72e32c4debb64917",
+        "tb/tb_probe_ram.v": "91ee6f4402f362344adcfc13344027a121990c53d760f8329d82a79fbd7bfb2a",
+        "tb/tb_sys_ovf.v": "ebaed30160ad8252e5ec8eeaf3bab99f35cc8a952c29ed9d357ccf0c6590a802",
+        "tb/tb_ram_sdp.v": "761ef941e07bcf92e54223263173dc57b149bafa0a947eacc6fc198641df9720",
+        "tb/tb_tx_net.v": "7b91ca66a137ec738819fd1861c024f207a499d7ae8a097f50717beecb94495a",
+        "tb/tb_rx_basic.v": "0d4a6e6f08482602085327e47fc6ff8631273a611cff7ac4188cbc8b476cec42",
+        "tb/tb_tx_multi.v": "b8eb8b52169abb7c70a9d62f3afeaee5b0ffb99818d8f161b849a9328da9b7ad",
+        "tb/tb_tx_bag.v": "b030589a9202845b32100d489669e1dec1f310a2e1b39e8273c3dd83ed2f7ce4",
+        "tb/tb_sys_fault.v": "cc0ce2ded1bda41b4b67930d5e7c0cd41dc75a739f437f69553391057e3fa9b9",
+        "tb/tb_mac_loop.v": "ca1f925a625d4692c999d9fdb2c57f260362a989521a41e6dc321ccd5d145b77",
+        "tb/tb_judge_capacity.v": "27c4c26042c6d349a88ebf7d28acd4e179d323a20de49cb450037f8e1838634e",
+        "tb/tb_sys_rtc.v": "5cff7c86cb70c75bbf44e7fa1e1798be7b0eaeb8372fae99c18090942ef646c8",
+        "tb/tb_rtc_recovery.v": "e70611a6b4455e168268b9d540df33ae0f9f6fee9f29c85be16de41476b0d6f6",
+        "tb/tb_gbe_burst.v": "84d81e772ea4cce67b9a71635326b0422311ae36294e9687605b85af6b8bac8f",
+        "tb/tb_sys_snmp.v": "7c1f97132f667f2e18093ef3efce997c9b5e6625b66b936220c7537c9347185c",
+        "tb/tb_sys_load.v": "c09053bfe2fba1814c467dd79969b2ae8c016597e2e6f40168fd05f8c046da18",
+        "tb/tb_rm_phase.v": "743573f97e38d1afb61b2fa8b9b32713d9da896baf42da2df26685313ed49e5a",
+        "tb/tb_elinx.v": "a206e3e3feac84d39260f9c2917ab04509c02ad7943af88f5a768d54c4aa1c03",
+        "tb/tb_sys_cfg.v": "937bab260b1e0abe615b24f180891628000a289e5b85a1920d4c9fbcb8640c91",
+        "tb/tb_mac_rx.v": "a5ce20892c3fc5c6583bdc86b20494a04e8c40d194ca27f3fe36b15a7c825c37",
+        "tb/tb_judge_snmp.v": "b852affd3ee3c0a45740463cd84ad723220353fe485547064c7cdfbf0134ed95",
+        "tb/tb_rx_net.v": "177260a2aa3e8c482bd041cb0181de66d6d02d1b62e87cda0730c54ef19bebac",
+        "tb/tb_net_services.v": "d023aa619b169ee5ac483c45df7ad317b3c1008266ff2a06234042d70d4f902b",
+        "tb/tb_tx_basic.v": "c5dcb8e0300e65dd92d143b3ec9f2de74c62dfeec21d137682c0d353bbcc3725",
+        "tb/tb_rx_ovf_dq.v": "b1b69155171df894c88567a9d8f233cea8b54d08795f371b9633279c82204475",
+        "tb/lib/gmii_monitor.v": "dd790d72de937779460ab593006c918c31d497b7c778211ebb25c632c6c3c7f9",
+        "tb/lib/mac_tx_suite.v": "9584a9130e1de3564a6c21a231d63f8d352b9a2578a265bce9d0fd95c1b30537",
+        "tb/lib/line_driver.v": "0dce6b8a16bad57eb0a91d1d3a96244fff0a8e58c7e81173be6165d0ef15bc6f",
+        "tb/lib/link_model.v": "be426565c159ca3265a858e9f996e19d350dbbe43c75e93aa90011d83fbaec91",
+        "tb/lib/tx_core_suite.v": "b9f5e6bd4efde1337c1297eb65bab82097d8ad5cda6de5655a02760c707d9011",
+        "tb/lib/sys_suite.v": "d1a6dd68f91e035bae8c4437a95db23a649248edce9c13095ceed22116b44ae5",
+        "tb/lib/sys_endpoint.v": "8376f5833df47f41a3a2d543a6abe33ae754b5466bdcfd90852df629e15d49a9",
+        "tb/lib/load_test_endpoint.v": "0e0fa29d5031050ee8cfbb8bde78c5fc4771196b40bfdeb89e3293d60cfc8ccc",
+        "tb/lib/snmp_test_endpoint.v": "9da9a92f94737cdc6f3ae6f20ef25bcc2752e8e19b6214d1edd2b4727dd19d0f",
+        "tb/lib/rx_core_suite.v": "25cd1d73b059f5834ce46fbaca2f8d364e5470787e933dbf4450838f1035ee52",
+        "tb/lib/judge_endpoint.v": "9f0258498783f9f02f3622ce9946c4e77d78bce2950cd1f3ae9125490f2a3a0b",
+        "tb/lib/rm_age_probe.v": "db399b7e721c49632e32a71f11a1f6f359622a1e4863f52e81382b669a4d2af1",
+        "tb/lib/rtc_retry_suite.v": "7c884c7c403244455500881a3fcd22f4e6e116a603f25b8f98a6e35a98bb95a1",
+        "tb/lib/line_monitor.v": "d5a4ad53ccae38a4758738a1c343c7c2ac77543598ef5221b2d84084b50bedff"
+      }
+    },
+    {
+      "kind": "RTL simulation trace",
+      "simulator": "Verilator 5.044",
+      "time_unit": "ns",
+      "seed": 20261007,
+      "capture_root": "/tmp/afdx_rx_trace",
+      "scope_note": "Trace extraction stopped after the final requested window; errors=0 at capture stop. This is not a full regression pass.",
+      "fcs_read_injection": "Same public cfg inputs as sim/wave/rx_fcs_error.do: cfg_addr=0x49,cfg_rd=1 at 973000ns;cfg_rd=0 at 973008ns;cfg_rvalid=1,cfg_rdata=1 asserted at 973013ns.",
+      "source_sha256": {
+        "rtl/AFDX_top.v": "a5617e45e2e4558cdf296079b1cc8e6813b6c23657628249d3d112176ab848b0",
+        "rtl/afdx_615a.v": "5f0920e5838967abafb312cf82c3af03e2737e0de618d4d1ff1ca18f91bbda6b",
+        "rtl/afdx_cfg.v": "05a3a49c35f8c7f8d8079be98919a769697115ff17aa7d3722c846b7c4318139",
+        "rtl/afdx_crc32_d8.v": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+        "rtl/afdx_mac_rx.v": "c51aeb33d2a8260d4d5d2936024a84688cb5267fc98383f3391b7a27bc99c45a",
+        "rtl/afdx_mac_tx.v": "bd69b8a1566cd34df4d8648bb48f710e4946e0c75de08dbb9f49b78072229e32",
+        "rtl/afdx_ntp_fraction.v": "333a5ceb4c11166dbe3dbff90433d2e3e1676af392a4623d842cd0a11e9fcace",
+        "rtl/afdx_ram_sdp.v": "6c89392a4753415ec83457d39264c30d1e391464f45e8376449d2e0424ca469e",
+        "rtl/afdx_rtc.v": "5b1308475faea5d2a3d71629440b5ac10e8f1f8d55c7ce2bc47b1cdd89672bf4",
+        "rtl/afdx_rx_core.v": "ca55fb106529ecc226cdb7a4ee883d1862bd95cf353e0b1c9049e3a7f7c328c6",
+        "rtl/afdx_rx_deliver.v": "cf305efa4f30c0dd15435ae2a6f26bf9368f6963ab04d549857054632c4577c8",
+        "rtl/afdx_rx_engine.v": "2578696b4490c68abfbab074f0210091093e68ee94549ecf3958dc9c3d90f661",
+        "rtl/afdx_rx_parse.v": "fffa02e32eb70787dc327e6d3e712b73db96ead896e86d3360c1f32f59b9c27f",
+        "rtl/afdx_snmp.v": "477ab555f03becd7ca4c873eeb2e2de017cde1866663425b174f92563d8fee4c",
+        "rtl/afdx_svc.v": "aba0236f7d57484bbd4e0f128320afe45e60d27bf2e3c81508627fb5e47047ab",
+        "rtl/afdx_timebase.v": "fbdd3ea0b342c40cb07f265a541a2a3cb5b6510ea6247d89eb2d6de6ef1be4f5",
+        "rtl/afdx_tx_buf.v": "820dd3ccd7dc2a40b4f66cc397b4b094bc3100875ebee5e1b8cbef9a323a17b3",
+        "rtl/afdx_tx_builder.v": "8c4611f3bc92eef9d66d0b358198de9966fc688c4895d24e8a153369d72c7808",
+        "rtl/afdx_tx_core.v": "2fd6bca694886de28813d92a449dba93d4b370c869418c1f583d65d699dc3594",
+        "rtl/afdx_tx_engine.v": "a3eb496bf80f4a52ec371400d624b42ed4c7828d81813154dd3129737f9692ba",
+        "rtl/afdx_tx_free.v": "29497145570de8405d76563d2cd4cd8103b611490fb3d4d91a9f6e44f14ddc02",
+        "tb/lib/gmii_monitor.v": "dd790d72de937779460ab593006c918c31d497b7c778211ebb25c632c6c3c7f9",
+        "tb/lib/judge_endpoint.v": "9f0258498783f9f02f3622ce9946c4e77d78bce2950cd1f3ae9125490f2a3a0b",
+        "tb/lib/line_driver.v": "0dce6b8a16bad57eb0a91d1d3a96244fff0a8e58c7e81173be6165d0ef15bc6f",
+        "tb/lib/line_monitor.v": "d5a4ad53ccae38a4758738a1c343c7c2ac77543598ef5221b2d84084b50bedff",
+        "tb/lib/link_model.v": "be426565c159ca3265a858e9f996e19d350dbbe43c75e93aa90011d83fbaec91",
+        "tb/lib/load_test_endpoint.v": "0e0fa29d5031050ee8cfbb8bde78c5fc4771196b40bfdeb89e3293d60cfc8ccc",
+        "tb/lib/mac_tx_suite.v": "9584a9130e1de3564a6c21a231d63f8d352b9a2578a265bce9d0fd95c1b30537",
+        "tb/lib/rm_age_probe.v": "db399b7e721c49632e32a71f11a1f6f359622a1e4863f52e81382b669a4d2af1",
+        "tb/lib/rtc_retry_suite.v": "7c884c7c403244455500881a3fcd22f4e6e116a603f25b8f98a6e35a98bb95a1",
+        "tb/lib/rx_core_suite.v": "25cd1d73b059f5834ce46fbaca2f8d364e5470787e933dbf4450838f1035ee52",
+        "tb/lib/snmp_test_endpoint.v": "9da9a92f94737cdc6f3ae6f20ef25bcc2752e8e19b6214d1edd2b4727dd19d0f",
+        "tb/lib/sys_endpoint.v": "8376f5833df47f41a3a2d543a6abe33ae754b5466bdcfd90852df629e15d49a9",
+        "tb/lib/sys_suite.v": "d1a6dd68f91e035bae8c4437a95db23a649248edce9c13095ceed22116b44ae5",
+        "tb/lib/tx_core_suite.v": "b9f5e6bd4efde1337c1297eb65bab82097d8ad5cda6de5655a02760c707d9011",
+        "tb/tb_sys_delay.v": "dfc606497e308745578914fd458df00b5c4001173f1c4cb2f4c4a0f56d9b83e0",
+        "tb/tb_sys_net.v": "dcf7c2cd4920c77925009cba26091df793e7e855bc0b353bb5144c962a11e0ca",
+        "tb/tb_judge_snmp.v": "b852affd3ee3c0a45740463cd84ad723220353fe485547064c7cdfbf0134ed95",
+        "tools/sys_cases.py": "f81f18edc5fee4496070d07ba506ac36441fe2996965f003ed16f04069c03185"
+      }
+    }
+  ],
+  "windows": {
+    "tx_dual_1": {
+      "testbench": "tb_sys_net",
+      "source_script": "sim/wave/tx_dual.do",
+      "start_ns": 685900,
+      "end_ns": 688900,
+      "signals": {
+        "app_tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              687680,
+              1
+            ],
+            [
+              687870,
+              0
+            ],
+            [
+              687960,
+              1
+            ],
+            [
+              688158,
+              0
+            ],
+            [
+              688440,
+              1
+            ],
+            [
+              688646,
+              0
+            ],
+            [
+              688776,
+              1
+            ]
+          ]
+        },
+        "app_tx_ready": {
+          "width": 1,
+          "events": [
+            [
+              685900,
+              1
+            ],
+            [
+              687684,
+              0
+            ],
+            [
+              687732,
+              1
+            ],
+            [
+              687868,
+              0
+            ],
+            [
+              687948,
+              1
+            ],
+            [
+              687964,
+              0
+            ],
+            [
+              688012,
+              1
+            ],
+            [
+              688156,
+              0
+            ],
+            [
+              688428,
+              1
+            ],
+            [
+              688444,
+              0
+            ],
+            [
+              688492,
+              1
+            ],
+            [
+              688644,
+              0
+            ],
+            [
+              688764,
+              1
+            ],
+            [
+              688780,
+              0
+            ],
+            [
+              688828,
+              1
+            ]
+          ]
+        },
+        "app_tx_data": {
+          "width": 8,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              687680,
+              38
+            ],
+            [
+              687688,
+              56
+            ],
+            [
+              687744,
+              75
+            ],
+            [
+              687752,
+              95
+            ],
+            [
+              687760,
+              113
+            ],
+            [
+              687768,
+              132
+            ],
+            [
+              687776,
+              152
+            ],
+            [
+              687784,
+              170
+            ],
+            [
+              687792,
+              189
+            ],
+            [
+              687800,
+              209
+            ],
+            [
+              687808,
+              227
+            ],
+            [
+              687816,
+              246
+            ],
+            [
+              687824,
+              10
+            ],
+            [
+              687832,
+              28
+            ],
+            [
+              687840,
+              47
+            ],
+            [
+              687848,
+              67
+            ],
+            [
+              687856,
+              85
+            ],
+            [
+              687864,
+              104
+            ],
+            [
+              687960,
+              114
+            ],
+            [
+              687968,
+              131
+            ],
+            [
+              688024,
+              149
+            ],
+            [
+              688032,
+              171
+            ],
+            [
+              688040,
+              188
+            ],
+            [
+              688048,
+              206
+            ],
+            [
+              688056,
+              228
+            ],
+            [
+              688064,
+              245
+            ],
+            [
+              688072,
+              7
+            ],
+            [
+              688080,
+              29
+            ],
+            [
+              688088,
+              46
+            ],
+            [
+              688096,
+              64
+            ],
+            [
+              688104,
+              86
+            ],
+            [
+              688112,
+              103
+            ],
+            [
+              688120,
+              121
+            ],
+            [
+              688128,
+              143
+            ],
+            [
+              688136,
+              160
+            ],
+            [
+              688144,
+              178
+            ],
+            [
+              688152,
+              200
+            ],
+            [
+              688440,
+              190
+            ],
+            [
+              688448,
+              206
+            ],
+            [
+              688504,
+              224
+            ],
+            [
+              688512,
+              247
+            ],
+            [
+              688520,
+              7
+            ],
+            [
+              688528,
+              25
+            ],
+            [
+              688536,
+              48
+            ],
+            [
+              688544,
+              64
+            ],
+            [
+              688552,
+              82
+            ],
+            [
+              688560,
+              105
+            ],
+            [
+              688568,
+              121
+            ],
+            [
+              688576,
+              139
+            ],
+            [
+              688584,
+              162
+            ],
+            [
+              688592,
+              178
+            ],
+            [
+              688600,
+              196
+            ],
+            [
+              688608,
+              219
+            ],
+            [
+              688616,
+              235
+            ],
+            [
+              688624,
+              253
+            ],
+            [
+              688632,
+              20
+            ],
+            [
+              688640,
+              36
+            ],
+            [
+              688776,
+              10
+            ],
+            [
+              688784,
+              25
+            ],
+            [
+              688840,
+              42
+            ],
+            [
+              688848,
+              67
+            ],
+            [
+              688856,
+              82
+            ],
+            [
+              688864,
+              99
+            ],
+            [
+              688872,
+              124
+            ],
+            [
+              688880,
+              139
+            ],
+            [
+              688888,
+              156
+            ],
+            [
+              688896,
+              181
+            ]
+          ]
+        },
+        "app_tx_last": {
+          "width": 1,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              687864,
+              1
+            ],
+            [
+              687870,
+              0
+            ],
+            [
+              688152,
+              1
+            ],
+            [
+              688158,
+              0
+            ],
+            [
+              688640,
+              1
+            ],
+            [
+              688646,
+              0
+            ]
+          ]
+        },
+        "app_tx_vl": {
+          "width": 7,
+          "events": [
+            [
+              685900,
+              0
+            ]
+          ]
+        },
+        "tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              688108,
+              1
+            ],
+            [
+              688692,
+              0
+            ]
+          ]
+        },
+        "tx_data": {
+          "width": 8,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              688108,
+              85
+            ],
+            [
+              688164,
+              213
+            ],
+            [
+              688172,
+              3
+            ],
+            [
+              688180,
+              0
+            ],
+            [
+              688212,
+              100
+            ],
+            [
+              688220,
+              2
+            ],
+            [
+              688228,
+              0
+            ],
+            [
+              688244,
+              18
+            ],
+            [
+              688252,
+              52
+            ],
+            [
+              688260,
+              32
+            ],
+            [
+              688268,
+              8
+            ],
+            [
+              688276,
+              0
+            ],
+            [
+              688284,
+              69
+            ],
+            [
+              688292,
+              0
+            ],
+            [
+              688308,
+              46
+            ],
+            [
+              688316,
+              0
+            ],
+            [
+              688348,
+              1
+            ],
+            [
+              688356,
+              17
+            ],
+            [
+              688364,
+              205
+            ],
+            [
+              688372,
+              122
+            ],
+            [
+              688380,
+              10
+            ],
+            [
+              688388,
+              0
+            ],
+            [
+              688396,
+              1
+            ],
+            [
+              688412,
+              224
+            ],
+            [
+              688428,
+              0
+            ],
+            [
+              688436,
+              100
+            ],
+            [
+              688444,
+              3
+            ],
+            [
+              688452,
+              232
+            ],
+            [
+              688460,
+              7
+            ],
+            [
+              688468,
+              208
+            ],
+            [
+              688476,
+              0
+            ],
+            [
+              688484,
+              26
+            ],
+            [
+              688492,
+              0
+            ],
+            [
+              688508,
+              38
+            ],
+            [
+              688516,
+              56
+            ],
+            [
+              688524,
+              75
+            ],
+            [
+              688532,
+              95
+            ],
+            [
+              688540,
+              113
+            ],
+            [
+              688548,
+              132
+            ],
+            [
+              688556,
+              152
+            ],
+            [
+              688564,
+              170
+            ],
+            [
+              688572,
+              189
+            ],
+            [
+              688580,
+              209
+            ],
+            [
+              688588,
+              227
+            ],
+            [
+              688596,
+              246
+            ],
+            [
+              688604,
+              10
+            ],
+            [
+              688612,
+              28
+            ],
+            [
+              688620,
+              47
+            ],
+            [
+              688628,
+              67
+            ],
+            [
+              688636,
+              85
+            ],
+            [
+              688644,
+              104
+            ],
+            [
+              688652,
+              0
+            ],
+            [
+              688660,
+              53
+            ],
+            [
+              688668,
+              95
+            ],
+            [
+              688676,
+              12
+            ],
+            [
+              688684,
+              0
+            ]
+          ]
+        },
+        "tx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              688108,
+              1
+            ],
+            [
+              688692,
+              0
+            ]
+          ]
+        },
+        "tx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              685900,
+              0
+            ],
+            [
+              688108,
+              85
+            ],
+            [
+              688164,
+              213
+            ],
+            [
+              688172,
+              3
+            ],
+            [
+              688180,
+              0
+            ],
+            [
+              688212,
+              100
+            ],
+            [
+              688220,
+              2
+            ],
+            [
+              688228,
+              0
+            ],
+            [
+              688244,
+              18
+            ],
+            [
+              688252,
+              52
+            ],
+            [
+              688260,
+              64
+            ],
+            [
+              688268,
+              8
+            ],
+            [
+              688276,
+              0
+            ],
+            [
+              688284,
+              69
+            ],
+            [
+              688292,
+              0
+            ],
+            [
+              688308,
+              46
+            ],
+            [
+              688316,
+              0
+            ],
+            [
+              688348,
+              1
+            ],
+            [
+              688356,
+              17
+            ],
+            [
+              688364,
+              205
+            ],
+            [
+              688372,
+              122
+            ],
+            [
+              688380,
+              10
+            ],
+            [
+              688388,
+              0
+            ],
+            [
+              688396,
+              1
+            ],
+            [
+              688412,
+              224
+            ],
+            [
+              688428,
+              0
+            ],
+            [
+              688436,
+              100
+            ],
+            [
+              688444,
+              3
+            ],
+            [
+              688452,
+              232
+            ],
+            [
+              688460,
+              7
+            ],
+            [
+              688468,
+              208
+            ],
+            [
+              688476,
+              0
+            ],
+            [
+              688484,
+              26
+            ],
+            [
+              688492,
+              0
+            ],
+            [
+              688508,
+              38
+            ],
+            [
+              688516,
+              56
+            ],
+            [
+              688524,
+              75
+            ],
+            [
+              688532,
+              95
+            ],
+            [
+              688540,
+              113
+            ],
+            [
+              688548,
+              132
+            ],
+            [
+              688556,
+              152
+            ],
+            [
+              688564,
+              170
+            ],
+            [
+              688572,
+              189
+            ],
+            [
+              688580,
+              209
+            ],
+            [
+              688588,
+              227
+            ],
+            [
+              688596,
+              246
+            ],
+            [
+              688604,
+              10
+            ],
+            [
+              688612,
+              28
+            ],
+            [
+              688620,
+              47
+            ],
+            [
+              688628,
+              67
+            ],
+            [
+              688636,
+              85
+            ],
+            [
+              688644,
+              104
+            ],
+            [
+              688652,
+              0
+            ],
+            [
+              688660,
+              251
+            ],
+            [
+              688668,
+              242
+            ],
+            [
+              688676,
+              231
+            ],
+            [
+              688684,
+              228
+            ],
+            [
+              688692,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "tx_dual_2": {
+      "testbench": "tb_sys_net",
+      "source_script": "sim/wave/tx_dual.do",
+      "start_ns": 688100,
+      "end_ns": 688420,
+      "signals": {
+        "app_tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              688100,
+              1
+            ],
+            [
+              688158,
+              0
+            ]
+          ]
+        },
+        "app_tx_ready": {
+          "width": 1,
+          "events": [
+            [
+              688100,
+              1
+            ],
+            [
+              688156,
+              0
+            ]
+          ]
+        },
+        "app_tx_data": {
+          "width": 8,
+          "events": [
+            [
+              688100,
+              64
+            ],
+            [
+              688104,
+              86
+            ],
+            [
+              688112,
+              103
+            ],
+            [
+              688120,
+              121
+            ],
+            [
+              688128,
+              143
+            ],
+            [
+              688136,
+              160
+            ],
+            [
+              688144,
+              178
+            ],
+            [
+              688152,
+              200
+            ]
+          ]
+        },
+        "app_tx_last": {
+          "width": 1,
+          "events": [
+            [
+              688100,
+              0
+            ],
+            [
+              688152,
+              1
+            ],
+            [
+              688158,
+              0
+            ]
+          ]
+        },
+        "app_tx_vl": {
+          "width": 7,
+          "events": [
+            [
+              688100,
+              0
+            ]
+          ]
+        },
+        "tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              688100,
+              0
+            ],
+            [
+              688108,
+              1
+            ]
+          ]
+        },
+        "tx_data": {
+          "width": 8,
+          "events": [
+            [
+              688100,
+              0
+            ],
+            [
+              688108,
+              85
+            ],
+            [
+              688164,
+              213
+            ],
+            [
+              688172,
+              3
+            ],
+            [
+              688180,
+              0
+            ],
+            [
+              688212,
+              100
+            ],
+            [
+              688220,
+              2
+            ],
+            [
+              688228,
+              0
+            ],
+            [
+              688244,
+              18
+            ],
+            [
+              688252,
+              52
+            ],
+            [
+              688260,
+              32
+            ],
+            [
+              688268,
+              8
+            ],
+            [
+              688276,
+              0
+            ],
+            [
+              688284,
+              69
+            ],
+            [
+              688292,
+              0
+            ],
+            [
+              688308,
+              46
+            ],
+            [
+              688316,
+              0
+            ],
+            [
+              688348,
+              1
+            ],
+            [
+              688356,
+              17
+            ],
+            [
+              688364,
+              205
+            ],
+            [
+              688372,
+              122
+            ],
+            [
+              688380,
+              10
+            ],
+            [
+              688388,
+              0
+            ],
+            [
+              688396,
+              1
+            ],
+            [
+              688412,
+              224
+            ]
+          ]
+        },
+        "tx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              688100,
+              0
+            ],
+            [
+              688108,
+              1
+            ]
+          ]
+        },
+        "tx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              688100,
+              0
+            ],
+            [
+              688108,
+              85
+            ],
+            [
+              688164,
+              213
+            ],
+            [
+              688172,
+              3
+            ],
+            [
+              688180,
+              0
+            ],
+            [
+              688212,
+              100
+            ],
+            [
+              688220,
+              2
+            ],
+            [
+              688228,
+              0
+            ],
+            [
+              688244,
+              18
+            ],
+            [
+              688252,
+              52
+            ],
+            [
+              688260,
+              64
+            ],
+            [
+              688268,
+              8
+            ],
+            [
+              688276,
+              0
+            ],
+            [
+              688284,
+              69
+            ],
+            [
+              688292,
+              0
+            ],
+            [
+              688308,
+              46
+            ],
+            [
+              688316,
+              0
+            ],
+            [
+              688348,
+              1
+            ],
+            [
+              688356,
+              17
+            ],
+            [
+              688364,
+              205
+            ],
+            [
+              688372,
+              122
+            ],
+            [
+              688380,
+              10
+            ],
+            [
+              688388,
+              0
+            ],
+            [
+              688396,
+              1
+            ],
+            [
+              688412,
+              224
+            ]
+          ]
+        }
+      }
+    },
+    "tx_bag": {
+      "testbench": "tb_tx_bag",
+      "source_script": "sim/wave/tx_bag.do",
+      "start_ns": 10000,
+      "end_ns": 830000,
+      "signals": {
+        "VL": {
+          "width": 7,
+          "events": [
+            [
+              10000,
+              0
+            ]
+          ]
+        },
+        "BAG_ticks": {
+          "width": 32,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              16972,
+              100000
+            ]
+          ]
+        },
+        "tx_valid_a": {
+          "width": 1,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              17076,
+              1
+            ],
+            [
+              17652,
+              0
+            ],
+            [
+              817076,
+              1
+            ],
+            [
+              817652,
+              0
+            ]
+          ]
+        },
+        "tx_data_a": {
+          "width": 8,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              17076,
+              85
+            ],
+            [
+              17132,
+              213
+            ],
+            [
+              17140,
+              3
+            ],
+            [
+              17148,
+              0
+            ],
+            [
+              17180,
+              100
+            ],
+            [
+              17188,
+              2
+            ],
+            [
+              17196,
+              0
+            ],
+            [
+              17212,
+              18
+            ],
+            [
+              17220,
+              52
+            ],
+            [
+              17228,
+              32
+            ],
+            [
+              17236,
+              8
+            ],
+            [
+              17244,
+              0
+            ],
+            [
+              17252,
+              69
+            ],
+            [
+              17260,
+              0
+            ],
+            [
+              17276,
+              29
+            ],
+            [
+              17284,
+              0
+            ],
+            [
+              17316,
+              1
+            ],
+            [
+              17324,
+              17
+            ],
+            [
+              17332,
+              207
+            ],
+            [
+              17340,
+              206
+            ],
+            [
+              17348,
+              10
+            ],
+            [
+              17356,
+              0
+            ],
+            [
+              17372,
+              1
+            ],
+            [
+              17380,
+              224
+            ],
+            [
+              17388,
+              0
+            ],
+            [
+              17404,
+              1
+            ],
+            [
+              17412,
+              3
+            ],
+            [
+              17420,
+              232
+            ],
+            [
+              17428,
+              7
+            ],
+            [
+              17436,
+              208
+            ],
+            [
+              17444,
+              0
+            ],
+            [
+              17452,
+              9
+            ],
+            [
+              17460,
+              0
+            ],
+            [
+              17476,
+              58
+            ],
+            [
+              17484,
+              0
+            ],
+            [
+              17620,
+              17
+            ],
+            [
+              17628,
+              84
+            ],
+            [
+              17636,
+              18
+            ],
+            [
+              17644,
+              156
+            ],
+            [
+              17652,
+              0
+            ],
+            [
+              817076,
+              85
+            ],
+            [
+              817132,
+              213
+            ],
+            [
+              817140,
+              3
+            ],
+            [
+              817148,
+              0
+            ],
+            [
+              817180,
+              100
+            ],
+            [
+              817188,
+              2
+            ],
+            [
+              817196,
+              0
+            ],
+            [
+              817212,
+              18
+            ],
+            [
+              817220,
+              52
+            ],
+            [
+              817228,
+              32
+            ],
+            [
+              817236,
+              8
+            ],
+            [
+              817244,
+              0
+            ],
+            [
+              817252,
+              69
+            ],
+            [
+              817260,
+              0
+            ],
+            [
+              817276,
+              29
+            ],
+            [
+              817284,
+              0
+            ],
+            [
+              817292,
+              1
+            ],
+            [
+              817300,
+              0
+            ],
+            [
+              817316,
+              1
+            ],
+            [
+              817324,
+              17
+            ],
+            [
+              817332,
+              207
+            ],
+            [
+              817340,
+              205
+            ],
+            [
+              817348,
+              10
+            ],
+            [
+              817356,
+              0
+            ],
+            [
+              817372,
+              1
+            ],
+            [
+              817380,
+              224
+            ],
+            [
+              817388,
+              0
+            ],
+            [
+              817404,
+              1
+            ],
+            [
+              817412,
+              3
+            ],
+            [
+              817420,
+              232
+            ],
+            [
+              817428,
+              7
+            ],
+            [
+              817436,
+              208
+            ],
+            [
+              817444,
+              0
+            ],
+            [
+              817452,
+              9
+            ],
+            [
+              817460,
+              0
+            ],
+            [
+              817476,
+              208
+            ],
+            [
+              817484,
+              0
+            ],
+            [
+              817612,
+              1
+            ],
+            [
+              817620,
+              97
+            ],
+            [
+              817628,
+              33
+            ],
+            [
+              817636,
+              244
+            ],
+            [
+              817644,
+              211
+            ],
+            [
+              817652,
+              0
+            ]
+          ]
+        },
+        "tx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              17076,
+              1
+            ],
+            [
+              17652,
+              0
+            ],
+            [
+              817076,
+              1
+            ],
+            [
+              817652,
+              0
+            ]
+          ]
+        },
+        "tx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              17076,
+              85
+            ],
+            [
+              17132,
+              213
+            ],
+            [
+              17140,
+              3
+            ],
+            [
+              17148,
+              0
+            ],
+            [
+              17180,
+              100
+            ],
+            [
+              17188,
+              2
+            ],
+            [
+              17196,
+              0
+            ],
+            [
+              17212,
+              18
+            ],
+            [
+              17220,
+              52
+            ],
+            [
+              17228,
+              64
+            ],
+            [
+              17236,
+              8
+            ],
+            [
+              17244,
+              0
+            ],
+            [
+              17252,
+              69
+            ],
+            [
+              17260,
+              0
+            ],
+            [
+              17276,
+              29
+            ],
+            [
+              17284,
+              0
+            ],
+            [
+              17316,
+              1
+            ],
+            [
+              17324,
+              17
+            ],
+            [
+              17332,
+              207
+            ],
+            [
+              17340,
+              206
+            ],
+            [
+              17348,
+              10
+            ],
+            [
+              17356,
+              0
+            ],
+            [
+              17372,
+              1
+            ],
+            [
+              17380,
+              224
+            ],
+            [
+              17388,
+              0
+            ],
+            [
+              17404,
+              1
+            ],
+            [
+              17412,
+              3
+            ],
+            [
+              17420,
+              232
+            ],
+            [
+              17428,
+              7
+            ],
+            [
+              17436,
+              208
+            ],
+            [
+              17444,
+              0
+            ],
+            [
+              17452,
+              9
+            ],
+            [
+              17460,
+              0
+            ],
+            [
+              17476,
+              58
+            ],
+            [
+              17484,
+              0
+            ],
+            [
+              17620,
+              157
+            ],
+            [
+              17628,
+              145
+            ],
+            [
+              17636,
+              112
+            ],
+            [
+              17644,
+              121
+            ],
+            [
+              17652,
+              0
+            ],
+            [
+              817076,
+              85
+            ],
+            [
+              817132,
+              213
+            ],
+            [
+              817140,
+              3
+            ],
+            [
+              817148,
+              0
+            ],
+            [
+              817180,
+              100
+            ],
+            [
+              817188,
+              2
+            ],
+            [
+              817196,
+              0
+            ],
+            [
+              817212,
+              18
+            ],
+            [
+              817220,
+              52
+            ],
+            [
+              817228,
+              64
+            ],
+            [
+              817236,
+              8
+            ],
+            [
+              817244,
+              0
+            ],
+            [
+              817252,
+              69
+            ],
+            [
+              817260,
+              0
+            ],
+            [
+              817276,
+              29
+            ],
+            [
+              817284,
+              0
+            ],
+            [
+              817292,
+              1
+            ],
+            [
+              817300,
+              0
+            ],
+            [
+              817316,
+              1
+            ],
+            [
+              817324,
+              17
+            ],
+            [
+              817332,
+              207
+            ],
+            [
+              817340,
+              205
+            ],
+            [
+              817348,
+              10
+            ],
+            [
+              817356,
+              0
+            ],
+            [
+              817372,
+              1
+            ],
+            [
+              817380,
+              224
+            ],
+            [
+              817388,
+              0
+            ],
+            [
+              817404,
+              1
+            ],
+            [
+              817412,
+              3
+            ],
+            [
+              817420,
+              232
+            ],
+            [
+              817428,
+              7
+            ],
+            [
+              817436,
+              208
+            ],
+            [
+              817444,
+              0
+            ],
+            [
+              817452,
+              9
+            ],
+            [
+              817460,
+              0
+            ],
+            [
+              817476,
+              208
+            ],
+            [
+              817484,
+              0
+            ],
+            [
+              817612,
+              1
+            ],
+            [
+              817620,
+              237
+            ],
+            [
+              817628,
+              228
+            ],
+            [
+              817636,
+              150
+            ],
+            [
+              817644,
+              54
+            ],
+            [
+              817652,
+              0
+            ]
+          ]
+        },
+        "SN": {
+          "width": 8,
+          "events": [
+            [
+              10000,
+              0
+            ],
+            [
+              813484,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    "rx_redundancy_1": {
+      "testbench": "tb_sys_delay",
+      "source_script": "sim/wave/rx_redundancy.do",
+      "start_ns": 3013980,
+      "end_ns": 3014240,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              3013980,
+              0
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ]
+          ]
+        },
+        "rx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              3013980,
+              0
+            ]
+          ]
+        },
+        "ev_deliver": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ],
+            [
+              3014028,
+              1
+            ],
+            [
+              3014036,
+              0
+            ]
+          ]
+        },
+        "app_rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ],
+            [
+              3014060,
+              1
+            ],
+            [
+              3014204,
+              0
+            ]
+          ]
+        },
+        "app_rx_data": {
+          "width": 8,
+          "events": [
+            [
+              3013980,
+              220
+            ],
+            [
+              3014060,
+              238
+            ],
+            [
+              3014068,
+              250
+            ],
+            [
+              3014076,
+              10
+            ],
+            [
+              3014084,
+              39
+            ],
+            [
+              3014092,
+              51
+            ],
+            [
+              3014100,
+              67
+            ],
+            [
+              3014108,
+              96
+            ],
+            [
+              3014116,
+              108
+            ],
+            [
+              3014124,
+              124
+            ],
+            [
+              3014132,
+              153
+            ],
+            [
+              3014140,
+              165
+            ],
+            [
+              3014148,
+              181
+            ],
+            [
+              3014156,
+              210
+            ],
+            [
+              3014164,
+              222
+            ],
+            [
+              3014172,
+              238
+            ],
+            [
+              3014180,
+              11
+            ],
+            [
+              3014188,
+              23
+            ],
+            [
+              3014196,
+              39
+            ]
+          ]
+        },
+        "app_rx_last": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ],
+            [
+              3014196,
+              1
+            ],
+            [
+              3014204,
+              0
+            ]
+          ]
+        },
+        "app_rx_net": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              1
+            ],
+            [
+              3014036,
+              0
+            ]
+          ]
+        },
+        "ev_rm_drop": {
+          "width": 1,
+          "events": [
+            [
+              3013980,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "rx_redundancy_2": {
+      "testbench": "tb_sys_delay",
+      "source_script": "sim/wave/rx_redundancy.do",
+      "start_ns": 3029820,
+      "end_ns": 3030080,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              1
+            ],
+            [
+              3029896,
+              0
+            ]
+          ]
+        },
+        "rx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              3029820,
+              222
+            ],
+            [
+              3029824,
+              238
+            ],
+            [
+              3029832,
+              11
+            ],
+            [
+              3029840,
+              23
+            ],
+            [
+              3029848,
+              39
+            ],
+            [
+              3029856,
+              6
+            ],
+            [
+              3029864,
+              146
+            ],
+            [
+              3029872,
+              156
+            ],
+            [
+              3029880,
+              4
+            ],
+            [
+              3029888,
+              234
+            ],
+            [
+              3029896,
+              0
+            ]
+          ]
+        },
+        "ev_deliver": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "app_rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "app_rx_data": {
+          "width": 8,
+          "events": [
+            [
+              3029820,
+              39
+            ]
+          ]
+        },
+        "app_rx_last": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "app_rx_net": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ]
+          ]
+        },
+        "ev_rm_drop": {
+          "width": 1,
+          "events": [
+            [
+              3029820,
+              0
+            ],
+            [
+              3030044,
+              1
+            ],
+            [
+              3030052,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "rx_fcs_error_1": {
+      "testbench": "tb_sys_net",
+      "source_script": "sim/wave/rx_fcs_error.do",
+      "start_ns": 798350,
+      "end_ns": 799600,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              798520,
+              1
+            ],
+            [
+              799112,
+              0
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              798520,
+              85
+            ],
+            [
+              798576,
+              213
+            ],
+            [
+              798584,
+              3
+            ],
+            [
+              798592,
+              0
+            ],
+            [
+              798624,
+              100
+            ],
+            [
+              798632,
+              2
+            ],
+            [
+              798640,
+              0
+            ],
+            [
+              798656,
+              18
+            ],
+            [
+              798664,
+              52
+            ],
+            [
+              798672,
+              32
+            ],
+            [
+              798680,
+              8
+            ],
+            [
+              798688,
+              0
+            ],
+            [
+              798696,
+              69
+            ],
+            [
+              798704,
+              0
+            ],
+            [
+              798720,
+              47
+            ],
+            [
+              798728,
+              0
+            ],
+            [
+              798736,
+              1
+            ],
+            [
+              798744,
+              0
+            ],
+            [
+              798768,
+              17
+            ],
+            [
+              798776,
+              205
+            ],
+            [
+              798784,
+              120
+            ],
+            [
+              798792,
+              10
+            ],
+            [
+              798800,
+              0
+            ],
+            [
+              798808,
+              1
+            ],
+            [
+              798824,
+              224
+            ],
+            [
+              798840,
+              0
+            ],
+            [
+              798848,
+              100
+            ],
+            [
+              798856,
+              3
+            ],
+            [
+              798864,
+              232
+            ],
+            [
+              798872,
+              7
+            ],
+            [
+              798880,
+              208
+            ],
+            [
+              798888,
+              0
+            ],
+            [
+              798896,
+              27
+            ],
+            [
+              798904,
+              0
+            ],
+            [
+              798920,
+              114
+            ],
+            [
+              798928,
+              131
+            ],
+            [
+              798936,
+              149
+            ],
+            [
+              798944,
+              171
+            ],
+            [
+              798952,
+              188
+            ],
+            [
+              798960,
+              206
+            ],
+            [
+              798968,
+              228
+            ],
+            [
+              798976,
+              245
+            ],
+            [
+              798984,
+              7
+            ],
+            [
+              798992,
+              29
+            ],
+            [
+              799000,
+              46
+            ],
+            [
+              799008,
+              64
+            ],
+            [
+              799016,
+              86
+            ],
+            [
+              799024,
+              103
+            ],
+            [
+              799032,
+              121
+            ],
+            [
+              799040,
+              143
+            ],
+            [
+              799048,
+              160
+            ],
+            [
+              799056,
+              178
+            ],
+            [
+              799064,
+              200
+            ],
+            [
+              799072,
+              1
+            ],
+            [
+              799080,
+              46
+            ],
+            [
+              799088,
+              52
+            ],
+            [
+              799096,
+              35
+            ],
+            [
+              799104,
+              213
+            ],
+            [
+              799112,
+              0
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              798520,
+              1
+            ],
+            [
+              799112,
+              0
+            ]
+          ]
+        },
+        "app_rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              799292,
+              1
+            ],
+            [
+              799444,
+              0
+            ]
+          ]
+        },
+        "ev_a": {
+          "width": 8,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              799156,
+              2
+            ],
+            [
+              799164,
+              0
+            ]
+          ]
+        },
+        "cfg_rd": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ]
+          ]
+        },
+        "cfg_addr": {
+          "width": 18,
+          "events": [
+            [
+              798350,
+              4101
+            ]
+          ]
+        },
+        "cfg_rvalid": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ]
+          ]
+        },
+        "cfg_rdata": {
+          "width": 32,
+          "events": [
+            [
+              798350,
+              0
+            ]
+          ]
+        },
+        "app_rx_net": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              799268,
+              1
+            ]
+          ]
+        },
+        "ev_a_fcs_error": {
+          "width": 1,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              799156,
+              1
+            ],
+            [
+              799164,
+              0
+            ]
+          ]
+        },
+        "count_a_fcs": {
+          "width": 32,
+          "events": [
+            [
+              798350,
+              0
+            ],
+            [
+              799164,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    "rx_fcs_error_2": {
+      "testbench": "tb_sys_net",
+      "source_script": "sim/wave/rx_fcs_error.do",
+      "start_ns": 798700,
+      "end_ns": 799020,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              1
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              798700,
+              69
+            ],
+            [
+              798704,
+              0
+            ],
+            [
+              798720,
+              47
+            ],
+            [
+              798728,
+              0
+            ],
+            [
+              798736,
+              1
+            ],
+            [
+              798744,
+              0
+            ],
+            [
+              798768,
+              17
+            ],
+            [
+              798776,
+              205
+            ],
+            [
+              798784,
+              120
+            ],
+            [
+              798792,
+              10
+            ],
+            [
+              798800,
+              0
+            ],
+            [
+              798808,
+              1
+            ],
+            [
+              798824,
+              224
+            ],
+            [
+              798840,
+              0
+            ],
+            [
+              798848,
+              100
+            ],
+            [
+              798856,
+              3
+            ],
+            [
+              798864,
+              232
+            ],
+            [
+              798872,
+              7
+            ],
+            [
+              798880,
+              208
+            ],
+            [
+              798888,
+              0
+            ],
+            [
+              798896,
+              27
+            ],
+            [
+              798904,
+              0
+            ],
+            [
+              798920,
+              114
+            ],
+            [
+              798928,
+              131
+            ],
+            [
+              798936,
+              149
+            ],
+            [
+              798944,
+              171
+            ],
+            [
+              798952,
+              188
+            ],
+            [
+              798960,
+              206
+            ],
+            [
+              798968,
+              228
+            ],
+            [
+              798976,
+              245
+            ],
+            [
+              798984,
+              7
+            ],
+            [
+              798992,
+              29
+            ],
+            [
+              799000,
+              46
+            ],
+            [
+              799008,
+              64
+            ],
+            [
+              799016,
+              86
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              1
+            ]
+          ]
+        },
+        "app_rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "ev_a": {
+          "width": 8,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "cfg_rd": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "cfg_addr": {
+          "width": 18,
+          "events": [
+            [
+              798700,
+              4101
+            ]
+          ]
+        },
+        "cfg_rvalid": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "cfg_rdata": {
+          "width": 32,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "app_rx_net": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "ev_a_fcs_error": {
+          "width": 1,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        },
+        "count_a_fcs": {
+          "width": 32,
+          "events": [
+            [
+              798700,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "rx_fcs_error_3": {
+      "testbench": "tb_sys_net",
+      "source_script": "sim/wave/rx_fcs_error.do",
+      "start_ns": 972992,
+      "end_ns": 973040,
+      "signals": {
+        "clk": {
+          "width": 1,
+          "events": [
+            [
+              972992,
+              0
+            ],
+            [
+              972996,
+              1
+            ],
+            [
+              973000,
+              0
+            ],
+            [
+              973004,
+              1
+            ],
+            [
+              973008,
+              0
+            ],
+            [
+              973012,
+              1
+            ],
+            [
+              973016,
+              0
+            ],
+            [
+              973020,
+              1
+            ],
+            [
+              973024,
+              0
+            ],
+            [
+              973028,
+              1
+            ],
+            [
+              973032,
+              0
+            ],
+            [
+              973036,
+              1
+            ],
+            [
+              973040,
+              0
+            ]
+          ]
+        },
+        "cfg_rd": {
+          "width": 1,
+          "events": [
+            [
+              972992,
+              0
+            ],
+            [
+              973000,
+              1
+            ],
+            [
+              973008,
+              0
+            ]
+          ]
+        },
+        "cfg_addr": {
+          "width": 18,
+          "events": [
+            [
+              972992,
+              91
+            ],
+            [
+              973000,
+              73
+            ]
+          ]
+        },
+        "host_read_pipe": {
+          "width": 2,
+          "events": [
+            [
+              972992,
+              0
+            ],
+            [
+              973004,
+              1
+            ],
+            [
+              973012,
+              2
+            ],
+            [
+              973020,
+              0
+            ]
+          ]
+        },
+        "cfg_rvalid": {
+          "width": 1,
+          "events": [
+            [
+              972992,
+              0
+            ],
+            [
+              973012,
+              1
+            ],
+            [
+              973020,
+              0
+            ]
+          ]
+        },
+        "cfg_rdata": {
+          "width": 32,
+          "events": [
+            [
+              972992,
+              0
+            ],
+            [
+              973012,
+              1
+            ]
+          ]
+        },
+        "count_a_fcs": {
+          "width": 32,
+          "events": [
+            [
+              972992,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    "snmp_get_1": {
+      "testbench": "tb_judge_snmp",
+      "source_script": "sim/wave/snmp_get.do",
+      "start_ns": 525280,
+      "end_ns": 525600,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              525280,
+              0
+            ],
+            [
+              525292,
+              1
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              525280,
+              0
+            ],
+            [
+              525292,
+              85
+            ],
+            [
+              525348,
+              213
+            ],
+            [
+              525356,
+              3
+            ],
+            [
+              525364,
+              0
+            ],
+            [
+              525396,
+              100
+            ],
+            [
+              525404,
+              2
+            ],
+            [
+              525412,
+              0
+            ],
+            [
+              525444,
+              32
+            ],
+            [
+              525452,
+              8
+            ],
+            [
+              525460,
+              0
+            ],
+            [
+              525468,
+              69
+            ],
+            [
+              525476,
+              0
+            ],
+            [
+              525492,
+              72
+            ],
+            [
+              525500,
+              0
+            ],
+            [
+              525532,
+              1
+            ],
+            [
+              525540,
+              17
+            ],
+            [
+              525548,
+              206
+            ],
+            [
+              525556,
+              96
+            ],
+            [
+              525564,
+              10
+            ],
+            [
+              525572,
+              0
+            ],
+            [
+              525588,
+              1
+            ],
+            [
+              525596,
+              224
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              525280,
+              0
+            ],
+            [
+              525292,
+              1
+            ]
+          ]
+        },
+        "rx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              525280,
+              0
+            ],
+            [
+              525292,
+              85
+            ],
+            [
+              525348,
+              213
+            ],
+            [
+              525356,
+              3
+            ],
+            [
+              525364,
+              0
+            ],
+            [
+              525396,
+              100
+            ],
+            [
+              525404,
+              2
+            ],
+            [
+              525412,
+              0
+            ],
+            [
+              525444,
+              64
+            ],
+            [
+              525452,
+              8
+            ],
+            [
+              525460,
+              0
+            ],
+            [
+              525468,
+              69
+            ],
+            [
+              525476,
+              0
+            ],
+            [
+              525492,
+              72
+            ],
+            [
+              525500,
+              0
+            ],
+            [
+              525532,
+              1
+            ],
+            [
+              525540,
+              17
+            ],
+            [
+              525548,
+              206
+            ],
+            [
+              525556,
+              96
+            ],
+            [
+              525564,
+              10
+            ],
+            [
+              525572,
+              0
+            ],
+            [
+              525588,
+              1
+            ],
+            [
+              525596,
+              224
+            ]
+          ]
+        },
+        "tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              525280,
+              0
+            ]
+          ]
+        },
+        "tx_data": {
+          "width": 8,
+          "events": [
+            [
+              525280,
+              0
+            ]
+          ]
+        },
+        "tx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              525280,
+              0
+            ]
+          ]
+        },
+        "tx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              525280,
+              0
+            ]
+          ]
+        },
+        "SNMP_requests": {
+          "width": 32,
+          "events": [
+            [
+              525280,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "snmp_get_2": {
+      "testbench": "tb_judge_snmp",
+      "source_script": "sim/wave/snmp_get.do",
+      "start_ns": 531660,
+      "end_ns": 531980,
+      "signals": {
+        "rx_valid": {
+          "width": 1,
+          "events": [
+            [
+              531660,
+              0
+            ]
+          ]
+        },
+        "rx_data": {
+          "width": 8,
+          "events": [
+            [
+              531660,
+              0
+            ]
+          ]
+        },
+        "rx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              531660,
+              0
+            ]
+          ]
+        },
+        "rx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              531660,
+              0
+            ]
+          ]
+        },
+        "tx_valid": {
+          "width": 1,
+          "events": [
+            [
+              531660,
+              0
+            ],
+            [
+              531676,
+              1
+            ]
+          ]
+        },
+        "tx_data": {
+          "width": 8,
+          "events": [
+            [
+              531660,
+              0
+            ],
+            [
+              531676,
+              85
+            ],
+            [
+              531732,
+              213
+            ],
+            [
+              531740,
+              3
+            ],
+            [
+              531748,
+              0
+            ],
+            [
+              531780,
+              202
+            ],
+            [
+              531788,
+              2
+            ],
+            [
+              531796,
+              0
+            ],
+            [
+              531812,
+              35
+            ],
+            [
+              531820,
+              69
+            ],
+            [
+              531828,
+              32
+            ],
+            [
+              531836,
+              8
+            ],
+            [
+              531844,
+              0
+            ],
+            [
+              531852,
+              69
+            ],
+            [
+              531860,
+              0
+            ],
+            [
+              531876,
+              74
+            ],
+            [
+              531884,
+              0
+            ],
+            [
+              531916,
+              1
+            ],
+            [
+              531924,
+              17
+            ],
+            [
+              531932,
+              205
+            ],
+            [
+              531940,
+              247
+            ],
+            [
+              531948,
+              10
+            ],
+            [
+              531956,
+              0
+            ],
+            [
+              531972,
+              2
+            ],
+            [
+              531980,
+              224
+            ]
+          ]
+        },
+        "tx_valid_b": {
+          "width": 1,
+          "events": [
+            [
+              531660,
+              0
+            ],
+            [
+              531676,
+              1
+            ]
+          ]
+        },
+        "tx_data_b": {
+          "width": 8,
+          "events": [
+            [
+              531660,
+              0
+            ],
+            [
+              531676,
+              85
+            ],
+            [
+              531732,
+              213
+            ],
+            [
+              531740,
+              3
+            ],
+            [
+              531748,
+              0
+            ],
+            [
+              531780,
+              202
+            ],
+            [
+              531788,
+              2
+            ],
+            [
+              531796,
+              0
+            ],
+            [
+              531812,
+              35
+            ],
+            [
+              531820,
+              69
+            ],
+            [
+              531828,
+              64
+            ],
+            [
+              531836,
+              8
+            ],
+            [
+              531844,
+              0
+            ],
+            [
+              531852,
+              69
+            ],
+            [
+              531860,
+              0
+            ],
+            [
+              531876,
+              74
+            ],
+            [
+              531884,
+              0
+            ],
+            [
+              531916,
+              1
+            ],
+            [
+              531924,
+              17
+            ],
+            [
+              531932,
+              205
+            ],
+            [
+              531940,
+              247
+            ],
+            [
+              531948,
+              10
+            ],
+            [
+              531956,
+              0
+            ],
+            [
+              531972,
+              2
+            ],
+            [
+              531980,
+              224
+            ]
+          ]
+        },
+        "SNMP_requests": {
+          "width": 32,
+          "events": [
+            [
+              531660,
+              1
+            ]
+          ]
+        }
+      }
+    }
+  }
+}

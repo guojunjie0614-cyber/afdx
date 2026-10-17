@@ -1,214 +1,138 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="178pt" viewBox="0 0 450 178">
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="330pt" viewBox="0 0 450 330">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<style>path, line, polygon { stroke-width: 1.0; }</style>
-<text x="88.00" y="25.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">clk</text>
-<path d="M 94.00 27.00 L 94.00 18.00 L 105.00 18.00 L 105.00 27.00 L 116.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 116.00 27.00 L 116.00 18.00 L 127.00 18.00 L 127.00 27.00 L 138.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 138.00 27.00 L 138.00 18.00 L 149.00 18.00 L 149.00 27.00 L 160.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 182.00 27.00 L 182.00 18.00 L 193.00 18.00 L 193.00 27.00 L 204.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 226.00 27.00 L 226.00 18.00 L 237.00 18.00 L 237.00 27.00 L 248.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 270.00 27.00 L 270.00 18.00 L 281.00 18.00 L 281.00 27.00 L 292.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 314.00 27.00 L 314.00 18.00 L 325.00 18.00 L 325.00 27.00 L 336.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 336.00 27.00 L 336.00 18.00 L 347.00 18.00 L 347.00 27.00 L 358.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 380.00 27.00 L 380.00 18.00 L 391.00 18.00 L 391.00 27.00 L 402.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 402.00 27.00 L 402.00 18.00 L 413.00 18.00 L 413.00 27.00 L 424.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 424.00 27.00 L 424.00 18.00 L 435.00 18.00 L 435.00 27.00 L 446.00 27.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="41.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">app_tx_valid</text>
-<path d="M 94.00 43.00 L 116.00 43.00 L 116.00 34.00 L 116.00 34.00 L 138.00 34.00 L 138.00 43.00 L 138.00 43.00 L 160.00 43.00 L 160.00 43.00 L 182.00 43.00 L 182.00 43.00 L 204.00 43.00 L 204.00 43.00 L 226.00 43.00 L 226.00 43.00 L 248.00 43.00 L 248.00 43.00 L 270.00 43.00 L 270.00 43.00 L 292.00 43.00 L 292.00 43.00 L 314.00 43.00 L 314.00 43.00 L 336.00 43.00 L 336.00 43.00 L 358.00 43.00 L 358.00 43.00 L 380.00 43.00 L 380.00 43.00 L 402.00 43.00 L 402.00 43.00 L 424.00 43.00 L 424.00 43.00 L 446.00 43.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="88.00" y="57.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">app_tx_ready</text>
-<path d="M 94.00 50.00 L 116.00 50.00 L 116.00 50.00 L 138.00 50.00 L 138.00 59.00 L 138.00 59.00 L 160.00 59.00 L 160.00 59.00 L 182.00 59.00 L 182.00 50.00 L 182.00 50.00 L 204.00 50.00 L 204.00 50.00 L 226.00 50.00 L 226.00 50.00 L 248.00 50.00 L 248.00 50.00 L 270.00 50.00 L 270.00 50.00 L 292.00 50.00 L 292.00 50.00 L 314.00 50.00 L 314.00 50.00 L 336.00 50.00 L 336.00 50.00 L 358.00 50.00 L 358.00 50.00 L 380.00 50.00 L 380.00 50.00 L 402.00 50.00 L 402.00 50.00 L 424.00 50.00 L 424.00 50.00 L 446.00 50.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="88.00" y="73.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">app_tx_data</text>
-<polygon points="94.00,70.50 95.60,66.00 114.40,66.00 116.00,70.50 114.40,75.00 95.60,75.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="116.00,70.50 117.60,66.00 136.40,66.00 138.00,70.50 136.40,75.00 117.60,75.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
-<text x="127.00" y="72.80" font-size="6.5" text-anchor="middle" fill="#000">B0</text>
-<polygon points="138.00,70.50 139.60,66.00 444.40,66.00 446.00,70.50 444.40,75.00 139.60,75.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="89.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">app_tx_last</text>
-<path d="M 94.00 91.00 L 116.00 91.00 L 116.00 82.00 L 116.00 82.00 L 138.00 82.00 L 138.00 91.00 L 138.00 91.00 L 160.00 91.00 L 160.00 91.00 L 182.00 91.00 L 182.00 91.00 L 204.00 91.00 L 204.00 91.00 L 226.00 91.00 L 226.00 91.00 L 248.00 91.00 L 248.00 91.00 L 270.00 91.00 L 270.00 91.00 L 292.00 91.00 L 292.00 91.00 L 314.00 91.00 L 314.00 91.00 L 336.00 91.00 L 336.00 91.00 L 358.00 91.00 L 358.00 91.00 L 380.00 91.00 L 380.00 91.00 L 402.00 91.00 L 402.00 91.00 L 424.00 91.00 L 424.00 91.00 L 446.00 91.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="88.00" y="105.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">app_tx_vl</text>
-<polygon points="94.00,102.50 95.60,98.00 136.40,98.00 138.00,102.50 136.40,107.00 95.60,107.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="116.00" y="104.80" font-size="6.5" text-anchor="middle" fill="#000">VL 0</text>
-<polygon points="138.00,102.50 139.60,98.00 444.40,98.00 446.00,102.50 444.40,107.00 139.60,107.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="121.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_valid</text>
-<path d="M 94.00 123.00 L 116.00 123.00 L 116.00 123.00 L 138.00 123.00 L 138.00 123.00 L 160.00 123.00 L 160.00 123.00 L 182.00 123.00 L 182.00 123.00 L 204.00 123.00 L 204.00 123.00 L 226.00 123.00 L 226.00 114.00 L 226.00 114.00 L 248.00 114.00 L 248.00 114.00 L 270.00 114.00 L 270.00 114.00 L 292.00 114.00 L 292.00 114.00 L 314.00 114.00 L 314.00 114.00 L 336.00 114.00 L 336.00 114.00 L 358.00 114.00 L 358.00 114.00 L 380.00 114.00 L 380.00 114.00 L 402.00 114.00 L 402.00 123.00 L 402.00 123.00 L 424.00 123.00 L 424.00 123.00 L 446.00 123.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="88.00" y="137.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_data</text>
-<polygon points="94.00,134.50 95.60,130.00 224.40,130.00 226.00,134.50 224.40,139.00 95.60,139.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="226.00,134.50 227.60,130.00 246.40,130.00 248.00,134.50 246.40,139.00 227.60,139.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="237.00" y="136.80" font-size="6.5" text-anchor="middle" fill="#000">55</text>
-<polygon points="248.00,134.50 249.60,130.00 268.40,130.00 270.00,134.50 268.40,139.00 249.60,139.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="270.00,134.50 271.60,130.00 290.40,130.00 292.00,134.50 290.40,139.00 271.60,139.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="281.00" y="136.80" font-size="6.5" text-anchor="middle" fill="#000">D5</text>
-<polygon points="292.00,134.50 293.60,130.00 312.40,130.00 314.00,134.50 312.40,139.00 293.60,139.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="314.00,134.50 315.60,130.00 356.40,130.00 358.00,134.50 356.40,139.00 315.60,139.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="336.00" y="136.80" font-size="6.5" text-anchor="middle" fill="#000">Frame</text>
-<polygon points="358.00,134.50 359.60,130.00 378.40,130.00 380.00,134.50 378.40,139.00 359.60,139.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<polygon points="380.00,134.50 381.60,130.00 400.40,130.00 402.00,134.50 400.40,139.00 381.60,139.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="391.00" y="136.80" font-size="6.5" text-anchor="middle" fill="#000">FCS</text>
-<polygon points="402.00,134.50 403.60,130.00 444.40,130.00 446.00,134.50 444.40,139.00 403.60,139.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="153.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_valid_b</text>
-<path d="M 94.00 155.00 L 116.00 155.00 L 116.00 155.00 L 138.00 155.00 L 138.00 155.00 L 160.00 155.00 L 160.00 155.00 L 182.00 155.00 L 182.00 155.00 L 204.00 155.00 L 204.00 155.00 L 226.00 155.00 L 226.00 146.00 L 226.00 146.00 L 248.00 146.00 L 248.00 146.00 L 270.00 146.00 L 270.00 146.00 L 292.00 146.00 L 292.00 146.00 L 314.00 146.00 L 314.00 146.00 L 336.00 146.00 L 336.00 146.00 L 358.00 146.00 L 358.00 146.00 L 380.00 146.00 L 380.00 146.00 L 402.00 146.00 L 402.00 155.00 L 402.00 155.00 L 424.00 155.00 L 424.00 155.00 L 446.00 155.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="88.00" y="169.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_data_b</text>
-<polygon points="94.00,166.50 95.60,162.00 224.40,162.00 226.00,166.50 224.40,171.00 95.60,171.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="226.00,166.50 227.60,162.00 246.40,162.00 248.00,166.50 246.40,171.00 227.60,171.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="237.00" y="168.80" font-size="6.5" text-anchor="middle" fill="#000">55</text>
-<polygon points="248.00,166.50 249.60,162.00 268.40,162.00 270.00,166.50 268.40,171.00 249.60,171.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="270.00,166.50 271.60,162.00 290.40,162.00 292.00,166.50 290.40,171.00 271.60,171.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="281.00" y="168.80" font-size="6.5" text-anchor="middle" fill="#000">D5</text>
-<polygon points="292.00,166.50 293.60,162.00 312.40,162.00 314.00,166.50 312.40,171.00 293.60,171.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="314.00,166.50 315.60,162.00 356.40,162.00 358.00,166.50 356.40,171.00 315.60,171.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="336.00" y="168.80" font-size="6.5" text-anchor="middle" fill="#000">Frame</text>
-<polygon points="358.00,166.50 359.60,162.00 378.40,162.00 380.00,166.50 378.40,171.00 359.60,171.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<polygon points="380.00,166.50 381.60,162.00 400.40,162.00 402.00,166.50 400.40,171.00 381.60,171.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="391.00" y="168.80" font-size="6.5" text-anchor="middle" fill="#000">FCS</text>
-<polygon points="402.00,166.50 403.60,162.00 444.40,162.00 446.00,166.50 444.40,171.00 403.60,171.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,29.00 171.00,16.00 174.00,16.00 171.00,29.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 29.00 L 171.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 29.00 L 174.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,45.00 171.00,32.00 174.00,32.00 171.00,45.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 45.00 L 171.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 45.00 L 174.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,61.00 171.00,48.00 174.00,48.00 171.00,61.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 61.00 L 171.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 61.00 L 174.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,77.00 171.00,64.00 174.00,64.00 171.00,77.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 77.00 L 171.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 77.00 L 174.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,93.00 171.00,80.00 174.00,80.00 171.00,93.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 93.00 L 171.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 93.00 L 174.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,109.00 171.00,96.00 174.00,96.00 171.00,109.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 109.00 L 171.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 109.00 L 174.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,125.00 171.00,112.00 174.00,112.00 171.00,125.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 125.00 L 171.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 125.00 L 174.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,141.00 171.00,128.00 174.00,128.00 171.00,141.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 141.00 L 171.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 141.00 L 174.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,157.00 171.00,144.00 174.00,144.00 171.00,157.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 157.00 L 171.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 157.00 L 174.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="168.00,173.00 171.00,160.00 174.00,160.00 171.00,173.00" fill="#fff" stroke="none"/>
-<path d="M 168.00 173.00 L 171.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 171.00 173.00 L 174.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,29.00 215.00,16.00 218.00,16.00 215.00,29.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 29.00 L 215.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 29.00 L 218.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,45.00 215.00,32.00 218.00,32.00 215.00,45.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 45.00 L 215.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 45.00 L 218.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,61.00 215.00,48.00 218.00,48.00 215.00,61.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 61.00 L 215.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 61.00 L 218.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,77.00 215.00,64.00 218.00,64.00 215.00,77.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 77.00 L 215.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 77.00 L 218.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,93.00 215.00,80.00 218.00,80.00 215.00,93.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 93.00 L 215.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 93.00 L 218.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,109.00 215.00,96.00 218.00,96.00 215.00,109.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 109.00 L 215.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 109.00 L 218.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,125.00 215.00,112.00 218.00,112.00 215.00,125.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 125.00 L 215.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 125.00 L 218.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,141.00 215.00,128.00 218.00,128.00 215.00,141.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 141.00 L 215.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 141.00 L 218.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,157.00 215.00,144.00 218.00,144.00 215.00,157.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 157.00 L 215.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 157.00 L 218.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="212.00,173.00 215.00,160.00 218.00,160.00 215.00,173.00" fill="#fff" stroke="none"/>
-<path d="M 212.00 173.00 L 215.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 215.00 173.00 L 218.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,29.00 259.00,16.00 262.00,16.00 259.00,29.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 29.00 L 259.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 29.00 L 262.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,45.00 259.00,32.00 262.00,32.00 259.00,45.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 45.00 L 259.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 45.00 L 262.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,61.00 259.00,48.00 262.00,48.00 259.00,61.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 61.00 L 259.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 61.00 L 262.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,77.00 259.00,64.00 262.00,64.00 259.00,77.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 77.00 L 259.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 77.00 L 262.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,93.00 259.00,80.00 262.00,80.00 259.00,93.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 93.00 L 259.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 93.00 L 262.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,109.00 259.00,96.00 262.00,96.00 259.00,109.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 109.00 L 259.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 109.00 L 262.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,125.00 259.00,112.00 262.00,112.00 259.00,125.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 125.00 L 259.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 125.00 L 262.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,141.00 259.00,128.00 262.00,128.00 259.00,141.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 141.00 L 259.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 141.00 L 262.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,157.00 259.00,144.00 262.00,144.00 259.00,157.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 157.00 L 259.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 157.00 L 262.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="256.00,173.00 259.00,160.00 262.00,160.00 259.00,173.00" fill="#fff" stroke="none"/>
-<path d="M 256.00 173.00 L 259.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 259.00 173.00 L 262.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,29.00 303.00,16.00 306.00,16.00 303.00,29.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 29.00 L 303.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 29.00 L 306.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,45.00 303.00,32.00 306.00,32.00 303.00,45.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 45.00 L 303.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 45.00 L 306.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,61.00 303.00,48.00 306.00,48.00 303.00,61.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 61.00 L 303.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 61.00 L 306.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,77.00 303.00,64.00 306.00,64.00 303.00,77.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 77.00 L 303.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 77.00 L 306.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,93.00 303.00,80.00 306.00,80.00 303.00,93.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 93.00 L 303.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 93.00 L 306.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,109.00 303.00,96.00 306.00,96.00 303.00,109.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 109.00 L 303.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 109.00 L 306.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,125.00 303.00,112.00 306.00,112.00 303.00,125.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 125.00 L 303.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 125.00 L 306.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,141.00 303.00,128.00 306.00,128.00 303.00,141.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 141.00 L 303.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 141.00 L 306.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,157.00 303.00,144.00 306.00,144.00 303.00,157.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 157.00 L 303.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 157.00 L 306.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="300.00,173.00 303.00,160.00 306.00,160.00 303.00,173.00" fill="#fff" stroke="none"/>
-<path d="M 300.00 173.00 L 303.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 303.00 173.00 L 306.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,29.00 369.00,16.00 372.00,16.00 369.00,29.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 29.00 L 369.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 29.00 L 372.00 16.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,45.00 369.00,32.00 372.00,32.00 369.00,45.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 45.00 L 369.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 45.00 L 372.00 32.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,61.00 369.00,48.00 372.00,48.00 369.00,61.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 61.00 L 369.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 61.00 L 372.00 48.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,77.00 369.00,64.00 372.00,64.00 369.00,77.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 77.00 L 369.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 77.00 L 372.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,93.00 369.00,80.00 372.00,80.00 369.00,93.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 93.00 L 369.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 93.00 L 372.00 80.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,109.00 369.00,96.00 372.00,96.00 369.00,109.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 109.00 L 369.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 109.00 L 372.00 96.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,125.00 369.00,112.00 372.00,112.00 369.00,125.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 125.00 L 369.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 125.00 L 372.00 112.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,141.00 369.00,128.00 372.00,128.00 369.00,141.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 141.00 L 369.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 141.00 L 372.00 128.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,157.00 369.00,144.00 372.00,144.00 369.00,157.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 157.00 L 369.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 157.00 L 372.00 144.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="366.00,173.00 369.00,160.00 372.00,160.00 369.00,173.00" fill="#fff" stroke="none"/>
-<path d="M 366.00 173.00 L 369.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 369.00 173.00 L 372.00 160.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<line x1="226.00" y1="5.00" x2="226.00" y2="174.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
+<rect x="0.00" y="0.00" width="450.00" height="351.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="0.00" y="8.00" font-size="7" text-anchor="start" fill="#000" font-weight="bold">(a) Application input and dual-network output</text>
+<text x="89.00" y="33.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_valid</text>
+<path d="M 96.00 35.00 L 304.85 35.00 L 304.85 26.00 L 327.15 26.00 L 327.15 35.00 L 337.71 35.00 L 337.71 26.00 L 360.94 26.00 L 360.94 35.00 L 394.03 35.00 L 394.03 26.00 L 418.20 26.00 L 418.20 35.00 L 433.45 35.00 L 433.45 26.00 L 448.00 26.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="50.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_ready</text>
+<path d="M 96.00 43.00 L 305.32 43.00 L 305.32 52.00 L 310.95 52.00 L 310.95 43.00 L 326.91 43.00 L 326.91 52.00 L 336.30 52.00 L 336.30 43.00 L 338.18 43.00 L 338.18 52.00 L 343.81 52.00 L 343.81 43.00 L 360.70 43.00 L 360.70 52.00 L 392.62 52.00 L 392.62 43.00 L 394.50 43.00 L 394.50 52.00 L 400.13 52.00 L 400.13 43.00 L 417.96 43.00 L 417.96 52.00 L 432.04 52.00 L 432.04 43.00 L 433.92 43.00 L 433.92 52.00 L 439.55 52.00 L 439.55 43.00 L 448.00 43.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="67.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_data</text>
+<polygon points="96.00,64.50 97.20,60.00 303.65,60.00 304.85,64.50 303.65,69.00 97.20,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="304.85,64.50 306.05,60.00 325.95,60.00 327.15,64.50 325.95,69.00 306.05,69.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="316.00" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">bytes</text>
+<polygon points="327.15,64.50 328.35,60.00 336.51,60.00 337.71,64.50 336.51,69.00 328.35,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="337.71,64.50 338.91,60.00 359.74,60.00 360.94,64.50 359.74,69.00 338.91,69.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="349.32" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">bytes</text>
+<polygon points="360.94,64.50 362.14,60.00 392.83,60.00 394.03,64.50 392.83,69.00 362.14,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="394.03,64.50 395.23,60.00 417.00,60.00 418.20,64.50 417.00,69.00 395.23,69.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="406.11" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">bytes</text>
+<polygon points="418.20,64.50 419.40,60.00 432.25,60.00 433.45,64.50 432.25,69.00 419.40,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="433.45,64.50 434.65,60.00 446.80,60.00 448.00,64.50 446.80,69.00 434.65,69.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="89.00" y="84.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_valid</text>
+<path d="M 96.00 86.00 L 355.07 86.00 L 355.07 77.00 L 423.59 77.00 L 423.59 86.00 L 448.00 86.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="101.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_data</text>
+<polygon points="96.00,98.50 97.20,94.00 353.87,94.00 355.07,98.50 353.87,103.00 97.20,103.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="355.07,98.50 356.27,94.00 422.39,94.00 423.59,98.50 422.39,103.00 356.27,103.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="389.33" y="100.80" font-size="6.5" text-anchor="middle" fill="#000">bytes</text>
+<polygon points="423.59,98.50 424.79,94.00 446.80,94.00 448.00,98.50 446.80,103.00 424.79,103.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<text x="89.00" y="118.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_valid_b</text>
+<path d="M 96.00 120.00 L 355.07 120.00 L 355.07 111.00 L 423.59 111.00 L 423.59 120.00 L 448.00 120.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="135.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_data_b</text>
+<polygon points="96.00,132.50 97.20,128.00 353.87,128.00 355.07,132.50 353.87,137.00 97.20,137.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="355.07,132.50 356.27,128.00 422.39,128.00 423.59,132.50 422.39,137.00 356.27,137.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="389.33" y="134.80" font-size="6.5" text-anchor="middle" fill="#000">bytes</text>
+<polygon points="423.59,132.50 424.79,128.00 446.80,128.00 448.00,132.50 446.80,137.00 424.79,137.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<line x1="355.07" y1="17.00" x2="355.07" y2="140.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
+<text x="355.07" y="18.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">GMII start 688.108 us</text>
+<path d="M 96.00 146.00 L 448.00 146.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<path d="M 96.00 146.00 L 96.00 149.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="96.00" y="157.00" font-size="6.5" text-anchor="start" fill="#555">685.900</text>
+<path d="M 272.00 146.00 L 272.00 149.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="272.00" y="157.00" font-size="6.5" text-anchor="middle" fill="#555">687.400</text>
+<path d="M 448.00 146.00 L 448.00 149.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="448.00" y="157.00" font-size="6.5" text-anchor="end" fill="#555">688.900</text>
+<text x="88.00" y="157.00" font-size="6.5" text-anchor="end" fill="#555">Time (us)</text>
+<text x="0.00" y="175.00" font-size="7" text-anchor="start" fill="#000" font-weight="bold">(b) GMII byte detail</text>
+<text x="89.00" y="200.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_valid</text>
+<path d="M 96.00 193.00 L 198.08 193.00 L 198.08 202.00 L 448.00 202.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="217.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_data</text>
+<polygon points="96.00,214.50 97.20,210.00 101.84,210.00 103.04,214.50 101.84,219.00 97.20,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<polygon points="103.04,214.50 104.24,210.00 115.92,210.00 117.12,214.50 115.92,219.00 104.24,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="110.08" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">56</text>
+<polygon points="117.12,214.50 118.32,210.00 130.00,210.00 131.20,214.50 130.00,219.00 118.32,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="124.16" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">67</text>
+<polygon points="131.20,214.50 132.40,210.00 144.08,210.00 145.28,214.50 144.08,219.00 132.40,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="138.24" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">79</text>
+<polygon points="145.28,214.50 146.48,210.00 158.16,210.00 159.36,214.50 158.16,219.00 146.48,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="152.32" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">8F</text>
+<polygon points="159.36,214.50 160.56,210.00 172.24,210.00 173.44,214.50 172.24,219.00 160.56,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="166.40" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">A0</text>
+<polygon points="173.44,214.50 174.64,210.00 186.32,210.00 187.52,214.50 186.32,219.00 174.64,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="180.48" y="216.80" font-size="6.5" text-anchor="middle" fill="#000">B2</text>
+<polygon points="187.52,214.50 188.72,210.00 196.88,210.00 198.08,214.50 196.88,219.00 188.72,219.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<polygon points="198.08,214.50 199.28,210.00 446.80,210.00 448.00,214.50 446.80,219.00 199.28,219.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<text x="89.00" y="234.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_tx_last</text>
+<path d="M 96.00 236.00 L 187.52 236.00 L 187.52 227.00 L 198.08 227.00 L 198.08 236.00 L 448.00 236.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="251.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_valid</text>
+<path d="M 96.00 253.00 L 110.08 253.00 L 110.08 244.00 L 448.00 244.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="268.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_data</text>
+<polygon points="96.00,265.50 97.20,261.00 108.88,261.00 110.08,265.50 108.88,270.00 97.20,270.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="110.08,265.50 111.28,261.00 207.44,261.00 208.64,265.50 207.44,270.00 111.28,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="159.36" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">55</text>
+<polygon points="208.64,265.50 209.84,261.00 221.52,261.00 222.72,265.50 221.52,270.00 209.84,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="215.68" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">D5</text>
+<polygon points="222.72,265.50 223.92,261.00 235.60,261.00 236.80,265.50 235.60,270.00 223.92,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="229.76" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">03</text>
+<polygon points="236.80,265.50 238.00,261.00 291.92,261.00 293.12,265.50 291.92,270.00 238.00,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="264.96" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="293.12,265.50 294.32,261.00 306.00,261.00 307.20,265.50 306.00,270.00 294.32,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="300.16" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">64</text>
+<polygon points="307.20,265.50 308.40,261.00 320.08,261.00 321.28,265.50 320.08,270.00 308.40,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="314.24" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">02</text>
+<polygon points="321.28,265.50 322.48,261.00 348.24,261.00 349.44,265.50 348.24,270.00 322.48,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="335.36" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="349.44,265.50 350.64,261.00 362.32,261.00 363.52,265.50 362.32,270.00 350.64,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="356.48" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">12</text>
+<polygon points="363.52,265.50 364.72,261.00 376.40,261.00 377.60,265.50 376.40,270.00 364.72,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="370.56" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">34</text>
+<polygon points="377.60,265.50 378.80,261.00 390.48,261.00 391.68,265.50 390.48,270.00 378.80,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="384.64" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">20</text>
+<polygon points="391.68,265.50 392.88,261.00 404.56,261.00 405.76,265.50 404.56,270.00 392.88,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="398.72" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">08</text>
+<polygon points="405.76,265.50 406.96,261.00 418.64,261.00 419.84,265.50 418.64,270.00 406.96,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="412.80" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="419.84,265.50 421.04,261.00 432.72,261.00 433.92,265.50 432.72,270.00 421.04,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="426.88" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">45</text>
+<polygon points="433.92,265.50 435.12,261.00 446.80,261.00 448.00,265.50 446.80,270.00 435.12,270.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="440.96" y="267.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<text x="89.00" y="285.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_valid_b</text>
+<path d="M 96.00 287.00 L 110.08 287.00 L 110.08 278.00 L 448.00 278.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="302.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">tx_data_b</text>
+<polygon points="96.00,299.50 97.20,295.00 108.88,295.00 110.08,299.50 108.88,304.00 97.20,304.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="110.08,299.50 111.28,295.00 207.44,295.00 208.64,299.50 207.44,304.00 111.28,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="159.36" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">55</text>
+<polygon points="208.64,299.50 209.84,295.00 221.52,295.00 222.72,299.50 221.52,304.00 209.84,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="215.68" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">D5</text>
+<polygon points="222.72,299.50 223.92,295.00 235.60,295.00 236.80,299.50 235.60,304.00 223.92,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="229.76" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">03</text>
+<polygon points="236.80,299.50 238.00,295.00 291.92,295.00 293.12,299.50 291.92,304.00 238.00,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="264.96" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="293.12,299.50 294.32,295.00 306.00,295.00 307.20,299.50 306.00,304.00 294.32,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="300.16" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">64</text>
+<polygon points="307.20,299.50 308.40,295.00 320.08,295.00 321.28,299.50 320.08,304.00 308.40,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="314.24" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">02</text>
+<polygon points="321.28,299.50 322.48,295.00 348.24,295.00 349.44,299.50 348.24,304.00 322.48,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="335.36" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="349.44,299.50 350.64,295.00 362.32,295.00 363.52,299.50 362.32,304.00 350.64,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="356.48" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">12</text>
+<polygon points="363.52,299.50 364.72,295.00 376.40,295.00 377.60,299.50 376.40,304.00 364.72,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="370.56" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">34</text>
+<polygon points="377.60,299.50 378.80,295.00 390.48,295.00 391.68,299.50 390.48,304.00 378.80,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="384.64" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">40</text>
+<polygon points="391.68,299.50 392.88,295.00 404.56,295.00 405.76,299.50 404.56,304.00 392.88,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="398.72" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">08</text>
+<polygon points="405.76,299.50 406.96,295.00 418.64,295.00 419.84,299.50 418.64,304.00 406.96,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="412.80" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<polygon points="419.84,299.50 421.04,295.00 432.72,295.00 433.92,299.50 432.72,304.00 421.04,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="426.88" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">45</text>
+<polygon points="433.92,299.50 435.12,295.00 446.80,295.00 448.00,299.50 446.80,304.00 435.12,304.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
+<text x="440.96" y="301.80" font-size="6.5" text-anchor="middle" fill="#000">00</text>
+<path d="M 96.00 313.00 L 448.00 313.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<path d="M 96.00 313.00 L 96.00 316.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="96.00" y="324.00" font-size="6.5" text-anchor="start" fill="#555">688.100</text>
+<path d="M 272.00 313.00 L 272.00 316.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="272.00" y="324.00" font-size="6.5" text-anchor="middle" fill="#555">688.200</text>
+<path d="M 448.00 313.00 L 448.00 316.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="448.00" y="324.00" font-size="6.5" text-anchor="end" fill="#555">688.300</text>
+<text x="88.00" y="324.00" font-size="6.5" text-anchor="end" fill="#555">Time (us)</text>
 </svg>

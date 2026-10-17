@@ -1,34 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="330pt" height="200pt" viewBox="0 0 330 200">
-<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<rect x="5.00" y="2.00" width="205.00" height="32.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
-<text x="107.50" y="17.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Testbench self-check</text>
-<text x="107.50" y="25.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">[RESULT] PASS, errors=0</text>
-<rect x="5.00" y="58.00" width="205.00" height="32.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
-<text x="107.50" y="73.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Independent reference check</text>
-<text x="107.50" y="81.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">checker passes, errors=0</text>
-<rect x="5.00" y="114.00" width="205.00" height="32.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
-<text x="107.50" y="129.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Netlist only: exact external records</text>
-<text x="107.50" y="137.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">byte-for-byte equality with RTL reference</text>
-<rect x="67.50" y="172.00" width="80.00" height="24.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
-<text x="107.50" y="187.42" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">PASS</text>
-<rect x="265.00" y="58.00" width="60.00" height="32.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
-<text x="295.00" y="77.42" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">FAIL</text>
-<path d="M 107.50 34.00 L 107.50 58.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="107.50,58.00 105.40,53.00 109.60,53.00" fill="#000"/>
-<text x="115.50" y="49.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">yes</text>
-<path d="M 107.50 90.00 L 107.50 114.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="107.50,114.00 105.40,109.00 109.60,109.00" fill="#000"/>
-<text x="115.50" y="105.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">yes</text>
-<path d="M 107.50 146.00 L 107.50 172.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="107.50,172.00 105.40,167.00 109.60,167.00" fill="#000"/>
-<text x="115.50" y="162.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">yes</text>
-<path d="M 210.00 18.00 L 240.00 18.00 L 240.00 74.00 L 265.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="265.00,74.00 260.00,76.10 260.00,71.90" fill="#000"/>
-<text x="224.00" y="13.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">no</text>
-<path d="M 210.00 74.00 L 240.00 74.00 L 240.00 74.00 L 265.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="265.00,74.00 260.00,76.10 260.00,71.90" fill="#000"/>
-<text x="224.00" y="69.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">no</text>
-<path d="M 210.00 130.00 L 240.00 130.00 L 240.00 74.00 L 265.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="265.00,74.00 260.00,76.10 260.00,71.90" fill="#000"/>
-<text x="224.00" y="125.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">no</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 376" width="720" height="376">
+  <defs>
+    <marker id="arr-blk" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 1.5 L 7 4 L 1 6.5 z" fill="#000000"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 1.5 L 7 4 L 1 6.5 z" fill="#2F9688"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 1.5 L 7 4 L 1 6.5 z" fill="#D9813F"/>
+    </marker>
+    <marker id="arr-gray" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 1 1.5 L 7 4 L 1 6.5 z" fill="#666666"/>
+    </marker>
+  </defs>
+  <style>
+    text {
+      font-family: Arial, Helvetica, sans-serif;
+      text-rendering: geometricPrecision;
+    }
+  </style>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+
+<style>text {font-family:'Arial Narrow',Arial,sans-serif;}</style>
+<rect x="16" y="16" width="452" height="94" fill="#DCE8F4" stroke="#000000" stroke-width="1.05"/>
+<rect x="16" y="16" width="452" height="28" fill="#B7CFE7" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="36" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 1: TESTBENCH SELF-CHECK</text>
+<text x="242" y="64" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">Runtime protocol and interface checks (all tests)</text>
+<rect x="25" y="74" width="434" height="27" fill="#FFFFFF" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="93" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: PASS result; errors = 0</text>
+<rect x="16" y="140" width="452" height="94" fill="#F0F0F0" stroke="#000000" stroke-width="1.05"/>
+<rect x="16" y="140" width="452" height="28" fill="#D7D7D7" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="160" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 2: PYTHON REFERENCE CHECK</text>
+<text x="242" y="188" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">For tests with a reference checker</text>
+<rect x="25" y="198" width="434" height="27" fill="#FEF0C9" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="217" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: Checker passes; errors = 0</text>
+<rect x="16" y="264" width="452" height="98" fill="#E3EDE4" stroke="#000000" stroke-width="1.05"/>
+<rect x="16" y="264" width="452" height="28" fill="#C2D5C1" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="284" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 3: RTL / NETLIST RECORD COMPARISON</text>
+<text x="242" y="312" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">For netlist tests with RTL record comparison</text>
+<rect x="25" y="322" width="434" height="27" fill="#E0EDDF" stroke="#000000" stroke-width="1.05"/>
+<text x="242" y="341" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: Same stimulus; byte-for-byte record match</text>
+<rect x="531" y="135" width="174" height="80" fill="#B75854" stroke="#000000" stroke-width="1.05"/>
+<text x="618" y="173" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="middle">VERDICT: FAIL</text>
+<text x="618" y="194" font-size="16" font-weight="normal" fill="#FFFFFF" text-anchor="middle">Test failed</text>
+<rect x="531" y="302" width="174" height="60" fill="#347F58" stroke="#000000" stroke-width="1.05"/>
+<text x="618" y="330" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="middle">VERDICT: PASS</text>
+<text x="618" y="350" font-size="14.5" font-weight="normal" fill="#FFFFFF" text-anchor="middle">Applicable checks passed</text>
+<path d="M 242 110 L 242 140" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="266" y="132" font-size="16" font-weight="bold" fill="#347F58" text-anchor="middle">YES</text>
+<path d="M 242 234 L 242 264" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="284" y="256" font-size="14.5" font-weight="bold" fill="#347F58" text-anchor="middle">YES / N/A</text>
+<path d="M 468 63 L 618 63 L 618 135" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="500" y="57" font-size="16" font-weight="bold" fill="#965625" text-anchor="middle">NO</text>
+<path d="M 468 187 L 531 187" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="500" y="181" font-size="16" font-weight="bold" fill="#965625" text-anchor="middle">NO</text>
+<path d="M 468 281 L 618 281 L 618 215" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="500" y="275" font-size="16" font-weight="bold" fill="#965625" text-anchor="middle">NO</text>
+<path d="M 468 334 L 531 334" fill="none" stroke="#000000" stroke-width="1.1" marker-end="url(#arr-blk)"/>
+<text x="500" y="328" font-size="14.5" font-weight="bold" fill="#347F58" text-anchor="middle">YES / N/A</text>
 </svg>
