@@ -51,10 +51,8 @@ module afdx_tx_builder #(
     // pending/prepared 记录下一条消息的准备进度。
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg pending, prepared, stream_active, p_a, p_b, p_timed;
-    // 数据支路的本地镜像逐点复制源标志的写入，不延迟启动条件。
-    (* preserve = 1, dont_merge = 1 *) reg prepared_c, time_due_c;
 
-    // prep 用十拍算出 IPv4 头校验和，每拍只累加一项。
+    // prep 用十拍算出 IPv4 头校验和，每拍只做一次加法。
     // prep=0：计算 IPv4 和 UDP 的长度字段，下一拍转 1。
     // prep=1：加上 IPv4 总长度字段，下一拍转 2。
     // prep=2：加上 IPv4 标识字段，下一拍转 3。
@@ -97,14 +95,9 @@ module afdx_tx_builder #(
     reg [10:0] p_len, active_len, payload_index;
     reg [7:0] p_sn, p_page, active_sn;
     reg [19:0] sum;
-    // 加数提前一相位选好，低 16 位分成两个字节，分别使用 9 位加法保留进位。
-    (* preserve = 1, dont_merge = 1 *) reg [15:0] add_term_q;
-    (* preserve = 1, dont_merge = 1 *) reg [7:0] sum_b0;
-    (* preserve = 1, dont_merge = 1 *) reg [7:0] sum_b1;
+    // 校验和的低 16 位与进位分开累加，每步的加法链不超过 16 位。
+    reg [15:0] sum_low;
     reg [3:0] sum_high;
-    wire [8:0] add_lo9 = {1'b0, sum_b0} + {1'b0, add_term_q[7:0]};
-    wire [8:0] add_hi9 = {1'b0, sum_b1} + {1'b0, add_term_q[15:8]} + {8'b0, add_lo9[8]};
-    wire carry_hi = add_hi9[8];
 
     // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
     // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
@@ -132,7 +125,6 @@ module afdx_tx_builder #(
     // 字节队列有八项，归还页号的队列有四项，都使用寄存器。
     reg [63:0] payload_fifo;
     reg [2:0] fifo_wr, fifo_rd;
-    (* preserve = 1, dont_merge = 1 *) reg [7:0] fifo_head;
     reg [3:0] fifo_count;
     reg issue_end;
     reg [7:0] issue_page, return_page0, return_page1;
@@ -145,7 +137,6 @@ module afdx_tx_builder #(
     wire fifo_pop = s_valid && s_ready[0] && ! s_last &&
         ((part == PART_HEADER && header_index == HEADER_LAST)
         || (part == PART_PAYLOAD && payload_index < active_len));
-    wire [2:0] fifo_rd_next = fifo_pop ? fifo_rd + 1'b1 : fifo_rd;
     wire return_push = payload_pipe[1] && return_pipe[1];
     wire return_pop = ( ! ret_valid || ret_ready) && return_count != 0;
     reg [TX_OFF_AW - 1:0] fetch_offset;
@@ -184,7 +175,6 @@ module afdx_tx_builder #(
         if (reset) begin
             pending <= 0;
             prepared <= 0;
-            prepared_c <= 0;
             stream_active <= 0;
             prep <= 0;
             p_a <= 0;
@@ -206,14 +196,11 @@ module afdx_tx_builder #(
             udp_length <= 0;
             checksum <= 0;
             sum <= 0;
-            add_term_q <= 0;
-            sum_b0 <= 0;
-            sum_b1 <= 0;
+            sum_low <= 0;
             sum_high <= 0;
             now_q <= 0;
             time_difference <= 0;
             time_due <= 0;
-            time_due_c <= 0;
             start_valid <= 0;
             t_start <= 0;
             payload_re <= 0;
@@ -243,7 +230,6 @@ module afdx_tx_builder #(
             payload_fifo <= 0;
             fifo_wr <= 0;
             fifo_rd <= 0;
-            fifo_head <= 0;
             fifo_count <= 0;
             issue_end <= 0;
             issue_page <= 0;
@@ -270,8 +256,6 @@ module afdx_tx_builder #(
             // 等价于上一版下一拍的有符号“差值 >= -4”，包含 32 位回绕边界。
             time_due <= !p_timed || time_difference < 32'h7fffffff
                 || time_difference >= START_LEAD_REGISTERED;
-            time_due_c <= !p_timed || time_difference < 32'h7fffffff
-                || time_difference >= START_LEAD_REGISTERED;
             payload_re <= 0;
             pnext_re <= 0;
             start_valid <= 0;
@@ -286,16 +270,11 @@ module afdx_tx_builder #(
             return_page0 <= issue_page;
             return_page1 <= return_page0;
             if (pnext_pipe[1]) next_page <= pnext_qr;
-            // 按下一读指针预取，输出支路不再经过队列的动态字节选择。
-            // 剩一项且同拍推入/弹出时，新队首正被写入，须旁路旧数组值；
-            // 空队列首次写入也走旁路。新帧读指针归零后，帧头阶段完成重新预取。
-            if (fifo_push && fifo_wr == fifo_rd_next) fifo_head <= payload_qr;
-            else fifo_head <= payload_fifo[{fifo_rd_next, 3'b0} +: 8];
             if (fifo_push) begin
                 payload_fifo[{fifo_wr, 3'b0} +: 8] <= payload_qr;
                 fifo_wr <= fifo_wr + 1'b1;
             end
-            if (fifo_pop) fifo_rd <= fifo_rd_next;
+            if (fifo_pop) fifo_rd <= fifo_rd + 1'b1;
             case ({fifo_push, fifo_pop})
                 2'b10 : fifo_count <= fifo_count + 1'b1;
                 2'b01 : fifo_count <= fifo_count - 1'b1;
@@ -333,7 +312,6 @@ module afdx_tx_builder #(
             if (grant_valid && grant_ready) begin
                 pending <= 1;
                 prepared <= 0;
-                prepared_c <= 0;
                 prep <= 0;
                 p_a <= grant_a;
                 p_b <= grant_b;
@@ -353,48 +331,31 @@ module afdx_tx_builder #(
             end
             else if (pending && ! prepared) begin
                 prep <= prep + 1'b1;
-                // 本拍预选下一相位的加数；相位 0 直接算新长度，不能取 ip_length 的旧值。
-                case (prep)
-                    0 : add_term_q <= p_len + IP_UDP_OVERHEAD;
-                    1 : add_term_q <= p_ident;
-                    2 : add_term_q <= p_src[31:16];
-                    3 : add_term_q <= p_src[15:0];
-                    4 : add_term_q <= p_dst[31:16];
-                    5 : add_term_q <= p_dst[15:0];
-                    default : ;
-                endcase
                 case (prep)
                     0 : begin
                         ip_length <= p_len + IP_UDP_OVERHEAD;
                         udp_length <= p_len + UDP_HEADER_LENGTH;
                         // 校验和从两个固定字段之和开始累加：
                         // 0x4500（版本 4、头长 20 字节）加 0x0111（生存时间 1、协议号 17 即 UDP）。
-                        sum_b0 <= IP_SUM_SEED[7:0];
-                        sum_b1 <= IP_SUM_SEED[15:8];
+                        sum_low <= IP_SUM_SEED[15:0];
                         sum_high <= IP_SUM_SEED[19:16];
                     end
-                    // 两个字节共用已寄存加数，高字节溢出单独累计；准备相位和输出拍次不变。
-                    1, 2, 3, 4, 5, 6 : begin
-                        sum_b0 <= add_lo9[7:0];
-                        sum_b1 <= add_hi9[7:0];
-                        sum_high <= sum_high + carry_hi;
-                    end
-                    7 : sum <= { 4'b0, sum_b1, sum_b0 } + sum_high;
+                    // 低 16 位加法和进位累加并行，进位不再串行穿过整个 20 位加法器；
+                    // 17 位常量把加法提升到 17 位，使 >= 取到真实进位。
+                    1 : begin sum_low <= sum_low + ip_length; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, ip_length} >= 17'h10000); end
+                    2 : begin sum_low <= sum_low + p_ident; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_ident} >= 17'h10000); end
+                    3 : begin sum_low <= sum_low + p_src[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[31:16]} >= 17'h10000); end
+                    4 : begin sum_low <= sum_low + p_src[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[15:0]} >= 17'h10000); end
+                    5 : begin sum_low <= sum_low + p_dst[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[31:16]} >= 17'h10000); end
+                    6 : begin sum_low <= sum_low + p_dst[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[15:0]} >= 17'h10000); end
+                    7 : sum <= { 4'b0, sum_low } + sum_high;
                     8 : sum <= { 4'b0, sum[15:0] } + sum[19:16];
                     9 : begin
                         checksum <= ~ sum[15:0];
                         prepared <= 1;
-                        prepared_c <= 1;
                     end
                     default : ;
                 endcase
-            end
-            // 仅字节寄存器使用本地启动标志；后面的握手写入仍保持原覆盖优先级。
-            if (pending && prepared_c && ! stream_active && time_due_c) begin
-                // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
-                // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
-                s_data_a <= DMAC_BYTE0;
-                s_data_b <= DMAC_BYTE0;
             end
             // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
             if (pending && prepared && ! stream_active && time_due) begin
@@ -403,6 +364,11 @@ module afdx_tx_builder #(
                 s_last <= 0;
                 s_en_a <= p_a;
                 s_en_b <= p_b;
+                // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
+                // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
+
+                s_data_a <= DMAC_BYTE0;
+                s_data_b <= DMAC_BYTE0;
                 header_index <= 0;
                 part <= PART_HEADER;
                 active_len <= p_len;
@@ -423,7 +389,6 @@ module afdx_tx_builder #(
                 t_start <= now;
                 pending <= 0;
                 prepared <= 0;
-                prepared_c <= 0;
                 complete_a <= s_en_a;
                 complete_b <= s_en_b;
                 bad <= 0;
@@ -448,8 +413,8 @@ module afdx_tx_builder #(
                 end
                 else if (part == PART_HEADER || (part == PART_PAYLOAD && payload_index < active_len)) begin
                     part <= PART_PAYLOAD;
-                    s_data_a <= fifo_head;
-                    s_data_b <= fifo_head;
+                    s_data_a <= payload_fifo[{fifo_rd, 3'b0} +: 8];
+                    s_data_b <= payload_fifo[{fifo_rd, 3'b0} +: 8];
                     payload_index <= payload_index + 1'b1;
                 end
                 else if (part == PART_PAYLOAD) begin

@@ -19,7 +19,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     input wire [2:0] host_read_addr,
     input wire host_read,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
-    // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块选通方向的负载。
+    // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块写选通方向的负载。
     (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
     // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
     output wire [7:0] snmp_wr_sel,
@@ -223,18 +223,13 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // read_loader 的取值：SEL_SHARED 这一组里再选哪个读值。
     localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
 
-    // 完整独热读源：共享组的三个子项各占一位，远端数据不再经过二级选择。
-    localparam OH_REGS = 0, OH_TX = 1, OH_A = 2, OH_B = 3, OH_RTC = 4;
-    localparam OH_SNMP_CONTROL = 5, OH_SNMP_STATUS = 6;
-    localparam OH_SHARED_LOAD = 7, OH_SHARED_LOAD_EXTRA = 8, OH_SHARED_DESCR = 9;
-
     // read_valid/read_select 将读有效标记与两拍后的数据对齐。
-    // read_loader/read_sel_* 与完整独热选择同拍寄存，第二拍只使用 read_sel_oh 与或读值。
+    // read_loader 选择共享地址组中的服务读值；
+    // read_sel_* 把共享组二次选择预译码成独热位，第二拍只剩一级选择。
     reg read_valid;
     reg [2:0] read_select;
     reg [1:0] read_loader;
     reg read_sel_load, read_sel_extra;
-    (* preserve = 1, dont_merge = 1 *) reg [9:0] read_sel_oh;
     // pending 表示主机写请求已受理；发送写在真实应答后一拍恢复就绪，地址和数据继续保持。
     reg tx_pending, rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
@@ -318,8 +313,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
 
     reg [2:0] mib_group;
     reg [1:0] mib_loader;
-    // 主机直接译码，MIB 使用前一拍译码；组选择与共享子项在同一边界寄存。
-    wire [2:0] read_sel_next = host_read ? group_select(cfg_write_addr) : mib_group;
+    // 与 read_loader 同拍的共享组独热选择，预译码只进本地寄存器。
     wire [1:0] read_loader_next = host_read ? loader_select(cfg_write_addr) : mib_loader;
     wire [31:0] status_value = {31'b0, tx_ready};
     wire [31:0] user_value = {16'b0, user_id};
@@ -555,41 +549,29 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             read_loader <= 0;
             read_sel_load <= 0;
             read_sel_extra <= 0;
-            read_sel_oh <= 10'b0000000001;
             cfg_rdata <= 0;
         end
         else begin
             // 读请求到来时保存此前的计数值，本拍新事件不计入此次读值。
             // 第一拍保存各组读值，第二拍选择本次请求对应的一组。
             read_valid <= cfg_rd;
-            read_select <= read_sel_next;
+            read_select <= host_read ? group_select(cfg_write_addr) : mib_group;
             read_loader <= read_loader_next;
             read_sel_load <= read_loader_next == SHARED_LOAD;
             read_sel_extra <= read_loader_next == SHARED_LOAD_EXTRA;
-            read_sel_oh[OH_REGS] <= read_sel_next == SEL_REGS;
-            read_sel_oh[OH_TX] <= read_sel_next == SEL_TX;
-            read_sel_oh[OH_A] <= read_sel_next == SEL_A;
-            read_sel_oh[OH_B] <= read_sel_next == SEL_B;
-            read_sel_oh[OH_RTC] <= read_sel_next == SEL_RTC;
-            read_sel_oh[OH_SNMP_CONTROL] <= read_sel_next == SEL_SNMP_CONTROL;
-            read_sel_oh[OH_SNMP_STATUS] <= read_sel_next == SEL_SNMP_STATUS;
-            read_sel_oh[OH_SHARED_LOAD] <= read_sel_next == SEL_SHARED && read_loader_next == SHARED_LOAD;
-            read_sel_oh[OH_SHARED_LOAD_EXTRA] <= read_sel_next == SEL_SHARED && read_loader_next == SHARED_LOAD_EXTRA;
-            // 保留共享组原来的加载、附加、描述默认选择顺序。
-            read_sel_oh[OH_SHARED_DESCR] <= read_sel_next == SEL_SHARED
-                && read_loader_next != SHARED_LOAD && read_loader_next != SHARED_LOAD_EXTRA;
-            // 读数据摊平与或，仍在请求后第二拍返回；空闲拍沿用原来的更新方式。
+            // 读结果分两级选择，并在请求后第二拍返回。
             cfg_rvalid <= read_valid;
-            cfg_rdata <= ({32{read_sel_oh[OH_REGS]}} & read_regs)
-                | ({32{read_sel_oh[OH_TX]}} & read_tx)
-                | ({32{read_sel_oh[OH_A]}} & read_a)
-                | ({32{read_sel_oh[OH_B]}} & read_b)
-                | ({32{read_sel_oh[OH_RTC]}} & rtc_rdata)
-                | ({32{read_sel_oh[OH_SNMP_CONTROL]}} & snmp_control_data)
-                | ({32{read_sel_oh[OH_SNMP_STATUS]}} & snmp_status_data)
-                | ({32{read_sel_oh[OH_SHARED_LOAD]}} & load_rdata)
-                | ({32{read_sel_oh[OH_SHARED_LOAD_EXTRA]}} & load_extra_data)
-                | ({32{read_sel_oh[OH_SHARED_DESCR]}} & snmp_descr_data);
+            case (read_select)
+                SEL_REGS : cfg_rdata <= read_regs;
+                SEL_TX : cfg_rdata <= read_tx;
+                SEL_A : cfg_rdata <= read_a;
+                SEL_B : cfg_rdata <= read_b;
+                SEL_RTC : cfg_rdata <= rtc_rdata;
+                SEL_SNMP_CONTROL : cfg_rdata <= snmp_control_data;
+                SEL_SNMP_STATUS : cfg_rdata <= snmp_status_data;
+                SEL_SHARED : cfg_rdata <= read_sel_load ? load_rdata
+                    : read_sel_extra ? load_extra_data : snmp_descr_data;
+            endcase
         end
     end
 
