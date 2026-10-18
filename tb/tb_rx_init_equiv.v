@@ -13,12 +13,23 @@ module tb_rx_init_equiv #(parameter COPIES = 32);
     integer cycle = 0, epoch = 0, errors = 0, checks = 0;
     integer rise_new = -1, rise_old = -1;
     reg was_new = 0, was_old = 0;
+    // 新核只让目标 bank 所属副本写入，其余副本给出另一 bank 的干扰地址，映射错误即与 R5 不符。
+    integer owner_copy = 0;
+    wire [COPIES-1:0] owner_we;
+    wire [COPIES*16-1:0] owner_address;
+    wire [COPIES*32-1:0] owner_data;
+    genvar copy;
+    generate for (copy=0;copy<COPIES;copy=copy+1) begin : owner
+        assign owner_we[copy] = cfg_map_write && copy == owner_copy;
+        assign owner_address[copy*16 +: 16] = copy == owner_copy ? cfg_address : cfg_address ^ 16'h8040;
+        assign owner_data[copy*32 +: 32] = copy == owner_copy ? cfg_data : 32'h00001fff;
+    end endgenerate
 
     afdx_rx_core #(.CFG_COPIES(COPIES)) dut (
         .clk(clk),.reset(reset),.now_c(16'b0),
         .rx_data_a(8'b0),.rx_valid_a(1'b0),.rx_data_b(8'b0),.rx_valid_b(1'b0),
-        .cfg_map_we({COPIES{cfg_map_write}}),.cfg_cfg_we(cfg_cfg_write),
-        .cfg_addr({COPIES{cfg_address}}),.cfg_wdata({COPIES{cfg_data}}),
+        .cfg_map_we(owner_we),.cfg_cfg_we(cfg_cfg_write),
+        .cfg_addr(owner_address),.cfg_wdata(owner_data),
         .d_valid(outputs_new[84]),.d_data(outputs_new[83:76]),.d_last(outputs_new[75]),
         .d_vl(outputs_new[74:63]),.d_sport(outputs_new[62:47]),.d_dport(outputs_new[46:31]),
         .d_net(outputs_new[30]),.init_done(init_new),.cfg_ok(cfg_ok_new),
@@ -37,7 +48,8 @@ module tb_rx_init_equiv #(parameter COPIES = 32);
         .ev_rm_drop(outputs_old[13]),.ev_deliver(outputs_old[12]));
     assign outputs_old[11:0] = 0;
 
-    task check;
+    // 三十多个进程同拍调用；静态任务共享 condition，会漏记不一致。
+    task automatic check;
         input condition;
         begin
             checks = checks + 1;
@@ -124,6 +136,7 @@ module tb_rx_init_equiv #(parameter COPIES = 32);
                     timeout=0;
                     while (!(&cfg_ok_new) && timeout<1000) begin @(negedge clk);timeout=timeout+1;end
                     check(timeout<1000);
+                    owner_copy=slot/(32/COPIES);
                     cfg_address=slot*2048+13;cfg_data=32'h00001000+slot;cfg_map_write=1;
                     @(negedge clk);cfg_map_write=0;
                     repeat(6) @(negedge clk);
