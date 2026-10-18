@@ -98,6 +98,10 @@ module afdx_tx_builder #(
     // 校验和的低 16 位与进位分开累加，每步的加法链不超过 16 位。
     reg [15:0] sum_low;
     reg [3:0] sum_high;
+    // 下一次累加的字段提前一拍锁存，低位加法和进位路径不再经过字段选择器。
+    reg [15:0] sum_operand;
+    localparam [19:0] IP_SUM_LENGTH_SEED = IP_SUM_SEED + IP_UDP_OVERHEAD;
+    wire [16:0] sum_step = {1'b0, sum_low} + {1'b0, sum_operand};
 
     // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
     // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
@@ -198,6 +202,7 @@ module afdx_tx_builder #(
             sum <= 0;
             sum_low <= 0;
             sum_high <= 0;
+            sum_operand <= 0;
             now_q <= 0;
             time_difference <= 0;
             time_due <= 0;
@@ -332,22 +337,28 @@ module afdx_tx_builder #(
             else if (pending && ! prepared) begin
                 prep <= prep + 1'b1;
                 case (prep)
+                    0 : sum_operand <= p_len;
+                    1 : sum_operand <= p_ident;
+                    2 : sum_operand <= p_src[31:16];
+                    3 : sum_operand <= p_src[15:0];
+                    4 : sum_operand <= p_dst[31:16];
+                    5 : sum_operand <= p_dst[15:0];
+                    default : ;
+                endcase
+                case (prep)
                     0 : begin
                         ip_length <= p_len + IP_UDP_OVERHEAD;
                         udp_length <= p_len + UDP_HEADER_LENGTH;
                         // 校验和从两个固定字段之和开始累加：
-                        // 0x4500（版本 4、头长 20 字节）加 0x0111（生存时间 1、协议号 17 即 UDP）。
-                        sum_low <= IP_SUM_SEED[15:0];
-                        sum_high <= IP_SUM_SEED[19:16];
+                        // 0x4500（版本和头长）加 0x0111（TTL和UDP）再加固定28字节头长；后续只累加原始负载长度。
+                        sum_low <= IP_SUM_LENGTH_SEED[15:0];
+                        sum_high <= IP_SUM_LENGTH_SEED[19:16];
                     end
-                    // 低 16 位加法和进位累加并行，进位不再串行穿过整个 20 位加法器；
-                    // 17 位常量把加法提升到 17 位，使 >= 取到真实进位。
-                    1 : begin sum_low <= sum_low + ip_length; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, ip_length} >= 17'h10000); end
-                    2 : begin sum_low <= sum_low + p_ident; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_ident} >= 17'h10000); end
-                    3 : begin sum_low <= sum_low + p_src[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[31:16]} >= 17'h10000); end
-                    4 : begin sum_low <= sum_low + p_src[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_src[15:0]} >= 17'h10000); end
-                    5 : begin sum_low <= sum_low + p_dst[31:16]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[31:16]} >= 17'h10000); end
-                    6 : begin sum_low <= sum_low + p_dst[15:0]; sum_high <= sum_high + ({1'b0, sum_low} + {1'b0, p_dst[15:0]} >= 17'h10000); end
+                    // prep=1..6 的加数由上一拍准备，累加次数及最后两次回卷不变。
+                    1, 2, 3, 4, 5, 6 : begin
+                        sum_low <= sum_step[15:0];
+                        sum_high <= sum_high + sum_step[16];
+                    end
                     7 : sum <= { 4'b0, sum_low } + sum_high;
                     8 : sum <= { 4'b0, sum[15:0] } + sum[19:16];
                     9 : begin
