@@ -22,7 +22,7 @@ FPGA 工具 & eLinx 3.0.7（工程、综合、行为仿真） \\
 
 系统级测试平台由两个完整的 \code{AFDX_top} 经 A、B 两网互连构成（图~\ref{fig:platform}）。两端之间为四条单向 GMII 链路，链路模型可对任意一帧施加延迟、丢弃、改写字节或重放。
 
-\figN[双端双网测试平台]{t01_platform}{双端双网测试平台。激励经公开端口驱动两个 \texttt{AFDX\_top}；链路模型在四条单向 GMII 链路上施加延迟和故障；端口监视器写出文本记录，由参考检查器重建每条消息和每一帧的去向}{fig:platform}
+\figN[双端双网测试平台]{t01_platform}{双端双网测试平台。激励经公开端口驱动两个 \texttt{AFDX\_top}；链路模型在四条单向 GMII 链路上施加延迟和故障；端口监视器写出文本记录，由参考检查器重建帧传输与消息交付过程}{fig:platform}
 
 测试平台通过顶层端口驱动被测设计：配置口写 VL 参数、读统计计数，应用口提交和接收消息，GMII 口收发帧。RTL 和综合后网表采用同一套激励。监视器记录握手、线路字节、事件脉冲、配置读回、应用消息交付及对应的时钟周期编号，用于功能和时序检查。
 
@@ -35,7 +35,7 @@ FPGA 工具 & eLinx 3.0.7（工程、综合、行为仿真） \\
 \thead{组件} & \thead{作用} \\
 \midrule
 \code{sys_suite}、\code{sys_endpoint} & 驱动系统级测试的两个端系统，记录配置、提交、交付和事件 \\
-\code{link_model} & 在 GMII 链路上施加延迟、丢帧、改字节、重放，并记录每次操作 \\
+\code{link_model} & 在 GMII 链路上施加延迟、丢帧、字节改写和重放，并记录每次操作 \\
 \code{line_driver}、\code{line_monitor} & 向线路送帧；记录线路上的每一帧并检查帧间隔 \\
 \code{mac_tx_suite}、\code{tx_core_suite}、\code{rx_core_suite} & MAC、发送核心、接收核心的模块级测试框架 \\
 \code{snmp_test_endpoint}、\code{load_test_endpoint} & SNMP 管理端和 615A 加载端，收发服务报文 \\

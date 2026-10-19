@@ -24,7 +24,7 @@
 <rect x="160.00" y="164.00" width="80.00" height="28.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
 <text x="200.00" y="181.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">End</text>
 <rect x="296.00" y="174.00" width="134.00" height="44.00" rx="4" fill="none" stroke="#7F7F7F" stroke-width="1.2" stroke-dasharray="3 2"/>
-<text x="300.00" y="182.60" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">Shared subroutines</text>
+<text x="300.00" y="182.60" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">Shared FSM sequences</text>
 <rect x="302.00" y="192.00" width="69.00" height="20.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
 <text x="336.50" y="204.84" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">Read / get_byte</text>
 <rect x="377.00" y="192.00" width="47.00" height="20.00" rx="4" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>

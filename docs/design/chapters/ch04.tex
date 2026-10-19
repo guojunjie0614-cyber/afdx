@@ -50,16 +50,16 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
   \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节都与 \code{clk} 同步，接口不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导、帧长和 FCS；接实体 PHY 时，外围适配逻辑须处理 PHY 错误标记，使带错误标记的帧被丢弃。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
-\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为首个前导字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{20h}、B 为 \texttt{40h}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
+\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为首个前导字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
 
 \section{线路帧格式}\label{sec:frame}
 
-图~\ref{fig:frame} 是本设计发送的 AFDX 帧。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{20}、B 网 \code{40}）。其后是 IPv4 头、UDP 头、应用数据、不足 17 字节时的补零，以及 1 字节序列号 SN，最后由 MAC 加 4 字节 FCS。
+图~\ref{fig:frame} 是本设计发送的 AFDX 帧。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{0x20}、B 网 \code{0x40}）。其后是 IPv4 头、UDP 头、应用数据、不足 17 字节时的补零，以及 1 字节序列号 SN，最后由 MAC 加 4 字节 FCS。
 
 \figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式与 MAC 地址编码，应用数据长度 $1 \le n \le 1471$ 字节}{fig:frame}
 
 \begin{table}\centering\small
-\caption{帧字段}\label{tab:frame}
+\caption{帧字段（字节序列以十六进制表示）}\label{tab:frame}
 \begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{1.2cm}L}
 \toprule
 字节位置 & 长度 & 内容 \\
@@ -68,9 +68,9 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
 4--5 & 2 & VLID，高字节在前 \\
 6--8 & 3 & \code{02 00 00}，源 MAC 固定部分 \\
 9--10 & 2 & 端系统用户 ID（寄存器 \code{USER_ID}） \\
-11 & 1 & 接口号：A 网 \code{20}，B 网 \code{40} \\
+11 & 1 & 接口号：A 网 \code{0x20}，B 网 \code{0x40} \\
 12--13 & 2 & \code{08 00}（IPv4） \\
-14--33 & 20 & IPv4 头：\code{45 00}，总长度 $n+28$，标识（每帧加 1），\code{00 00}，TTL \code{01}，协议 \code{11}，头校验和，源 IP，目的 IP \\
+14--33 & 20 & IPv4 头：\code{45 00}，总长度 $n+28$，标识（每帧加 1），\code{00 00}，TTL \code{0x01}，协议号 \code{0x11}（17），头校验和，源 IP，目的 IP \\
 34--41 & 8 & UDP 头：源端口，目的端口，长度 $n+8$，校验和（填 0） \\
 42 起 & $n$ & 应用数据 \\
 其后 & $17-n$ & $n<17$ 时补 0 至 17 字节 \\
@@ -92,7 +92,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}、初值全 1、结果取反后低
 
 应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 序号和 UDP 端口在首字节取样。
 
-没有服务报文争用时，\code{app_tx_ready} 就是发送核心的 \code{m_ready}，每拍接收一个字节，仅在分配缓存页或等待入队结果时暂停，连续暂停不超过 96 拍。服务报文正在传送时，应用要等它传完，三个服务同时有报文时约等 3850 拍（第~\ref{sec:budget}~节）。
+没有服务报文争用时，\code{app_tx_ready} 就是发送核心的 \code{m_ready}，每拍接收一个字节，仅在分配缓存页或等待入队结果时暂停，连续暂停不超过 96 拍。服务报文传输期间，应用等待当前服务消息完成；三个服务同时有报文时，等待预算约为 3850 拍（第~\ref{sec:budget}~节）。
 
 缓存页用尽或 VL 队列已满时，发送核心丢弃消息并计数，退回已分配的缓存页，继续接收并丢弃该消息的剩余字节。
 
@@ -100,7 +100,9 @@ CRC32 采用反射多项式 \code{0xEDB88320}、初值全 1、结果取反后低
 
 \subsection{接收消息的连续交付}
 
-接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 序号、端口和来源网络在整条消息期间保持固定。应用须在每个有效周期接收字节（图~\ref{fig:wapp}(b)）。
+接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 序号、端口和来源网络在整条消息期间保持固定。接口时序见图~\ref{fig:wapp}(b)。
+
+无反压接口使消息交付按固定字节节拍完成，省去接收交付链上的下游停顿控制。外部应用可用缓存写口或 DMA/FIFO 接口承接数据，并应保证每个有效周期都能接收一个字节。
 
 \figN[应用口时序]{f32_wapp}{应用接口时序：(a) 消息提交与握手；(b) 接收消息连续交付}{fig:wapp}
 
@@ -124,7 +126,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}、初值全 1、结果取反后低
 \Needspace{26\baselineskip}
 \section{内部接口}\label{sec:intif}
 
-一级模块之间和核心内部子模块之间的接口以寄存器输出为主；组合输出包括 ready 握手、\code{cfg_ok}，以及 \code{afdx_svc} 的数据选择与接收分发直通，后者只做选择和门控。接口按下面四种约定之一工作：
+一级模块之间和核心内部子模块之间的接口以寄存器输出为主；组合输出包括 ready 握手、\code{cfg_ok}，以及 \code{afdx_svc} 的数据选择与接收分发直通，后者只做选择和门控。内部接口主要采用以下四种约定：
 \begin{itemize}
   \item \textbf{字节流握手}（\code{valid}/\code{ready}/\code{last}）：两者同拍为 1 传送一个字节；附带字段在首字节取样并保持到末字节。
   \item \textbf{请求应答}（\code{req}/\code{ack}）：请求保持到应答脉冲，应答与结果同拍给出。

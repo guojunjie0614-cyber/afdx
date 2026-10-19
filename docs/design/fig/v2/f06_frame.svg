@@ -51,12 +51,12 @@
 <rect x="103.00" y="78.00" width="44.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
 <text x="125.00" y="89.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">02 00 00</text>
 <text x="125.00" y="98.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">fixed</text>
-<rect x="147.00" y="78.00" width="40.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
-<text x="167.00" y="89.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">User ID</text>
-<text x="167.00" y="98.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">2 B</text>
-<rect x="187.00" y="78.00" width="54.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
-<text x="214.00" y="89.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">IF</text>
-<text x="214.00" y="98.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">20h A / 40h B</text>
+<rect x="147.00" y="78.00" width="34.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="164.00" y="89.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">User ID</text>
+<text x="164.00" y="98.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">2 B</text>
+<rect x="181.00" y="78.00" width="60.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="211.00" y="89.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">IF</text>
+<text x="211.00" y="98.23" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">0x20 A / 0x40 B</text>
 <path d="M 65.00 54.00 L 3.00 78.00" fill="none" stroke="#666" stroke-width="0.5"/>
 <path d="M 109.00 54.00 L 93.00 78.00" fill="none" stroke="#666" stroke-width="0.5"/>
 <path d="M 109.00 54.00 L 103.00 78.00" fill="none" stroke="#666" stroke-width="0.5"/>

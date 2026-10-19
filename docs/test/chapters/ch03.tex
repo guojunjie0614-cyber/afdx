@@ -43,7 +43,7 @@ F2-03 & 完整性检查：序号递增、允许丢一帧、重复、跳号、复
 F2-04 & 冗余管理：先到副本交付，后到副本丢弃 & RX-03，SYS-03，SYS-04 & \ref{sec:f-ic} \\
 F2-05 & 冗余窗口的计时边界与记录过期处理 & RX-08，SYS-03 & \ref{sec:f-ic} \\
 F2-06 & 多 VL 序号状态隔离 & RX-04 & \ref{sec:f-ic} \\
-F2-07 & 接收环形缓存溢出与交付队列满后的恢复 & RX-05，RX-06，SYS-07 & \ref{sec:f-ic} \\
+F2-07 & 接收环形缓冲溢出与交付队列满后的恢复 & RX-05，RX-06，SYS-07 & \ref{sec:f-ic} \\
 F2-08 & 各类错误计数与配置口读回一致 & SYS-02，SYS-07 & \ref{sec:f-ic} \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 功能 3：SNMP 网络管理} \\*
@@ -93,7 +93,7 @@ BAS-01 & \code{tb_ram_sdp} & 四种宽度和深度的存储器：写入、同步
 \midrule
 MAC-01 & \code{tb_mac_tx} & 组帧、网络选择、帧间隔、上游字节输入中断 \\
 MAC-02 & \code{tb_mac_rx} & 正常帧接收、错误分类、去 FCS、帧边界 \\
-MAC-03 & \code{tb_mac_loop} & 发送接回接收，不同帧长与双网闭环 \\
+MAC-03 & \code{tb_mac_loop} & 收发环回，不同帧长与双网闭环 \\
 \midrule
 TX-01 & \code{tb_tx_basic} & 不同消息长度的分页存储、协议头和双网发送 \\
 TX-02 & \code{tb_tx_basic}（32 页 × 2048 字节） & 同 TX-01，改变页数与页尺寸 \\
@@ -112,7 +112,7 @@ RX-07 & \code{tb_rx_net} & 固定输入的接收记录，供网表对照 \\
 RX-08 & \code{tb_rm_phase} & 跨计时边界及处理次序变化下的去重与记录过期 \\
 \midrule
 SYS-01 & \code{tb_sys_basic} & 两端双向互发，交付与事件 \\
-SYS-02 & \code{tb_sys_fault} & 线路上丢帧、重放、改字节，检测、计数与恢复 \\
+SYS-02 & \code{tb_sys_fault} & 线路丢帧、重放与字节改写，检测、计数与恢复 \\
 SYS-03 & \code{tb_sys_delay} & 两网延迟变化下的交付与去重 \\
 SYS-04 & \code{tb_sys_load} & 128 条发送 VL 的传输与发送拒绝 \\
 SYS-05 & \code{tb_sys_cfg} & 配置写握手、读延迟、计数采样时刻 \\
@@ -155,7 +155,7 @@ ModelSim 批量测试包含 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-0
 以下用例通过调整参数测试资源边界和突发工况：
 \begin{itemize}
   \item TX-02：发送缓存改为 32 页、每页 2048 字节，检查该配置下的分页存储与发送结果；
-  \item RX-05、SYS-07：每网接收环形缓存缩为 512 字节，使最长消息无法存入；
+  \item RX-05、SYS-07：每网接收环形缓冲缩为 512 字节，使最长消息无法存入；
   \item RX-06：交付队列缩为 2 项，使队列在长消息交付期间填满；
   \item PERF-02、PERF-03：77、81 条 VL 的最长消息同时到期。
 \end{itemize}

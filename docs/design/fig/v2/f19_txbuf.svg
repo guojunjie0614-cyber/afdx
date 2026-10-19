@@ -26,7 +26,7 @@
 <text x="330.00" y="126.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">write tx_desc</text>
 <rect x="96.00" y="166.00" width="56.00" height="30.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
 <text x="124.00" y="180.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">DRAIN</text>
-<text x="124.00" y="188.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">eat to m_last</text>
+<text x="124.00" y="188.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">drain to m_last</text>
 <rect x="192.00" y="166.00" width="56.00" height="30.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
 <text x="220.00" y="180.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">RETURN</text>
 <text x="220.00" y="188.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pages → free</text>

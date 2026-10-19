@@ -11,7 +11,7 @@
 <rect x="216.00" y="40.00" width="92.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
 <text x="262.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_rx_engine</text>
 <text x="262.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">map, IC, RM,</text>
-<text x="262.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">aging</text>
+<text x="262.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">expiry</text>
 <rect x="338.00" y="40.00" width="66.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
 <text x="371.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_deliver</text>
 <text x="371.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">1 B / cycle,</text>

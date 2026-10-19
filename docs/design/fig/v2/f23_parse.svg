@@ -23,8 +23,9 @@
 <text x="26.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">03 00 00 00</text>
 <text x="26.80" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">VLID</text>
 <text x="72.40" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ignored</text>
-<text x="186.40" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">45, no fragment, proto 11,</text>
-<text x="186.40" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">IP length, sum = FFFF</text>
+<text x="186.40" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0x45, no fragment,</text>
+<text x="186.40" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">proto 0x11, IP length,</text>
+<text x="186.40" y="62.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">sum = 0xFFFF</text>
 <text x="292.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ports, n = len − 8</text>
 <text x="292.80" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">UDP sum ≠ 0 → check</text>
 <text x="359.20" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">space ≥ n ?</text>
@@ -32,7 +33,7 @@
 <text x="417.20" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">SN at</text>
 <text x="417.20" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">42 + max(n,17)</text>
 <text x="102.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">08 00</text>
-<text x="225.00" y="70.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Streaming checks</text>
+<text x="225.00" y="73.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Streaming checks</text>
 <rect x="0.00" y="88.00" width="62.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
 <text x="31.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">LEN_WAIT</text>
 <text x="31.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">until byte 39</text>

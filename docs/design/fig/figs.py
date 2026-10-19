@@ -137,8 +137,8 @@ def f06_frame():
     d1 = f.box(3, ye, 56, 26, 'white', '03 00 00 00', 'fixed', tsize=T2, pad=2)
     d2 = f.box(59, ye, 34, 26, 'white', 'VLID', '2 B', tsize=T2, pad=2)
     s1 = f.box(103, ye, 44, 26, 'white', '02 00 00', 'fixed', tsize=T2, pad=2)
-    s2 = f.box(147, ye, 40, 26, 'white', 'User ID', '2 B', tsize=T2, pad=2)
-    s3 = f.box(187, ye, 54, 26, 'white', 'IF', '20h A / 40h B', tsize=T2, pad=2)
+    s2 = f.box(147, ye, 34, 26, 'white', 'User ID', '2 B', tsize=T2, pad=2)
+    s3 = f.box(181, ye, 60, 26, 'white', 'IF', '0x20 A / 0x40 B', tsize=T2, pad=2)
     for src, (l, r) in ((B['Dst MAC'], (d1, d2)), (B['Src MAC'], (s1, s3))):
         f.arrow([(src.l, src.b), (l.l, l.t)], head=None, sw=0.5, color='#666')
         f.arrow([(src.r, src.b), (r.r, r.t)], head=None, sw=0.5, color='#666')
@@ -253,16 +253,16 @@ def f10_macfsm():
     bad = f.box(165, 224, 70, 20, 'drop', 'BAD_PRE', rx=4)
     f.arrow([(58, 183), (165, 183)])
     f.tag(111, 179, 'armed && valid_q', size=6.5)
-    f.tag(111, 169, '&& data_q == 55h', size=6.5)
+    f.tag(111, 169, '&& data_q == 0x55', size=6.5)
     f.arrow([(235, 183), (370, 183)])
-    f.tag(302, 179, 'valid_q && data_q == D5h', size=6.5)
+    f.tag(302, 179, 'valid_q && data_q == 0xD5', size=6.5)
     f.arrow([(44, 173), (44, 153), (405, 153), (405, 173)])
-    f.tag(225, 150, 'armed && valid_q && data_q == D5h', size=6.5)
+    f.tag(225, 150, 'armed && valid_q && data_q == 0xD5', size=6.5)
     f.arrow([(58, 189), (76, 189), (76, 234), (165, 234)])
     f.tag(80, 216, 'armed && valid_q', size=6.5, anchor='start')
-    f.tag(80, 224, '&& data_q not 55h / D5h', size=6.5, anchor='start')
+    f.tag(80, 224, '&& data_q not 0x55 / 0xD5', size=6.5, anchor='start')
     f.arrow([(200, 193), (200, 224)])
-    f.tag(204, 207, 'valid_q && data_q not 55h / D5h', size=6.5, anchor='start')
+    f.tag(204, 207, 'valid_q && data_q not 0x55 / 0xD5', size=6.5, anchor='start')
     f.arrow([(175, 173), (175, 161), (50, 161), (50, 173)])
     f.tag(110, 159, '!valid_q', size=6.5)
     f.arrow([(405, 193), (405, 253), (22, 253), (22, 193)])
@@ -279,7 +279,7 @@ def f11_rx():
     y0, y1, y2 = 0, 40, 98
     mac = f.box(28, y1, 62, 40, 'rx', 'mac_rx ×2', 'SFD, CRC32,', 'strip FCS')
     prs = f.box(120, y1, 66, 40, 'rx', 'rx_parse ×2', 'header check,', 'trial write')
-    eng = f.box(216, y1, 92, 40, 'rx', 'afdx_rx_engine', 'map, IC, RM,', 'aging')
+    eng = f.box(216, y1, 92, 40, 'rx', 'afdx_rx_engine', 'map, IC, RM,', 'expiry')
     dlv = f.box(338, y1, 66, 40, 'rx', 'rx_deliver', '1 B / cycle,', 'no backpressure')
     ya = 56
     f.arrow([(0, ya), (mac.l, ya)])
@@ -512,7 +512,7 @@ def f19_txbuf():
     rep = S(96, r2, 'txl', 'REPLY', 'wait enq_ack')
     enq = S(192, r2, 'txl', 'ENQUEUE', 'enq_valid', w=70)
     desc = S(302, r2, 'txl', 'DESC', 'write tx_desc')
-    drain = S(96, r3, 'drop', 'DRAIN', 'eat to m_last')
+    drain = S(96, r3, 'drop', 'DRAIN', 'drain to m_last')
     ret = S(192, r3, 'drop', 'RETURN', 'pages → free')
     for b in (idle, recv, drain):
         f.outline(b)
@@ -667,14 +667,14 @@ def f23_parse():
     sn = f.box(pl.r, y, 44, 18, 'gray', 'pad · SN', tsize=T2, pad=1)
     for b in (0, 6, 12, 14, 34, 42):
         f.tag(X + b * bw, 10, str(b), size=6.5)
-    rows = [(X + 3 * bw, ['03 00 00 00', 'VLID']), (X + 9 * bw, ['ignored']), (X + 24 * bw, ['45, no fragment, proto 11,', 'IP length, sum = FFFF']),
+    rows = [(X + 3 * bw, ['03 00 00 00', 'VLID']), (X + 9 * bw, ['ignored']), (X + 24 * bw, ['0x45, no fragment,', 'proto 0x11, IP length,', 'sum = 0xFFFF']),
             (X + 38 * bw, ['ports, n = len − 8', 'UDP sum ≠ 0 → check']), (pl.cx, ['space ≥ n ?', 'trial write']),
             (sn.cx, ['SN at', '42 + max(n,17)'])]
     for x, ls in rows:
         for i, t in enumerate(ls):
             f.tag(x, 45 + i * 8.5, t, size=6.5)
     f.tag(X + 13 * bw, 45, '08 00', size=6.5)
-    f.tag(225, 70, '(a) Streaming checks', bold=True, size=T1)
+    f.tag(225, 73, '(a) Streaming checks', bold=True, size=T1)
     # (b) length_phase
     S = lambda x, yy, k, t, sub, w=62: f.box(x, yy, w, 28, k, t, sub, rx=4, pad=2, tsize=T2, ssize=6.5)
     yb = 88
@@ -932,7 +932,7 @@ def f29_615a():
         f.rect(x, y, w, 10, '#E6E6E6', 'none', 0, rx=3)
         f.text(x + w / 2, y + 7.2, label, size=6.5)
     end = f.box(160, 164, 80, 28, 'drop', 'End', rx=4)
-    shared = f.group(296, 174, 134, 44, 'gray', 'Shared subroutines', dash='3 2', label_color='#444')
+    shared = f.group(296, 174, 134, 44, 'gray', 'Shared FSM sequences', dash='3 2', label_color='#444')
     f.box(302, 192, 69, 20, 'gray', 'Read / get_byte', tsize=6.5, rx=4)
     f.box(377, 192, 47, 20, 'svc', 'Packet out', tsize=T2, rx=4)
     f.arrow([(wait.r, 96), (dispatch.l, 96)])
@@ -1091,20 +1091,33 @@ def f31_wgmii():
     f = Fig(450, 114)
     cw, bw = 14, 9
     B = (11, 15, 22)
-    xs = slots(78, [bw if i in B else cw for i in range(25)])
-    pre = [(i, i + 1, '55', 'v') for i in range(2, 9)]
+    # 为完整十六进制字节标签留宽，压缩空闲段与 FCS 展示段；拍序号不变。
+    widths = [cw] * 25
+    for i in (*range(2, 11), 13, 14, 24):
+        widths[i] = 19
+    for i in (0, 1, *range(17, 21)):
+        widths[i] = 10
+    for i in (21, 23):
+        widths[i] = 8
+    widths[9] = 20
+    widths[20] = 14
+    widths[21] = 10
+    for i in B:
+        widths[i] = bw
+    xs = slots(78, widths)
+    pre = [(i, i + 1, '0x55', 'v') for i in range(2, 9)]
 
     def data(n11, fcs):
-        return ([(0, 2, '00', 'x')] + pre + [(9, 10, 'D5', 'v'), (10, 11, '03', 'v'), (11, 12, '', 'v'),
-                (12, 13, 'uid', 'v'), (13, 14, n11, 'h'), (14, 15, '08', 'v'), (15, 16, '', 'v'), (16, 17, 'SN', 'v'),
-                (17, 21, fcs, 'v'), (21, 24, '', 'x'), (24, 25, '55', 'v')])
+        return ([(0, 2, '0x00', 'x')] + pre + [(9, 10, '0xD5', 'v'), (10, 11, '0x03', 'v'), (11, 12, '', 'v'),
+                (12, 13, 'uid', 'v'), (13, 14, n11, 'h'), (14, 15, '0x08', 'v'), (15, 16, '', 'v'), (16, 17, 'SN', 'v'),
+                (17, 21, fcs, 'v'), (21, 24, '', 'x'), (24, 25, '0x55', 'v')])
     valid = '00' + '1' * 19 + '000' + '1'
     ys = wave(f, xs, 14, [
         ('clk', 'clk', None),
         ('tx_valid', 'bit', valid),
-        ('tx_data', 'bus', data('20', 'FCS (A)')),
+        ('tx_data', 'bus', data('0x20', 'FCS (A)')),
         ('tx_valid_b', 'bit', valid),
-        ('tx_data_b', 'bus', data('40', 'FCS (B)')),
+        ('tx_data_b', 'bus', data('0x40', 'FCS (B)')),
     ], brk=B)
     cycles(f, xs, 9, {2: '0', 9: '7', 10: '8', 13: '19', 16: '67', 17: '68', 20: '71', 21: '72', 24: '84'})
     yb = ys[-1] + 9
