@@ -27,11 +27,7 @@
 \end{tabularx}
 \end{table}
 
-\code{tx_cfg} 中每条 VL 占 8 个字，其中 6 个配置字有效，字段见表~\ref{tab:cfgfmt}。配置字合并在同一张 1024$\times$32 的表中，相比拆分为六张浅表减少了块 RAM 占用；引擎在授权操作中逐拍读取六个配置字，步骤见表~\ref{tab:txops}。
-
-\code{afdx_tx_core} 例化 7 张表和 5 个子模块，并持有 \code{tx_cfg} 的写口：复位后先用 1024 拍把 \code{tx_cfg} 清零，此后只在 \code{cfg_we} 与引擎的 \code{cfg_ok} 同拍为 1 时寄存写地址与数据，并在下一拍写入配置表。
-
-\code{tx_cfg} 清零、空闲页装满和 \code{tx_state} 清零三者都完成后 \code{init_done} 置 1，引擎和分页缓存才开始工作。
+\code{tx_cfg} 中每条 VL 占 8 个字，其中 6 个配置字有效，字段见表~\ref{tab:cfgfmt}。配置字合并在同一张 1024$\times$32 的表中，相比拆分为六张浅表减少了块 RAM 占用；引擎在授权操作中逐拍读取六个配置字，步骤见表~\ref{tab:txops}。\code{afdx_tx_core} 例化 7 张表和 5 个子模块，并持有 \code{tx_cfg} 的写口：复位后先用 1024 拍把 \code{tx_cfg} 清零，此后只在 \code{cfg_we} 与引擎的 \code{cfg_ok} 同拍为 1 时寄存写地址与数据，并在下一拍写入配置表。\code{tx_cfg} 清零、空闲页装满和 \code{tx_state} 清零三者都完成后 \code{init_done} 置 1，引擎和分页缓存才开始工作。
 
 \section{空闲页池}\label{sec:txfree}
 
@@ -207,15 +203,11 @@ GRANT & 有候选且 \code{grant_ready} & 0--4：依次读配置字 1--5；1：�
 \end{tabularx}
 \end{table}
 
-起始条件为 \code{prepared}、上一帧已送完，且 \code{grant_timed}$=0$、允许时刻已过或距允许时刻至多 4 拍。4 拍提前量补偿起始路径上的四级寄存器：\code{now} 寄存 1 拍、差值 \code{now_q}$-T$ 寄存 1 拍、\code{s_valid} 寄存 1 拍、MAC 判断起始并寄存输出 1 拍。于是线路空闲时第一个前导字节恰在 \code{now}$=T$ 那一拍出现。
+起始条件为 \code{prepared}、上一帧已送完，且 \code{grant_timed}$=0$、允许时刻已过或距允许时刻至多 4 拍。4 拍提前量补偿起始路径上的四级寄存器：\code{now} 寄存 1 拍、差值 \code{now_q}$-T$ 寄存 1 拍、\code{s_valid} 寄存 1 拍、MAC 判断起始并寄存输出 1 拍。于是线路空闲时，首个前导码字节在 \code{now}$=T$ 的一拍输出。
 
-起始拍把 42 字节帧头并行装入移位寄存器，A、B 两路共用，只在第 11 字节（接口号）B 网换为 \code{0x40}。
+起始拍把 42 字节帧头并行装入移位寄存器，A、B 两路共用，只在第 11 字节（接口号）B 网换为 \code{0x40}。MAC 每取一字节，按 \code{part} 依次送出帧头 42 字节、载荷 $n$ 字节、$n<17$ 时补零到 17 字节、带 \code{s_last} 的 SN；\code{tx_sof} 所在拍的 \code{now} 作为 $t_\text{start}$ 回报引擎。
 
-MAC 每取一字节，按 \code{part} 依次送出帧头 42 字节、载荷 $n$ 字节、$n<17$ 时补零到 17 字节、带 \code{s_last} 的 SN。\code{tx_sof} 那拍的 \code{now} 作为 $t_\text{start}$ 回报引擎。
-
-起始拍起，只要 FIFO 中不足 5 字节就每拍发出一个 \code{tx_payload} 读；读请求寄存、同步 RAM 和输出寄存共 3 拍后写入 FIFO。
-
-当前页与下一页号分开保存：起始时读 \code{tx_pnext}[首页]，每次跨页再读下一页的后继，跨页时请求连续不断。读到页末字节或消息末字节时，该页号随数据一起进入 4 项还页 FIFO，经还页口 1 还页至空闲页池。
+起始拍起，只要 FIFO 中不足 5 字节就每拍发出一个 \code{tx_payload} 读；读请求寄存、同步 RAM 和输出寄存共 3 拍后写入 FIFO。当前页与下一页号分开保存：起始时读 \code{tx_pnext}[首页]，每次跨页再读下一页的后继，跨页时请求连续不断。读到页末字节或消息末字节时，该页号随数据一起进入 4 项还页 FIFO，经还页口 1 还页至空闲页池。
 
 \subsection{时序与异常处理}
 \begin{itemize}

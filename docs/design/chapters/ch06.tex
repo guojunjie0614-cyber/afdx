@@ -25,11 +25,7 @@
 
 \code{skew_max} 的单位是 \code{now_c} 的一个计时单位（32.768~µs）。
 
-\code{afdx_rx_core} 例化两套 MAC 与解析器、一个引擎、一个交付模块和 5 张表，并持有 \code{rx_map}、\code{rx_cfg} 的写口。
-
-复位后用 65536 拍同时清 \code{rx_map}（每拍一项）和 \code{rx_cfg}（前 4096 拍），引擎另清 \code{rx_state}，全部完成后 \code{init_done} 置 1。之后表写只在 \code{cfg_ok} 为 1 时进入写口寄存器，下一拍写入配置表。
-
-各模块的统计脉冲在核心中相或后寄存一拍输出。
+\code{afdx_rx_core} 例化两套 MAC 与解析器、一个引擎、一个交付模块和 5 张表，并持有 \code{rx_map}、\code{rx_cfg} 的写口。复位后用 65536 拍同时清 \code{rx_map}（每拍一项）和 \code{rx_cfg}（前 4096 拍），引擎另清 \code{rx_state}，全部完成后 \code{init_done} 置 1。之后表写只在 \code{cfg_ok} 为 1 时进入写口寄存器，下一拍写入配置表。各模块的统计脉冲在核心中相或后寄存一拍输出。
 
 \section{接收 MAC}\label{sec:macrx}
 
