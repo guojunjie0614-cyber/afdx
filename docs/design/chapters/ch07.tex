@@ -92,7 +92,7 @@ MIB 包含 35 个只读对象与 1 个读写对象（\code{USER_ID}），共 36 
 
 \subsection{请求解析与回应组装}
 
-代理的主状态机有 44 个状态，按功能分为 7 组，见图~\ref{fig:snmpfsm}。请求先完整写入 256$\times$8 的请求 RAM，解析与查找通过公共读取状态序列访问 RAM：原状态分支将返回位置写入 \code{return_state}，读取序列用 4 拍完成越界检查、发出读请求、等待同步读出和锁存数据，随后转回原状态分支。Fetch 状态组由解析、Lookup、Value 和 Encode 共用；每个解析状态只处理一个已就绪的字节，单拍逻辑只有一级比较。Set 未命中时经 Value 组的 \code{SET_ERROR} 编码错误回应，异常处理完成后返回接收状态。
+代理的主状态机有 44 个状态，按功能分为 7 组，见图~\ref{fig:snmpfsm}。请求先完整写入 256$\times$8 的请求 RAM，解析与查找通过公共读取状态序列访问 RAM：原状态分支将返回位置写入 \code{return_state}，读取序列用 4 拍完成越界检查、发出读请求、等待同步读出和锁存数据，随后转回原状态分支。\code{Fetch} 状态组由解析、\code{Lookup}、\code{Value} 和 \code{Encode} 共用；每个解析状态只处理一个已就绪的字节，单拍逻辑只有一级比较。Set 未命中时经 Value 组的 \code{SET_ERROR} 编码错误回应，异常处理完成后返回接收状态。
 
 \figN[SNMP 代理状态机（按功能分组）]{f28_snmpfsm}{SNMP 代理的请求解析、对象访问与回应组装状态机}{fig:snmpfsm}
 
