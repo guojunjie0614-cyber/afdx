@@ -8,15 +8,15 @@ RTL 共 21 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 \caption{RTL 源文件}\label{tab:files}\\
 \longtablehead{2}{文件 & 作用}
 \code{AFDX_top.v} & 顶层：双网收发核心、服务通道、三项服务、配置与时间基准 \\
-\code{afdx_timebase.v} & 周期计数 \code{now} 与粗计时 \code{now_c} \\
+\code{afdx_timebase.v} & 周期计数 \code{now} 与粗粒度计时 \code{now_c} \\
 \code{afdx_cfg.v} & 地址译码、寄存器、27 个计数器、配置表写握手 \\
 \code{afdx_svc.v} & 应用与服务的消息轮询发送、按端口分发接收 \\
 \code{afdx_tx_core.v} & 发送核心集成模块，例化发送侧各模块和 7 张表 \\
-\code{afdx_tx_buf.v} & 消息分页写入、入队请求、失败退页 \\
+\code{afdx_tx_buf.v} & 消息分页写入、入队请求、失败还页 \\
 \code{afdx_tx_free.v} & 空闲页 FIFO \\
 \code{afdx_tx_engine.v} & BAG 调度：扫描、入队、授权、起始确认 \\
-\code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、页归还 \\
-\code{afdx_mac_tx.v} & 双网发送 MAC：前导、FCS、帧间隔、欠载检测与异常帧终止 \\
+\code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、还页 \\
+\code{afdx_mac_tx.v} & 双网发送 MAC：前导码、FCS、帧间隔、欠载检测与异常帧终止 \\
 \code{afdx_crc32_d8.v} & 逐字节 CRC32 组合逻辑 \\
 \code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块和 5 张表 \\
 \code{afdx_mac_rx.v} & 接收 MAC：SFD 检测、CRC 校验、剥离 FCS \\
@@ -114,8 +114,8 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \longtablehead{3}{信号 & 位宽 & 含义}
 \code{m_valid}、\code{m_ready} & 1、1 & 字节握手；\code{m_ready} 只在 \code{tx_buf} 处于 IDLE、RECV、DRAIN 时为 1 \\
 \code{m_data}、\code{m_last} & 8、1 & 消息字节、末字节标记 \\
-\code{m_vl} & 7 & 发送 VL 序号，首字节取样 \\
-\code{m_port_en}、\code{m_sport}、\code{m_dport} & 1、16、16 & 为 1 时用消息自带 UDP 端口；首字节取样 \\
+\code{m_vl} & 7 & 发送 VL 序号，首字节锁存 \\
+\code{m_port_en}、\code{m_sport}、\code{m_dport} & 1、16、16 & 为 1 时用消息自带 UDP 端口；首字节锁存 \\
 \end{longtable}
 
 \section{入队与授权}
@@ -151,17 +151,17 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.2cm-6\tabcolsep\relax}}
 \caption{帧字节接口（\texttt{tx\_builder} $\leftrightarrow$ \texttt{mac\_tx}）}\label{tab:ifs}\\
 \longtablehead{3}{信号 & 位宽 & 含义}
-\code{s_valid}、\code{s_ready} & 1、1 & 字节握手；\code{s_ready} 在 \code{byte_en}$=1$ 且满足以下任一条件时为 1：前导末拍；DATA 且 \code{last_byte}$=0$；DRAIN \\
+\code{s_valid}、\code{s_ready} & 1、1 & 字节握手；\code{s_ready} 在 \code{byte_en}$=1$ 且满足以下任一条件时为 1：前导码末拍；DATA 且 \code{last_byte}$=0$；DRAIN \\
 \code{s_data_a}、\code{s_data_b} & 8、8 & 两网字节，仅第 11 字节不同 \\
 \code{s_last} & 1 & 与 SN 字节同拍 \\
-\code{s_en_a}、\code{s_en_b} & 1、1 & 起始拍取样，选择本帧发往哪一网 \\
+\code{s_en_a}、\code{s_en_b} & 1、1 & 起始拍锁存，选择本帧发往哪一网 \\
 \code{tx_sof}、\code{tx_eof} & 1、1 & 首个前导字节、帧尾（FCS 发完）的单拍脉冲 \\
 \code{tx_underrun} & 1 & 数据阶段上游未备好字节的欠载指示 \\
 \end{longtable}
 
 \section{帧描述与交付队列}
 
-每网解析器对完好帧给出一份 95 位帧描述，引擎取走后判决并回送提交或回退；通过的帧在交付队列中登记一项，见表~\ref{tab:ifdesc}。
+每网解析器对正确帧给出一份 95 位帧描述，引擎取走后判定并回送提交或回退；通过的帧在交付队列中写入一项，见表~\ref{tab:ifdesc}。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.2cm-6\tabcolsep\relax}}
 \caption{帧描述与交付队列项}\label{tab:ifdesc}\\
@@ -174,7 +174,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{start} & 12 & 本帧载荷在环形缓冲中的起点 \\*
 \code{arrival} & 16 & 帧尾时刻的 \code{now_c} \\*
 \code{desc_valid}、\code{desc_take} & 1、1 & 交接握手 \\*
-\code{resolve_valid}、\code{resolve_commit} & 1、1 & 引擎判决：提交则 \code{wr_commit} 前进到本帧末，否则 \code{wr_trial} 退回 \\*
+\code{resolve_valid}、\code{resolve_commit} & 1、1 & 引擎判定：提交则 \code{wr_commit} 前进到本帧末，否则 \code{wr_trial} 回退 \\*
 \midrule
 \multicolumn{3}{l}{\textit{交付队列项（\code{rx_engine} $\rightarrow$ \code{rx_deliver}，32 项寄存器）}} \\*
 \code{net} & 1 & 0 为 A 网，1 为 B 网 \\
@@ -215,6 +215,15 @@ PSN & 同一网上同一 VL 上一帧的序列号 \\
 \code{pend_vl} & 已授权但尚未开始发送的 VL \\
 \code{cfg_ok} & 引擎在本拍不发出配置表读的指示 \\
 有效副本 & 帧格式、FCS 与协议头检查通过，且满足接收配置和已启用的完整性检查的单网帧副本 \\
+还页 & 将页号送回空闲页池（经还页口，信号 \code{ret}）\\
+认领 & 服务按 UDP 目的端口声明接收某条消息（信号 \code{svc_rx_claim}）\\
+清表 & 复位后逐项清零接收序号状态表（\code{rx_state} 等）的过程 \\
+占线 & 一帧在线路上的占用时长 $C(n)$，单位为拍 \\
+主端 / 从端 & SNTP 角色：主端应答请求并回送时间戳；从端周期发送请求并据回应校时 \\
+应答 & 请求应答式握手的确认脉冲（\code{ack}），与协议响应报文（回应）相区别 \\
+计时单位 & \code{now_c} 的单位，32.768~µs \\
+发送抖动 & 帧起始相对 BAG 允许时刻的偏差 \\
+起始回报 / 起始确认 & 组帧器经 \code{tx_sof} 向引擎报告帧起始 / 引擎据此写回 \code{next_time} 的操作 \\
 \bottomrule
 \end{tabularx}
 \end{table}
