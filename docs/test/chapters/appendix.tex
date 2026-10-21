@@ -1,17 +1,17 @@
 \chapter{完整回归结果}\label{app:regress}
 
 \section{完整 RTL 回归}
-完整回归共 \RegCount{} 项，全部通过（表~\ref{tab:regress}）。自检合计 \countsep{\RegChecks} 次，独立核对合计 \countsep{\RegIndep} 项；“仅自检”表示该用例由测试平台完成判定。表中测试平台名称下方列出该用例采用的非默认参数。
+完整回归共 \RegCount{} 项，全部通过（表~\ref{tab:regress}）。自检合计 \countsep{\RegChecks} 次，独立核对合计 \countsep{\RegIndep} 项。表中测试平台名称下方列出该用例采用的非默认参数。
 
 \begingroup
 \renewcommand{\tablearraystretch}{1.18}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{5.9cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedleft\arraybackslash}p{1.5cm}@{}}
 \caption{完整 RTL 回归结果（均为通过）}\label{tab:regress}\\
 \longtablehead{5}{\thead{编号} & \thead{测试平台} & \thead{测试内容} & \thead{自检} & \thead{独立核对}}
-BAS-01 & \code{tb_ram_sdp} & 核对不同存储器配置的写入、同步读取和读使能 & 20764 & 仅自检 \\
-MAC-01 & \code{tb_mac_tx} & 核对以太网组帧、帧间隔和上游字节输入中断处理 & 264649 & 仅自检 \\
-MAC-02 & \code{tb_mac_rx} & 核对正常帧、错误分类、去 FCS 和帧边界 & 105303 & 仅自检 \\
-MAC-03 & \code{tb_mac_loop} & 收发环回，核对不同帧长与双网内容 & 1385254 & 仅自检 \\
+BAS-01 & \code{tb_ram_sdp} & 核对不同存储器配置的写入、同步读取和读使能 & 20764 & 平台自检 \\
+MAC-01 & \code{tb_mac_tx} & 核对以太网组帧、帧间隔和上游字节输入中断处理 & 264649 & 平台自检 \\
+MAC-02 & \code{tb_mac_rx} & 核对正常帧、错误分类、去 FCS 和帧边界 & 105303 & 平台自检 \\
+MAC-03 & \code{tb_mac_loop} & 收发环回，核对不同帧长与双网内容 & 1385254 & 平台自检 \\
 TX-01 & \code{tb_tx_basic} & 核对不同消息长度的分页存储、协议头与双网发送 & 662055 & 7605 \\
 TX-02 & \code{tb_tx_basic}\par \code{TX_PAGE_AW=5}\par \code{TX_OFF_AW=11} & 核对不同消息长度的分页存储、协议头与双网发送 & 661635 & 7605 \\
 TX-03 & \code{tb_tx_bag} & 核对 BAG 间隔、计数回绕和发送间隔变化 & 14054170 & 14591 \\
@@ -25,7 +25,7 @@ RX-04 & \code{tb_rx_load} & 大量虚拟链路接收时，核对序号隔离和�
 RX-05 & \code{tb_rx_ovf_ring}\par \code{RX_RING_AW=9} & 缩小接收环形缓冲，核对溢出回退和后续接收恢复 & 422837 & 99 \\
 RX-06 & \code{tb_rx_ovf_dq}\par \code{RX_DQ_AW=1} & 缩小交付队列，核对队列满丢帧和释放后恢复 & 373852 & 57 \\
 RX-07 & \code{tb_rx_net} & 用固定正常及异常输入核对接收输出，供网表对照 & 374111 & 110 \\
-RX-08 & \code{tb_rm_phase} & 使双网副本跨越计时刻度边界并交换处理顺序，核对去重和记录过期处理 & 353130 & 仅自检 \\
+RX-08 & \code{tb_rm_phase} & 使双网副本跨越计时刻度边界并交换处理顺序，核对去重和记录过期处理 & 353130 & 平台自检 \\
 SYS-01 & \code{tb_sys_basic} & 两个完整端系统互发消息，核对交付与事件 & 5155148 & 2896 \\
 SYS-02 & \code{tb_sys_fault} & 在线路上丢帧、重放及损坏字节，核对检测和恢复 & 47117674 & 8726 \\
 SYS-03 & \code{tb_sys_delay} & 改变两网延迟，核对交付、去重和端到端时延 & 15481734 & 3763 \\
@@ -34,18 +34,18 @@ SYS-05 & \code{tb_sys_cfg} & 核对配置写握手、读延迟和计数采样时
 SYS-06 & \code{tb_sys_reset} & 传输途中复位，核对旧残帧不混入新交付 & 10991314 & 3682 \\
 SYS-07 & \code{tb_sys_ovf}\par \code{RX_RING_AW=9} & 完整系统接收环形缓冲溢出时，核对丢弃、计数和恢复 & 9681100 & 1488 \\
 SYS-08 & \code{tb_sys_net} & 通过顶层执行配置、正常及异常传输，供网表对照 & 2943996 & 1265 \\
-SYS-09 & \code{tb_elinx} & 在 eLinx 中运行双端双网互发仿真，核对字节、端口和去重 & 9238 & 仅自检 \\
+SYS-09 & \code{tb_elinx} & 在 eLinx 中运行双端双网互发仿真，核对字节、端口和去重 & 9238 & 平台自检 \\
 SVC-01 & \code{tb_sys_snmp} & 核对查询、团体名和编码边界，并比较配置口读值 & 37611 & 926 \\
 SVC-02 & \code{tb_sys_snmp_settrap} & 核对设置、非法写入拒绝、启动和认证失败通知 & 8563 & 188 \\
-SVC-03 & \code{tb_judge_snmp} & 解码查询、设置和通知，核对字段与配置口读值 & 699 & 仅自检 \\
+SVC-03 & \code{tb_judge_snmp} & 解码查询、设置和通知，核对字段与配置口读值 & 699 & 平台自检 \\
 SVC-04 & \code{tb_sys_615a} & 核对加载卸载、文件内容、校验错误和丢包重试 & 44098 & 752 \\
 SVC-05 & \code{tb_sys_rtc} & 核对空载及有流量时的时钟同步、秒边界和交付 & 10675857 & 1811 \\
-SVC-06 & \code{tb_rtc_recovery} & 丢弃同步响应并交换使能顺序，核对重发恢复 & 28 & 仅自检 \\
-SVC-07 & \code{tb_rtc_originate} & 响应回送的请求时间戳错误或过期时不校时，合法响应仍能同步 & 34 & 仅自检 \\
+SVC-06 & \code{tb_rtc_recovery} & 丢弃同步响应并交换使能顺序，核对重发恢复 & 28 & 平台自检 \\
+SVC-07 & \code{tb_rtc_originate} & 响应回送的请求时间戳错误或过期时不校时，合法响应仍能同步 & 34 & 平台自检 \\
 PERF-01 & \code{tb_sys_perf} & 测量吞吐、发送与接收时延、端到端时延和抖动 & 756575324 & 1212916 \\
-PERF-02 & \code{tb_gbe_burst}\par \code{COUNT=77} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 643550 & 仅自检 \\
-PERF-03 & \code{tb_gbe_burst}\par \code{COUNT=81} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 673498 & 仅自检 \\
-CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双网只交付一次 & 49924 & 仅自检 \\
+PERF-02 & \code{tb_gbe_burst}\par \code{COUNT=77} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 643550 & 平台自检 \\
+PERF-03 & \code{tb_gbe_burst}\par \code{COUNT=81} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 673498 & 平台自检 \\
+CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双网只交付一次 & 49924 & 平台自检 \\
 \end{longtable}
 \endgroup
 

@@ -97,7 +97,7 @@ RTL 与网表仿真使用同一套激励。网表仿真使用原厂单元功能�
 NET-01 由测试平台完成自检；NET-02 除自检和参考检查外，还将网表端口记录与 RTL 端口记录进行比较，比较范围包含记录中的时钟周期编号。两项测试均通过 \ref{sec:criteria}~节规定的检查，仿真诊断中未出现 Error、Fatal 或 Warning。
 
 \begin{items}{综合后仿真测试项}{tab:net-result}
-NET-01 & 由界面综合导出的网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 仅自检 & 通过 \\
+NET-01 & 由界面综合导出的网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 平台自检 & 通过 \\
 NET-02 & 由界面综合导出的网表；激励同 SVC-08（\code{tb_net_services}） & 自检和独立核对通过；7 份端口记录与 RTL 逐字节相同；仿真诊断无 Error、Fatal、Warning & \SvcChecks/0\newline 65/0 & 通过 \\
 \end{items}
 
