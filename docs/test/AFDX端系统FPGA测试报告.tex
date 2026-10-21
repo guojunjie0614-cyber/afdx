@@ -21,7 +21,7 @@
 \providecommand{\kaishu}{\CJKfamily{zhkai}}
 
 % ---------- 版式 ----------
-\usepackage[a4paper,top=2.6cm,bottom=2.5cm,left=2.6cm,right=2.4cm,headheight=15pt]{geometry}
+\usepackage[a4paper,top=2.4cm,bottom=2.3cm,left=2.6cm,right=2.4cm,headheight=15pt]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -41,7 +41,7 @@
 \usepackage[font=small,labelsep=quad,skip=6pt]{caption}
 \usepackage[hidelinks,bookmarksnumbered]{hyperref}
 
-\linespread{1.3}
+\linespread{1.2}
 \setlength{\parskip}{2pt}
 \emergencystretch=3em
 \raggedbottom
@@ -93,9 +93,9 @@
 \ctexset{
   chapter = {format=\zihao{3}\heiti\raggedright, name={第,章}, number=\arabic{chapter},
              beforeskip=0pt, afterskip=18pt},
-  section = {format=\zihao{4}\heiti, beforeskip=14pt, afterskip=8pt,
+  section = {format=\zihao{4}\heiti, beforeskip=12pt, afterskip=6pt,
              break=\Needspace{3\baselineskip}},
-  subsection = {format=\zihao{-4}\heiti, beforeskip=10pt, afterskip=6pt,
+  subsection = {format=\zihao{-4}\heiti, beforeskip=9pt, afterskip=5pt,
                 break=\Needspace{3\baselineskip}},
 }
 \renewcommand{\thefigure}{\thechapter-\arabic{figure}}
@@ -130,6 +130,15 @@
 \ExplSyntaxOn
 \NewDocumentCommand{\code}{m}{\texttt{\hyphenchar\font=-1\relax
   \str_map_inline:nn {#1} { ##1 \str_if_in:nnT {_/} {##1} { \penalty 200 \relax } }}}
+% 大计数自动按三位分组，数值仍取共享数字宏。
+\NewDocumentCommand{\countsep}{m}{\group_begin:
+  \tl_set:Nx \l_tmpa_tl {#1}
+  \int_set:Nn \l_tmpa_int {\tl_count:N \l_tmpa_tl}
+  \tl_map_inline:Nn \l_tmpa_tl {##1
+    \int_decr:N \l_tmpa_int
+    \int_compare:nNnT {\l_tmpa_int} > {0}
+      {\int_compare:nNnT {\int_mod:nn {\l_tmpa_int}{3}} = {0} {,}}}
+  \group_end:}
 \ExplSyntaxOff
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{C}{>{\centering\arraybackslash}X}

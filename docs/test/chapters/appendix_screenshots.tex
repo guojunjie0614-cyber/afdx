@@ -48,7 +48,7 @@
 \includegraphics[width=\linewidth]{../../sim/wave/png/rx_fcs_error_3.png}
 \par\smallskip
 {\small (b) 配置口读取地址 \code{0x49}，返回 \code{cfg_rvalid=1}、\code{cfg_rdata=1}\par}
-\caption[FCS 错误检测与计数读回的原始波形]{FCS 错误检测与计数读回的 ModelSim 原始波形：错误事件使 A 网 FCS 错误计数加 1，配置口读请求经两拍返回该计数。}
+\caption[FCS 错误检测与计数读回的原始波形]{FCS 错误检测与计数读回的 ModelSim 原始波形：检测到 FCS 错误后，A 网 FCS 错误计数加 1；配置口收到读请求后，经两拍返回该计数。}
 \label{fig:capture-fcs}
 \end{figure}
 

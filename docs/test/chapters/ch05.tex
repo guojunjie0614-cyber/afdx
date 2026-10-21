@@ -1,16 +1,16 @@
 \chapter{技术指标测试}\label{ch:perf}
 
-本章报告传输速率、帧格式、端到端时延与抖动、VL 支持能力 4 项技术指标，按端口记录计算实测值。
+本章给出传输速率、帧格式、端到端时延与抖动、VL 支持能力 4 项技术指标的测试结果。实测值根据端口记录计算。
 
 \section{测量定义}\label{sec:p-def}
 
-两端共用 125~MHz 时钟，一拍 8~ns。
+两个端系统共用 125~MHz 时钟，每拍为 8~ns。
 
-\textbf{吞吐：}接收应用口在统计窗口内交付的有效载荷速率。窗口长 $N$ 拍、交付有效载荷 $B$ 字节时，
+\textbf{吞吐：}以接收应用口在统计窗口内交付的有效载荷计算。若窗口长度为 $N$ 拍、交付的有效载荷为 $B$ 字节，则
 \begin{equation}
   R=\frac{8B}{N\times 8\,\mathrm{ns}}=\frac{1000B}{N}\ \mathrm{Mbps}.
 \end{equation}
-报文头、填充和冗余副本不计入；A、B 两网副本只计一份；两个方向分别统计。
+统计时不计入报文头和填充字节，A、B 两网的冗余副本只计一份，两个方向分别统计。
 
 \textbf{时延：}记 $M$ 为发送端应用口接受消息末字节的时刻，$S$ 为该帧首个前导字节出现在发送 GMII 上的时刻，$E$ 为该帧末字节到达接收 GMII 的时刻，$D$ 为接收端应用口交付末字节的时刻，$L$ 为设定的线路延迟，则
 \begin{equation}
@@ -18,9 +18,9 @@
 \end{equation}
 $T_{\mathrm{e2e}}$ 按应用口至应用口测量，包含排队、线路串行发送、接收检查和交付，扣除设定的线路延迟。
 
-\textbf{抖动：}同一 VL 相邻两帧发送起点间隔与 BAG 之差 $\Delta_i=(S_i-S_{i-1})-\mathrm{BAG}$，抖动 $J=\max_i|\Delta_i|$。
+\textbf{抖动：}同一 VL 相邻两帧的发送起点间隔与 BAG 之差为 $\Delta_i=(S_i-S_{i-1})-\mathrm{BAG}$，抖动 $J=\max_i|\Delta_i|$。
 
-\textbf{判定门限：}$R\ge100$~Mbps，$T_{\mathrm{e2e}}\le2000$~µs，$J\le50$~µs。抖动“不超过几十微秒”取 50~µs 作为检查门限。
+\textbf{判定门限：}$R\ge100$~Mbps，$T_{\mathrm{e2e}}\le2000$~µs，$J\le50$~µs。对于抖动“不超过几十微秒”的要求，取 50~µs 作为检查门限。
 
 \section{传输速率}\label{sec:p-rate}
 
@@ -28,8 +28,8 @@ $T_{\mathrm{e2e}}$ 按应用口至应用口测量，包含排队、线路串行�
 PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 拍和 257 拍下各运行一次，两网均启用；满载工况预热 2 个 BAG 后统计 21~ms & $R\ge100$~Mbps；$T_{\mathrm{e2e}}\le2000$~µs；$J\le50$~µs；全部交付与提交记录逐条匹配 & 756575324/0\newline 1212916/0 & 通过 \\
 \end{items}
 
-\begin{table}[!htbp]\centering
-\caption{PERF-01 测试工况}\label{tab:perf-cases}
+\par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
+\captionof{table}{PERF-01 测试工况}\label{tab:perf-cases}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\centering\arraybackslash}p{2.6cm}>{\centering\arraybackslash}p{2.65cm}L@{}}
 \toprule
 \thead{工况} & \thead{每方向 VL 数} & \thead{方向} & \thead{消息安排} \\
@@ -41,10 +41,9 @@ PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 �
 81 条双向 & 81 & 双向 & 同上 \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{minipage}\par\medskip
 
-\Needspace{6\baselineskip}
-本测试采用 125~MHz、8 位 GMII，帧内每拍传送一字节，对应接口数据速率为 1~Gbps。吞吐按接收应用口完成去重后的有效载荷统计。77 条 VL 双向满载时，每方向吞吐为 \Thru{}~Mbps，满足 100~Mbps 要求。两种线路延迟、单向与双向工况的对应结果相同。各 VL 规模的实测值与要求见表~\ref{tab:p-rate-res} 和图~\ref{fig:thru}。
+本测试采用 125~MHz、8 位 GMII，帧内每拍传送一字节，对应接口数据速率为 1~Gbps。吞吐按接收应用口完成去重后的有效载荷统计。77 条 VL 双向满载时，每方向吞吐为 \Thru{}~Mbps，满足 100~Mbps 要求。采用两种线路延迟，以及单向、双向传输时，同一 VL 规模下的吞吐结果相同。各 VL 规模的实测值与要求见表~\ref{tab:p-rate-res} 和图~\ref{fig:thru}。
 
 \begin{table}[!htbp]\centering
 \caption{每方向有效载荷吞吐}\label{tab:p-rate-res}
@@ -64,9 +63,11 @@ PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 �
 \caption[各 VL 规模的有效载荷吞吐]{10、77、81 条 VL 的每方向有效载荷吞吐，虚线为 100~Mbps 要求。只统计接收应用口去重后的有效载荷}\label{fig:thru}
 \end{figure}
 
+\FloatBarrier
+\Needspace{20\baselineskip}
 \section{帧格式}\label{sec:p-frame}
 
-帧格式测试全部通过。线路帧与参考检查器输出逐字节对比，载荷、帧长、以太网封装、VLID 和序号均正确；各子项的要求、结果与用例见表~\ref{tab:p-frame}。
+帧格式测试全部通过。将线路帧与参考检查器的输出逐字节对比，载荷、帧长、以太网封装、VLID 和序号均正确；各子项的要求、结果与用例见表~\ref{tab:p-frame}。
 
 \begin{table}[!htbp]\centering
 \caption{帧格式测试结果}\label{tab:p-frame}
@@ -74,20 +75,21 @@ PERF-01 & 五种工况（表~\ref{tab:perf-cases}），每种在线路延迟 0 �
 \toprule
 \thead{子项} & \thead{要求} & \thead{测试结果} & \thead{用例} \\
 \midrule
-载荷长度 & 不超过 1471 字节 & 1--1471 字节消息逐字节正确，含填充边界 17/18 字节和页边界 511--513 字节；超过 VL 最大长度的消息被拒绝 & TX-01，MAC-01，TX-05 \\
+载荷长度 & 不超过 1471 字节 & 1--1471 字节消息的内容逐字节正确，覆盖填充边界 17/18 字节和页边界 511--513 字节；超过 VL 最大长度的消息被拒绝 & TX-01，MAC-01，TX-05 \\
 帧长 & 不超过 1518 字节 & 1471 字节载荷对应 1518 字节帧（含 FCS，不含前导码）；短帧填充至 64 字节；超长帧在接收侧被丢弃 & TX-01，MAC-01，MAC-02 \\
-以太网封装 & IEEE 802.3 & 前导码 7 字节、SFD 1 字节、FCS 正确，帧间隔 12 拍 & MAC-01，MAC-03 \\
+以太网封装 & IEEE 802.3 & 前导码为 7 字节、SFD 为 1 字节，FCS 正确，帧间隔为 12 拍 & MAC-01，MAC-03 \\
 VLID & 帧中携带 VLID & 目的地址携带 VLID；接收侧 VLID 0 与 65535 映射正确 & TX-01，RX-01 \\
 序号 & 1--255 & 按 VL 独立递增，255 后回绕到 1；复位后首帧为 0 & TX-01，RX-03 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+\FloatBarrier
 \section{端到端时延与抖动}\label{sec:p-lat}
 
 \subsection{稳态时延}
 
-稳态时延测试通过。PERF-01 满载工况下，$T_{\mathrm{tx}}$ 为 \Ttx~µs，$T_{\mathrm{rx}}$ 最大 11.960~µs，$T_{\mathrm{e2e}}$ 最大 \Lat~µs。表~\ref{tab:perf-lat} 汇总两种线路延迟、两个方向下的结果：最大值取各组最大值；10 至 81 条 VL 各满载工况的平均时延相同。
+稳态时延测试通过。PERF-01 满载工况下，$T_{\mathrm{tx}}$ 为 \Ttx~µs，$T_{\mathrm{rx}}$ 最大 11.960~µs，$T_{\mathrm{e2e}}$ 最大 \Lat~µs。表~\ref{tab:perf-lat} 汇总了两种线路延迟和两个方向的测量结果，其中最大值取所有统计组中的最大值。10 至 81 条 VL 的各满载工况中，平均时延相同。
 
 \begin{table}[!htbp]\centering
 \caption{PERF-01 各工况时延（µs），$T_{\mathrm{e2e}}$ 已扣除设定的线路延迟}\label{tab:perf-lat}
@@ -106,7 +108,7 @@ VLID & 帧中携带 VLID & 目的地址携带 VLID；接收侧 VLID 0 与 65535 
 \end{tabular}
 \end{table}
 
-轻载实测：1 字节消息的 $T_{\mathrm{e2e}}$ 为 1.056~µs，1471 字节为 24.400~µs，每种长度的 8 个样本相同（图~\ref{fig:lat}）。时延包含线路串行发送和接收端完成帧检查后的逐字节交付，两段传送每字节各占 8~ns。短消息的线路占用还包括满足最小帧长的填充字节。
+轻载工况下，实测 1 字节消息的 $T_{\mathrm{e2e}}$ 为 1.056~µs，1471 字节消息为 24.400~µs；同一长度的 8 个样本测得的时延相同（图~\ref{fig:lat}）。时延包含线路串行发送和接收端完成帧检查后的逐字节交付；在这两个阶段中，每传送一字节均需 8~ns。短消息的线路占用还包括满足最小帧长的填充字节。
 
 \par\addvspace{\intextsep}\noindent\begin{minipage}{\linewidth}
 \centering
@@ -124,17 +126,17 @@ VLID & 帧中携带 VLID & 目的地址携带 VLID；接收侧 VLID 0 与 65535 
   \Delta_v \le \Big(\sum_{u\in Q_v}\big(C(n_u)+w_u\big)+422\Big)\times 8~\mathrm{ns},\qquad C(n)=67+\max(n,17),
   \label{eq:worst}
 \end{equation}
-其中 $Q_v$ 为先于 $v$ 发出的其他 VL 的帧，$C(n)$ 为 $n$ 字节消息的帧占线拍数（最长帧 1538 拍，即 12.304~µs），$w_u$ 为预授权占槽等待，422 拍为扫描与 $v$ 自身的授权和准备时间。端到端时延上界为无争用时延与 $\Delta_v$ 之和。
+其中 $Q_v$ 由先于 $v$ 发出的其他 VL 的帧组成，$C(n)$ 为 $n$ 字节消息的帧占线拍数（最长帧 1538 拍，即 12.304~µs），$w_u$ 为提前授权占槽等待时间，422 拍为扫描以及对 $v$ 授权和准备所需的时间。端到端时延上界为无争用时延与 $\Delta_v$ 之和。
 
-各 VL 不同时到期时，每帧的预授权占槽等待小于 4.1~µs，累计值由 VL 配置决定，计算方法见设计文档 3.7.3 节。
+各 VL 不同时到期时，每帧的提前授权占槽等待小于 4.1~µs，累计值由 VL 配置决定，计算方法见设计文档 3.7.3 节。
 
-各 VL 同时到期时 $w_u=0$，调度按 VL 轮询，$Q_v$ 中每条 VL 至多一帧。据此得到：
+各 VL 同时到期时，$w_u=0$。调度器按 VL 轮询，$Q_v$ 中每条 VL 至多对应一帧。据此可得以下上界：
 \begin{itemize}
   \item 77 条、81 条最长帧同时到期：上界分别为 962.888~µs 和 1012.104~µs；
   \item 任意消息长度组合（至多 128 条 VL，排队消息受发送缓存 256 页限制），并计入消息获准发送时线路上可能正在发送的一帧：上界 1.15~ms。
 \end{itemize}
 
-\textbf{实测结果：通过。}PERF-02、PERF-03 的实测值低于上界 3.6~µs，全部消息的内容、交付次数和冗余丢弃均正确（表~\ref{tab:perf-burst}）。测试将 77、81 条 VL 的 1471 字节消息全部入队后同时放行，计时至最后一条消息交付。突发期间线路连续满速发送，帧间无多余空闲。
+\textbf{实测结果：通过。}PERF-02、PERF-03 的实测值低于上界 3.6~µs，全部消息的内容、交付次数和冗余副本丢弃结果均正确（表~\ref{tab:perf-burst}）。测试分别将 77、81 条 VL 的 1471 字节消息全部入队，再同时放行；从放行时刻开始计时，直到最后一条消息交付。突发期间线路连续满速发送，帧间无多余空闲。
 
 \begin{table}[!htbp]\centering
 \caption{同时到期的时延：上界与实测}\label{tab:perf-burst}
@@ -153,21 +155,21 @@ PERF-02 & 77 条 VL 各一条 1471 字节消息装入发送队列后同时放行
 PERF-03 & 同上，81 条 VL & 同上 & 673498/0\newline 仅自检 & 通过 \\
 \end{items}
 
-BAG 为 1~ms、消息为最长时，线路在一个 BAG 内至多容纳 81 帧（$81\times1538=124578<125000$ 拍），81 条即该配置下线路可承载的最大 VL 数。77 条同时到期时时延低于 1~ms，81 条时为 1.008~ms，均满足要求。
+BAG 为 1~ms、消息长度为最大值时，线路在一个 BAG 内至多容纳 81 帧（$81\times1538=124578<125000$ 拍），81 条即该配置下线路可承载的最大 VL 数。77 条 VL 同时到期时，实测时延低于 1~ms；81 条 VL 同时到期时，实测时延为 1.008~ms，均满足要求。
 
 \subsection{发送抖动}
 
-稳态发送抖动测试通过。PERF-01 满载工况下，同一 VL 相邻两帧的发送起点间隔均等于 BAG，抖动为 \Jit~µs。TX-03 的模块级测试核对 BAG 最小间隔，其波形见图~\ref{fig:wbag}。
+稳态发送抖动测试通过。PERF-01 满载工况下，同一 VL 相邻两帧的发送起点间隔均等于 BAG，抖动为 \Jit~µs。TX-03 在模块级测试中检查 BAG 最小间隔，对应波形见图~\ref{fig:wbag}。
 
 \begin{figure}[!htbp]\centering
 \includegraphics{fig/pdf/t13_w_bag.pdf}
 \caption[同一 VL 的相邻发送起点]{RTL 信号波形：同一 VL 两帧分别在 17.076~µs、817.076~µs 开始发送，起点相隔 800~µs（100000 拍 BAG），A、B 两网同拍；长空闲段用断轴压缩}\label{fig:wbag}
 \end{figure}
 
-\textbf{同拍释放的争用。}补充专项测量分别采用 8、77 条 VL 和 17、1471 字节消息，每组运行 24 轮，BAG 均为 1~ms（125000 拍）。各 VL 首轮同时释放，后续允许发送时刻按上一帧的实际发送起点加 BAG 推进。
+\textbf{同拍释放的争用。}补充专项测量分别采用 8、77 条 VL 和 17、1471 字节消息，每组运行 24 轮，BAG 均为 1~ms（125000 拍）。各 VL 首轮同时释放，后续每帧的允许发送时刻，均按上一帧的实际发送起点加 BAG 计算。
 
 \Needspace{12\baselineskip}
-共同理想起点为首轮释放时刻加轮次乘 BAG。相位偏差是实际发送起点相对该理想起点的偏移，包含各 VL 依次占用线路的排队时间；相邻起点间隔按同一 VL 的相邻两帧计算。表~\ref{tab:jitter-contention} 分别列出最大相位偏差、相邻起点间隔及最大抖动。
+各 VL 的共同理想起点，取首轮释放时刻加上轮次与 BAG 的乘积。相位偏差是实际发送起点相对该理想起点的偏移，包含各 VL 依次占用线路的排队时间；相邻起点间隔按同一 VL 的相邻两帧计算。表~\ref{tab:jitter-contention} 分别列出最大相位偏差、相邻起点间隔及最大抖动。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
 \captionof{table}{同拍释放下的相位偏差与发送间隔（专项测量）}\label{tab:jitter-contention}
@@ -185,7 +187,7 @@ BAG 为 1~ms、消息为最长时，线路在一个 BAG 内至多容纳 81 帧�
 
 四组工况的最大抖动均低于 50~µs。77 条短消息工况的相邻发送间隔最大增加 4368 拍；其余三组在首轮排队后，相邻发送间隔保持为 BAG。
 
-\textbf{服务报文并发。}RTC、SNMP、615A 报文叠加 77 条 VL 的 1471 字节消息，连续运行 24 轮；每方向发送 1848 条业务帧，并传输 RTC 22 帧、SNMP 20 帧、TFTP 26 帧。两个方向的有效载荷吞吐均保持 \Thru{}~Mbps，测量错误数为 0。相邻发送间隔的最大增加分别为 258、312 拍，即 2.064、2.496~µs（表~\ref{tab:jitter-services}）。
+\textbf{服务报文并发。}将 RTC、SNMP、615A 报文与 77 条 VL 的 1471 字节消息并发传输，连续运行 24 轮；每方向发送 1848 条业务帧，并传输 RTC 22 帧、SNMP 20 帧、TFTP 26 帧。两个方向的有效载荷吞吐均保持 \Thru{}~Mbps，测量错误数为 0。相邻发送间隔的最大增加分别为 258、312 拍，即 2.064、2.496~µs（表~\ref{tab:jitter-services}）。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
 \captionof{table}{服务报文并发时的业务发送结果（专项测量）}\label{tab:jitter-services}
@@ -201,17 +203,16 @@ BAG 为 1~ms、消息为最长时，线路在一个 BAG 内至多容纳 81 帧�
 
 上述专项测量见附录~\ref{app:evidence} 的 \code{contention.json}；标准回归的稳态结果取自 PERF-01。
 
-\FloatBarrier
+\clearpage
 \section{VL 支持能力}\label{sec:p-vl}
 
 \begin{items}{VL 支持能力测试项}{tab:p-vl}
 CAP-01 & 两个端系统经双网互连；每端写入全部 4096 条接收配置和 128 条发送配置；128 条发送 VL 各发一条 64 字节消息，两端同时发送，目的接收索引为 0、32、64、……、4032 和 4095 & 每端 A、B 网各发出 128 帧；128 条消息各交付一次，128 个冗余副本被丢弃；索引、长度和内容逐条正确 & \CapChecks/0\newline 仅自检 & 通过 \\
 \end{items}
 
-\Needspace{7\baselineskip}
-VL 支持能力测试通过。CAP-01 在系统级验证 128 条发送 VL 全部可用，接收索引覆盖表首、表尾及全范围。RX-01 在模块级逐条验证全部 4096 条接收 VL：每条接收两对双网副本，共交付 8192 条消息（\ref{sec:f-comm}~节）。SYS-04 在系统级抽查了含 0 和 4095 在内的 256 个接收索引。
+VL 支持能力测试通过。CAP-01 在系统级验证了 128 条发送 VL 全部可用，所选接收索引分布于接收表的全范围，并包含表首和表尾。RX-01 在模块级逐条验证全部 4096 条接收 VL：每条接收两对双网副本，共交付 8192 条消息（\ref{sec:f-comm}~节）。SYS-04 在系统级抽查了含 0 和 4095 在内的 256 个接收索引。
 
-发送 VL 数、同时缓存消息数和线路持续承载规模分别见表~\ref{tab:cap-scales}。SYS-04 实测第 86 条最长消息因无空闲页被拒绝；77、81 条 VL 满载分别占用 231、243 页。默认容量见表~\ref{tab:cap-buf}；接收溢出边界由 RX-05、RX-06 和 SYS-07 采用缩小参数测试（\ref{sec:f-ic}~节）。
+表~\ref{tab:cap-scales} 分别说明发送 VL 数量、可同时缓存的消息数量，以及线路可持续承载的 VL 数量。SYS-04 实测第 86 条最长消息因无空闲页被拒绝；77、81 条 VL 满载分别占用 231、243 页。默认容量见表~\ref{tab:cap-buf}；RX-05、RX-06 和 SYS-07 使用缩小后的参数测试接收溢出边界（\ref{sec:f-ic}~节）。
 
 \begin{table}[!htbp]\centering
 \caption{发送配置、缓存与线路承载规模}\label{tab:cap-scales}

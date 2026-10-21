@@ -1,10 +1,10 @@
 \chapter{综合结果与综合后仿真}\label{ch:netlist}
 
-eLinx 完成 \code{AFDX_top} 综合并导出 VQM 网表。综合后网表通过双向通信测试（NET-01）和五项功能联合测试（NET-02）。
+使用 eLinx 对 \code{AFDX_top} 进行综合，并导出 VQM 网表。综合后网表通过双向通信测试（NET-01）和五项功能联合测试（NET-02）。
 
 \section{综合配置与资源}
 
-综合使用 eLinx~3.0.7，顶层为 \code{AFDX_top}，目标器件 EQ6HL130、CSG484\_H 封装，优化模式为 Speed，时钟 \code{clk} 为 125~MHz、周期 8~ns。Run Synthesis 成功并导出 VQM 网表，总体资源见表~\ref{tab:test-synth-res}。
+综合工具为 eLinx~3.0.7，顶层为 \code{AFDX_top}，目标器件为 EQ6HL130，封装为 CSG484\_H，优化模式设为 Speed。时钟 \code{clk} 的频率为 125~MHz，周期为 8~ns。Run Synthesis 执行成功，并导出 VQM 网表；总体资源用量见表~\ref{tab:test-synth-res}。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{总体综合资源}\label{tab:test-synth-res}
@@ -23,7 +23,7 @@ PLL & 0 & 8 & 0\% \\
 \end{tabularx}
 \end{minipage}\par\medskip
 
-表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块及收发核心中的主要子模块，数字包含各自子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要承载 VL 配置、状态、描述符和报文数据。
+表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块及收发核心中的主要子模块，各模块的资源用量均包含其子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要用于保存 VL 配置、状态、描述符和报文数据。
 
 \begingroup\renewcommand{\tablearraystretch}{1.16}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-10.6cm-6\tabcolsep\relax}@{}}
@@ -46,13 +46,12 @@ PLL & 0 & 8 & 0\% \\
 \end{longtable}
 \endgroup
 
-分模块表按综合层次报告统计，逻辑单元包括仅使用寄存器的单元，与总体资源表的 LUT 分别计数；存储位数表示有效数据位数。缩进项已计入所属核心；标注“2 个”的行表示两个实例的合计用量。
+分模块资源表依据综合层次报告统计。逻辑单元包含仅使用寄存器的单元，与总体资源表中的 LUT 采用不同的统计口径；存储位数表示有效数据位数。缩进项已计入所属核心；标注“2 个”的行表示两个实例的合计用量。
 
 
-\Needspace{15\baselineskip}
 \subsection{MAC 单口资源对照}
 
-在 EQ6HL130 上分别对自研 MAC 和 eLinx 生成的 TripleSpeedEthernet IP 配置进行单口资源统计，结果见表~\ref{tab:test-mac-res}。数字取自相同器件下的资源打包报告；IP 采用该次生成配置，带用户侧 FIFO。原始记录见附录~\ref{app:evidence}。
+在 EQ6HL130 上分别对自研 MAC 和 eLinx 生成的 TripleSpeedEthernet IP 配置进行单口资源统计，结果见表~\ref{tab:test-mac-res}。资源用量取自相同器件下的资源打包报告；所比较的 IP 采用该次生成的配置，包含用户侧 FIFO。原始记录见附录~\ref{app:evidence}。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{MAC 单口资源对照}\label{tab:test-mac-res}
@@ -67,12 +66,11 @@ FF & 198 & 975 \\
 \end{tabularx}
 \end{minipage}\par\medskip
 
-表中数字对应两个独立单口工程；整机集成后的资源用量按表~\ref{tab:test-synth-res} 统计。
+表中资源用量分别来自两个独立的单口工程；整机集成后的资源用量见表~\ref{tab:test-synth-res}。
 
-\Needspace{17\baselineskip}
 \section{综合时序}
 
-时钟 \code{clk} 的目标频率为 125~MHz、周期为 8~ns，综合时序摘要见表~\ref{tab:test-synth-time}。报告采用综合阶段的单元延迟与时钟延迟模型，数据路径的布线延迟按 0~ns 统计。
+时钟 \code{clk} 的目标频率为 125~MHz、周期为 8~ns，综合时序摘要见表~\ref{tab:test-synth-time}。时序分析采用综合阶段的单元延迟与时钟延迟模型，数据路径的布线延迟按 0~ns 统计。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{8~ns（125~MHz）时钟约束下的综合时序摘要}\label{tab:test-synth-time}
@@ -87,20 +85,20 @@ Hold 最差裕量 & $-$\Hold~ns & 538/44216 & 零布线延迟模型下的检查�
 \end{tabularx}
 \end{minipage}\par\medskip
 
-setup 检查的 44216 个端点均满足 8~ns 约束，工具给出的最高频率估计为 \Fmax~MHz。按最小 setup 裕量选出的路径位于 \code{afdx_615a}，从 \code{name_pos[1]} 到 \code{packet_type[1]}，共 15 级逻辑，逻辑延迟 5.403~ns，裕量 +\Setup~ns。
+setup 检查的 44216 个端点均满足 8~ns 约束，工具给出的最高频率估计为 \Fmax~MHz。setup 裕量最小的路径位于 \code{afdx_615a}，从 \code{name_pos[1]} 到 \code{packet_type[1]}，共 15 级逻辑，逻辑延迟 5.403~ns，裕量 +\Setup~ns。
 
-hold 检查有 538 个违例端点，最差裕量为 $-$\Hold~ns。最差路径由发送缓冲的 \code{payload_wd} 寄存器到 RAM 写数据寄存器，数据路径延迟为 0.696~ns；模型中 RAM 时钟比源触发器时钟晚 0.754~ns。
+hold 检查有 538 个违例端点，最差裕量为 $-$\Hold~ns。最差路径从发送缓冲的 \code{payload_wd} 寄存器出发，到达 RAM 写数据寄存器，数据路径延迟为 0.696~ns；模型中 RAM 时钟比源触发器时钟晚 0.754~ns。物理实现阶段需结合实际数据路径与时钟路径延迟，完成 hold 检查与违例修复。
 
-\Needspace{12\baselineskip}
+\Needspace{16\baselineskip}
 \section{网表功能结果}
 
-RTL 与网表采用同一套激励，网表采用原厂单元功能模型进行逻辑功能仿真。网表副本按原厂单元声明补齐仿真所需输入和参数，处理方法见附录~\ref{sec:repro-netlist}。
+RTL 与网表仿真使用同一套激励。网表仿真使用原厂单元功能模型。仿真副本按原厂原语声明补齐省略输入的默认电平，并为已有进位输入连接补充启用参数；原有连接、参数和 LUT 内容均保留，处理方法见附录~\ref{sec:repro-netlist}。
 
-NET-01 由测试平台自检；NET-02 执行自检、参考检查和 RTL 端口记录比较，比较内容包含记录中的时钟周期编号。两项测试均按 \ref{sec:criteria}~节判据通过，仿真诊断无 Error、Fatal 或 Warning。
+NET-01 由测试平台完成自检；NET-02 除自检和参考检查外，还将网表端口记录与 RTL 端口记录进行比较，比较范围包含记录中的时钟周期编号。两项测试均通过 \ref{sec:criteria}~节规定的检查，仿真诊断中未出现 Error、Fatal 或 Warning。
 
 \begin{items}{综合后仿真测试项}{tab:net-result}
-NET-01 & 界面综合网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 仅自检 & 通过 \\
-NET-02 & 界面综合网表；激励同 SVC-08（\code{tb_net_services}） & 自检和独立核对通过；7 份端口记录与 RTL 逐字节相同；仿真诊断无 Error、Fatal、Warning & \SvcChecks/0\newline 65/0 & 通过 \\
+NET-01 & 由界面综合导出的网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 仅自检 & 通过 \\
+NET-02 & 由界面综合导出的网表；激励同 SVC-08（\code{tb_net_services}） & 自检和独立核对通过；7 份端口记录与 RTL 逐字节相同；仿真诊断无 Error、Fatal、Warning & \SvcChecks/0\newline 65/0 & 通过 \\
 \end{items}
 
-NET-02 的 7 份端口记录与 RTL 逐字节一致，包括五项功能联合测试总记录、各端各网的线路记录、接收记录和卸载结果。加载并卸载的 16 字节文件与原文件一致，卸载内容的 41 项检查全部通过。
+NET-02 的 7 份端口记录与对应的 RTL 记录逐字节一致，包括五项功能联合测试总记录、各端各网的线路记录、接收记录和卸载结果。加载并卸载的 16 字节文件与原文件一致，卸载内容的 41 项检查全部通过。

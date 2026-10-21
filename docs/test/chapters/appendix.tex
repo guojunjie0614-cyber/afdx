@@ -1,7 +1,7 @@
 \chapter{完整回归结果}\label{app:regress}
 
 \section{完整 RTL 回归}
-完整回归共 \RegCount{} 项，全部通过（表~\ref{tab:regress}）。自检合计 \RegChecks{} 次，独立核对合计 \RegIndep{} 项；“仅自检”表示该用例由测试平台完成判定。测试平台下方为非默认参数。
+完整回归共 \RegCount{} 项，全部通过（表~\ref{tab:regress}）。自检合计 \countsep{\RegChecks} 次，独立核对合计 \countsep{\RegIndep} 项；“仅自检”表示该用例由测试平台完成判定。表中测试平台名称下方列出该用例采用的非默认参数。
 
 \begingroup
 \renewcommand{\tablearraystretch}{1.18}
@@ -50,7 +50,7 @@ CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双�
 \endgroup
 
 \section{ModelSim 批量测试}
-7 个用例全部通过，Error 和 Warning 均为 0，总耗时 626.779~s。检查数与完整回归分开统计。
+7 个用例全部通过，Error 和 Warning 均为 0，总耗时 626.779~s。这些用例的检查数与完整回归分别统计。
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.35cm}>{\raggedright\arraybackslash}p{6.8cm}>{\raggedleft\arraybackslash}p{1.75cm}>{\centering\arraybackslash}p{0.9cm}>{\raggedleft\arraybackslash}p{1.65cm}@{}}
 \caption{ModelSim 批量测试的七个用例结果}\\
@@ -67,7 +67,7 @@ CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双�
 \chapter{复现命令}\label{app:repro}
 
 \section{环境与行为仿真}
-命令在仓库根目录执行，PowerShell 命令行末的反引号为续行符。工程路径不得含中文或空格。环境：Windows PowerShell 5.1、eLinx 3.0.7、ModelSim SE-64 2020.4；Python 脚本要求 3.10 及以上版本（已验证 3.12.7）。工具路径按表~\ref{tab:envvars} 设置，详见 \code{README.md}“软件准备”。
+以下命令均在仓库根目录执行，PowerShell 命令行末的反引号表示续行。工程路径不得含中文或空格。环境：Windows PowerShell 5.1、eLinx 3.0.7、ModelSim SE-64 2020.4；Python 脚本要求 3.10 及以上版本（已验证 3.12.7）。工具路径按表~\ref{tab:envvars} 设置，详见 \code{README.md}“软件准备”。
 
 \begin{table}
 \centering
@@ -88,22 +88,22 @@ Python 依赖的安装命令如下；eLinx 行为仿真和 ModelSim 批量测试
 python -m pip install psutil pyasn1==0.4.8
 \end{runcommand}
 
-\textbf{eLinx 行为仿真：}打开 \code{elinx/AFDX_EndSystem.epr}，在 Tool Settings 中配置 ModelSim，在 Simulation Sources 中确认顶层为 \code{tb_elinx}，执行 Run Behavioral Simulation。通过标志：末行含 \code{PASS checks=9238 errors=0}。
+\textbf{eLinx 行为仿真：}打开 \code{elinx/AFDX_EndSystem.epr}，在 Tool Settings 中配置 ModelSim，在 Simulation Sources 中确认顶层为 \code{tb_elinx}，执行 Run Behavioral Simulation。通过判据为末行包含 \code{PASS checks=9238 errors=0}。
 
-\textbf{ModelSim 批量测试：}在 Transcript 中进入仓库根目录，执行以下命令。通过标志：7 行 \code{JUDGE CASE PASS} 和末行 \code{JUDGE ENTRY PASS cases=7}。汇总文件为 \code{out/modelsim/judge_*/result.txt}。
+\textbf{ModelSim 批量测试：}在 Transcript 中进入仓库根目录，执行以下命令。通过判据为输出 7 行 \code{JUDGE CASE PASS} 和末行 \code{JUDGE ENTRY PASS cases=7}。汇总文件为 \code{out/modelsim/judge_*/result.txt}。
 \begin{runcommand}
 do sim/run_judge.do
 \end{runcommand}
 
-\textbf{完整 RTL 回归：}执行以下命令。通过标志：\RegCount{} 项均为 PASS。汇总写入 \code{out/regress/}，逐项输出写入 \code{out/sim/}。
+\textbf{完整 RTL 回归：}执行以下命令。通过判据为 \RegCount{} 项结果均为 PASS。汇总写入 \code{out/regress/}，逐项输出写入 \code{out/sim/}。
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass `
   -File sim/regress.ps1
 \end{runcommand}
 
-\Needspace{10\baselineskip}
+\Needspace{15\baselineskip}
 \section{界面综合网表}\label{sec:repro-netlist}
-先在 eLinx 中执行 Run Synthesis 生成网表，再运行以下命令。第一条运行 NET-01；第二条先对 RTL 运行五项功能联合测试，再对界面综合网表运行同一测试并比较 7 份端口记录（NET-02）。
+先在 eLinx 中执行 Run Synthesis 生成网表，再运行以下命令。第一条命令运行 NET-01；第二条命令先对 RTL 运行五项功能联合测试，再对界面综合网表运行同一测试，并比较两次仿真的 7 份端口记录（NET-02）。
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass `
   -File sim/run_gui_netlist.ps1
@@ -111,9 +111,9 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 powershell -NoProfile -ExecutionPolicy Bypass `
   -File sim/run_gui_netlist.ps1 -Test tb_net_services
 \end{runcommand}
-通过标志：分别打印 \code{GUI NETLIST PASS tb_elinx} 和 \code{GUI NETLIST PASS tb_net_services}；自检 \ElinxChecks/0 和 \SvcChecks/0，五项功能联合测试参考检查 65/0，7 份端口记录与 RTL 一致。输出目录为 \code{out/gui_netlist/}。
+通过判据为分别输出 \code{GUI NETLIST PASS tb_elinx} 和 \code{GUI NETLIST PASS tb_net_services}；自检的检查数/错误数分别为 \ElinxChecks/0 和 \SvcChecks/0，五项功能联合测试的参考检查为 65/0，且 7 份端口记录与 RTL 一致。输出目录为 \code{out/gui_netlist/}。
 
-仿真前，\code{tools/adapt_gui_vqm.py} 在网表副本中按厂商声明补齐 427486 个默认输入（含 RAM 字节掩码、未用数据输入等）和 3933 个启用进位输入的参数，保留已有连接、参数和 LUT 内容。
+仿真前，\code{tools/adapt_gui_vqm.py} 按原厂原语声明和默认电平规则，在网表副本中补齐省略输入的默认值，包括 RAM 字节掩码与未用数据输入；对已有进位输入连接，补充相应的启用参数。脚本保留原网表，以及副本中的已有连接、已有参数和 LUT 内容。本次共补齐 \countsep{427486} 个输入默认值和 \countsep{3933} 个进位输入启用参数，操作统计见 \code{docs/evidence/gui_services_summary.json} 的 \code{adaptation}。
 
 \section{代码覆盖率复现}
 在配置 ModelSim 的环境下，执行以下命令运行完整 38 项回归并按 \code{sbceft} 配置启用代码覆盖率统计：
@@ -131,12 +131,12 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \chapter{测试记录索引}\label{app:evidence}
 
 \section{记录说明}
-文件名除特别说明外均相对于 \code{docs/evidence/}，归档清单见 \code{manifest.json}。以下按标准测试、异常注入和专项测试列出记录文件。
+除特别说明外，以下文件名均相对于 \code{docs/evidence/}，归档清单见 \code{manifest.json}。以下按标准测试、异常注入和专项测试列出记录文件。
 
 \section{标准测试与综合记录}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.6cm-2\tabcolsep\relax}@{}}
 \caption{标准测试及综合网表证据文件索引}\\
-\longtablehead{2}{\thead{文件} & \thead{对应测试与字段或日志定位}}
+\longtablehead{2}{\thead{文件} & \thead{对应测试及字段或日志位置}}
 \code{performance.json} & \code{tb_sys_perf}；\code{items/errors}，\code{reports.system.performance} 下各阶段、方向的吞吐、时延与抖动。 \\
 \code{rtc.json} & \code{tb_sys_rtc}；\code{items/errors}、\code{idle_max_ns}、\code{loaded_max_ns}、\code{gbe_max_ns}、\code{gbe_mbps}。 \\
 \code{capacity.log} & \code{tb_judge_capacity}；\code{[CAPACITY_SUMMARY]} 中发送数、接收配置数、抽测数与首末索引，\code{[RESULT]} 中检查项数和错误数。 \\
@@ -155,11 +155,11 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \code{coverage/vcover_report.txt} & ModelSim \code{vcover} 导出的完整覆盖率文本报告。 \\
 \end{longtable}
 
-\Needspace{9\baselineskip}
+\Needspace{11\baselineskip}
 \section{异常注入记录}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.6cm-2\tabcolsep\relax}@{}}
 \caption{异常注入与计数读回证据文件索引}\\
-\longtablehead{2}{\thead{文件} & \thead{对应测试与字段或记录类型}}
+\longtablehead{2}{\thead{文件} & \thead{对应测试及字段或记录类型}}
 \code{fault_checks.json} & \code{tb_sys_fault}；\code{items/errors} 和 \code{reports} 中双端收发、GMII、系统阶段统计。 \\
 \code{fault_events.txt} & 同测试的系统记录；\code{A/J/R/P/V} 行及 \code{G CLOCK_NS}，定位注入、阶段与配置口读回。 \\
 \code{fault_rx_events.txt} & 同测试端 1 接收记录；\code{R/I} 行定位复位与就绪，\code{P/E} 行定位阶段与接收事件。 \\
@@ -174,7 +174,6 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 \code{queue_overflow_events.txt} & 同测试接收记录；\code{G RX_DQ_AW}、\code{P}、\code{E} 行定位队列参数、阶段和交付／溢出事件。 \\
 \end{longtable}
 
-\Needspace{12\baselineskip}
 \section{专项测试记录}
 \code{contention.json} 保存多条 VL 同时获准发送与服务报文并发测试结果；各组测量见 \code{runs[].measurements}，方向数据见其中的 \code{directions}。
 
@@ -183,24 +182,22 @@ MAC 单口资源对照的原始记录为 \code{mac_self_resources.json} 与 \cod
 \section{参考汇总与补充记录}
 \code{sim/reference/} 中的 \code{regression.json} 汇总完整回归结果（表~\ref{tab:regress}）；\code{judge_result.txt} 汇总批量测试各用例的结果、耗时及性能、RTC 和突发指标。
 
-\Needspace{12\baselineskip}
+\Needspace{16\baselineskip}
 \section{数字来源汇总}
 各项结果的记录文件与取值位置见下表；测试配置与测量口径见第~\ref{ch:env}~章和第~\ref{ch:perf}~章。
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.6cm-2\tabcolsep\relax}@{}}
 \caption{报告数字与原始来源对应}\\
 \longtablehead{2}{\thead{数字或数字组} & \thead{来源与取值位置}}
-\RegCount{} 项、\RegChecks{} 次自检、\RegIndep{} 项独立核对 & \code{sim/reference/regression.json} 的 \code{Runs[]} 长度、\code{Checks} 之和及非空 \code{CheckItems} 之和；逐项数值见完整回归表。 \\
-批量测试 7 项、0 错误、0 Warning；各例耗时及总耗时 626.779 s & \code{sim/reference/judge_result.txt} 的 \code{JUDGE CASE}、\code{JUDGE ENTRY}。 \\
+\RegCount{} 项、\countsep{\RegChecks} 次自检、\countsep{\RegIndep} 项独立核对 & \code{sim/reference/regression.json} 的 \code{Runs[]} 长度、\code{Checks} 之和及非空 \code{CheckItems} 之和；逐项数值见完整回归表。 \\
+批量测试 7 项、0 错误、0 Warning；各用例耗时及总耗时 626.779 s & \code{sim/reference/judge_result.txt} 的 \code{JUDGE CASE}、\code{JUDGE ENTRY}。 \\
 \ElinxChecks/0、\SvcChecks/0、65/0 & \code{gui_elinx_summary.json} 和 \code{gui_services_summary.json} 的 \code{results}（自检）及 \code{check.items/errors}（独立核对）。 \\
 7 份一致记录；卸载检查 41 项、16 字节 & \code{gui_services_summary.json} 的 \code{exact_external_records}、\code{check.download.items} 及 \code{check.download.cases}。 \\
-427486 个输入、3933 个进位输入启用参数 & \code{gui_services_summary.json} 的 \code{adaptation} 下 \code{added_input_defaults} 各计数之和，以及 \code{carry_use_parameters_added} 中的 \code{cin_used}。 \\
-综合资源：CLB 4620 & 综合结果见 \code{docs/FACTS.md} 第三节，CLB 用量见 \code{gui_resources.rpt}。 \\
 \CapChecks{}、\SnmpChecks{}；128 条发送、4096 条接收配置与抽测索引 & \code{capacity.log} 的 \code{[RESULT]}、\code{[CAPACITY_SUMMARY]} 及 \code{snmp.log} 的 \code{[RESULT]}。 \\
 吞吐 \Thru{}、\ThruEightyOne{}、\ThruTen{} Mbps；时延 \Lat{}、\Ttx{}、\Trx{} µs；抖动 \Jit{} µs & \code{performance.json} 的 \code{reports.system.performance}，对应阶段、方向中的吞吐、\code{T_tx}、\code{T_rx}、\code{T_e2e_link_removed} 及抖动统计。 \\
 突发消息全部交付耗时 \BurstSevSeven{}、\BurstEightOne{} µs；RTC 误差 \RtcIdle{}、\RtcLoad{} ns & \code{judge_result.txt} 的 \code{JUDGE METRIC}；RTC 另见 \code{rtc.json} 的 \code{idle_max_ns}、\code{loaded_max_ns}、\code{gbe_max_ns}。 \\
 资源、占比和综合时序数字 & \code{gui_resources.rpt}、\code{device_capacity.rpt}、\code{gui_timing.json}。占比按综合用量除以器件总量计算。 \\
-覆盖率 \CovStmt{}\% 语句、\CovBranch{}\% 分支、\CovCond{}\% 条件、\CovFsm{}\% 状态机、\CovToggle{}\% 翻转 & \code{sim/reference/coverage/totals.json} 的 \code{metrics} 及 \code{modules.csv} 各模块汇总。 \\
-工具版本、依赖版本与仿真五小时超时设置 & \code{README.md}“软件准备”、\code{FACTS.md} 第四节；VQM 适配依据 \code{tools/adapt_gui_vqm.py}。 \\
+覆盖率 \CovStmt{}\% 语句、\CovBranch{}\% 分支、\CovCond{}\% 条件、\CovFsmState{}\% 状态、\CovFsmTrans{}\% 转换、\CovFsm{}\% 状态机合并、\CovToggle{}\% 翻转 & \code{sim/reference/coverage/totals.json} 的 \code{metrics} 及 \code{modules.csv} 各模块汇总。 \\
+工具版本、依赖版本与仿真五小时超时设置 & \code{README.md}“软件准备”；网表仿真默认五小时运行上限见 \code{tools/gui_netlist.py} 的 \code{--deadline} 设置。 \\
 \end{longtable}
 \endgroup
