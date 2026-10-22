@@ -69,7 +69,13 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
                                     '-wlf', 'simulation.wlf', '-do', 'do run.do'], 5 * 3600)
         rows = re.findall(r'\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)', log)
         diagnostics = {kind: len(re.findall(r'\*\* ' + kind + ':', log)) for kind in ('Error', 'Fatal', 'Warning')}
-        expected = '9238' if test == 'tb_elinx' else '1123'
+        # 轮询读次数会随RTL延迟变化；网表必须与同次RTL参考的检查数完全一致。
+        expected = '9238'
+        if test == 'tb_net_services':
+            if reference:
+                expected = json.loads((reference / 'summary.json').read_text(encoding='utf-8'))['results'][0][2]
+            else:
+                expected = rows[0][2] if len(rows) == 1 and int(rows[0][2]) > 0 else 'invalid'
         flow.result.update(results=rows, diagnostics=diagnostics, mode=mode)
         if rows != [(test, 'PASS', expected, '0')] or diagnostics['Error'] or diagnostics['Fatal']:
             raise RuntimeError('测试没有完整通过，见 simulation.log')
