@@ -389,7 +389,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         | ({4{lane_b[2]}} & count_b_len[read_slice * 4 +: 4])
                         | ({4{lane_b[3]}} & count_b_hdr[read_slice * 4 +: 4])
                         | ({4{lane_b[4]}} & count_b_unk[read_slice * 4 +: 4])
-                        | ({4{lane_b[5]}} & count_b_ic[read_slice * 4 +: 4])
+                        | ({4{lane_b[5]}} & count_b_cfg[read_slice * 4 +: 4])
                         | ({4{lane_b[6]}} & count_b_ic[read_slice * 4 +: 4])
                         | ({4{lane_b[7]}} & count_b_ovf[read_slice * 4 +: 4]);
                 end
