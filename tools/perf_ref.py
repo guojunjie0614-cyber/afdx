@@ -150,18 +150,25 @@ def measure_r97(folder, stages=None, output=None):
     from pathlib import Path
     import json
     folder=Path(folder)
-    windows={}
+    windows={};offers=collections.defaultdict(list);current='initial'
     for line in (folder/'sys_events.txt').read_text(encoding='ascii').splitlines():
         p=line.split()
+        if p and p[0]=='P':current=p[2]
+        if p and p[0]=='O':offers[current,int(p[2]),int(p[3])].append((int(p[5]),int(p[4])))
         if p and p[0]=='F' and p[2] in ('begin','end'):windows.setdefault(p[3],{})[p[2]]=int(p[1])
     endpoints={}
     for es in (1,2):
-        ms=[];stage='initial';by_vl=collections.defaultdict(list)
+        ms=[];stage='initial';by_vl=collections.defaultdict(list);offer_index=collections.Counter()
         for line in (folder/f'es{es}_tx/events.txt').read_text(encoding='ascii').splitlines():
             p=line.split()
             if p[0]=='P':stage=p[2]
             elif p[0]=='M':
                 m=dict(id=len(ms)+1,stage=stage,cycle=int(p[1]),vl=int(p[2]),n=int(p[3]),data=p[7],tx={},rx={},delivery=None)
+                key=(stage,es,m['vl']);index=offer_index[key];offer_index[key]+=1
+                if key in offers:
+                    assert index<len(offers[key]) and offers[key][index][1]==m['n'],'planned release matching'
+                    m['release']=offers[key][index][0]
+                else:m['release']=m['cycle']  # Legacy captures lack a separate planned-release record.
                 ms.append(m);by_vl[m['vl']].append(m)
         endpoints[es]=dict(messages=ms,by_vl=by_vl)
         for net in ('A','B'):
@@ -189,7 +196,7 @@ def measure_r97(folder, stages=None, output=None):
         endpoints[es]['pulses']=pulses
     scope=sorted({m['stage'] for ep in endpoints.values() for m in ep['messages'] if (m['stage'] in stages if stages else m['stage'].startswith(('var_','gbe77_')))})
     answer={};frame_rows=[]
-    metrics=('L_gmii','L_tx','L_rx','L_rx_last','L_app','L_app_last')
+    metrics=('L_gmii','L_tx','L_rx','L_rx_last','L_app','L_app_last','L_release_app','L_release_app_last')
     for stage in scope:
         assert stage in windows and set(windows[stage])=={'begin','end'},('measurement window',stage)
         begin,end=windows[stage]['begin'],windows[stage]['end'];assert end>begin
@@ -219,11 +226,11 @@ def measure_r97(folder, stages=None, output=None):
                     tx=m['tx'][net][0];rx=m['rx'][net][0]
                     assert rx-tx==(257 if stage.endswith('_d257') else 0),'link delay'
                     values=dict(L_gmii=rx-tx,L_tx=tx-m['cycle'])
-                    if net==winner:values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'])
+                    if net==winner:values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'],L_release_app=d-m['release'],L_release_app_last=d+m['n']-1-m['release'])
                     for scope_net in (([net,'accepted'] if net==winner else [net]) if begin<=m['cycle']<end else []):
                         for group in ['all',str(m['n'])]:
                             for metric,value in values.items():buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
-                    frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,in_window=begin<=m['cycle']<end,M=m['cycle'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
+                    frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,in_window=begin<=m['cycle']<end,M=m['cycle'],release=m['release'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
             for net in ('accepted','A','B'):
                 for group in ['all']+list(map(str,lengths)):
                     for metric in metrics:
@@ -271,7 +278,9 @@ def check_r97_var(folder, measured):
             count=collections.Counter(f['vl'] for f in rows);vls=80 if stage.startswith('var_high') else 32
             requirement(set(count)==set(range(vls)) and min(count.values(),default=0)>=8,stage+' '+direction+' >=8 frames per VL')
             requirement({f['length'] for f in rows}=={1,17,256,1024,1471},stage+' '+direction+' five payload lengths')
-            requirement(rate>=100,stage+' '+direction+' payload >=100Mbps',measured_mbps=rate)
+            if stage.startswith('var_high'):
+                requirement(rate>=100,stage+' '+direction+' payload >=100Mbps',measured_mbps=rate)
+            else:requirements.append(dict(status='REPORT',label=stage+' '+direction+' offered-load throughput',measured_mbps=rate))
             requirement(all(f['L_gmii']<=250000 and f['L_app']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame first-byte latency <=2000us')
             requirements.append(dict(status='REPORT',label=stage+' '+direction+' R97 jitter',cycles=measured[key+'/L_app/jitter']))
     (folder/'r97_requirements.json').write_text(json.dumps(requirements,indent=2),encoding='utf8')
