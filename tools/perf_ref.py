@@ -143,3 +143,103 @@ def measure(sysrows,endpoints,gmii,samples,expect):
             stage_result['directions'][f'es{source_number}_to_es{3-source_number}']=metrics
         result[stage]=stage_result
     return result
+
+
+# R97 uses public GMII SFD and application records; legacy measure() above is unchanged.
+def measure_r97(folder, stages=None, output=None):
+    from pathlib import Path
+    import json
+    folder=Path(folder)
+    windows={}
+    for line in (folder/'sys_events.txt').read_text(encoding='ascii').splitlines():
+        p=line.split()
+        if p and p[0]=='F' and p[2] in ('begin','end'):windows.setdefault(p[3],{})[p[2]]=int(p[1])
+    endpoints={}
+    for es in (1,2):
+        ms=[];stage='initial';by_vl=collections.defaultdict(list)
+        for line in (folder/f'es{es}_tx/events.txt').read_text(encoding='ascii').splitlines():
+            p=line.split()
+            if p[0]=='P':stage=p[2]
+            elif p[0]=='M':
+                m=dict(id=len(ms)+1,stage=stage,cycle=int(p[1]),vl=int(p[2]),n=int(p[3]),data=p[7],tx={},rx={},delivery=None)
+                ms.append(m);by_vl[m['vl']].append(m)
+        endpoints[es]=dict(messages=ms,by_vl=by_vl)
+        for net in ('A','B'):
+            for kind,dest in [('tx',es),('rx',3-es)]:
+                cursor=collections.Counter()
+                for line in (folder/f'es{dest}_gmii_{kind}/dump_{net.lower()}.txt').read_text(encoding='ascii').splitlines():
+                    p=line.split();wire=p[3];vl=int(wire[24:28],16)-(100 if es==1 else 2000)
+                    assert vl in by_vl and cursor[vl]<len(by_vl[vl]),('unmatched GMII',es,net,vl)
+                    m=by_vl[vl][cursor[vl]];cursor[vl]+=1
+                    assert int(p[2])*2==len(wire) and wire[100:100+2*m['n']]==m['data'],('GMII payload',es,net,m['id'])
+                    m[kind][net]=(int(p[1])+7,wire)
+                    if kind=='rx':assert wire==m['tx'][net][1],('link bytes',es,net,m['id'])
+                assert all(cursor[v]==len(mm) for v,mm in by_vl.items()),('GMII counts',es,net,kind)
+        cursor=collections.Counter();stage='initial';pulses=collections.Counter()
+        for line in (folder/f'es{3-es}_rx/events.txt').read_text(encoding='ascii').splitlines():
+            p=line.split()
+            if p[0]=='P':stage=p[2]
+            elif p[0]=='E':pulses[stage,p[2]]+=1
+            elif p[0]=='D':
+                vl=int(p[3]);assert vl in by_vl and cursor[vl]<len(by_vl[vl]),'unmatched delivery'
+                m=by_vl[vl][cursor[vl]];cursor[vl]+=1
+                assert int(p[6])==m['n'] and p[7]==m['data'],'delivery payload/order'
+                m['delivery']=(int(p[1]),p[2])
+        assert all(cursor[v]==len(mm) for v,mm in by_vl.items()),'exactly one delivery'
+        endpoints[es]['pulses']=pulses
+    scope=sorted({m['stage'] for ep in endpoints.values() for m in ep['messages'] if (m['stage'] in stages if stages else m['stage'].startswith(('var_','gbe77_')))})
+    answer={};frame_rows=[]
+    metrics=('L_gmii','L_tx','L_rx','L_rx_last','L_app','L_app_last')
+    for stage in scope:
+        assert stage in windows and set(windows[stage])=={'begin','end'},('measurement window',stage)
+        begin,end=windows[stage]['begin'],windows[stage]['end'];assert end>begin
+        for es in (1,2):
+            direction=f'es{es}_to_es{3-es}';ep=endpoints[es];ms=[m for m in ep['messages'] if m['stage']==stage]
+            selected=[m for m in ms if begin<=m['cycle']<end]
+            prefix=f'{stage}/{direction}/accepted/all'
+            answer[prefix+'/offered/messages']=len(ms);answer[prefix+'/delivered/messages']=sum(m['delivery'] is not None for m in ms)
+            answer[prefix+'/redundancy/rejections']=ep['pulses'][stage,'rm_drop']
+            assert ep['pulses'][stage,'rm_drop']==len(ms),('redundancy',stage,es)
+            assert all(not ep['pulses'][stage,net+'_'+event] for net in ('a','b') for event in ('fcs','len','hdr','unk','cfg','ic','ovf','gdrop')),('error pulses',stage,es)
+            answer[prefix+'/throughput/window_cycles']=end-begin
+            answer[prefix+'/throughput/payload_bytes']=sum(max(0,min(m['delivery'][0]+m['n'],end)-max(m['delivery'][0],begin)) for m in ms)
+            interval=0;previous={}
+            for m in ms:
+                for net in ('A','B'):
+                    k=(m['vl'],net);now=m['tx'][net][0]
+                    bag=125000 if stage.startswith(('gbe77','var_high')) else (125000,250000,500000,1000000)[m['vl']//8]
+                    if k in previous and begin<=m['cycle']<end:interval=max(interval,abs(now-previous[k]-bag))
+                    previous[k]=now
+            answer[prefix+'/tx_interval_jitter/max']=interval
+            buckets=collections.defaultdict(list)
+            lengths=sorted({m['n'] for m in ms})
+            for m in selected:
+                d,winner=m['delivery']
+                for net in ('A','B'):
+                    tx=m['tx'][net][0];rx=m['rx'][net][0]
+                    assert rx-tx==(257 if stage.endswith('_d257') else 0),'link delay'
+                    values=dict(L_gmii=rx-tx,L_tx=tx-m['cycle'])
+                    if net==winner:values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'])
+                    for scope_net in ([net,'accepted'] if net==winner else [net]):
+                        for group in ['all',str(m['n'])]:
+                            for metric,value in values.items():buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
+                    frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,M=m['cycle'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
+            for net in ('accepted','A','B'):
+                for group in ['all']+list(map(str,lengths)):
+                    for metric in metrics:
+                        rows=buckets[net,group,metric];key=f'{stage}/{direction}/{net}/{group}/{metric}'
+                        stats=dict(samples=len(rows),min='NA',max='NA',jitter='NA',vl='NA',min_frame='NA',max_frame='NA')
+                        if rows:
+                            by_vl=collections.defaultdict(list)
+                            for value,vl,frame in rows:by_vl[vl].append((value,frame))
+                            candidates=[]
+                            for vl,rr in by_vl.items():
+                                lo=min(v for v,f in rr);hi=max(v for v,f in rr)
+                                candidates.append((-(hi-lo),vl,min(f for v,f in rr if v==lo),min(f for v,f in rr if v==hi)))
+                            neg,vl,low,high=min(candidates)
+                            stats.update(min=min(v for v,_,_ in rows),max=max(v for v,_,_ in rows),jitter=-neg,vl=vl,min_frame=low,max_frame=high)
+                        answer.update({key+'/'+k:v for k,v in stats.items()})
+    output=Path(output) if output else folder/'r97_python.tsv'
+    output.write_bytes(''.join(k+'\t'+str(answer[k])+'\n' for k in sorted(answer)).encode('ascii'))
+    (folder/'r97_frames.json').write_text(json.dumps(frame_rows,separators=(',',':')),encoding='utf8')
+    return answer
