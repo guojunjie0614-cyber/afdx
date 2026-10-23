@@ -255,7 +255,13 @@
         "sha256": "d9c45afb41ea78516d0948e32478b3e9656fca47d3a1e31bb081d639adc044b2"
       }
     ],
-    "bytes": 145439,
-    "sha256": "cac1f8bd66dce20594430529381d34a8bd64924e4e4ba77d28a9cba053d52438"
+    "bytes": 145633,
+    "sha256": "88aef18f3a52c88a42e9cf3d802743104b5ae6530bbda3bb1ae270bf9890efc0"
+  },
+  {
+    "file": "t43_timing.json",
+    "source": "T43 native synthesis/full timing and terminal JSON",
+    "bytes": 17107,
+    "sha256": "a04e72884640d0030c4103870b776f796a5b181190f88a08a0f3a14eebd54c15"
   }
 ]

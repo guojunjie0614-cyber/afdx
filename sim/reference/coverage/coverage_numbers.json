@@ -1,0 +1,285 @@
+{
+  "tests": 39,
+  "passed": 39,
+  "module_count": 24,
+  "rtl_file_count": 24,
+  "ce_div": 2,
+  "metrics": {
+    "Statements": {
+      "covered": 14314,
+      "total": 15877,
+      "percent": 90.15
+    },
+    "Branches": {
+      "covered": 8188,
+      "total": 9642,
+      "percent": 84.92
+    },
+    "Conditions": {
+      "covered": 1029,
+      "total": 1511,
+      "percent": 68.1
+    },
+    "Expressions": {
+      "covered": 3264,
+      "total": 4325,
+      "percent": 75.46
+    },
+    "FSM States": {
+      "covered": 110,
+      "total": 110,
+      "percent": 100.0
+    },
+    "FSM Transitions": {
+      "covered": 138,
+      "total": 308,
+      "percent": 44.8
+    },
+    "Toggles": {
+      "covered": 47317,
+      "total": 59698,
+      "percent": 79.26
+    },
+    "FSM": {
+      "covered": 248,
+      "total": 418,
+      "percent": 59.33
+    }
+  },
+  "test_counts": [
+    {
+      "Test": "tb_ram_sdp",
+      "Param": "",
+      "Checks": 20764,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_mac_tx",
+      "Param": "",
+      "Checks": 264649,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_mac_rx",
+      "Param": "",
+      "Checks": 105303,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_mac_loop",
+      "Param": "",
+      "Checks": 1385254,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_tx_basic",
+      "Param": "",
+      "Checks": 662057,
+      "CheckItems": 7605
+    },
+    {
+      "Test": "tb_tx_basic",
+      "Param": "TX_PAGE_AW=5,TX_OFF_AW=11",
+      "Checks": 661637,
+      "CheckItems": 7605
+    },
+    {
+      "Test": "tb_tx_bag",
+      "Param": "",
+      "Checks": 14054172,
+      "CheckItems": 14591
+    },
+    {
+      "Test": "tb_tx_multi",
+      "Param": "",
+      "Checks": 14438577,
+      "CheckItems": 56211
+    },
+    {
+      "Test": "tb_tx_drop",
+      "Param": "",
+      "Checks": 30267258,
+      "CheckItems": 4642
+    },
+    {
+      "Test": "tb_tx_net",
+      "Param": "",
+      "Checks": 219315,
+      "CheckItems": 229
+    },
+    {
+      "Test": "tb_rx_basic",
+      "Param": "",
+      "Checks": 9960369,
+      "CheckItems": 123855
+    },
+    {
+      "Test": "tb_rx_fault",
+      "Param": "",
+      "Checks": 576923,
+      "CheckItems": 890
+    },
+    {
+      "Test": "tb_rx_icrm",
+      "Param": "",
+      "Checks": 4635284,
+      "CheckItems": 1274
+    },
+    {
+      "Test": "tb_rx_load",
+      "Param": "",
+      "Checks": 6406189,
+      "CheckItems": 19180
+    },
+    {
+      "Test": "tb_rx_ovf_ring",
+      "Param": "RX_RING_AW=9",
+      "Checks": 422837,
+      "CheckItems": 99
+    },
+    {
+      "Test": "tb_rx_ovf_dq",
+      "Param": "RX_DQ_AW=1",
+      "Checks": 373852,
+      "CheckItems": 57
+    },
+    {
+      "Test": "tb_rx_net",
+      "Param": "",
+      "Checks": 374111,
+      "CheckItems": 110
+    },
+    {
+      "Test": "tb_sys_basic",
+      "Param": "",
+      "Checks": 5156252,
+      "CheckItems": 2896
+    },
+    {
+      "Test": "tb_sys_fault",
+      "Param": "",
+      "Checks": 47120962,
+      "CheckItems": 8726
+    },
+    {
+      "Test": "tb_sys_delay",
+      "Param": "",
+      "Checks": 15482118,
+      "CheckItems": 3763
+    },
+    {
+      "Test": "tb_sys_load",
+      "Param": "",
+      "Checks": 216848087,
+      "CheckItems": 116677
+    },
+    {
+      "Test": "tb_sys_cfg",
+      "Param": "",
+      "Checks": 21170537,
+      "CheckItems": 714342
+    },
+    {
+      "Test": "tb_sys_reset",
+      "Param": "",
+      "Checks": 10992598,
+      "CheckItems": 3682
+    },
+    {
+      "Test": "tb_sys_ovf",
+      "Param": "RX_RING_AW=9",
+      "Checks": 9681664,
+      "CheckItems": 1488
+    },
+    {
+      "Test": "tb_sys_net",
+      "Param": "",
+      "Checks": 2944308,
+      "CheckItems": 1265
+    },
+    {
+      "Test": "tb_sys_perf",
+      "Param": "",
+      "Checks": 756655064,
+      "CheckItems": 1212916
+    },
+    {
+      "Test": "tb_sys_rtc",
+      "Param": "",
+      "Checks": 10675857,
+      "CheckItems": 1811
+    },
+    {
+      "Test": "tb_sys_snmp",
+      "Param": "",
+      "Checks": 37611,
+      "CheckItems": 926
+    },
+    {
+      "Test": "tb_sys_snmp_settrap",
+      "Param": "",
+      "Checks": 8563,
+      "CheckItems": 188
+    },
+    {
+      "Test": "tb_sys_615a",
+      "Param": "",
+      "Checks": 44098,
+      "CheckItems": 752
+    },
+    {
+      "Test": "tb_gbe_burst",
+      "Param": "COUNT=77",
+      "Checks": 643552,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_gbe_burst",
+      "Param": "COUNT=81",
+      "Checks": 673500,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_rm_phase",
+      "Param": "",
+      "Checks": 353130,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_rtc_recovery",
+      "Param": "",
+      "Checks": 28,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_rtc_originate",
+      "Param": "",
+      "Checks": 34,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_judge_capacity",
+      "Param": "",
+      "Checks": 49924,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_judge_snmp",
+      "Param": "",
+      "Checks": 699,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_elinx",
+      "Param": "",
+      "Checks": 9238,
+      "CheckItems": null
+    },
+    {
+      "Test": "tb_sys_perf_var",
+      "Param": "",
+      "Checks": 1402134183,
+      "CheckItems": 1573773
+    }
+  ]
+}
