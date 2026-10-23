@@ -193,8 +193,9 @@ module AFDX_top #(
             mib_snapshot_seconds <= snmp_mib_addr[17:4] == RTC_ADDR_GROUP && snmp_mib_addr[2:0] == 4;
         end
     end
+    // SNMP 状态机保证 mib_rd/mib_wr 互斥，读抓拍不依赖写 ready。
     wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
-        || (!cfg_rd && !cfg_wr && snmp_mib_rd && (!snmp_mib_wr || cfg_ready) && mib_snapshot_seconds);
+        || (!cfg_rd && !cfg_wr && snmp_mib_rd && mib_snapshot_seconds);
     afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) loader (
         .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
