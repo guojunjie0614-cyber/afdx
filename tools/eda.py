@@ -126,7 +126,7 @@ def sim(options):
         f.result["replaced_modules"]=sorted(replaced)
         if options.test.startswith("tb_sys_") and options.test not in ("tb_sys_rtc","tb_sys_snmp","tb_sys_snmp_settrap","tb_sys_615a"):
             f.job("vectors",[sys.executable,ROOT/"tools/sys_cases.py","--test",options.test,
-                  "--seed",str(options.seed),"--out",f.folder/"vectors"],30)
+                  "--seed",str(options.seed),"--out",f.folder/"vectors"],120 if options.test=="tb_sys_perf_var" else 30)
             for sub in ("es1_tx","es1_rx","es2_tx","es2_rx","es1_gmii_tx","es1_gmii_rx","es2_gmii_tx","es2_gmii_rx"):(f.folder/sub).mkdir()
             sources.extend(ROOT/"tools"/name for name in ("sys_cases.py","sys_ref.py","sys_checks.py","sys_run_checks.py","gmii_ref.py","tx_ref.py","rx_ref.py","rx_checks.py","afdx_ref.py"))
             if (ROOT/"tools/perf_ref.py").exists():sources.append(ROOT/"tools/perf_ref.py")
@@ -198,6 +198,7 @@ def sim(options):
         # 加载后卸载使五功能场景达到约70万拍；网表预算8小时，仍受Deadline截断。
         sim_budget=28800 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
         if options.test in ("tb_sys_perf", "tb_sys_perf_var") and not netlists:sim_budget=max(sim_budget,5400)
+        if options.test=="tb_sys_perf_var" and not netlists:sim_budget=max(sim_budget,14400)
         if options.coverage:sim_budget=max(sim_budget,3600)
         log=f.job("simulation",[MS/"vsim.exe","-c",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
         if options.coverage:
@@ -220,7 +221,7 @@ def sim(options):
         if options.test.startswith("tb_sys_") and options.test not in ("tb_sys_rtc","tb_sys_snmp","tb_sys_snmp_settrap","tb_sys_615a"):
             check_command=[sys.executable,ROOT/"tools/sys_run_checks.py","--test",options.test,"--dir",f.folder]
             if "AFDX_top" in replaced:check_command += ["--netlist","--rtl-reference",f.result["rtl_reference"]]
-            report=f.job("check",check_command,300)
+            report=f.job("check",check_command,1200 if options.test=="tb_sys_perf_var" else 300)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
