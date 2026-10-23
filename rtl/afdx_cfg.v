@@ -223,13 +223,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // read_loader 的取值：SEL_SHARED 这一组里再选哪个读值。
     localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
 
-    // read_valid/read_select 将读有效标记与两拍后的数据对齐。
-    // read_loader 选择共享地址组中的服务读值；
-    // read_sel_* 把共享组二次选择预译码成独热位，第二拍只剩一级选择。
+    // read_valid 将读有效标记与请求后第二拍的本地选择结果对齐。
     reg read_valid;
-    reg [2:0] read_select;
-    reg [1:0] read_loader;
-    reg read_sel_load, read_sel_extra;
     // pending 表示主机写请求已受理；发送写在真实应答后一拍恢复就绪，地址和数据继续保持。
     reg tx_pending, rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
@@ -313,7 +308,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
 
     reg [2:0] mib_group;
     reg [1:0] mib_loader;
-    // 与 read_loader 同拍的共享组独热选择，预译码只进本地寄存器。
+    // 共享组选择来自本拍主机请求地址或已经寄存的网络管理地址。
     wire [1:0] read_loader_next = host_read ? loader_select(cfg_write_addr) : mib_loader;
     wire [31:0] status_value = {31'b0, tx_ready};
     wire [31:0] user_value = {16'b0, user_id};
@@ -545,34 +540,52 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         if (reset) begin
             read_valid <= 0;
             cfg_rvalid <= 0;
-            read_select <= 0;
-            read_loader <= 0;
-            read_sel_load <= 0;
-            read_sel_extra <= 0;
-            cfg_rdata <= 0;
         end
         else begin
-            // 读请求到来时保存此前的计数值，本拍新事件不计入此次读值。
-            // 第一拍保存各组读值，第二拍选择本次请求对应的一组。
+            // 请求拍保存各组读值，下一拍返回同一次请求对应的数据。
             read_valid <= cfg_rd;
-            read_select <= host_read ? group_select(cfg_write_addr) : mib_group;
-            read_loader <= read_loader_next;
-            read_sel_load <= read_loader_next == SHARED_LOAD;
-            read_sel_extra <= read_loader_next == SHARED_LOAD_EXTRA;
-            // 读结果分两级选择，并在请求后第二拍返回。
             cfg_rvalid <= read_valid;
-            case (read_select)
-                SEL_REGS : cfg_rdata <= read_regs;
-                SEL_TX : cfg_rdata <= read_tx;
-                SEL_A : cfg_rdata <= read_a;
-                SEL_B : cfg_rdata <= read_b;
-                SEL_RTC : cfg_rdata <= rtc_rdata;
-                SEL_SNMP_CONTROL : cfg_rdata <= snmp_control_data;
-                SEL_SNMP_STATUS : cfg_rdata <= snmp_status_data;
-                SEL_SHARED : cfg_rdata <= read_sel_load ? load_rdata
-                    : read_sel_extra ? load_extra_data : snmp_descr_data;
-            endcase
         end
     end
+
+    // 保留组选择层次，每四位使用本地组选择与共享组独热选择。
+    // 共享组三个来源并行与或，避免数据经过串联的优先选择；返回仍为两拍。
+    wire [2:0] read_group_next = host_read ? group_select(cfg_write_addr) : mib_group;
+    genvar result_slice;
+    generate
+        for (result_slice = 0; result_slice < 8; result_slice = result_slice + 1) begin : result_bank
+            (* preserve = 1, dont_merge = 1 *) reg [2:0] group_q;
+            (* preserve = 1, dont_merge = 1 *) reg load_q, extra_q, descr_q;
+            always @(posedge clk) begin
+                if (reset) begin
+                    group_q <= SEL_REGS;
+                    load_q <= 0;
+                    extra_q <= 0;
+                    descr_q <= 0;
+                    cfg_rdata[result_slice * 4 +: 4] <= 0;
+                end
+                else begin
+                    group_q <= read_group_next;
+                    load_q <= read_loader_next == SHARED_LOAD;
+                    extra_q <= read_loader_next == SHARED_LOAD_EXTRA;
+                    descr_q <= read_loader_next != SHARED_LOAD
+                        && read_loader_next != SHARED_LOAD_EXTRA;
+                    case (group_q)
+                        SEL_REGS : cfg_rdata[result_slice * 4 +: 4] <= read_regs[result_slice * 4 +: 4];
+                        SEL_TX : cfg_rdata[result_slice * 4 +: 4] <= read_tx[result_slice * 4 +: 4];
+                        SEL_A : cfg_rdata[result_slice * 4 +: 4] <= read_a[result_slice * 4 +: 4];
+                        SEL_B : cfg_rdata[result_slice * 4 +: 4] <= read_b[result_slice * 4 +: 4];
+                        SEL_RTC : cfg_rdata[result_slice * 4 +: 4] <= rtc_rdata[result_slice * 4 +: 4];
+                        SEL_SNMP_CONTROL : cfg_rdata[result_slice * 4 +: 4] <= snmp_control_data[result_slice * 4 +: 4];
+                        SEL_SNMP_STATUS : cfg_rdata[result_slice * 4 +: 4] <= snmp_status_data[result_slice * 4 +: 4];
+                        SEL_SHARED : cfg_rdata[result_slice * 4 +: 4] <=
+                            ({4{load_q}} & load_rdata[result_slice * 4 +: 4]) |
+                            ({4{extra_q}} & load_extra_data[result_slice * 4 +: 4]) |
+                            ({4{descr_q}} & snmp_descr_data[result_slice * 4 +: 4]);
+                    endcase
+                end
+            end
+        end
+    endgenerate
 
 endmodule
