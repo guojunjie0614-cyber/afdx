@@ -1,31 +1,29 @@
 \chapter{接收通路}\label{ch:rx}
 
-接收核心 \code{afdx_rx_core} 为每个网络配置一套 MAC 和解析器，两网共用一个接收引擎和一个交付模块。MAC 在接收过程中逐字节校验 CRC，解析器同时检查帧头，并将载荷预写入本网的环形缓冲。对于通过解析器检查的帧，接收引擎根据帧描述依次执行 VL 查表、完整性检查和冗余管理，再通知解析器提交数据或回退写指针。已提交的消息最终由交付模块逐字节送给应用。
+接收核心 \code{afdx_rx_core} 为 A、B 两路网络各配置一套接收 MAC 和帧头解析器，两网共用同一接收引擎与交付模块。MAC 在接收过程中逐字节校验 CRC，解析器同步检查帧头并将载荷预写入本网的环形缓冲。对于通过解析器检查的帧，接收引擎根据帧描述依次执行 VL 查表、完整性检查和冗余管理，再通知解析器提交数据或回退写指针；已提交的消息最终由交付模块逐字节送往应用口。
 
 \section{接收核心与配置表}\label{sec:rxtables}
 
 \figN[接收核心框图]{f11_rx}{接收核心及配置、状态和载荷存储之间的连接}{fig:rx}
 
-接收侧的表见表~\ref{tab:rxtables}。\code{rx_map} 以 16 位 VLID 直接寻址，任意 4096 个 VLID 都能映射到接收 VL 序号 \code{idx}；映射表采用一个 65536$\times$13 的数组，读出后直接进入一级寄存器，查表固定 2 拍。
+接收侧的片上表见表~\ref{tab:rxtables}。\code{rx_map} 以 16 位 VLID 直接寻址，任意 4096 个 VLID 均可映射到接收 VL 索引 \code{idx}；映射表定义为 65536$\times$13 的存储阵列，读出数据直接锁存至一级寄存器，查表延迟固定为 2 拍。
 
 \begin{table}\centering\small
 \caption{接收侧配置与状态表}\label{tab:rxtables}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{1.8cm}L}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.9cm}L}
 \toprule
 表 & 深度$\times$位宽 & 写口 & 读口 & 内容 \\
 \midrule
-\code{rx_map} & 65536$\times$13 & 配置总线 & rx\_engine & \code{valid}[12]、\code{idx}[11:0] \\
-\code{rx_cfg} & 4096$\times$32 & 配置总线 & rx\_engine & \code{en}、\code{net_a}、\code{net_b}、\code{ic_en}、\code{rm_en}、\code{skew_max}[16:5]、\code{max_payload}[27:17] \\
-\code{rx_state} & 4096$\times$44 & rx\_engine & rx\_engine & 每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
-\code{rx_ring_a/b} & 4096$\times$8 & 本网 rx\_parse & rx\_deliver & 每网一个环形缓冲，按到达顺序存载荷 \\
-\code{rx_dq} & 32 项寄存器 & rx\_engine & rx\_deliver & 待交付的网、起点、长度、\code{idx}、UDP 端口 \\
+\code{rx_map} & 65536$\times$13 & 配置总线 & \code{rx_engine} & \code{valid}[12]、\code{idx}[11:0] \\
+\code{rx_cfg} & 4096$\times$32 & 配置总线 & \code{rx_engine} & \code{en}、\code{net_a}、\code{net_b}、\code{ic_en}、\code{rm_en}、\code{skew_max}[16:5]、\code{max_payload}[27:17] \\
+\code{rx_state} & 4096$\times$44 & \code{rx_engine} & \code{rx_engine} & 每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
+\code{rx_ring_a/b} & 4096$\times$8 & 本网 \code{rx_parse} & \code{rx_deliver} & 每网一个环形缓冲，按到达顺序存载荷 \\
+\code{rx_dq} & 32 项寄存器 & \code{rx_engine} & \code{rx_deliver} & 待交付消息的来源网络、起始地址、长度、\code{idx}、UDP 端口 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\code{skew_max} 的单位是 \code{now_c} 的一个计时单位（32.768~µs）。
-
-\code{afdx_rx_core} 例化两套 MAC 与解析器、一个引擎、一个交付模块和 5 张表，其中 \code{rx_map}、\code{rx_cfg} 的写口由核心控制。复位后，核心用 65536 拍清零 \code{rx_map}，每拍清一项，并在前 4096 拍同步清零 \code{rx_cfg}；引擎另行清零 \code{rx_state}。全部完成后，\code{init_done} 置 1。此后仅在 \code{cfg_ok} 为 1 时锁存配置写请求，并于下一拍写入配置表。核心将各模块的统计脉冲按位相或，再寄存一拍输出。
+\code{rx_cfg} 中的 \code{skew_max} 以 \code{now_c} 的计时单位（32.768~µs）计。\code{afdx_rx_core} 例化 A、B 两路接收 MAC 与解析器、共用接收引擎、交付模块及 5 张表，其中 \code{rx_map}、\code{rx_cfg} 的写口由核心统一管控。复位后，核心用 65536 拍逐项清零 \code{rx_map}（前 4096 拍同步清零 \code{rx_cfg}），引擎另行清零 \code{rx_state}；全部完成后置位 \code{init_done}。运行期间仅在 \code{cfg_ok} 为 1 时锁存配置写请求并于下一拍写入配置表。核心将各模块的统计脉冲按位相或，寄存一拍后输出。
 
 \section{接收 MAC}\label{sec:macrx}
 
@@ -36,11 +34,11 @@
   \item \textbf{帧结束：}寄存后的 \code{rx_valid} 首次为 0 时，MAC 判定帧接收结束，输出 \code{f_end} 和 \code{f_err}。错误判定依次检查前导码错误、帧长不在 64--1518 范围内、CRC 余式不等于 \code{0xDEBB20E3}，均无异常则判为正确帧。MAC 向后级最多输出 1514 字节；若帧长超限，则按帧长错误结束本帧。
   \item \textbf{帧间：}\code{f_end} 之后立即回到空闲，可分辨间隔为 1 个低电平周期的两帧。
 \end{itemize}
-以 GMII 上最后一个 FCS 字节到达的时刻为第 0 拍：第 1 拍它进入输入寄存器，第 2 拍寄存后的 \code{rx_valid} 为 0，第 3 拍输出 \code{f_end}、\code{f_err} 和 \code{f_len}。去掉 FCS 的最后一个内容字节在第 2 拍从 \code{m_data} 输出，比第 3 拍的 \code{f_end} 早 1 拍，解析器据此完成校验和累加。
+以 GMII 上 FCS 末字节到达时刻为第 0 拍：第 1 拍该字节锁存至输入寄存器，第 2 拍寄存后的 \code{rx_valid} 拉低，第 3 拍输出 \code{f_end}、\code{f_err} 和 \code{f_len}。剥离 FCS 后的最后一个有效字节在第 2 拍从 \code{m_data} 输出，比第 3 拍的 \code{f_end} 早 1 拍，解析器据此完成校验和累加。
 
 \section{帧头解析与预写入缓存}
 
-\code{afdx_rx_parse} 由字节位置计数器 \code{position} 驱动，随输入字节逐项检查帧头；两个小状态机分别负责长度计算和帧尾分类，结构见图~\ref{fig:parse}。
+\code{afdx_rx_parse} 由字节位置计数器 \code{position} 驱动，随输入字节流式检查帧头；另设两个辅助状态机分别负责长度计算与帧尾分类，结构见图~\ref{fig:parse}。
 
 \subsection{流式检查与长度计算}
 
@@ -71,11 +69,9 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 每次 \code{f_end} 有效时，解析器均对该帧进行一次分类。\code{finish_phase} 在 \code{f_end} 后第 2 拍进入 FIN\_REPORT 并作出判定，类别脉冲和帧描述均经寄存后输出，在第 3 拍有效。分类时，若 \code{f_err} 表示 FCS 错误或帧长错误（含前导码错误），则直接采用该结果；否则依次判定帧头错误、溢出或正确。
 
-解析器在帧尾完成错误帧的分类和计数，并把预写入指针回退至本帧开始前；正确帧的描述交给引擎处理。正确帧的帧描述见表~\ref{tab:ifdesc}；两网在同一拍结束的正确帧，描述也在同一拍给出。
+解析器在帧尾完成错误帧的分类与计数，并将预写入指针 \code{wr_trial} 回退至已提交写指针 \code{wr_commit}；正确帧则生成帧描述字交由接收引擎处理（表~\ref{tab:ifdesc}）。两网在同一拍结束的正确帧，其帧描述也在同一拍给出。
 
-同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎处理一份描述需要 13 拍，即使两网各有一份描述，也只需 26 拍即可处理完，短于同一网相邻描述的到达间隔。
-
-若数据帧的首个前导字节在清表完成前到达，则忽略整帧，不生成帧描述，也不计入统计。
+同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎处理一份描述至多需要 13 拍，即使两网各有一份描述，也只需 26 拍即可处理完毕，短于同一网相邻描述的到达间隔。若数据帧的首个前导字节在清表完成前到达，解析器将忽略整帧，不生成帧描述，也不计入统计。
 
 \section{完整性检查与冗余管理}
 
@@ -105,7 +101,7 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 6 & 时间差取绝对值，计算 PSN 的两步后继序号，原始距离折算到 1--255 环上 \\
 7 & 完整性检查，更新本网 PSN；不通过 $\rightarrow$ 10 \\
 8 & 冗余管理判定 \code{deliver_allowed} \\
-9 & 判重复；\code{rx_dq} 满记溢出；否则写入交付队列，更新 \code{rm_last}、\code{rm_time} \\
+9 & 执行冗余去重判定；若 \code{rx_dq} 已满则记为溢出，否则写入交付队列并更新 \code{rm_last}、\code{rm_time} \\
 10 & 状态有变化则写回 \code{rx_state} \\
 11 & 给出 \code{resolve} 与 \code{commit}，按处理结果产生一个统计脉冲，返回 IDLE \\
 \bottomrule
@@ -127,14 +123,12 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 冗余管理（\code{rm_en}$=1$ 时）按处理顺序交付首个有效副本；两网描述同拍待处理时先处理 A 网。副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次，判据如下：
 \begin{itemize}
-  \item 尚无记录，或到达时刻与 \code{rm_time} 之差超过 \code{skew_max}：交付；当两份副本的处理顺序与到达顺序相反时，对 16 位时间差取绝对值。
+  \item 尚无记录，或到达时刻与 \code{rm_time} 之差超过 \code{skew_max}：交付；当两份副本的处理顺序与到达顺序相反时（如引擎忙期间 B 网先完成解析、A 网后完成解析，引擎转入空闲时按 A 网优先仲裁先处理了 A 网），对 16 位时间差取绝对值。
   \item 否则 SN 等于 \code{rm_last}：另一网的重复帧，丢弃并计“冗余管理丢弃”。
   \item 否则 SN 为 0 或 \code{rm_last} 为 0：交付。
   \item 否则在 1--255 环上，SN 领先 \code{rm_last} 1--127 步则交付，其余丢弃。
 \end{itemize}
-对于判定可交付的帧，若 \code{rx_dq} 已满，则计为“溢出”并回退预写入指针；否则提交环形缓冲中的载荷，将帧描述写入 \code{rx_dq}，并更新 \code{rm_last} 和 \code{rm_time}。
-
-两网描述同拍到达时，从描述有效到引擎完成判定，后处理的一份也不超过 27 拍，设计约束取 64 拍。
+对于判定可交付的帧，若 \code{rx_dq} 已满，则计为“溢出”并回退预写入指针；否则提交环形缓冲中的载荷，将帧描述写入 \code{rx_dq}，并更新 \code{rm_last} 和 \code{rm_time}。两网描述同拍到达时，从描述有效到引擎完成判定，后处理的一份也不超过 27 拍（设计约束取 64 拍）。
 
 \code{now_c} 每变化一次，引擎在空闲时通过 AGE 状态的 4 个步骤检查下一条 VL；有帧描述到来时立即返回 IDLE 处理帧，之后重试该项过期清理检查。判据为：若记录已超过 \code{0x4000} 个计时单位（约 0.537~s），清除 \code{rm_time_valid}。
 
@@ -146,13 +140,11 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 \figN[交付模块]{f25_deliver}{交付模块的队头选择、环形缓冲读取与字节输出流水}{fig:deliver}
 
-图~\ref{fig:deliver} 中 C1--C6 依次为组内选择寄存、队头寄存、读请求寄存、同步 RAM 读出、两网数据寄存和输出寄存六个采样边界。\code{HEAD_RELEASE} 负责等待请求撤销。
-
-队头选择分两拍（HEAD\_IDLE 组内 8 选 1，HEAD\_SELECT 组间 4 选 1），同时给出 \code{dq_pop}；队头进入 \code{dq_data} 后，读控制在下一拍发起首次读取，随后每拍将地址加 1，直到 \code{left} 减为 0 时停止。
+图~\ref{fig:deliver} 中 C1--C6 依次为组内选择寄存、队头寄存、读请求寄存、同步 RAM 读出、两网数据寄存和输出寄存六个采样边界。队头选择状态机按 \code{HEAD_IDLE}（组内 8 选 1，C1）、\code{HEAD_SELECT}（组间 4 选 1 锁存至 \code{dq_data} 并给出 \code{dq_pop}，C2）和 \code{HEAD_RELEASE}（等待出队握手完成）推进；队头进入 \code{dq_data} 后，读控制在下一拍发起首次读取，随后每拍将地址加 1，直到 \code{left} 减为 0 时停止。
 
 读请求、同步 RAM、数据寄存三级流水由 \code{valid_pipe}、\code{last_pipe} 对齐，第一个 \code{d_valid} 在 \code{dq_count} 变为非零后的第 6 拍有效。\code{d_last} 有效的当拍，模块重新允许取队头。
 
-一条消息的 $n$ 个字节在连续 $n$ 拍内送出，\code{d_last} 与末字节同拍；VL 序号、端口和来源网络在整条消息期间不变。交付口不带反压。
+一条消息的 $n$ 个字节在连续 $n$ 拍内送出，\code{d_last} 与末字节同拍；VL 索引、端口和来源网络在整条消息期间不变。交付口不带反压。
 
 线路空闲时，从帧尾到首个 \code{d_valid} 的典型延迟为 24 拍，设计上界为 200 拍（图~\ref{fig:pipe}）。若前一消息尚未交付完，当前消息需等待；取队头与读流水共约 6 拍，可在前一消息末字节之后的 16 拍内开始交付。32 项描述队列用于暂存长载荷交付期间到达的短帧描述（第~\ref{sec:budget}~节）。
 
@@ -168,13 +160,13 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 \toprule
 位 & 名称 & 产生模块 & 含义 \\
 \midrule
-0 & 正确帧 & rx\_parse & 通过 MAC 和帧头检查 \\
-1 & FCS 错 & rx\_parse & CRC 不符 \\
-2 & 帧长错 & rx\_parse & 帧长越界、超长或前导码错 \\
-3 & 帧头错 & rx\_parse & 固定字段、IP/UDP 长度或校验和错 \\
-4 & 未知 VL & rx\_engine & \code{rx_map} 无效 \\
-5 & 配置不允许 & rx\_engine & VL 或本网未启用，或超过 \code{max_payload} \\
-6 & 完整性检查丢弃 & rx\_engine & SN 不连续 \\
+0 & 正确帧 & \code{rx_parse} & 通过 MAC 和帧头检查 \\
+1 & FCS 错误 & \code{rx_parse} & CRC 校验不符 \\
+2 & 帧长错误 & \code{rx_parse} & 帧长越界、超长或前导码错误 \\
+3 & 帧头错误 & \code{rx_parse} & 固定字段、IP/UDP 长度或校验和错误 \\
+4 & 未知 VL & \code{rx_engine} & \code{rx_map} 无效 \\
+5 & 配置不允许 & \code{rx_engine} & VL 或本网未启用，或超过 \code{max_payload} \\
+6 & 完整性检查丢弃 & \code{rx_engine} & SN 不连续 \\
 7 & 溢出 & 两处相或 & 环形缓冲剩余空间不足，或 \code{rx_dq} 已满 \\
 \bottomrule
 \end{tabularx}

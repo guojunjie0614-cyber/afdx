@@ -23,7 +23,7 @@ RTL 共 21 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 \code{afdx_rx_parse.v} & 帧头检查、载荷预写入环形缓冲、帧尾分类 \\
 \code{afdx_rx_engine.v} & VL 查表、完整性检查、冗余管理、过期清理 \\
 \code{afdx_rx_deliver.v} & 从环形缓冲逐字节交付 \\
-\code{afdx_ram_sdp.v} & 简单双口同步 RAM，全设计唯一的 RAM 例化方式 \\
+\code{afdx_ram_sdp.v} & 伪双口（Simple Dual-Port）同步 RAM，全设计唯一的 RAM 例化原语 \\
 \code{afdx_rtc.v} & 实时时钟与 SNTP 主从对时 \\
 \code{afdx_ntp_fraction.v} & 纳秒与 NTP 小数的逐位换算 \\
 \code{afdx_snmp.v} & SNMP 代理：BER 编解码、MIB、Set、Trap \\
@@ -114,7 +114,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \longtablehead{3}{信号 & 位宽 & 含义}
 \code{m_valid}、\code{m_ready} & 1、1 & 字节握手；\code{m_ready} 只在 \code{tx_buf} 处于 IDLE、RECV、DRAIN 时为 1 \\
 \code{m_data}、\code{m_last} & 8、1 & 消息字节、末字节标记 \\
-\code{m_vl} & 7 & 发送 VL 序号，首字节锁存 \\
+\code{m_vl} & 7 & 发送 VL 索引，首字节锁存 \\
 \code{m_port_en}、\code{m_sport}、\code{m_dport} & 1、16、16 & \code{m_port_en} 为 1 时使用消息自带的 UDP 端口；首字节锁存 \\
 \end{longtable}
 
@@ -127,7 +127,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \longtablehead{3}{信号 & 位宽 & 含义}
 \multicolumn{3}{l}{\textit{入队（\code{tx_buf} $\rightarrow$ \code{tx_engine}，请求应答）}} \\*
 \code{enq_valid} & 1 & 保持有效，直至收到 \code{enq_ack} \\
-\code{enq_vl}、\code{enq_head}、\code{enq_len} & 7、8、11 & VL 序号、消息首页号、字节数 \\
+\code{enq_vl}、\code{enq_head}、\code{enq_len} & 7、8、11 & 发送 VL 索引、消息首页号、字节数 \\
 \code{enq_ack}、\code{enq_result} & 1、3 & 单拍应答；0 接纳，1 VL 未启用，2 队列满，3 超长（4 无空闲页由 \code{tx_buf} 自行判定） \\
 \code{tx_desc}[43:0] & 44 & \{\code{len}[10:0], \code{port_en}, \code{sport}[15:0], \code{dport}[15:0]\}，以首页号为地址 \\
 \midrule
@@ -179,11 +179,11 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \multicolumn{3}{l}{\textit{交付队列项（\code{rx_engine} $\rightarrow$ \code{rx_deliver}，32 项寄存器）}} \\*
 \code{net} & 1 & 0 为 A 网，1 为 B 网 \\
 \code{start}、\code{n} & 12、11 & 环形缓冲起点和字节数 \\
-\code{idx} & 12 & 接收 VL 序号 \\
+\code{idx} & 12 & 接收 VL 索引 \\
 \code{sport}、\code{dport} & 16、16 & UDP 端口 \\
 \end{longtable}
 
-交付口 \code{d_*} 的字段与应用接收口相同。服务通道将这些信号同时广播给应用和三个服务。各服务在首字节到达当拍，根据 UDP 目的端口产生组合匹配信号 \code{svc_rx_claim}；匹配结果寄存并保持至末字节。端口匹配的消息由对应服务接收，不向应用口输出。
+交付口 \code{d_*} 的字段与应用接收口对应（目的端口在内部记为 \code{d_dport}，在顶层记为 \code{app_rx_port}）。服务通道将这些信号同时广播给应用和三个服务。各服务在首字节到达当拍，根据 UDP 目的端口产生组合匹配信号 \code{svc_rx_claim}；匹配结果寄存并保持至末字节。端口匹配的消息由对应服务接收，不向应用口输出。
 
 \section{服务发送总线}
 
@@ -215,15 +215,15 @@ PSN & 同一网上同一 VL 上一帧的序列号 \\
 \code{pend_vl} & 已授权但尚未开始发送的 VL \\
 \code{cfg_ok} & 引擎在本拍不发出配置表读的指示 \\
 有效副本 & 帧格式、FCS 与协议头检查通过，且满足接收配置和已启用的完整性检查的单网帧副本 \\
-还页 & 将页号送回空闲页池（经还页口，信号 \code{ret}）\\
+还页 & 将页号送回空闲页池（经还页口 \code{ret1_*} 或 \code{ret2_*}）\\
 端口匹配 & 服务根据 UDP 目的端口确定是否接收当前消息（信号 \code{svc_rx_claim}）\\
-清表 & 复位后逐项清零接收序号状态表（\code{rx_state} 等）的过程 \\
+清表 & 复位后逐项清零收发配置表与状态表（\code{rx_map}、\code{rx_cfg}、\code{rx_state}、\code{tx_cfg}、\code{tx_state}）的过程 \\
 占线 & 一帧在线路上的占用时长 $C(n)$，单位为拍 \\
 主端 / 从端 & SNTP 角色：主端应答请求并回送时间戳；从端周期发送请求并根据响应校时 \\
 应答 & 请求应答式握手的确认脉冲（\code{ack}），用于确认接口请求，与协议响应报文不同 \\
 计时单位 & \code{now_c} 的单位，32.768~µs \\
 发送抖动 & 帧起始相对 BAG 允许时刻的偏差 \\
-起始回报 / 起始确认 & 组帧器经 \code{tx_sof} 向引擎报告帧起始 / 引擎据此写回 \code{next_time} 的操作 \\
+起始回报 / 起始确认 & 组帧器在 \code{tx_sof} 有效拍经 \code{start_valid}/\code{t_start} 向引擎报告帧起始 / 引擎据此写回 \code{next_time} 的操作 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -235,14 +235,14 @@ PSN & 同一网上同一 VL 上一帧的序列号 \\
 \begin{enumerate}[label={[\arabic*]},leftmargin=2.5em]
   \item ARINC Specification 664 Part 7: Avionics Full Duplex Switched Ethernet Network, 2005-06-27.
   \item ARINC Report 615A-2: Software Data Loader Using Ethernet Interface, 2002-05-10.
-  \item ARINC Report 665-1: Loadable Software Standards.
+  \item ARINC Report 665-1: Loadable Software Standards, 2001-01-12.
   \item RFC 1350: The TFTP Protocol (Revision 2), 1992.
   \item RFC 2347: TFTP Option Extension, 1998.
   \item RFC 1157: A Simple Network Management Protocol (SNMP), 1990.
   \item RFC 3416: Version 2 of the Protocol Operations for the Simple Network Management Protocol (SNMP), 2002.
   \item RFC 3418: Management Information Base (MIB) for the Simple Network Management Protocol (SNMP), 2002.
   \item RFC 4330: Simple Network Time Protocol (SNTP) Version 4 for IPv4, IPv6 and OSI, 2006.
-  \item IEEE Std 802.3: IEEE Standard for Ethernet.
+  \item IEEE Std 802.3: IEEE Standard for Ethernet, 2018.
   \item 中科亿海微. 全国大学生嵌入式芯片与系统设计竞赛 FPGA 创新设计赛道选题指南.
 \end{enumerate}
 \endgroup

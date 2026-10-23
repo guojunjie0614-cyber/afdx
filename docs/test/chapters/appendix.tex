@@ -35,7 +35,7 @@ SYS-06 & \code{tb_sys_reset} & 传输途中复位，核对旧残帧不混入新�
 SYS-07 & \code{tb_sys_ovf}\par \code{RX_RING_AW=9} & 完整系统接收环形缓冲溢出时，核对丢弃、计数和恢复 & 9681100 & 1488 \\
 SYS-08 & \code{tb_sys_net} & 通过顶层执行配置、正常及异常传输，供网表对照 & 2943996 & 1265 \\
 SYS-09 & \code{tb_elinx} & 在 eLinx 中运行双端双网互发仿真，核对字节、端口和去重 & 9238 & 平台自检 \\
-SVC-01 & \code{tb_sys_snmp} & 核对查询、团体名和编码边界，并比较配置口读值 & 37611 & 926 \\
+SVC-01 & \code{tb_sys_snmp} & 核对查询、团体名（\code{community}）和编码边界，并比较配置口读值 & 37611 & 926 \\
 SVC-02 & \code{tb_sys_snmp_settrap} & 核对设置、非法写入拒绝、启动和认证失败通知 & 8563 & 188 \\
 SVC-03 & \code{tb_judge_snmp} & 解码查询、设置和通知，核对字段与配置口读值 & 699 & 平台自检 \\
 SVC-04 & \code{tb_sys_615a} & 核对加载卸载、文件内容、校验错误和丢包重试 & 44098 & 752 \\
@@ -88,7 +88,7 @@ Python 依赖的安装命令如下；eLinx 行为仿真和 ModelSim 批量测试
 python -m pip install psutil pyasn1==0.4.8
 \end{runcommand}
 
-\textbf{eLinx 行为仿真：}打开 \code{elinx/AFDX_EndSystem.epr}，在 Tool Settings 中配置 ModelSim，在 Simulation Sources 中确认顶层为 \code{tb_elinx}，执行 Run Behavioral Simulation。通过判据为末行包含 \code{PASS checks=9238 errors=0}。
+\textbf{eLinx 行为仿真：}在 eLinx 中打开工程文件 \code{elinx/AFDX_EndSystem.epr}，在设置项中配置好 \mbox{ModelSim} 路径并确认仿真顶层为 \code{tb_elinx}，随后执行行为仿真。通过判据为控制台末行包含 \code{PASS checks=9238 errors=0}。
 
 \textbf{ModelSim 批量测试：}在 Transcript 中进入仓库根目录，执行以下命令。通过判据为输出 7 行 \code{JUDGE CASE PASS} 和末行 \code{JUDGE ENTRY PASS cases=7}。汇总文件为 \code{out/modelsim/judge_*/result.txt}。
 \begin{runcommand}
@@ -103,7 +103,7 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 
 \Needspace{15\baselineskip}
 \section{界面综合网表}\label{sec:repro-netlist}
-先在 eLinx 中执行 Run Synthesis 生成网表，再运行以下命令。第一条命令运行 NET-01；第二条命令先对 RTL 运行五项功能联合测试，再对界面综合网表运行同一测试，并比较两次仿真的 7 份端口记录（NET-02）。
+先在 eLinx 中执行 Run Synthesis 生成网表，再运行以下命令。第一条命令运行 \mbox{NET-01}；第二条命令先对 RTL 运行五项功能联合测试，再对界面综合网表运行同一测试，并比较两次仿真的 7 份端口记录（\mbox{NET-02}）。
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass `
   -File sim/run_gui_netlist.ps1
@@ -183,11 +183,11 @@ MAC 单口资源对照的原始记录为 \code{mac_self_resources.json} 与 \cod
 \code{sim/reference/} 中的 \code{regression.json} 汇总完整回归结果（表~\ref{tab:regress}）；\code{judge_result.txt} 汇总批量测试各用例的结果、耗时及性能、RTC 和突发指标。
 
 \Needspace{16\baselineskip}
-\section{数字来源汇总}
+\section{关键数据溯源索引}
 各项结果的记录文件与取值位置见下表；测试配置与测量口径见第~\ref{ch:env}~章和第~\ref{ch:perf}~章。
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.6cm-2\tabcolsep\relax}@{}}
-\caption{报告数字与原始来源对应}\\
+\caption{报告关键数据与原始证据对应}\\
 \longtablehead{2}{\thead{数字或数字组} & \thead{来源与取值位置}}
 \RegCount{} 项、\countsep{\RegChecks} 次自检、\countsep{\RegIndep} 项独立核对 & \code{sim/reference/regression.json} 的 \code{Runs[]} 长度、\code{Checks} 之和及非空 \code{CheckItems} 之和；逐项数值见完整回归表。 \\
 批量测试 7 项、0 错误、0 Warning；各用例耗时及总耗时 626.779 s & \code{sim/reference/judge_result.txt} 的 \code{JUDGE CASE}、\code{JUDGE ENTRY}。 \\

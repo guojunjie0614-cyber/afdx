@@ -42,7 +42,7 @@ MAC 实现 & 可采用 eLinx IP 或自行实现 & 自研双网 MAC（第~\ref{se
 \longtablehead{3}{编号 & 规格 & 内容}
 F1 & 用户数据发送 & 每个端系统支持 128 条发送 VL，每条均可独立配置 BAG（以时钟周期计，不超过 $2^{30}$）、VLID、源/目的 IP 与端口、最大载荷和队列深度；消息长度为 1--1471 字节；按 VL 配置选择 A 网、B 网或双网发送 \\
 F2 & 用户数据接收 & 支持 4096 条接收 VL，可映射任意 16 位 VLID；检查前导码、FCS、帧长、IP 头校验和、UDP 长度与校验和；两网分别进行完整性检查；启用冗余管理且副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次 \\
-F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；community 校验 \\
+F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；团体名（\code{community}）校验 \\
 F4 & 615A 数据加卸载 & 基于 TFTP 的上传操作和介质定义卸载；LUH 头文件与数据文件 CRC-16 校验；超时重传 \\
 F5 & RTC 时钟同步 & SNTPv4 主从对时；32 位秒加 32 位纳秒；响应须回显本次请求的 Transmit 时间戳 \\
 P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps \\

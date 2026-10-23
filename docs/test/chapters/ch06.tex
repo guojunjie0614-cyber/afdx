@@ -4,7 +4,7 @@
 
 \section{综合配置与资源}
 
-综合工具为 eLinx~3.0.7，顶层为 \code{AFDX_top}，目标器件为 EQ6HL130，封装为 CSG484\_H，优化模式设为 Speed。时钟 \code{clk} 的频率为 125~MHz，周期为 8~ns。Run Synthesis 执行成功，并导出 VQM 网表；总体资源用量见表~\ref{tab:test-synth-res}。
+综合采用 eLinx~3.0.7 工具，顶层模块为 \code{AFDX_top}，目标器件选用 EQ6HL130（CSG484\_H 封装），优化策略设为 Speed，主时钟 \code{clk} 约束为 125~MHz（周期 8~ns）。综合流程无错误完成并导出结构化 VQM 网表，整机资源消耗汇总见表~\ref{tab:test-synth-res}。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{总体综合资源}\label{tab:test-synth-res}
@@ -15,7 +15,7 @@
 LUT & \Lut & 136160 & \LutPct\% \\
 FF & \FF & 136160 & \FFPct\% \\
 CLB & \Clb & 13616 & \ClbPct\% \\
-存储块 & \Mem & 1200 & \MemPct\% \\
+存储块（BRAM） & \Mem & 1200 & \MemPct\% \\
 DSP & 0 & 48 & 0\% \\
 PLL & 0 & 8 & 0\% \\
 用户引脚 & \Pins & 339 & \PinPct\% \\
@@ -23,7 +23,7 @@ PLL & 0 & 8 & 0\% \\
 \end{tabularx}
 \end{minipage}\par\medskip
 
-表~\ref{tab:test-synth-mod} 列出顶层下七个主要模块及收发核心中的主要子模块，各模块的资源用量均包含其子模块。发送和接收核心合计使用 14491 个逻辑单元、2315136 位存储；两者的存储主要用于保存 VL 配置、状态、描述符和报文数据。
+表~\ref{tab:test-synth-mod} 依据综合层次报告列出顶层下除轻量级计数器 \code{afdx_timebase} 外的 7 个主要功能模块，以及收发核心内部的关键控制子模块（各父模块资源均包含其下属子模块及片上存储实例）。发送与接收核心合计使用 14491 个逻辑单元和 2315136 位片上存储，集中承载 VL 配置表、调度与冗余状态、描述符队列及报文数据缓存。
 
 \begingroup\renewcommand{\tablearraystretch}{1.16}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-10.6cm-6\tabcolsep\relax}@{}}
@@ -46,12 +46,12 @@ PLL & 0 & 8 & 0\% \\
 \end{longtable}
 \endgroup
 
-分模块资源表依据综合层次报告统计。逻辑单元包含仅使用寄存器的单元，与总体资源表中的 LUT 采用不同的统计口径；存储位数表示有效数据位数。缩进项已计入所属核心；标注“2 个”的行表示两个实例的合计用量。
+表中“逻辑单元”来自层次报告的 Entity 统计口径（含仅使用寄存器的逻辑单元，故与表~\ref{tab:test-synth-res} 的纯 LUT 统计口径不同）；缩进子模块已计入所属核心，标注“2 个”的行代表双网通道两个实例的合计值。“存储位数”统计综合后实际映射的有效数据位宽：其中 \code{afdx_rx_core} 为 1208320 位，比设计文档表 9-2 按 RTL 数组位宽声明统计的 1228800 位少 20480 位，原因是综合器自动裁除了接收配置表 \code{rx_cfg}（$4096\times32$~bit）每项中未使用的最高 5 位（$4096\times5=20480$~bit）。
 
 
 \subsection{MAC 单口资源对照}
 
-在 EQ6HL130 上分别对自研 MAC 和 eLinx 生成的 TripleSpeedEthernet IP 配置进行单口资源统计，结果见表~\ref{tab:test-mac-res}。资源用量取自相同器件下的资源打包报告；所比较的 IP 采用该次生成的配置，包含用户侧 FIFO。原始记录见附录~\ref{app:evidence}。
+在相同目标器件 EQ6HL130 下，建立两个独立的单口工程分别对本设计自研的流式千兆 MAC（\code{afdx_mac_tx}+\code{afdx_mac_rx}）与 eLinx IP 核生成器导出的 TripleSpeedEthernet IP（含用户侧 FIFO 的标准千兆配置）进行综合打包对比，结果见表~\ref{tab:test-mac-res}（原始打包报告见附录~\ref{app:evidence}，整机双网集成资源见表~\ref{tab:test-synth-res}）。自研 MAC 省去了通用 IP 中的跨时钟域 FIFO、管理接口及冗余速率适配逻辑，单口 LUT 与寄存器开销分别仅为通用 IP 的 39.7\% 和 20.3\%，且不占用片上存储块。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{MAC 单口资源对照}\label{tab:test-mac-res}
@@ -61,16 +61,14 @@ PLL & 0 & 8 & 0\% \\
 \midrule
 LUT & 556 & 1400 \\
 FF & 198 & 975 \\
-存储块 & 0 & 24 \\
+存储块（BRAM） & 0 & 24 \\
 \bottomrule
 \end{tabularx}
 \end{minipage}\par\medskip
 
-表中资源用量分别来自两个独立的单口工程；整机集成后的资源用量见表~\ref{tab:test-synth-res}。
-
 \section{综合时序}
 
-时钟 \code{clk} 的目标频率为 125~MHz、周期为 8~ns，综合时序摘要见表~\ref{tab:test-synth-time}。时序分析采用综合阶段的单元延迟与时钟延迟模型，数据路径的布线延迟按 0~ns 统计。
+在主时钟 \code{clk} 周期 8~ns（125~MHz）约束下，eLinx 综合阶段的静态时序分析摘要见表~\ref{tab:test-synth-time}。综合阶段采用逻辑单元延迟与预估时钟树模型，数据路径的互连布线延迟按 0~ns 计算。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\renewcommand{\tablearraystretch}{1.16}\tablestyle\centering
 \captionof{table}{8~ns（125~MHz）时钟约束下的综合时序摘要}\label{tab:test-synth-time}
@@ -85,16 +83,16 @@ Hold 最差裕量 & $-$\Hold~ns & 538/44216 & 零布线延迟模型下的检查�
 \end{tabularx}
 \end{minipage}\par\medskip
 
-setup 检查的 44216 个端点均满足 8~ns 约束，工具给出的最高频率估计为 \Fmax~MHz。setup 裕量最小的路径位于 \code{afdx_615a}，从 \code{name_pos[1]} 到 \code{packet_type[1]}，共 15 级逻辑，逻辑延迟 5.403~ns，裕量 +\Setup~ns。
+全设计 44216 个同步端点均满足 8~ns 建立时间（Setup）约束，工具评估的最高工作频率为 \Fmax~MHz。建立时间裕量最小的路径位于 \code{afdx_615a} 模块内部，起点为 \code{name_pos[1]}、终点为 \code{packet_type[1]}，经 15 级组合逻辑，总延迟 5.403~ns，保留 +\Setup~ns 正裕量。
 
-hold 检查有 538 个违例端点，最差裕量为 $-$\Hold~ns。最差路径从发送缓冲的 \code{payload_wd} 寄存器出发，到达 RAM 写数据寄存器，数据路径延迟为 0.696~ns；模型中 RAM 时钟比源触发器时钟晚 0.754~ns。物理实现阶段需结合实际数据路径与时钟路径延迟，完成 hold 检查与违例修复。
+在零互连延迟的综合前模型下，保持时间（Hold）检查报告 538 个跨存储块端点的表面负裕量，最差值为 $-$\Hold~ns（位于发送缓存写数据寄存器 \code{payload_wd} 至 BRAM 写端口路径）。该现象源于综合模型中 BRAM 时钟树分支比普通触发器晚 0.754~ns，而数据路径仅计入 0.696~ns 的触发器输出单元延迟、互连布线延迟按 0~ns 计，从而产生 68~ps 的名义缺口；进入布局布线阶段计入数百皮秒的实际互连延迟与绕线补偿后即可自然闭合。
 
 \Needspace{16\baselineskip}
 \section{网表功能结果}
 
-RTL 与网表仿真使用同一套激励。网表仿真使用原厂单元功能模型。仿真副本按原厂原语声明补齐省略输入的默认电平，并为已有进位输入连接补充启用参数；原有连接、参数和 LUT 内容均保留，处理方法见附录~\ref{sec:repro-netlist}。
+综合后仿真直接复用 RTL 测试平台与原厂单元功能仿真库。由于 eLinx 导出的结构化 VQM 网表省略了原语未用输入端口的默认电平绑定，仿真前通过脚本 \code{tools/adapt_gui_vqm.py} 按原厂原语声明显式补齐悬空输入的默认电平与进位链使能参数，同时完整保留网表原有的全部信号连接、配置参数及 LUT 掩码值（详见附录~\ref{sec:repro-netlist}）。
 
-NET-01 由测试平台完成自检；NET-02 除自检和参考检查外，还将网表端口记录与 RTL 端口记录进行比较，比较范围包含记录中的时钟周期编号。两项测试均通过 \ref{sec:criteria}~节规定的检查，仿真诊断中未出现 Error、Fatal 或 Warning。
+NET-01 执行双端双向通信测试平台自检；NET-02 在完成自检与独立参考模型核对的基础上，进一步将网表仿真的外部端口记录与 RTL 仿真记录进行含精确时钟周期编号的逐字节比对。两项测试均一次性通过~\ref{sec:criteria}~节规定的全部检查，且 ModelSim 仿真全过程无 Error、Fatal 或 Warning。
 
 \begin{items}{综合后仿真测试项}{tab:net-result}
 NET-01 & 由界面综合导出的网表；激励同 SYS-09（\code{tb_elinx}） & 自检通过；仿真诊断无 Error、Fatal、Warning & \ElinxChecks/0\newline 平台自检 & 通过 \\

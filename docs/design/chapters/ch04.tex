@@ -16,22 +16,22 @@
 \code{rx_ready} & 入 & 不使用 \\
 \midrule
 \multicolumn{3}{l}{\textit{冗余网络}} \\*
-\code{tx_data_b}、\code{tx_valid_b}、\code{rx_data_b}、\code{rx_valid_b} & 出/入 & B 网，含义同 A 网 \\
+\code{tx_data_b[7:0]}、\code{tx_valid_b}、\code{rx_data_b[7:0]}、\code{rx_valid_b} & 出/入 & B 网，含义同 A 网 \\
 \midrule
 \multicolumn{3}{l}{\textit{应用发送}} \\*
 \code{app_tx_valid}、\code{app_tx_ready} & 入/出 & 字节握手 \\
 \code{app_tx_data[7:0]}、\code{app_tx_last} & 入 & 消息字节；\code{last} 标记末字节 \\
-\code{app_tx_vl[6:0]} & 入 & 发送 VL 序号，在首字节锁存 \\
+\code{app_tx_vl[6:0]} & 入 & 发送 VL 索引，在首字节锁存 \\
 \code{app_tx_port_en}、\code{app_tx_sport[15:0]}、\code{app_tx_dport[15:0]} & 入 & \code{app_tx_port_en} 为 1 时使用消息自带的 UDP 端口，否则使用 VL 的默认端口；在首字节锁存 \\
 \midrule
 \multicolumn{3}{l}{\textit{应用接收}} \\*
 \code{app_rx_valid}、\code{app_rx_data[7:0]}、\code{app_rx_last} & 出 & 交付字节，不带反压 \\
-\code{app_rx_vl[11:0]}、\code{app_rx_sport}、\code{app_rx_port}、\code{app_rx_net} & 出 & 接收 VL 序号、UDP 源/目的端口及来源网络；整条消息期间保持不变 \\
+\code{app_rx_vl[11:0]}、\code{app_rx_sport[15:0]}、\code{app_rx_port[15:0]}、\code{app_rx_net} & 出 & 接收 VL 索引、UDP 源端口、UDP 目的端口（\code{app_rx_port}）及来源网络；整条消息期间保持不变 \\
 \midrule
 \multicolumn{3}{l}{\textit{配置与统计}} \\*
 \code{cfg_wr}、\code{cfg_rd}、\code{cfg_addr[17:0]}、\code{cfg_wdata[31:0]} & 入 & 配置总线请求 \\
 \code{cfg_rdata[31:0]}、\code{cfg_rvalid}、\code{cfg_ready} & 出 & 读数据、读有效、写就绪 \\
-\code{ev_tx[6:0]} & 出 & 发送统计脉冲：accept、drop\_dis、drop\_full、drop\_long、drop\_nopage、tx\_a、tx\_b \\
+\code{ev_tx[6:0]} & 出 & 发送统计脉冲：\code{accept}、\code{drop_dis}、\code{drop_full}、\code{drop_long}、\code{drop_nopage}、\code{tx_a}、\code{tx_b} \\
 \code{ev_a[7:0]}、\code{ev_b[7:0]} & 出 & 各网接收统计脉冲，见表~\ref{tab:rxev} \\
 \code{ev_rm_drop}、\code{ev_deliver} & 出 & 冗余丢弃、交付 \\
 \code{ev_gdrop[1:0]} & 出 & 保留端口，固定为 0 \\
@@ -44,13 +44,13 @@
 A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一个字节。
 
 \begin{itemize}
-  \item \textbf{发送：}\code{tx_valid} 从第一个前导字节到最后一个 FCS 字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的 \code{tx_valid} 与 \code{tx_data} 全程保持为 0。
-  \item \textbf{接收：}\code{rx_valid} 的上升沿表示一帧开始，下降沿表示该帧结束。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始定界符、累加 CRC 并剥离 FCS。
+  \item \textbf{发送：}\code{tx_valid} 从前导码首字节至 FCS 末字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的 \code{tx_valid} 与 \code{tx_data} 全程保持为 0。
+  \item \textbf{接收：}\code{rx_valid} 的上升沿表示一帧开始，下降沿表示该帧结束。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始定界符（SFD）、累加 CRC 并剥离 FCS。
   \item \textbf{复位：}复位期间输出为 0；对于清表完成前开始接收的帧，接收核心将整帧忽略（第~\ref{sec:clkrst}~节）。
-  \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节都与 \code{clk} 同步，接口不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导码、帧长和 FCS；连接外部 PHY 时，外围适配逻辑须处理 PHY 错误标记，并丢弃带错误标记的帧。收发时钟适配见第~\ref{sec:clkrst}~节。
+  \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节均与 \code{clk} 同步，不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导码、帧长和 FCS；连接外部 PHY 时，外围适配逻辑须处理 PHY 错误标记并丢弃带错帧。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
-\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为首个前导字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
+\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为前导码首字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
 
 \section{以太网帧格式}\label{sec:frame}
 
@@ -82,7 +82,7 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
 
 由此，含 FCS 的帧长为 $47+\max(n,17)$，范围 64--1518 字节；A、B 两份帧只有第 11 字节和 FCS 不同。复位后，各 VL 首帧的 SN 均为 0，之后按 1、2、…、255、1、… 循环。组播目的 IP 按 Part 7 图 3-38 配置为 \code{224.224.VLID[15:8].VLID[7:0]}，发送核心直接使用配置表中的目的 IP，因此单播服务（如 615A）也可共用该通路。
 
-本设计按 VL 配置传送 UDP 消息，不实现子 VL、IP 分片与重组、采样端口与队列端口语义及 ICMP。发送时 UDP 校验和填 0；接收按 VLID 查表并检查帧与协议字段，不按目的 IP 地址过滤。
+端系统以 VL 为独立调度与查表粒度，承载不分片的单包 UDP 消息：发送侧将 UDP 校验和置 0；接收侧直接以目的 MAC 低 16 位 VLID 查表定界并校验协议头字段，通过校验后将载荷与 UDP 端口一并交付上层应用或内部服务。
 
 CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆盖从目的 MAC 到 SN 的全部字节。结果取反后按低字节在前的顺序发送。收发通路均采用组合模块 \code{afdx_crc32_d8}，以 32 位当前 CRC 值和 8 位数据为输入，输出更新后的 CRC 值。
 
@@ -90,7 +90,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 \subsection{发送握手与缓存等待}
 
-应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 序号和 UDP 端口在首字节锁存。
+应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 索引和 UDP 端口在首字节锁存。
 
 没有服务报文争用时，\code{app_tx_ready} 直接连接发送核心的 \code{m_ready}。发送核心每拍接收一个字节，仅在分配缓存页或等待入队结果时暂停，连续暂停不超过 96 拍。服务报文传输期间，应用等待当前服务消息完成；三个服务同时有报文时，等待预算约为 3850 拍（第~\ref{sec:budget}~节）。
 
@@ -100,7 +100,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 \subsection{接收消息的连续交付}
 
-接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 序号、端口和来源网络在整条消息期间保持固定。接口时序见图~\ref{fig:wapp}(b)。
+接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 索引、端口和来源网络在整条消息期间保持固定。接口时序见图~\ref{fig:wapp}(b)。
 
 接收接口不提供反压，按固定字节节拍连续交付消息，因此交付通路无需处理下游停顿。外部应用可用缓存写口或 DMA/FIFO 接口接收数据，并应保证每个有效周期都能接收一个字节。
 
