@@ -194,20 +194,22 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 peer_sp <= rx_sport;
                 peer_dp <= incoming_port;
             end
+            // 首字节下标为零且两个前瞻位均为零；空闲拍下标恒零，任何有效拍均可更新它们。
+            // 去掉首字节接纳路径对标志写使能的远端 enable 依赖，不改变接收拍数。
+            if (rx_valid) begin
+                capture_hi_q <= !rx_last && rx_index == 1;
+                capture_lo_q <= !rx_last && rx_index == 2;
+            end
             if (rx_valid && (receiving || (rx_claim && ! packet_pending))) begin
                 rx_we <= 1;
                 if (rx_last) begin
                     rx_length <= rx_index + 1'b1;
                     rx_index <= 0;
-                    capture_hi_q <= 0;
-                    capture_lo_q <= 0;
                     receiving <= 0;
                     packet_pending <= 1;
                 end
                 else begin
                     rx_index <= rx_index + 1'b1;
-                    capture_hi_q <= rx_index == 1;
-                    capture_lo_q <= rx_index == 2;
                     receiving <= 1;
                 end
             end
@@ -584,4 +586,10 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         end
     endgenerate
 
+`ifdef AFDX_CE_DIV
+    always @(negedge clk) begin
+        if (!reset && !receiving && (rx_index != 0 || capture_hi_q || capture_lo_q))
+            $fatal(1, "loader idle capture invariant");
+    end
+`endif
 endmodule
