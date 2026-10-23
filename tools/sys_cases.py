@@ -241,6 +241,38 @@ def perf(s):
 
 
 
+# R97: prescribed lengths and BAG mix; keep legacy perf() byte-for-byte unchanged.
+def perf_var_events(kind):
+    lengths=(1,17,256,1024,1471)
+    vls=80 if kind=='var_high' else 32
+    warm,window=(250000,2500000) if kind=='var_high' else (2000000,8000000)
+    events=[]
+    for vl in range(vls):
+        period=125000 if kind=='var_high' else (125000,250000,500000,1000000)[vl//8]
+        phase=0 if kind=='var_burst' else vl*125000//vls
+        for k,target in enumerate(range(phase,warm+window,period)):
+            n=(lengths[vl] if vl<4 else 1471) if kind=='var_high' else lengths[k%5] if kind=='var_cycle' else lengths[vl%5]
+            events.append((target,vl,n))
+    return warm,window,vls,sorted(events)
+
+
+def perf_var(s):
+    for kind in ('var_fixed','var_cycle','var_high','var_burst'):
+        for delay in (0,257):
+            s.stage(kind+f'_d{delay}');s.emit('W 1000000');s.user()
+            for link in range(4):s.emit(f'L {link} {delay}')
+            warm,window,vls,events=perf_var_events(kind)
+            for es in (1,2):
+                for vl in range(vls):
+                    bag=125000 if kind=='var_high' else (125000,250000,500000,1000000)[vl//8]
+                    s.config(es,vl,maximum=1471,bag=bag)
+            s.emit(f'N {warm} {window} {len(events)}')
+            for target,vl,n in events:
+                a=s.blob(s.data(n));b=s.blob(s.data(n))
+                s.emit(f'I {target} {vl} {n} {a} {b}')
+            s.emit('D');s.counts()
+
+
 def generate(test,seed,out):
     s=Cases(seed);globals()[test.removeprefix('tb_sys_')](s);s.save(out)
 

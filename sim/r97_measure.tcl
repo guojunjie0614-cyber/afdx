@@ -186,3 +186,149 @@ proc r97::judge_lines {folder {stage_prefix ""}} {
     }
     return $lines
 }
+
+# Full official variable-load coverage, intentionally separate from measure:
+# short diagnostic runs may measure correctly without meeting this coverage.
+proc r97::var_coverage {folder} {
+    set required {}
+    foreach kind {var_fixed var_cycle var_high var_burst} {
+        foreach delay {0 257} {lappend required ${kind}_d${delay}}
+    }
+    set marks {}; set windows {}; set bases {}; set observed {}; set stage ""
+    foreach row [rows [file join $folder sys_events.txt]] {
+        set type [lindex $row 0]
+        if {$type eq "P"} {
+            lassign $row type cycle stage
+            lappend marks [list $cycle $stage]
+            if {[string match var_* $stage]} {
+                require [expr {$stage in $required}] "unexpected variable stage $stage"
+                require [expr {![dict exists $observed $stage]}] "duplicate variable stage $stage"
+                dict set observed $stage 1
+            }
+        }
+        if {$type eq "F" && [lindex $row 2] in {begin end}} {
+            lassign $row type cycle edge label
+            require [expr {![dict exists $windows $label $edge]}] "duplicate window edge $label/$edge"
+            dict set windows $label $edge $cycle
+        }
+        if {$type eq "O" && $stage in $required} {
+            require [expr {[llength $row]==6}] "malformed planned release row"
+            lassign $row type actual es vl n planned
+            require [expr {$es in {1 2} && [string is integer -strict $planned]}] "invalid planned release row"
+            if {![dict exists $bases $stage $es] || $planned<[dict get $bases $stage $es]} {
+                dict set bases $stage $es $planned
+            }
+        }
+    }
+    foreach name $required {require [dict exists $observed $name] "missing variable stage $name"}
+    set counts {}; set lengths {}
+    foreach es {1 2} {
+        foreach row [rows [file join $folder es${es}_tx events.txt]] {
+            if {[lindex $row 0] ne "M"} {continue}
+            lassign $row type cycle vl n
+            set name [stage_at $marks $cycle]
+            if {$name ni $required} {continue}
+            require [expr {[dict exists $windows $name begin] && [dict exists $windows $name end]}] "missing window $name"
+            set expected_vls [expr {[string match var_high_* $name] ? 80 : 32}]
+            require [expr {$vl>=0 && $vl<$expected_vls}] "out-of-range VL $name/ES$es/$vl"
+            require [expr {$n in {1 17 256 1024 1471}}] "unexpected payload length $name/ES$es/$n"
+            if {$cycle>=[dict get $windows $name begin] && $cycle<[dict get $windows $name end]} {
+                dict incr counts $name,$es,$vl
+                dict set lengths $name $es $n 1
+            }
+        }
+    }
+    set result {}; set checks 0
+    foreach name $required {
+        require [expr {[dict exists $windows $name begin] && [dict exists $windows $name end]}] "missing window $name"
+        set high [string match var_high_* $name]
+        set expected_vls [expr {$high ? 80 : 32}]
+        set warm [expr {$high ? 250000 : 2000000}]
+        set duration [expr {[dict get $windows $name end]-[dict get $windows $name begin]}]
+        set required_duration [expr {$high ? 2500000 : 8000000}]
+        require [expr {$duration>=2500000 && $duration>=$required_duration}] "short measurement window $name: $duration"
+        incr checks
+        foreach es {1 2} {
+            require [dict exists $bases $name $es] "missing planned release base $name/ES$es"
+            set preheat [expr {[dict get $windows $name begin]-[dict get $bases $name $es]}]
+            require [expr {$preheat>=$warm}] "short warmup $name/ES$es: $preheat"
+            require [dict exists $lengths $name $es] "no measured messages $name/ES$es"
+            require [expr {[lsort -integer [dict keys [dict get $lengths $name $es]]] eq {1 17 256 1024 1471}}] "missing measured lengths $name/ES$es"
+            set minimum {}
+            for {set vl 0} {$vl<$expected_vls} {incr vl} {
+                require [dict exists $counts $name,$es,$vl] "missing measured VL $name/ES$es/$vl"
+                set count [dict get $counts $name,$es,$vl]
+                require [expr {$count>=8}] "fewer than eight frames $name/ES$es/$vl: $count"
+                if {$minimum eq "" || $count<$minimum} {set minimum $count}
+                incr checks
+            }
+            dict set result $name es$es [dict create vls $expected_vls window_cycles $duration warmup_cycles $preheat min_frames_per_vl $minimum lengths {1 17 256 1024 1471}]
+            incr checks 3
+        }
+    }
+    dict set result all_frame_latency [all_frame_limits $folder $marks $required]
+    dict set result checks $checks
+    dict set result passed 1
+    return $result
+}
+
+# Check latency over every offered message, including warmup and drain.
+# This does not change the window-selected canonical measurement fields.
+proc r97::all_frame_limits {folder marks required} {
+    set result {}
+    foreach es {1 2} {
+        set queues {}; set messages {}; set id 0
+        foreach row [rows [file join $folder es${es}_tx events.txt]] {
+            if {[lindex $row 0] ne "M"} {continue}
+            lassign $row kind cycle vl n
+            incr id; dict lappend queues $vl $id
+            dict set messages $id [list $cycle [stage_at $marks $cycle]]
+        }
+        set destination [expr {3-$es}]; set counts {}; set delivered {}
+        foreach row [rows [file join $folder es${destination}_rx events.txt]] {
+            if {[lindex $row 0] ne "D"} {continue}
+            lassign $row kind cycle net vl
+            set index 0; if {[dict exists $counts $vl]} {set index [dict get $counts $vl]}
+            require [dict exists $queues $vl] "all-frame D unknown VL ES$es/$vl"
+            require [expr {$index<[llength [dict get $queues $vl]]}] "all-frame extra D ES$es/$vl"
+            set id [lindex [dict get $queues $vl] $index]; dict incr counts $vl
+            dict set delivered $id $cycle
+        }
+        set frames {}
+        foreach side {tx rx} {
+            set endpoint [expr {$side eq "tx" ? $es : $destination}]
+            foreach net {A B} {
+                set counts {}
+                foreach row [rows [file join $folder es${endpoint}_gmii_${side} dump_[string tolower $net].txt]] {
+                    lassign $row recorded cycle n wire
+                    scan [string range $wire 24 27] %x vlid
+                    set vl [expr {$vlid-($es==1 ? 100 : 2000)}]
+                    set index 0; if {[dict exists $counts $vl]} {set index [dict get $counts $vl]}
+                    require [dict exists $queues $vl] "all-frame GMII unknown VL ES$es/$vl"
+                    require [expr {$index<[llength [dict get $queues $vl]]}] "all-frame extra GMII ES$es/$vl"
+                    set id [lindex [dict get $queues $vl] $index]; dict incr counts $vl
+                    dict set frames $id,$side,$net [expr {$cycle+7}]
+                }
+            }
+        }
+        dict for {id item} $messages {
+            lassign $item cycle stage
+            if {$stage ni $required} {continue}
+            require [dict exists $delivered $id] "all-frame missing D ES$es frame$id"
+            set app [expr {[dict get $delivered $id]-$cycle}]
+            require [expr {$app>=0 && $app<=250000}] "all-frame L_app >2ms or negative $stage/ES$es/frame$id: $app"
+            set key $stage/es$es
+            if {![dict exists $result $key]} {dict set result $key [dict create messages 0 L_app_max 0 L_gmii_max 0]}
+            set item [dict get $result $key]; dict incr item messages
+            dict set item L_app_max [expr {max([dict get $item L_app_max],$app)}]
+            foreach net {A B} {
+                foreach side {tx rx} {require [dict exists $frames $id,$side,$net] "all-frame missing GMII ES$es/frame$id/$side/$net"}
+                set gmii [expr {[dict get $frames $id,rx,$net]-[dict get $frames $id,tx,$net]}]
+                require [expr {$gmii>=0 && $gmii<=250000}] "all-frame L_gmii >2ms or negative $stage/ES$es/frame$id/$net: $gmii"
+                dict set item L_gmii_max [expr {max([dict get $item L_gmii_max],$gmii)}]
+            }
+            dict set result $key $item
+        }
+    }
+    return $result
+}

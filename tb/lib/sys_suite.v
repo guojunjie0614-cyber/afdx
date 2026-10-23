@@ -4,7 +4,7 @@
 `timescale 1ns/1ps
 // 测试指令只描述公开端口操作，不访问被测模块的内部状态。
 module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
- LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,LINK_FRAMES=2048);
+ LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,LINK_FRAMES=2048,MAX_CYCLES=50000000);
  reg clk=0;always #4 clk=~clk;
  reg reset1=1,reset2=1;
  integer sf,cf,pf,rc,cycle=0,checks=0,errors=0,quiet=0;
@@ -35,7 +35,7 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
      es1.ev_tx||es2.ev_tx||es1.ev_a||es1.ev_b||es2.ev_a||es2.ev_b||
      es1.ev_rm_drop||es2.ev_rm_drop||es1.ev_deliver||es2.ev_deliver||
      es1.ev_gdrop||es2.ev_gdrop||es1.line_activity||es2.line_activity)quiet=cycle;
-  if(cycle>50000000 || errors+e1+e2+l0e+l1e+l2e+l3e>100)begin
+  if(cycle>MAX_CYCLES || errors+e1+e2+l0e+l1e+l2e+l3e>100)begin
    #1;
    $display("[RESULT] %0s FAIL checks=%0d errors=%0d",NAME,checks+c1+c2,errors+e1+e2+l0e+l1e+l2e+l3e+1);$finish;
   end
@@ -168,6 +168,38 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
    light_sender(2,length,rounds,period,base,off2);
   join
  end endtask
+ // N命令：按绝对释放拍排列的主机待发队列；单字节应用口仍按真实握手逐条提交。
+ integer var_due[0:19999],var_vl[0:19999],var_len[0:19999];
+ integer var_off1[0:19999],var_off2[0:19999];
+ integer var_warm,var_window,var_count,var_i;
+ task automatic var_sender;
+ input integer who,amount,base;
+ integer e,target;
+ begin
+  for(e=0;e<amount;e=e+1)begin
+   target=base+var_due[e];
+   while(cycle<target)tick;
+   $fwrite(sf,"O %0d %0d %0d %0d %0d\n",cycle,who,var_vl[e],var_len[e],target);
+   if(who==1)es1.send_payload(var_vl[e],var_len[e],0,16'h1234,16'h4321,var_off1[e]);
+   else es2.send_payload(var_vl[e],var_len[e],0,16'h1234,16'h4321,var_off2[e]);
+  end
+ end endtask
+ task var_traffic;
+ input integer warm,window,amount;
+ integer base;
+ begin
+  base=cycle+10;
+  fork
+   var_sender(1,amount,base);
+   var_sender(2,amount,base);
+   begin
+    while(cycle<base+warm)tick;
+    $fwrite(sf,"F %0d begin %0s\n",cycle,stage_name);
+    while(cycle<base+warm+window)tick;
+    $fwrite(sf,"F %0d end %0s\n",cycle,stage_name);
+   end
+  join
+ end endtask
  task pulse_reads;input integer who;input [17:0] a;input integer amount;
  integer mj;begin
  fork
@@ -210,6 +242,15 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
     "Y":begin rc=$fscanf(cf,"%d %d %h %d %d",es,vl,value,n,offset);change_live(es,vl,value,n,offset);end
     "F":begin rc=$fscanf(cf,"%d %d %d %d %d %d",es,count,delay,vl,offset,live_offset);perf_traffic(es,count,delay,vl,offset,live_offset);end
     "K":begin rc=$fscanf(cf,"%d %d %d %d %d",n,count,delay,offset,live_offset);light_traffic(n,count,delay,offset,live_offset);end
+    "N":begin
+     rc=$fscanf(cf,"%d %d %d",var_warm,var_window,var_count);
+     check(var_count>0 && var_count<=20000,"R97 input event count bounds");
+     for(var_i=0;var_i<var_count;var_i=var_i+1)begin
+      rc=$fscanf(cf,"%s %d %d %d %d %d",command,var_due[var_i],var_vl[var_i],var_len[var_i],var_off1[var_i],var_off2[var_i]);
+      check(rc==6 && command=="I","R97 schedule row");
+     end
+     var_traffic(var_warm,var_window,var_count);
+    end
     "L":begin rc=$fscanf(cf,"%d %d",link,delay);set_delay(link,delay);end
     "A":begin rc=$fscanf(cf,"%d %d %d %d %d",link,frame,mode,byte_index,mask);action(link,frame,mode,byte_index,mask);end
     "R":begin rc=$fscanf(cf,"%d %d",link,frame);replay(link,frame);end

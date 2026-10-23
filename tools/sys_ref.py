@@ -411,7 +411,7 @@ def check(test, folder):
             if len(diagnostics) < 50:
                 diagnostics.append(label)
     sysrows = rows(folder/'sys_events.txt')
-    allowed = {'G', 'P', 'W', 'Q', 'V', 'L', 'A', 'R', 'J', 'E', 'F'}
+    allowed = {'G', 'P', 'W', 'Q', 'V', 'L', 'A', 'R', 'J', 'E', 'F', 'O'}
     for _, _, p in sysrows:
         expect(p[0] in allowed, 'S5 recognized system row '+p[0])
     endpoints = {number: endpoint(folder, number, expect) for number in (1, 2)}

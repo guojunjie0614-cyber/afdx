@@ -1,6 +1,8 @@
 # tb_sys_perf uses the same input sequence as tools/sys_cases.py (seed 20261007).
 # This file generates that sequence and measures the simulator's public records.
 namespace eval judge_perf {variable commands; variable payload; variable offset; variable message; variable hex}
+source [file join [file dirname [info script]] r97_measure.tcl]
+source [file join [file dirname [info script]] perf_var_vectors.tcl]
 
 proc judge_perf::emit {line} {variable commands; puts $commands $line}
 proc judge_perf::write_cfg {es address value} {emit [format {C %d %x %x 0} $es $address $value]}
@@ -82,12 +84,14 @@ proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)
 proc judge_perf::limits {stage es rate maximum variation wire_a wire_b} {
     set direction es${es}_to_es[expr {3-$es}]
     set meets [expr {$rate>=100.0 && $maximum<=2000.0 && $variation<=50.0}]
-    set same [expr {abs($rate-906.136)<0.000000001 && $maximum==24.408 && $variation==0 && abs($wire_a-906.136)<0.000000001 && abs($wire_b-906.136)<0.000000001}]
+    # T39: 54877a09 adds two RX map pipeline cycles, 24.408 + 0.016 us.
+    set expected_e2e_us 24.424
+    set same [expr {abs($rate-906.136)<0.000000001 && $maximum==$expected_e2e_us && $variation==0 && abs($wire_a-906.136)<0.000000001 && abs($wire_b-906.136)<0.000000001}]
     set lines [list [format {JUDGE METRIC tb_sys_perf stage=%s direction=%s delivered_mbps=%.3f max_e2e_us=%.3f jitter_us=%.3f gmii_a_mbps=%.3f gmii_b_mbps=%.3f} \
         $stage $direction $rate $maximum $variation $wire_a $wire_b]]
     lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s min_mbps=100 throughput_margin_mbps=%.3f max_e2e_us=2000 latency_margin_us=%.3f max_jitter_us=50 jitter_margin_us=%.3f} \
         [expr {$meets ? "PASS" : "FAIL"}] $stage $direction [expr {$rate-100.0}] [expr {2000.0-$maximum}] [expr {50.0-$variation}]]
-    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_mbps=906.136 expected_e2e_us=24.408 expected_jitter_us=0} \
+    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_mbps=906.136 expected_e2e_us=24.424 expected_jitter_us=0} \
         [expr {$same ? "PASS" : "FAIL"}] $stage $direction]
     if {!$meets || !$same} {
         foreach line $lines {puts $line}
@@ -212,5 +216,17 @@ proc judge_perf::measure {folder} {
             set lines [concat $lines [limits $stage $es $rate $maximum $variation $wire_rate(A) $wire_rate(B)]]
         }
     }
+    set newmetrics [r97::measure $folder {gbe77_d0 gbe77_d257}]
+    set augmented {}
+    foreach line $lines {
+        if {[regexp {^JUDGE METRIC tb_sys_perf stage=(\S+) direction=(\S+)} $line all stage direction]} {
+            set key "$stage/$direction/accepted/all"
+            append line [format { l_gmii_max_us=%.3f l_app_max_us=%.3f jitter_r97_us=%.3f jitter_r97_gmii_us=%.3f tx_interval_jitter_us=%.3f} \
+                [expr {[dict get $newmetrics $key/L_gmii/max]*0.008}] [expr {[dict get $newmetrics $key/L_app/max]*0.008}] \
+                [expr {[dict get $newmetrics $key/L_app/jitter]*0.008}] [expr {[dict get $newmetrics $key/L_gmii/jitter]*0.008}] [expr {[dict get $newmetrics $key/tx_interval_jitter/max]*0.008}]]
+        }
+        lappend augmented $line
+    }
+    set lines $augmented
     return $lines
 }
