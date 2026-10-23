@@ -228,5 +228,34 @@
     "source": "out/sim/tb_rx_ovf_dq/20261014_095545_014768/events.txt",
     "bytes": 3486,
     "sha256": "a1035bf95511092e7ddb4da5906b6c905d24b0589b2657fabf00a16564bcb519"
+  },
+  {
+    "file": "perf_r97.json",
+    "source": "out/t42/perf_r97.json",
+    "operation": "Selected metrics from immutable simulation measurements; no simulation rerun",
+    "inputs": [
+      {
+        "source": "out/t40/grouped_metrics.tsv",
+        "sha256": "2b1a233e47113b96748f864ecfcabc8bae3c18045f3cb19e2e8007095d962aab"
+      },
+      {
+        "source": "out/t40/burst_release_analysis.json",
+        "sha256": "a205327cb820ac4647fcfc0a7d19319e74e927be55c880cf6f3251ca6d3d5c18"
+      },
+      {
+        "source": "out/t40/jitter_analysis.json",
+        "sha256": "eb061575d6b79f56bd6efc23d5ddd0ff325174f2c1bcf13f5378731ba55a93a6"
+      },
+      {
+        "source": "out/t40/approved_measurement_equivalence.json",
+        "sha256": "7220c34a128fd0455784e895eb1841bc5d144d5ba33ff7acc865676e75c14eca"
+      },
+      {
+        "source": "out/t40/approved_policy.json",
+        "sha256": "d9c45afb41ea78516d0948e32478b3e9656fca47d3a1e31bb081d639adc044b2"
+      }
+    ],
+    "bytes": 145439,
+    "sha256": "cac1f8bd66dce20594430529381d34a8bd64924e4e4ba77d28a9cba053d52438"
   }
 ]

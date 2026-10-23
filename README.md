@@ -100,7 +100,7 @@ JUDGE CASE PASS performance checks=756575324 errors=0 warnings=0 elapsed_s=457.3
 JUDGE ENTRY PASS cases=7 warnings=0 elapsed_s=524.347 output_mib=579.3
 ```
 
-运行结果可与 [评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对照。评委入口的七条 `JUDGE CASE PASS`、最终 `JUDGE ENTRY PASS cases=7`、检查项数、错误数以及 `JUDGE METRIC` 的指标应一致；回归汇总的 38 项测试名、参数、PASS 状态和检查项数也应一致。耗时、时间戳、输出目录名和输出文件大小会随机器或运行时间变化，不用逐字比较。参考汇总中的路径相对于仓库根目录，指向那次运行的输出位置，本仓库不附带这些运行目录。
+[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 保留旧版七用例、38项记录，计数及整套参考待合并后的完整验证统一刷新；上方预期输出与耗时也是该历史记录。已更新的性能数字不再与旧参考逐值比较，应使用[性能证据](docs/evidence/perf_r97.json)的 `main_table`；新变长工况复现见下方性能说明。耗时、时间戳、输出目录名和输出文件大小会随机器或运行时间变化，不用逐字比较。参考汇总中的路径相对于仓库根目录，指向那次运行的输出位置，本仓库不附带这些运行目录。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -157,16 +157,18 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
-| 77 条虚拟链路的吞吐、最大端到端时延和发送抖动 | do 入口打印 `JUDGE METRIC tb_sys_perf`。链路延迟为 0 或 257 拍时，两个方向分别为 **906.136 Mbps、24.408 µs、0 µs**；两网冗余副本不相加。Python 入口 `sim/run.ps1 -Test tb_sys_perf` 应得到相同结果。 |
+| 定长与混合帧长性能 | gbe77 每方向 **906.136 Mbps**；var_high **904.752 Mbps**。链路0拍时 L_app 末字节最大 **24.424 µs**，257拍时 **26.480 µs**；R97应用首字节抖动 **0.008 µs**。定义、四类新工况与各段数值见[事实清单](docs/FACTS.md#二性能数字与测量方法)，出处为[性能证据](docs/evidence/perf_r97.json)的 `main_table`。 |
 | 77/81 条虚拟链路同时提交消息后，队列全部发完的时间 | `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 **959.272/1008.488 µs**；81 条的用例特意检查超过 1 ms 的边界。 |
 | 时钟同步误差 | `JUDGE METRIC rtc_...` 给出最大误差；空载为 **0 ns**，普通用户流量和 77 条虚拟链路满载时均为 **10788 ns**。 |
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
 | 虚拟链路容量 | `capacity` 每端配置 4096 条接收虚拟链路，并逐字节验证索引 0、4095 和中间 126 项。每端全部 128 条发送虚拟链路都发出消息，对端每条只交付一次。 |
 | 网络管理（SNMP，Simple Network Management Protocol） | `snmp` 检查 Get、GetNext、Set 的请求号回显、错误码为 0、返回值与配置口寄存器一致；Trap 检查错误码为 0、启动通知类型和运行时间寄存器。 |
 
-吞吐测试先运行两个带宽间隔，再测量 21 ms 内交付的用户字节数。端到端时延从应用提交末字节算到对端交付末字节，只扣除设定的线路延迟。发送抖动表示同一虚拟链路相邻两帧的发送间隔偏离 1 ms 的程度。
+按[1022答疑](docs/sources/FPGA创新大赛问题汇总1022.xlsx) R95/R97，吞吐只计接收应用口去重后的有效载荷；时延分别报 L_gmii（TX SFD→RX SFD）、L_tx（提交完成→TX SFD）、L_rx（RX SFD→交付首/末字节）、L_app（提交完成→交付首/末字节）。L_gmii在直连模型中为0.000/2.056 µs，不能当成端系统性能。R97抖动是同一VL时延最大减最小，再取各VL最大；旧相邻发送间隔偏离BAG称发送间隔偏差（gbe77为0.000 µs）。
 
-`JUDGE REQUIREMENT` 对照赛题门限并打印余量：吞吐至少 100 Mbps、最大端到端时延至多 2000 µs、抖动至多 50 µs。`JUDGE BASELINE` 另行检查是否仍为 906.136 Mbps、24.408 µs、0 µs；门限不达标和基线不一致会分别标出 FAIL。
+新变长工况只对 var_high 检查≥100 Mbps；var_fixed/var_cycle/var_burst的给定负载较低，实测分别为57.794/70.403/57.794 Mbps，只报告。所有工况所有帧 L_gmii/L_app≤2000 µs；R97抖动只报告，50 µs为项目检查器历史参考值，不是官方上限。旧 `JUDGE BASELINE` 的应用末字节扣链路基线为24.424 µs：54877a09增加接收映射读两拍，历史旧值24.408 µs增加16 ns；旧兼容字段 `jitter_us` 仍指发送间隔偏差。来源：[性能证据](docs/evidence/perf_r97.json)的 `policy`、`main_table`。
+
+变长多VL测试：`powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_perf_var`；纯ModelSim在仓库根目录执行 `set ::env(AFDX_JUDGE_CASE) perf_var`、`do sim/run_judge.do`。取消筛选用 `unset ::env(AFDX_JUDGE_CASE)`。五种载荷、VL/BAG与窗口见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
 
 `tb_gbe_burst` 的突发指标在发送核心的消息输入口和接收核心的消息交付口之间测量。顶层将这两路核心直接接到 GMII，没有另加适配缓存或流水延迟。
 队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上吞吐和周期指标是 RTL 仿真测量；布线后静态时序另见“综合与布线结果”，不能当作上板实测。
@@ -257,6 +259,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 `AFDX_top` 保留赛题模板的 `clk`、`reset`、`tx_data`、`rx_data`、`tx_valid`、`rx_valid`、`tx_ready`、`rx_ready`，这一组是 A 网 GMII。另外增加了 B 网 GMII（`*_b`）、应用收发口（`app_tx_*`、`app_rx_*`）和配置口（`cfg_*`），用于双网冗余、提交和取回用户消息、写入虚拟链路配置。以太网线路不能暂停，`rx_ready` 不使用。
 
+[1022答疑](docs/sources/FPGA创新大赛问题汇总1022.xlsx) R110说明模板是端系统对外应用数据接口；当前模板八位口实际用作A网GMII，应用另走 `app_*`、B网另增端口，与该说明有差别。原理解依据为R61“GMII是PHY接口”和R95-2“两次例化MAC”；已准备向官方确认，本次不改接口、不宣称解释已获认可。R112允许以仿真截图及仿真演示视频代替开发板照片和视频。
+
 测试与参考模型的对应：`tb_tx_*`、`tb_rx_*` 对应 `afdx_ref.py`、`tx_ref.py`、`rx_ref.py`；`tb_sys_*` 对应系统、GMII 和各服务的参考模型；`tb_net_services` 对应 `net_services_ref.py`。`tools/eda.py` 负责生成向量、调用仿真和检查器。ModelSim do 入口使用 `sim/vectors/` 中的固定向量和测试平台自检，不调用 Python。
 
 ## 实现范围
@@ -270,9 +274,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 ## 测量条件和限制
 
-- 吞吐、时延、抖动均为 RTL 仿真结果，A、B 两网每个方向单独计算，冗余副本不相加。工况为 1471 字节 UDP 载荷、带宽间隔 1 ms：77 条虚拟链路每方向 906.136 Mbps，81 条 953.208 Mbps，10 条 117.680 Mbps。
-- 最大端到端时延 24.408 µs 和发送抖动 0 µs 的条件是各虚拟链路错开提交、没有服务报文插入。77 条虚拟链路同拍提交 1471 字节消息时，最后一条要等前面的排完，相对理想时刻最多晚 935.120 µs；满载时插入 RTC、SNMP、615A 报文，数据帧间隔会比 1 ms 多出最多 312 个时钟周期（约 2.5 µs）。
+- 性能是RTL仿真测量，R95有效载荷吞吐不重复计算A/B副本。gbe77定长1471字节为906.136 Mbps；混合1、17、256、1024、1471字节的var_high为904.752 Mbps。四类工况均有0/257拍延迟、双向和A/B两网，详情见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
+- 稳态 L_app 末字节最大24.424 µs（链路0拍），包含257拍链路时为26.480 µs；var_cycle的R97抖动9.992 µs主要来自BAG相位等待（ΔTX +11.904、ΔRX −1.912 µs）。var_burst从实际提交完成到末字节最大36.424 µs，从计划释放到首/末字节为174.464/174.592 µs，两种口径抖动最大均0.008 µs；差额主要来自单应用口串行注入。来源：[性能证据](docs/evidence/perf_r97.json)的 `main_table`、`jitter_top3`。历史争用实验的理想释放偏差935.120 µs不是R97抖动，见[边界说明](docs/FACTS.md#五报告必须主动说明的边界)。
 - 时钟同步误差在两端使用同一个理想时钟的仿真中测得：空载 0 ns，有用户流量时最大 10788 ns。
-- MAC 层是本工程自己编写的，没有使用 eLinx 的 MAC IP。
+- R95-2建议调用并两次例化 `Tri_Mode_Ethernet_Mac`；R111说明无强制使用要求。本设计保留自研MAC，未集成官方MAC IP，理由及配置范围见[对照](docs/FACTS.md#九附录设计取舍依据的专项实验)。
 - 综合后网表仿真使用官方流程导出的 VQM，不含布局布线延迟；吞吐等性能指标没有在网表上重测。布局布线后导出的 `.vo` 网表没有通过仿真，原因是工具导出的 18/36 位 RAM 写数据位序与仿真库不一致；按赛题答疑，综合后仿真即可。
 - 已完成官方默认布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。
