@@ -39,10 +39,15 @@ proc r97::stats {samples} {
 }
 proc r97::measure {folder {stages {}}} {
     set marks {}; set windows {}; set finalcycle 0
+    set releases {}; set release_stage ""
     foreach row [rows [file join $folder sys_events.txt]] {
         set kind [lindex $row 0]; set cycle [lindex $row 1]
         if {[string is integer -strict $cycle]} {set finalcycle [expr {max($finalcycle,$cycle)}]}
-        if {$kind eq "P"} {lappend marks [list $cycle [lindex $row 2]]}
+        if {$kind eq "P"} {set release_stage [lindex $row 2]; lappend marks [list $cycle $release_stage]}
+        if {$kind eq "O"} {
+            lassign $row kind actual source vl size planned
+            dict lappend releases $release_stage,$source,$vl [list $size $planned]
+        }
         if {$kind eq "F" && [lindex $row 2] in {begin end}} {dict set windows [lindex $row 3] [lindex $row 2] $cycle}
     }
     set wanted {}
@@ -53,7 +58,7 @@ proc r97::measure {folder {stages {}}} {
     require [expr {[llength $wanted]>0}] "no requested stages"
     set messages {}; set queues {}; set lengths {}; set rejects {}; set arrivals {}; set frames {}
     foreach es {1 2} {
-        set id 0
+        set id 0; set release_counts {}
         foreach row [rows [file join $folder es${es}_tx events.txt]] {
             set kind [lindex $row 0]; set cycle [lindex $row 1]
             if {$kind eq "E" && [stage_at $marks $cycle] in $wanted && [lindex $row 2] in {drop_dis drop_full drop_long drop_nopage}} {error "R97: application rejection ES$es at $cycle"}
@@ -62,7 +67,17 @@ proc r97::measure {folder {stages {}}} {
             lassign $row kind cycle vl n pen sport dport payload
             set stage [stage_at $marks $cycle]
             require [expr {[string length $payload]==2*$n}] "M payload length ES$es frame$id"
-            dict set messages $es $id [dict create cycle $cycle vl $vl n $n payload $payload stage $stage]
+            # Legacy records without O use M as release; no existing metric changes.
+            # Variable cases use the host-queue planned release, not actual dispatch.
+            set release $cycle; set release_key $stage,$es,$vl
+            if {[dict exists $releases $release_key]} {
+                set ri 0; if {[dict exists $release_counts $release_key]} {set ri [dict get $release_counts $release_key]}
+                require [expr {$ri<[llength [dict get $releases $release_key]]}] "missing planned release $release_key"
+                lassign [lindex [dict get $releases $release_key] $ri] release_n release
+                require [expr {$release_n==$n}] "planned release length/order mismatch $release_key"
+                dict incr release_counts $release_key
+            } elseif {[string match var_* $stage]} {error "R97: missing O record $release_key"}
+            dict set messages $es $id [dict create cycle $cycle vl $vl n $n payload $payload stage $stage release $release]
             dict lappend queues $es,$vl $id
             if {$stage in $wanted} {dict set lengths $stage $n 1}
         }
@@ -140,6 +155,8 @@ proc r97::measure {folder {stages {}}} {
                     if {$winner eq $net} {
                         dict set values L_rx [expr {$dc-$rx}]; dict set values L_rx_last [expr {$dc+$n-1-$rx}]
                         dict set values L_app [expr {$dc-$cycle}]; dict set values L_app_last [expr {$dc+$n-1-$cycle}]
+                        dict set values L_release_app [expr {$dc-[dict get $m release]}]
+                        dict set values L_release_app_last [expr {$dc+$n-1-[dict get $m release]}]
                     }
                     foreach group [list all $n] {
                         dict for {metric value} $values {
@@ -149,7 +166,7 @@ proc r97::measure {folder {stages {}}} {
                     }
                 }
             }
-            foreach net {A B accepted} {foreach group $groups {foreach metric {L_gmii L_tx L_rx L_rx_last L_app L_app_last} {
+            foreach net {A B accepted} {foreach group $groups {foreach metric {L_gmii L_tx L_rx L_rx_last L_app L_app_last L_release_app L_release_app_last} {
                 set sample {}; if {[dict exists $samples $net/$group/$metric]} {set sample [dict get $samples $net/$group/$metric]}
                 dict for {stat value} [stats $sample] {dict set out $stage/$direction/$net/$group/$metric/$stat $value}
             }}}
@@ -176,7 +193,7 @@ proc r97::judge_lines {folder {stage_prefix ""}} {
         set rate [expr {[dict get $results $p/throughput/payload_bytes]*1000.0/[dict get $results $p/throughput/window_cycles]}]
         set test tb_sys_perf_var; if {[string match gbe77_* $stage]} {set test tb_sys_perf}
         set line [format {JUDGE METRIC %s stage=%s direction=%s delivered_mbps=%.3f} $test $stage $direction $rate]
-        foreach {name metric stat} {l_gmii_max_us L_gmii max l_tx_max_us L_tx max l_rx_max_us L_rx max l_rx_last_max_us L_rx_last max l_app_max_us L_app max l_app_last_max_us L_app_last max jitter_r97_us L_app jitter jitter_r97_gmii_us L_gmii jitter} {
+        foreach {name metric stat} {l_gmii_max_us L_gmii max l_tx_max_us L_tx max l_rx_max_us L_rx max l_rx_last_max_us L_rx_last max l_app_max_us L_app max l_app_last_max_us L_app_last max jitter_r97_us L_app jitter jitter_r97_gmii_us L_gmii jitter l_release_app_max_us L_release_app max l_release_app_last_max_us L_release_app_last max jitter_r97_release_us L_release_app jitter} {
             set v [dict get $results $p/$metric/$stat]
             if {$v eq "NA"} {set formatted NA} else {set formatted [format %.3f [expr {$v*0.008}]]}
             append line " $name=" $formatted
