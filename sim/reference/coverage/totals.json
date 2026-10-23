@@ -1,60 +1,96 @@
 {
   "tool": "ModelSim SE-64 2020.4",
   "rtl_metrics": "sbceft",
-  "module_count": 21,
+  "module_count": 24,
+  "rtl_file_count": 24,
   "aggregation": "design-unit covered bins / design-unit total bins; FSM = states + transitions",
   "metrics": {
     "Statements": {
-      "covered": 2916,
-      "total": 3006,
-      "percent": 97.0
+      "covered": 14314,
+      "total": 15877,
+      "percent": 90.15
     },
     "Branches": {
-      "covered": 1700,
-      "total": 1831,
-      "percent": 92.84
+      "covered": 8188,
+      "total": 9642,
+      "percent": 84.92
     },
     "Conditions": {
-      "covered": 421,
-      "total": 580,
-      "percent": 72.58
+      "covered": 1029,
+      "total": 1511,
+      "percent": 68.1
+    },
+    "Expressions": {
+      "covered": 3264,
+      "total": 4325,
+      "percent": 75.46
     },
     "FSM States": {
-      "covered": 104,
-      "total": 104,
+      "covered": 110,
+      "total": 110,
       "percent": 100.0
     },
     "FSM Transitions": {
-      "covered": 131,
-      "total": 296,
-      "percent": 44.25
+      "covered": 138,
+      "total": 308,
+      "percent": 44.8
     },
     "Toggles": {
-      "covered": 24768,
-      "total": 31186,
-      "percent": 79.42
+      "covered": 47317,
+      "total": 59698,
+      "percent": 79.26
     },
     "FSM": {
-      "covered": 235,
-      "total": 400,
-      "percent": 58.75
+      "covered": 248,
+      "total": 418,
+      "percent": 59.33
     }
   },
   "coverage_regression": {
-    "tests": 38,
-    "passed": 38,
+    "tests": 39,
+    "passed": 39,
     "reference_counts_match": true,
-    "started": "2026-10-14T23:50:40.3196842+08:00",
-    "finished": "2026-10-15T00:21:34.014930+08:00",
-    "elapsed_seconds": 1853.695
+    "started": "2026-10-23T17:03:38.7061494+08:00",
+    "finished": "2026-10-23T20:43:51.019376+08:00",
+    "elapsed_seconds": 13212.313,
+    "finished_source": "latest individual run finish; official batch summary has no Finished field"
   },
-  "merged_ucdb_bytes": 1566037,
+  "merged_ucdb_bytes": 3054701,
+  "source_summary": "out/regress/coverage_20261023_170338_7061494/summary.json",
+  "ce_div": 2,
+  "rtl_modules": {
+    "AFDX_top": "rtl/AFDX_top.v",
+    "afdx_615a": "rtl/afdx_615a.v",
+    "afdx_615a_engine": "rtl/afdx_615a_engine.v",
+    "afdx_cfg": "rtl/afdx_cfg.v",
+    "afdx_crc32_d8": "rtl/afdx_crc32_d8.v",
+    "afdx_mac_rx": "rtl/afdx_mac_rx.v",
+    "afdx_mac_tx": "rtl/afdx_mac_tx.v",
+    "afdx_mgmt_tx": "rtl/afdx_mgmt_tx.v",
+    "afdx_ntp_fraction": "rtl/afdx_ntp_fraction.v",
+    "afdx_ram_sdp": "rtl/afdx_ram_sdp.v",
+    "afdx_rtc": "rtl/afdx_rtc.v",
+    "afdx_rx_core": "rtl/afdx_rx_core.v",
+    "afdx_rx_deliver": "rtl/afdx_rx_deliver.v",
+    "afdx_rx_engine": "rtl/afdx_rx_engine.v",
+    "afdx_rx_parse": "rtl/afdx_rx_parse.v",
+    "afdx_snmp": "rtl/afdx_snmp.v",
+    "afdx_snmp_engine": "rtl/afdx_snmp_engine.v",
+    "afdx_svc": "rtl/afdx_svc.v",
+    "afdx_timebase": "rtl/afdx_timebase.v",
+    "afdx_tx_buf": "rtl/afdx_tx_buf.v",
+    "afdx_tx_builder": "rtl/afdx_tx_builder.v",
+    "afdx_tx_core": "rtl/afdx_tx_core.v",
+    "afdx_tx_engine": "rtl/afdx_tx_engine.v",
+    "afdx_tx_free": "rtl/afdx_tx_free.v"
+  },
   "coverage_off_regression": {
-    "tests": 38,
-    "passed": 38,
+    "tests": 39,
+    "passed": 39,
     "reference_counts_match": true,
-    "started": "2026-10-14T23:32:40.4245279+08:00",
-    "finished": "2026-10-14T23:49:28.788552+08:00",
-    "elapsed_seconds": 1008.364
+    "started": "2026-10-23T16:51:42.423747+08:00",
+    "finished": "2026-10-23T18:25:54.123897+08:00",
+    "elapsed_seconds": 5651.7,
+    "finished_source": "latest individual run finish; official batch summary has no Finished field"
   }
 }
