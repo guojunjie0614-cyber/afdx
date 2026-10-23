@@ -93,6 +93,9 @@ module afdx_tx_builder #(
     reg [31:0] p_time, p_src, p_dst, now_q, time_difference;
     reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ident, ip_length, udp_length, checksum;
     reg [10:0] p_len, active_len, payload_index;
+    // 与负载下标同拍更新，移出字节队列控制路径上的长比较。
+    reg payload_more;
+    wire [10:0] payload_index_next = payload_index + 1'b1;
     reg [7:0] p_sn, p_page, active_sn;
     reg [19:0] sum;
     // 校验和的低 16 位与进位分开累加，每步的加法链不超过 16 位。
@@ -140,7 +143,7 @@ module afdx_tx_builder #(
     wire fifo_push = payload_pipe[1];
     wire fifo_pop = s_valid && s_ready[0] && ! s_last &&
         ((part == PART_HEADER && header_index == HEADER_LAST)
-        || (part == PART_PAYLOAD && payload_index < active_len));
+        || (part == PART_PAYLOAD && payload_more));
     wire return_push = payload_pipe[1] && return_pipe[1];
     wire return_pop = ( ! ret_valid || ret_ready) && return_count != 0;
     reg [TX_OFF_AW - 1:0] fetch_offset;
@@ -225,6 +228,7 @@ module afdx_tx_builder #(
             active_len <= 0;
             active_sn <= 0;
             payload_index <= 0;
+            payload_more <= 0;
             padding_left <= 0;
             fetch_page <= 0;
             fetch_offset <= 0;
@@ -385,6 +389,7 @@ module afdx_tx_builder #(
                 active_len <= p_len;
                 active_sn <= p_sn;
                 payload_index <= 0;
+                payload_more <= p_len != 0;
                 fetch_page <= p_page;
                 fetch_offset <= 0;
                 fetch_left <= p_len;
@@ -422,11 +427,12 @@ module afdx_tx_builder #(
                     // B 网把源 MAC 地址里的网络标识换成 0x40，其余字节与 A 网相同。
                     s_data_b <= header_index == NETWORK_ID_INDEX ? NETWORK_B : header[327:320];
                 end
-                else if (part == PART_HEADER || (part == PART_PAYLOAD && payload_index < active_len)) begin
+                else if (part == PART_HEADER || (part == PART_PAYLOAD && payload_more)) begin
                     part <= PART_PAYLOAD;
                     s_data_a <= payload_fifo[{fifo_rd, 3'b0} +: 8];
                     s_data_b <= payload_fifo[{fifo_rd, 3'b0} +: 8];
-                    payload_index <= payload_index + 1'b1;
+                    payload_index <= payload_index_next;
+                    payload_more <= payload_index_next < active_len;
                 end
                 else if (part == PART_PAYLOAD) begin
                     if (active_len < MIN_PAYLOAD) begin
@@ -455,4 +461,13 @@ module afdx_tx_builder #(
         end
     end
 
+`ifdef AFDX_CE_DIV
+    // 所有 RTL 回归都定义此宏；综合不定义，不产生硬件。
+    always @(negedge clk) begin
+        if (!reset && (payload_more !== (payload_index < active_len))) begin
+            $display("[FAIL] payload_more invariant index=%0d len=%0d", payload_index, active_len);
+            $fatal(1, "payload_more invariant");
+        end
+    end
+`endif
 endmodule
