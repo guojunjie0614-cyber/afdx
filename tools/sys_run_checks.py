@@ -19,6 +19,15 @@ def run(test,folder):
     reports['gmii']=reports['system'].pop('gmii')
     gmii_ref.emit(reports['gmii'])
     result=dict(test=test,items=sum(r['items'] for r in reports.values()),errors=sum(r['errors'] for r in reports.values()),reports=reports)
+    if test in ('tb_sys_perf','tb_sys_perf_var'):
+        from perf_ref import measure_r97, check_r97_var
+        result['r97_fields']=len(measure_r97(folder))
+        if test=='tb_sys_perf_var':
+            measured=dict(line.split('\t') for line in (folder/'r97_python.tsv').read_text().splitlines())
+            measured={k:(int(v) if v!='NA' else v) for k,v in measured.items()}
+            requirements=check_r97_var(folder,measured)
+            result['r97_requirement_failures']=sum(row['status']=='FAIL' for row in requirements)
+            result['errors']+=result['r97_requirement_failures']
     (folder/'check_summary.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     return result
 

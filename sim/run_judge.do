@@ -32,8 +32,8 @@ proc judge_case {root output ini label test parameters} {
     if {$test eq "tb_sys_rtc"} {
         file copy [file join $root sim vectors judge fractions.txt] [file join $folder vectors fractions.txt]
     }
-    if {$test eq "tb_sys_perf"} {
-        judge_perf::vectors [file join $folder vectors]
+    if {$test eq "tb_sys_perf" || $test eq "tb_sys_perf_var"} {
+        if {$test eq "tb_sys_perf_var"} {judge_perf::var_vectors [file join $folder vectors]} else {judge_perf::vectors [file join $folder vectors]}
         foreach es {1 2} {
             foreach suffix {tx rx gmii_tx gmii_rx} {
                 file mkdir [file join $folder es${es}_${suffix}]
@@ -84,6 +84,9 @@ proc judge_case {root output ini label test parameters} {
     if {$test eq "tb_sys_perf"} {
         set lines [concat $lines [judge_perf::measure $folder]]
     }
+    if {$test eq "tb_sys_perf_var"} {
+        set lines [concat $lines [judge_perf::var_measure $folder]]
+    }
     cd $output
     set seconds [expr {([clock milliseconds]-$started)/1000.0}]
     set lines [linsert $lines 0 [format {JUDGE CASE PASS %s checks=%s errors=0 warnings=%d elapsed_s=%.3f} $label $checks $warnings $seconds]]
@@ -121,7 +124,7 @@ proc judge_main {root} {
     transcript file [file join $output compile.log]
     transcript on
     set sources [concat [lsort [glob [file join $root rtl *.v]]] [lsort [glob [file join $root tb lib *.v]]]]
-    foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
+    foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_sys_perf_var tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
     if {$ce_div ni {1 2}} {error "AFDX_CE_DIV must be 1 or 2"}
@@ -143,9 +146,13 @@ proc judge_main {root} {
         burst81 tb_gbe_burst {-gCOUNT=81}
         rtc tb_sys_rtc {}
         performance tb_sys_perf {}
+        perf_var tb_sys_perf_var {}
     } {
+        if {[info exists ::env(AFDX_JUDGE_CASE)] && $::env(AFDX_JUDGE_CASE) ne $label} {continue}
         set summary [concat $summary [judge_case $root $output $ini $label $test $parameters]]
+        incr ::judge_cases
     }
+    if {$::judge_cases==0} {error "No matching AFDX_JUDGE_CASE"}
     set fh [open [file join $output result.txt] w]
     puts $fh [join $summary "\n"]
     close $fh
@@ -159,6 +166,7 @@ if {$judge_transcript ne ""} {set judge_transcript [file normalize $judge_transc
 set judge_echo [transcript -q]
 set judge_started [clock milliseconds]
 set judge_warnings 0
+set judge_cases 0
 set judge_output ""
 set judge_failed [catch {judge_main $judge_root} judge_message]
 set judge_cleanup_failed [catch {
@@ -172,7 +180,7 @@ set judge_seconds [expr {([clock milliseconds]-$judge_started)/1000.0}]
 if {$judge_failed} {
     set judge_result "JUDGE ENTRY FAIL: $judge_message"
 } else {
-    set judge_result [format {JUDGE ENTRY PASS cases=7 warnings=%d elapsed_s=%.3f output_mib=%.1f} $judge_warnings $judge_seconds [expr {[judge_bytes $judge_output]/1048576.0}]]
+    set judge_result [format {JUDGE ENTRY PASS cases=%d warnings=%d elapsed_s=%.3f output_mib=%.1f} $judge_cases $judge_warnings $judge_seconds [expr {[judge_bytes $judge_output]/1048576.0}]]
 }
 puts $judge_result
 if {$judge_output ne "" && [file isdirectory $judge_output]} {

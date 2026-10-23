@@ -213,17 +213,17 @@ def measure_r97(folder, stages=None, output=None):
             answer[prefix+'/tx_interval_jitter/max']=interval
             buckets=collections.defaultdict(list)
             lengths=sorted({m['n'] for m in ms})
-            for m in selected:
+            for m in ms:
                 d,winner=m['delivery']
                 for net in ('A','B'):
                     tx=m['tx'][net][0];rx=m['rx'][net][0]
                     assert rx-tx==(257 if stage.endswith('_d257') else 0),'link delay'
                     values=dict(L_gmii=rx-tx,L_tx=tx-m['cycle'])
                     if net==winner:values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'])
-                    for scope_net in ([net,'accepted'] if net==winner else [net]):
+                    for scope_net in (([net,'accepted'] if net==winner else [net]) if begin<=m['cycle']<end else []):
                         for group in ['all',str(m['n'])]:
                             for metric,value in values.items():buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
-                    frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,M=m['cycle'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
+                    frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,in_window=begin<=m['cycle']<end,M=m['cycle'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
             for net in ('accepted','A','B'):
                 for group in ['all']+list(map(str,lengths)):
                     for metric in metrics:
@@ -243,3 +243,37 @@ def measure_r97(folder, stages=None, output=None):
     output.write_bytes(''.join(k+'\t'+str(answer[k])+'\n' for k in sorted(answer)).encode('ascii'))
     (folder/'r97_frames.json').write_text(json.dumps(frame_rows,separators=(',',':')),encoding='utf8')
     return answer
+
+
+
+def check_r97_var(folder, measured):
+    import json
+    from pathlib import Path
+    folder=Path(folder);frames=json.loads((folder/'r97_frames.json').read_text())
+    accepted_all=[f for f in frames if f['accepted']];accepted=[f for f in accepted_all if f['in_window']];requirements=[]
+    def requirement(ok,label,**details):
+        requirements.append(dict(status='PASS' if ok else 'FAIL',label=label,**details))
+    required={kind+'_d'+str(delay) for kind in ('var_fixed','var_cycle','var_high','var_burst') for delay in (0,257)}
+    requirement({f['stage'] for f in accepted}==required,'all eight variable stages present')
+    starts={};begins={};current='initial'
+    for line in (folder/'sys_events.txt').read_text().splitlines():
+        p=line.split()
+        if p[0]=='P':current=p[2]
+        elif p[0]=='O':starts[current]=min(starts.get(current,int(p[5])),int(p[5]))
+        elif p[0]=='F' and p[2]=='begin':begins[p[3]]=int(p[1])
+    for stage in sorted({f['stage'] for f in accepted}):
+        requirement(begins[stage]-starts[stage]>=(250000 if stage.startswith('var_high') else 2000000),stage+' warmup >=2 maximum BAG')
+        for direction in ('es1_to_es2','es2_to_es1'):
+            rows=[f for f in accepted if f['stage']==stage and f['direction']==direction]
+            key=f'{stage}/{direction}/accepted/all';duration=measured[key+'/throughput/window_cycles']
+            rate=measured[key+'/throughput/payload_bytes']*1000/duration
+            requirement(duration>=2500000,stage+' '+direction+' window >=20ms')
+            count=collections.Counter(f['vl'] for f in rows);vls=80 if stage.startswith('var_high') else 32
+            requirement(set(count)==set(range(vls)) and min(count.values(),default=0)>=8,stage+' '+direction+' >=8 frames per VL')
+            requirement({f['length'] for f in rows}=={1,17,256,1024,1471},stage+' '+direction+' five payload lengths')
+            requirement(rate>=100,stage+' '+direction+' payload >=100Mbps',measured_mbps=rate)
+            requirement(all(f['L_gmii']<=250000 and f['L_app']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame first-byte latency <=2000us')
+            requirements.append(dict(status='REPORT',label=stage+' '+direction+' R97 jitter',cycles=measured[key+'/L_app/jitter']))
+    (folder/'r97_requirements.json').write_text(json.dumps(requirements,indent=2),encoding='utf8')
+    for row in requirements:print('[R97 '+row['status']+'] '+row['label']+' '+str({k:v for k,v in row.items() if k not in ('status','label')}))
+    return requirements
