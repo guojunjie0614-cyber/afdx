@@ -25,3 +25,4 @@ __pycache__/
 # Local backups and preview caches
 .backup/
 .preview/
+!docs/evidence/*.log
