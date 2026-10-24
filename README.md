@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-当前结果对应 2026-10-23 冻结 RTL `f60aaacd`。
+当前源码采用 T45 的 S2d 结构改动（9b277556）与初始化参考修复（bb1180d1），使用可由界面复现的 PRES1.50 布线选项；验证截至 2026-10-24。125 MHz 全量内部 setup 已无失败，+0.300 ns 裕量目标仍未达到。
 
 本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
 
@@ -104,7 +104,7 @@ JUDGE CASE PASS perf_var checks=1402134183 errors=0 warnings=0 elapsed_s=3292.38
 JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=7410.092 output_mib=1017.9
 ```
 
-[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对应本轮证据；性能定义与数值见 [性能证据](docs/evidence/perf_r97.json)。耗时、时间戳、输出目录和文件大小随运行变化。参考汇总中的 `Folder`、`Ucdb` 路径相对于仓库根目录，统一为 `out/sim/...`，指向该次运行的输出位置；这里只规范化原路径前缀，检查数、结果及原 UCDB 绑定保持不变。本仓库不附带这些原运行目录与可重建产物。
+[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 保留 2026-10-23 历史冻结版归档；性能定义与数值见 [性能证据](docs/evidence/perf_r97.json)。耗时、时间戳、输出目录和文件大小随运行变化。参考汇总中的 `Folder`、`Ucdb` 路径相对于仓库根目录，统一为 `out/sim/...`，指向该次运行的输出位置；这里只规范化原路径前缀，检查数、结果及原 UCDB 绑定保持不变。本仓库不附带这些原运行目录与可重建产物。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -158,7 +158,7 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 
    预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
 
-综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方默认布局布线。两个入口及旧版实现模板均使用 `elinx/constraints.edc` 这一份约束源；输出目录中的 `constraints.sdc` 是它的副本。
+综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方布局布线。`elinx/constraints.edc` 设置 PRES_FAC_MULT=1.50，eLinx 工程与命令行均读取这一份约束源；输出 constraints.sdc 是它的副本。同源 S2d 默认选项为 1 个失败、setup −0.251 ns，PRES1.50 为 0 个失败、+0.013 ns；交付工程没有 cluster 坐标赋值。
 
 主机配置访问优先；主机与 SNMP MIB 同时读同一地址时共用返回值，不同地址时 MIB 保持请求到主机释放总线。主机读延迟仍为两拍。接收映射、配置或序号检查拒绝的报文多用一拍登记判断，正常数据帧保持原处理拍数。
 
@@ -176,7 +176,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
-| 定长与混合帧长性能 | gbe77 每方向 **906.136 Mbps**；var_high **904.752 Mbps**。链路0拍时 L_app 末字节最大 **24.424 µs**，257拍时 **26.480 µs**；R97应用首字节抖动 **0.008 µs**。定义、四类新工况与各段数值见[事实清单](docs/FACTS.md#二性能数字与测量方法)，出处为[性能证据](docs/evidence/perf_r97.json)的 `main_table`。 |
+| 定长与混合帧长性能 | gbe77 每方向 **906.136 Mbps**；var_high **904.752 Mbps**。链路0拍时 L_app 末字节最大 **24.432 µs**，257拍时 **26.488 µs**；R97应用首字节抖动 **0.008 µs**。定义、四类新工况与各段数值见[事实清单](docs/FACTS.md#二性能数字与测量方法)，出处为[性能证据](docs/evidence/perf_r97.json)的 `main_table`。 |
 | 77/81 条虚拟链路同时提交消息后，队列全部发完的时间 | `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 **959.288/1008.504 µs**；81 条的用例特意检查超过 1 ms 的边界。 |
 | 时钟同步误差 | `JUDGE METRIC rtc_...` 给出最大误差；空载为 **0 ns**，普通用户流量和 77 条虚拟链路满载时均为 **10788 ns**。 |
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
@@ -185,7 +185,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 按[1022答疑](docs/sources/FPGA创新大赛问题汇总1022.xlsx) R95/R97，吞吐只计接收应用口去重后的有效载荷；时延分别报 L_gmii（TX SFD→RX SFD）、L_tx（提交完成→TX SFD）、L_rx（RX SFD→交付首/末字节）、L_app（提交完成→交付首/末字节）。L_gmii在直连模型中为0.000/2.056 µs，不能当成端系统性能。R97抖动是同一VL时延最大减最小，再取各VL最大；旧相邻发送间隔偏离BAG称发送间隔偏差（gbe77为0.000 µs）。
 
-新变长工况只对 var_high 检查≥100 Mbps；var_fixed/var_cycle/var_burst的给定负载较低，实测分别为57.794/70.403/57.794 Mbps，只报告。所有工况所有帧 L_gmii/L_app≤2000 µs；R97抖动只报告，50 µs为项目检查器历史参考值，不是官方上限。旧 `JUDGE BASELINE` 的应用末字节扣链路基线为24.424 µs：54877a09增加接收映射读两拍，历史旧值24.408 µs增加16 ns；旧兼容字段 `jitter_us` 仍指发送间隔偏差。来源：[性能证据](docs/evidence/perf_r97.json)的 `policy`、`main_table`。
+新变长工况只对 var_high 检查≥100 Mbps；var_fixed/var_cycle/var_burst的给定负载较低，实测分别为57.794/70.403/57.794 Mbps，只报告。所有工况所有帧 L_gmii/L_app≤2000 µs；R97抖动只报告，50 µs为项目检查器历史参考值，不是官方上限。当前 `JUDGE BASELINE` 的应用末字节扣链路基线为24.432 µs；2026-10-23 的历史值为24.424 µs，更早的24.408 µs由54877a09增加接收映射读两拍后增加16 ns；旧兼容字段 `jitter_us` 仍指发送间隔偏差。来源：[性能证据](docs/evidence/perf_r97.json)的 `policy`、`main_table`。
 
 变长多VL测试：`powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_perf_var`；纯ModelSim在仓库根目录执行 `set ::env(AFDX_JUDGE_CASE) perf_var`、`do sim/run_judge.do`。取消筛选用 `unset ::env(AFDX_JUDGE_CASE)`。五种载荷、VL/BAG与窗口见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
 
@@ -211,7 +211,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 入口先仿真 RTL，再用相同激励仿真新生成的 VQM，逐字节比较七份外部记录。自检项数必须与本次 RTL 一致，独立检查错误为 0；`exact_external_records` 七项均须为 `true`。
 
-本轮官方 VQM 的 `tb_net_services` 网表与同次 RTL 均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 7912.875 秒，同激励 RTL 23.813 秒；原网表 SHA-256 与本轮官方综合一致。
+2026-10-23 冻结 RTL f60aaacd 的历史官方 VQM 与同次 RTL 在 tb_net_services 中均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 7912.875 秒，同激励 RTL 23.813 秒；原网表 SHA-256 与本轮官方综合一致。
 
 使用界面产物时省略 `-Netlist`，默认读取 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`。两种入口都不重新综合；每次仿真的网表副本、日志、独立检查和 `summary.json` 放在 `out/gui_netlist/` 下的新目录。出错时打印 `GUI NETLIST FAIL` 或 `GUI NETLIST ENTRY FAIL` 并返回非零退出码，总时限为五小时。
 
@@ -221,30 +221,27 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 ## 综合与布线结果
 
-
-器件 EQ6HL130、封装 CSG484_H，唯一主时钟为 8 ns（125 MHz），顶层 `CE_DIV=2`；综合设置和实现选项保持工程默认值。已完成本轮官方综合、布局布线及全量时序导出。内部 setup 仍有 1 个失败端点，尚未满足 125 MHz 的建立时间要求；保持检查通过。
+当前结果来自与主树 149 项冻结输入逐字节相同的 S2d + PRES1.50 官方测量。器件 EQ6HL130、封装 CSG484_H，唯一主时钟为 8 ns（125 MHz），顶层 CE_DIV=2。所有已报告内部端点 setup 和 hold 均非负；T45 的 +0.300 ns 裕量目标尚未达到。
 
 | 项目 | 当前官方结果 |
-|---|---|
-| 查找表（LUT） | 38297 |
-| 触发器（FF） | 19947 |
-| 可配置逻辑块（CLB） | 5049 |
-| 存储器（Memory） | 361 |
+|---|---:|
+| 查找表（LUT） | 34294 |
+| 触发器（FF） | 17454 |
+| 可配置逻辑块（CLB） | 4521 |
+| 存储器（Memory） | 366 |
 | 用户引脚 | 259 |
-| 综合后建立裕量／保持裕量 | +4.459 / -0.068 ns |
-| 综合后最高频率估算 | 282.406 MHz |
-| 布线后建立裕量／保持裕量 | -0.090 / +0.229 ns |
-| 布线后最高频率估算 | 123.609 MHz |
-| 布线后 setup 失败端点 | 1 / 50132 |
-| 8 ns 路径数／最差 setup | 160894 / -0.090 ns |
-| 16 ns 路径数／最差 setup | 50296 / +1.750 ns |
-| 同沿 hold 路径数 | 211190 |
+| 布线后建立裕量／保持裕量 | +0.013 / +0.229 ns |
+| 布线后最高频率估算 | 125.203 MHz |
+| 布线后 setup 失败端点 | 0 / 45745 |
+| 8 ns 路径数／最差 setup | 153342 / +0.013 ns |
+| 16 ns 路径数／最差 setup | 50296 / +0.940 ns |
+| 同沿 hold 路径数 | 203638 |
 
-约束检查：2755 个引擎寄存器，不合格寄存器 0，遗漏内部连接 0；综合、实现及全量报告的约束审查均通过。
-综合估算、布线后静态时序和 RTL 性能仿真采用不同证据口径；未设置完整外部 I/O 延迟预算，也没有上板测量。当前轻量证据为 `docs/evidence/t43_timing.json`，原始结果由本轮三个 JSON 及其报告路径定位。
+约束检查为 2755 个引擎寄存器，不合格寄存器和遗漏内部连接均为 0；综合、实现与全量报告三次审查通过。轻量结果及前十路径见 [T45 时序证据](docs/evidence/t45_timing.json)。D3 f60aaacd 的历史对照为 LUT/FF 38297/19947、1 个失败、setup −0.090 ns，原始口径保留在 [T43 时序证据](docs/evidence/t43_timing.json)。
 
-CE1 回归 39/39 通过、评委 8/8 通过；CE2 回归 39/39 通过、评委 8/8 通过。
-本轮同激励 RTL 五功能联测中，SNMP、上传、卸载分别为 1478、16643、48333 拍；这是相应用例的观察值。
+本次 CE2 回归 39/39、评委 8/8、16 份初始化等价检查均通过；回归中的一次槽位准入错误已真实补跑，原失败记录保留。源码包括接收交付队列 RAM、统计事件两拍流水、数据发送缓冲、接收 payload 预登记与管理请求/元数据两级寄存。数据发送增加一拍（8 ns），管理发送相对前一版再增加一拍；性能基线和 R97 参考按本次完整窗口测量更新。
+
+当前仅保留 PRES1.50 这一份冻结候选的五线终验，完整结果仍待收齐。上文 2026-10-23 的网表结果和 sim/reference/ 归档结果属于历史冻结版，不冒充本次终验。布线后静态时序不是上板实测，也未覆盖完整外部 I/O 延迟预算。
 
 ## 模块一览
 
@@ -295,8 +292,8 @@ CE1 回归 39/39 通过、评委 8/8 通过；CE2 回归 39/39 通过、评委 8
 ## 测量条件和限制
 
 - 性能是RTL仿真测量，R95有效载荷吞吐不重复计算A/B副本。gbe77定长1471字节为906.136 Mbps；混合1、17、256、1024、1471字节的var_high为904.752 Mbps。四类工况均有0/257拍延迟、双向和A/B两网，详情见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
-- 稳态 L_app 末字节最大24.424 µs（链路0拍），包含257拍链路时为26.480 µs；var_cycle的R97抖动9.992 µs主要来自BAG相位等待（ΔTX +11.904、ΔRX −1.912 µs）。var_burst从实际提交完成到末字节最大36.424 µs，从计划释放到首/末字节为174.464/174.592 µs，两种口径抖动最大均0.008 µs；差额主要来自单应用口串行注入。来源：[性能证据](docs/evidence/perf_r97.json)的 `main_table`、`jitter_top3`。历史争用实验的理想释放偏差935.120 µs不是R97抖动，见[边界说明](docs/FACTS.md#五报告必须主动说明的边界)。
+- 稳态 L_app 末字节最大24.432 µs（链路0拍），包含257拍链路时为26.488 µs；var_cycle的R97抖动9.992 µs主要来自BAG相位等待（ΔTX +11.904、ΔRX −1.912 µs）。var_burst从实际提交完成到末字节最大34.840 µs，从计划释放到首/末字节为174.464/174.592 µs，两种口径抖动最大均0.008 µs；差额主要来自单应用口串行注入。来源：[性能证据](docs/evidence/perf_r97.json)的 `main_table`、`jitter_top3`。历史争用实验的理想释放偏差935.120 µs不是R97抖动，见[边界说明](docs/FACTS.md#五报告必须主动说明的边界)。
 - 时钟同步误差在两端使用同一个理想时钟的仿真中测得：空载 0 ns，有用户流量时最大 10788 ns。
 - R95-2建议调用并两次例化 `Tri_Mode_Ethernet_Mac`；R111说明无强制使用要求。本设计保留自研MAC，未集成官方MAC IP，理由及配置范围见[对照](docs/FACTS.md#九附录设计取舍依据的专项实验)。
 - 综合后网表仿真使用官方流程导出的 VQM，不含布局布线延迟；吞吐等性能指标没有在网表上重测。布局布线后导出的 `.vo` 网表没有通过仿真，原因是工具导出的 18/36 位 RAM 写数据位序与仿真库不一致；按赛题答疑，综合后仿真即可。
-- 已完成官方默认布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。
+- 已采用 PRES1.50 完成官方布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。

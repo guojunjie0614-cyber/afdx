@@ -263,6 +263,38 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     reg [31:0] count_deliver;
     reg [31:0] count_a_gdrop, count_b_gdrop;
 
+    // 事件来自收发核心，与计数器相隔大半个芯片；计数器只供读取，晚两拍加一不改变任何行为。
+    // 先经两级寄存再进计数器使能，每级都能放在途中，把一条长线拆成三段。
+    (* preserve = 1, dont_merge = 1 *) reg [6:0] ev_tx_p, ev_tx_q;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] ev_a_p, ev_a_q, ev_b_p, ev_b_q;
+    (* preserve = 1, dont_merge = 1 *) reg ev_rm_drop_p, ev_rm_drop_q, ev_deliver_p, ev_deliver_q;
+    always @(posedge clk) begin
+        if (reset) begin
+            ev_tx_p <= 0;
+            ev_tx_q <= 0;
+            ev_a_p <= 0;
+            ev_a_q <= 0;
+            ev_b_p <= 0;
+            ev_b_q <= 0;
+            ev_rm_drop_p <= 0;
+            ev_rm_drop_q <= 0;
+            ev_deliver_p <= 0;
+            ev_deliver_q <= 0;
+        end
+        else begin
+            ev_tx_p <= ev_tx;
+            ev_tx_q <= ev_tx_p;
+            ev_a_p <= ev_a;
+            ev_a_q <= ev_a_p;
+            ev_b_p <= ev_b;
+            ev_b_q <= ev_b_p;
+            ev_rm_drop_p <= ev_rm_drop;
+            ev_rm_drop_q <= ev_rm_drop_p;
+            ev_deliver_p <= ev_deliver;
+            ev_deliver_q <= ev_deliver_p;
+        end
+    end
+
     function [7:0] register_select;
         input [17:0] address;
         begin
@@ -424,31 +456,31 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
         else begin
             // 事件脉冲到来时，对应计数器加一；复位清零，读取不清零。
-            if (ev_tx[0]) count_accept <= count_accept + 32'd1;
-            if (ev_tx[1]) count_drop_dis <= count_drop_dis + 32'd1;
-            if (ev_tx[2]) count_drop_full <= count_drop_full + 32'd1;
-            if (ev_tx[3]) count_drop_long <= count_drop_long + 32'd1;
-            if (ev_tx[4]) count_drop_nopage <= count_drop_nopage + 32'd1;
-            if (ev_tx[5]) count_tx_a <= count_tx_a + 32'd1;
-            if (ev_tx[6]) count_tx_b <= count_tx_b + 32'd1;
-            if (ev_a[0]) count_a_good <= count_a_good + 32'd1;
-            if (ev_a[1]) count_a_fcs <= count_a_fcs + 32'd1;
-            if (ev_a[2]) count_a_len <= count_a_len + 32'd1;
-            if (ev_a[3]) count_a_hdr <= count_a_hdr + 32'd1;
-            if (ev_a[4]) count_a_unk <= count_a_unk + 32'd1;
-            if (ev_a[5]) count_a_cfg <= count_a_cfg + 32'd1;
-            if (ev_a[6]) count_a_ic <= count_a_ic + 32'd1;
-            if (ev_a[7]) count_a_ovf <= count_a_ovf + 32'd1;
-            if (ev_b[0]) count_b_good <= count_b_good + 32'd1;
-            if (ev_b[1]) count_b_fcs <= count_b_fcs + 32'd1;
-            if (ev_b[2]) count_b_len <= count_b_len + 32'd1;
-            if (ev_b[3]) count_b_hdr <= count_b_hdr + 32'd1;
-            if (ev_b[4]) count_b_unk <= count_b_unk + 32'd1;
-            if (ev_b[5]) count_b_cfg <= count_b_cfg + 32'd1;
-            if (ev_b[6]) count_b_ic <= count_b_ic + 32'd1;
-            if (ev_b[7]) count_b_ovf <= count_b_ovf + 32'd1;
-            if (ev_rm_drop) count_rm_drop <= count_rm_drop + 32'd1;
-            if (ev_deliver) count_deliver <= count_deliver + 32'd1;
+            if (ev_tx_q[0]) count_accept <= count_accept + 32'd1;
+            if (ev_tx_q[1]) count_drop_dis <= count_drop_dis + 32'd1;
+            if (ev_tx_q[2]) count_drop_full <= count_drop_full + 32'd1;
+            if (ev_tx_q[3]) count_drop_long <= count_drop_long + 32'd1;
+            if (ev_tx_q[4]) count_drop_nopage <= count_drop_nopage + 32'd1;
+            if (ev_tx_q[5]) count_tx_a <= count_tx_a + 32'd1;
+            if (ev_tx_q[6]) count_tx_b <= count_tx_b + 32'd1;
+            if (ev_a_q[0]) count_a_good <= count_a_good + 32'd1;
+            if (ev_a_q[1]) count_a_fcs <= count_a_fcs + 32'd1;
+            if (ev_a_q[2]) count_a_len <= count_a_len + 32'd1;
+            if (ev_a_q[3]) count_a_hdr <= count_a_hdr + 32'd1;
+            if (ev_a_q[4]) count_a_unk <= count_a_unk + 32'd1;
+            if (ev_a_q[5]) count_a_cfg <= count_a_cfg + 32'd1;
+            if (ev_a_q[6]) count_a_ic <= count_a_ic + 32'd1;
+            if (ev_a_q[7]) count_a_ovf <= count_a_ovf + 32'd1;
+            if (ev_b_q[0]) count_b_good <= count_b_good + 32'd1;
+            if (ev_b_q[1]) count_b_fcs <= count_b_fcs + 32'd1;
+            if (ev_b_q[2]) count_b_len <= count_b_len + 32'd1;
+            if (ev_b_q[3]) count_b_hdr <= count_b_hdr + 32'd1;
+            if (ev_b_q[4]) count_b_unk <= count_b_unk + 32'd1;
+            if (ev_b_q[5]) count_b_cfg <= count_b_cfg + 32'd1;
+            if (ev_b_q[6]) count_b_ic <= count_b_ic + 32'd1;
+            if (ev_b_q[7]) count_b_ovf <= count_b_ovf + 32'd1;
+            if (ev_rm_drop_q) count_rm_drop <= count_rm_drop + 32'd1;
+            if (ev_deliver_q) count_deliver <= count_deliver + 32'd1;
             if (ev_gdrop[0]) count_a_gdrop <= count_a_gdrop + 32'd1;
             if (ev_gdrop[1]) count_b_gdrop <= count_b_gdrop + 32'd1;
         end

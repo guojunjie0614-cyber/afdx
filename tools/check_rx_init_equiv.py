@@ -14,8 +14,13 @@ def main():
     try:
         source=subprocess.check_output(['git','show',R5+':rtl/afdx_rx_core.v'],cwd=ROOT).decode('utf-8')
         source=source.replace('module afdx_rx_core #(','module afdx_rx_core_r5 #(',1)
+        # The R5 core instantiates the R5 delivery module, whose queue port differs from the current one.
+        source=source.replace('afdx_rx_deliver #(','afdx_rx_deliver_r5 #(',1)
+        deliver=subprocess.check_output(['git','show',R5+':rtl/afdx_rx_deliver.v'],cwd=ROOT).decode('utf-8')
+        deliver=deliver.replace('module afdx_rx_deliver #(','module afdx_rx_deliver_r5 #(',1)
         reference=flow.folder/'afdx_rx_core_r5.v';reference.write_text(source,encoding='utf-8')
-        sources=sorted((ROOT/'rtl').glob('*.v'))+[reference,ROOT/'tb/tb_rx_init_equiv.v']
+        reference_deliver=flow.folder/'afdx_rx_deliver_r5.v';reference_deliver.write_text(deliver,encoding='utf-8')
+        sources=sorted((ROOT/'rtl').glob('*.v'))+[reference,reference_deliver,ROOT/'tb/tb_rx_init_equiv.v']
         ms=eda.modelsim_dir()
         flow.job('vlib',[ms/'vlib.exe','work'],30)
         compiled=flow.job('compile',[ms/'vlog.exe','-vlog01compat',*sources],120)

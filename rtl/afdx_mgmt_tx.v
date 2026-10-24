@@ -19,13 +19,24 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     output reg [6:0] tx_vl,
     output reg [15:0] tx_sport, tx_dport
 );
-    // 跨段输入先直接寄存，后续控制只使用本地副本。
+    // 协议引擎与本模块可能相距很远，跨段输入整组经两级寄存，后续控制只使用第二级。
+    // 请求与元数据同样晚两拍，元数据在请求翻转前已稳定并保持到 complete，对齐关系不变。
+    (* preserve = 1, dont_merge = 1 *) reg request_p, mode_p;
+    (* preserve = 1, dont_merge = 1 *) reg [AW:0] length_p;
+    (* preserve = 1, dont_merge = 1 *) reg [6:0] vl_p;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] sport_p, dport_p;
     reg request_q, mode_q;
     reg [AW:0] length_q;
     reg [6:0] vl_q;
     reg [15:0] sport_q, dport_q;
     always @(posedge clk) begin
         if (reset) begin
+            request_p <= 0;
+            length_p <= 0;
+            vl_p <= 0;
+            sport_p <= 0;
+            dport_p <= 0;
+            mode_p <= 0;
             request_q <= 0;
             length_q <= 0;
             vl_q <= 0;
@@ -34,12 +45,18 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             mode_q <= 0;
         end
         else begin
-            request_q <= request;
-            length_q <= length;
-            vl_q <= vl;
-            sport_q <= sport;
-            dport_q <= dport;
-            mode_q <= mode;
+            request_p <= request;
+            length_p <= length;
+            vl_p <= vl;
+            sport_p <= sport;
+            dport_p <= dport;
+            mode_p <= mode;
+            request_q <= request_p;
+            length_q <= length_p;
+            vl_q <= vl_p;
+            sport_q <= sport_p;
+            dport_q <= dport_p;
+            mode_q <= mode_p;
         end
     end
 

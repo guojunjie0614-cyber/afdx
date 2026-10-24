@@ -36,6 +36,8 @@ def constraints(path):
     pairs=collections.defaultdict(dict)
     for line in lines:
         if line==clock:continue
+        # Native default and installed SmartExploreRun values; no timing exceptions.
+        if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.3|1\.50)',line):continue
         m=rule.fullmatch(line)
         if not m:raise ValueError('Unrecognized timing exception: '+line)
         kind,multiplier,start,end=m.groups()

@@ -335,19 +335,56 @@ module afdx_tx_core #(
         .ev_tx_a(ev_tx_a),
         .ev_tx_b(ev_tx_b)
     );
-    afdx_mac_tx #(.READY_COPIES(READY_COPIES)) mac (
+    // 组帧模块到 MAC 之间放一级两项的流水缓冲：组帧模块只看缓冲的寄存 ready，
+    // MAC 看到的有效、数据都由靠近它的寄存器驱动，两段长线各自只有一级寄存器到寄存器。
+    // 缓冲满速时每拍进出一个字节，不插空拍；发送整体晚一拍。
+    localparam STREAM_WIDTH = 19;
+    wire [STREAM_WIDTH - 1:0] up_word = { s_data_a, s_data_b, s_last, s_en_a, s_en_b };
+    (* preserve = 1, dont_merge = 1 *) reg [READY_COPIES - 1:0] up_ready;
+    reg main_valid, skid_valid;
+    reg [STREAM_WIDTH - 1:0] main_word, skid_word;
+    wire mac_ready;
+    wire up_take = s_valid && up_ready[0];
+    wire main_free = !main_valid || mac_ready;
+    assign s_ready = up_ready;
+    always @(posedge clk) begin
+        if (reset) begin
+            up_ready <= {READY_COPIES{1'b1}};
+            main_valid <= 0;
+            skid_valid <= 0;
+            main_word <= 0;
+            skid_word <= 0;
+        end
+        else begin
+            if (main_free) begin
+                // MAC 取走或缓冲为空时，先补入暂存项，否则补入本拍新字节。
+                main_valid <= skid_valid || up_take;
+                main_word <= skid_valid ? skid_word : up_word;
+                skid_valid <= 0;
+                up_ready <= {READY_COPIES{1'b1}};
+            end
+            else if (up_take) begin
+                // MAC 本拍不取：新字节进暂存项，下一拍停止向组帧模块要数。
+                skid_valid <= 1;
+                skid_word <= up_word;
+                up_ready <= 0;
+            end
+        end
+    end
+
+    afdx_mac_tx mac (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
         .byte_en(byte_en),
         // 数据和握手
-        .s_valid(s_valid),
-        .s_ready(s_ready),
-        .s_data_a(s_data_a),
-        .s_data_b(s_data_b),
-        .s_last(s_last),
-        .s_en_a(s_en_a),
-        .s_en_b(s_en_b),
+        .s_valid(main_valid),
+        .s_ready(mac_ready),
+        .s_data_a(main_word[18:11]),
+        .s_data_b(main_word[10:3]),
+        .s_last(main_word[2]),
+        .s_en_a(main_word[1]),
+        .s_en_b(main_word[0]),
         .tx_sof(tx_sof),
         .tx_eof(tx_eof),
         .tx_underrun(tx_underrun),

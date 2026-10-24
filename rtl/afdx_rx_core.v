@@ -66,37 +66,27 @@ module afdx_rx_core #(
     wire [RX_RING_AW + 82:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
 
-    localparam DQ_WIDTH = RX_RING_AW + 56, DQ_WRITE_SLICES = (DQ_WIDTH + 23) / 24;
+    localparam DQ_WIDTH = RX_RING_AW + 56;
     wire engine_rm, engine_deliver, dq_pop;
-    wire [32 * DQ_WRITE_SLICES - 1:0] dq_we;
-    wire [RX_DQ_AW - 1:0] dq_wa;
+    wire dq_we, dq_re;
+    wire [RX_DQ_AW - 1:0] dq_wa, dq_ra;
     wire [RX_DQ_AW:0] dq_count;
-    wire [DQ_WIDTH - 1:0] dq_wd;
-    wire [32 * DQ_WIDTH - 1:0] dq_entries;
+    wire [DQ_WIDTH - 1:0] dq_wd, dq_q;
 
-    // rx_dq 最多保存 32 条待交付消息的信息。
-    // 接收引擎写入这些寄存器，交付模块按顺序读取。
-    genvar i, dq_word;
-    generate
-        for (i = 0; i < 32; i = i + 1) begin : queue_slot
-            if (i < (1 << RX_DQ_AW)) begin : present
-                reg [DQ_WIDTH - 1:0] entry;
-
-                // 写目标与数据同拍预译码，局部使能各驱动不超过 24 位。
-                for (dq_word = 0; dq_word < DQ_WRITE_SLICES; dq_word = dq_word + 1) begin : word
-                    localparam WORD_WIDTH = DQ_WIDTH - dq_word * 24 >= 24 ? 24 : DQ_WIDTH - dq_word * 24;
-                    always @(posedge clk) if (dq_we[i * DQ_WRITE_SLICES + dq_word])
-                        entry[dq_word * 24 +: WORD_WIDTH] <= dq_wd[dq_word * 24 +: WORD_WIDTH];
-                end
-
-                assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = entry;
-            end
-            else begin : absent
-
-                assign dq_entries[(i + 1) * DQ_WIDTH - 1:i * DQ_WIDTH] = { DQ_WIDTH { 1'b0 } };
-            end
-        end
-    endgenerate
+    // rx_dq 最多保存 2^RX_DQ_AW 条待交付消息的信息，按先进先出使用。
+    // 接收引擎按写指针写入，交付模块每拍读出读指针所指的一项。
+    // 队列为空时写入项可能正是读指针所指项，这一拍跳过读出；
+    // 交付模块最早在下一拍看到计数非零，那时读出的已是新写入的值。
+    assign dq_re = !(dq_we && dq_wa == dq_ra);
+    afdx_ram_sdp #(.WIDTH(DQ_WIDTH), .DEPTH(1 << RX_DQ_AW)) rx_dq (
+        .clk(clk),
+        .write_enable(dq_we),
+        .write_address(dq_wa),
+        .write_data(dq_wd),
+        .read_enable(dq_re),
+        .read_address(dq_ra),
+        .read_data(dq_q)
+    );
 
     // 初始化完成且 cfg_ok 为高时，外部配置才能写入接收表。
     always @(posedge clk) begin
@@ -358,7 +348,7 @@ module afdx_rx_core #(
         .resolve_commit(commit_b),
         .ev(parse_ev_b)
     );
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(1), .DESC_COPIES(CFG_COPIES)) engine (
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(0), .DESC_COPIES(CFG_COPIES)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -407,7 +397,8 @@ module afdx_rx_core #(
         .reset(reset),
         // 数据和握手
         .dq_count(dq_count),
-        .dq_entries(dq_entries),
+        .dq_ra(dq_ra),
+        .dq_q(dq_q),
         .dq_pop(dq_pop),
         .ring_a_re(ra_re),
         .ring_b_re(rb_re),

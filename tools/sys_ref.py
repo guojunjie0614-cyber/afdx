@@ -20,6 +20,9 @@ COUNTERS.update({0x48+i: 'a_'+name for i, name in enumerate(
 COUNTERS.update({0x50+i: 'b_'+name for i, name in enumerate(
     ('good', 'fcs', 'len', 'hdr', 'unk', 'cfg', 'ic', 'ovf'))})
 COUNTERS.update({0x58: 'rm_drop', 0x59: 'deliver'})
+# Event pulses pass two pipeline registers before reaching the counters, so a pulse at
+# cycle p is first visible to a read issued at cycle p + 1 + COUNTER_LAG.
+COUNTER_LAG = 2
 COUNTERS.update({0x5a: 'a_gdrop', 0x5b: 'b_gdrop'})
 
 
@@ -282,7 +285,7 @@ def bus_checks(sysrows, endpoints, expect):
         reset = max((z for z in ep['resets'] if z <= t), default=-1)
         if address in COUNTERS:
             times = ep['pulses'][COUNTERS[address]]
-            expected = (bisect.bisect_left(times, t)-bisect.bisect_right(times, reset)) & 0xffffffff
+            expected = max(0, bisect.bisect_left(times, t-COUNTER_LAG)-bisect.bisect_right(times, reset)) & 0xffffffff
             if value:
                 nonzero[es][COUNTERS[address]] = max(value, nonzero[es].get(COUNTERS[address], 0))
             expect(value == expected, f'S4 ES{es} {COUNTERS[address]} t={t}: got={value} expected={expected}')
