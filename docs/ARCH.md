@@ -332,7 +332,7 @@ B 网 ─► mac_rx ─► rx_parse ─► rx_ring_b ─┤
 
 写请求在 `cfg_wr` 与 `cfg_ready` 同拍为 1 时接受。普通寄存器当拍写；表写进入保持寄存器，下一拍起 `cfg_ready` 为 0，地址、数据和写使能保持到对应核心 `cfg_ok`。接受后下一拍恢复 `cfg_ready`，不受阻时低一拍，表写等待检查预算为 64 拍。
 
-配置写避开引擎发起查表读取的周期。TX 的 `cfg_ok` 为 `enable` && `op`==IDLE && !`want_enq` && !`want_grant`；RX 为 `enable` && (`op`==IDLE || `op`==AGE) && !desc_a_valid && !desc_b_valid。外壳的写使能与引擎的读使能同沿寄存，下一拍作用于 RAM，避免依赖同地址读写结果。
+配置写避开引擎发起查表读取的周期。TX 的 `cfg_ok` 为 `enable` && `op`==IDLE && !`want_enq` && !`want_grant`；RX 为 `enable` && (`op`==IDLE || `op`==AGE) && `desc_quiet_copy[c]`（上一拍两网 `desc_valid` 均为 0）。`desc_valid` 变高当拍 `cfg_ok` 仍可能为 1，但外壳写使能与引擎读使能同沿寄存，下一拍才作用于 RAM；写请求至少比同一次帧处理的 map 读早一拍到达 RAM 口。其余配置/状态写与读的先后见 T49 报告。
 
 多字配置没有事务原子性。应先排空该 VL，停用 `en`，写其余字段，再启用；不要在消息排队或在途时改变配置。
 
