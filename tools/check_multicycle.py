@@ -29,11 +29,7 @@ def constraints(path):
         if m[1] in collections_by_name:raise ValueError('Duplicate register collection')
         collections_by_name[m[1]]=m[2].split()
     source=collection.sub('',source)
-    # T50 physical floorplan assignments live in the same edc file; they are not
-    # timing exceptions and are checked by the placement report instead.
-    physical=re.compile(r'(?:create_pblock|add_insts_to_pblock|add_cells_to_pblock|set_location_assignment)\b')
-    lines=[line.strip() for line in source.splitlines()
-           if line.strip() and not physical.match(line.strip())]
+    lines=[line.strip() for line in source.splitlines() if line.strip()]
     clock='create_clock -name clk -period 8.000 [get_ports {clk}]'
     if lines.count(clock)!=1:raise ValueError('Exactly one 8 ns main clock is required')
     rule=re.compile(r'set_multicycle_path -(setup|hold) ([012]) -from \$(\w+) -to \$(\w+)')
@@ -41,7 +37,7 @@ def constraints(path):
     for line in lines:
         if line==clock:continue
         # Native default and installed SmartExploreRun values; no timing exceptions.
-        if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.[0-9]+)',line):continue
+        if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.3|1\.50)',line):continue
         m=rule.fullmatch(line)
         if not m:raise ValueError('Unrecognized timing exception: '+line)
         kind,multiplier,start,end=m.groups()
