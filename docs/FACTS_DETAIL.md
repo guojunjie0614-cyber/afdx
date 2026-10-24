@@ -1,12 +1,12 @@
 # AFDX 端系统补充数据
 
-T43 历史终验结果对应 2026-10-23 冻结 RTL `f60aaacd`；当前时延细分采用下述 S2d 实测。
+当前参考输出、五线终验与资源时序对应 2026-10-24 冻结版 `83e5d5e8`；时延细分采用同源 S2d 实测。
 
 本轮回归、评委、资源和布线后全量时序按当前证据更新；历史异常注入与独立实验保留原日期和原始数字，旧源码行号只作为归档定位。汇总见 [sim/reference](../sim/reference/)，测量边界见 [事实清单](FACTS.md)；证据摘要见 [manifest.json](evidence/manifest.json)。
 
 ## 逐项回归与评委入口
 
-下表保留 2026-10-23 冻结 RTL `f60aaacd` 的 T43 历史终验计数，按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](../sim/reference/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
+下表采用 2026-10-24 冻结版 `83e5d5e8` 的本次 CE2 覆盖率终验计数，按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](../sim/reference/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
 
 | 测试名及非默认参数 | 测什么 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---|---|---|
@@ -14,12 +14,12 @@ T43 历史终验结果对应 2026-10-23 冻结 RTL `f60aaacd`；当前时延细�
 | [tb_mac_tx](../tb/tb_mac_tx.v) | 核对以太网组帧、帧间隔和上游缺字节处理。 | 264649 | — | PASS |
 | [tb_mac_rx](../tb/tb_mac_rx.v) | 核对正常帧、错误分类、去校验值和帧边界。 | 105303 | — | PASS |
 | [tb_mac_loop](../tb/tb_mac_loop.v) | 发送端接回接收端，核对不同帧长与双网内容。 | 1385254 | — | PASS |
-| [tb_tx_basic](../tb/tb_tx_basic.v) | 核对不同消息长度的分页存储、协议头与双网发送。 | 662057 | 7605 | PASS |
-| [tb_tx_basic](../tb/tb_tx_basic.v) `TX_PAGE_AW=5,TX_OFF_AW=11` | 核对不同消息长度的分页存储、协议头与双网发送。 | 661637 | 7605 | PASS |
-| [tb_tx_bag](../tb/tb_tx_bag.v) | 核对带宽间隔、计数回绕和发送间隔变化。 | 14054172 | 14591 | PASS |
-| [tb_tx_multi](../tb/tb_tx_multi.v) | 核对多条虚拟链路的队列、轮询与网络选择。 | 14438577 | 56211 | PASS |
-| [tb_tx_drop](../tb/tb_tx_drop.v) | 核对禁用、队满、超长、无空闲页及失败后的页回收。 | 30267258 | 4642 | PASS |
-| [tb_tx_net](../tb/tb_tx_net.v) | 用固定输入核对发送内容和事件，供网表对照。 | 219315 | 229 | PASS |
+| [tb_tx_basic](../tb/tb_tx_basic.v) | 核对不同消息长度的分页存储、协议头与双网发送。 | 662156 | 7605 | PASS |
+| [tb_tx_basic](../tb/tb_tx_basic.v) `TX_PAGE_AW=5,TX_OFF_AW=11` | 核对不同消息长度的分页存储、协议头与双网发送。 | 661736 | 7605 | PASS |
+| [tb_tx_bag](../tb/tb_tx_bag.v) | 核对带宽间隔、计数回绕和发送间隔变化。 | 14054199 | 14591 | PASS |
+| [tb_tx_multi](../tb/tb_tx_multi.v) | 核对多条虚拟链路的队列、轮询与网络选择。 | 14438572 | 56223 | PASS |
+| [tb_tx_drop](../tb/tb_tx_drop.v) | 核对禁用、队满、超长、无空闲页及失败后的页回收。 | 30267272 | 4642 | PASS |
+| [tb_tx_net](../tb/tb_tx_net.v) | 用固定输入核对发送内容和事件，供网表对照。 | 219323 | 229 | PASS |
 | [tb_rx_basic](../tb/tb_rx_basic.v) | 核对接收映射、不同消息长度、用户数据与端口。 | 9960369 | 123855 | PASS |
 | [tb_rx_fault](../tb/tb_rx_fault.v) | 损坏校验值、长度、报头和配置，核对拒绝原因。 | 576923 | 890 | PASS |
 | [tb_rx_icrm](../tb/tb_rx_icrm.v) | 核对序号规则、回绕和两网到达时间差边界。 | 4635284 | 1274 | PASS |
@@ -27,15 +27,15 @@ T43 历史终验结果对应 2026-10-23 冻结 RTL `f60aaacd`；当前时延细�
 | [tb_rx_ovf_ring](../tb/tb_rx_ovf_ring.v) `RX_RING_AW=9` | 缩小字节缓存，核对溢出回退和后续接收恢复。 | 422837 | 99 | PASS |
 | [tb_rx_ovf_dq](../tb/tb_rx_ovf_dq.v) `RX_DQ_AW=1` | 缩小交付队列，核对队满丢帧和释放后恢复。 | 373852 | 57 | PASS |
 | [tb_rx_net](../tb/tb_rx_net.v) | 用固定正常及异常输入核对接收输出，供网表对照。 | 374111 | 110 | PASS |
-| [tb_sys_basic](../tb/tb_sys_basic.v) | 两个完整端系统互发消息，核对交付与事件。 | 5156252 | 2896 | PASS |
-| [tb_sys_fault](../tb/tb_sys_fault.v) | 在线路上丢帧、重放及损坏字节，核对检测和恢复。 | 47120962 | 8726 | PASS |
-| [tb_sys_delay](../tb/tb_sys_delay.v) | 改变两网延迟，核对交付、去重和端到端时延。 | 15482118 | 3763 | PASS |
-| [tb_sys_load](../tb/tb_sys_load.v) | 多链路同时传输，核对交付、发送间隔和配置隔离。 | 216848087 | 116677 | PASS |
-| [tb_sys_cfg](../tb/tb_sys_cfg.v) | 核对配置写握手、读延迟和计数采样时刻。 | 21170537 | 714342 | PASS |
-| [tb_sys_reset](../tb/tb_sys_reset.v) | 传输途中复位，核对旧残帧不混入新交付。 | 10992598 | 3682 | PASS |
-| [tb_sys_ovf](../tb/tb_sys_ovf.v) `RX_RING_AW=9` | 完整系统接收缓存溢出时，核对丢弃、计数和恢复。 | 9681664 | 1488 | PASS |
-| [tb_sys_net](../tb/tb_sys_net.v) | 通过顶层执行配置、正常及异常传输，供网表对照。 | 2944308 | 1265 | PASS |
-| [tb_sys_perf](../tb/tb_sys_perf.v) | 测量吞吐、发送与接收时延、端到端时延和抖动。 | 756655064 | 1212916 | PASS |
+| [tb_sys_basic](../tb/tb_sys_basic.v) | 两个完整端系统互发消息，核对交付与事件。 | 5156190 | 2896 | PASS |
+| [tb_sys_fault](../tb/tb_sys_fault.v) | 在线路上丢帧、重放及损坏字节，核对检测和恢复。 | 47121898 | 8726 | PASS |
+| [tb_sys_delay](../tb/tb_sys_delay.v) | 改变两网延迟，核对交付、去重和端到端时延。 | 15482172 | 3763 | PASS |
+| [tb_sys_load](../tb/tb_sys_load.v) | 多链路同时传输，核对交付、发送间隔和配置隔离。 | 216848182 | 116677 | PASS |
+| [tb_sys_cfg](../tb/tb_sys_cfg.v) | 核对配置写握手、读延迟和计数采样时刻。 | 21170726 | 714342 | PASS |
+| [tb_sys_reset](../tb/tb_sys_reset.v) | 传输途中复位，核对旧残帧不混入新交付。 | 10992796 | 3682 | PASS |
+| [tb_sys_ovf](../tb/tb_sys_ovf.v) `RX_RING_AW=9` | 完整系统接收缓存溢出时，核对丢弃、计数和恢复。 | 9681880 | 1488 | PASS |
+| [tb_sys_net](../tb/tb_sys_net.v) | 通过顶层执行配置、正常及异常传输，供网表对照。 | 2944324 | 1265 | PASS |
+| [tb_sys_perf](../tb/tb_sys_perf.v) | 测量吞吐、发送与接收时延、端到端时延和抖动。 | 756655316 | 1212916 | PASS |
 | [tb_sys_rtc](../tb/tb_sys_rtc.v) | 核对空载及有流量时的时钟同步、秒边界和交付。 | 10675857 | 1811 | PASS |
 | [tb_sys_snmp](../tb/tb_sys_snmp.v) | 核对查询、团体名和编码边界，并比较配置口读值。 | 37611 | 926 | PASS |
 | [tb_sys_snmp_settrap](../tb/tb_sys_snmp_settrap.v) | 核对设置、非法写入拒绝、启动和认证失败通知。 | 8563 | 188 | PASS |
@@ -48,9 +48,9 @@ T43 历史终验结果对应 2026-10-23 冻结 RTL `f60aaacd`；当前时延细�
 | [tb_judge_capacity](../tb/tb_judge_capacity.v) | 配置全部收发链路，逐字节核对双网只交付一次。 | 49924 | — | PASS |
 | [tb_judge_snmp](../tb/tb_judge_snmp.v) | 解码查询、设置和通知，核对字段与配置口读值。 | 699 | — | PASS |
 | [tb_elinx](../tb/tb_elinx.v) | 由界面入口运行双端双网互发，核对字节、端口和去重。 | 9238 | — | PASS |
-| [tb_sys_perf_var](../tb/tb_sys_perf_var.v) | 变长帧、多虚拟链路并发、吞吐与分段时延检查。 | 1402134183 | 1573773 | PASS |
+| [tb_sys_perf_var](../tb/tb_sys_perf_var.v) | 变长帧、多虚拟链路并发、吞吐与分段时延检查。 | 1402134376 | 1573773 | PASS |
 
-T43 历史纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge_result.txt)。CE1 回归 39/39 通过、评委 8/8 通过；CE2 回归 39/39 通过、评委 8/8 通过。
+冻结版本次 CE2 纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge_result.txt)。CE1 回归 39/39 通过、评委 8/8 通过；CE2 回归 39/39 通过、评委 8/8 通过。
 
 | 入口用例 | 测试平台与目的 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---|---|---|
@@ -60,8 +60,8 @@ T43 历史纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge
 | `burst77` | tb_gbe_burst：77 条虚拟链路同时提交消息。 | 643552 | — | PASS |
 | `burst81` | tb_gbe_burst：81 条虚拟链路同时提交消息。 | 673500 | — | PASS |
 | `rtc` | tb_sys_rtc：空载及有流量时的同步误差。 | 10675857 | — | PASS |
-| `performance` | tb_sys_perf：吞吐、分段时延和抖动。 | 756655064 | — | PASS |
-| `perf_var` | tb_sys_perf_var：变长帧与多虚拟链路、吞吐和分段时延。 | 1402134183 | — | PASS |
+| `performance` | tb_sys_perf：吞吐、分段时延和抖动。 | 756655316 | — | PASS |
+| `perf_var` | tb_sys_perf_var：变长帧与多虚拟链路、吞吐和分段时延。 | 1402134376 | — | PASS |
 
 ### 本轮代码覆盖率
 
@@ -69,27 +69,27 @@ T43 历史纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
-| 语句 | 14314 / 15877 | 90.15% |
-| 分支 | 8188 / 9642 | 84.92% |
-| 条件 | 1029 / 1511 | 68.10% |
-| 表达式 | 3264 / 4325 | 75.46% |
+| 语句 | 6981 / 7083 | 98.55% |
+| 分支 | 3844 / 3985 | 96.46% |
+| 条件 | 610 / 717 | 85.07% |
+| 表达式 | 1760 / 1991 | 88.39% |
 | 状态机，含状态和转换 | 248 / 418 | 59.33% |
 | 状态 | 110 / 110 | 100.00% |
 | 转换 | 138 / 308 | 44.80% |
-| 翻转 | 47317 / 59698 | 79.26% |
+| 翻转 | 41314 / 53632 | 77.03% |
 
 逐模块数字和原始报告见 `sim/reference/coverage/`；未覆盖项保持原统计范围，不沿用旧版源码行号或未重新核对的原因说明。
 
 ## 综合资源占比与模块分工
 
-当前官方综合用量见下表及本轮 `t43_timing.json`；归档界面报告仍保留于 [gui_resources.rpt](evidence/gui_resources.rpt)；EQ6HL130/CSG484_H 的器件总量取 [device_capacity.rpt](evidence/device_capacity.rpt) 各行斜线后的数。这里只借用器件容量，不把其中的布局后用量混进综合结果。比例按“综合用量 ÷ 总量”计算，四舍五入到小数点后两位。
+当前官方综合用量见下表及本轮 `t45_timing.json`；归档界面报告仍保留于 [gui_resources.rpt](evidence/gui_resources.rpt)；EQ6HL130/CSG484_H 的器件总量取 [device_capacity.rpt](evidence/device_capacity.rpt) 各行斜线后的数。这里只借用器件容量，不把其中的布局后用量混进综合结果。比例按“综合用量 ÷ 总量”计算，四舍五入到小数点后两位。
 
 | 资源 | 当前官方综合用量 | 器件总量 | 占比 |
 |---|---|---|---|
-| 查找表（Lookup Table，LUT） | 38297 | 136160 | 28.13% |
-| 触发器（Flip-Flop，FF） | 19947 | 136160 | 14.65% |
-| 可配置逻辑块（Configurable Logic Block，CLB） | 5049 | 13616 | 37.08% |
-| 存储块（Memory） | 361 | 1200 | 30.08% |
+| 查找表（Lookup Table，LUT） | 34294 | 136160 | 25.19% |
+| 触发器（Flip-Flop，FF） | 17454 | 136160 | 12.82% |
+| 可配置逻辑块（Configurable Logic Block，CLB） | 4521 | 13616 | 33.20% |
+| 存储块（Memory） | 366 | 1200 | 30.50% |
 | 数字信号处理单元（Digital Signal Processing，DSP） | 0 | 48 | 0.00% |
 | 锁相环（Phase-Locked Loop，PLL） | 0 | 8 | 0.00% |
 | 用户引脚 | 259 | 339 | 76.40% |
@@ -125,7 +125,7 @@ T43 历史纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge
 
 ## 各工况的时延细分
 
-2026-10-24、S2d 源码 `9b277556` 的完整窗口实测见 [perf_r97.json](evidence/perf_r97.json) 的 `main_table`。本次 CE2 Python 与正式 Tcl 的 17592 字段、20 个窗口组合逐字段及逐字节一致，差异为 0；两项性能测试分别通过 756655316、1402134376 项自检，错误均为 0。完整 CE2 回归 39/39、正式评委 8/8 通过；上方 T43 历史表保留原计数。定义见[事实清单](FACTS.md#时延与抖动定义)；所有时延及极差单位为 µs，吞吐为 Mbps。首/末分别为应用交付首/末字节，L_app 包含链路。各列最大值可来自不同帧；逐帧才满足分段加和。
+2026-10-24、S2d 源码 `9b277556` 的完整窗口实测见 [perf_r97.json](evidence/perf_r97.json) 的 `main_table`。本次 CE2 Python 与正式 Tcl 的 17592 字段、20 个窗口组合逐字段及逐字节一致，差异为 0；两项性能测试分别通过 756655316、1402134376 项自检，错误均为 0。完整 CE2 回归 39/39、正式评委 8/8 通过；上方逐项表已更新为本次冻结版计数。定义见[事实清单](FACTS.md#时延与抖动定义)；所有时延及极差单位为 µs，吞吐为 Mbps。首/末分别为应用交付首/末字节，L_app 包含链路。各列最大值可来自不同帧；逐帧才满足分段加和。
 
 | 工况 | 方向 | 吞吐 | L_gmii | L_tx | L_rx首/末 | L_app首/末 | J_app（VL:min帧→max帧） | J_gmii | 发送间隔偏差 |
 |---|---|---:|---:|---:|---|---|---|---:|---:|
@@ -175,36 +175,36 @@ A/B两网、逐载荷长度及各口径极差见 `证据/perf_r97.json:grouped_m
 
 | 项目 | 当前官方结果 |
 |---|---|
-| 查找表（LUT） | 38297 |
-| 触发器（FF） | 19947 |
-| 可配置逻辑块（CLB） | 5049 |
-| 存储器（Memory） | 361 |
+| 查找表（LUT） | 34294 |
+| 触发器（FF） | 17454 |
+| 可配置逻辑块（CLB） | 4521 |
+| 存储器（Memory） | 366 |
 | 用户引脚 | 259 |
 | 综合后建立裕量／保持裕量 | +4.459 / -0.068 ns |
 | 综合后最高频率估算 | 282.406 MHz |
-| 布线后建立裕量／保持裕量 | -0.090 / +0.229 ns |
-| 布线后最高频率估算 | 123.609 MHz |
-| 布线后 setup 失败端点 | 1 / 50132 |
-| 8 ns 路径数／最差 setup | 160894 / -0.090 ns |
-| 16 ns 路径数／最差 setup | 50296 / +1.750 ns |
-| 同沿 hold 路径数 | 211190 |
+| 布线后建立裕量／保持裕量 | +0.013 / +0.229 ns |
+| 布线后最高频率估算 | 125.203 MHz |
+| 布线后 setup 失败端点 | 0 / 45745 |
+| 8 ns 路径数／最差 setup | 153342 / +0.013 ns |
+| 16 ns 路径数／最差 setup | 50296 / +0.940 ns |
+| 同沿 hold 路径数 | 203638 |
 
 最差十条真实路径：
 
 | 起点 → 终点 | 级数 | 逻辑 ns | 连线 ns | setup ns |
 |---|---|---|---|---|
-| `\cfg_regs\|cfg_ready_m~I\|ff/Q` → `\rtc\|load_ns[0]~I\|ff/ena` | 4 | 1.580 | 6.340 | -0.090 |
-| `\rx_core\|ev_b[2]~I\|ff/Q` → `\cfg_regs\|count_b_len[30]~I\|ff/D` | 1 | 1.970 | 5.950 | +0.005 |
-| `\rx_core\|ev_b[2]~I\|ff/Q` → `\cfg_regs\|count_b_len[31]~I\|ff/D` | 1 | 1.970 | 5.950 | +0.005 |
-| `\cfg_regs\|tx_cfg_we~0_I\|ff/Q` → `\cfg_regs\|receive_bus[0].ready~I\|ff/D` | 2 | 1.042 | 6.846 | +0.037 |
-| `\tx_core\|builder\|s_valid~I\|ff/Q` → `\tx_core\|mac\|fcs_a[23]~I\|ff/D` | 5 | 1.842 | 6.032 | +0.051 |
-| `\snmp\|configured~I\|ff/Q` → `\snmp\|req_wa[0]~I\|ff/ena` | 5 | 1.820 | 5.949 | +0.061 |
-| `\snmp\|configured~I\|ff/Q` → `\snmp\|rx_count[6]~I\|ff/ena` | 5 | 1.820 | 5.949 | +0.061 |
-| `\snmp\|configured~I\|ff/Q` → `\snmp\|rx_count[8]~I\|ff/ena` | 5 | 1.820 | 5.949 | +0.061 |
-| `\snmp\|configured~I\|ff/Q` → `\snmp\|req_wa[6]~I\|ff/ena` | 5 | 1.820 | 5.949 | +0.061 |
-| `\snmp\|configured~I\|ff/Q` → `\snmp\|req_wa[7]~I\|ff/ena` | 5 | 1.820 | 5.949 | +0.061 |
+| `\tx_core\|init_done~2_I\|ff/Q` → `\tx_core\|cfg_write~I\|ff/D` | 2 | 1.132 | 6.780 | +0.013 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[307]~I\|ff/ena` | 4 | 1.760 | 6.036 | +0.034 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[292]~I\|ff/ena` | 4 | 1.760 | 6.036 | +0.034 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[299]~I\|ff/ena` | 4 | 1.760 | 6.036 | +0.034 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[300]~I\|ff/ena` | 4 | 1.760 | 6.036 | +0.034 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[308]~I\|ff/ena` | 4 | 1.760 | 6.036 | +0.034 |
+| `\rx_core\|parse_b\|desc_data[93]~I\|ff/Q` → `\rx_core\|map_bank_oh[30]~I\|ff/D` | 4 | 1.863 | 6.023 | +0.039 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[306]~I\|ff/ena` | 4 | 1.760 | 6.016 | +0.054 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[305]~I\|ff/ena` | 4 | 1.760 | 6.016 | +0.054 |
+| `\tx_core\|builder\|header_index[0]~I\|ff/Q` → `\tx_core\|builder\|header[290]~I\|ff/ena` | 4 | 1.760 | 6.016 | +0.054 |
 
-本轮官方 VQM 的 `tb_net_services` 网表与同次 RTL 均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 7912.875 秒，同激励 RTL 23.813 秒；原网表 SHA-256 与本轮官方综合一致。
+冻结版 `83e5d5e8` 的本次官方 VQM 与同次 RTL 在 `tb_net_services` 中均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 8793.406 秒，同激励 RTL 17.469 秒；原网表 SHA-256 与冻结版官方综合一致。
 
 ## 设计默认参数
 

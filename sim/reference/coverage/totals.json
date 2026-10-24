@@ -6,24 +6,24 @@
   "aggregation": "design-unit covered bins / design-unit total bins; FSM = states + transitions",
   "metrics": {
     "Statements": {
-      "covered": 14314,
-      "total": 15877,
-      "percent": 90.15
+      "covered": 6981,
+      "total": 7083,
+      "percent": 98.55
     },
     "Branches": {
-      "covered": 8188,
-      "total": 9642,
-      "percent": 84.92
+      "covered": 3844,
+      "total": 3985,
+      "percent": 96.46
     },
     "Conditions": {
-      "covered": 1029,
-      "total": 1511,
-      "percent": 68.1
+      "covered": 610,
+      "total": 717,
+      "percent": 85.07
     },
     "Expressions": {
-      "covered": 3264,
-      "total": 4325,
-      "percent": 75.46
+      "covered": 1760,
+      "total": 1991,
+      "percent": 88.39
     },
     "FSM States": {
       "covered": 110,
@@ -36,9 +36,9 @@
       "percent": 44.8
     },
     "Toggles": {
-      "covered": 47317,
-      "total": 59698,
-      "percent": 79.26
+      "covered": 41314,
+      "total": 53632,
+      "percent": 77.03
     },
     "FSM": {
       "covered": 248,
@@ -50,13 +50,13 @@
     "tests": 39,
     "passed": 39,
     "reference_counts_match": true,
-    "started": "2026-10-23T17:03:38.7061494+08:00",
-    "finished": "2026-10-23T20:43:51.019376+08:00",
-    "elapsed_seconds": 13212.313,
+    "started": "2026-10-24T08:16:49.9775403+08:00",
+    "finished": "2026-10-24T13:23:24.702506+08:00",
+    "elapsed_seconds": 18394.725,
     "finished_source": "latest individual run finish; official batch summary has no Finished field"
   },
-  "merged_ucdb_bytes": 3054701,
-  "source_summary": "out/regress/coverage_20261023_170338_7061494/summary.json",
+  "merged_ucdb_bytes": 2931612,
+  "source_summary": "out/t45/terminal/s4_s2d_pres150/ce2/out/regress/coverage_20261024_081649_9775403/summary.json",
   "ce_div": 2,
   "rtl_modules": {
     "AFDX_top": "rtl/AFDX_top.v",
@@ -88,9 +88,9 @@
     "tests": 39,
     "passed": 39,
     "reference_counts_match": true,
-    "started": "2026-10-23T16:51:42.423747+08:00",
-    "finished": "2026-10-23T18:25:54.123897+08:00",
-    "elapsed_seconds": 5651.7,
+    "started": "2026-10-24T03:42:31.411038+08:00",
+    "finished": "2026-10-24T08:10:44.943933+08:00",
+    "elapsed_seconds": 16093.533,
     "finished_source": "latest individual run finish; official batch summary has no Finished field"
   }
 }

@@ -5,14 +5,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        24        24         0   100.00%
-    Conditions                       4         4         0   100.00%
-    Expressions                     74        37        37    50.00%
-    Statements                      78        78         0   100.00%
+    Branches                        12        12         0   100.00%
+    Conditions                       2         2         0   100.00%
+    Expressions                     37        28         9    75.67%
+    Statements                      39        39         0   100.00%
     Toggles                       2282      1908       374    83.61%
 
 
-Total Coverage By Design Unit (filtered view): 86.72%
+Total Coverage By Design Unit (filtered view): 91.85%
 
 Coverage Report Summary Data by DU
 
@@ -21,14 +21,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       164       126        38    76.82%
-    Conditions                      52        18        34    34.61%
-    Expressions                     66        33        33    50.00%
-    Statements                     510       488        22    95.68%
+    Branches                        82        76         6    92.68%
+    Conditions                      26        18         8    69.23%
+    Expressions                     33        33         0   100.00%
+    Statements                     255       255         0   100.00%
     Toggles                       3198      1878      1320    58.72%
 
 
-Total Coverage By Design Unit (filtered view): 63.17%
+Total Coverage By Design Unit (filtered view): 84.12%
 
 Coverage Report Summary Data by DU
 
@@ -37,16 +37,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                      1442       985       457    68.30%
-    Conditions                     168        64       104    38.09%
-    Expressions                    506       367       139    72.52%
+    Branches                       721       680        41    94.31%
+    Conditions                      84        64        20    76.19%
+    Expressions                    253       209        44    82.60%
     FSM States                      11        11         0   100.00%
     FSM Transitions                 54        16        38    29.62%
-    Statements                    2598      2015       583    77.55%
+    Statements                    1299      1262        37    97.15%
     Toggles                       6150      4105      2045    66.74%
 
 
-Total Coverage By Design Unit (filtered view): 64.69%
+Total Coverage By Design Unit (filtered view): 78.09%
 
 Coverage Report Summary Data by DU
 
@@ -55,14 +55,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                      1772      1671       101    94.30%
-    Conditions                     164       122        42    74.39%
-    Expressions                   1268      1065       203    83.99%
-    Statements                    2554      2491        63    97.53%
-    Toggles                       4976      3155      1821    63.40%
+    Branches                       888       878        10    98.87%
+    Conditions                      82        62        20    75.60%
+    Expressions                    634       550        84    86.75%
+    Statements                    1298      1296         2    99.84%
+    Toggles                       5076      3255      1821    64.12%
 
 
-Total Coverage By Design Unit (filtered view): 82.72%
+Total Coverage By Design Unit (filtered view): 85.04%
 
 Coverage Report Summary Data by DU
 
@@ -71,8 +71,8 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                         4         4         0   100.00%
-    Statements                      12        12         0   100.00%
+    Branches                         2         2         0   100.00%
+    Statements                       6         6         0   100.00%
     Toggles                        128        64        64    50.00%
 
 
@@ -85,16 +85,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        52        43         9    82.69%
-    Conditions                      28        18        10    64.28%
-    Expressions                      2         2         0   100.00%
+    Branches                        26        26         0   100.00%
+    Conditions                      14        14         0   100.00%
+    Expressions                      1         1         0   100.00%
     FSM States                       4         4         0   100.00%
     FSM Transitions                  8         8         0   100.00%
-    Statements                      90        85         5    94.44%
+    Statements                      45        45         0   100.00%
     Toggles                        308       307         1    99.67%
 
 
-Total Coverage By Design Unit (filtered view): 91.58%
+Total Coverage By Design Unit (filtered view): 99.95%
 
 Coverage Report Summary Data by DU
 
@@ -103,16 +103,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       146       113        33    77.39%
-    Conditions                      28        21         7    75.00%
+    Branches                        73        68         5    93.15%
+    Conditions                      13        11         2    84.61%
     Expressions                     13        10         3    76.92%
     FSM States                       5         5         0   100.00%
     FSM Transitions                  9         8         1    88.88%
-    Statements                     188       169        19    89.89%
-    Toggles                        542       503        39    92.80%
+    Statements                      94        93         1    98.93%
+    Toggles                        514       475        39    92.41%
 
 
-Total Coverage By Design Unit (filtered view): 85.84%
+Total Coverage By Design Unit (filtered view): 90.70%
 
 Coverage Report Summary Data by DU
 
@@ -121,14 +121,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        44        34        10    77.27%
-    Conditions                      14         7         7    50.00%
-    Expressions                     20         9        11    45.00%
-    Statements                     148       115        33    77.70%
-    Toggles                        336       273        63    81.25%
+    Branches                        22        22         0   100.00%
+    Conditions                       7         7         0   100.00%
+    Expressions                     10         9         1    90.00%
+    Statements                      86        86         0   100.00%
+    Toggles                        440       349        91    79.31%
 
 
-Total Coverage By Design Unit (filtered view): 66.24%
+Total Coverage By Design Unit (filtered view): 93.86%
 
 Coverage Report Summary Data by DU
 
@@ -137,15 +137,15 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        44        27        17    61.36%
-    Conditions                       2         1         1    50.00%
+    Branches                        24        23         1    95.83%
+    Conditions                       1         1         0   100.00%
     FSM States                       3         3         0   100.00%
     FSM Transitions                  5         4         1    80.00%
-    Statements                      56        37        19    66.07%
+    Statements                      28        27         1    96.42%
     Toggles                        344       341         3    99.12%
 
 
-Total Coverage By Design Unit (filtered view): 76.09%
+Total Coverage By Design Unit (filtered view): 95.23%
 
 Coverage Report Summary Data by DU
 
@@ -154,13 +154,13 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        16        10         6    62.50%
-    Conditions                       8         0         8     0.00%
-    Statements                      20        10        10    50.00%
-    Toggles                        268       259         9    96.64%
+    Branches                         8         5         3    62.50%
+    Conditions                       4         0         4     0.00%
+    Statements                      10         5         5    50.00%
+    Toggles                        278       277         1    99.64%
 
 
-Total Coverage By Design Unit (filtered view): 52.28%
+Total Coverage By Design Unit (filtered view): 53.03%
 
 Coverage Report Summary Data by DU
 
@@ -169,16 +169,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       604       441       163    73.01%
-    Conditions                      61        21        40    34.42%
-    Expressions                    173        55       118    31.79%
+    Branches                       309       292        17    94.49%
+    Conditions                      32        21        11    65.62%
+    Expressions                     88        54        34    61.36%
     FSM States                      21        21         0   100.00%
     FSM Transitions                 53        23        30    43.39%
-    Statements                    1048       850       198    81.10%
+    Statements                     531       516        15    97.17%
     Toggles                       5400      3790      1610    70.18%
 
 
-Total Coverage By Design Unit (filtered view): 61.98%
+Total Coverage By Design Unit (filtered view): 76.03%
 
 Coverage Report Summary Data by DU
 
@@ -187,14 +187,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                      1126      1124         2    99.82%
-    Conditions                       4         4         0   100.00%
-    Expressions                    580       337       243    58.10%
-    Statements                    2012      2012         0   100.00%
-    Toggles                      14298     14060       238    98.33%
+    Branches                       371       370         1    99.73%
+    Conditions                       2         2         0   100.00%
+    Expressions                    292       292         0   100.00%
+    Statements                     815       815         0   100.00%
+    Toggles                       9904      9783       121    98.77%
 
 
-Total Coverage By Design Unit (filtered view): 91.25%
+Total Coverage By Design Unit (filtered view): 99.70%
 
 Coverage Report Summary Data by DU
 
@@ -203,16 +203,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                      1000       920        80    92.00%
-    Conditions                      86        84         2    97.67%
-    Expressions                     10        10         0   100.00%
+    Branches                        25        24         1    96.00%
+    Conditions                       7         6         1    85.71%
+    Expressions                      5         5         0   100.00%
     FSM States                       3         3         0   100.00%
     FSM Transitions                  4         3         1    75.00%
-    Statements                    1018      1015         3    99.70%
-    Toggles                       2262      2262         0   100.00%
+    Statements                      69        68         1    98.55%
+    Toggles                        438       438         0   100.00%
 
 
-Total Coverage By Design Unit (filtered view): 94.91%
+Total Coverage By Design Unit (filtered view): 93.60%
 
 Coverage Report Summary Data by DU
 
@@ -221,16 +221,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       706       675        31    95.60%
-    Conditions                      60        47        13    78.33%
-    Expressions                    815       768        47    94.23%
+    Branches                       164       161         3    98.17%
+    Conditions                      30        29         1    96.66%
+    Expressions                    216       214         2    99.07%
     FSM States                       4         4         0   100.00%
     FSM Transitions                  8         6         2    75.00%
-    Statements                    1099      1077        22    97.99%
-    Toggles                       2278      1683       595    73.88%
+    Statements                     266       264         2    99.24%
+    Toggles                       2088      1493       595    71.50%
 
 
-Total Coverage By Design Unit (filtered view): 87.86%
+Total Coverage By Design Unit (filtered view): 91.38%
 
 Coverage Report Summary Data by DU
 
@@ -239,16 +239,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       190       182         8    95.78%
-    Conditions                      84        66        18    78.57%
-    Expressions                     52        30        22    57.69%
+    Branches                        97        97         0   100.00%
+    Conditions                      39        38         1    97.43%
+    Expressions                     30        29         1    96.66%
     FSM States                       3         3         0   100.00%
     FSM Transitions                  5         3         2    60.00%
-    Statements                     340       334         6    98.23%
-    Toggles                       1306      1218        88    93.26%
+    Statements                     173       173         0   100.00%
+    Toggles                       1308      1220        88    93.27%
 
 
-Total Coverage By Design Unit (filtered view): 83.36%
+Total Coverage By Design Unit (filtered view): 92.48%
 
 Coverage Report Summary Data by DU
 
@@ -257,16 +257,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       200       156        44    78.00%
-    Conditions                      42        13        29    30.95%
-    Expressions                     24        12        12    50.00%
+    Branches                       100        94         6    94.00%
+    Conditions                      21        12         9    57.14%
+    Expressions                     12        12         0   100.00%
     FSM States                       4         4         0   100.00%
     FSM Transitions                  6         5         1    83.33%
-    Statements                     450       402        48    89.33%
+    Statements                     225       222         3    98.66%
     Toggles                       3046      1427      1619    46.84%
 
 
-Total Coverage By Design Unit (filtered view): 68.35%
+Total Coverage By Design Unit (filtered view): 82.85%
 
 Coverage Report Summary Data by DU
 
@@ -275,16 +275,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                      1186       794       392    66.94%
-    Conditions                     216        92       124    42.59%
-    Expressions                    406       313        93    77.09%
+    Branches                       593       557        36    93.92%
+    Conditions                     108        92        16    85.18%
+    Expressions                    203       175        28    86.20%
     FSM States                      29        29         0   100.00%
     FSM Transitions                110        29        81    26.36%
-    Statements                    1912      1441       471    75.36%
+    Statements                     956       929        27    97.17%
     Toggles                       5634      3572      2062    63.40%
 
 
-Total Coverage By Design Unit (filtered view): 64.53%
+Total Coverage By Design Unit (filtered view): 78.89%
 
 Coverage Report Summary Data by DU
 
@@ -293,14 +293,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        48        46         2    95.83%
-    Conditions                      10        10         0   100.00%
-    Expressions                    130        54        76    41.53%
-    Statements                     100        92         8    92.00%
+    Branches                        24        24         0   100.00%
+    Conditions                       5         5         0   100.00%
+    Expressions                     65        46        19    70.76%
+    Statements                      50        50         0   100.00%
     Toggles                        188       188         0   100.00%
 
 
-Total Coverage By Design Unit (filtered view): 85.87%
+Total Coverage By Design Unit (filtered view): 94.15%
 
 Coverage Report Summary Data by DU
 
@@ -309,8 +309,8 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                         4         4         0   100.00%
-    Statements                      12        12         0   100.00%
+    Branches                         2         2         0   100.00%
+    Statements                       6         6         0   100.00%
     Toggles                        102        88        14    86.27%
 
 
@@ -323,16 +323,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       158       121        37    76.58%
-    Conditions                      32        18        14    56.25%
-    Expressions                     22        19         3    86.36%
+    Branches                        79        75         4    94.93%
+    Conditions                      16        13         3    81.25%
+    Expressions                     11        10         1    90.90%
     FSM States                      10        10         0   100.00%
     FSM Transitions                 24        17         7    70.83%
-    Statements                     290       260        30    89.65%
+    Statements                     145       143         2    98.62%
     Toggles                        602       602         0   100.00%
 
 
-Total Coverage By Design Unit (filtered view): 82.81%
+Total Coverage By Design Unit (filtered view): 90.93%
 
 Coverage Report Summary Data by DU
 
@@ -341,16 +341,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       416       408         8    98.07%
-    Conditions                     396       383        13    96.71%
-    Expressions                     38        34         4    89.47%
+    Branches                       208       204         4    98.07%
+    Conditions                     198       192         6    96.96%
+    Expressions                     19        18         1    94.73%
     FSM States                       4         4         0   100.00%
     FSM Transitions                  5         4         1    80.00%
-    Statements                     656       650         6    99.08%
+    Statements                     328       325         3    99.08%
     Toggles                       1560      1434       126    91.92%
 
 
-Total Coverage By Design Unit (filtered view): 93.61%
+Total Coverage By Design Unit (filtered view): 94.39%
 
 Coverage Report Summary Data by DU
 
@@ -359,14 +359,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        22        22         0   100.00%
-    Conditions                       8         4         4    50.00%
-    Expressions                      4         3         1    75.00%
-    Statements                      38        38         0   100.00%
-    Toggles                       1900      1784       116    93.89%
+    Branches                        18        18         0   100.00%
+    Conditions                       4         2         2    50.00%
+    Expressions                      8         8         0   100.00%
+    Statements                      35        35         0   100.00%
+    Toggles                       2054      1904       150    92.69%
 
 
-Total Coverage By Design Unit (filtered view): 83.77%
+Total Coverage By Design Unit (filtered view): 88.53%
 
 Coverage Report Summary Data by DU
 
@@ -375,16 +375,16 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                       214       204        10    95.32%
-    Conditions                      32        25         7    78.12%
-    Expressions                     98        89         9    90.81%
+    Branches                       107       105         2    98.13%
+    Conditions                      16        14         2    87.50%
+    Expressions                     49        47         2    95.91%
     FSM States                       5         5         0   100.00%
     FSM Transitions                 11         8         3    72.72%
-    Statements                     524       514        10    98.09%
+    Statements                     262       260         2    99.23%
     Toggles                       2370      2198       172    92.74%
 
 
-Total Coverage By Design Unit (filtered view): 89.68%
+Total Coverage By Design Unit (filtered view): 92.32%
 
 Coverage Report Summary Data by DU
 
@@ -393,13 +393,14 @@ Coverage Report Summary Data by DU
 =================================================================================
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        60        54         6    90.00%
-    Conditions                      12         7         5    58.33%
-    Expressions                     24        17         7    70.83%
+    Branches                        30        29         1    96.66%
+    Conditions                       6         5         1    83.33%
+    Expressions                     12        10         2    83.33%
     FSM States                       4         4         0   100.00%
     FSM Transitions                  6         4         2    66.66%
-    Statements                     124       117         7    94.35%
+    Statements                      62        61         1    98.38%
     Toggles                        220       218         2    99.09%
 
 
-Total Coverage By Design Unit (filtered view): 82.75%
+Total Coverage By Design Unit (filtered view): 89.63%
+
