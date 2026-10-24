@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="100pt" viewBox="0 0 450 100">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="58.00" y="0.00" width="300.00" height="46.00" rx="4" fill="none" stroke="#D9813F" stroke-width="1.2"/>
+<text x="62.00" y="8.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">ES1  afdx_tx_core</text>
+<rect x="62.00" y="14.00" width="66.00" height="28.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="95.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_buf</text>
+<text x="95.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">page store</text>
+<rect x="136.00" y="14.00" width="66.00" height="28.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="169.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_engine</text>
+<text x="169.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">BAG schedule</text>
+<rect x="210.00" y="14.00" width="66.00" height="28.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="243.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">tx_builder</text>
+<text x="243.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">header + SN</text>
+<rect x="284.00" y="14.00" width="66.00" height="28.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="317.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">mac_tx</text>
+<text x="317.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">preamble + FCS</text>
+<rect x="58.00" y="52.00" width="300.00" height="46.00" rx="4" fill="none" stroke="#2F9688" stroke-width="1.2"/>
+<text x="62.00" y="60.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">ES2  afdx_rx_core</text>
+<rect x="62.00" y="66.00" width="66.00" height="28.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="95.00" y="79.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_deliver</text>
+<text x="95.00" y="87.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">1 B / cycle</text>
+<rect x="136.00" y="66.00" width="66.00" height="28.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="169.00" y="79.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_engine</text>
+<text x="169.00" y="87.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">IC + RM</text>
+<rect x="210.00" y="66.00" width="66.00" height="28.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="243.00" y="79.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_parse ×2</text>
+<text x="243.00" y="87.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">header check</text>
+<rect x="284.00" y="66.00" width="66.00" height="28.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="317.00" y="79.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">mac_rx ×2</text>
+<text x="317.00" y="87.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">strip FCS</text>
+<rect x="0.00" y="14.00" width="50.00" height="28.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="25.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">App</text>
+<text x="25.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">m_* msg</text>
+<rect x="0.00" y="66.00" width="50.00" height="28.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="25.00" y="79.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">App</text>
+<text x="25.00" y="87.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">d_* msg</text>
+<rect x="372.00" y="14.00" width="78.00" height="80.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="411.00" y="48.81" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Network</text>
+<text x="411.00" y="57.63" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">A + B copies</text>
+<text x="411.00" y="66.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">GMII, 1 B / cycle</text>
+<path d="M 50.00 28.00 L 62.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="62.00,28.00 57.00,30.10 57.00,25.90" fill="#000"/>
+<path d="M 128.00 28.00 L 136.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="136.00,28.00 131.00,30.10 131.00,25.90" fill="#000"/>
+<path d="M 202.00 28.00 L 210.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="210.00,28.00 205.00,30.10 205.00,25.90" fill="#000"/>
+<path d="M 276.00 28.00 L 284.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="284.00,28.00 279.00,30.10 279.00,25.90" fill="#000"/>
+<path d="M 350.00 28.00 L 372.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="372.00,28.00 367.00,30.10 367.00,25.90" fill="#000"/>
+<path d="M 372.00 80.00 L 350.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="350.00,80.00 355.00,77.90 355.00,82.10" fill="#000"/>
+<path d="M 136.00 80.00 L 128.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="128.00,80.00 133.00,77.90 133.00,82.10" fill="#000"/>
+<path d="M 210.00 80.00 L 202.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="202.00,80.00 207.00,77.90 207.00,82.10" fill="#000"/>
+<path d="M 284.00 80.00 L 276.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="276.00,80.00 281.00,77.90 281.00,82.10" fill="#000"/>
+<path d="M 62.00 80.00 L 50.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="50.00,80.00 55.00,77.90 55.00,82.10" fill="#000"/>
+</svg>

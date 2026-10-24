@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "SNMP request handling",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    },
+    "viewBox": [
+      1100,
+      420
+    ]
+  },
+  "components": [
+    {
+      "id": "claim",
+      "type": "external",
+      "label": "UDP 161 claim",
+      "sublabel": "from afdx_svc",
+      "pos": [
+        30,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "ber",
+      "type": "backend",
+      "label": "BER decode",
+      "sublabel": "request RAM 256 B",
+      "pos": [
+        230,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "comm",
+      "type": "backend",
+      "label": "Community",
+      "sublabel": "1-16 bytes",
+      "pos": [
+        400,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "pdu",
+      "type": "backend",
+      "label": "PDU dispatch",
+      "sublabel": "Get / GetNext / Set",
+      "pos": [
+        570,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "build",
+      "type": "backend",
+      "label": "GetResponse",
+      "sublabel": "response RAM",
+      "pos": [
+        740,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "send",
+      "type": "external",
+      "label": "Service port 2",
+      "sublabel": "to afdx_svc",
+      "pos": [
+        930,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "mib",
+      "type": "database",
+      "label": "MIB access",
+      "sublabel": "36 objects, cfg path",
+      "pos": [
+        740,
+        290
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "bad",
+      "type": "security",
+      "label": "Bad community",
+      "sublabel": "count, no reply",
+      "pos": [
+        400,
+        290
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "trap",
+      "type": "security",
+      "label": "SNMPv2-Trap",
+      "sublabel": "sent via port 2",
+      "pos": [
+        180,
+        290
+      ],
+      "size": [
+        140,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "afdx_snmp",
+      "wraps": [
+        "ber",
+        "comm",
+        "pdu",
+        "build",
+        "mib",
+        "bad",
+        "trap"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1",
+      "from": "claim",
+      "to": "ber",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e2",
+      "from": "ber",
+      "to": "comm",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e3",
+      "from": "comm",
+      "to": "pdu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e4",
+      "from": "pdu",
+      "to": "build",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e5",
+      "from": "build",
+      "to": "send",
+      "variant": "emphasis"
+    },
+    {
+      "id": "m1",
+      "from": "pdu",
+      "to": "mib",
+      "label": "OID",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "labelAt": [
+        716,
+        257
+      ]
+    },
+    {
+      "id": "m2",
+      "from": "mib",
+      "to": "build",
+      "label": "value",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        810,
+        238
+      ]
+    },
+    {
+      "id": "x1",
+      "from": "comm",
+      "to": "bad",
+      "label": "mismatch",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        470,
+        238
+      ]
+    },
+    {
+      "id": "x2",
+      "from": "bad",
+      "to": "trap",
+      "label": "trap on",
+      "variant": "dashed",
+      "fromSide": "left",
+      "toSide": "right"
+    }
+  ]
+}
