@@ -92,6 +92,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
+    // T50：读秒使能在 rtc 内分成 4 份缓冲，各驱动 8 位切片，缩短顶层使能锥到使能端的连线。
+    (* keep = 1, dont_merge = 1 *) wire cfg_re_b0 = cfg_re;
+    (* keep = 1, dont_merge = 1 *) wire cfg_re_b1 = cfg_re;
+    (* keep = 1, dont_merge = 1 *) wire cfg_re_b2 = cfg_re;
+    (* keep = 1, dont_merge = 1 *) wire cfg_re_b3 = cfg_re;
     // 校正加法使用同拍本地镜像；复制下一拍值而非延迟采样，避免秒源跨区布线后再串加法。
     (* preserve = 1, dont_merge = 1 *) reg [31:0] seconds_calc, nanoseconds_calc;
     reg [31:0] timestamp_seconds, timestamp_nanoseconds;
@@ -390,7 +395,12 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     load_overflow <= ge32(cfg_wdata, LAST_TICK_NS);
                 end
             endcase
-            if (SPLIT_CFG_ADDR == 2 && cfg_re) snapshot_ns <= nanoseconds;
+            if (SPLIT_CFG_ADDR == 2) begin
+                if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
+                if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];
+                if (cfg_re_b2) snapshot_ns[23:16] <= nanoseconds[23:16];
+                if (cfg_re_b3) snapshot_ns[31:24] <= nanoseconds[31:24];
+            end
             // 读秒时同时保存纳秒值，由配置模块再选择最终读结果。
             if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
@@ -400,7 +410,10 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 REG_PORT : cfg_rdata <= { 16'b0, port_number };
                 REG_SECONDS : begin
                     cfg_rdata <= seconds;
-                    if (cfg_re) snapshot_ns <= nanoseconds;
+                    if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
+                    if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];
+                    if (cfg_re_b2) snapshot_ns[23:16] <= nanoseconds[23:16];
+                    if (cfg_re_b3) snapshot_ns[31:24] <= nanoseconds[31:24];
                 end
                 REG_NS : cfg_rdata <= snapshot_ns;
                 REG_OFFSET_SEC : cfg_rdata <= offset_sec;
