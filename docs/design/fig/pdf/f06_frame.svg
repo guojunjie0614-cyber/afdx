@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="862" height="205" viewBox="0 0 862 205">
+<style>
+text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
+.st { fill: #fff; stroke: #000; stroke-width: 1.4; }
+.st0 { fill: #e6e6e6; stroke: #000; stroke-width: 1.4; }
+.ed { fill: none; stroke: #000; stroke-width: 1.2; }
+.ed2 { fill: none; stroke: #000; stroke-width: 1.2; stroke-dasharray: 5 3; }
+.box { fill: #fff; stroke: #000; stroke-width: 1.2; }
+.gray { fill: #e0e0e0; stroke: #000; stroke-width: 1.2; }
+.hatch { fill: url(#hatch); stroke: #000; stroke-width: 1.2; stroke-dasharray: 4 2; }
+.thin { fill: none; stroke: #000; stroke-width: 0.8; }
+</style>
+<defs>
+<marker id="ar" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="7" refX="9.5" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker>
+<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+<rect width="6" height="6" fill="#fff"/><line x1="0" y1="0" x2="0" y2="6" stroke="#777" stroke-width="1.2"/></pattern>
+</defs>
+<rect x="20" y="70" width="62" height="44" class="box" stroke-dasharray="4 2"/>
+<text x="51.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Preamble</text>
+<text x="51.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">7</text>
+<rect x="82" y="70" width="38" height="44" class="box" stroke-dasharray="4 2"/>
+<text x="101.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">SFD</text>
+<text x="101.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">1</text>
+<rect x="120" y="70" width="92" height="44" class="box"/>
+<text x="166.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Dst MAC</text>
+<text x="166.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">6</text>
+<rect x="212" y="70" width="92" height="44" class="box"/>
+<text x="258.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Src MAC</text>
+<text x="258.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">6</text>
+<rect x="304" y="70" width="46" height="44" class="box"/>
+<text x="327.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Type</text>
+<text x="327.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">2</text>
+<rect x="350" y="70" width="104" height="44" class="box"/>
+<text x="402.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">IPv4 header</text>
+<text x="402.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">20</text>
+<rect x="454" y="70" width="70" height="44" class="box"/>
+<text x="489.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">UDP hdr</text>
+<text x="489.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">8</text>
+<rect x="524" y="70" width="132" height="44" class="gray"/>
+<text x="590.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Payload</text>
+<text x="590.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">n = 1..1471</text>
+<rect x="656" y="70" width="52" height="44" class="box"/>
+<text x="682.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">Pad</text>
+<text x="682.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">17-n</text>
+<rect x="708" y="70" width="38" height="44" class="gray"/>
+<text x="727.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">SN</text>
+<text x="727.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">1</text>
+<rect x="746" y="70" width="50" height="44" class="box"/>
+<text x="771.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">FCS</text>
+<text x="771.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">4</text>
+<rect x="796" y="70" width="46" height="44" class="box" stroke-dasharray="4 2"/>
+<text x="819.0" y="89.0" font-size="13.2" text-anchor="middle" font-weight="bold">IFG</text>
+<text x="819.0" y="104.0" font-size="12.0" text-anchor="middle" font-weight="normal">12</text>
+<path d="M 120 48 L 120 40 L 796 40 L 796 48" class="thin"/>
+<text x="458.0" y="35.0" font-size="12.0" text-anchor="middle" font-weight="normal">Frame length incl. FCS: 47 + max(n, 17) = 64 ... 1518 bytes</text>
+<path d="M 120 66 L 120 58 L 746 58 L 746 66" class="thin"/>
+<text x="433.0" y="53.0" font-size="12.0" text-anchor="middle" font-weight="normal"></text>
+<text x="583.0" y="54.0" font-size="10.8" text-anchor="middle" font-weight="normal" font-style="italic">CRC32 coverage</text>
+<path d="M 120 114 L 14 150" class="thin"/>
+<path d="M 212 114 L 138 150" class="thin"/>
+<rect x="14" y="150" width="74" height="38" class="box"/>
+<text x="51.0" y="166.0" font-size="12.0" text-anchor="middle" font-weight="bold">03 00 00 00</text>
+<text x="51.0" y="180.0" font-size="10.8" text-anchor="middle" font-weight="normal">fixed</text>
+<rect x="88" y="150" width="50" height="38" class="box"/>
+<text x="113.0" y="166.0" font-size="12.0" text-anchor="middle" font-weight="bold">VLID</text>
+<text x="113.0" y="180.0" font-size="10.8" text-anchor="middle" font-weight="normal">2 B</text>
+<path d="M 212 114 L 146 150" class="thin"/>
+<path d="M 304 114 L 330 150" class="thin"/>
+<rect x="146" y="150" width="58" height="38" class="box"/>
+<text x="175.0" y="166.0" font-size="12.0" text-anchor="middle" font-weight="bold">02 00 00</text>
+<text x="175.0" y="180.0" font-size="10.8" text-anchor="middle" font-weight="normal">fixed</text>
+<rect x="204" y="150" width="52" height="38" class="box"/>
+<text x="230.0" y="166.0" font-size="12.0" text-anchor="middle" font-weight="bold">User ID</text>
+<text x="230.0" y="180.0" font-size="10.8" text-anchor="middle" font-weight="normal">2 B</text>
+<rect x="256" y="150" width="74" height="38" class="box"/>
+<text x="293.0" y="166.0" font-size="12.0" text-anchor="middle" font-weight="bold">IF</text>
+<text x="293.0" y="180.0" font-size="10.8" text-anchor="middle" font-weight="normal">20h A / 40h B</text>
+<text x="402.0" y="135.0" font-size="10.8" text-anchor="middle" font-weight="normal">total = n + 28</text>
+<text x="402.0" y="147.0" font-size="10.8" text-anchor="middle" font-weight="normal">TTL 1, proto 17</text>
+<text x="489.0" y="135.0" font-size="10.8" text-anchor="middle" font-weight="normal">len = n + 8</text>
+<text x="489.0" y="147.0" font-size="10.8" text-anchor="middle" font-weight="normal">checksum 0</text>
+<text x="590.0" y="135.0" font-size="10.8" text-anchor="middle" font-weight="normal">application data</text>
+<text x="731.0" y="135.0" font-size="10.8" text-anchor="middle" font-weight="normal">0, then 1..255</text>
+<text x="731.0" y="147.0" font-size="10.8" text-anchor="middle" font-weight="normal">(255 -&gt; 1)</text>
+</svg>

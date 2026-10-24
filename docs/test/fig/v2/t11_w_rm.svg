@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="245pt" viewBox="0 0 450 245">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="0.00" width="450.00" height="266.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="0.00" y="8.00" font-size="7" text-anchor="start" fill="#000" font-weight="bold">(a) A-network copy accepted and delivered</text>
+<text x="89.00" y="33.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">ev_deliver</text>
+<path d="M 96.00 35.00 L 135.11 35.00 L 135.11 26.00 L 148.15 26.00 L 148.15 35.00 L 448.00 35.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="50.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_rx_valid</text>
+<path d="M 96.00 52.00 L 187.26 52.00 L 187.26 43.00 L 421.93 43.00 L 421.93 52.00 L 448.00 52.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="67.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_rx_data</text>
+<polygon points="96.00,64.50 97.20,60.00 186.06,60.00 187.26,64.50 186.06,69.00 97.20,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<polygon points="187.26,64.50 188.46,60.00 199.10,60.00 200.30,64.50 199.10,69.00 188.46,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="193.78" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">EE</text>
+<polygon points="200.30,64.50 201.50,60.00 212.13,60.00 213.33,64.50 212.13,69.00 201.50,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="206.81" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">FA</text>
+<polygon points="213.33,64.50 214.53,60.00 225.17,60.00 226.37,64.50 225.17,69.00 214.53,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="219.85" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">0A</text>
+<polygon points="226.37,64.50 227.57,60.00 238.21,60.00 239.41,64.50 238.21,69.00 227.57,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="232.89" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">27</text>
+<polygon points="239.41,64.50 240.61,60.00 251.24,60.00 252.44,64.50 251.24,69.00 240.61,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="245.93" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">33</text>
+<polygon points="252.44,64.50 253.64,60.00 264.28,60.00 265.48,64.50 264.28,69.00 253.64,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="258.96" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">43</text>
+<polygon points="265.48,64.50 266.68,60.00 277.32,60.00 278.52,64.50 277.32,69.00 266.68,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="272.00" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">60</text>
+<polygon points="278.52,64.50 279.72,60.00 290.36,60.00 291.56,64.50 290.36,69.00 279.72,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="285.04" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">6C</text>
+<polygon points="291.56,64.50 292.76,60.00 303.39,60.00 304.59,64.50 303.39,69.00 292.76,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="298.07" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">7C</text>
+<polygon points="304.59,64.50 305.79,60.00 316.43,60.00 317.63,64.50 316.43,69.00 305.79,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="311.11" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">99</text>
+<polygon points="317.63,64.50 318.83,60.00 329.47,60.00 330.67,64.50 329.47,69.00 318.83,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="324.15" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">A5</text>
+<polygon points="330.67,64.50 331.87,60.00 342.50,60.00 343.70,64.50 342.50,69.00 331.87,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="337.19" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">B5</text>
+<polygon points="343.70,64.50 344.90,60.00 355.54,60.00 356.74,64.50 355.54,69.00 344.90,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="350.22" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">D2</text>
+<polygon points="356.74,64.50 357.94,60.00 368.58,60.00 369.78,64.50 368.58,69.00 357.94,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="363.26" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">DE</text>
+<polygon points="369.78,64.50 370.98,60.00 381.61,60.00 382.81,64.50 381.61,69.00 370.98,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="376.30" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">EE</text>
+<polygon points="382.81,64.50 384.01,60.00 394.65,60.00 395.85,64.50 394.65,69.00 384.01,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="389.33" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">0B</text>
+<polygon points="395.85,64.50 397.05,60.00 407.69,60.00 408.89,64.50 407.69,69.00 397.05,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="402.37" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">17</text>
+<polygon points="408.89,64.50 410.09,60.00 420.73,60.00 421.93,64.50 420.73,69.00 410.09,69.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="415.41" y="66.80" font-size="6.5" text-anchor="middle" fill="#000">27</text>
+<polygon points="421.93,64.50 423.13,60.00 446.80,60.00 448.00,64.50 446.80,69.00 423.13,69.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<text x="89.00" y="84.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_rx_last</text>
+<path d="M 96.00 86.00 L 408.89 86.00 L 408.89 77.00 L 421.93 77.00 L 421.93 86.00 L 448.00 86.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="101.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_rx_net</text>
+<path d="M 96.00 94.00 L 148.15 94.00 L 148.15 103.00 L 448.00 103.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<line x1="135.11" y1="17.00" x2="135.11" y2="106.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
+<text x="135.11" y="18.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">Accept 3014.028 us</text>
+<path d="M 96.00 112.00 L 448.00 112.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<path d="M 96.00 112.00 L 96.00 115.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="96.00" y="123.00" font-size="6.5" text-anchor="start" fill="#555">3014.004</text>
+<path d="M 272.00 112.00 L 272.00 115.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="272.00" y="123.00" font-size="6.5" text-anchor="middle" fill="#555">3014.112</text>
+<path d="M 448.00 112.00 L 448.00 115.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="448.00" y="123.00" font-size="6.5" text-anchor="end" fill="#555">3014.220</text>
+<text x="88.00" y="123.00" font-size="6.5" text-anchor="end" fill="#555">Time (us)</text>
+<text x="0.00" y="141.00" font-size="7" text-anchor="start" fill="#000" font-weight="bold">(b) Late B-network copy discarded</text>
+<text x="89.00" y="166.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">rx_valid_b</text>
+<path d="M 96.00 159.00 L 193.10 159.00 L 193.10 168.00 L 448.00 168.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="183.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">rx_data_b</text>
+<polygon points="96.00,180.50 97.20,176.00 106.94,176.00 108.14,180.50 106.94,185.00 97.20,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="102.07" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">0B</text>
+<polygon points="108.14,180.50 109.34,176.00 119.08,176.00 120.28,180.50 119.08,185.00 109.34,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="114.21" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">17</text>
+<polygon points="120.28,180.50 121.48,176.00 131.21,176.00 132.41,180.50 131.21,185.00 121.48,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="126.34" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">27</text>
+<polygon points="132.41,180.50 133.61,176.00 143.35,176.00 144.55,180.50 143.35,185.00 133.61,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="138.48" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">06</text>
+<polygon points="144.55,180.50 145.75,176.00 155.49,176.00 156.69,180.50 155.49,185.00 145.75,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="150.62" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">92</text>
+<polygon points="156.69,180.50 157.89,176.00 167.63,176.00 168.83,180.50 167.63,185.00 157.89,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="162.76" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">9C</text>
+<polygon points="168.83,180.50 170.03,176.00 179.77,176.00 180.97,180.50 179.77,185.00 170.03,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="174.90" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">04</text>
+<polygon points="180.97,180.50 182.17,176.00 191.90,176.00 193.10,180.50 191.90,185.00 182.17,185.00" fill="#BFE3DC" stroke="#000" stroke-width="0.6"/>
+<text x="187.03" y="182.80" font-size="6.5" text-anchor="middle" fill="#000">EA</text>
+<polygon points="193.10,180.50 194.30,176.00 446.80,176.00 448.00,180.50 446.80,185.00 194.30,185.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
+<text x="89.00" y="200.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">ev_rm_drop</text>
+<path d="M 96.00 202.00 L 417.66 202.00 L 417.66 193.00 L 429.79 193.00 L 429.79 202.00 L 448.00 202.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<text x="89.00" y="217.00" font-size="7" text-anchor="end" fill="#000" font-weight="bold">app_rx_valid</text>
+<path d="M 96.00 219.00 L 448.00 219.00" fill="none" stroke="#000" stroke-width="0.75"/>
+<line x1="417.66" y1="150.00" x2="417.66" y2="222.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
+<text x="417.66" y="151.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">Drop 3030.044 us</text>
+<path d="M 96.00 228.00 L 448.00 228.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<path d="M 96.00 228.00 L 96.00 231.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="96.00" y="239.00" font-size="6.5" text-anchor="start" fill="#555">3029.832</text>
+<path d="M 272.00 228.00 L 272.00 231.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="272.00" y="239.00" font-size="6.5" text-anchor="middle" fill="#555">3029.948</text>
+<path d="M 448.00 228.00 L 448.00 231.00" fill="none" stroke="#777" stroke-width="0.5"/>
+<text x="448.00" y="239.00" font-size="6.5" text-anchor="end" fill="#555">3030.064</text>
+<text x="88.00" y="239.00" font-size="6.5" text-anchor="end" fill="#555">Time (us)</text>
+</svg>

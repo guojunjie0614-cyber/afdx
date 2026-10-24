@@ -1,0 +1,56 @@
+{
+  "signal": [
+    {
+      "name": "clk (125 MHz)",
+      "wave": "P......|............"
+    },
+    {},
+    {
+      "name": "rx_dv (GMII In)",
+      "wave": "01.....|0......1...0"
+    },
+    {
+      "name": "rxd[7:0]",
+      "wave": "x2.3...|x......2.3.x",
+      "data": [
+        "55",
+        "DATA n (512 B)",
+        "55",
+        "DATA n+1 (<512 B)"
+      ]
+    },
+    {},
+    {
+      "name": "tx_en_a (Net A)",
+      "wave": "0......|..1...0....."
+    },
+    {
+      "name": "txd_a[7:0]",
+      "wave": "x......|..2.3.x.....",
+      "data": [
+        "55",
+        "ACK n (Block n)"
+      ]
+    },
+    {},
+    {
+      "name": "tx_en_b (Net B)",
+      "wave": "0......|..1...0....."
+    },
+    {
+      "name": "txd_b[7:0]",
+      "wave": "x......|..2.3.x.....",
+      "data": [
+        "55",
+        "ACK n (Block n)"
+      ]
+    }
+  ],
+  "config": {
+    "hscale": 2,
+    "skin": "default"
+  },
+  "foot": {
+    "text": "Protocol schematic; compressed time axis, not to scale."
+  }
+}

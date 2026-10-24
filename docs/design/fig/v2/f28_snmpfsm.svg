@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="196pt" viewBox="0 0 450 196">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="22.00" y="44.00" width="64.00" height="26.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="54.00" y="60.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Receive</text>
+<rect x="140.00" y="44.00" width="64.00" height="26.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="172.00" y="60.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Decode</text>
+<rect x="260.00" y="44.00" width="64.00" height="26.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="292.00" y="60.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Lookup</text>
+<rect x="382.00" y="44.00" width="64.00" height="26.00" rx="4" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
+<text x="414.00" y="60.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Value</text>
+<rect x="382.00" y="144.00" width="64.00" height="26.00" rx="4" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="414.00" y="160.42" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Encode</text>
+<rect x="22.00" y="144.00" width="64.00" height="26.00" rx="4" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="54.00" y="160.42" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Send</text>
+<rect x="140.00" y="100.00" width="72.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="176.00" y="113.20" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Fetch</text>
+<text x="176.00" y="121.63" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">(shared)</text>
+<path d="M 86.00 57.00 L 140.00 57.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="140.00,57.00 135.00,59.10 135.00,54.90" fill="#000"/>
+<text x="113.00" y="53.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">last byte</text>
+<path d="M 204.00 57.00 L 260.00 57.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="260.00,57.00 255.00,59.10 255.00,54.90" fill="#000"/>
+<text x="232.00" y="53.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">valid binding</text>
+<path d="M 324.00 53.00 L 382.00 53.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="382.00,53.00 377.00,55.10 377.00,50.90" fill="#000"/>
+<text x="353.00" y="49.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">hit</text>
+<path d="M 324.00 65.00 L 382.00 65.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="382.00,65.00 377.00,67.10 377.00,62.90" fill="#000"/>
+<text x="353.00" y="61.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">bad / missed Set</text>
+<path d="M 292.00 70.00 L 292.00 100.00 L 390.00 100.00 L 390.00 144.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="390.00,144.00 387.90,139.00 392.10,139.00" fill="#000"/>
+<text x="341.00" y="96.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">miss (Get)</text>
+<path d="M 436.00 70.00 L 436.00 144.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="436.00,144.00 433.90,139.00 438.10,139.00" fill="#000"/>
+<text x="432.00" y="127.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">ready / error</text>
+<path d="M 382.00 163.00 L 86.00 163.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="86.00,163.00 91.00,160.90 91.00,165.10" fill="#000"/>
+<text x="234.00" y="159.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">encoded</text>
+<path d="M 35.00 144.00 L 35.00 70.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="35.00,70.00 37.10,75.00 32.90,75.00" fill="#000"/>
+<text x="39.00" y="110.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">last byte</text>
+<path d="M 74.00 70.00 L 74.00 136.00 L 374.00 136.00 L 374.00 157.00 L 382.00 157.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="382.00,157.00 377.00,159.10 377.00,154.90" fill="#000"/>
+<text x="280.00" y="132.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">trap pending</text>
+<path d="M 172.00 44.00 L 172.00 32.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="172.00,32.00 174.10,37.00 169.90,37.00" fill="#000"/>
+<rect x="150.30" y="20.00" width="43.41" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="172.00" y="29.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ Receive</text>
+<text x="172.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">bad BER / version / community</text>
+<path d="M 292.00 44.00 L 292.00 32.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="292.00,32.00 294.10,37.00 289.90,37.00" fill="#000"/>
+<rect x="270.30" y="20.00" width="43.41" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="292.00" y="29.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ Receive</text>
+<text x="292.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">bad OID</text>
+<path d="M 414.00 170.00 L 414.00 182.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="414.00,182.00 411.90,177.00 416.10,177.00" fill="#000"/>
+<rect x="392.30" y="182.00" width="43.41" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="414.00" y="191.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ Receive</text>
+<text x="405.00" y="180.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">bad encoding</text>
+<path d="M 155.00 70.00 L 155.00 100.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="155.00,100.00 152.90,95.00 157.10,95.00" fill="#000"/>
+<text x="159.00" y="84.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">call</text>
+<path d="M 190.00 100.00 L 190.00 70.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="190.00,70.00 192.10,75.00 187.90,75.00" fill="#000"/>
+<text x="186.00" y="96.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">return</text>
+<path d="M 212.00 114.00 L 224.00 114.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="224.00,114.00 219.00,116.10 219.00,111.90" fill="#000"/>
+<rect x="224.00" y="108.00" width="43.41" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="245.70" y="117.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ Receive</text>
+<text x="246.00" y="105.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">short request</text>
+</svg>

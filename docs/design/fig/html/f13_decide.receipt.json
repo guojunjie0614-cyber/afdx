@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/mac_max/Desktop/afdx/docs/design/fig/src/f13_decide.architecture.json",
+  "output": "/Users/mac_max/Desktop/afdx/docs/design/fig/html/f13_decide.html",
+  "specification": {
+    "sha256": "a1ea49140242f7b2988570392a04935acf83025e6088b8c86dfd4ca5b7a1dac4",
+    "bytes": 4706
+  },
+  "artifact": {
+    "sha256": "6b5abe6d0eeea41ca987c90434746bfabed0e06618f1d4997658e7aa561db324",
+    "bytes": 711850
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

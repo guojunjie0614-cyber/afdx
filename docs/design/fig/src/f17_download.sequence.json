@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": { "title": "ARINC 615A media-defined download", "locale": "en", "quality_profile": "showcase", "legend": { "mode": "hidden" }, "column_fit": "spread", "viewBox": [760, 820] },
+  "participants": [
+    { "id": "ldr", "type": "external", "label": "Data loader", "sublabel": "TFTP peer" },
+    { "id": "tgt", "type": "backend", "label": "afdx_615a", "sublabel": "target DEMC3_1" }
+  ],
+  "segments": [
+    { "from": 165, "to": 300, "label": "Initialization" },
+    { "from": 310, "to": 440, "label": "Download list" },
+    { "from": 450, "to": 760, "label": "MEMORY.BIN" }
+  ],
+  "messages": [
+    { "id": "d1", "from": "ldr", "to": "tgt", "y": 185, "label": "RRQ DEMC3_1.LND", "variant": "emphasis" },
+    { "id": "d2", "from": "tgt", "to": "ldr", "y": 220, "label": "DATA1: LND, status 0001", "variant": "return" },
+    { "id": "d3", "from": "tgt", "to": "ldr", "y": 262, "label": "WRQ + DATA1: LNS 0001", "variant": "default" },
+    { "id": "d4", "from": "ldr", "to": "tgt", "y": 330, "label": "WRQ DEMC3_1.LNR", "variant": "emphasis" },
+    { "id": "d5", "from": "ldr", "to": "tgt", "y": 372, "label": "DATA1: LNR (MEMORY.BIN)", "variant": "default" },
+    { "id": "d6", "from": "tgt", "to": "ldr", "y": 414, "label": "LNS 0002", "variant": "return" },
+    { "id": "d7", "from": "tgt", "to": "ldr", "y": 470, "label": "WRQ MEMORY.BIN", "variant": "emphasis" },
+    { "id": "d8", "from": "ldr", "to": "tgt", "y": 512, "label": "ACK0 (new TID)", "variant": "return" },
+    { "id": "d9", "from": "tgt", "to": "ldr", "y": 554, "label": "DATA n (512 B from load RAM)", "variant": "default" },
+    { "id": "d10", "from": "ldr", "to": "tgt", "y": 596, "label": "ACK n", "variant": "return" },
+    { "id": "d11", "from": "tgt", "to": "ldr", "y": 638, "label": "LNS progress after first block", "variant": "default" },
+    { "id": "d12", "from": "tgt", "to": "ldr", "y": 680, "label": "LNS 0003, ratio 100", "variant": "emphasis", "note": "after last-block ACK" }
+  ]
+}

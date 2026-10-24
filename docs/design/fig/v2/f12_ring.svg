@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="75pt" viewBox="0 0 450 75">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="20.00" y="30.00" width="60.00" height="20.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="50.00" y="43.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">free</text>
+<rect x="80.00" y="30.00" width="170.00" height="20.00" rx="0" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="165.00" y="43.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">committed, waiting for rx_deliver</text>
+<rect x="250.00" y="30.00" width="110.00" height="20.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="305.00" y="43.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">current frame (trial)</text>
+<rect x="360.00" y="30.00" width="70.00" height="20.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="395.00" y="43.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">free</text>
+<path d="M 80.00 16.00 L 80.00 30.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="80.00,30.00 77.90,25.00 82.10,25.00" fill="#000"/>
+<text x="80.00" y="6.50" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">rd</text>
+<text x="83.00" y="14.50" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">rx_deliver</text>
+<path d="M 250.00 16.00 L 250.00 30.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="250.00,30.00 247.90,25.00 252.10,25.00" fill="#000"/>
+<text x="250.00" y="6.50" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">wr_commit</text>
+<text x="253.00" y="14.50" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">rx_parse</text>
+<path d="M 360.00 16.00 L 360.00 30.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="360.00,30.00 357.90,25.00 362.10,25.00" fill="#000"/>
+<text x="360.00" y="6.50" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">wr_trial</text>
+<text x="363.00" y="14.50" font-size="7.0" text-anchor="start" fill="#444" font-weight="bold">rx_parse</text>
+<path d="M 430.00 40.00 L 444.00 40.00 L 444.00 62.00 L 8.00 62.00 L 8.00 40.00 L 20.00 40.00" fill="none" stroke="#000" stroke-width="0.6"/>
+<polygon points="20.00,40.00 15.00,42.10 15.00,37.90" fill="#000"/>
+<text x="226.00" y="71.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold" font-style="italic">wrap: 2^RX_RING_AW = 4096 B per network; pointers carry one extra bit</text>
+<text x="85.00" y="59.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">free = 4096 − (wr_commit − rd)</text>
+</svg>

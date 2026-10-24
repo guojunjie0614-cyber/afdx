@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="140pt" viewBox="0 0 450 140">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="30.00" y="40.00" width="70.00" height="40.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="65.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_tx_buf</text>
+<text x="65.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">page alloc,</text>
+<text x="65.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">payload write</text>
+<rect x="126.00" y="40.00" width="92.00" height="40.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="172.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_tx_engine</text>
+<text x="172.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">BAG scan,</text>
+<text x="172.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">LOOKAHEAD = 512</text>
+<rect x="244.00" y="40.00" width="70.00" height="40.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="279.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_tx_builder</text>
+<text x="279.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">42-B header,</text>
+<text x="279.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">prefetch</text>
+<rect x="340.00" y="40.00" width="70.00" height="40.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="375.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_mac_tx</text>
+<text x="375.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">preamble, FCS,</text>
+<text x="375.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">A/B CRC32</text>
+<path d="M 0.00 52.00 L 30.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="30.00,52.00 25.00,54.10 25.00,49.90" fill="#000"/>
+<text x="15.00" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">m_*</text>
+<path d="M 100.00 52.00 L 126.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="126.00,52.00 121.00,54.10 121.00,49.90" fill="#000"/>
+<text x="113.00" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">enq</text>
+<path d="M 126.00 70.00 L 100.00 70.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="100.00,70.00 105.00,67.90 105.00,72.10" fill="#000"/>
+<text x="113.00" y="78.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">result</text>
+<path d="M 218.00 52.00 L 244.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="244.00,52.00 239.00,54.10 239.00,49.90" fill="#000"/>
+<text x="231.00" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">grant</text>
+<path d="M 244.00 70.00 L 218.00 70.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="218.00,70.00 223.00,67.90 223.00,72.10" fill="#000"/>
+<text x="231.00" y="78.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">t_start</text>
+<path d="M 314.00 52.00 L 340.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="340.00,52.00 335.00,54.10 335.00,49.90" fill="#000"/>
+<text x="327.00" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">s_*</text>
+<path d="M 410.00 60.00 L 450.00 60.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="450.00,60.00 445.00,62.10 445.00,57.90" fill="#000"/>
+<text x="430.00" y="56.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">GMII</text>
+<text x="430.00" y="70.50" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">A / B</text>
+<rect x="30.00" y="0.00" width="62.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="61.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_desc</text>
+<text x="61.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">256 × 44</text>
+<rect x="142.00" y="0.00" width="60.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="172.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_state</text>
+<text x="172.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">+ tx_mnext</text>
+<rect x="208.00" y="0.00" width="62.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="239.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_cfg</text>
+<text x="239.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">1024 × 32</text>
+<path d="M 60.00 40.00 L 60.00 24.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="60.00,24.00 62.10,29.00 57.90,29.00" fill="#000"/>
+<path d="M 92.00 12.00 L 134.00 12.00 L 134.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="134.00,40.00 131.90,35.00 136.10,35.00" fill="#000"/>
+<path d="M 171.00 24.00 L 171.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="171.00,40.00 168.90,35.00 173.10,35.00" fill="#000"/>
+<polygon points="171.00,24.00 173.10,29.00 168.90,29.00" fill="#000"/>
+<path d="M 212.00 24.00 L 212.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="212.00,40.00 209.90,35.00 214.10,35.00" fill="#000"/>
+<path d="M 300.00 12.00 L 270.00 12.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="270.00,12.00 275.00,9.90 275.00,14.10" fill="#000"/>
+<text x="303.00" y="14.50" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">cfg bus (afdx_cfg)</text>
+<rect x="28.00" y="96.00" width="58.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="57.00" y="107.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_free</text>
+<text x="57.00" y="115.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">256-page FIFO</text>
+<rect x="126.00" y="96.00" width="188.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="220.00" y="107.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_payload + tx_pnext</text>
+<text x="220.00" y="115.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">128 KiB = 256 pages × 512 B</text>
+<path d="M 48.00 80.00 L 48.00 96.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="48.00,96.00 45.90,91.00 50.10,91.00" fill="#000"/>
+<polygon points="48.00,80.00 50.10,85.00 45.90,85.00" fill="#000"/>
+<text x="51.00" y="91.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">page</text>
+<path d="M 94.00 80.00 L 94.00 108.00 L 126.00 108.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="126.00,108.00 121.00,110.10 121.00,105.90" fill="#000"/>
+<text x="110.00" y="105.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">wr</text>
+<path d="M 296.00 96.00 L 296.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="296.00,80.00 298.10,85.00 293.90,85.00" fill="#000"/>
+<text x="293.00" y="91.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">prefetch</text>
+<path d="M 314.00 74.00 L 326.00 74.00 L 326.00 128.00 L 57.00 128.00 L 57.00 120.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="57.00,120.00 59.10,125.00 54.90,125.00" fill="#000"/>
+<text x="190.00" y="137.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">page returned after read</text>
+</svg>

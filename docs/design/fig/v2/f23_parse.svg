@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="168pt" viewBox="0 0 450 168">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="4.00" y="16.00" width="45.60" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="26.80" y="28.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">DMAC</text>
+<rect x="49.60" y="16.00" width="45.60" height="18.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="72.40" y="28.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">SMAC</text>
+<rect x="95.20" y="16.00" width="15.20" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="102.80" y="28.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">T</text>
+<rect x="110.40" y="16.00" width="152.00" height="18.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="186.40" y="28.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">IPv4 header</text>
+<rect x="262.40" y="16.00" width="60.80" height="18.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="292.80" y="28.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">UDP header</text>
+<rect x="323.20" y="16.00" width="72.00" height="18.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="359.20" y="28.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">payload n B</text>
+<rect x="395.20" y="16.00" width="44.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="417.20" y="28.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pad · SN</text>
+<text x="4.00" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0</text>
+<text x="49.60" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">6</text>
+<text x="95.20" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">12</text>
+<text x="110.40" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">14</text>
+<text x="262.40" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">34</text>
+<text x="323.20" y="10.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">42</text>
+<text x="26.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">03 00 00 00</text>
+<text x="26.80" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">VLID</text>
+<text x="72.40" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ignored</text>
+<text x="186.40" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0x45, no fragment,</text>
+<text x="186.40" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">proto 0x11, IP length,</text>
+<text x="186.40" y="62.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">sum = 0xFFFF</text>
+<text x="292.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ports, n = len − 8</text>
+<text x="292.80" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">UDP sum ≠ 0 → check</text>
+<text x="359.20" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">space ≥ n ?</text>
+<text x="359.20" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">trial write</text>
+<text x="417.20" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">SN at</text>
+<text x="417.20" y="53.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">42 + max(n,17)</text>
+<text x="102.80" y="45.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">08 00</text>
+<text x="225.00" y="73.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Streaming checks</text>
+<rect x="0.00" y="88.00" width="62.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="31.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">LEN_WAIT</text>
+<text x="31.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">until byte 39</text>
+<rect x="96.00" y="88.00" width="62.00" height="28.00" rx="4" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="127.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">LEN_SIZES</text>
+<text x="127.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">n, n_ok, IP len</text>
+<rect x="192.00" y="88.00" width="70.00" height="28.00" rx="4" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="227.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">LEN_LIMITS</text>
+<text x="227.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">end, SN pos, space</text>
+<path d="M 62.00 102.00 L 96.00 102.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="96.00,102.00 91.00,104.10 91.00,99.90" fill="#000"/>
+<path d="M 158.00 102.00 L 192.00 102.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="192.00,102.00 187.00,104.10 187.00,99.90" fill="#000"/>
+<path d="M 227.00 116.00 L 227.00 126.00 L 31.00 126.00 L 31.00 116.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="31.00,116.00 33.10,121.00 28.90,121.00" fill="#000"/>
+<text x="79.00" y="99.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">UDP len</text>
+<text x="131.00" y="140.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) length_phase</text>
+<rect x="290.00" y="88.00" width="56.00" height="28.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="318.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">FIN_WAIT</text>
+<text x="318.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">frame body</text>
+<rect x="388.00" y="88.00" width="60.00" height="28.00" rx="4" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="418.00" y="101.02" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">FIN_SETTLE</text>
+<text x="418.00" y="109.03" font-size="6.5" text-anchor="middle" fill="#000000" font-weight="bold">UDP sum final</text>
+<rect x="388.00" y="136.00" width="60.00" height="28.00" rx="4" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="418.00" y="149.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">FIN_REPORT</text>
+<text x="418.00" y="157.03" font-size="6.5" text-anchor="middle" fill="#FFFFFF" font-weight="bold">class, desc</text>
+<path d="M 346.00 102.00 L 388.00 102.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="388.00,102.00 383.00,104.10 383.00,99.90" fill="#000"/>
+<text x="367.00" y="99.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">f_end</text>
+<path d="M 418.00 116.00 L 418.00 136.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="418.00,136.00 415.90,131.00 420.10,131.00" fill="#000"/>
+<path d="M 388.00 150.00 L 318.00 150.00 L 318.00 116.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="318.00,116.00 320.10,121.00 315.90,121.00" fill="#000"/>
+<text x="290.00" y="165.00" font-size="8.0" text-anchor="start" fill="#000" font-weight="bold">(c) finish_phase</text>
+<text x="353.00" y="146.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">one ev pulse</text>
+</svg>

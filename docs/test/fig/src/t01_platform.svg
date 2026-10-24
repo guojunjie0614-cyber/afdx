@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 402" width="720" height="402">
+<defs><marker id="arr-blk" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 1 1.5 L 7 4 L 1 6.5 z" fill="#000000"/></marker></defs>
+<style>text {font-family:'Arial Narrow',Arial,sans-serif;text-rendering:geometricPrecision;fill:#000000;}</style>
+<rect width="720" height="402" fill="#FFFFFF"/>
+<rect x="222" y="8" width="276" height="52" fill="#FFFFFF" stroke="#000000" stroke-width="0.9625" stroke-dasharray="3 2"/>
+<text x="360" y="30" font-size="15.5" font-weight="bold" text-anchor="middle">Stimulus &amp; Fault Control (Testbench)</text>
+<rect x="16" y="76" width="176" height="213" fill="#DEDEDB" stroke="#000000" stroke-width="0.9625"/>
+<rect x="16" y="76" width="176" height="30" fill="#DEDEDB" stroke="#000000" stroke-width="0.9625"/>
+<text x="104" y="92" font-size="14.5" font-weight="bold" text-anchor="middle">ES1: AFDX_top (125 MHz)</text>
+<rect x="24" y="112" width="160" height="42" fill="#C1D5E5" stroke="#000000" stroke-width="0.9625"/>
+<text x="104" y="129" font-size="14" font-weight="bold" text-anchor="middle">Host &amp; Application Interface</text>
+<text x="104" y="144" font-size="13" font-weight="normal" text-anchor="middle">TX input / RX output</text>
+<rect x="24" y="162" width="160" height="55" fill="#E9A16C" stroke="#000000" stroke-width="0.9625"/>
+<text x="104" y="181" font-size="14" font-weight="bold" text-anchor="middle">afdx_tx_core (TX Engine)</text>
+<text x="104" y="196" font-size="13" font-weight="normal" text-anchor="middle">VL scheduling / BAG</text>
+<rect x="24" y="225" width="160" height="55" fill="#BBD0BE" stroke="#000000" stroke-width="0.9625"/>
+<text x="104" y="244" font-size="14" font-weight="bold" text-anchor="middle">afdx_rx_core (RX Engine)</text>
+<text x="104" y="259" font-size="13" font-weight="normal" text-anchor="middle">Integrity / redundancy</text>
+<rect x="528" y="76" width="176" height="213" fill="#DEDEDB" stroke="#000000" stroke-width="0.9625"/>
+<rect x="528" y="76" width="176" height="30" fill="#DEDEDB" stroke="#000000" stroke-width="0.9625"/>
+<text x="616" y="92" font-size="14.5" font-weight="bold" text-anchor="middle">ES2: AFDX_top (125 MHz)</text>
+<rect x="536" y="112" width="160" height="42" fill="#C1D5E5" stroke="#000000" stroke-width="0.9625"/>
+<text x="616" y="129" font-size="14" font-weight="bold" text-anchor="middle">Host &amp; Application Interface</text>
+<text x="616" y="144" font-size="13" font-weight="normal" text-anchor="middle">TX input / RX output</text>
+<rect x="536" y="162" width="160" height="55" fill="#E9A16C" stroke="#000000" stroke-width="0.9625"/>
+<text x="616" y="181" font-size="14" font-weight="bold" text-anchor="middle">afdx_tx_core (TX Engine)</text>
+<text x="616" y="196" font-size="13" font-weight="normal" text-anchor="middle">VL scheduling / BAG</text>
+<rect x="536" y="225" width="160" height="55" fill="#BBD0BE" stroke="#000000" stroke-width="0.9625"/>
+<text x="616" y="244" font-size="14" font-weight="bold" text-anchor="middle">afdx_rx_core (RX Engine)</text>
+<text x="616" y="259" font-size="13" font-weight="normal" text-anchor="middle">Integrity / redundancy</text>
+<rect x="252" y="76" width="216" height="213" fill="#C1D5E5" stroke="#000000" stroke-width="0.9625"/>
+<rect x="252" y="76" width="216" height="30" fill="#C1D5E5" stroke="#000000" stroke-width="0.9625"/>
+<text x="360" y="91" font-size="12" font-weight="bold" text-anchor="middle">Link Model: 4 One-Way GMII</text>
+<text x="360" y="102" font-size="10" font-weight="normal" text-anchor="middle">Delay, Drop, XOR, Reorder &amp; Skew</text>
+<rect x="260" y="112" width="200" height="80" fill="#F6F6F4" stroke="#000000" stroke-width="0.9625"/>
+<text x="360" y="126" font-size="11.5" font-weight="bold" text-anchor="middle">Network A Channels (Forward &amp; Reverse)</text>
+<rect x="268" y="133" width="82" height="53" fill="#E5E2CC" stroke="#000000" stroke-width="0.9625"/>
+<rect x="356" y="133" width="96" height="53" fill="#FFE0AC" stroke="#000000" stroke-width="0.9625"/>
+<text x="309" y="155" font-size="13.5" font-weight="bold" text-anchor="middle">Delay FIFO</text>
+<text x="309" y="171" font-size="13" font-weight="normal" text-anchor="middle">Skew &amp; Jitter</text>
+<text x="404" y="155" font-size="13.5" font-weight="bold" text-anchor="middle">Fault Inj. (XOR)</text>
+<text x="404" y="171" font-size="13" font-weight="normal" text-anchor="middle">CRC Err / Bit Flip</text>
+<rect x="260" y="200" width="200" height="80" fill="#F6F6F4" stroke="#000000" stroke-width="0.9625"/>
+<text x="360" y="214" font-size="11.5" font-weight="bold" text-anchor="middle">Network B Channels (Forward &amp; Reverse)</text>
+<rect x="268" y="221" width="82" height="53" fill="#E5E2CC" stroke="#000000" stroke-width="0.9625"/>
+<rect x="356" y="221" width="96" height="53" fill="#FFE0AC" stroke="#000000" stroke-width="0.9625"/>
+<text x="309" y="243" font-size="13.5" font-weight="bold" text-anchor="middle">Delay FIFO</text>
+<text x="309" y="259" font-size="13" font-weight="normal" text-anchor="middle">Skew &amp; Jitter</text>
+<text x="404" y="243" font-size="13.5" font-weight="bold" text-anchor="middle">Loss / Reorder</text>
+<text x="404" y="259" font-size="13" font-weight="normal" text-anchor="middle">Drop &amp; Replay</text>
+<path d="M 228 60 L 228 68 L 104 68 L 104 76" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="166" y="63" font-size="13" font-weight="bold" text-anchor="middle">app / cfg stimulus</text>
+<path d="M 492 60 L 492 68 L 616 68 L 616 76" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="554" y="63" font-size="13" font-weight="bold" text-anchor="middle">app / cfg stimulus</text>
+<path d="M 360 60 L 360 76" fill="none" stroke="#000000" stroke-width="1.008333" stroke-dasharray="3 2" marker-end="url(#arr-blk)"/>
+<text x="364" y="70" font-size="10.5" font-weight="normal" text-anchor="start">fault config</text>
+<path d="M 192 146 L 252 146" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<path d="M 468 146 L 528 146" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="232" y="141" font-size="12.5" font-weight="bold" text-anchor="middle">TXD_A</text>
+<path d="M 202 142 L 206 150" stroke="#000000" stroke-width="0.9625"/>
+<text x="204" y="134" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<text x="488" y="141" font-size="12.5" font-weight="bold" text-anchor="middle">RXD_A</text>
+<path d="M 514 142 L 518 150" stroke="#000000" stroke-width="0.9625"/>
+<text x="516" y="134" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<path d="M 252 176 L 192 176" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<path d="M 528 176 L 468 176" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="232" y="171" font-size="12.5" font-weight="bold" text-anchor="middle">RXD_A</text>
+<path d="M 202 172 L 206 180" stroke="#000000" stroke-width="0.9625"/>
+<text x="204" y="164" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<text x="488" y="171" font-size="12.5" font-weight="bold" text-anchor="middle">TXD_A</text>
+<path d="M 514 172 L 518 180" stroke="#000000" stroke-width="0.9625"/>
+<text x="516" y="164" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<path d="M 192 224 L 252 224" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<path d="M 468 224 L 528 224" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="232" y="219" font-size="12.5" font-weight="bold" text-anchor="middle">TXD_B</text>
+<path d="M 202 220 L 206 228" stroke="#000000" stroke-width="0.9625"/>
+<text x="204" y="212" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<text x="488" y="219" font-size="12.5" font-weight="bold" text-anchor="middle">RXD_B</text>
+<path d="M 514 220 L 518 228" stroke="#000000" stroke-width="0.9625"/>
+<text x="516" y="212" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<path d="M 252 254 L 192 254" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<path d="M 528 254 L 468 254" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<text x="232" y="249" font-size="12.5" font-weight="bold" text-anchor="middle">RXD_B</text>
+<path d="M 202 250 L 206 258" stroke="#000000" stroke-width="0.9625"/>
+<text x="204" y="242" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<text x="488" y="249" font-size="12.5" font-weight="bold" text-anchor="middle">TXD_B</text>
+<path d="M 514 250 L 518 258" stroke="#000000" stroke-width="0.9625"/>
+<text x="516" y="242" font-size="8.5" font-weight="normal" text-anchor="middle">/8</text>
+<rect x="16" y="310" width="176" height="40" fill="#FFF0C4" stroke="#000000" stroke-width="0.9625"/>
+<text x="104" y="327" font-size="14" font-weight="bold" text-anchor="middle">ES1 Port Monitors</text>
+<text x="104" y="342" font-size="13" font-weight="normal" text-anchor="middle">Captured port traces</text>
+<path d="M 104 289 L 104 310" fill="none" stroke="#000000" stroke-width="1.008333" stroke-dasharray="3 2" marker-end="url(#arr-blk)"/>
+<rect x="528" y="310" width="176" height="40" fill="#FFF0C4" stroke="#000000" stroke-width="0.9625"/>
+<text x="616" y="327" font-size="14" font-weight="bold" text-anchor="middle">ES2 Port Monitors</text>
+<text x="616" y="342" font-size="13" font-weight="normal" text-anchor="middle">Captured port traces</text>
+<path d="M 616 289 L 616 310" fill="none" stroke="#000000" stroke-width="1.008333" stroke-dasharray="3 2" marker-end="url(#arr-blk)"/>
+<rect x="236" y="310" width="248" height="40" fill="#FFFFFF" stroke="#000000" stroke-width="0.9625"/>
+<text x="360" y="327" font-size="15.5" font-weight="bold" text-anchor="middle">Python Reference Model</text>
+<text x="360" y="342" font-size="13" font-weight="normal" text-anchor="middle">Independent checker</text>
+<path d="M 192 330 L 236 330" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<path d="M 528 330 L 484 330" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+<rect x="308" y="366" width="104" height="28" fill="#BBD0BE" stroke="#000000" stroke-width="0.9625"/>
+<text x="360" y="378" font-size="11.5" font-weight="bold" text-anchor="middle">Verdict</text>
+<text x="360" y="390" font-size="11.5" font-weight="normal" text-anchor="middle">[RESULT] + [CHECK]</text>
+<path d="M 360 350 L 360 366" fill="none" stroke="#000000" stroke-width="1.008333" marker-end="url(#arr-blk)"/>
+</svg>

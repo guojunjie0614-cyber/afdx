@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Two end-system testbench",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    },
+    "viewBox": [
+      1180,
+      560
+    ]
+  },
+  "components": [
+    {
+      "id": "drv1",
+      "type": "external",
+      "label": "Driver ES1",
+      "sublabel": "app / cfg stimulus",
+      "pos": [
+        60,
+        70
+      ],
+      "size": [
+        170,
+        60
+      ]
+    },
+    {
+      "id": "drv2",
+      "type": "external",
+      "label": "Driver ES2",
+      "sublabel": "app / cfg stimulus",
+      "pos": [
+        700,
+        70
+      ],
+      "size": [
+        170,
+        60
+      ]
+    },
+    {
+      "id": "es1",
+      "type": "backend",
+      "label": "ES1: AFDX_top",
+      "sublabel": "RTL or netlist",
+      "pos": [
+        60,
+        240
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "link",
+      "type": "messagebus",
+      "label": "Link model",
+      "sublabel": "4 one-way GMII links",
+      "tag": "delay drop xor hold replay",
+      "pos": [
+        380,
+        236
+      ],
+      "size": [
+        200,
+        72
+      ]
+    },
+    {
+      "id": "es2",
+      "type": "backend",
+      "label": "ES2: AFDX_top",
+      "sublabel": "RTL or netlist",
+      "pos": [
+        700,
+        240
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "mon",
+      "type": "database",
+      "label": "Port monitors",
+      "sublabel": "dump / events / sys_events",
+      "pos": [
+        380,
+        430
+      ],
+      "size": [
+        200,
+        60
+      ]
+    },
+    {
+      "id": "ref",
+      "type": "external",
+      "label": "Python reference",
+      "sublabel": "afdx_ref, sys_ref",
+      "pos": [
+        700,
+        430
+      ],
+      "size": [
+        170,
+        60
+      ]
+    },
+    {
+      "id": "res",
+      "type": "backend",
+      "label": "Verdict",
+      "sublabel": "[RESULT] + [CHECK]",
+      "pos": [
+        960,
+        430
+      ],
+      "size": [
+        170,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "drv1",
+      "to": "es1",
+      "label": "app_tx / cfg",
+      "labelAt": [
+        145,
+        185
+      ]
+    },
+    {
+      "id": "c2",
+      "from": "drv2",
+      "to": "es2",
+      "label": "app_tx / cfg",
+      "labelAt": [
+        785,
+        185
+      ]
+    },
+    {
+      "id": "c3",
+      "from": "es1",
+      "to": "link",
+      "label": "GMII A/B",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c4",
+      "from": "link",
+      "to": "es2",
+      "label": "GMII A/B",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c5",
+      "from": "link",
+      "to": "mon",
+      "label": "frames",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        480,
+        370
+      ]
+    },
+    {
+      "id": "c6",
+      "from": "mon",
+      "to": "ref",
+      "label": "text logs"
+    },
+    {
+      "id": "c7",
+      "from": "ref",
+      "to": "res",
+      "label": "items"
+    }
+  ]
+}

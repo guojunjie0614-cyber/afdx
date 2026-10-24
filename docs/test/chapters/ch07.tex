@@ -1,0 +1,22 @@
+\chapter{测试结论}\label{ch:conclusion}
+
+本报告通过模块级、系统级与综合后网表三级验证体系，结合“在线自检 + 独立黄金参考模型离线比对 + 形式化断言”三重检查机制，对 AFDX 端系统 FPGA 设计完成了全需求覆盖与全工况验证。需求规格规定的 46 个测试点覆盖率达 100\%，\RegCount{} 项 RTL 自动化回归（累计 \countsep{\RegChecks} 次在线自检与 \countsep{\RegIndep} 项独立核对）、7 项 ModelSim 批量测试以及 2 项 eLinx 综合后网表仿真全部零错误通过，RTL 代码语句覆盖率达 \CovStmt\%、状态机转换覆盖率达 \CovFsmTrans\%。
+
+\section{功能完整性与异常恢复闭环}
+
+\begin{enumerate}
+  \item \textbf{核心数据通路（模块 1、模块 2）：}发送侧 UDP/IP/Ethernet 组帧、页式缓存管理、BAG 定时整形、512 拍提前授权调度与双网同拍发送，以及接收侧 VLID 映射、完整性检查（IC）和冗余管理（RM）在全帧长范围（1--1471 字节）及各类边界工况下均准确无误。发送侧 4 类拒绝机制与接收侧 10 类异常过滤机制均能精确识错、分类计数并安全回收存储资源，无锁死或残留污染。
+  \item \textbf{协议与系统管理服务（模块 3、模块 4、模块 5）：}SNMP 代理准确支持 GetRequest、GetNextRequest、SetRequest 与 Trap 报文编解码及只读/团体名（\code{community}）访问控制；\mbox{ARINC 615A-2} 引擎可靠完成整块与非整块文件的上传下载、CRC16 校验及超时重传，传输前后的存储镜像与源文件逐字节一致；RTC 时钟同步模块在空载与 77 条 VL 满载并发下的最大同步误差分别为 \RtcIdle~ns 和 \RtcLoad~ns，且在响应丢失、时间戳失配及过期响应注入下具备确定性的防误校与恢复能力。五项核心功能在共享双网链路、应用口和配置口时互不干扰。
+\end{enumerate}
+
+\section{性能指标与容量裕度}
+
+\begin{enumerate}
+  \item \textbf{吞吐与帧格式：}在 125~MHz GMII 千兆双网接口下，77 条与 81 条 VL 双向满载去重后的单向有效载荷吞吐分别达到 \Thru~Mbps 和 \ThruEightyOne~Mbps，高于 100~Mbps 指标要求；以太网与 AFDX 帧格式全面符合规范。
+  \item \textbf{时延与发送抖动：}稳态满载下端到端时延最大为 \Lat~µs，稳态发送抖动为 \Jit~µs；81 条最长帧同拍突发释放时的实测最坏排队交付耗时为 \BurstEightOne~µs（理论最坏上界 1.15~ms），远低于 2~ms 限值；在多 VL 同拍争用与服务报文并发抢占下，发送抖动均严格受控于 50~µs 门限以内。
+  \item \textbf{VL 容量：}硬件全量支持 128 条发送 VL 配置与 4096 条接收 VL 独立配置及双网冗余接收。
+\end{enumerate}
+
+\section{综合实现与网表一致性}
+
+在目标器件 EQ6HL130 上，整机综合消耗 \Lut{} 个 LUT（\LutPct\%）、\FF{} 个触发器（\FFPct\%）和 \Mem{} 个存储块（\MemPct\%）；125~MHz 时钟约束下建立时间最差裕量为 +\Setup~ns，最高评估频率达 \Fmax~MHz。eLinx 导出的综合后 VQM 网表顺利通过双向通信（\ElinxChecks{} 次自检）与五项功能联合测试（\SvcChecks{} 次自检、65 项独立核对），网表仿真的 7 份外部端口记录与 RTL 仿真含拍号逐字节一致，证实综合生成的门级结构完整保持了 RTL 的周期级确定性行为。

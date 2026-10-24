@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="148pt" viewBox="0 0 450 148">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="10.00" y="0.00" width="90.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="55.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Driver ES1</text>
+<text x="55.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">app / cfg stimulus</text>
+<rect x="350.00" y="0.00" width="90.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
+<text x="395.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Driver ES2</text>
+<text x="395.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">app / cfg stimulus</text>
+<rect x="0.00" y="42.00" width="110.00" height="30.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="55.00" y="56.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">ES1: AFDX_top</text>
+<text x="55.00" y="64.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">RTL or netlist</text>
+<rect x="165.00" y="40.00" width="120.00" height="36.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
+<text x="225.00" y="52.81" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Link model</text>
+<text x="225.00" y="61.63" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">4 one-way GMII links</text>
+<text x="225.00" y="70.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">delay, drop, xor, replay</text>
+<rect x="340.00" y="42.00" width="110.00" height="30.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
+<text x="395.00" y="56.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">ES2: AFDX_top</text>
+<text x="395.00" y="64.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">RTL or netlist</text>
+<path d="M 55.00 24.00 L 55.00 42.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="55.00,42.00 52.90,37.00 57.10,37.00" fill="#000"/>
+<path d="M 395.00 24.00 L 395.00 42.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="395.00,42.00 392.90,37.00 397.10,37.00" fill="#000"/>
+<path d="M 110.00 52.00 L 165.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="165.00,52.00 160.00,54.10 160.00,49.90" fill="#000"/>
+<path d="M 165.00 62.00 L 110.00 62.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="110.00,62.00 115.00,59.90 115.00,64.10" fill="#000"/>
+<path d="M 285.00 52.00 L 340.00 52.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="340.00,52.00 335.00,54.10 335.00,49.90" fill="#000"/>
+<path d="M 340.00 62.00 L 285.00 62.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="285.00,62.00 290.00,59.90 290.00,64.10" fill="#000"/>
+<text x="137.50" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">GMII A/B</text>
+<text x="312.50" y="49.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">GMII A/B</text>
+<path d="M 225.00 76.00 L 225.00 100.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="225.00,100.00 222.90,95.00 227.10,95.00" fill="#000"/>
+<text x="228.00" y="90.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">frames</text>
+<rect x="165.00" y="100.00" width="120.00" height="28.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="225.00" y="113.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Port monitors</text>
+<text x="225.00" y="121.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">dump · events · sys_events</text>
+<rect x="0.00" y="100.00" width="110.00" height="28.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0"/>
+<text x="55.00" y="113.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Python reference</text>
+<text x="55.00" y="121.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">afdx_ref, sys_ref</text>
+<rect x="340.00" y="100.00" width="110.00" height="28.00" rx="0" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
+<text x="395.00" y="113.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Verdict</text>
+<text x="395.00" y="121.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">[RESULT] + [CHECK]</text>
+<path d="M 30.00 72.00 L 30.00 90.00 L 190.00 90.00 L 190.00 100.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="190.00,100.00 187.90,95.00 192.10,95.00" fill="#000"/>
+<path d="M 420.00 72.00 L 420.00 90.00 L 260.00 90.00 L 260.00 100.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="260.00,100.00 257.90,95.00 262.10,95.00" fill="#000"/>
+<text x="64.00" y="86.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">ports, cfg reads</text>
+<path d="M 165.00 114.00 L 110.00 114.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="110.00,114.00 115.00,111.90 115.00,116.10" fill="#000"/>
+<text x="137.50" y="111.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">text logs</text>
+<path d="M 55.00 128.00 L 55.00 134.00 L 395.00 134.00 L 395.00 128.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="395.00,128.00 397.10,133.00 392.90,133.00" fill="#000"/>
+<text x="225.00" y="144.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">items checked independently of RTL</text>
+</svg>

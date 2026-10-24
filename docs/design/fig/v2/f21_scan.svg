@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="94pt" viewBox="0 0 450 94">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="0.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="32.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Issue</text>
+<text x="32.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">state_re, scan_vl0</text>
+<rect x="77.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="109.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_state</text>
+<text x="109.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">sync read</text>
+<rect x="154.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="186.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Capture</text>
+<text x="186.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">s0 ← state_q</text>
+<rect x="231.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="263.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Subtract</text>
+<text x="263.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">d = now − next</text>
+<rect x="308.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
+<text x="340.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Window</text>
+<text x="340.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">d + 512 ≥ 0 ?</text>
+<rect x="385.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
+<text x="417.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Decide</text>
+<text x="417.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">candidate</text>
+<path d="M 65.00 38.00 L 77.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="77.00,38.00 72.00,40.10 72.00,35.90" fill="#000"/>
+<path d="M 142.00 38.00 L 154.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="154.00,38.00 149.00,40.10 149.00,35.90" fill="#000"/>
+<path d="M 219.00 38.00 L 231.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="231.00,38.00 226.00,40.10 226.00,35.90" fill="#000"/>
+<path d="M 296.00 38.00 L 308.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="308.00,38.00 303.00,40.10 303.00,35.90" fill="#000"/>
+<path d="M 373.00 38.00 L 385.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="385.00,38.00 380.00,40.10 380.00,35.90" fill="#000"/>
+<text x="32.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c</text>
+<text x="109.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+1</text>
+<text x="186.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+2</text>
+<text x="263.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+3</text>
+<text x="340.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+4</text>
+<text x="417.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+5</text>
+<text x="109.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[0]</text>
+<text x="186.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[1]</text>
+<text x="263.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[2]</text>
+<text x="340.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[3]</text>
+<text x="417.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[4]</text>
+<path d="M 391.00 54.00 L 391.00 80.00 L 83.00 80.00 L 83.00 54.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="83.00,54.00 85.10,59.00 80.90,59.00" fill="#000"/>
+<text x="263.50" y="90.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">queue empty and due: write back timer_active = 0</text>
+</svg>

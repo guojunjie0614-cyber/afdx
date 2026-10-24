@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="152pt" viewBox="0 0 450 152">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="130.00" y="0.00" width="190.00" height="150.00" rx="0" fill="#E6E6E6" stroke="none" stroke-width="0"/>
+<text x="225.00" y="12.00" font-size="7.0" text-anchor="middle" fill="#000">tx / rx cores + AFDX network (UDP 123)</text>
+<rect x="4.00" y="0.00" width="100.00" height="26.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="54.00" y="12.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Slave afdx_rtc</text>
+<text x="54.00" y="20.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">CTRL.master = 0</text>
+<path d="M 54.00 26.00 L 54.00 150.00" fill="none" stroke="#777" stroke-width="0.5" stroke-dasharray="3 2"/>
+<rect x="346.00" y="0.00" width="100.00" height="26.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
+<text x="396.00" y="12.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Master afdx_rtc</text>
+<text x="396.00" y="20.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">CTRL.master = 1</text>
+<path d="M 396.00 26.00 L 396.00 150.00" fill="none" stroke="#777" stroke-width="0.5" stroke-dasharray="3 2"/>
+<path d="M 54.00 50.00 L 130.00 50.00 L 320.00 72.00 L 396.00 72.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="396.00,72.00 391.00,74.10 391.00,69.90" fill="#000"/>
+<text x="225.00" y="45.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">mode 3: Transmit = t1</text>
+<path d="M 396.00 104.00 L 320.00 104.00 L 130.00 128.00 L 54.00 128.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="54.00,128.00 59.00,125.90 59.00,130.10" fill="#000"/>
+<text x="225.00" y="99.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">mode 4: Originate = t1, Receive = t2, Transmit = t3</text>
+<circle cx="54" cy="50" r="2.2" fill="#000"/>
+<text x="47.00" y="52.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">t1</text>
+<circle cx="396" cy="72" r="2.2" fill="#000"/>
+<text x="403.00" y="74.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">t2</text>
+<circle cx="396" cy="104" r="2.2" fill="#000"/>
+<text x="403.00" y="106.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">t3</text>
+<circle cx="54" cy="128" r="2.2" fill="#000"/>
+<text x="47.00" y="130.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">t4</text>
+</svg>

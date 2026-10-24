@@ -1,0 +1,81 @@
+\chapter{原始仿真截图}\label{app:captures}
+
+本附录汇集 ModelSim 原始波形窗口，与正文中的时序图配合阅读。
+
+\section{应用消息与双网发送}
+
+图~\ref{fig:capture-tx} 展示应用口写入与 A、B 两网发送的时序，以及发送起点附近的字节变化。
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{../../sim/wave/png/tx_dual_1.png}
+\par\smallskip
+{\small (a) 应用口写入与双网发送的整体时序\par}
+\medskip
+\includegraphics[width=\linewidth]{../../sim/wave/png/tx_dual_2.png}
+\par\smallskip
+{\small (b) A、B 两网发送起点附近的字节时序\par}
+\caption[应用消息与双网发送的原始波形]{应用消息与双网发送的 ModelSim 原始波形：两网在同一时钟周期开始发送。}
+\label{fig:capture-tx}
+\end{figure}
+
+\clearpage
+\section{双网副本接收与去重}
+
+图~\ref{fig:capture-rm} 展示先到副本的应用交付，以及晚到副本触发的冗余丢弃事件。
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{../../sim/wave/png/rx_redundancy_1.png}
+\par\smallskip
+{\small (a) A 网副本触发交付事件，随后向应用口输出消息\par}
+\medskip
+\includegraphics[width=\linewidth]{../../sim/wave/png/rx_redundancy_2.png}
+\par\smallskip
+{\small (b) 晚到的 B 网副本触发 \code{ev_rm_drop}\par}
+\caption[双网副本接收与去重的原始波形]{双网副本接收与去重的 ModelSim 原始波形：A 网副本交付，晚到的 B 网副本被冗余管理模块丢弃。}
+\label{fig:capture-rm}
+\end{figure}
+
+\clearpage
+\section{FCS 错误检测与计数读回}
+
+图~\ref{fig:capture-fcs} 分别展示 FCS 错误事件、计数变化和配置口的独立读请求。
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{../../sim/wave/png/rx_fcs_error_1.png}
+\par\smallskip
+{\small (a) \code{ev_a_fcs_error} 脉冲与 \code{count_a_fcs} 从 0 变为 1\par}
+\medskip
+\includegraphics[width=\linewidth]{../../sim/wave/png/rx_fcs_error_3.png}
+\par\smallskip
+{\small (b) 配置口读取地址 \code{0x49}，返回 \code{cfg_rvalid=1}、\code{cfg_rdata=1}\par}
+\caption[FCS 错误检测与计数读回的原始波形]{FCS 错误检测与计数读回的 ModelSim 原始波形：检测到 FCS 错误后，A 网 FCS 错误计数加 1；配置口收到读请求后，经两拍返回该计数。}
+\label{fig:capture-fcs}
+\end{figure}
+
+\clearpage
+\section{SNMP Get 请求与响应}
+
+图~\ref{fig:capture-snmp} 展示管理请求到达代理，以及代理从 A、B 两网发送响应的时序。
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{../../sim/wave/png/snmp_get_1.png}
+\par\smallskip
+{\small (a) Get 请求经 A、B 两网到达代理\par}
+\medskip
+\includegraphics[width=\linewidth]{../../sim/wave/png/snmp_get_2.png}
+\par\smallskip
+{\small (b) 代理从 A、B 两网同时发送响应\par}
+\caption[SNMP Get 请求与响应的原始波形]{SNMP Get 请求与响应的 ModelSim 原始波形：请求经双网到达代理，代理处理后经双网发出响应。}
+\label{fig:capture-snmp}
+\end{figure}
+
+\clearpage
+\section{同一 VL 的发送间隔}
+
+图~\ref{fig:capture-bag} 中两个光标分别标记同一 VL 相邻两帧的发送起点，光标间隔为 800~µs，与 100000 拍的 BAG 配置一致。
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{../../sim/wave/png/tx_bag.png}
+\caption[同一 VL 发送间隔的原始波形]{同一 VL 发送间隔的 ModelSim 原始波形：两个发送起点相隔一个 BAG，A、B 两网同时发送。}
+\label{fig:capture-bag}
+\end{figure}
