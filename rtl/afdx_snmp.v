@@ -271,18 +271,16 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     end
 
     // RAM 端口由全速寄存器直接驱动，只提交一次每个 CE 命令。
+    // 四个纯数据寄存器不带同步复位：写使能仍受复位清零，只有写使能为 1 时
+    // 数据才会写入 RAM，因此复位后的数据初值不进入功能路径。
     always @(posedge clk) begin
         if (reset) begin
             cmd_req_re <= 0;
             cmd_req_ra <= 0;
             cmd_out_we <= 0;
-            cmd_out_wa <= 0;
-            cmd_out_data <= 0;
             ram_req_re <= 0;
             ram_req_ra <= 0;
             ram_out_we <= 0;
-            ram_out_wa <= 0;
-            ram_out_data <= 0;
         end
         else begin
             cmd_req_re <= req_re;
