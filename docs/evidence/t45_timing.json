@@ -1,0 +1,179 @@
+{
+  "measurement_date": "2026-10-24",
+  "source_commit": "9b277556eee64cfef1aab52b75a91a9f91105b74",
+  "initialization_checker_commit": "bb1180d1",
+  "scope": "Official eLinx synthesis/implementation/full endpoint static timing of identical RTL and settings now transplanted into t45; no board measurement",
+  "device": "EQ6HL130",
+  "package": "CSG484_H",
+  "clock_period_ns": 8.0,
+  "ce_div": 2,
+  "engineering_option": {
+    "name": "PRES_FAC_MULT",
+    "value": 1.5,
+    "shared_GUI_and_CLI_source": "elinx/constraints.edc",
+    "project": "elinx/AFDX_EndSystem.epr",
+    "coordinate_assignments": false
+  },
+  "metrics": {
+    "setup_ns": 0.013,
+    "hold_ns": 0.229,
+    "fail": 0,
+    "fmax": 125.20346069335938,
+    "resources": {
+      "lut": 34294,
+      "ff": 17454,
+      "clb": 4521,
+      "memory": 366,
+      "pins": 259,
+      "dsp": 0,
+      "pll": 0
+    },
+    "multicycle": {
+      "paths": 50296,
+      "worst_setup_ns": 0.94,
+      "failed_paths": 0
+    },
+    "audit": {
+      "synthesis": true,
+      "implementation": true,
+      "full_timing": true
+    },
+    "registers": 2755,
+    "invalid": 0,
+    "uncovered": 0
+  },
+  "full_report": {
+    "raw_setup_path_records": 203638,
+    "raw_hold_path_records": 203638,
+    "unique_setup_endpoints": 45745,
+    "groups": {
+      "single_cycle": {
+        "paths": 153342,
+        "worst_setup_ns": 0.013,
+        "failed_paths": 0
+      },
+      "multicycle": {
+        "paths": 50296,
+        "worst_setup_ns": 0.94,
+        "failed_paths": 0
+      }
+    },
+    "unique_endpoint_histogram": {
+      "negative": 0,
+      "0_to_100ps": 17,
+      "100_to_200ps": 5,
+      "200_to_300ps": 8,
+      "300_to_500ps": 37,
+      "500_to_1000ps": 192,
+      "1000_to_2000ps": 1572,
+      "at_least_2000ps": 43914
+    },
+    "original_database_sha256": "b7b20b3a82b7e225389244d8026be8fc6018528e93a8a8c741b7d302435b756c",
+    "database_retained": false,
+    "portable_CSV_and_reports_retained": true
+  },
+  "validation": {
+    "CE2_regression": {
+      "passed": true,
+      "count": 39,
+      "checks": 2585512887,
+      "infrastructure_missing_native_case_really_rerun": true,
+      "original_failure_retained": true
+    },
+    "CE2_judge": {
+      "passed": true,
+      "count": 8
+    },
+    "initialization_copies16": {
+      "passed": true,
+      "checks": 11651990,
+      "errors": 0
+    },
+    "main_frozen_149_inputs_match_official_candidate": true,
+    "every_actual_native_regression_input_matches_main": true,
+    "single_five_line_terminal_status": "running; complete results pending"
+  },
+  "top10": [
+    {
+      "from_cell_name": "\\tx_core|init_done~2_I|ff/Q",
+      "to_cell_name": "\\tx_core|cfg_write~I|ff/D",
+      "slack": 13,
+      "levels": 2,
+      "logic_delay": 1132,
+      "net_delay": 6780
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[307]~I|ff/ena",
+      "slack": 34,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6036
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[292]~I|ff/ena",
+      "slack": 34,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6036
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[299]~I|ff/ena",
+      "slack": 34,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6036
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[300]~I|ff/ena",
+      "slack": 34,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6036
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[308]~I|ff/ena",
+      "slack": 34,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6036
+    },
+    {
+      "from_cell_name": "\\rx_core|parse_b|desc_data[93]~I|ff/Q",
+      "to_cell_name": "\\rx_core|map_bank_oh[30]~I|ff/D",
+      "slack": 39,
+      "levels": 4,
+      "logic_delay": 1863,
+      "net_delay": 6023
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[306]~I|ff/ena",
+      "slack": 54,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6016
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[305]~I|ff/ena",
+      "slack": 54,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6016
+    },
+    {
+      "from_cell_name": "\\tx_core|builder|header_index[0]~I|ff/Q",
+      "to_cell_name": "\\tx_core|builder|header[290]~I|ff/ena",
+      "slack": 54,
+      "levels": 4,
+      "logic_delay": 1760,
+      "net_delay": 6016
+    }
+  ],
+  "setup_0300_target_met": false
+}

@@ -85,13 +85,13 @@ proc judge_perf::limits {stage es rate maximum variation wire_a wire_b} {
     set direction es${es}_to_es[expr {3-$es}]
     set meets [expr {$rate>=100.0 && $maximum<=2000.0 && $variation<=50.0}]
     # T39: 54877a09 adds two RX map pipeline cycles, 24.408 + 0.016 us.
-    set expected_e2e_us 24.424
+    set expected_e2e_us [expr {3054*0.008}]
     set same [expr {abs($rate-906.136)<0.000000001 && $maximum==$expected_e2e_us && $variation==0 && abs($wire_a-906.136)<0.000000001 && abs($wire_b-906.136)<0.000000001}]
     set lines [list [format {JUDGE METRIC tb_sys_perf stage=%s direction=%s delivered_mbps=%.3f max_e2e_us=%.3f jitter_us=%.3f gmii_a_mbps=%.3f gmii_b_mbps=%.3f} \
         $stage $direction $rate $maximum $variation $wire_a $wire_b]]
     lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s min_mbps=100 throughput_margin_mbps=%.3f max_e2e_us=2000 latency_margin_us=%.3f max_jitter_us=50 jitter_margin_us=%.3f} \
         [expr {$meets ? "PASS" : "FAIL"}] $stage $direction [expr {$rate-100.0}] [expr {2000.0-$maximum}] [expr {50.0-$variation}]]
-    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_mbps=906.136 expected_e2e_us=24.424 expected_jitter_us=0} \
+    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_mbps=906.136 expected_e2e_us=24.432 expected_jitter_us=0} \
         [expr {$same ? "PASS" : "FAIL"}] $stage $direction]
     if {!$meets || !$same} {
         foreach line $lines {puts $line}

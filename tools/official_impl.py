@@ -97,6 +97,12 @@ def main():
                      synthesis['package'], run.attrib['Id'], implementation.attrib['Id']]
         script.write_text(
             'setlogfile ' + official_synth.tcl(config) + ' ' + official_synth.tcl(output / (name + '.edi')) + '\n'
+            'proc official_trace_physical_assignment {command code result operation} {\n'
+            '  if {[lindex $command 1] eq "-name" && [lindex $command 2] eq "PRES_FAC_MULT"} {\n'
+            '    puts "OFFICIAL_PHYSICAL_ASSIGNMENT PRES_FAC_MULT=[lindex $command 3] code=$code"\n'
+            '  }\n'
+            '}\n'
+            'trace add execution set_global_assignment leave official_trace_physical_assignment\n'
             'source ' + official_synth.tcl(native) + '\n'
             'run_route ' + ' '.join(map(official_synth.tcl, arguments)) + '\n'
             'puts "OFFICIAL_STAGE_COMPLETED route"\nexit 0\n', encoding='utf-8')

@@ -100,6 +100,8 @@ module sys_endpoint #(
 
     reg [7:0] stimulus[0:31999999],message_bytes[0:8191],delivered_bytes[0:4095];
     reg [31:0] expected_count[0:26],cfg_shadow[0:1023];
+    // 0–24 号计数器的事件在设计内经两级寄存才加一，期望值同样晚两拍累加。
+    reg count_lag1[0:24],count_lag2[0:24];
     reg [15:0] user_shadow=0;
     integer tf,rf,cycle=0,release_cycle=0,quiet_since=0,last_wire_end=-100000;
     integer pending_tx=0,outstanding=0,last_message=0,last_outcome=-1,low_run=0;
@@ -180,7 +182,8 @@ module sys_endpoint #(
                 if(index<7)$fwrite(tf,"E %0d %0s\n",cycle,label);
                 else $fwrite(rf,"E %0d %0s\n",cycle,label);
             end
-            expected_count[index]=expected_count[index]+32'd1;
+            if(index<25)count_lag1[index]=1;
+            else expected_count[index]=expected_count[index]+32'd1;
             quiet_since=cycle;
         end
     endtask
@@ -193,6 +196,7 @@ module sys_endpoint #(
         if(CAPTURE_CORE)$fwrite(tf,"G 0 TX_PAGE_AW %0d\nG 0 TX_OFF_AW %0d\nG 0 LOOKAHEAD %0d\n",TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD);
         if(CAPTURE_CORE)$fwrite(rf,"G 0 RX_RING_AW %0d\nG 0 RX_DQ_AW %0d\n",RX_RING_AW,RX_DQ_AW);
         for(k=0;k<27;k=k+1)expected_count[k]=0;
+            for(k=0;k<25;k=k+1)begin count_lag1[k]=0;count_lag2[k]=0;end
         for(k=0;k<1024;k=k+1)cfg_shadow[k]=0;
         payload_fd=$fopen("vectors/sys_payload.count","r");
         if(!payload_fd)begin $display("[SYS_FAIL] cannot open payload count");$finish;end
@@ -211,6 +215,7 @@ module sys_endpoint #(
             read_pending0=0;read_pending1=0;bus_pending=0;ready_check=0;
             user_shadow=0;low_run=0;
             for(k=0;k<27;k=k+1)expected_count[k]=0;
+            for(k=0;k<25;k=k+1)begin count_lag1[k]=0;count_lag2[k]=0;end
             for(k=0;k<1024;k=k+1)cfg_shadow[k]=0;
         end else begin
             if(was_reset)begin
@@ -339,6 +344,10 @@ module sys_endpoint #(
                     $fwrite(rf,"\n");
                     delivery_active=0;delivery_len=0;
                 end
+            end
+            for(k=0;k<25;k=k+1)begin
+                if(count_lag2[k])expected_count[k]=expected_count[k]+32'd1;
+                count_lag2[k]=count_lag1[k];count_lag1[k]=0;
             end
             if(ev_tx[0])record_pulse(0,"accept");
             if(ev_tx[1])record_pulse(1,"drop_dis");

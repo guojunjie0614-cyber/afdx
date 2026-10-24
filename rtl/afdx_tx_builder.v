@@ -84,8 +84,9 @@ module afdx_tx_builder #(
     localparam IP_VERSION_TOS = 16'h4500, IP_NO_FRAGMENT = 16'h0000, IP_TTL_PROTOCOL = 16'h0111;
     localparam UDP_NO_CHECKSUM = 16'h0000;
 
-    // 时间判定再寄存一拍，因此提前五拍比较；准备过程已保证 p_time 稳定。
-    localparam START_LEAD_REGISTERED = 32'hfffffffb;
+    // 时间判定再寄存一拍，送往 MAC 前还经过一级流水缓冲，因此提前六拍比较；
+    // 准备过程已保证 p_time 稳定，帧的首个前导字节仍在 p_time 那拍上线。
+    localparam START_LEAD_REGISTERED = 32'hfffffffa;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg time_due;
 
     // 预读队列里已有这么多字节时，暂停发出新的读请求。
@@ -262,7 +263,7 @@ module afdx_tx_builder #(
 
             now_q <= now;
             time_difference <= now_q - p_time;
-            // 等价于上一版下一拍的有符号“差值 >= -4”，包含 32 位回绕边界。
+            // 等价于下一拍的有符号“差值 >= -5”，包含 32 位回绕边界。
             time_due <= !p_timed || time_difference < 32'h7fffffff
                 || time_difference >= START_LEAD_REGISTERED;
             payload_re <= 0;

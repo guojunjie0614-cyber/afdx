@@ -85,6 +85,9 @@ module afdx_rx_parse #(
     // 随 position 的有效步进提前译码下一字节，停顿时一起保持。
     // 字段写使能只使用本地标志；首字节重置时二者均为假。
     (* preserve = 1, dont_merge = 1 *) reg at_udp_check_low, at_payload;
+    // in_payload 等价于 n_ok && POS_PAYLOAD <= position < end_data，随 position 提前一拍登记：
+    // 进入首个用户字节时取 n_ok（长度相在第 41 字节前已算完），之后到 last_data 为止保持。
+    reg in_payload;
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
@@ -178,6 +181,7 @@ module afdx_rx_parse #(
             position <= 0;
             at_udp_check_low <= 0;
             at_payload <= 0;
+            in_payload <= 0;
             high_byte <= 0;
             sn <= 0;
             vlid <= 0;
@@ -258,6 +262,7 @@ module afdx_rx_parse #(
                     position <= 1;
                     at_udp_check_low <= 0;
                     at_payload <= 0;
+                    in_payload <= 0;
                     high_byte <= m_data;
                     overflow <= 0;
                     begin ip_add_valid <= 1; ip_seed <= 1; ip_add_word <= 0; end
@@ -277,6 +282,7 @@ module afdx_rx_parse #(
                     position <= position + 1'b1;
                     at_udp_check_low <= position == POS_UDP_CHECK_LOW - 1;
                     at_payload <= position == POS_PAYLOAD - 1;
+                    in_payload <= position == POS_PAYLOAD - 1 ? n_ok : in_payload && position != last_data;
                     // 环写口的数据和地址随字节自由运行，只在 ring_we 提交拍生效；
                     // 位置比较不再进入写数据与写地址的使能锥。
                     ring_wd <= m_data;
@@ -308,7 +314,7 @@ module afdx_rx_parse #(
                         begin ip_add_valid <= 1; ip_add_word <= { high_byte, m_data }; end
                     if (position >= POS_IP_ADDRESSES && position <= POS_UDP_CHECK_LOW && position[0])
                         begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
-                    if (n_ok && position >= POS_PAYLOAD && position < end_data) begin
+                    if (in_payload) begin
                         if (position[0]) begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
                         else if (position == last_data) begin udp_add_valid <= 1; udp_add_word <= { m_data, 8'b0 }; end
                         if (position == POS_PAYLOAD) begin
