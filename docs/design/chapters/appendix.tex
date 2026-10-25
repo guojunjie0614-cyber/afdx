@@ -13,24 +13,24 @@ RTL 共 24 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 \code{afdx_svc.v} & 应用与服务的消息轮询发送（授权寄存）、按端口分发接收 \\
 \code{afdx_tx_core.v} & 发送核心集成模块，例化发送侧各模块、输出流缓冲和 7 张表 \\
 \code{afdx_tx_buf.v} & 消息分页写入（写口流水寄存）、入队请求、失败后回收缓存页 \\
-\code{afdx_tx_free.v} & 256 页空闲页 FIFO，支持双还页口并发回收 \\
-\code{afdx_tx_engine.v} & BAG 调度：扫描、入队、授权、起始确认 \\
+\code{afdx_tx_free.v} & 256 页空闲页 FIFO，支持双页面回收端口并发回收 \\
+\code{afdx_tx_engine.v} & BAG 调度：扫描、入队、授权、发送起始确认（TX Start Confirm） \\
 \code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、-6 拍提前补偿 \\
-\code{afdx_mac_tx.v} & 双网发送 MAC：前导码、FCS、帧间隔、欠载检测与异常帧终止 \\
+\code{afdx_mac_tx.v} & 双网发送 MAC：前导码、FCS、帧间隔、发送下溢（TX Underrun）检测与异常帧终止 \\
 \code{afdx_crc32_d8.v} & 逐字节 CRC32 组合逻辑 \\
-\code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块、分体式映射表和交付模块 \\
+\code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块、多 Bank 分块映射表和交付模块 \\
 \code{afdx_mac_rx.v} & 接收 MAC：SFD 检测、CRC 校验、剥离 FCS \\
 \code{afdx_rx_parse.v} & 帧头检查、载荷预写入环形缓冲、帧尾分类 \\
 \code{afdx_rx_engine.v} & 32 子库查表、完整性检查、冗余管理、过期清理 \\
 \code{afdx_rx_deliver.v} & 读取块 RAM 交付队列 \code{rx_dq}，从环形缓冲逐字节交付 \\
-\code{afdx_ram_sdp.v} & 伪双口（Simple Dual-Port）同步 RAM，全设计唯一的 RAM 例化原语 \\
-\code{afdx_rtc.v} & 实时时钟与 SNTP 主从对时 \\
+\code{afdx_ram_sdp.v} & 简单双端口（Simple Dual-Port, SDP）同步 RAM，全设计唯一的 RAM 例化原语 \\
+\code{afdx_rtc.v} & 实时时钟与 SNTPv4 纳秒级时钟同步 \\
 \code{afdx_ntp_fraction.v} & 纳秒与 NTP 小数的逐位换算 \\
 \code{afdx_snmp.v} & SNMP 顶层包装：请求捕获、MIB/Trap RAM 接口与 \code{CE_DIV=2} 使能树 \\
 \code{afdx_snmp_engine.v} & SNMP 协议核心：ASN.1/BER 编解码、MIB 读写与响应生成（16~ns 域） \\
 \code{afdx_615a.v} & 615A 顶层包装：TFTP 捕获、6 块协议 RAM 接口与使能树 \\
-\code{afdx_615a_engine.v} & 615A 协议核心：加卸载状态机与文件 CRC-16 校验（16~ns 域） \\
-\code{afdx_mgmt_tx.v} & 管理面共享发送输出缓冲：256 字节帧缓冲，供 SNMP 与 615A 复用解耦 \\
+\code{afdx_615a_engine.v} & 615A 协议核心：数据加载状态机与文件 CRC-16 硬件校验（16~ns 域） \\
+\code{afdx_mgmt_tx.v} & 管理面流式预取发送适配器：8 字节预取队列，供 SNMP 与 615A 复用解耦 \\
 \end{longtable}
 
 \Needspace{19\baselineskip}
@@ -48,7 +48,7 @@ RTL 共 24 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 发送 / 接收 VL & 128 / 4096 & 接收映射表 65536 项 \\
 帧间隔 & 12 拍 & 96~ns \\
 初始化 & 65538 拍 & 解除复位到 \code{tx_ready}，524.304~µs \\
-SNMP 请求缓存 & 256~B & 单变量绑定 \\
+SNMP 请求缓存 & 256~B & 单 VarBind \\
 615A 加载区 & 8~KiB & 头文件区 2~KiB，LUR 区 512~B \\
 615A 超时 / 重传 & 2~s / 1 次 & 可经寄存器修改 \\
 RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
@@ -65,15 +65,15 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \caption{服务寄存器}\label{tab:regs}\\
 \longtablehead{4}{地址 & 名称 & 读写 & 含义}
 \multicolumn{4}{l}{\textit{RTC}} \\*
-\code{0x80} & \code{CTRL} & RW & 位 0 启用，位 1 主端；写位 2 装入暂存时间 \\
-\code{0x81} & \code{PERIOD} & RW & 从端请求间隔（拍），复位 125000 \\
+\code{0x80} & \code{CTRL} & RW & 位 0 启用，位 1 Server 模式；写位 2 装入暂存时间 \\
+\code{0x81} & \code{PERIOD} & RW & Client 端请求间隔（拍），复位 125000 \\
 \code{0x82} & \code{TX_VL} & RW & 发送 VL，低 7 位 \\
 \code{0x83} & \code{UDP_PORT} & RW & UDP 端口，复位 123 \\
 \code{0x84} & \code{SEC} & RW & 写秒暂存值；读当前秒并锁存纳秒 \\
 \code{0x85} & \code{NS} & RW & 写纳秒暂存值；读锁存的纳秒值 \\
 \code{0x86} & \code{OFFSET_SEC} & RO & 最近偏差的有符号秒部分 \\
 \code{0x87} & \code{OFFSET_NS} & RO & 最近偏差的纳秒余数 \\
-\code{0x88} & \code{SYNC_COUNT} & RO & 从端校时次数 \\
+\code{0x88} & \code{SYNC_COUNT} & RO & Client 时钟同步次数 \\
 \midrule
 \multicolumn{4}{l}{\textit{SNMP}} \\*
 \code{0x90} & \code{ENABLE} & RW & 位 0 启用代理 \\
@@ -126,7 +126,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{afdx_tx_buf} 写完消息后，将描述符写入 \code{tx_desc}，再向引擎发出入队请求。引擎选中一条消息后，将整帧字段一次性交给组帧器；组帧器在帧开始发送时报告起始时刻，见表~\ref{tab:ifgrant}。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.2cm-6\tabcolsep\relax}}
-\caption{入队、授权和起始回报接口}\label{tab:ifgrant}\\
+\caption{入队、授权和发送起始指示接口}\label{tab:ifgrant}\\
 \longtablehead{3}{信号 & 位宽 & 含义}
 \multicolumn{3}{l}{\textit{入队（\code{tx_buf} $\rightarrow$ \code{tx_engine}，请求应答）}} \\*
 \code{enq_valid} & 1 & 保持有效，直至收到 \code{enq_ack} \\
@@ -134,7 +134,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{enq_ack}、\code{enq_result} & 1、3 & 单拍应答；0 接纳，1 VL 未启用，2 队列满，3 超长（4 无空闲页由 \code{tx_buf} 自行判定） \\
 \code{tx_desc}[43:0] & 44 & \{\code{len}[10:0], \code{port_en}, \code{sport}[15:0], \code{dport}[15:0]\}，以首页号为地址 \\
 \midrule
-\multicolumn{3}{l}{\textit{授权（\code{tx_engine} $\rightarrow$ \code{tx_builder}，单槽交接）}} \\*
+\multicolumn{3}{l}{\textit{授权（\code{tx_engine} $\rightarrow$ \code{tx_builder}，单深缓冲握手（Single-Slot Handshake）}} \\*
 \code{grant_valid}、\code{grant_ready} & 1、1 & \code{grant_ready} $=\neg$\code{pending}，即单帧待发槽位空闲 \\*
 \code{grant_a}、\code{grant_b} & 1、1 & 两网启用位（配置字 0 的 [1]、[2]） \\*
 \code{grant_timed}、\code{grant_time} & 1、32 & \code{grant_timed} 为 1 时，帧不得早于 \code{grant_time} 起始；为 0 时可立即发送 \\*
@@ -143,7 +143,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{grant_sport}、\code{grant_dport} & 16、16 & \code{port_en} 为 1 取消息自带端口，否则取配置字 5 \\*
 \code{grant_len}、\code{grant_sn}、\code{grant_page} & 11、8、8 & 载荷字节数、帧序号、首页号 \\*
 \midrule
-\multicolumn{3}{l}{\textit{起始回报（\code{tx_builder} $\rightarrow$ \code{tx_engine}）}} \\*
+\multicolumn{3}{l}{\textit{发送起始指示（TX Start Indication）（\code{tx_builder} $\rightarrow$ \code{tx_engine}）}} \\*
 \code{start_valid}、\code{t_start} & 1、32 & 单拍脉冲；\code{t_start} 为输出首个前导字节时的 \code{now} \\
 \end{longtable}
 
@@ -159,7 +159,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{s_last} & 1 & 与 SN 字节同拍 \\
 \code{s_en_a}、\code{s_en_b} & 1、1 & 起始拍锁存，选择本帧发往哪一网 \\
 \code{tx_sof}、\code{tx_eof} & 1、1 & 首个前导字节、帧尾（FCS 发完）的单拍脉冲 \\
-\code{tx_underrun} & 1 & 数据阶段上游未备好字节的欠载指示 \\
+\code{tx_underrun} & 1 & 数据阶段上游未备好字节的下溢（Underrun）指示 \\
 \end{longtable}
 
 \section{帧描述与交付队列}
@@ -169,7 +169,7 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.2cm-6\tabcolsep\relax}}
 \caption{帧描述与交付队列项}\label{tab:ifdesc}\\
 \longtablehead{3}{字段 & 位宽 & 含义}
-\multicolumn{3}{l}{\textit{帧描述（\code{rx_parse} $\rightarrow$ \code{rx_engine}，单槽交接，高位在前）}} \\*
+\multicolumn{3}{l}{\textit{帧描述（\code{rx_parse} $\rightarrow$ \code{rx_engine}，单深缓冲握手（Single-Slot Handshake），高位在前）}} \\*
 \code{vlid} & 16 & 目的 MAC 第 4--5 字节 \\*
 \code{sn} & 8 & 帧末 SN \\*
 \code{sport}、\code{dport} & 16、16 & UDP 端口 \\*
@@ -218,15 +218,15 @@ PSN & 同一网上同一 VL 上一帧的序列号 \\
 \code{pend_vl} & 已授权但尚未开始发送的 VL \\
 \code{cfg_ok} & 引擎在本拍不发出配置表读的指示 \\
 有效副本 & 帧格式、FCS 与协议头检查通过，且满足接收配置和已启用的完整性检查的单网帧副本 \\
-还页 & 将页号送回空闲页池（经还页口 \code{ret1_*} 或 \code{ret2_*}）\\
+页面释放 & 将页号送回空闲页池（经页面回收口 \code{ret1_*} 或 \code{ret2_*}）\\
 端口匹配 & 服务根据 UDP 目的端口确定是否接收当前消息（信号 \code{svc_rx_claim}）\\
-清表 & 复位后逐项清零收发配置表与状态表（\code{rx_map}、\code{rx_cfg}、\code{rx_state}、\code{tx_cfg}、\code{tx_state}）的过程 \\
-占线 & 一帧在线路上的占用时长 $C(n)$，单位为拍 \\
-主端 / 从端 & SNTP 角色：主端应答请求并回送时间戳；从端周期发送请求并根据响应校时 \\
+表初始化 & 复位后逐项清零收发配置表与状态表（\code{rx_map}、\code{rx_cfg}、\code{rx_state}、\code{tx_cfg}、\code{tx_state}）的过程 \\
+线路占用 & 一帧在线路上的占用时长 $C(n)$，单位为拍 \\
+Server / Client & SNTP 角色：Server 端应答请求并回显时间戳；Client 端周期发送请求并执行时钟同步校准 \\
 应答 & 请求应答式握手的确认脉冲（\code{ack}），用于确认接口请求，与协议响应报文不同 \\
 计时单位 & \code{now_c} 的单位，32.768~µs \\
 发送抖动 & 帧起始相对 BAG 允许时刻的偏差 \\
-起始回报 / 起始确认 & 组帧器在 \code{tx_sof} 有效拍经 \code{start_valid}/\code{t_start} 向引擎报告帧起始 / 引擎据此写回 \code{next_time} 的操作 \\
+起始指示 / 起始确认 & 组帧器在 \code{tx_sof} 有效拍经 \code{start_valid}/\code{t_start} 发送起始指示（TX Start Indication）；发送引擎据此完成发送起始确认（TX Start Confirm）并写回更新后的 \code{next_time} \\
 \bottomrule
 \end{tabularx}
 \end{table}

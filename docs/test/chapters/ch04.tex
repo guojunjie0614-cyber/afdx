@@ -73,7 +73,7 @@ VL 禁用 & 向未启用的 VL 125 提交 1 条消息 & \code{0x41} = 1 \\
 \end{tabularx}
 \end{table}
 
-其中，“无空闲页”用例重点验证跨页分配失败时的半途还页闭环：当空闲页池仅剩 1 页时，首条 1471 字节消息（需 3 页）在写满第 1 页并申请第 2 页时触发无页拒绝，分页缓存立即通过还页口 2 将已占用的 1 页退回空闲页池；紧随其后的 512 字节单页消息得以成功复用该页并完成入队发送；而在该页尚未被组帧器读完归还前提交的第 3 条 1 字节消息，则再次因空闲页数为 0 被准确拒绝。三条消息依次呈现“拒绝 $\rightarrow$ 接纳 $\rightarrow$ 拒绝”，证明异常还页无泄漏。
+其中，“无空闲页”用例重点验证跨页分配失败时的半途页面释放闭环：当空闲页池仅剩 1 页时，首条 1471 字节消息（需 3 页）在写满第 1 页并申请第 2 页时触发无页拒绝，分页缓存立即通过页面回收口 2 将已占用的 1 页退回空闲页池；紧随其后的 512 字节单页消息得以成功复用该页并完成入队发送；而在该页尚未被组帧器读完归还前提交的第 3 条 1 字节消息，则再次因空闲页数为 0 被准确拒绝。三条消息依次呈现“拒绝 $\rightarrow$ 接纳 $\rightarrow$ 拒绝”，证明异常页面释放与回收无泄漏。
 
 \Needspace{23\baselineskip}
 \subsection{仿真波形}
@@ -86,7 +86,7 @@ VL 禁用 & 向未启用的 VL 125 提交 1 条消息 & \code{0x41} = 1 \\
 \Needspace{14\baselineskip}
 \section{高完整性通信}\label{sec:f-ic}
 
-高完整性通信测试覆盖 MAC 与协议头错误过滤、序列号完整性检查（IC）、双网冗余管理（RM）、接收环形缓冲与交付队列满溢回退以及各分类统计计数器核对，对应需求测试点 F2-01 至 F2-08，测试结果见表~\ref{tab:f-ic}。
+高完整性通信测试覆盖 MAC 与协议头错误过滤、序列号完整性检查（IC）、双网冗余管理（RM）、接收环形缓冲与交付队列溢出回退以及各分类统计计数器核对，对应需求测试点 F2-01 至 F2-08，测试结果见表~\ref{tab:f-ic}。
 
 \begin{items}{高完整性通信测试项}{tab:f-ic}
 RX-02 & 输入 FCS 错误、帧长错误、IP 头错误、UDP 头错误、未知 VL、网络不允许的帧 & 各帧的拒绝原因与参考判决一致；均未交付 & 576923/0\newline 890/0 & 通过 \\
@@ -104,7 +104,7 @@ SYS-07 & 接收环形缓冲缩为 512 字节；每端发送 513、1000、1471 �
 
 \subsection{序号判决与冗余窗口边界}
 
-用例 RX-03 解耦验证 IC 序号判决与 RM 冗余去重机制。单独验证 IC 时（开启 IC、关闭 RM，图~\ref{fig:ic-sequence}），接收引擎为每条 VL 的 A、B 两网独立维护上一接收序列号 PSN（图中记为 \code{last}）。根据 ARINC 664 P7 规则，清表后首帧、对端复位首帧（$\text{SN}=0$）以及满足 $\text{SN}\in\{\text{PSN}+1,\text{PSN}+2\}$（在 1--255 环上容忍单帧丢失）的帧均判为有效；无论本次检查通过与否，只要通过映射与配置检查，均以当前 SN 更新本网 PSN，使后续连续帧可在单次乱序后立即恢复同步。
+用例 RX-03 解耦验证 IC 序号判决与 RM 冗余去重机制。单独验证 IC 时（开启 IC、关闭 RM，图~\ref{fig:ic-sequence}），接收引擎为每条 VL 的 A、B 两网独立维护上一接收序列号 PSN（图中记为 \code{last}）。根据 ARINC 664 P7 规则，表初始化后首帧、对端复位首帧（$\text{SN}=0$）以及满足 $\text{SN}\in\{\text{PSN}+1,\text{PSN}+2\}$（在 1--255 环上容忍单帧丢失）的帧均判为有效；无论本次检查通过与否，只要通过映射与配置检查，均以当前 SN 更新本网 PSN，使后续连续帧可在单次乱序后立即恢复同步。
 
 图~\ref{fig:ic-sequence}(a) 展示了覆盖五类状态转移的测试序列：依次注入序号 7、8（步进 1，正常连续）、10（步进 2，单帧丢失容忍），三帧均被接纳；随后注入序号 13（步进 3，超出容忍窗口），该帧被 IC 拒绝但仍将 PSN 更新为 13；紧随其后的序号 14 因满足 $13+1$ 立即恢复接纳，而再次注入的重复序号 14（步进 0）则被准确丢弃。后续继续注入 0、1、0、2 及跨 255$\rightarrow$1 回绕序列，完整的 20 帧激励共接纳 13 帧、拒绝 7 帧，与参考模型完全一致。
 
@@ -179,16 +179,16 @@ UDP 头错误 & SYS-02 & 校验和字段非零，每端每网 1 帧，共 4 帧 
 SNMP 网络管理测试覆盖 v1/v2c 协议下的 Get、GetNext 全表遍历、Set 配置修改、异常请求拒绝以及 v2 Trap 主动通知，对应需求测试点 F3-01 至 F3-06（表~\ref{tab:f-snmp}）。外部管理端基于第三方库 \code{pyasn1} 构造与解析 BER 报文，经由 AFDX 双网通路与被测端代理交互，并将报文返回值与配置总线直接读回值交叉比对。
 
 \begin{items}{SNMP 测试项}{tab:f-snmp}
-SVC-01 & Get、GetNext；v1、v2c；依次遍历各对象直至表尾；错误团体名（\code{community}）；请求号正负值；BER 长度边界（16 字节团体名、长形式长度）；穿插双向用户消息 & 响应字段经独立解码后核对正确；数值与配置口读回一致；不响应团体名错误的请求，\code{BAD_COMMUNITY} 计数加 1；用户消息交付不受影响 & 37611/0\newline 926/0 & 通过 \\*
-SVC-02 & Set 后读回；向只读对象发送设置请求，以及发送类型错误、团体名错误的设置请求；切换开关触发启动通知和认证失败通知；穿插用户消息 & 设置值读回一致；拒绝时错误字段正确，寄存器保持原值；两类通知字段正确 & 8563/0\newline 188/0 & 通过 \\*
+SVC-01 & Get、GetNext；v1、v2c；依次遍历各对象直至表尾；错误 Community（\code{community}）凭据；请求号正负值；BER 长度边界（16 字节 Community 字符串、长格式长度（Long-Form Length）；穿插双向用户消息 & 响应字段经独立解码后核对正确；数值与配置口读回一致；不响应Community错误的请求，\code{BAD_COMMUNITY} 计数加 1；用户消息交付不受影响 & 37611/0\newline 926/0 & 通过 \\*
+SVC-02 & Set 后读回；向只读对象发送设置请求，以及发送类型错误、Community错误的设置请求；切换开关触发启动通知和认证失败通知；穿插用户消息 & 设置值读回一致；拒绝时错误字段正确，寄存器保持原值；两类通知字段正确 & 8563/0\newline 188/0 & 通过 \\*
 SVC-03 & 批量测试；Get、GetNext、Set、Trap 四类报文交互 & 四类报文字段解码正确，数值与读回一致 & \SnmpChecks/0\newline 平台自检 & 通过 \\*
 \end{items}
 
 \subsection{查询、设置与通知结果}
 
-用例 SVC-01 对 MIB 中的 36 个管理对象（含 \code{sysDescr}、\code{sysUpTime} 两个系统对象，以及私有子树下的设备版本、\code{USER_ID}、RTC 状态、全部 27 个收发与去重计数器及 SNMP 自身统计量）分别执行 SNMPv1 与 v2c Get 精确查询，并从根前缀 \code{1.3} 起执行 GetNext 字典序遍历。实测全部响应均从 UDP 端口 161 返回请求源端口，协议版本、团体名（\code{community}）与 \code{request-id} 原样保持，字符串、\code{TimeTicks} 及各 32 位计数器的 ASN.1 编码与配置总线读回值完全一致。针对未定义 OID 的越界访问，v1 准确返回 \code{noSuchName=2}（错误索引 1），v2c Get 返回异常值标签 \code{noSuchObject}（\code{0x80}），v2c GetNext 在遍历越过表尾后返回 \code{endOfMibView}（\code{0x82}）。
+用例 SVC-01 对 MIB 中的 36 个管理对象（含 \code{sysDescr}、\code{sysUpTime} 两个系统对象，以及私有子树下的设备版本、\code{USER_ID}、RTC 状态、全部 27 个收发与去重计数器及 SNMP 自身统计量）分别执行 SNMPv1 与 v2c Get 精确查询，并从根前缀 \code{1.3} 起执行 GetNext 字典序遍历。实测全部响应均从 UDP 端口 161 返回请求源端口，协议版本、Community（\code{community}）与 \code{request-id} 原样保持，字符串、\code{TimeTicks} 及各 32 位计数器的 ASN.1 编码与配置总线读回值完全一致。针对未定义 OID 的越界访问，v1 准确返回 \code{noSuchName=2}（错误索引 1），v2c Get 返回异常值标签 \code{noSuchObject}（\code{0x80}），v2c GetNext 在遍历越过表尾后返回 \code{endOfMibView}（\code{0x82}）。
 
-用例 SVC-02 验证读写对象修改、非法写入拒绝与 Trap 触发机制：先依次通过 v1 Set 和 v2c Set 将读写对象 \code{USER_ID} 改写为 \code{0x3456} 和 \code{0xabcd}，每次改写后经 SNMP Get 与主机配置口读回均确认生效；随后注入只读对象写请求与错误类型写请求，v1/v2c 分别返回表~\ref{tab:snmp-errors} 所示的标准差错状态码（错误索引均为 1），且 \code{USER_ID} 维持 \code{0xabcd} 不变；当注入错误团体名的 Set 请求时，代理静默丢弃而不回包，同时递增 \code{BAD_COMMUNITY} 计数。
+用例 SVC-02 验证读写对象修改、非法写入拒绝与 Trap 触发机制：先依次通过 v1 Set 和 v2c Set 将读写对象 \code{USER_ID} 改写为 \code{0x3456} 和 \code{0xabcd}，每次改写后经 SNMP Get 与主机配置口读回均确认生效；随后注入只读对象写请求与错误类型写请求，v1/v2c 分别返回表~\ref{tab:snmp-errors} 所示的标准差错状态码（错误索引均为 1），且 \code{USER_ID} 维持 \code{0xabcd} 不变；当注入错误 Community 的 Set 请求时，代理静默丢弃而不回包，同时递增 \code{BAD_COMMUNITY} 计数。
 
 \begin{table}[!htbp]\centering
 \caption{SNMP Set 拒绝结果}\label{tab:snmp-errors}
@@ -202,14 +202,14 @@ SVC-03 & 批量测试；Get、GetNext、Set、Trap 四类报文交互 & 四类�
 \end{tabularx}
 \end{table}
 
-在 Trap 通知测试中：当 \code{TRAP_ENABLE} 关闭时，使能代理并等待 1,250,000 拍确认无报文发出；置位 \code{TRAP_ENABLE} 并重启代理后，管理端在 UDP 端口 162 准确收到一条 \code{coldStart} 通知，随后注入错误团体名请求又触发一条 \code{authenticationFailure} 通知；再次关闭 \code{TRAP_ENABLE} 后重复上述触发条件，Trap 发送计数稳定保持为 2。经 \code{pyasn1} 解码确认，两条 SNMPv2-Trap（PDU \code{0xA7}）均携带 \code{sysUpTime.0} 与 \code{snmpTrapOID.0} 两个变量绑定，分别指向标准 Trap OID 的尾项 1 和 5。在 22 个 Set/Trap 交互场景穿插进行的双向用户流量中，两端各 29 条用户消息均完整、单次交付，验证了服务通道轮询与端口分发的隔离性。
+在 Trap 通知测试中：当 \code{TRAP_ENABLE} 关闭时，使能代理并等待 1,250,000 拍确认无报文发出；置位 \code{TRAP_ENABLE} 并重启代理后，管理端在 UDP 端口 162 准确收到一条 \code{coldStart} 通知，随后注入错误 Community请求又触发一条 \code{authenticationFailure} 通知；再次关闭 \code{TRAP_ENABLE} 后重复上述触发条件，Trap 发送计数稳定保持为 2。经 \code{pyasn1} 解码确认，两条 SNMPv2-Trap（PDU \code{0xA7}）均携带 \code{sysUpTime.0} 与 \code{snmpTrapOID.0} 两个 VarBind，分别指向标准 Trap OID 的尾项 1 和 5。在 22 个 Set/Trap 交互场景穿插进行的双向用户流量中，两端各 29 条用户消息均完整、单次交付，验证了服务通道轮询与端口分发的隔离性。
 
 \figTiming[SNMP Get 请求与响应]{t14_w_snmp}{RTL 信号波形：SNMP Get 请求与响应的帧首窗口；(a) 请求在 525.292~µs 到达 GMII；(b) 代理在 531.676~µs 从 A、B 两网同时开始响应}{fig:wsnmp}
 
 \Needspace{18\baselineskip}
-\section{615A 数据加卸载}\label{sec:f-615a}
+\section{ARINC 615A 软件数据加载}\label{sec:f-615a}
 
-ARINC 615A 数据加卸载测试覆盖单文件上传（LUI、LUS、LUR、LUH 头文件及数据文件）、介质定义卸载（LND、LNS、LNR 及 \code{MEMORY.BIN} 回传）、TFTP 512 字节整块与短末块边界、CRC-16 校验失败与丢包超时重传，以及片内 8~KiB 加载区的数据一致性核对，对应需求测试点 F4-01 至 F4-05（表~\ref{tab:f-615a}）。
+ARINC 615A 软件数据加载测试覆盖单文件上传（LUI、LUS、LUR、LUH 头文件及数据文件）、介质定义下载（Media-Defined Download, MDD）（LND、LNS、LNR 及 \code{MEMORY.BIN} 回传）、TFTP 512 字节整块与短末块边界、CRC-16 校验失败与丢包超时重传，以及片内 8~KiB 加载区的数据一致性核对，对应需求测试点 F4-01 至 F4-05（表~\ref{tab:f-615a}）。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
 \setlength{\tabcolsep}{4pt}
@@ -224,12 +224,12 @@ SVC-04 & 加载：LUI、LUR、头文件、数据文件、LUS；卸载：LND、LN
 \end{minipage}\par\medskip
 
 \Needspace{8\baselineskip}
-SVC-04 对每次加卸载会话同时执行四项闭环核对：
+SVC-04 对每次数据加载会话同时执行四项闭环核对：
 \begin{enumerate}
   \item 线路上传输的各阶段协议文件与 TFTP 报文经独立解码后格式与字段正确；
   \item 状态文件（LUS/LNS）的进度百分比与状态码演进正确，单次丢包重传后能恢复完成，重传耗尽或校验出错时准确终止并上报原因码；
   \item 上传完成后经主机配置总线逐字节读回片内 8~KiB 加载区 RAM，与原始数据文件逐字节一致；
-  \item 介质定义卸载回传的 \code{MEMORY.BIN} 文件与最近一次成功上传的数据文件逐字节一致。
+  \item 介质定义下载（Media-Defined Download）回传的 \code{MEMORY.BIN} 文件与最近一次成功上传的数据文件逐字节一致。
 \end{enumerate}
 
 \subsection{加载与卸载场景结果}
@@ -238,9 +238,9 @@ SVC-04 对每次加卸载会话同时执行四项闭环核对：
 \begin{itemize}
   \item \textbf{正常传输与 TFTP 末块边界：}1500 字节文件（拆分为 512、512、476 字节三块，以短块收尾）与 1536 字节文件（3 个 512 字节满块后补发零长度 \code{DATA4} 收尾）分别覆盖了 RFC 1350 的两类传输终止边界。两次上传过程中，LUS 依次报告初始化（\code{0x0001}）、传输中（\code{0x0002}）和完成（\code{0x0003}，进度 100\%），状态文件计数连续递增，\code{STATUS} 寄存器为 \code{0x0002}（成功）；配置口读回的片内 RAM 数据及后续卸载回传的 \code{MEMORY.BIN} 均与原文件逐字节吻合。
   \item \textbf{单次丢包与超时重传恢复：}上传期间首次丢弃 \code{DATA2} 后，目标端在 2~ms 超时后重发前一块 \code{ACK1}，触发加载端补发 \code{DATA2}（重传计数加 1）并顺利完成 1500 字节写入；卸载期间首次丢弃 \code{ACK2} 后，目标端超时重发内容一致的 \code{DATA2}，加载端去重接收后文件完整无损。
-  \item \textbf{数据损坏与 CRC-16 拦截：}翻转上传 \code{DATA2} 第 14 字节最高位后，目标端流式 CRC-16 校验与 LUH 头文件声明值失配，立即发出 TFTP \code{ERROR} 及失败状态文件（LUS 总状态 \code{0x1003}、文件级状态 \code{0x1007}），\code{STATUS} 寄存器记录 \code{0x0303}（原因码 3：CRC 错），进度定格在 100\% 以下。
+  \item \textbf{数据损坏与 \mbox{CRC-16} 拦截：}翻转上传 \code{DATA2} 第 14 字节最高位后，目标端流式 \mbox{CRC-16} 校验与 LUH 头文件声明值失配，立即发出 TFTP \code{ERROR} 及失败状态文件（LUS 总状态 \code{0x1003}、文件级状态 \code{0x1007}），\code{STATUS} 寄存器记录 \code{0x0303}（原因码 3：CRC 错），进度定格在 100\% 以下。
   \item \textbf{重传次数耗尽终止：}上传持续丢弃 \code{DATA2} 时，目标端在重发两次 \code{ACK1} 后判定重传耗尽（重传计数加 2，已加载字节数停留在 512，\code{STATUS} 为 \code{0x0503}）；卸载持续丢弃 \code{ACK2} 时，目标端重发两次 \code{DATA2} 后终止会话，状态文件进度按已确认的首块报告为 $\lfloor 51200/1500\rfloor = 34\%$。两种场景均以状态码 \code{0x1003}/\code{0x1007} 干净结束。
-  \item \textbf{协议版本兼容与忙态写保护：}分别配置 \code{A4}、\code{A3} 版本均可正常完成加卸载，且传输忙期间向版本等控制寄存器发起的改写请求被硬件安全忽略；当注入不受支持的 \code{A5} 版本 LUR 时，目标端在列表阶段直接拒绝（LUS 报告 \code{FAIL 1}，\code{STATUS} 为 \code{0x0103}，已加载字节数为 0），不再发起后续头文件与数据文件请求。
+  \item \textbf{协议版本兼容与忙态写保护：}分别配置 \code{A4}、\code{A3} 版本均可正常完成数据加载，且传输忙期间向版本等控制寄存器发起的改写请求被硬件安全忽略；当注入不受支持的 \code{A5} 版本 LUR 时，目标端在列表阶段直接拒绝（LUS 报告 \code{FAIL 1}，\code{STATUS} 为 \code{0x0103}，已加载字节数为 0），不再发起后续头文件与数据文件请求。
   \item \textbf{端口切换、选项忽略与非法文件名拒绝：}将请求端口改配为 1059 后，RRQ/WRQ 随之切换至 1059 端口建立会话；当请求附带 \code{blksize=1024}、\code{port=5555} 等 RFC 2347 扩展选项时，目标端按规范忽略选项、不回 OACK，维持 512 字节块长传输；请求卸载不存在的 \code{ABSENT.BIN} 时，目标端准确返回 \code{FAIL 1} 且输出长度为 0。
 \end{itemize}
 
@@ -250,15 +250,15 @@ SVC-04 对每次加卸载会话同时执行四项闭环核对：
 \Needspace{14\baselineskip}
 \section{RTC 时钟同步}\label{sec:f-rtc}
 
-RTC 时钟同步测试覆盖 SNTPv4 主从对时交互、空载与带载同步精度、跨秒进位、纳秒与 32 位 NTP 小数双向换算、响应丢失重发以及非法/过期响应过滤，对应需求测试点 F5-01 至 F5-06（表~\ref{tab:f-rtc}）。测试中通过独立解码线路上的 48 字节 SNTP 报文，逐项核对模式字段、时间戳编码及响应帧中回显的 \code{Originate} 时间戳。
+RTC 时钟同步测试覆盖 SNTPv4 客户端/服务端时钟同步交互、空载与带载同步精度、跨秒进位、纳秒与 32 位 NTP 小数双向无损换算、应答丢失重发以及非法/过期应答过滤，对应需求测试点 F5-01 至 F5-06（表~\ref{tab:f-rtc}）。测试中通过独立解码线路上的 48 字节 SNTP 报文，逐项核对模式字段、时间戳编码及应答帧中回显的 \code{Originate} 时间戳。
 
 \begin{items}{RTC 测试项}{tab:f-rtc}
-SVC-05 & 空载、用户流量带载、77 条 VL 满载三种场景；空载时交换主从角色，从端时间分别超前和落后；在秒边界附近启动；停止同步后继续运行；纳秒与 NTP 小数换算 72 组向量（含零、秒末和随机值） & 报文字段与时间戳编码正确；回送时间戳与本次请求一致；秒进位正确；停止同步后时钟继续运行；换算双向一致；同步误差见表~\ref{tab:rtc-err} & 10675857/0\newline 1811/0 & 通过 \\
-SVC-06 & 丢弃第一个响应；交换主从端的启动顺序 & 从端在下一周期重发请求并完成同步 & 28/0\newline 平台自检 & 通过 \\
-SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响应 & 错误和过期响应不校时；合法响应只校时一次 & 34/0\newline 平台自检 & 通过 \\
+SVC-05 & 空载、用户流量带载、77 条 VL 满载三种场景；空载时交换主从角色，Client 时间分别超前和落后；在秒边界附近启动；停止同步后继续运行；纳秒与 NTP 小数换算 72 组向量（含零、秒末和随机值） & 报文字段与时间戳编码正确；回送时间戳与本次请求一致；秒进位正确；停止同步后时钟继续运行；换算双向一致；同步误差见表~\ref{tab:rtc-err} & 10675857/0\newline 1811/0 & 通过 \\
+SVC-06 & 丢弃第一个响应；交换 Server/Client 启动顺序 & Client 在下一周期重发请求并完成同步 & 28/0\newline 平台自检 & 通过 \\
+SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响应 & 错误和过期响应不误校准；合法响应仅执行单次同步校准 & 34/0\newline 平台自检 & 通过 \\
 \end{items}
 
-每次对时完成后，测试平台在同一拍读取主从两端的秒（\code{SEC}）与锁存纳秒（\code{NS}）寄存器，折算为纳秒后求差，三种负载工况下的同步误差汇总于表~\ref{tab:rtc-err}。空载工况下，往返路径无排队等待，4 拍固定写回延迟由硬件精确补偿 32~ns，实测同步误差为 0~ns；在叠加用户流量及 77 条 VL 双向满载（每方向吞吐保持 \Thru{}~Mbps）工况下，由于发送时间戳在报文首字节进入发送核心（入队前）采样，当请求或响应报文恰逢线上正在发送 1471 字节长帧（占线 1538 拍即 12.304~µs）时会产生单向排队等待，这种往返排队不对称带来的最大同步偏差实测为 \RtcLoad{}~ns（10.788~µs），严格小于单个最长帧的占线时间。
+每次时钟同步完成后，测试平台在同一拍读取主从两端的秒（\code{SEC}）与锁存纳秒（\code{NS}）寄存器，折算为纳秒后求差，三种负载工况下的同步误差汇总于表~\ref{tab:rtc-err}。空载工况下，往返路径无排队等待，5 拍固定写回流水延迟由硬件精确补偿 40~ns，实测同步误差为 0~ns；在叠加用户流量及 77 条 VL 双向满载（每方向吞吐保持 \Thru{}~Mbps）工况下，由于发送时间戳在报文首字节进入发送核心（入队前）采样，当请求或响应报文恰逢线上正在发送 1471 字节长帧（线路占用 1538 拍即 12.304~µs）时会产生单向排队等待，这种往返排队不对称带来的最大同步偏差实测为 \RtcLoad{}~ns（10.788~µs），严格小于单个最长帧的线路占用时间。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
 \captionof{table}{RTC 同步误差（SVC-05）}\label{tab:rtc-err}
@@ -273,12 +273,12 @@ SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响�
 \end{tabular*}
 \end{minipage}\par\medskip
 
-\figTiming[SNTP 请求与响应]{t16_w_rtc}{SNTP 请求与响应的协议示意：从端发出时间请求并收到主端响应，响应中的 Originate 等于请求的发送时间戳 T1；时间轴压缩，不按比例}{fig:wrtc}
+\figTiming[SNTP 请求与响应]{t16_w_rtc}{SNTP 请求与响应的协议示意：Client 发出时间请求并收到 Server 响应，响应中的 Originate 等于请求的发送时间戳 T1；时间轴压缩，不按比例}{fig:wrtc}
 
 \FloatBarrier
 \section{五项功能联合测试}\label{sec:f-all}
 
-用例 SVC-08 在同一对端系统、同一次仿真运行中联合开启全部五项功能，使应用消息、高完整性异常注入与三项高层服务共享底层的双网收发核心、服务通道仲裁器和主机配置总线（表~\ref{tab:f-all}）。全过程共执行 \SvcChecks{} 次平台自检与 65 项独立参考核对（含 16 字节加卸载文件的 41 项逐字节与状态核对），全部零错误一次性通过。测试特别验证了在 \code{CE_DIV=2}（2 周期时钟使能解耦）与基于 BRAM 的拒绝状态记录架构（\code{denial_ram}）下，管理面在与业务高负载并发运行时的周期级确定性与协议时序安全性；该用例同时作为综合后门级网表仿真（NET-02，见第~\ref{ch:netlist}~章）的基准激励。
+用例 SVC-08 在同一对端系统、同一次仿真运行中联合开启全部五项功能，使应用消息、高完整性异常注入与三项高层服务共享底层的双网收发核心、服务通道仲裁器和主机配置总线（表~\ref{tab:f-all}）。全过程共执行 \SvcChecks{} 次平台自检与 65 项独立参考核对（含 16 字节数据加载文件的 41 项逐字节与状态核对），全部零错误一次性通过。测试验证了在 \code{CE_DIV=2}（2 周期时钟使能解耦）与基于 BRAM 的拒绝状态记录架构（\code{denial_ram}）下，管理协议与用户业务在同一硬件架构下共存时的周期级确定性与协议时序安全性；该用例同时作为综合后门级网表仿真（NET-02，见第~\ref{ch:netlist}~章）的基准激励。多 VL 满载并发传输见第~\ref{ch:perf}~章。
 
 \begin{items}{五项功能联合测试项}{tab:f-all}
 SVC-08 & 依次执行：(1) 两端各发一条用户消息；(2) 向一端注入一个跳号帧；(3) 一次 SNMP Get 读取设备描述；(4) 一次时钟同步；(5) 加载 16 字节文件，读回 RAM 后卸载 & (1) 双网副本去重，各交付一次；(2) 完整性错误计数加 1，交付数不变；(3) 响应经独立 BER 解码后核对正确；(4) 配置口确认同步完成，请求与响应时间戳对应；(5) RAM 与卸载内容均与原文件一致；测试结束时，交付数与错误数均无额外增加 & \SvcChecks/0\newline 65/0 & 通过 \\

@@ -58,12 +58,12 @@ FPGA 综合与实现工具 & eLinx 3.0.7（集成逻辑综合、\code{impl.ps1} 
   \item \textbf{发送间隔偏差（\code{tx_interval_jitter}）：}对定周期业务，统计相邻发送起点间隔偏离 BAG 的最大差值：$J_\text{tx} = \max_i |(S_{i} - S_{i-1}) - \text{BAG}|$。稳态下无争用时该偏差严格为 0。
 \end{itemize}
 
-\section{独立黄金参考模型与双重校验机制}\label{sec:criteria}
+\section{独立参考模型（Golden Model）与双重校验机制}\label{sec:criteria}
 
-测试体系遵循“在线硬件断言 + 离线独立黄金参考模型 + 网表逐拍对照”的三重校验机制（图~\ref{fig:criteria}）：
+测试体系遵循“在线硬件断言 + 离线独立参考模型（Golden Model） + 网表逐拍对照”的三重校验机制（图~\ref{fig:criteria}）：
 \begin{enumerate}
   \item \textbf{平台运行时自检（Stage 1）：}测试平台例化硬件监视器，实时检查 GMII 帧间隔（IFG $\ge 12$ 拍）、FCS 校验、序列号连续性、去重交付与寄存器读写时序。测试结束时控制台必须输出 \code{[RESULT] PASS errors=0}。
-  \item \textbf{Python 黄金参考模型比对（Stage 2）：}参考模型（Golden Reference Model）完全独立于 Verilog RTL 实现。它读取测试平台导出的时钟级端口追踪日志，按协议规范重构完整的 IP/UDP 校验和、ARINC 664 冗余窗口与加卸载文件，逐字节比对应用交付数据，确认无丢包、无多余交付与无数据损坏。
+  \item \textbf{Python 参考模型（Golden Model）比对（Stage 2）：}参考模型（Golden Reference Model）完全独立于 Verilog RTL 实现。它读取测试平台导出的时钟级端口追踪日志，按协议规范重构完整的 IP/UDP 校验和、ARINC 664 冗余窗口与数据加载文件，逐字节比对应用交付数据，确认无丢包、无多余交付与无数据损坏。
   \item \textbf{RTL / 网表逐字节一致性签核（Stage 3）：}对于综合后门级网表仿真（NET-02），将网表在完全相同外部激励下的 7 份端口记录与 RTL 记录执行包含拍号的二进制逐字节比对，确保门级实现未破坏 RTL 的周期级行为。
 \end{enumerate}
 

@@ -2,35 +2,36 @@
 
 \section{时延预算与流水账本}\label{sec:latbudget}
 
-端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 与 \code{m_valid \&\& m_ready} 握手完成）起算，至接收端应用接口完成末字节交付时（$d_\text{last}$ 有效）结束。按照官方 1022 答疑 R97 口径，端到端时延严格分解为发送处理段 $L_\text{tx}$、网络链路传输段 $L_\text{gmii}$ 与接收处理段 $L_\text{rx}$。
+端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 与 \code{m_valid && m_ready} 握手完成）起算，至接收端应用接口完成末字节交付时（$d_\text{last}$ 有效）结束。按照官方 1022 答疑 R97 口径，端到端时延严格分解为发送处理段 $L_\text{tx}$、网络链路传输段 $L_\text{gmii}$ 与接收处理段 $L_\text{rx}$。
 
 在收发通路无其他消息争用、当前 VL 已满足 BAG 最小发送间隔的基准条件下，表~\ref{tab:latency} 详细列出 1471 字节满载帧（对应最大以太网帧 1518 字节）在各子模块流水中的逐拍开销与时间预算：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
   \item \textbf{发送处理流水：}\code{afdx_tx_buf} 载荷 RAM 写口增加 1 拍流水寄存，写描述符并向调度引擎发起入队请求需 3 拍；\code{afdx_tx_engine} 入队判定需 6 拍、帧授权需 9 拍；\code{afdx_tx_builder} 帧头组装与 IP 校验和准备需 11 拍；核心输出端插入的 1 级流缓冲与双网 MAC 启动共 2 拍。从 $m_\text{last}$ 到 GMII 首个前导码字节 \code{tx_sof} 固定为 32 拍（0.256~µs，原基线为 31 拍 / 0.248~µs）；若按 R95 规则计至以太网帧起始定界符（SFD，\code{8'hD5}，前导码第 8 字节）结束，发送处理时延 $L_\text{tx}$ 典型为 39 拍（\Ttx~µs）。
   \item \textbf{物理链路传输：}前导码首字节至 FCS 末字节共 $8 + 1518 = 1526$ 字节，在线路上占 1525 拍（扣除与发送首拍重叠的 1 拍），折合 12.200~µs。直连仿真模型下 SFD 间的链路延迟 $L_\text{gmii} = 0.000$~µs。
-  \item \textbf{接收处理流水：}接收 MAC 检测帧尾需 3 拍；\code{afdx_rx_parse} 帧尾分类需 3 拍；分体式 \code{rx_map} 增加 2 拍读回流水，接收引擎执行 VL 映射、配置/状态查表、完整性检查、冗余管理与入队共需 14 拍；交付模块读取块 RAM 队头并自环形缓冲读出首字节需 6 拍。从 FCS 结束到首个交付字节 \code{d_valid} 由 24 拍更新为 26 拍（0.208~µs）。接收段首字节时延 $L_\text{rx}$ 为 \Trx~µs，末字节时延 $L_\text{rx,last}$ 为 \TrxLast~µs。
+  \item \textbf{接收处理流水：}接收 MAC 检测帧尾需 3 拍；\code{afdx_rx_parse} 帧尾分类需 3 拍；多 Bank \code{rx_map} 增加 2 拍读回流水，接收引擎执行 VL 映射、配置/状态查表、完整性检查、冗余管理与入队共需 14 拍；交付模块读取块 RAM 队头并自环形缓冲读出首字节需 6 拍。从 FCS 结束到首个交付字节 \code{d_valid} 由 24 拍更新为 26 拍（0.208~µs）。接收段首字节时延 $L_\text{rx}$ 为 \Trx~µs，末字节时延 $L_\text{rx,last}$ 为 \TrxLast~µs。
   \item \textbf{逐字节交付：}交付模块每拍交付一个有效字节，1471 字节载荷从首字节到末字节需 $n-1 = 1470$ 拍（11.760~µs）。
 \end{enumerate}
 
-\begin{table}\centering\small
+\begin{table}[!htbp]\centering\small
 \caption{端到端时延流水账本（1471 字节满载消息）}\label{tab:latency}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.4cm}L}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{1.5cm}>{\raggedleft\arraybackslash}p{1.7cm}>{\raggedleft\arraybackslash}p{1.7cm}L}
 \toprule
-阶段与区段 & 典型拍数 & 典型时间 & 上界时间 & 详细流水构成与硬件依据 \\
+阶段与区段 & 典型拍数 & 典型时间\newline (µs) & 上界时间\newline (µs) & 详细流水构成与硬件依据 \\
 \midrule
-发送写缓存与入队 & 4 & 0.032~µs & 0.080~µs & 载荷写寄存 1 拍，写 \code{tx_desc} 并置 \code{enq_valid} 3 拍 \\
-调度引擎入队与授权 & 15 & 0.120~µs & 0.240~µs & ENQ 状态 6 拍，GRANT 状态 9 拍 \\
-组帧准备与流缓冲 & 12 & 0.096~µs & 0.160~µs & IP 校验和准备 11 拍，流缓冲双缓冲锁存 1 拍 \\
-MAC 起始响应 & 1 & 0.008~µs & 0.016~µs & 检测起始并在第 32 拍输出首前导码 \code{tx_sof}（0.256~µs） \\
-前导码发送至 SFD & 7 & 0.056~µs & 0.056~µs & 7 字节 \code{0x55} 占 7 拍，第 39 拍输出 SFD（$L_\text{tx}=\Ttx$~µs） \\
-以太网帧传输 & 1518 & 12.144~µs & 12.144~µs & 帧头 42 字节、载荷 1471 字节、SN 1 字节、FCS 4 字节 \\
-MAC 帧尾与解析分类 & 6 & 0.048~µs & 0.064~µs & MAC 帧尾判定 3 拍，解析器 FIN 状态机两级分类 3 拍 \\
-分体映射与引擎判定 & 14 & 0.112~µs & 0.160~µs & 32 子库查表 3 拍，读 cfg/state 2 拍，IC/RM 判定与提交 9 拍 \\
-交付队头读取与流水 & 6 & 0.048~µs & 0.064~µs & 块 RAM 队头读出 2 拍，读控制与环形缓冲读出 4 拍 \\
-逐字节流式交付 & 1470 & 11.760~µs & 11.760~µs & 接收应用口每拍交付 1 字节，首字节至末字节（$n-1$ 拍） \\
+发送写缓存与入队 & 4 & 0.032 & 0.080 & 载荷写寄存 1 拍，写 \code{tx_desc} 并置 \code{enq_valid} 3 拍 \\
+调度引擎入队与授权 & 15 & 0.120 & 0.240 & ENQ 状态 6 拍，GRANT 状态 9 拍 \\
+组帧准备与流缓冲 & 12 & 0.096 & 0.160 & IP 校验和准备 11 拍，流缓冲双缓冲锁存 1 拍 \\
+MAC 起始响应 & 1 & 0.008 & 0.016 & 检测起始并在第 32 拍输出首前导码 \code{tx_sof}（0.256~µs） \\
+前导码发送至 SFD & 7 & 0.056 & 0.056 & 7 字节 \code{0x55} 占 7 拍，第 39 拍输出 SFD（$L_\text{tx}=\Ttx$~µs） \\
+以太网帧传输 & 1518 & 12.144 & 12.144 & 帧头 42 字节、载荷 1471 字节、SN 1 字节、FCS 4 字节 \\
+MAC 帧尾与解析分类 & 6 & 0.048 & 0.064 & MAC 帧尾判定 3 拍，解析器 FIN 状态机两级分类 3 拍 \\
+分体映射与引擎判定 & 14 & 0.112 & 0.160 & 32 子库查表 3 拍，读 cfg/state 2 拍，IC/RM 判定与提交 9 拍 \\
+交付队头读取与流水 & 6 & 0.048 & 0.064 & 块 RAM 队头读出 2 拍，读控制与环形缓冲读出 4 拍 \\
+逐字节流式交付 & 1470 & 11.760 & 11.760 & 接收应用口每拍交付 1 字节，首字节至末字节（$n-1$ 拍） \\
 \midrule
-无冲突合计（典型） & 3053 & 24.424~µs & 26.360~µs & $m_\text{last}$ 至 $d_\text{last}$ 纯硬件流水开销 \\
-含 AGE 让出 1 拍 & 3054 & \Lat~µs & 26.368~µs & 恰好遇接收引擎 AGE 老化扫描打断 1 拍，与实测吻合 \\
+无冲突硬件流水上界 & 3053 & 24.424 & 24.744 & $m_\text{last}$ 至 $d_\text{last}$ 纯硬件流水上界代数和 \\
+叠加 AGE 老化扫描 1 拍 & 3054 & \Lat & 24.752 & 接收端恰遇 4096 拍 AGE 扫描打断 1 拍，与实测吻合 \\
+计入最坏在途争用与调度 & --- & --- & 26.360 & 计入最坏 202 拍调度扫描与在途争用等待（$24.744 + 1.616$~µs） \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -39,53 +40,53 @@ MAC 帧尾与解析分类 & 6 & 0.048~µs & 0.064~µs & MAC 帧尾判定 3 拍�
 
 \section{片上 RAM 分配与物理存储规划}\label{sec:ramalloc}
 
-全系统共规划 21 张逻辑存储表，在物理实现中映射为 52 个 \code{afdx_ram_sdp} 模块实例，见表~\ref{tab:ram}。所有 RAM 均采用严格的一写一读伪双口（Simple Dual-Port）同步时序，消除异步读写风险。
+全系统共规划 21 张逻辑存储表，在物理实现中封装为 52 个 \code{afdx_ram_sdp} 简单双端口（SDP）同步 RAM 模块实例，综合后占用 366 个 EBR 原语（逻辑存储总容量 2,444,544~bit，约 298.4~KiB），见表~\ref{tab:ram}。所有 RAM 均采用严格的一写一读 SDP 同步时序，消除异步读写风险。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.4cm-10\tabcolsep\relax}}
 \caption{片上存储器分配与物理映射}\label{tab:ram}\\
-\longtablehead{5}{存储表名称 & 逻辑规模（深$\times$宽） & 逻辑位宽（bit） & 物理例化 & 架构分工与物理优化说明}
+\longtablehead{5}{存储表名称 & 逻辑规模（深$\times$宽） & 逻辑容量（bit） & 物理例化 & 架构分工与物理优化说明}
 \multicolumn{5}{l}{\textit{发送通路（共 7 张逻辑表，7 个物理模块）}} \\
-\code{tx_payload} & 131072$\times$8 & 1,048,576 & 1 & 128~KiB 载荷缓冲（256 页 $\times$ 512 字节），写口增加流水寄存 \\
-\code{tx_cfg} & 1024$\times$32 & 32,768 & 1 & 128 条发送 VL 配置表（每条 VL 占 8 个 32 位字） \\
-\code{tx_desc} & 256$\times$44 & 11,264 & 1 & 消息元数据描述符表（长度、端口使能、源/目的 UDP 端口） \\
-\code{tx_state} & 128$\times$63 & 8,064 & 1 & 发送调度状态（\code{next_time}、\code{sn}、\code{q_count}、队头/队尾） \\
-\code{tx_free} & 256$\times$8 & 2,048 & 1 & 空闲页池 FIFO，支持双还页口并发归还 \\
-\code{tx_mnext} & 256$\times$8 & 2,048 & 1 & 发送消息链表（同 VL 下一条消息首页号） \\
-\code{tx_pnext} & 256$\times$8 & 2,048 & 1 & 消息内分页链表（同一消息下一页号） \\
-\textit{发送小计} & --- & \textit{1,106,816} & \textit{7} & 发送侧总存储容量约 135.1~KB \\
+\code{tx_payload} & $131072\times 8$ & 1,048,576 & 1 & 128~KiB 载荷缓冲（256 页 $\times$ 512 字节），写口增加流水寄存 \\
+\code{tx_cfg} & $1024\times 32$ & 32,768 & 1 & 128 条发送 VL 配置表（每条 VL 占 8 个 32 位字） \\
+\code{tx_desc} & $256\times 44$ & 11,264 & 1 & 消息元数据描述符表（长度、端口使能、源/目的 UDP 端口） \\
+\code{tx_state} & $128\times 63$ & 8,064 & 1 & 发送调度状态（\code{next_time}、\code{sn}、\code{q_count}、队头/队尾） \\
+\code{tx_free} & $256\times 8$ & 2,048 & 1 & 空闲页池 FIFO，支持双页面回收端口并发归还 \\
+\code{tx_mnext} & $256\times 8$ & 2,048 & 1 & 发送消息链表（同 VL 下一条消息首页号） \\
+\code{tx_pnext} & $256\times 8$ & 2,048 & 1 & 消息内分页链表（同一消息下一页号） \\
+\textit{发送小计} & --- & \textit{1,106,816} & \textit{7} & 发送侧总存储容量约 135.1~KiB \\
 \midrule
 \multicolumn{5}{l}{\textit{接收通路（共 6 张逻辑表，37 个物理模块）}} \\
-\code{rx_map} & 65536$\times$13 & 851,968 & 32 & 物理拆分为 32 个 $2048\times 13$ 子库，两级读流水，16 路配置总线复制 \\
-\code{rx_state} & 4096$\times$44 & 180,224 & 1 & 4096 条接收 VL 状态（双网 PSN、冗余时间戳与有效位） \\
-\code{rx_cfg} & 4096$\times$32 & 131,072 & 1 & 4096 条接收 VL 配置字（使能、网络选择、skew\_max、最大长度） \\
-\code{rx_ring_a} & 4096$\times$8 & 32,768 & 1 & A 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
-\code{rx_ring_b} & 4096$\times$8 & 32,768 & 1 & B 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
-\code{rx_dq} & 32$\times$68 & 2,176 & 1 & 接收交付队列（迁入块 RAM，消除 32 项寄存器多路选择树） \\
-\textit{接收小计} & --- & \textit{1,230,976} & \textit{37} & 接收侧总存储容量约 150.3~KB \\
+\code{rx_map} & $65536\times 13$ & 851,968 & 32 & 物理拆分为 32 个 $2048\times 13$ 子库，两级读流水，16 路配置总线复制 \\
+\code{rx_state} & $4096\times 44$ & 180,224 & 1 & 4096 条接收 VL 状态（双网 PSN、冗余时间戳与有效位） \\
+\code{rx_cfg} & $4096\times 32$ & 131,072 & 1 & 4096 条接收 VL 配置字（使能、网络选择、skew\_max、最大长度） \\
+\code{rx_ring_a} & $4096\times 8$ & 32,768 & 1 & A 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
+\code{rx_ring_b} & $4096\times 8$ & 32,768 & 1 & B 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
+\code{rx_dq} & $32\times 68$ & 2,176 & 1 & 接收交付队列（迁入块 RAM，消除 32 项寄存器多路选择树） \\
+\textit{接收小计} & --- & \textit{1,230,976} & \textit{37} & 接收侧总存储容量约 150.3~KiB \\
 \midrule
 \multicolumn{5}{l}{\textit{网络服务（共 8 张逻辑表，8 个物理模块）}} \\
-\code{snmp/req_ram} & 256$\times$8 & 2,048 & 1 & SNMP 请求报文缓冲（256 字节，支持单变量绑定请求） \\
-\code{snmp/resp_ram} & 256$\times$8 & 2,048 & 1 & SNMP 应答与 Trap 组装缓冲（256 字节） \\
-\code{615a/load_ram} & 8192$\times$8 & 65,536 & 1 & 615A 数据加载暂存区（8~KiB），支持主机读回与介质卸载 \\
-\code{615a/header_ram} & 2048$\times$8 & 16,384 & 1 & 615A LUH 头文件缓存区（2~KiB） \\
-\code{615a/pkt_rx} & 1024$\times$8 & 8,192 & 1 & 615A TFTP 接收报文缓冲（1~KiB） \\
-\code{615a/pkt_tx} & 1024$\times$8 & 8,192 & 1 & 615A TFTP 发送与超时重传报文缓冲（1~KiB） \\
-\code{615a/lur_ram} & 512$\times$8 & 4,096 & 1 & 615A 上传请求文件（LUR）暂存区（512 字节） \\
-\code{615a/denial_ram} & 32$\times$8 & 256 & 1 & 615A 拒绝原因文本表（消除状态机大位宽组合选择） \\
-\textit{服务小计} & --- & \textit{106,752} & \textit{8} & 网络服务总存储容量约 13.0~KB \\
+\code{snmp/req_ram} & $256\times 8$ & 2,048 & 1 & SNMP 请求报文缓冲（256 字节，支持单 VarBind请求） \\
+\code{snmp/resp_ram} & $256\times 8$ & 2,048 & 1 & SNMP 应答与 Trap 组装缓冲（256 字节） \\
+\code{615a/load_ram} & $8192\times 8$ & 65,536 & 1 & 615A 数据加载暂存区（8~KiB），支持主机读回与介质卸载 \\
+\code{615a/header_ram} & $2048\times 8$ & 16,384 & 1 & 615A LUH 头文件缓存区（2~KiB） \\
+\code{615a/pkt_rx} & $1024\times 8$ & 8,192 & 1 & 615A TFTP 接收报文缓冲（1~KiB） \\
+\code{615a/pkt_tx} & $1024\times 8$ & 8,192 & 1 & 615A TFTP 发送与超时重传报文缓冲（1~KiB） \\
+\code{615a/lur_ram} & $512\times 8$ & 4,096 & 1 & 615A 上传请求文件（LUR）暂存区（512 字节） \\*
+\code{615a/denial_ram} & $32\times 8$ & 256 & 1 & 615A 拒绝原因文本表（消除状态机大位宽组合选择） \\*
+\textit{服务小计} & --- & \textit{106,752} & \textit{8} & 网络服务总存储容量约 13.0~KiB \\*
 \midrule
-\textbf{全设计合计} & --- & \textbf{2,444,544} & \textbf{52} & 逻辑总容量约 298.4~KB，综合映射为 \Mem~个 EBR（占比 \MemPct\%） \\
+\textbf{全设计合计} & --- & \textbf{2,444,544} & \textbf{52} & 逻辑总容量约 298.4~KiB，综合映射为 \Mem~个 EBR（占比 \MemPct\%） \\
 \end{longtable}
 
-全系统逻辑 RAM 总位宽为 2,444,544 位（约 298.4~KB）。在 EQ6HL130 目标器件中，经 eLinx 官方综合映射，共消耗 \Mem{} 个嵌入式块 RAM（EBR），占器件全部 1,200 个存储块资源的 \MemPct\%，片上存储资源裕量达 69.5\%。
+全系统逻辑 RAM 存储容量为 2,444,544~bit（约 298.4~KiB）。在 EQ6HL130 目标器件中，经 eLinx 官方综合映射，共消耗 \Mem{} 个嵌入式块 RAM（EBR），占器件全部 1,200 个存储块资源的 \MemPct\%，片上存储资源裕量达 69.5\%。
 
 \section{静态时序收敛与关键路径工程优化}\label{sec:timingopt}
 
-在 125~MHz（8~ns 周期）工作频率下，端系统不仅要在单周期内完成每拍一字节的 GMII 吞吐，还要支持 4096 条接收 VL 的查表与深层协议解析。为了达成最终布局布线后的严苛静态时序收敛，本设计在架构设计与物理实现上实施了六项关键工程措施：
+在 125~MHz（8~ns 周期）工作频率下，端系统不仅要在单周期内完成每拍一字节的 GMII 吞吐，还要支持 4096 条接收 VL 的查表与深层协议解析。为确保端系统静态时序闭环（Timing Closure），系统在 RTL 微架构与物理实现协同层面确立了六项优化措施：
 
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
-  \item \textbf{管理面协议引擎 $\text{CE\_DIV}=2$ 多周期解耦：}ARINC 615A 与 SNMPv1/v2c 协议包含深层状态转移分支；若按 8~ns 单周期约束，状态译码与字段组装路径较长。设计将核心引擎（\code{afdx_snmp_engine.v} 与 \code{afdx_615a_engine.v}）分离，采用局部 2 分频使能树（\code{CE_GROUPS}）驱动，在约束中定义为 2 周期多周期路径（建立时间预算 16~ns）；同时在顶层设置 \code{afdx_mgmt_tx} 缓冲模块，实现多周期引擎向 125~MHz 发送仲裁的数据适配。
-  \item \textbf{\code{rx_map} 32 子库分体式存储与配置总线复制：}\code{rx_map} 逻辑规模达 $65536\times 13$~bit，若由单一大模块实现，其写使能、地址线与读出选择器将产生较大扇出。物理设计将其均匀拆解为 32 个独立的 $2048\times 13$~bit 块 RAM 子库，并在配置写侧引入 16 路总线复制树（\code{RX_CONFIG_BANKS=16}），读侧增加两级流水多路复用，降低了长连线对布局布线的时序压力。
+  \item \textbf{管理面协议引擎 $\text{CE\_DIV}=2$ 多周期解耦：}ARINC 615A 与 SNMP 协议包含深层状态转移分支。设计将高层协议核心状态机（\code{afdx_snmp_engine.v} 与 \code{afdx_615a_engine.v}）独立封装，通过 2 分频低扇出时钟使能树驱动，在时序约束中为内部使能路径施加 2 周期建立时间约束（16~ns 预算）；同时在顶层设计 \code{afdx_mgmt_tx} 流式预取适配模块，平滑桥接 16~ns 多周期路径与 125~MHz 单周期全速发送仲裁域。
+  \item \textbf{\code{rx_map} 32 子库多 Bank 分块存储与配置总线复制：}\code{rx_map} 逻辑容量达 $65536\times 13$~bit。若直接例化单体大模块，其地址译码、写使能树与宽位数据选择器将产生严重的布线拥塞。物理设计将其均匀划分为 32 个独立的 $2048\times 13$~bit 块 RAM 子库；配置总线引入 16 路低扇出驱动树（\code{RX_CONFIG_BANKS=16}），读出侧插入两级流水 MUX，有效化解了芯片长跨度连线的延迟瓶颈。
   \item \textbf{\code{rx_dq} 迁入块 RAM 消除寄存器阵列选择树：}原交付队列采用 32 项 $\times$ 68~bit 寄存器数组，队头读取需经过 32 选 1 宽位组合逻辑。重构为 \code{afdx_ram_sdp} 块 RAM 后，交付模块通过微状态机（\code{HEAD_IDLE -> HEAD_SELECT -> HEAD_RELEASE}）按地址流式读出，消除了宽位选择树的逻辑级数。
   \item \textbf{\code{afdx_tx_buf} 写口寄存与输出流缓冲解耦：}在分页写载荷端口插入 \code{payload_we_r} 流水寄存，切断应用输入到 RAM 写口的路径；在组帧器与双网 MAC 间插入包含乒乓双缓冲结构的 1 级流缓冲，并更新提前启动参数 \code{START_LEAD_REGISTERED = -6}，兼顾路径隔离与到期准点发送。
   \item \textbf{服务仲裁与统计事件两级流水寄存：}\code{afdx_svc} 对 4 路发送仲裁授权向量进行寄存输出（\code{served_r}）；\code{afdx_cfg} 对跨越核心长距离布线的 5 路统计脉冲插入两级寄存（\code{_p} 与 \code{_q}），消除了远距离信号直驱 32 位累加器的建立时间压力。
@@ -96,9 +97,9 @@ MAC 帧尾与解析分类 & 6 & 0.048~µs & 0.064~µs & MAC 帧尾判定 3 拍�
 \caption{综合与布局布线后全量静态时序签核指标}\label{tab:routed-timing}
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}L}
 \toprule
-时序分析指标 & 官方综合估算值 & 布局布线后实测值 & 签核标准与工程结论 \\
+时序分析指标 & 官方综合估算值 & 布局布线后 STA 结果 & 签核标准与工程结论 \\
 \midrule
-分析主时钟周期 & 8.000~ns（125~MHz） & 8.000~ns（125~MHz） & 全系统单一全局物理时钟 \\
+分析主时钟周期 & 8.000~ns（125~MHz） & 8.000~ns（125~MHz） & 125~MHz 单一主时钟驱动 \\
 最差建立时间裕量（Worst Setup） & $+\Setup$~ns & $+\RoutedSetup$~ns & 全量 45,745 个时序端点 0 违例 \\
 最差保持时间裕量（Worst Hold） & $-\Hold$~ns & $+\RoutedHold$~ns & 布局布线后保持时间完全收敛 \\
 最高工作频率（Fmax） & \Fmax~MHz & \RoutedFmax~MHz & 满足 125~MHz 线速运行要求 \\

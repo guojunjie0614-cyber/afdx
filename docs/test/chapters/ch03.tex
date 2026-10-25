@@ -10,7 +10,7 @@
 \toprule
 \thead{指标项目} & \thead{赛题与答疑规范要求} & \thead{设计实测数据与技术特征} & \thead{结论} \\
 \midrule
-传输速率 & $\ge 100\text{ Mbps}$（R95-1 规定去重有效载荷，千兆 GMII） & 定长 77 条 VL 满载达 \Thru~Mbps（81 条 VL 达 \ThruEightyOne~Mbps）；多 VL 变长高负载（\code{var_high}）达 \ThruVarHigh~Mbps（单向 452.376~Mbps） & 符合 \\
+传输速率 & $\ge 100\text{ Mbps}$（R95-1 规定去重有效载荷，千兆 GMII） & 定长 77 条 VL 满载达 \Thru~Mbps（81 条 VL 达 \ThruEightyOne~Mbps）；多 VL 变长高负载（\code{var_high}）两方向去重单向吞吐率各达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps） & 符合 \\
 传输时延 & 端到端 $<1\sim 2\text{ ms}$（R96 单帧时延 $\le 2\text{ ms}$） & 定长满载稳态端到端最大时延 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs，$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs，含 257 拍线缆延迟最大 26.488~µs） & 符合 \\
 传输抖动 & 不超过几十微秒（R97-2 同 VL 时延极差口径） & 定长满载发送间隔抖动为 \Jit~µs；R97 同 VL 端到端时延极差定长满载为 \JitSameVl~µs（1 拍，\code{AGE} 扫描交错），变长循环工况为 \JitVarCycle~µs & 符合 \\
 帧格式 & 载荷 1--1471 B，帧长 $\le 1518\text{ B}$，含 VLID 与 1--255 序号 & 1--1471 字节载荷逐字节通过，64--1518 字节以太网封装正确；VLID 映射及 1--255 序号独立循环回绕正确 & 符合 \\
@@ -68,12 +68,12 @@ F2-08 & 各类错误的计数结果与配置口读回值一致 & SYS-02，SYS-07
 \multicolumn{4}{@{}l}{\heiti 功能 3：SNMP 网络管理} \\*
 F3-01 & Get、GetNext 及逐对象遍历 & SVC-01，SVC-03 & \ref{sec:f-snmp} \\
 F3-02 & Set 及读回 & SVC-02，SVC-03 & \ref{sec:f-snmp} \\
-F3-03 & 非法请求拒绝：只读对象、错误类型、错误团体名（\code{community}） & SVC-01，SVC-02 & \ref{sec:f-snmp} \\
+F3-03 & 非法请求拒绝：只读对象、错误类型、错误 Community（\code{community}）凭据 & SVC-01，SVC-02 & \ref{sec:f-snmp} \\
 F3-04 & Trap：启动通知、认证失败通知 & SVC-02，SVC-03 & \ref{sec:f-snmp} \\
 F3-05 & v1/v2c 及 BER 编码边界 & SVC-01 & \ref{sec:f-snmp} \\
 F3-06 & 管理报文与用户数据共存 & SVC-01，SVC-02，SVC-08 & \ref{sec:f-snmp} \\
 \midrule
-\multicolumn{4}{@{}l}{\heiti 功能 4：615A 数据加卸载} \\*
+\multicolumn{4}{@{}l}{\heiti 功能 4：ARINC 615A 软件数据加载} \\*
 F4-01 & 加载流程：LUI、LUR、头文件、数据文件、LUS & SVC-04，SVC-08 & \ref{sec:f-615a} \\
 F4-02 & 卸载流程：LND、LNR、LNS，\code{MEMORY.BIN} 回传 & SVC-04，SVC-08 & \ref{sec:f-615a} \\
 F4-03 & TFTP 整块边界与结束空块 & SVC-04 & \ref{sec:f-615a} \\
@@ -86,7 +86,7 @@ F5-02 & 空载与带载同步误差 & SVC-05 & \ref{sec:f-rtc} \\
 F5-03 & 秒边界进位，停止同步后时钟继续运行 & SVC-05 & \ref{sec:f-rtc} \\
 F5-04 & 纳秒与 NTP 小数的双向换算 & SVC-05 & \ref{sec:f-rtc} \\
 F5-05 & 响应丢失后重发恢复 & SVC-06 & \ref{sec:f-rtc} \\
-F5-06 & 回送时间戳错误或过期的响应不校时 & SVC-07 & \ref{sec:f-rtc} \\
+F5-06 & 回送时间戳错误或过期的应答不误校准 & SVC-07 & \ref{sec:f-rtc} \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\*
 P-01 & 传输速率不低于 100~Mbps & PERF-01，PERF-04 & \ref{sec:p-rate} \\
@@ -140,13 +140,13 @@ SYS-07 & \code{tb_sys_ovf}（缓存 512 字节） & 整机接收溢出的丢弃�
 SYS-08 & \code{tb_sys_net} & 记录顶层在固定输入下的结果，供网表对照 \\
 SYS-09 & \code{tb_elinx} & 在 eLinx 中运行：双端双网互发与去重 \\
 \midrule
-SVC-01 & \code{tb_sys_snmp} & SNMP 查询、遍历、团体名（\code{community}）与编码边界 \\
+SVC-01 & \code{tb_sys_snmp} & SNMP 查询、遍历、Community（\code{community}）与编码边界 \\
 SVC-02 & \code{tb_sys_snmp_settrap} & SNMP 设置、非法写入拒绝、Trap 通知 \\
 SVC-03 & \code{tb_judge_snmp} & SNMP 四类报文交互的字段解码与读回 \\
 SVC-04 & \code{tb_sys_615a} & 615A 加载、卸载、校验错误与丢包重试 \\
 SVC-05 & \code{tb_sys_rtc} & RTC 空载与带载同步、秒边界 \\
 SVC-06 & \code{tb_rtc_recovery} & RTC 响应丢失后的重发恢复 \\
-SVC-07 & \code{tb_rtc_originate} & 错误或过期响应不校时 \\
+SVC-07 & \code{tb_rtc_originate} & 错误或过期应答不误校准 \\
 SVC-08 & \code{tb_net_services} & 五项功能联合测试 \\
 \midrule
 PERF-01 & \code{tb_sys_perf} & 定长 10/77/81 VL 吞吐、分段时延和抖动 \\
@@ -166,6 +166,7 @@ NET-02 & 官方综合，\code{tb_net_services} & SVC-08 的网表仿真，与 RT
 
 \begingroup
 \tablestyle
+\renewcommand{\tablearraystretch}{1.10}
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}*{7}{>{\raggedleft\arraybackslash}p{1.45cm}}@{}}
 \caption{各模块代码覆盖率明细（ModelSim SE-64 实测统计，\%）}\label{tab:coverage}\\
@@ -196,12 +197,11 @@ NET-02 & 官方综合，\code{tb_net_services} & SVC-08 的网表仿真，与 RT
 \code{afdx_tx_free} & 98.38 & 96.66 & 83.33 & 83.33 & 100.00 & 66.66 & 99.09 \\
 \midrule
 \thead{全设计汇总（24 个模块）} & \textbf{\CovStmt} & \textbf{\CovBranch} & \textbf{\CovCond} & \textbf{\CovExpr} & \textbf{\CovFsmState} & \textbf{\CovFsmTrans} & \textbf{\CovToggle} \\
-\bottomrule
 \end{longtable}
 \endgroup
 
 全设计覆盖率实测汇总与统计分析如下：
-\begin{itemize}
+\begin{itemize}[leftmargin=2em,itemsep=1pt,topsep=2pt,parsep=0pt]
   \item \textbf{语句与分支覆盖率（\CovStmt\%、\CovBranch\%）：}语句覆盖达到 6981 / 7083，分支覆盖达到 3844 / 3985。收发数据通路模块中，\code{afdx_mac_rx}、\code{afdx_rx_core}、\code{afdx_mgmt_tx} 语句覆盖率均达 100.00\%；\code{afdx_tx_builder} 语句覆盖 99.08\%、分支覆盖 98.07\%、条件覆盖 96.96\%；\code{afdx_rx_parse} 语句与分支均为 100.00\%。
   \item \textbf{有限状态机覆盖率（状态 100.00\%，转移 \CovFsmTrans\%）：}工具自动识别出全设计共 110 个 FSM 状态，在 39 项回归测试下全部 110 个状态实现 100.00\% 覆盖（110/110）。状态机转移覆盖达到 138 / 308（\CovFsmTrans\%），状态与转移合并覆盖率为 248 / 418（\CovFsm\%）。未命中的转移主要是 ModelSim 识别的状态机笛卡尔积中，协议语义上互斥的跳转路径。
   \item \textbf{条件与表达式覆盖率（\CovCond\%、\CovExpr\%）：}条件覆盖达 610 / 717，表达式覆盖达 1760 / 1991。未覆盖项主要包括：(1) \code{afdx_ram_sdp} 双口 RAM 包装模型中的仿真碰撞断言；(2) 协议引擎中的硬件异常超时溢出保护；(3) 控制寄存器并发写入防御分支。

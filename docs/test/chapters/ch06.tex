@@ -25,12 +25,12 @@
 
 分模块资源分布见表~\ref{tab:synth_entity}。表中各子实体的详细拆解数据取自 2026-10-15 的 21 模块基线综合归档（32,847 LUT / 13,869 FF / 340 EBR）。当前 24 模块版本在此基础上实施了四项架构优化：
 \begin{enumerate}
-  \item \textbf{接收映射分体式存储（\code{rx_map} 32 子库）：}将 65,536 项接收映射表拆分为 32 个独立的双口 RAM 子库，消除大扇出译码逻辑；
+  \item \textbf{接收映射分块存储（Banked Storage）（\code{rx_map} 32 子库）：}将 65,536 项接收映射表拆分为 32 个独立的双口 RAM 子库，消除大扇出译码逻辑；
   \item \textbf{交付队列 BRAM 化（\code{rx_dq}）：}将 32 项交付描述队列由触发器移入专用嵌入式块 RAM；
   \item \textbf{异常状态硬件缓存（\code{denial_ram}）：}将高频异常拒绝记录由分布式寄存器转为块 RAM 存储；
   \item \textbf{管理面 \code{CE_DIV=2} 局部使能树复制：}为 SNMP 与 615A 多周期引擎构建专用的时钟使能驱动树。
 \end{enumerate}
-上述优化使全片资源更新为 \Lut{} LUT、\FF{} FF 及 \Mem{} EBR。由于长连线拥塞缓解，物理装箱效率提升，全芯片 CLB 占用由 4,620 降至 \textbf{\Clb}（利用率为 \ClbPct\%），提升了布局布线的布通率与时序收敛裕量。
+上述优化使全片资源更新为 \Lut{} LUT、\FF{} FF 及 \Mem{} EBR。由于长连线拥塞缓解，物理逻辑打包（Pack）效率提升，全芯片 CLB 占用由 4,620 降至 \textbf{\Clb}（利用率为 \ClbPct\%），提升了布局布线的布通率与时序收敛裕量。
 
 \begin{table}[!htbp]\centering
 \caption{分模块资源分布（基线层次归档明细）}\label{tab:synth_entity}
@@ -83,15 +83,15 @@ CLB 占用 & 69 & 209 \\
 
 \section{布局布线后全量静态时序分析（Post-Route STA）}\label{sec:sta}
 
-为验证时钟树与实际布线延迟下的建立与保持时间，采用 eLinx 官方实现脚本 \code{elinx/impl.ps1}（策略组合 \code{S2d + PRES1.50}，无单元物理坐标约束）执行布局布线，并基于导出的物理时序数据库完成静态时序签核（签核证据记录于 \code{docs/evidence/t45_timing.json} 与 \code{post_route_timing_campaign.md}）。
+为验证时钟树与实际布线延迟下的建立与保持时间，采用 eLinx 官方实现脚本 \code{elinx/impl.ps1}（策略组合 \code{S2d + PRES1.50}，无单元物理坐标约束）执行布局布线，并基于导出的物理时序数据库完成静态时序签核（最终签核证据归档于 \code{docs/evidence/t45_timing.json}，历史时序优化收敛过程记录于 \code{post_route_timing_campaign.md}）。
 
 \subsection{时序签核与多周期约束审计}
 
 静态时序签核全面对比了综合阶段未布线估算模型与布局布线后实测静态时序（表~\ref{tab:sta_summary}）：
 \begin{itemize}
-  \item \textbf{8.000 ns 单周期约束组（主时钟 \code{clk}）：}覆盖全芯片数据通路共 153,342 条路径。布局布线后实测最差建立时间裕量（Worst Setup Slack）为 \textbf{+\RoutedSetup~ns}（数据到达时间 7.775~ns，要求到达时间 7.788~ns），等效最高工作频率达到 \textbf{\RoutedFmax~MHz}，满足 125~MHz 目标工作频率。
-  \item \textbf{16.000 ns 多周期约束组（\code{CE_DIV=2}）：}覆盖 SNMP 引擎（\code{AFDX_top|snmp_u|eng_u|*}）与 615A 引擎（\code{AFDX_top|a615_u|eng_u|*}）共 50,296 条路径。实测最差建立裕量为 \textbf{+\MulticycleSetup~ns}（数据到达 14.847~ns，要求 15.787~ns），时序裕量充足。
-  \item \textbf{保持时间分析（Hold Time）：}在覆盖全设计全部 203,638 条同沿路径的分析中，最差保持裕量为 \textbf{+\RoutedHold~ns}。布线工具通过自动插入缓冲器与连线延迟，消除了综合阶段零连线模型下因时钟偏斜估算产生的 $-$\Hold~ns 名义负裕量。
+  \item \textbf{8.000~ns 单周期约束组（主时钟 \code{clk}）：}覆盖全芯片数据通路共 153,342 条路径。布局布线后实测最差建立时间裕量（Worst Setup Slack）为 \textbf{+\RoutedSetup~ns}（数据到达时间 7.775~ns，要求到达时间 7.788~ns），等效最高工作频率达到 \textbf{\RoutedFmax~MHz}，满足 125~MHz 目标工作频率。
+  \item \textbf{16.000~ns 多周期约束组（\code{CE_DIV=2}）：}覆盖 SNMP 引擎（\code{AFDX_top|snmp_u|eng_u|*}）与 615A 引擎（\code{AFDX_top|a615_u|eng_u|*}）共 50,296 条路径。实测最差建立裕量为 \textbf{+\MulticycleSetup~ns}（数据到达 14.847~ns，要求 15.787~ns），时序裕量充足。
+  \item \textbf{保持时间分析（Hold Time）：}在覆盖全设计全部 203,638 条同沿路径的分析中，最差保持裕量为 \textbf{+\RoutedHold~ns}。布线工具通过自动插入缓冲器与连线延迟，消除了综合阶段零连线模型下因时钟偏斜估算产生的 $-\Hold$~ns 名义负裕量。
   \item \textbf{违例端点数：}在全芯片全部 45,745 个同步终点中，建立时间与保持时间违例端点数均为 \textbf{0 / 45,745}。
   \item \textbf{多周期使能审计：}通过独立时序审计脚本 \code{tools/check_multicycle.py}，对被测设计中全部 2,755 个多周期引擎寄存器开展使能引脚与时钟连线结构审计，确认非法使能路径 0 条、漏约束路径 0 条。
 \end{itemize}
@@ -104,10 +104,11 @@ CLB 占用 & 69 & 209 \\
 \midrule
 单周期最差建立裕量 (Setup) & +\Setup~ns & \textbf{+\RoutedSetup~ns} & 满足 8.000~ns 周期约束 \\
 多周期最差建立裕量 (\code{CE_DIV=2}) & --- & \textbf{+\MulticycleSetup~ns} & 满足 16.000~ns 周期约束 \\
-最差保持裕量 (Hold) & $-$\Hold~ns & \textbf{+\RoutedHold~ns} & 保持时间完全闭合 \\
+最差保持裕量 (Hold) & $-\Hold$~ns & \textbf{+\RoutedHold~ns} & 布局布线插入延迟后完全闭合 \\
 等效最高工作频率 ($F_\text{max}$) & \Fmax~MHz & \textbf{\RoutedFmax~MHz} & 高于 125~MHz 目标工作主频 \\
-违例终点数 (Failed Endpoints) & 0 / 44,216 & \textbf{0 / 45,745} & 全芯片 0 违例时序收敛 \\
-覆盖分析路径总数 & 44,216 条 & 203,638 条 & 覆盖全芯片所有同步路径 \\
+建立违例终点数 (Setup Failed) & 0 / 44,216 & \textbf{0 / 45,745} & 布局布线后 0 建立违例 \\
+保持违例终点数 (Hold Failed) & 538 / 44,216 & \textbf{0 / 45,745} & 布局布线物理优化后全部消除 \\
+分析覆盖终点总数 (Endpoints) & 44,216 个 & 45,745 个 & 覆盖全芯片所有同步时序终点 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -137,7 +138,7 @@ CLB 占用 & 69 & 209 \\
 \end{tabularx}
 \end{table}
 
-分析表明：单周期约束组的最差路径位于发送核心初始化状态向配置写入使能控制的跨逻辑块长连线，由于连线延迟占比达到 85.7\%（6.780~ns），在 \code{PRES1.50} 扩张布线因子优化下最终保留了 +0.013~ns 的安全正裕量；紧随其后的 8 条路径集中于组帧器内部协议报头寄存器写使能广播树，裕量均在 +0.034~ns 至 +0.054~ns 之间。而在 16.000~ns 多周期约束组中，最差建立路径为 \code{AFDX_top|a615_u|ce_div_rep_reg[8]} 到 \code{eng_u|s_tot_bytes_reg[28]}，裕量为 +0.940~ns，表明多周期使能树复制策略有效缓解了复杂协议引擎的时序压力。
+分析表明：单周期约束组的最差路径位于发送核心初始化状态向配置写入使能控制的跨逻辑块长连线，由于连线延迟占比达到 85.7\%（6.780~ns），在 \code{PRES1.50} 扩张布线因子优化下保留了 +0.013~ns 的建立时间裕量（13~ps），成功满足 8.000~ns 单周期硬约束；紧随其后的 8 条路径集中于组帧器内部协议报头寄存器写使能广播树，裕量均在 +0.034~ns 至 +0.054~ns 之间。而在 16.000~ns 多周期约束组中，最差建立路径为 \code{AFDX_top|a615_u|ce_div_rep_reg[8]} 到 \code{eng_u|s_tot_bytes_reg[28]}，裕量为 +0.940~ns，表明多周期使能树复制策略有效缓解了复杂协议引擎的时序压力。
 
 \section{综合后门级网表后仿真验证}\label{sec:net_sim}
 
@@ -157,4 +158,4 @@ NET-02 & 官方综合 VQM 网表；激励同 SVC-08（\code{tb_net_services}） 
 \end{tabularx}
 \end{table}
 
-NET-02（官方综合 VQM 命令行回归）在 ModelSim 下历时 \textbf{\NetCliTime~秒}（8793.406~s）完成全流程网表仿真。在双向用户消息收发、序号跳变异常注入、SNMP 管理查询、RTC 时钟同步以及 16 字节文件加载并卸载的联合激励下，网表通过了全部 \SvcChecks{} 次自检与 65 项独立参考比对，且外部端口记录（含双端应用输入输出、四条单向 GMII 线路字节流及加卸载文件二进制内容）与同激励下的 RTL 仿真记录在时钟周期拍号与字节流上完全一致，验证了门级网表与 RTL 的周期级行为一致性。
+NET-02（官方综合 VQM 命令行回归）在 ModelSim 下历时 \textbf{\NetCliTime~秒}（8793.406~s）完成全流程网表仿真。在双向用户消息收发、序号跳变异常注入、SNMP 管理查询、RTC 时钟同步以及 16 字节文件加载并卸载的联合激励下，网表通过了全部 \SvcChecks{} 次自检与 65 项独立参考比对，且外部端口记录（含双端应用输入输出、四条单向 GMII 线路字节流及数据加载文件二进制内容）与同激励下的 RTL 仿真记录在时钟周期拍号与字节流上完全一致，验证了门级网表与 RTL 的周期级行为一致性。

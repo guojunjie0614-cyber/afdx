@@ -5,17 +5,17 @@
 本设计以纯 RTL 将 AFDX 线速收发、完整性检查、冗余管理以及 RTC、SNMP、615A 三项高层服务收敛到同一套硬件架构中，核心工程方法归纳如下：
 
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
-  \item \textbf{单时钟同步数据通路与多周期使能域解耦。}核心统一运行于 125~MHz（8~ns 周期），字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一周期基准；对于复杂的管理协议状态机，通过局部使能两分频树（\code{CE_DIV=2}）获得 16~ns 宽松时序预算，在消除异步跨时钟域亚稳态风险的同时实现了物理时序的稳固收敛。
-  \item \textbf{状态入表与硬件逻辑分时复用。}52 个 \code{afdx_ram_sdp} 物理块 RAM 实例统一采用伪双口同步读写接口承载载荷、配置、各 VL 独立状态与协议报文。128 条发送 VL 和 4096 条接收 VL 的状态全部按地址检索，字节流水与判定逻辑在全链路间分时复用，使组合逻辑深度与 VL 数量完全解耦。
-  \item \textbf{读写端口独占与无锁互斥仲裁。}每张表的读写端口归属严格唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突；交付队列迁入块 RAM，由微状态机流式读出，消除宽位多路选择树。
-  \item \textbf{全流水寄存切分与精细时延补偿。}所有 RAM 读出数据先打拍再参与算术或比较；发送侧组帧器采用 6 拍提前量精确补偿内部读取流水与流缓冲延迟，保证到期首字节准点送出；RTC 对 4 拍写回流水补偿 32~ns，保障纳秒级时钟对齐精度。
+  \item \textbf{单时钟同步数据通路与多周期使能域解耦。}端系统逻辑统一运行于 125~MHz（8~ns 周期）主时钟，字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一时钟基准；对于复杂的管理协议状态机，通过局部使能两分频树（\code{CE_DIV=2}）构建隔拍更新的 16~ns 多周期路径，在消除异步跨时钟域亚稳态风险的同时实现了物理时序的稳固收敛。
+  \item \textbf{状态入表与硬件逻辑分时复用。}52 个 \code{afdx_ram_sdp} 模块封装实例（综合后映射为 366 个 EBR 原语）统一采用简单双端口（SDP）同步读写接口承载载荷、配置、各 VL 独立状态与协议报文。128 条发送 VL 和 4096 条接收 VL 的状态全部按地址检索，字节流水与判定逻辑在全链路间分时复用，使组合逻辑深度与 VL 数量完全解耦。
+  \item \textbf{读写端口独占与无冲突时序仲裁。}每张表的读写端口归属严格唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突；交付队列迁入块 RAM，由微状态机流式读出，消除宽位多路选择树。
+  \item \textbf{全流水寄存切分与精细时延补偿。}所有 RAM 读出数据先打拍再参与算术或比较；发送侧组帧器采用 6 拍提前量精确补偿内部读取流水与流缓冲延迟，保证到期首字节准点送出；RTC 对 5 拍写回流水精确补偿 40~ns，保障时钟同步精度。
 \end{enumerate}
 
 \section{工程交付清单与 24 个 RTL 模块}\label{sec:deliveryfiles}
 
 工程完整源码交付于仓库 \code{rtl/} 目录，共包含 24 个 Verilog 文件，职责划分见表~\ref{tab:rtl24}。
 
-\begin{table}\centering\small
+\begin{table}[htbp]\centering\footnotesize\renewcommand{\arraystretch}{0.95}
 \caption{交付的 24 个 Verilog RTL 源码清单}\label{tab:rtl24}
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{2.6cm}L}
 \toprule
@@ -26,25 +26,25 @@
 \code{afdx_cfg.v} & 配置与统计 & 32 位配置总线译码、27 个计数器两级流水维护与写握手 \\
 \code{afdx_svc.v} & 服务通道 & 4 路整消息轮询发送仲裁（寄存输出）与 UDP 端口接收分发 \\
 \code{afdx_tx_core.v} & 发送核心 & 发送顶层包装，集成分页缓存、引擎、组帧器、MAC 与输出流缓冲 \\
-\code{afdx_tx_buf.v} & 发送核心 & 消息分页写入、写口流水寄存、描述符登记与失败还页 \\
-\code{afdx_tx_free.v} & 发送核心 & 256 页空闲页池 FIFO，支持双还页口并发回收 \\
-\code{afdx_tx_engine.v} & 发送核心 & 128 条 VL 的 BAG 轮询调度、入队许可、帧授权与到期起始确认 \\
+\code{afdx_tx_buf.v} & 发送核心 & 消息分页写入、写口流水寄存、描述符登记与失败页面释放 \\
+\code{afdx_tx_free.v} & 发送核心 & 256 页空闲页池 FIFO，支持双页面回收端口并发回收 \\
+\code{afdx_tx_engine.v} & 发送核心 & 128 条 VL 的 BAG 轮询调度、入队许可、帧授权与到期发送确认（TX Start Confirm） \\
 \code{afdx_tx_builder.v} & 发送核心 & 帧头组装、IP 校验和准备、载荷流预读与 -6 拍提前补偿 \\
-\code{afdx_mac_tx.v} & 发送核心 & 纯 RTL 自研双网 MAC，单状态机两网同拍起始与欠载检测 \\
+\code{afdx_mac_tx.v} & 发送核心 & 纯 RTL 自研双网 MAC，单状态机两网同拍起始与发送下溢（TX Underrun）检测 \\
 \code{afdx_crc32_d8.v} & 通用算术 & 8 位并行 CRC-32 组合逻辑生成与校验器 \\
-\code{afdx_rx_core.v} & 接收核心 & 接收顶层包装，集成双 MAC、解析器、分体式映射表与交付模块 \\
+\code{afdx_rx_core.v} & 接收核心 & 接收顶层包装，集成双 MAC、解析器、多 Bank 分块映射表与交付模块 \\
 \code{afdx_mac_rx.v} & 接收核心 & 接收 MAC，SFD 定界、CRC32 流式累加校验与 FCS 剥离 \\
 \code{afdx_rx_parse.v} & 接收核心 & 帧头检查、UDP 校验和验证、载荷预写入与帧尾分类 \\
 \code{afdx_rx_engine.v} & 接收核心 & VLID 映射、完整性检查（IC）、冗余管理（RM）与老化扫描 \\
 \code{afdx_rx_deliver.v} & 接收核心 & 读取块 RAM 交付队列 \code{rx_dq}，从环形缓冲逐字节流式交付 \\
-\code{afdx_ram_sdp.v} & 存储原语 & 伪双口（Simple Dual-Port）同步 RAM 原语封装 \\
-\code{afdx_rtc.v} & 高层服务 & 实时时钟、SNTPv4 主从对时与时间戳收发状态机 \\
+\code{afdx_ram_sdp.v} & 存储原语 & 简单双端口（Simple Dual-Port, SDP）同步 RAM 原语封装 \\
+\code{afdx_rtc.v} & 高层服务 & 实时时钟、SNTPv4 纳秒级时钟同步与时间戳收发状态机 \\
 \code{afdx_ntp_fraction.v} & 高层服务 & 本地纳秒时基与 NTP 32 位二进制小数逐位迭代换算器 \\
 \code{afdx_snmp.v} & 高层服务 & SNMP 顶层包装、UDP 请求捕获与 \code{CE_DIV=2} 使能复制树 \\
 \code{afdx_snmp_engine.v} & 高层服务 & SNMPv1/v2c ASN.1/BER 解码、MIB 读写与响应生成（16~ns 域） \\
 \code{afdx_615a.v} & 高层服务 & 615A 顶层包装、TFTP 捕获、6 块协议 RAM 接口与使能树 \\
-\code{afdx_615a_engine.v} & 高层服务 & ARINC 615A 加卸载协议状态机与文件 CRC-16 校验（16~ns 域） \\
-\code{afdx_mgmt_tx.v} & 高层服务 & 管理面共享发送输出缓冲（256 字节，125~MHz 全速域解耦） \\
+\code{afdx_615a_engine.v} & 高层服务 & ARINC 615A 数据加载协议状态机与文件 CRC-16 硬件校验（16~ns 域） \\
+\code{afdx_mgmt_tx.v} & 高层服务 & 管理面流式预取发送适配器（8 字节预取队列，125~MHz 主时钟域解耦） \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -56,15 +56,15 @@
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
   \item \textbf{8 项核心评审用例一键运行：}
     在 ModelSim 命令行窗口或脚本中进入工程根目录，直接执行：
-\begin{verbatim}
-    do sim/run_judge.do
-\end{verbatim}
+\begin{runcommand}
+do sim/run_judge.do
+\end{runcommand}
     该入口无需配置 Python 环境，自动连续执行 8 项核心评审用例（\code{services}、\code{capacity}、\code{snmp}、\code{burst77}、\code{burst81}、\code{rtc}、\code{performance}、\code{perf_var}），实测总耗时为 8787.198 秒，判定全部为 PASS。
   \item \textbf{全量 39 项自动化回归测试：}
     在 PowerShell 下执行全量回归脚本（可附加 \code{-Coverage} 统计覆盖率）：
-\begin{verbatim}
-    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
-\end{verbatim}
+\begin{runcommand}
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
+\end{runcommand}
     自动完成全套 39 项测试平台的编译、仿真与参考模型交叉断言校验。
 \end{enumerate}
 
@@ -74,23 +74,23 @@
 
 \begin{enumerate}[leftmargin=2em,itemsep=3pt]
   \item \textbf{步骤一：官方逻辑综合与 VQM 导出}
-\begin{verbatim}
-    powershell -ExecutionPolicy Bypass -File elinx\synth.ps1
-\end{verbatim}
-    执行 \code{S2d} 综合策略，保持模块层级与时钟使能拓扑，生成门级网表与装箱报告。
+\begin{runcommand}
+powershell -ExecutionPolicy Bypass -File elinx/synth.ps1
+\end{runcommand}
+    执行 \code{S2d} 综合策略，保持模块层级与时钟使能拓扑，生成门级网表与逻辑打包（Pack）报告。
   \item \textbf{步骤二：物理布局布线（Place \& Route）}
-\begin{verbatim}
-    powershell -ExecutionPolicy Bypass -File elinx\impl.ps1
-\end{verbatim}
+\begin{runcommand}
+powershell -ExecutionPolicy Bypass -File elinx/impl.ps1
+\end{runcommand}
     执行 \code{PRES1.50} 物理优化，完成管脚布局布线并生成物理时序数据库。
   \item \textbf{步骤三：多周期路径约束合法性审计}
-\begin{verbatim}
-    python3 tools/check_multicycle.py
-\end{verbatim}
+\begin{runcommand}
+python3 tools/check_multicycle.py <VQM_PATH> --constraints elinx/constraints.edc --output out/multicycle_audit
+\end{runcommand}
     对全芯片时序约束进行严格审计，核对 2,755 个引擎寄存器的使能引脚与多周期声明，确认 0 非法路径、0 漏约束。
   \item \textbf{步骤四：布线后静态时序全量导出与签核}
-\begin{verbatim}
-    python3 tools/report_routed_timing.py
-\end{verbatim}
+\begin{runcommand}
+python3 tools/report_routed_timing.py
+\end{runcommand}
     自动解析布局布线后的真实时序数据库，核验 8~ns 单周期路径（最差建立裕量 $+\RoutedSetup$~ns）、16~ns 多周期路径（最差建立裕量 $+\MulticycleSetup$~ns）以及同沿保持时间裕量（$+\RoutedHold$~ns），输出 45,745 个端点 0 违例的权威签核报告。
 \end{enumerate}

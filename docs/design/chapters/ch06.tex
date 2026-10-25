@@ -16,11 +16,11 @@
 \toprule
 表 & 深度$\times$位宽 & 写口 & 读口 & 内容 \\
 \midrule
-\code{rx_map} & 65536$\times$13 & 配置总线 & \code{rx_engine} & \code{valid}[12]、\code{idx}[11:0]，物理划分为 32 个 2048$\times$13 子库 \\
-\code{rx_cfg} & 4096$\times$32 & 配置总线 & \code{rx_engine} & \code{en}、\code{net_a}、\code{net_b}、\code{ic_en}、\code{rm_en}、\code{skew_max}[16:5]、\code{max_payload}[27:17] \\
-\code{rx_state} & 4096$\times$44 & \code{rx_engine} & \code{rx_engine} & 每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
-\code{rx_ring_a/b} & 4096$\times$8 & 本网 \code{rx_parse} & \code{rx_deliver} & 每网一个环形缓冲，按到达顺序存载荷 \\
-\code{rx_dq} & 32$\times$68 & \code{rx_engine} & \code{rx_deliver} & \code{afdx_ram_sdp} 块 RAM：来源网、起点、长度、\code{idx}、UDP 端口 \\
+\code{rx_map} & $65536\times 13$ & 配置总线 & \code{rx_engine} & \code{valid}[12]、\code{idx}[11:0]，物理划分为 32 个 $2048\times 13$ 子库 \\
+\code{rx_cfg} & $4096\times 32$ & 配置总线 & \code{rx_engine} & \code{en}、\code{net_a}、\code{net_b}、\code{ic_en}、\code{rm_en}、\code{skew_max}[16:5]、\code{max_payload}[27:17] \\
+\code{rx_state} & $4096\times 44$ & \code{rx_engine} & \code{rx_engine} & 每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
+\code{rx_ring_a/b} & $4096\times 8$ & 本网 \code{rx_parse} & \code{rx_deliver} & 每网一个环形缓冲，按到达顺序存载荷 \\
+\code{rx_dq} & $32\times 68$ & \code{rx_engine} & \code{rx_deliver} & \code{afdx_ram_sdp} 块 RAM：来源网、起点、长度、\code{idx}、UDP 端口 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -73,7 +73,7 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 解析器在帧尾完成错误帧的分类与计数，并将预写入指针 \code{wr_trial} 回退至已提交写指针 \code{wr_commit}；正确帧则生成帧描述字交由接收引擎处理（表~\ref{tab:ifdesc}）。两网在同一拍结束的正确帧，其帧描述也在同一拍给出。
 
-同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎处理一份描述至多需要 15 拍，两网各一份描述的服务时间合计至多 30 拍；加上中断 AGE 的至多 1 拍，仍短于同一网相邻描述的到达间隔。若数据帧的首个前导字节在清表完成前到达，解析器将忽略整帧，不生成帧描述，也不计入统计。
+同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎处理一份描述至多需要 15 拍，两网各一份描述的服务时间合计至多 30 拍；加上中断 AGE 的至多 1 拍，仍短于同一网相邻描述的到达间隔。若数据帧的首个前导字节在表初始化完成前到达，解析器将忽略整帧，不生成帧描述，也不计入统计。
 
 \section{完整性检查与冗余管理}
 
@@ -95,8 +95,8 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 \toprule
 \code{phase} & 动作 \\
 \midrule
-（IDLE） & 取走帧描述（\code{take}），以 VLID 读分体式 \code{rx_map} \\
-0--2 & 等待分体式 \code{rx_map} 2 级流水线读出 \\
+（IDLE） & 取走帧描述（\code{take}），以 VLID 读多 Bank \code{rx_map} \\
+0--2 & 等待多 Bank \code{rx_map} 2 级流水线读出 \\
 3 & 分 bank 接口在表内锁存映射结果 \code{selected_map} \\
 4 & 有效映射以 \code{selected_map[11:0]} 触发 \code{rx_cfg} 与 \code{rx_state} 读取；无效映射撤销读使能 \\
 5--6 & 等待同步读出，保存配置和状态（无效映射在 5 拍跳转至 13 报告未知 VL） \\
@@ -116,7 +116,7 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 \code{rx_map} 映射无效时，引擎将该帧计为“未知 VL”；VL 未启用、本网未启用或 $n$ 大于 \code{max_payload} 时，计为“配置不允许”。
 
-完整性检查（\code{ic_en}$=1$ 时）每网独立进行。记本网上一帧的序号为 PSN，满足以下任一条件即可通过检查：清表后本网首次收到该 VL；SN 为 0（对端复位）；SN 为 PSN 在 1--255 环上递增 1 步或 2 步的后继序号，后者允许丢一帧。PSN 为 0 时，后继序号分别为 1 和 2。
+完整性检查（\code{ic_en}$=1$ 时）每网独立进行。记本网上一帧的序号为 PSN，满足以下任一条件即可通过检查：表初始化后本网首次收到该 VL；SN 为 0（对端复位）；SN 为 PSN 在 1--255 环上递增 1 步或 2 步的后继序号，后者允许丢一帧。PSN 为 0 时，后继序号分别为 1 和 2。
 
 启用完整性检查时，通过映射与配置检查的帧均以当前 SN 更新本网 PSN，包括序号检查失败的帧；后续序号连续时可恢复同步。未通过序号检查的帧计为“完整性检查丢弃”。
 
@@ -157,7 +157,7 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 \Needspace{22\baselineskip}
 \section{统计分类}\label{sec:rxclass}
 
-对于清表完成后开始接收的每一帧（一段 \code{rx_valid} 连续为 1 的字节流），解析器均在帧尾离开线路后的 32 拍内，在对应网络上输出且仅输出一个类别脉冲。对于分类为正确的帧，接收引擎还输出且仅输出一个处理结果脉冲；该脉冲在引擎完成判定后的 8 拍内有效，且不晚于帧尾后的 150 拍。每网的 \code{ev} 位定义见表~\ref{tab:rxev}。
+对于表初始化完成后开始接收的每一帧（一段 \code{rx_valid} 连续为 1 的字节流），解析器均在帧尾离开线路后的 32 拍内，在对应网络上输出且仅输出一个类别脉冲。对于分类为正确的帧，接收引擎还输出且仅输出一个处理结果脉冲；该脉冲在引擎完成判定后的 8 拍内有效，且不晚于帧尾后的 150 拍。每网的 \code{ev} 位定义见表~\ref{tab:rxev}。
 
 \begin{table}\centering\small
 \caption{接收统计脉冲 \texttt{ev\_a}、\texttt{ev\_b}}\label{tab:rxev}
