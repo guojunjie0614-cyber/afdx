@@ -91,7 +91,8 @@ class Flow:
         self.result["finished"]=datetime.now().astimezone().isoformat()
         self.result["jobs"]=self.jobs
         save(self.folder/"summary.json",self.result)
-        save(ROOT/"out"/("latest_"+self.result["name"]+".json"),self.result)
+        # Parallel verification batches keep separate latest pointers.
+        save(ROOT/"out"/(os.environ.get("AFDX_LATEST_PREFIX","")+"latest_"+self.result["name"]+".json"),self.result)
 
 def sim(options):
     f=Flow("net" if options.netlist else "sim",options.test,options.deadline)
@@ -126,7 +127,8 @@ def sim(options):
         f.result["replaced_modules"]=sorted(replaced)
         if options.test.startswith("tb_sys_") and options.test not in ("tb_sys_rtc","tb_sys_snmp","tb_sys_snmp_settrap","tb_sys_615a"):
             f.job("vectors",[sys.executable,ROOT/"tools/sys_cases.py","--test",options.test,
-                  "--seed",str(options.seed),"--out",f.folder/"vectors"],120 if options.test=="tb_sys_perf_var" else 30)
+                  "--seed",str(options.seed),"--out",f.folder/"vectors"],
+                  300 if options.test in ("tb_sys_perf","tb_sys_perf_var") else 30)
             for sub in ("es1_tx","es1_rx","es2_tx","es2_rx","es1_gmii_tx","es1_gmii_rx","es2_gmii_tx","es2_gmii_rx"):(f.folder/sub).mkdir()
             sources.extend(ROOT/"tools"/name for name in ("sys_cases.py","sys_ref.py","sys_checks.py","sys_run_checks.py","gmii_ref.py","tx_ref.py","rx_ref.py","rx_checks.py","afdx_ref.py"))
             if (ROOT/"tools/perf_ref.py").exists():sources.append(ROOT/"tools/perf_ref.py")
