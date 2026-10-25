@@ -1,5 +1,6 @@
 {
-  "head": "eb9499dc",
+  "head": "c68fac81",
+  "checked": "2026-10-25",
   "python_files": [
     "tools/afdx_ref.py",
     "tools/eda.py",
@@ -12,6 +13,6 @@
     "tools/sys_ref.py",
     "tools/tx_ref.py"
   ],
-  "non_text_change": "tools/eda.py removed owner_thread from active_job records",
+  "non_text_change": "tools/eda.py: per-batch AFDX_LATEST_PREFIX and wider vector budget for the two long performance tests; tools/check_multicycle.py accepts the setup clock uncertainty",
   "rtl_tb_matches_latest_regression_except_one_check_message": 73
 }

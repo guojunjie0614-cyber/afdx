@@ -6,14 +6,14 @@
   "aggregation": "design-unit covered bins / design-unit total bins; FSM = states + transitions",
   "metrics": {
     "Statements": {
-      "covered": 6981,
-      "total": 7083,
-      "percent": 98.55
+      "covered": 6985,
+      "total": 7090,
+      "percent": 98.51
     },
     "Branches": {
-      "covered": 3844,
-      "total": 3985,
-      "percent": 96.46
+      "covered": 3855,
+      "total": 3999,
+      "percent": 96.39
     },
     "Conditions": {
       "covered": 610,
@@ -21,9 +21,9 @@
       "percent": 85.07
     },
     "Expressions": {
-      "covered": 1760,
-      "total": 1991,
-      "percent": 88.39
+      "covered": 1746,
+      "total": 1977,
+      "percent": 88.31
     },
     "FSM States": {
       "covered": 110,
@@ -36,9 +36,9 @@
       "percent": 44.8
     },
     "Toggles": {
-      "covered": 41314,
-      "total": 53632,
-      "percent": 77.03
+      "covered": 41386,
+      "total": 53744,
+      "percent": 77.0
     },
     "FSM": {
       "covered": 248,
@@ -49,17 +49,16 @@
   "coverage_regression": {
     "tests": 39,
     "passed": 39,
-    "reference_counts_match": true,
-    "started": "2026-10-24T08:16:49.9775403+08:00",
-    "finished": "2026-10-24T13:23:24.702506+08:00",
-    "elapsed_seconds": 18394.725,
-    "finished_source": "latest individual run finish; official batch summary has no Finished field"
+    "started": "2026-10-25T16:33:13.080960+08:00",
+    "finished": "2026-10-25T20:22:12.124942+08:00",
+    "elapsed_seconds": 23542.957,
+    "finished_source": "latest individual run finish; batch summary has no per-batch wall clock",
+    "reference_counts_match": true
   },
-  "merged_ucdb_bytes": 2931612,
-  "source_summary": "out/t45/terminal/s4_s2d_pres150/ce2/out/regress/coverage_20261024_081649_9775403/summary.json",
+  "merged_ucdb_bytes": 2923275,
+  "source_summary": "E:/2026_Embedded_FPGA/worktrees/active/c3_t54/out/t54/regress_ce2cov/summary.json",
   "ce_div": 2,
   "rtl_modules": {
-    "AFDX_top": "rtl/AFDX_top.v",
     "afdx_615a": "rtl/afdx_615a.v",
     "afdx_615a_engine": "rtl/afdx_615a_engine.v",
     "afdx_cfg": "rtl/afdx_cfg.v",
@@ -78,6 +77,7 @@
     "afdx_snmp_engine": "rtl/afdx_snmp_engine.v",
     "afdx_svc": "rtl/afdx_svc.v",
     "afdx_timebase": "rtl/afdx_timebase.v",
+    "AFDX_top": "rtl/AFDX_top.v",
     "afdx_tx_buf": "rtl/afdx_tx_buf.v",
     "afdx_tx_builder": "rtl/afdx_tx_builder.v",
     "afdx_tx_core": "rtl/afdx_tx_core.v",
@@ -87,10 +87,10 @@
   "coverage_off_regression": {
     "tests": 39,
     "passed": 39,
-    "reference_counts_match": true,
-    "started": "2026-10-24T03:42:31.411038+08:00",
-    "finished": "2026-10-24T08:10:44.943933+08:00",
-    "elapsed_seconds": 16093.533,
-    "finished_source": "latest individual run finish; official batch summary has no Finished field"
+    "started": "2026-10-25T16:33:13.076887+08:00",
+    "finished": "2026-10-25T18:24:08.556229+08:00",
+    "elapsed_seconds": 10954.645,
+    "finished_source": "latest individual run finish; batch summary has no per-batch wall clock",
+    "reference_counts_match": true
   }
 }

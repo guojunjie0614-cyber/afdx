@@ -6,14 +6,14 @@
   "ce_div": 2,
   "metrics": {
     "Statements": {
-      "covered": 6981,
-      "total": 7083,
-      "percent": 98.55
+      "covered": 6985,
+      "total": 7090,
+      "percent": 98.51
     },
     "Branches": {
-      "covered": 3844,
-      "total": 3985,
-      "percent": 96.46
+      "covered": 3855,
+      "total": 3999,
+      "percent": 96.39
     },
     "Conditions": {
       "covered": 610,
@@ -21,9 +21,9 @@
       "percent": 85.07
     },
     "Expressions": {
-      "covered": 1760,
-      "total": 1991,
-      "percent": 88.39
+      "covered": 1746,
+      "total": 1977,
+      "percent": 88.31
     },
     "FSM States": {
       "covered": 110,
@@ -36,9 +36,9 @@
       "percent": 44.8
     },
     "Toggles": {
-      "covered": 41314,
-      "total": 53632,
-      "percent": 77.03
+      "covered": 41386,
+      "total": 53744,
+      "percent": 77.0
     },
     "FSM": {
       "covered": 248,
@@ -176,7 +176,7 @@
     {
       "Test": "tb_sys_cfg",
       "Param": "",
-      "Checks": 21170726,
+      "Checks": 21170246,
       "CheckItems": 714342
     },
     {
