@@ -33,11 +33,20 @@ def constraints(path):
     clock='create_clock -name clk -period 8.000 [get_ports {clk}]'
     if lines.count(clock)!=1:raise ValueError('Exactly one 8 ns main clock is required')
     rule=re.compile(r'set_multicycle_path -(setup|hold) ([012]) -from \$(\w+) -to \$(\w+)')
+    uncertainty_rule=re.compile(r'set_clock_uncertainty -setup (\d+(?:\.\d+)?) \[get_clocks \{clk\}\]')
     pairs=collections.defaultdict(dict)
+    uncertainty=0.0
     for line in lines:
         if line==clock:continue
         # Native default and installed SmartExploreRun values; no timing exceptions.
         if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.3|1\.50)',line):continue
+        # Setup over-constraint: a clock property, not a path exception. Hold keeps 0 ns.
+        m=uncertainty_rule.fullmatch(line)
+        if m:
+            if uncertainty:raise ValueError('Duplicate clock uncertainty')
+            uncertainty=float(m.group(1))
+            if uncertainty<0:raise ValueError('Clock uncertainty must be nonnegative')
+            continue
         m=rule.fullmatch(line)
         if not m:raise ValueError('Unrecognized timing exception: '+line)
         kind,multiplier,start,end=m.groups()
@@ -56,7 +65,7 @@ def constraints(path):
         pairs[(start,end)][kind]=int(multiplier)
     if not pairs or any(set(v)!={'setup','hold'} for v in pairs.values()):raise ValueError('Every MCP needs setup and hold')
     if set(collections_by_name)!={n for pair in pairs for n in pair}:raise ValueError('Unused register collection')
-    return [(tuple(collections_by_name[a]),tuple(collections_by_name[b])) for a,b in pairs]
+    return [(tuple(collections_by_name[a]),tuple(collections_by_name[b])) for a,b in pairs],uncertainty
 
 @functools.lru_cache(None)
 def matcher(patterns):
@@ -124,7 +133,7 @@ def enable_behavior(cells, registers, phases, source):
 
 def audit(vqm,sdc,destination):
     data=vqm.read_text(encoding='utf-8').replace('\r\n','\n')
-    pairs=constraints(sdc)
+    pairs,uncertainty=constraints(sdc)
     cells=[];drivers={};registers={};ram=[]
     for m in CELL.finditer(data):
         kind,name=m['kind'],m['name']
@@ -201,6 +210,7 @@ def audit(vqm,sdc,destination):
         missing_arcs.extend((registers[n]['native'],cell['native']) for n in internal-allowed[net])
     result=dict(netlist_sha256=hashlib.sha256(vqm.read_bytes()).hexdigest(),
                 constraints_sha256=hashlib.sha256(sdc.read_bytes()).hexdigest(),
+                setup_uncertainty_ns=uncertainty,
                 constrained_registers=len(rows),by_module=dict(by_module),invalid_registers=len(invalid),
                 ram_cells_in_engine=illegal_ram,all_registers=len(registers),ram_cells=len(ram),
                 selected_non_register_cells=nonregisters,uncovered_engine_registers=uncovered,

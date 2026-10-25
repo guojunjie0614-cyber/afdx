@@ -49,8 +49,15 @@ def generate(netlist,output):
             source_group=group(regs[source])
             if source_group and source_group[0]==target[0]:
                 relations[target].add(source_group);actual_arcs+=1
+    uncertainty='0.30'
+    if output.is_file():
+        match=re.search(r'(?m)^set_clock_uncertainty -setup (\d+(?:\.\d+)?) \[get_clocks \{clk\}\]\s*$',
+                        output.read_text(encoding='utf-8-sig'))
+        if match:uncertainty=match.group(1)
     lines=['# Main clock stays at 125 MHz; capture/configuration/RAM/output paths keep 8 ns.',
-           'create_clock -name clk -period 8.000 [get_ports {clk}]','',
+           'create_clock -name clk -period 8.000 [get_ports {clk}]',
+           '# Setup over-constraint: the router aims '+uncertainty+' ns earlier; sign-off stays at 8 ns.',
+           'set_clock_uncertainty -setup '+uncertainty+' [get_clocks {clk}]','',
            '# Register-only groups follow actual mapped fan-in, avoiding a dense all-to-all matrix.',
            '# Refresh with the netlist checker after RTL changes; all internal arcs must be covered.',
            '# Native eLinx hold 0 preserves the same-edge check (conventional SDC setup 2 / hold 1).']
