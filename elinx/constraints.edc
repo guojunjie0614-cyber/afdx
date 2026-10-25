@@ -1,5 +1,8 @@
 # Main clock stays at 125 MHz; capture/configuration/RAM/output paths keep 8 ns.
 create_clock -name clk -period 8.000 [get_ports {clk}]
+# T51 过约束：只收紧 setup 目标 0.30 ns，让布局布线按 7.7 ns 努力；签核仍按 8 ns
+# （实现报告的 slack 已扣掉这 0.30 ns，真实余量 = 报告值 + 0.30 ns）。hold 不加不确定度。
+set_clock_uncertainty -setup 0.30 [get_clocks {clk}]
 
 # Register-only groups follow actual mapped fan-in, avoiding a dense all-to-all matrix.
 # Refresh with the netlist checker after RTL changes; all internal arcs must be covered.

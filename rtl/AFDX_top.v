@@ -132,7 +132,7 @@ module AFDX_top #(
     wire [7:0] snmp_tx_data;
     wire [6:0] snmp_tx_vl;
     wire [15:0] snmp_tx_dport;
-    wire [17:0] snmp_mib_addr, bus_addr;
+    wire [17:0] snmp_mib_addr, snmp_mib_addr_cmp, bus_addr;
     wire [31:0] snmp_mib_wdata;
     wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data;
     wire load_tx_valid, load_tx_last, load_claim;
@@ -150,7 +150,7 @@ module AFDX_top #(
     // 主机优先读取；两者读同一地址时，共用本次读取结果。
     // 不同地址时主机优先；同地址读必须共享结果，避免连续主机读取饿死 MIB 请求。
     assign snmp_mib_ready = !cfg_wr
-        && (!cfg_rd || (!snmp_mib_wr && cfg_addr == snmp_mib_addr))
+        && (!cfg_rd || (!snmp_mib_wr && cfg_addr == snmp_mib_addr_cmp))
         && (!snmp_mib_wr || cfg_ready);
 
     assign snmp_grant = (snmp_mib_rd || snmp_mib_wr) && snmp_mib_ready;
@@ -236,6 +236,7 @@ module AFDX_top #(
         .mib_wr(snmp_mib_wr),
         .mib_wdata(snmp_mib_wdata),
         .mib_addr(snmp_mib_addr),
+        .mib_addr_cmp(snmp_mib_addr_cmp),
         .mib_ready(snmp_mib_ready),
         .mib_rvalid(snmp_read_pipe[1]),
         .mib_rdata(cfg_rdata),
