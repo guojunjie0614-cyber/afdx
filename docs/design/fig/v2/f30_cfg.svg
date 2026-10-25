@@ -9,12 +9,12 @@
 <rect x="211.00" y="25.00" width="112.00" height="21.00" rx="0" fill="#F5EBD3" stroke="#111" stroke-width="1.4"/>
 <text x="267.00" y="37.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">W0 = 0x0018001F</text>
 <text x="225.00" y="59.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">hold address / data / write-enable</text>
-<path d="M 99.00 42.00 L 128.00 42.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 99.00 42.00 L 122.50 42.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="128.00,42.00 122.50,44.50 122.50,39.50" fill="#008CA6"/>
 <rect x="358.00" y="26.00" width="92.00" height="32.00" rx="0" fill="#DDF1F4" stroke="#000" stroke-width="1.4"/>
 <text x="404.00" y="41.13" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">RX write register</text>
 <text x="404.00" y="49.71" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">cfg_ok permits capture</text>
-<path d="M 323.00 36.00 L 358.00 36.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 323.00 36.00 L 352.50 36.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="358.00,36.00 352.50,38.50 352.50,33.50" fill="#008CA6"/>
 <rect x="0.00" y="76.00" width="114.00" height="17.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
 <text x="57.00" y="86.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">Cycle / edge</text>
@@ -102,9 +102,9 @@
 <rect x="310.00" y="221.00" width="140.00" height="31.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="380.00" y="235.51" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">t+2: group select</text>
 <text x="380.00" y="244.33" font-size="7" text-anchor="middle" fill="#000000" font-weight="bold">D(A0) = 0x0000002A</text>
-<path d="M 107.00 236.00 L 139.00 236.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 107.00 236.00 L 133.50 236.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="139.00,236.00 133.50,238.50 133.50,233.50" fill="#008CA6"/>
-<path d="M 278.00 236.00 L 310.00 236.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 278.00 236.00 L 304.50 236.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="310.00,236.00 304.50,238.50 304.50,233.50" fill="#527D27"/>
 <text x="53.00" y="270.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">word = addr[2:0] = 2</text>
 <text x="208.00" y="270.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">group = addr[17:3] = 0</text>

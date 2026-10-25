@@ -2,90 +2,90 @@
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
 <text x="0.00" y="9.00" font-size="8.5" text-anchor="start" fill="#000" font-weight="bold">RTC correction · local borrow/carry selection on (seconds, ns)</text>
 <text x="0.00" y="31.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">t2−t1: (0,19600)</text>
-<text x="0.00" y="60.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">t3−t4: (0,−20600)</text>
+<text x="0.00" y="67.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">t3−t4: (0,−20600)</text>
 <circle cx="104" cy="45" r="10" fill="white" stroke="#111" stroke-width="1.4"/>
 <text x="104.00" y="47.70" font-size="8.5" text-anchor="middle" fill="#111" font-weight="bold">+</text>
-<path d="M 89.00 28.00 L 104.00 28.00 L 104.00 35.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 89.00 28.00 L 104.00 28.00 L 104.00 29.50" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="104.00,35.00 101.50,29.50 106.50,29.50" fill="#008CA6"/>
-<path d="M 91.00 57.00 L 104.00 57.00 L 104.00 55.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 91.00 64.00 L 104.00 64.00 L 104.00 60.50" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="104.00,55.00 106.50,60.50 101.50,60.50" fill="#008CA6"/>
 <circle cx="142" cy="45" r="10" fill="white" stroke="#111" stroke-width="1.4"/>
 <text x="142.00" y="47.70" font-size="8.5" text-anchor="middle" fill="#111" font-weight="bold">÷2</text>
-<path d="M 114.00 45.00 L 132.00 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 114.00 45.00 L 126.50 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="132.00,45.00 126.50,47.50 126.50,42.50" fill="#008CA6"/>
 <rect x="175.00" y="32.00" width="109.00" height="26.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
 <text x="229.50" y="48.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">raw: (0, −500)</text>
-<path d="M 152.00 45.00 L 175.00 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 152.00 45.00 L 169.50 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="175.00,45.00 169.50,47.50 169.50,42.50" fill="#008CA6"/>
 <circle cx="317" cy="45" r="10" fill="white" stroke="#111" stroke-width="1.4"/>
 <text x="317.00" y="47.70" font-size="8.5" text-anchor="middle" fill="#111" font-weight="bold">±</text>
-<path d="M 284.00 45.00 L 307.00 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 284.00 45.00 L 301.50 45.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="307.00,45.00 301.50,47.50 301.50,42.50" fill="#008CA6"/>
 <rect x="350.00" y="32.00" width="100.00" height="26.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
 <text x="400.00" y="48.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">(−1, 999999500)</text>
-<path d="M 327.00 45.00 L 350.00 45.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 327.00 45.00 L 344.50 45.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="350.00,45.00 344.50,47.50 344.50,42.50" fill="#527D27"/>
 <text x="317.00" y="24.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">s−1; ns+10^9</text>
 <text x="0.00" y="85.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">SUM = (0, −1000)</text>
 <text x="0.00" y="103.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">HALF_SECOND: even seconds → +0</text>
 <polygon points="300.00,86.00 318.00,93.92 318.00,122.08 300.00,130.00" fill="#EDEDED" stroke="#000" stroke-width="1.4"/>
-<path d="M 400.00 58.00 L 400.00 75.00 L 290.00 75.00 L 290.00 98.00 L 300.00 98.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 400.00 58.00 L 400.00 75.00 L 290.00 75.00 L 290.00 98.00 L 294.50 98.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="300.00,98.00 294.50,100.50 294.50,95.50" fill="#527D27"/>
-<path d="M 229.00 58.00 L 229.00 116.00 L 300.00 116.00" fill="none" stroke="#888" stroke-width="1.1"/>
+<path d="M 229.00 58.00 L 229.00 116.00 L 294.50 116.00" fill="none" stroke="#888" stroke-width="1.1"/>
 <polygon points="300.00,116.00 294.50,118.50 294.50,113.50" fill="#888"/>
 <rect x="350.00" y="94.00" width="100.00" height="28.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="400.00" y="107.00" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">offset: −500 ns</text>
 <text x="400.00" y="115.29" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">(−1, 999999500)</text>
-<path d="M 318.00 108.00 L 350.00 108.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 318.00 108.00 L 344.50 108.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="350.00,108.00 344.50,110.50 344.50,105.50" fill="#527D27"/>
 <text x="307.00" y="145.00" font-size="6.7" text-anchor="middle" fill="#78529A" font-weight="bold">ns &lt; 0 = 1</text>
-<path d="M 309.00 136.00 L 309.00 125.00" fill="none" stroke="#78529A" stroke-width="1.4"/>
+<path d="M 309.00 136.00 L 309.00 130.50" fill="none" stroke="#78529A" stroke-width="1.4"/>
 <polygon points="309.00,125.00 311.50,130.50 306.50,130.50" fill="#78529A"/>
 <text x="0.00" y="135.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">OFFSET_CANDIDATES → NORMALIZE_OFFSET</text>
 <text x="400.00" y="139.00" font-size="7.3" text-anchor="middle" fill="#527D27" font-weight="bold">offset</text>
-<path d="M 400.00 122.00 L 400.00 129.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 400.00 122.00 L 400.00 123.50" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="400.00,129.00 397.50,123.50 402.50,123.50" fill="#527D27"/>
 <rect x="0.00" y="176.00" width="112.00" height="30.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
 <text x="56.00" y="189.77" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">Current clock</text>
 <text x="56.00" y="198.53" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">(11, 2000000)</text>
 <circle cx="147" cy="191" r="10" fill="white" stroke="#111" stroke-width="1.4"/>
 <text x="147.00" y="193.70" font-size="8.5" text-anchor="middle" fill="#111" font-weight="bold">+</text>
-<path d="M 112.00 191.00 L 137.00 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 112.00 191.00 L 131.50 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="137.00,191.00 131.50,193.50 131.50,188.50" fill="#008CA6"/>
 <text x="147.00" y="169.00" font-size="7.3" text-anchor="middle" fill="#527D27" font-weight="bold">offset</text>
-<path d="M 147.00 173.00 L 147.00 181.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 147.00 173.00 L 147.00 175.50" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="147.00,181.00 144.50,175.50 149.50,175.50" fill="#527D27"/>
 <rect x="175.00" y="178.00" width="116.00" height="26.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
 <text x="233.00" y="194.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">(10, 1001999500)</text>
-<path d="M 157.00 191.00 L 175.00 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 157.00 191.00 L 169.50 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="175.00,191.00 169.50,193.50 169.50,188.50" fill="#008CA6"/>
 <text x="233.00" y="171.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ADD_OFFSET</text>
 <circle cx="320" cy="191" r="10" fill="white" stroke="#111" stroke-width="1.4"/>
 <text x="320.00" y="193.70" font-size="8.5" text-anchor="middle" fill="#111" font-weight="bold">±</text>
-<path d="M 291.00 191.00 L 310.00 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 291.00 191.00 L 304.50 191.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="310.00,191.00 304.50,193.50 304.50,188.50" fill="#008CA6"/>
 <text x="321.00" y="169.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">s+1; ns−10^9</text>
 <rect x="350.00" y="178.00" width="100.00" height="26.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
 <text x="400.00" y="194.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">(11, 1999500)</text>
-<path d="M 330.00 191.00 L 350.00 191.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 330.00 191.00 L 344.50 191.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="350.00,191.00 344.50,193.50 344.50,188.50" fill="#527D27"/>
 <polygon points="300.00,218.00 318.00,225.92 318.00,254.08 300.00,262.00" fill="#EDEDED" stroke="#000" stroke-width="1.4"/>
-<path d="M 400.00 204.00 L 400.00 211.00 L 289.00 211.00 L 289.00 230.00 L 300.00 230.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 400.00 204.00 L 400.00 211.00 L 289.00 211.00 L 289.00 230.00 L 294.50 230.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="300.00,230.00 294.50,232.50 294.50,227.50" fill="#527D27"/>
-<path d="M 233.00 204.00 L 233.00 252.00 L 300.00 252.00" fill="none" stroke="#888" stroke-width="1.1"/>
+<path d="M 233.00 204.00 L 233.00 252.00 L 294.50 252.00" fill="none" stroke="#888" stroke-width="1.1"/>
 <polygon points="300.00,252.00 294.50,254.50 294.50,249.50" fill="#888"/>
 <text x="0.00" y="232.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">TIME_CANDIDATES</text>
 <text x="325.00" y="219.00" font-size="7.3" text-anchor="start" fill="#78529A" font-weight="bold">ns ≥ 10^9 = 1</text>
-<path d="M 309.00 214.00 L 309.00 222.00" fill="none" stroke="#78529A" stroke-width="1.4"/>
+<path d="M 309.00 214.00 L 309.00 216.50" fill="none" stroke="#78529A" stroke-width="1.4"/>
 <polygon points="309.00,222.00 306.50,216.50 311.50,216.50" fill="#78529A"/>
 <circle cx="347" cy="240" r="13" fill="white" stroke="#527D27" stroke-width="1.4"/>
 <text x="347.00" y="242.70" font-size="8.5" text-anchor="middle" fill="#527D27" font-weight="bold">+40</text>
-<path d="M 318.00 240.00 L 334.00 240.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 318.00 240.00 L 328.50 240.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="334.00,240.00 328.50,242.50 328.50,237.50" fill="#527D27"/>
 <rect x="380.00" y="225.00" width="70.00" height="30.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="415.00" y="239.00" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">APPLY</text>
 <text x="415.00" y="247.29" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">(11, 1999540)</text>
-<path d="M 360.00 240.00 L 380.00 240.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 360.00 240.00 L 374.50 240.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="380.00,240.00 374.50,242.50 374.50,237.50" fill="#527D27"/>
 <text x="0.00" y="274.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">NORMALIZE_TIME → LATENCY (+40 ns) → APPLY</text>
 <path d="M 183.00 58.00 L 186.00 54.00 L 189.00 58.00" fill="none" stroke="#000" stroke-width="1.0"/>

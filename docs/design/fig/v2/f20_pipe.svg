@@ -44,11 +44,11 @@
 <text x="341.60" y="105.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold"></text>
 <rect x="345.80" y="96.00" width="67.20" height="13.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
 <text x="379.40" y="105.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">55 ×7 | D5</text>
-<path d="M 110.60 49.00 L 110.60 56.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<path d="M 110.60 49.00 L 110.60 50.50" fill="none" stroke="#000" stroke-width="1.1"/>
 <polygon points="110.60,56.00 108.10,50.50 113.10,50.50" fill="#000"/>
-<path d="M 236.60 69.00 L 236.60 76.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<path d="M 236.60 69.00 L 236.60 70.50" fill="none" stroke="#000" stroke-width="1.1"/>
 <polygon points="236.60,76.00 234.10,70.50 239.10,70.50" fill="#000"/>
-<path d="M 337.40 89.00 L 337.40 96.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<path d="M 337.40 89.00 L 337.40 90.50" fill="none" stroke="#000" stroke-width="1.1"/>
 <polygon points="337.40,96.00 334.90,90.50 339.90,90.50" fill="#000"/>
 <text x="69.00" y="23.00" font-size="6.7" text-anchor="end" fill="#000" font-weight="bold">last byte</text>
 <text x="345.80" y="122.00" font-size="7.3" text-anchor="middle" fill="#008AA6" font-weight="bold">SOF 32</text>
@@ -87,12 +87,12 @@
 <text x="270.20" y="234.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">read</text>
 <rect x="295.40" y="225.00" width="33.60" height="13.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="312.20" y="234.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">p0…</text>
-<path d="M 102.20 184.00 L 102.20 189.00" fill="none" stroke="#000" stroke-width="1.1"/>
-<polygon points="102.20,189.00 99.70,183.50 104.70,183.50" fill="#000"/>
-<path d="M 127.40 202.00 L 127.40 207.00" fill="none" stroke="#000" stroke-width="1.1"/>
-<polygon points="127.40,207.00 124.90,201.50 129.90,201.50" fill="#000"/>
-<path d="M 245.00 220.00 L 245.00 225.00" fill="none" stroke="#000" stroke-width="1.1"/>
-<polygon points="245.00,225.00 242.50,219.50 247.50,219.50" fill="#000"/>
+<path d="M 102.20 184.00 L 102.20 185.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="102.20,189.00 100.38,185.00 104.02,185.00" fill="#000"/>
+<path d="M 127.40 202.00 L 127.40 203.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="127.40,207.00 125.58,203.00 129.22,203.00" fill="#000"/>
+<path d="M 245.00 220.00 L 245.00 221.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="245.00,225.00 243.18,221.00 246.82,221.00" fill="#000"/>
 <text x="105.20" y="180.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">f_end</text>
 <text x="130.40" y="198.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">desc_valid</text>
 <text x="248.00" y="216.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">dq_count++</text>

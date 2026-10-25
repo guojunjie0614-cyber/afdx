@@ -84,9 +84,9 @@
 <text x="270.50" y="119.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">46…58</text>
 <text x="348.00" y="119.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">59</text>
 <text x="405.00" y="119.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">60…63</text>
-<path d="M 89.00 159.00 L 209.00 159.00" fill="none" stroke="#008AA6" stroke-width="0.9"/>
-<polygon points="209.00,159.00 203.50,161.50 203.50,156.50" fill="#008AA6"/>
+<path d="M 94.50 159.00 L 203.50 159.00" fill="none" stroke="#008AA6" stroke-width="0.9"/>
 <polygon points="89.00,159.00 94.50,156.50 94.50,161.50" fill="#008AA6"/>
+<polygon points="209.00,159.00 203.50,161.50 203.50,156.50" fill="#008AA6"/>
 <text x="149.00" y="172.00" font-size="7.3" text-anchor="middle" fill="#008AA6" font-weight="bold">4-B application payload</text>
 <text x="332.00" y="163.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">UDP = 12 B · IP = 32 B · frame = 64 B</text>
 <text x="4.00" y="194.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(c) VL7 / USER_ID 0x1234: A and B differ in the interface byte</text>

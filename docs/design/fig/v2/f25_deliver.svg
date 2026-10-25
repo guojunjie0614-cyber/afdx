@@ -11,9 +11,9 @@
 <rect x="8.00" y="31.00" width="104.00" height="19.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
 <path d="M 38.00 31.00 L 38.00 50.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 78.00 31.00 L 78.00 50.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 120.00 30.00 L 294.00 30.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<polygon points="294.00,30.00 288.50,32.50 288.50,27.50" fill="#000"/>
+<path d="M 125.50 30.00 L 288.50 30.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <polygon points="120.00,30.00 125.50,27.50 125.50,32.50" fill="#000"/>
+<polygon points="294.00,30.00 288.50,32.50 288.50,27.50" fill="#000"/>
 <text x="207.00" y="25.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">6 clocks to first output</text>
 <text x="120.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0</text>
 <path d="M 120.00 55.00 L 120.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
@@ -63,15 +63,17 @@
 <path d="M 102.33 98.00 L 102.33 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <path d="M 106.67 98.00 L 106.67 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <path d="M 111.00 108.00 L 120.00 108.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<rect x="121.00" y="63.64" width="31.60" height="7.04" rx="0" fill="#fff" stroke="none" stroke-width="0"/>
 <text x="122.00" y="69.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">count = 1</text>
+<rect x="160.43" y="64.64" width="35.14" height="7.04" rx="0" fill="#fff" stroke="none" stroke-width="0"/>
 <text x="178.00" y="70.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">latch head</text>
-<path d="M 178.00 74.00 L 194.00 82.00" fill="none" stroke="#777" stroke-width="0.9"/>
+<path d="M 178.00 74.00 L 189.08 79.54" fill="none" stroke="#777" stroke-width="0.9"/>
 <polygon points="194.00,82.00 187.96,81.78 190.20,77.30" fill="#777"/>
-<path d="M 216.31 90.34 L 226.69 99.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<path d="M 216.31 90.34 L 222.60 95.98" fill="none" stroke="#008DA5" stroke-width="1.6"/>
 <polygon points="226.69,99.66 220.93,97.85 224.27,94.12" fill="#008DA5"/>
-<path d="M 245.31 116.34 L 255.69 125.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<path d="M 245.31 116.34 L 251.60 121.98" fill="none" stroke="#008DA5" stroke-width="1.6"/>
 <polygon points="255.69,125.66 249.93,123.85 253.27,120.12" fill="#008DA5"/>
-<path d="M 274.31 142.34 L 284.69 151.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<path d="M 274.31 142.34 L 280.60 147.98" fill="none" stroke="#008DA5" stroke-width="1.6"/>
 <polygon points="284.69,151.66 278.93,149.85 282.27,146.12" fill="#008DA5"/>
 <polygon points="194,82 197,74 217,74 220,82 217,90 197,90" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
 <text x="207.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">100</text>
@@ -81,11 +83,11 @@
 <text x="265.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p0</text>
 <polygon points="281,160 284,152 304,152 307,160 304,168 284,168" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
 <text x="294.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p0</text>
-<path d="M 245.31 90.34 L 255.69 99.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<path d="M 245.31 90.34 L 251.60 95.98" fill="none" stroke="#527C31" stroke-width="1.6"/>
 <polygon points="255.69,99.66 249.93,97.85 253.27,94.12" fill="#527C31"/>
-<path d="M 274.31 116.34 L 284.69 125.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<path d="M 274.31 116.34 L 280.60 121.98" fill="none" stroke="#527C31" stroke-width="1.6"/>
 <polygon points="284.69,125.66 278.93,123.85 282.27,120.12" fill="#527C31"/>
-<path d="M 303.31 142.34 L 313.69 151.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<path d="M 303.31 142.34 L 309.60 147.98" fill="none" stroke="#527C31" stroke-width="1.6"/>
 <polygon points="313.69,151.66 307.93,149.85 311.27,146.12" fill="#527C31"/>
 <polygon points="223,82 226,74 246,74 249,82 246,90 226,90" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
 <text x="236.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">101</text>
@@ -95,11 +97,11 @@
 <text x="294.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p1</text>
 <polygon points="310,160 313,152 333,152 336,160 333,168 313,168" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
 <text x="323.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p1</text>
-<path d="M 274.31 90.34 L 284.69 99.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<path d="M 274.31 90.34 L 280.60 95.98" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
 <polygon points="284.69,99.66 278.93,97.85 282.27,94.12" fill="#AA6B25"/>
-<path d="M 303.31 116.34 L 313.69 125.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<path d="M 303.31 116.34 L 309.60 121.98" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
 <polygon points="313.69,125.66 307.93,123.85 311.27,120.12" fill="#AA6B25"/>
-<path d="M 332.31 142.34 L 342.69 151.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<path d="M 332.31 142.34 L 338.60 147.98" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
 <polygon points="342.69,151.66 336.93,149.85 340.27,146.12" fill="#AA6B25"/>
 <polygon points="252,82 255,74 275,74 278,82 275,90 255,90" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
 <text x="265.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">102</text>
@@ -109,11 +111,11 @@
 <text x="323.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p2</text>
 <polygon points="339,160 342,152 362,152 365,160 362,168 342,168" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
 <text x="352.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p2</text>
-<path d="M 303.31 90.34 L 313.69 99.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<path d="M 303.31 90.34 L 309.60 95.98" fill="none" stroke="#755092" stroke-width="1.6"/>
 <polygon points="313.69,99.66 307.93,97.85 311.27,94.12" fill="#755092"/>
-<path d="M 332.31 116.34 L 342.69 125.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<path d="M 332.31 116.34 L 338.60 121.98" fill="none" stroke="#755092" stroke-width="1.6"/>
 <polygon points="342.69,125.66 336.93,123.85 340.27,120.12" fill="#755092"/>
-<path d="M 361.31 142.34 L 371.69 151.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<path d="M 361.31 142.34 L 367.60 147.98" fill="none" stroke="#755092" stroke-width="1.6"/>
 <polygon points="371.69,151.66 365.93,149.85 369.27,146.12" fill="#755092"/>
 <polygon points="281,82 284,74 304,74 307,82 304,90 284,90" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
 <text x="294.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">103</text>
@@ -123,9 +125,10 @@
 <text x="352.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p3</text>
 <polygon points="368,160 371,152 391,152 394,160 391,168 371,168" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
 <text x="381.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p3</text>
-<path d="M 294.00 180.00 L 381.00 180.00" fill="none" stroke="#507D26" stroke-width="0.9"/>
-<polygon points="381.00,180.00 375.50,182.50 375.50,177.50" fill="#507D26"/>
+<path d="M 299.50 180.00 L 375.50 180.00" fill="none" stroke="#507D26" stroke-width="0.9"/>
 <polygon points="294.00,180.00 299.50,177.50 299.50,182.50" fill="#507D26"/>
+<polygon points="381.00,180.00 375.50,182.50 375.50,177.50" fill="#507D26"/>
+<rect x="311.38" y="186.60" width="52.25" height="8.40" rx="0" fill="#fff" stroke="none" stroke-width="0"/>
 <text x="337.50" y="193.00" font-size="8" text-anchor="middle" fill="#507D26" font-weight="bold">1 byte / clock</text>
 <text x="8.00" y="214.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">d_valid</text>
 <path d="M 120.00 217.00 L 294.00 217.00 L 294.00 205.00 L 410.00 205.00 L 410.00 217.00 L 439.00 217.00" fill="none" stroke="#000" stroke-width="1.4"/>
