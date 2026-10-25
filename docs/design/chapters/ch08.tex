@@ -2,7 +2,7 @@
 
 \code{afdx_cfg} 负责配置总线的地址译码、配置寄存器和 27 个统计计数器的维护、读数据多路选择，并在配置表写入时与收发核心执行许可握手。模块输出全部来自寄存器，结构见图~\ref{fig:cfg}。
 
-\figN[配置模块]{f30_cfg}{配置模块。主机与 SNMP 代理共享一条总线；配置表写请求保存在暂存寄存器中，等待核心许可；收到 $t$ 拍的读请求后，在 $t+1$ 拍锁存本地与服务寄存器的读值，$t+2$ 拍选出数据}{fig:cfg}
+\figN[配置模块]{f30_cfg}{配置事务示例：(a) 暂存对 \code{rx_cfg[7]} 的写入，等待许可后写 RAM，并对比 RX/TX 的就绪重武装；(b) 读回 \code{USER_ID}=42 的两拍候选锁存与选择}{fig:cfg}
 
 \section{地址映射}
 
@@ -79,9 +79,14 @@ SNMP 代理读写管理对象使用同一条总线。顶层的仲裁规则是：
 \text{发送侧：}\ & \text{cfg\_ok} = \text{enable} \wedge (\text{op}=\text{IDLE}) \wedge \neg\text{want\_enq} \wedge \neg\text{want\_grant} \\
 \text{接收侧：}\ & \text{cfg\_ok} = \text{enable} \wedge (\text{op}\in\{\text{IDLE},\text{AGE}\}) \wedge \neg\text{desc\_a\_valid} \wedge \neg\text{desc\_b\_valid}
 \end{align}
-\code{cfg_ok} 由引擎自身的状态寄存器与同级模块的寄存输出（入队请求、帧描述有效、\code{grant_ready}）组合生成。\code{afdx_cfg} 接收一次写表请求后，保持写使能（\code{tx_cfg_we}、\code{rx_map_we} 或 \code{rx_cfg_we}）及地址、数据；当对应核心的 \code{cfg_ok} 为 1 时，引擎本拍不置位对应配置表的读使能寄存器，核心模块在该拍把写请求锁存到写口寄存器并于下一拍写入 RAM，\code{afdx_cfg} 同时撤销写请求并恢复 \code{cfg_ready}。时序为：
+\code{cfg_ok} 由引擎自身的状态寄存器与同级模块的寄存输出（入队请求、帧描述有效、\code{grant_ready}）组合生成。\code{afdx_cfg} 接收一次写表请求后，保持写使能（\code{tx_cfg_we}、\code{rx_map_we} 或 \code{rx_cfg_we}）及地址、数据；当对应核心的 \code{cfg_ok} 为 1 时，引擎本拍不置位对应配置表的读使能寄存器，核心模块在该拍把写请求锁存到写口寄存器并于下一拍写入 RAM，\code{afdx_cfg} 撤销写请求。接收侧在许可后的下一拍恢复 \code{cfg_ready}；发送侧通过 \code{tx_cfg_ok_q} 与 \code{tx_cfg_rearm} 再延后一拍恢复就绪，保证本地应答与真实写请求完成对齐。时序为：
 \begin{equation}
-\text{cfg\_ready}(t+1)=0,\quad u=\min\{\,\tau \ge t+1 : \text{cfg\_ok}(\tau)=1\,\},\quad \text{cfg\_ready}(u+1)=1,
+\begin{aligned}
+&\text{cfg\_ready}(t+1)=0,\qquad
+u=\min\{\,\tau \ge t+1 : \text{cfg\_ok}(\tau)=1\,\},\\
+&\text{cfg\_ready}_{\mathrm{RX}}(u+1)=1,\qquad
+\text{cfg\_ready}_{\mathrm{TX}}(u+2)=1.
+\end{aligned}
 \end{equation}
 其中 $t$ 为总线接受写请求的时刻，$u-t$ 为写表等待时间，上界为 64 拍（第~\ref{sec:budget}~节）。
 

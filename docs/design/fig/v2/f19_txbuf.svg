@@ -1,86 +1,96 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="432pt" height="198pt" viewBox="0 0 432 198">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="293.0pt" viewBox="-1.5 -1.5 453.0 293.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<rect x="0.00" y="28.00" width="56.00" height="30.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="28.00" y="42.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
-<text x="28.00" y="50.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">hold 1st byte</text>
-<rect x="96.00" y="28.00" width="56.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="124.00" y="42.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">ALLOC</text>
-<text x="124.00" y="50.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pop_req</text>
-<rect x="192.00" y="28.00" width="70.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="227.00" y="42.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">WAIT_PAGE</text>
-<text x="227.00" y="50.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">write byte 0</text>
-<rect x="302.00" y="28.00" width="56.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="330.00" y="42.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">RECV</text>
-<text x="330.00" y="50.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">1 B / cycle</text>
-<rect x="0.00" y="104.00" width="56.00" height="30.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="28.00" y="118.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">EVENT</text>
-<text x="28.00" y="126.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">one ev pulse</text>
-<rect x="96.00" y="104.00" width="56.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="124.00" y="118.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">REPLY</text>
-<text x="124.00" y="126.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">wait enq_ack</text>
-<rect x="192.00" y="104.00" width="70.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="227.00" y="118.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">ENQUEUE</text>
-<text x="227.00" y="126.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">enq_valid</text>
-<rect x="302.00" y="104.00" width="56.00" height="30.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="330.00" y="118.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">DESC</text>
-<text x="330.00" y="126.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">write tx_desc</text>
-<rect x="96.00" y="166.00" width="56.00" height="30.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
-<text x="124.00" y="180.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">DRAIN</text>
-<text x="124.00" y="188.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">drain to m_last</text>
-<rect x="192.00" y="166.00" width="56.00" height="30.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
-<text x="220.00" y="180.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">RETURN</text>
-<text x="220.00" y="188.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">pages → free</text>
-<rect x="0.00" y="28.00" width="56.00" height="30.00" rx="4" fill="none" stroke="#000" stroke-width="1.6"/>
-<rect x="302.00" y="28.00" width="56.00" height="30.00" rx="4" fill="none" stroke="#000" stroke-width="1.6"/>
-<rect x="96.00" y="166.00" width="56.00" height="30.00" rx="4" fill="none" stroke="#000" stroke-width="1.6"/>
-<path d="M 56.00 43.00 L 96.00 43.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="96.00,43.00 91.00,45.10 91.00,40.90" fill="#000"/>
-<text x="76.00" y="40.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">take</text>
-<path d="M 152.00 43.00 L 192.00 43.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="192.00,43.00 187.00,45.10 187.00,40.90" fill="#000"/>
-<text x="172.00" y="40.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">1 cycle</text>
-<path d="M 262.00 43.00 L 302.00 43.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="302.00,43.00 297.00,45.10 297.00,40.90" fill="#000"/>
-<text x="282.00" y="40.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">pop_ok</text>
-<path d="M 340.00 58.00 L 340.00 104.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="340.00,104.00 337.90,99.00 342.10,99.00" fill="#000"/>
-<text x="343.00" y="86.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">m_last</text>
-<path d="M 310.00 58.00 L 310.00 74.00 L 124.00 74.00 L 124.00 58.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="124.00,58.00 126.10,63.00 121.90,63.00" fill="#000"/>
-<text x="178.00" y="70.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">boundary: next byte</text>
-<path d="M 250.00 58.00 L 250.00 86.00 L 320.00 86.00 L 320.00 104.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="320.00,104.00 317.90,99.00 322.10,99.00" fill="#000"/>
-<text x="285.00" y="96.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">held_last</text>
-<path d="M 302.00 119.00 L 262.00 119.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="262.00,119.00 267.00,116.90 267.00,121.10" fill="#000"/>
-<path d="M 192.00 119.00 L 152.00 119.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="152.00,119.00 157.00,116.90 157.00,121.10" fill="#000"/>
-<path d="M 96.00 119.00 L 56.00 119.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="56.00,119.00 61.00,116.90 61.00,121.10" fill="#000"/>
-<text x="76.00" y="116.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">accept</text>
-<path d="M 28.00 104.00 L 28.00 58.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="28.00,58.00 30.10,63.00 25.90,63.00" fill="#000"/>
-<text x="31.00" y="86.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">next msg</text>
-<path d="M 358.00 43.00 L 370.00 43.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="370.00,43.00 365.00,45.10 365.00,40.90" fill="#000"/>
-<rect x="370.00" y="37.00" width="46.11" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="393.05" y="46.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ RETURN</text>
-<text x="389.00" y="34.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">&gt; 1471 B</text>
-<path d="M 227.00 28.00 L 227.00 16.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="227.00,16.00 229.10,21.00 224.90,21.00" fill="#000"/>
-<rect x="203.95" y="4.00" width="46.11" height="12.00" rx="6" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="227.00" y="13.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">→ RETURN</text>
-<text x="222.00" y="21.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">pop_ack, !pop_ok</text>
-<path d="M 124.00 134.00 L 124.00 146.00 L 227.00 146.00 L 227.00 166.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="227.00,166.00 224.90,161.00 229.10,161.00" fill="#000"/>
-<text x="178.00" y="142.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">reject</text>
-<path d="M 192.00 181.00 L 152.00 181.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="152.00,181.00 157.00,178.90 157.00,183.10" fill="#000"/>
-<text x="172.00" y="178.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">not ended</text>
-<path d="M 202.00 166.00 L 202.00 154.00 L 40.00 154.00 L 40.00 134.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="40.00,134.00 42.10,139.00 37.90,139.00" fill="#000"/>
-<text x="76.00" y="151.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">ended</text>
-<path d="M 96.00 181.00 L 14.00 181.00 L 14.00 134.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="14.00,134.00 16.10,139.00 11.90,139.00" fill="#000"/>
-<text x="52.00" y="178.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">m_last</text>
+<text x="4.00" y="9.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">Paged storage: page links follow M0; the message link skips to M1</text>
+<text x="94.00" y="29.00" font-size="7.3" text-anchor="middle" fill="#13899A" font-weight="bold">tx_pnext</text>
+<text x="154.00" y="29.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">page</text>
+<text x="298.00" y="29.00" font-size="8" text-anchor="middle" fill="#000" font-weight="bold">tx_payload · 512 B / page</text>
+<rect x="4.00" y="34.00" width="65.00" height="60.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<text x="36.50" y="54.01" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">tx_state[7]</text>
+<text x="36.50" y="62.77" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">head = 12</text>
+<text x="36.50" y="71.53" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">tail = 91</text>
+<text x="36.50" y="80.29" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">count = 2</text>
+<path d="M 8.00 94.00 L 12.00 89.00 L 16.00 94.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 69.00 49.00 L 73.00 49.00 L 73.00 35.00 L 154.00 35.00 L 154.00 45.00" fill="none" stroke="#79539C" stroke-width="1.4"/>
+<polygon points="154.00,45.00 151.50,39.50 156.50,39.50" fill="#79539C"/>
+<rect x="80.00" y="45.00" width="28.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="94.00" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">37</text>
+<rect x="140.00" y="45.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="154.00" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">12</text>
+<rect x="168.00" y="45.00" width="60.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="198.0" y="57.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">0</tspan></text>
+<rect x="228.00" y="45.00" width="140.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="298.00" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">…</text>
+<rect x="368.00" y="45.00" width="60.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="398.0" y="57.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">511</tspan></text>
+<text x="298.00" y="77.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">M0 · 512 B</text>
+<rect x="80.00" y="83.00" width="28.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="94.00" y="95.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">84</text>
+<rect x="140.00" y="83.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="154.00" y="95.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">37</text>
+<rect x="168.00" y="83.00" width="60.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="198.0" y="95.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">512</tspan></text>
+<rect x="228.00" y="83.00" width="140.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="298.00" y="95.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">…</text>
+<rect x="368.00" y="83.00" width="60.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="398.0" y="95.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">1023</tspan></text>
+<text x="298.00" y="115.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">M0 · 512 B</text>
+<rect x="80.00" y="121.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="94.00" y="133.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">—</text>
+<rect x="140.00" y="121.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="154.00" y="133.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">84</text>
+<rect x="168.00" y="121.00" width="32.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="184.0" y="133.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">1024</tspan></text>
+<rect x="200.00" y="121.00" width="25.38" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="212.69" y="133.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">…</text>
+<rect x="225.38" y="121.00" width="32.00" height="20.00" rx="0" fill="#DEF1F3" stroke="#000" stroke-width="1.4"/>
+<text x="241.375" y="133.0" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-size="9">p<tspan baseline-shift="sub" font-size="6.2">1199</tspan></text>
+<rect x="257.38" y="121.00" width="170.62" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="342.69" y="133.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">unused</text>
+<text x="212.70" y="153.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">176 B</text>
+<text x="342.70" y="153.00" font-size="7.3" text-anchor="middle" fill="#666" font-weight="bold">336 B unused</text>
+<rect x="80.00" y="159.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="94.00" y="171.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">—</text>
+<rect x="140.00" y="159.00" width="28.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="154.00" y="171.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">91</text>
+<rect x="168.00" y="159.00" width="152.34" height="20.00" rx="0" fill="#EEE6F3" stroke="#000" stroke-width="1.4"/>
+<text x="244.17" y="171.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">M1: q0 … q299</text>
+<rect x="320.34" y="159.00" width="107.66" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="374.17" y="171.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">unused</text>
+<text x="244.20" y="191.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">300 B</text>
+<text x="374.20" y="191.00" font-size="7.3" text-anchor="middle" fill="#666" font-weight="bold">212 B</text>
+<path d="M 108.00 55.00 L 122.00 55.00 L 122.00 77.00 L 154.00 77.00 L 154.00 83.00" fill="none" stroke="#13899A" stroke-width="1.6"/>
+<polygon points="154.00,83.00 151.50,77.50 156.50,77.50" fill="#13899A"/>
+<path d="M 108.00 93.00 L 122.00 93.00 L 122.00 115.00 L 154.00 115.00 L 154.00 121.00" fill="none" stroke="#13899A" stroke-width="1.6"/>
+<polygon points="154.00,121.00 151.50,115.50 156.50,115.50" fill="#13899A"/>
+<text x="94.00" y="191.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">unused</text>
+<path d="M 428.00 55.00 L 442.00 55.00 L 442.00 169.00 L 428.00 169.00" fill="none" stroke="#79539C" stroke-width="1.4"/>
+<polygon points="428.00,169.00 433.50,166.50 433.50,171.50" fill="#79539C"/>
+<text x="4.00" y="117.00" font-size="7.3" text-anchor="start" fill="#79539C" font-weight="bold">tx_mnext[12]</text>
+<text x="4.00" y="130.00" font-size="8" text-anchor="start" fill="#79539C" font-weight="bold">= 91</text>
+<text x="4.00" y="149.00" font-size="6.7" text-anchor="start" fill="#79539C" font-weight="bold">next message</text>
+<text x="4.00" y="211.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Builder page-end reads: p511 → p1023 → p1199</text>
+<text x="349.00" y="228.00" font-size="7.3" text-anchor="middle" fill="#628D36" font-weight="bold">ret1_page: 12 → 37 → 84</text>
+<text x="4.00" y="243.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">tx_free</text>
+<rect x="100.00" y="237.00" width="62.00" height="20.00" rx="0" fill="#F0F0F0" stroke="#000" stroke-width="1.4"/>
+<text x="131.00" y="249.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">existing …</text>
+<rect x="162.00" y="237.00" width="62.00" height="20.00" rx="0" fill="#E8F0DC" stroke="#000" stroke-width="1.4"/>
+<text x="193.00" y="249.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">12</text>
+<rect x="224.00" y="237.00" width="62.00" height="20.00" rx="0" fill="#E8F0DC" stroke="#000" stroke-width="1.4"/>
+<text x="255.00" y="249.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">37</text>
+<rect x="286.00" y="237.00" width="62.00" height="20.00" rx="0" fill="#E8F0DC" stroke="#000" stroke-width="1.4"/>
+<text x="317.00" y="249.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">84</text>
+<rect x="348.00" y="237.00" width="62.00" height="20.00" rx="0" fill="#fff" stroke="#000" stroke-width="1.4"/>
+<text x="379.00" y="249.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold"></text>
+<path d="M 446.00 247.00 L 410.00 247.00" fill="none" stroke="#628D36" stroke-width="1.4"/>
+<polygon points="410.00,247.00 415.50,244.50 415.50,249.50" fill="#628D36"/>
+<path d="M 100.00 247.00 L 68.00 247.00" fill="none" stroke="#628D36" stroke-width="1.4"/>
+<polygon points="68.00,247.00 73.50,244.50 73.50,249.50" fill="#628D36"/>
+<text x="4.00" y="260.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">pop → tx_buf</text>
+<path d="M 131.00 274.00 L 131.00 257.00" fill="none" stroke="#628D36" stroke-width="1.4"/>
+<polygon points="131.00,257.00 133.50,262.50 128.50,262.50" fill="#628D36"/>
+<text x="131.00" y="287.00" font-size="7.3" text-anchor="middle" fill="#628D36" font-weight="bold">rd_ptr</text>
+<path d="M 379.00 274.00 L 379.00 257.00" fill="none" stroke="#628D36" stroke-width="1.4"/>
+<polygon points="379.00,257.00 381.50,262.50 376.50,262.50" fill="#628D36"/>
+<text x="379.00" y="287.00" font-size="7.3" text-anchor="middle" fill="#628D36" font-weight="bold">wr_ptr</text>
+<text x="251.00" y="280.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">after the three returns</text>
 </svg>

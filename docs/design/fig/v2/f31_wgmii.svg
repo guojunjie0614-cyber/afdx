@@ -1,166 +1,110 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="114pt" viewBox="0 0 450 114">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="213.0pt" viewBox="-1.5 -1.5 453.0 213.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<text x="72.00" y="21.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">clk</text>
-<path d="M 78.00 23.00 L 78.00 14.00 L 83.00 14.00 L 83.00 23.00 L 88.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 88.00 23.00 L 88.00 14.00 L 93.00 14.00 L 93.00 23.00 L 98.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 98.00 23.00 L 98.00 14.00 L 107.50 14.00 L 107.50 23.00 L 117.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 117.00 23.00 L 117.00 14.00 L 126.50 14.00 L 126.50 23.00 L 136.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 136.00 23.00 L 136.00 14.00 L 145.50 14.00 L 145.50 23.00 L 155.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 155.00 23.00 L 155.00 14.00 L 164.50 14.00 L 164.50 23.00 L 174.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 174.00 23.00 L 174.00 14.00 L 183.50 14.00 L 183.50 23.00 L 193.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 193.00 23.00 L 193.00 14.00 L 202.50 14.00 L 202.50 23.00 L 212.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 212.00 23.00 L 212.00 14.00 L 221.50 14.00 L 221.50 23.00 L 231.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 231.00 23.00 L 231.00 14.00 L 241.00 14.00 L 241.00 23.00 L 251.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 251.00 23.00 L 251.00 14.00 L 260.50 14.00 L 260.50 23.00 L 270.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 279.00 23.00 L 279.00 14.00 L 286.00 14.00 L 286.00 23.00 L 293.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 293.00 23.00 L 293.00 14.00 L 302.50 14.00 L 302.50 23.00 L 312.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 312.00 23.00 L 312.00 14.00 L 321.50 14.00 L 321.50 23.00 L 331.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 340.00 23.00 L 340.00 14.00 L 347.00 14.00 L 347.00 23.00 L 354.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 354.00 23.00 L 354.00 14.00 L 359.00 14.00 L 359.00 23.00 L 364.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 364.00 23.00 L 364.00 14.00 L 369.00 14.00 L 369.00 23.00 L 374.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 374.00 23.00 L 374.00 14.00 L 379.00 14.00 L 379.00 23.00 L 384.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 384.00 23.00 L 384.00 14.00 L 391.00 14.00 L 391.00 23.00 L 398.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 398.00 23.00 L 398.00 14.00 L 403.00 14.00 L 403.00 23.00 L 408.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 417.00 23.00 L 417.00 14.00 L 421.00 14.00 L 421.00 23.00 L 425.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 425.00 23.00 L 425.00 14.00 L 434.50 14.00 L 434.50 23.00 L 444.00 23.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<text x="72.00" y="37.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_valid</text>
-<path d="M 78.00 39.00 L 88.00 39.00 L 88.00 39.00 L 98.00 39.00 L 98.00 30.00 L 98.00 30.00 L 117.00 30.00 L 117.00 30.00 L 136.00 30.00 L 136.00 30.00 L 155.00 30.00 L 155.00 30.00 L 174.00 30.00 L 174.00 30.00 L 193.00 30.00 L 193.00 30.00 L 212.00 30.00 L 212.00 30.00 L 231.00 30.00 L 231.00 30.00 L 251.00 30.00 L 251.00 30.00 L 270.00 30.00 L 270.00 30.00 L 279.00 30.00 L 279.00 30.00 L 293.00 30.00 L 293.00 30.00 L 312.00 30.00 L 312.00 30.00 L 331.00 30.00 L 331.00 30.00 L 340.00 30.00 L 340.00 30.00 L 354.00 30.00 L 354.00 30.00 L 364.00 30.00 L 364.00 30.00 L 374.00 30.00 L 374.00 30.00 L 384.00 30.00 L 384.00 30.00 L 398.00 30.00 L 398.00 39.00 L 398.00 39.00 L 408.00 39.00 L 408.00 39.00 L 417.00 39.00 L 417.00 39.00 L 425.00 39.00 L 425.00 30.00 L 425.00 30.00 L 444.00 30.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="72.00" y="53.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_data</text>
-<polygon points="78.00,50.50 79.60,46.00 96.40,46.00 98.00,50.50 96.40,55.00 79.60,55.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x00</text>
-<polygon points="98.00,50.50 99.60,46.00 115.40,46.00 117.00,50.50 115.40,55.00 99.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="107.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="117.00,50.50 118.60,46.00 134.40,46.00 136.00,50.50 134.40,55.00 118.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="126.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="136.00,50.50 137.60,46.00 153.40,46.00 155.00,50.50 153.40,55.00 137.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="145.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="155.00,50.50 156.60,46.00 172.40,46.00 174.00,50.50 172.40,55.00 156.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="164.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="174.00,50.50 175.60,46.00 191.40,46.00 193.00,50.50 191.40,55.00 175.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="183.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="193.00,50.50 194.60,46.00 210.40,46.00 212.00,50.50 210.40,55.00 194.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="202.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="212.00,50.50 213.60,46.00 229.40,46.00 231.00,50.50 229.40,55.00 213.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="221.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="231.00,50.50 232.60,46.00 249.40,46.00 251.00,50.50 249.40,55.00 232.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="241.00" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0xD5</text>
-<polygon points="251.00,50.50 252.60,46.00 268.40,46.00 270.00,50.50 268.40,55.00 252.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="260.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x03</text>
-<polygon points="270.00,50.50 271.60,46.00 277.40,46.00 279.00,50.50 277.40,55.00 271.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="279.00,50.50 280.60,46.00 291.40,46.00 293.00,50.50 291.40,55.00 280.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="286.00" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">uid</text>
-<polygon points="293.00,50.50 294.60,46.00 310.40,46.00 312.00,50.50 310.40,55.00 294.60,55.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="302.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x20</text>
-<polygon points="312.00,50.50 313.60,46.00 329.40,46.00 331.00,50.50 329.40,55.00 313.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="321.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x08</text>
-<polygon points="331.00,50.50 332.60,46.00 338.40,46.00 340.00,50.50 338.40,55.00 332.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="340.00,50.50 341.60,46.00 352.40,46.00 354.00,50.50 352.40,55.00 341.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="347.00" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">SN</text>
-<polygon points="354.00,50.50 355.60,46.00 396.40,46.00 398.00,50.50 396.40,55.00 355.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="376.00" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">FCS (A)</text>
-<polygon points="398.00,50.50 399.60,46.00 423.40,46.00 425.00,50.50 423.40,55.00 399.60,55.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="425.00,50.50 426.60,46.00 442.40,46.00 444.00,50.50 442.40,55.00 426.60,55.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="434.50" y="52.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<text x="72.00" y="69.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_valid_b</text>
-<path d="M 78.00 71.00 L 88.00 71.00 L 88.00 71.00 L 98.00 71.00 L 98.00 62.00 L 98.00 62.00 L 117.00 62.00 L 117.00 62.00 L 136.00 62.00 L 136.00 62.00 L 155.00 62.00 L 155.00 62.00 L 174.00 62.00 L 174.00 62.00 L 193.00 62.00 L 193.00 62.00 L 212.00 62.00 L 212.00 62.00 L 231.00 62.00 L 231.00 62.00 L 251.00 62.00 L 251.00 62.00 L 270.00 62.00 L 270.00 62.00 L 279.00 62.00 L 279.00 62.00 L 293.00 62.00 L 293.00 62.00 L 312.00 62.00 L 312.00 62.00 L 331.00 62.00 L 331.00 62.00 L 340.00 62.00 L 340.00 62.00 L 354.00 62.00 L 354.00 62.00 L 364.00 62.00 L 364.00 62.00 L 374.00 62.00 L 374.00 62.00 L 384.00 62.00 L 384.00 62.00 L 398.00 62.00 L 398.00 71.00 L 398.00 71.00 L 408.00 71.00 L 408.00 71.00 L 417.00 71.00 L 417.00 71.00 L 425.00 71.00 L 425.00 62.00 L 425.00 62.00 L 444.00 62.00" fill="none" stroke="#000" stroke-width="0.75"/>
-<text x="72.00" y="85.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_data_b</text>
-<polygon points="78.00,82.50 79.60,78.00 96.40,78.00 98.00,82.50 96.40,87.00 79.60,87.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<text x="88.00" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x00</text>
-<polygon points="98.00,82.50 99.60,78.00 115.40,78.00 117.00,82.50 115.40,87.00 99.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="107.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="117.00,82.50 118.60,78.00 134.40,78.00 136.00,82.50 134.40,87.00 118.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="126.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="136.00,82.50 137.60,78.00 153.40,78.00 155.00,82.50 153.40,87.00 137.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="145.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="155.00,82.50 156.60,78.00 172.40,78.00 174.00,82.50 172.40,87.00 156.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="164.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="174.00,82.50 175.60,78.00 191.40,78.00 193.00,82.50 191.40,87.00 175.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="183.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="193.00,82.50 194.60,78.00 210.40,78.00 212.00,82.50 210.40,87.00 194.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="202.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="212.00,82.50 213.60,78.00 229.40,78.00 231.00,82.50 229.40,87.00 213.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="221.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="231.00,82.50 232.60,78.00 249.40,78.00 251.00,82.50 249.40,87.00 232.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="241.00" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0xD5</text>
-<polygon points="251.00,82.50 252.60,78.00 268.40,78.00 270.00,82.50 268.40,87.00 252.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="260.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x03</text>
-<polygon points="270.00,82.50 271.60,78.00 277.40,78.00 279.00,82.50 277.40,87.00 271.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="279.00,82.50 280.60,78.00 291.40,78.00 293.00,82.50 291.40,87.00 280.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="286.00" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">uid</text>
-<polygon points="293.00,82.50 294.60,78.00 310.40,78.00 312.00,82.50 310.40,87.00 294.60,87.00" fill="#F4CDAE" stroke="#000" stroke-width="0.6"/>
-<text x="302.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x40</text>
-<polygon points="312.00,82.50 313.60,78.00 329.40,78.00 331.00,82.50 329.40,87.00 313.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="321.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x08</text>
-<polygon points="331.00,82.50 332.60,78.00 338.40,78.00 340.00,82.50 338.40,87.00 332.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<polygon points="340.00,82.50 341.60,78.00 352.40,78.00 354.00,82.50 352.40,87.00 341.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="347.00" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">SN</text>
-<polygon points="354.00,82.50 355.60,78.00 396.40,78.00 398.00,82.50 396.40,87.00 355.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="376.00" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">FCS (B)</text>
-<polygon points="398.00,82.50 399.60,78.00 423.40,78.00 425.00,82.50 423.40,87.00 399.60,87.00" fill="#E6E6E6" stroke="#000" stroke-width="0.6"/>
-<polygon points="425.00,82.50 426.60,78.00 442.40,78.00 444.00,82.50 442.40,87.00 426.60,87.00" fill="#FFFFFF" stroke="#000" stroke-width="0.6"/>
-<text x="434.50" y="84.80" font-size="6.5" text-anchor="middle" fill="#000">0x55</text>
-<polygon points="271.50,25.00 274.50,12.00 277.50,12.00 274.50,25.00" fill="#fff" stroke="none"/>
-<path d="M 271.50 25.00 L 274.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 274.50 25.00 L 277.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="271.50,41.00 274.50,28.00 277.50,28.00 274.50,41.00" fill="#fff" stroke="none"/>
-<path d="M 271.50 41.00 L 274.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 274.50 41.00 L 277.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="271.50,57.00 274.50,44.00 277.50,44.00 274.50,57.00" fill="#fff" stroke="none"/>
-<path d="M 271.50 57.00 L 274.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 274.50 57.00 L 277.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="271.50,73.00 274.50,60.00 277.50,60.00 274.50,73.00" fill="#fff" stroke="none"/>
-<path d="M 271.50 73.00 L 274.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 274.50 73.00 L 277.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="271.50,89.00 274.50,76.00 277.50,76.00 274.50,89.00" fill="#fff" stroke="none"/>
-<path d="M 271.50 89.00 L 274.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 274.50 89.00 L 277.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="332.50,25.00 335.50,12.00 338.50,12.00 335.50,25.00" fill="#fff" stroke="none"/>
-<path d="M 332.50 25.00 L 335.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 335.50 25.00 L 338.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="332.50,41.00 335.50,28.00 338.50,28.00 335.50,41.00" fill="#fff" stroke="none"/>
-<path d="M 332.50 41.00 L 335.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 335.50 41.00 L 338.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="332.50,57.00 335.50,44.00 338.50,44.00 335.50,57.00" fill="#fff" stroke="none"/>
-<path d="M 332.50 57.00 L 335.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 335.50 57.00 L 338.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="332.50,73.00 335.50,60.00 338.50,60.00 335.50,73.00" fill="#fff" stroke="none"/>
-<path d="M 332.50 73.00 L 335.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 335.50 73.00 L 338.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="332.50,89.00 335.50,76.00 338.50,76.00 335.50,89.00" fill="#fff" stroke="none"/>
-<path d="M 332.50 89.00 L 335.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 335.50 89.00 L 338.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="409.50,25.00 412.50,12.00 415.50,12.00 412.50,25.00" fill="#fff" stroke="none"/>
-<path d="M 409.50 25.00 L 412.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 412.50 25.00 L 415.50 12.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="409.50,41.00 412.50,28.00 415.50,28.00 412.50,41.00" fill="#fff" stroke="none"/>
-<path d="M 409.50 41.00 L 412.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 412.50 41.00 L 415.50 28.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="409.50,57.00 412.50,44.00 415.50,44.00 412.50,57.00" fill="#fff" stroke="none"/>
-<path d="M 409.50 57.00 L 412.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 412.50 57.00 L 415.50 44.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="409.50,73.00 412.50,60.00 415.50,60.00 412.50,73.00" fill="#fff" stroke="none"/>
-<path d="M 409.50 73.00 L 412.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 412.50 73.00 L 415.50 60.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="409.50,89.00 412.50,76.00 415.50,76.00 412.50,89.00" fill="#fff" stroke="none"/>
-<path d="M 409.50 89.00 L 412.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<path d="M 412.50 89.00 L 415.50 76.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<text x="107.50" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0</text>
-<text x="241.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">7</text>
-<text x="260.50" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8</text>
-<text x="302.50" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">19</text>
-<text x="347.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">67</text>
-<text x="359.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">68</text>
-<text x="391.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">71</text>
-<text x="403.00" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">72</text>
-<text x="434.50" y="9.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">84</text>
-<line x1="98.00" y1="2.00" x2="98.00" y2="91.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
-<line x1="251.00" y1="2.00" x2="251.00" y2="91.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
-<line x1="398.00" y1="2.00" x2="398.00" y2="91.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
-<line x1="425.00" y1="2.00" x2="425.00" y2="91.00" stroke="#777" stroke-width="0.5" stroke-dasharray="2 1.5"/>
-<path d="M 98.00 99.00 L 98.00 103.00 M 251.00 99.00 L 251.00 103.00 M 98.00 101.00 L 251.00 101.00" fill="none" stroke="#000" stroke-width="0.5"/>
-<text x="174.50" y="108.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">preamble 7 B + SFD</text>
-<path d="M 251.00 99.00 L 251.00 103.00 M 398.00 99.00 L 398.00 103.00 M 251.00 101.00 L 398.00 101.00" fill="none" stroke="#000" stroke-width="0.5"/>
-<text x="324.50" y="108.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">frame 64 B (1-byte message)</text>
-<path d="M 398.00 99.00 L 398.00 103.00 M 425.00 99.00 L 425.00 103.00 M 398.00 101.00 L 425.00 101.00" fill="none" stroke="#000" stroke-width="0.5"/>
-<text x="411.50" y="108.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">IFG ≥ 12 cycles</text>
+<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) Both GMII ports carry B0 / SN17 in the same byte cycles</text>
+<text x="69.00" y="29.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">cycle</text>
+<text x="88.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0</text>
+<text x="113.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">1–6</text>
+<text x="138.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">7</text>
+<text x="166.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">8–18</text>
+<text x="195.50" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">19</text>
+<text x="228.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">20–49</text>
+<text x="260.50" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">50</text>
+<text x="293.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">51–66</text>
+<text x="325.50" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">67</text>
+<text x="359.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">68–71</text>
+<text x="400.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">72–83</text>
+<text x="431.00" y="29.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">84</text>
+<text x="69.00" y="52.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">tx_valid A/B</text>
+<path d="M 77.00 42.00 L 380.00 42.00 L 380.00 54.00 L 420.00 54.00 L 420.00 42.00 L 442.00 42.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="69.00" y="81.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">data A</text>
+<rect x="77.00" y="69.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="88.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55</text>
+<rect x="99.00" y="69.00" width="28.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="113.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55 ×6</text>
+<rect x="127.00" y="69.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="138.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">D5</text>
+<rect x="149.00" y="69.00" width="34.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="166.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">H0…10</text>
+<rect x="183.00" y="69.00" width="25.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="195.50" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">20</text>
+<rect x="208.00" y="69.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="228.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">H12…41</text>
+<rect x="248.00" y="69.00" width="25.00" height="20.00" rx="0" fill="#DDF1F4" stroke="none" stroke-width="0"/>
+<text x="260.50" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">B0</text>
+<rect x="273.00" y="69.00" width="40.00" height="20.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="293.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0 ×16</text>
+<rect x="313.00" y="69.00" width="25.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="325.50" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">17</text>
+<rect x="338.00" y="69.00" width="42.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="359.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">FCS_A</text>
+<rect x="380.00" y="69.00" width="40.00" height="20.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="400.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">idle</text>
+<rect x="420.00" y="69.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="431.00" y="81.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55</text>
+<rect x="77.00" y="69.00" width="365.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 99.00 69.00 L 99.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 127.00 69.00 L 127.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 149.00 69.00 L 149.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 183.00 69.00 L 183.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 208.00 69.00 L 208.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 248.00 69.00 L 248.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 273.00 69.00 L 273.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 313.00 69.00 L 313.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 338.00 69.00 L 338.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 380.00 69.00 L 380.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 420.00 69.00 L 420.00 89.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="69.00" y="113.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">data B</text>
+<rect x="77.00" y="101.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="88.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55</text>
+<rect x="99.00" y="101.00" width="28.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="113.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55 ×6</text>
+<rect x="127.00" y="101.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="138.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">D5</text>
+<rect x="149.00" y="101.00" width="34.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="166.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">H0…10</text>
+<rect x="183.00" y="101.00" width="25.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="195.50" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">40</text>
+<rect x="208.00" y="101.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="228.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">H12…41</text>
+<rect x="248.00" y="101.00" width="25.00" height="20.00" rx="0" fill="#DDF1F4" stroke="none" stroke-width="0"/>
+<text x="260.50" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">B0</text>
+<rect x="273.00" y="101.00" width="40.00" height="20.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="293.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0 ×16</text>
+<rect x="313.00" y="101.00" width="25.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="325.50" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">17</text>
+<rect x="338.00" y="101.00" width="42.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="359.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">FCS_B</text>
+<rect x="380.00" y="101.00" width="40.00" height="20.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="400.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">idle</text>
+<rect x="420.00" y="101.00" width="22.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="431.00" y="113.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">55</text>
+<rect x="77.00" y="101.00" width="365.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 99.00 101.00 L 99.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 127.00 101.00 L 127.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 149.00 101.00 L 149.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 183.00 101.00 L 183.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 208.00 101.00 L 208.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 248.00 101.00 L 248.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 273.00 101.00 L 273.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 313.00 101.00 L 313.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 338.00 101.00 L 338.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 380.00 101.00 L 380.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 420.00 101.00 L 420.00 121.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="77.00" y="136.00" font-size="7.3" text-anchor="start" fill="#79539C" font-weight="bold">Source IF byte: A = 0x20; B = 0x40</text>
+<text x="4.00" y="158.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(b) Framing length and per-network checksum</text>
+<rect x="4.00" y="171.00" width="93.00" height="20.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="50.50" y="183.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">preamble + SFD</text>
+<rect x="97.00" y="171.00" width="231.00" height="20.00" rx="0" fill="#DDF1F4" stroke="none" stroke-width="0"/>
+<text x="212.50" y="183.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">42-B header + B0 + pad16 + SN</text>
+<rect x="328.00" y="171.00" width="48.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="352.00" y="183.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">FCS</text>
+<rect x="376.00" y="171.00" width="70.00" height="20.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="411.00" y="183.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">IFG</text>
+<rect x="4.00" y="171.00" width="442.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 97.00 171.00 L 97.00 191.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 328.00 171.00 L 328.00 191.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 376.00 171.00 L 376.00 191.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="50.50" y="204.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">8 cycles</text>
+<text x="235.00" y="204.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">60 + 4 = 64 B frame</text>
+<text x="411.00" y="204.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">12 cycles</text>
 </svg>

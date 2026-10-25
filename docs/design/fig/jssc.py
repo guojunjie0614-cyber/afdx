@@ -1,30 +1,32 @@
 """JSSC 风格插图的统一样式与绘图函数。
 
 坐标单位即印刷 pt：全宽图画布宽 450 pt（版心约 453 pt），插入 LaTeX 时不缩放，
-因此各图字号一致。字号：框标题 8 pt 粗体，副标题/信号/连线标签 7 pt，最小 6.5 pt。
+因此各图字号一致。主体 1.4 pt 黑色轮廓、1.6 pt 主数据路径，内部细线 0.9 pt。
+字号：框标题 8 pt 粗体，副标题/信号/连线标签 7.3 pt，最小 6.7 pt。
 """
 import os
 
 FONT = 'Arial, Helvetica, sans-serif'
-T1, T2 = 8.0, 7.0          # 标题、次级字号（pt）
-LW = 1.0                   # 连线线宽
-BW = 1.0                   # 框线宽
+T1, T2 = 8.0, 7.3          # 标题、次级字号（pt）
+LW = 1.4                   # 连线线宽
+BW = 1.4                   # 框线宽
+DW = 1.6                   # 主数据路径
 PAD = 4.0                  # 文字到框边的最小留白
 
 # 按功能着色，全文一套
 PAL = {
-    'tx':  ('#D9813F', '#FFFFFF'),   # 发送通路：填充、文字
-    'rx':  ('#2F9688', '#FFFFFF'),   # 接收通路
-    'svc': ('#6A5BA8', '#FFFFFF'),   # 服务
-    'ram': ('#F2D488', '#000000'),   # 块 RAM 表
-    'cfg': ('#A9C6EA', '#000000'),   # 配置与控制
+    'tx':  ('#FCE7D5', '#000000'),   # 发送通路：填充、文字
+    'rx':  ('#DDF1F4', '#000000'),   # 接收通路
+    'svc': ('#ECE3F2', '#000000'),   # 服务
+    'ram': ('#F5EBD3', '#000000'),   # 块 RAM 表
+    'cfg': ('#E5EDF7', '#000000'),   # 配置与控制
     'ext': ('#FFFFFF', '#000000'),   # 片外对象（虚线框）
-    'gray': ('#E6E6E6', '#000000'),  # 中性
+    'gray': ('#F1F1F1', '#000000'),  # 中性
     'white': ('#FFFFFF', '#000000'),
-    'drop': ('#F6D2B8', '#000000'),  # 丢弃/异常（浅橙）
-    'pass': ('#BFE3DC', '#000000'),  # 通过（浅青）
-    'txl': ('#F4CDAE', '#000000'),   # 发送通路浅色（状态机的操作态）
-    'svcl': ('#D5CFEA', '#000000'),  # 服务浅色
+    'drop': ('#ECE3F2', '#000000'),  # 丢弃/异常
+    'pass': ('#EAF2DF', '#000000'),  # 通过
+    'txl': ('#FFF3E8', '#000000'),   # 发送通路浅色（状态机的操作态）
+    'svcl': ('#F4F1F6', '#000000'),  # 服务浅色
 }
 LEGEND_NAMES = {
     'tx': 'TX path', 'rx': 'RX path', 'svc': 'Services', 'ram': 'Block RAM',
@@ -74,13 +76,13 @@ class Fig:
         self.tags = []      # (x0, y0, x1, y1, 文字)
 
     # ---------- 基本元素 ----------
-    def text(self, x, y, s, size=T2, anchor='middle', bold=False, color='#000', italic=False):
+    def text(self, x, y, s, size=T2, anchor='middle', bold=True, color='#000', italic=False):
         """y 为文字基线。"""
         w = ' font-weight="bold"' if bold else ''
         it = ' font-style="italic"' if italic else ''
         self.body.append(f'<text x="{x:.2f}" y="{y:.2f}" font-size="{size}" text-anchor="{anchor}" fill="{color}"{w}{it}>{esc(s)}</text>')
 
-    def rect(self, x, y, w, h, fill='#fff', stroke='#000', sw=0.6, dash=None, rx=0):
+    def rect(self, x, y, w, h, fill='#fff', stroke='#000', sw=0.9, dash=None, rx=0):
         d = f' stroke-dasharray="{dash}"' if dash else ''
         self.body.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" rx="{rx}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"{d}/>')
 
@@ -179,11 +181,11 @@ class Fig:
         self.rect(b.x, b.y, b.w, b.h, 'none', '#000', sw, rx=rx)
 
     def group(self, x, y, w, h, kind, label, dash=None, label_color=None, stroke=None):
-        """子系统分组框：细圆角边框，左上角标签；stroke 可覆盖默认边框颜色。"""
-        col = stroke if stroke is not None else (PAL[kind][0] if kind in PAL and kind not in ('ext', 'white', 'gray') else '#7F7F7F')
+        """子系统分组框：黑色直角轮廓，左上角标签。"""
+        col = stroke if stroke is not None else '#000'
         if label_color is None:
             label_color = '#000'
-        self.rect(x, y, w, h, 'none', col, 1.2, dash, rx=4)
+        self.rect(x, y, w, h, 'none', col, BW, dash)
         if label:
             self.text(x + 4, y + 8.6, label, T2, 'start', True, label_color)
         return Box(x, y, w, h)
@@ -211,7 +213,7 @@ class Fig:
         if head in ('start', 'both'):
             self._head(pts[1], pts[0], color)
 
-    def _head(self, p0, p1, color, L=5.0, W=2.1):
+    def _head(self, p0, p1, color, L=5.5, W=2.5):
         (x0, y0), (x1, y1) = p0, p1
         dx, dy = x1 - x0, y1 - y0
         n = (dx * dx + dy * dy) ** 0.5
@@ -266,8 +268,12 @@ class Fig:
     # ---------- 输出 ----------
     def save(self, path):
         self.check()
-        head = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.w}pt" height="{self.h}pt" '
-                f'viewBox="0 0 {self.w} {self.h}">\n<style>text {{ font-family: {FONT}; }}</style>\n')
+        # Export the page rather than glyph/drawing bounds: preserve print scale
+        # and leave room for strokes centered on the nominal canvas edge.
+        margin = 1.5
+        width, height = self.w + 2 * margin, self.h + 2 * margin
+        head = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}pt" height="{height}pt" '
+                f'viewBox="{-margin} {-margin} {width} {height}">\n<style>text {{ font-family: {FONT}; }}</style>\n')
         with open(path, 'w', encoding='utf-8') as f:
             f.write(head + '\n'.join(self.body) + '\n</svg>\n')
         name = os.path.basename(path)

@@ -50,13 +50,13 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
   \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节均与 \code{clk} 同步，不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导码、帧长和 FCS；连接外部 PHY 时，外围适配逻辑须处理 PHY 错误标记并丢弃带错帧。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
-\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为前导码首字节，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
+\figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为前导码首字节，图中按标注的周期段压缩展示；示例载荷为 B0、SN 为 17，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
 
 \section{以太网帧格式}\label{sec:frame}
 
 图~\ref{fig:frame} 给出了本设计发送的 AFDX 帧格式。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{0x20}、B 网 \code{0x40}）。其后依次为 IPv4 头、UDP 头和应用数据；应用数据不足 17 字节时补零至该长度，再附加 1 字节序列号 SN，最后由 MAC 添加 4 字节 FCS。
 
-\figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式与 MAC 地址编码，应用数据长度 $1 \le n \le 1471$ 字节}{fig:frame}
+\figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式与具体字节位置。应用数据长度 $1 \le n \le 1471$ 字节；示例 $n=4$ 时，p0--p3 位于第 42--45 字节，补零 13 字节，SN 位于第 59 字节，含 FCS 的帧长为 64 字节。地址编码采用 VL 7 与 USER\_ID=\texttt{0x1234}}{fig:frame}
 
 \begin{table}\centering\small
 \caption{帧字段（字节序列以十六进制表示）}\label{tab:frame}
@@ -104,7 +104,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 接收接口不提供反压，按固定字节节拍连续交付消息，因此交付通路无需处理下游停顿。外部应用可用缓存写口或 DMA/FIFO 接口接收数据，并应保证每个有效周期都能接收一个字节。
 
-\figN[应用口时序]{f32_wapp}{应用接口时序：(a) 消息提交与握手；(b) 接收消息连续交付}{fig:wapp}
+\figN[应用口时序]{f32_wapp}{应用接口时序：(a) 无争用、空闲引擎及时接纳时的消息提交与握手示例；(b) 接收消息连续交付。示例中的 6 拍取页和 10 拍提交间隔不代表所有争用条件下的等待上界}{fig:wapp}
 
 \section{配置总线}
 
@@ -117,7 +117,7 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 图~\ref{fig:wcfg} 中，A、R、T 分别对应连续寄存器读、寄存器写和配置表写；寄存器写期间 \code{cfg_ready} 保持为 1。
 
-\figN[配置总线时序]{f33_wcfg}{配置总线的连续读、寄存器写与配置表写时序}{fig:wcfg}
+\figN[配置总线时序]{f33_wcfg}{配置总线的连续读、寄存器写与接收配置表写时序}{fig:wcfg}
 
 \section{事件接口}
 
