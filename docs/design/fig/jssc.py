@@ -5,6 +5,7 @@
 字号：框标题 8 pt 粗体，副标题/信号/连线标签 7.3 pt，最小 6.7 pt。
 """
 import os
+from math import dist
 
 FONT = 'Arial, Helvetica, sans-serif'
 T1, T2 = 8.0, 7.3          # 标题、次级字号（pt）
@@ -202,16 +203,28 @@ class Fig:
         self.text(x, y, s, size, anchor, bold, color, italic)
 
     def arrow(self, pts, dash=False, head='end', sw=LW, color='#000', check=True):
-        """正交折线。head: 'end' / 'start' / 'both' / None。"""
-        d = ' '.join(('M' if i == 0 else 'L') + f' {x:.2f} {y:.2f}' for i, (x, y) in enumerate(pts))
+        """带箭头的折线；线身止于箭头底边，端点仍是箭尖的位置。"""
+        shaft = list(pts)
+        heads = []
+        for end, neighbor, enabled in (
+            (0, 1, head in ('start', 'both')),
+            (-1, -2, head in ('end', 'both')),
+        ):
+            if not enabled:
+                continue
+            tip, previous = pts[end], pts[neighbor]
+            span = dist(tip, previous)
+            # 短线保留可见线身；同一线段的双箭头各占至多 40%，避免相叠。
+            length = min(5.5, span * (0.4 if head == 'both' and len(pts) == 2 else 0.8))
+            shaft[end] = tuple(t + (p - t) * length / span for t, p in zip(tip, previous))
+            heads.append((previous, tip, length))
+        d = ' '.join(('M' if i == 0 else 'L') + f' {x:.2f} {y:.2f}' for i, (x, y) in enumerate(shaft))
         da = ' stroke-dasharray="3 2"' if dash else ''
         self.body.append(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{sw}"{da}/>')
         if check:
             self.segs += list(zip(pts[:-1], pts[1:]))
-        if head in ('end', 'both'):
-            self._head(pts[-2], pts[-1], color)
-        if head in ('start', 'both'):
-            self._head(pts[1], pts[0], color)
+        for previous, tip, length in heads:
+            self._head(previous, tip, color, L=length, W=2.5 * length / 5.5)
 
     def _head(self, p0, p1, color, L=5.5, W=2.5):
         (x0, y0), (x1, y1) = p0, p1

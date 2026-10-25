@@ -19,13 +19,13 @@
 <text x="411.50" y="38.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">13 resolve</text>
 <text x="8.00" y="64.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">n = 4</text>
 <text x="8.00" y="82.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">max = 1471</text>
-<path d="M 50.00 61.00 L 144.00 61.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 50.00 61.00 L 138.50 61.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,61.00 138.50,63.50 138.50,58.50" fill="#000"/>
-<path d="M 69.00 79.00 L 144.00 79.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 69.00 79.00 L 138.50 79.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,79.00 138.50,81.50 138.50,76.50" fill="#000"/>
 <rect x="144.00" y="56.00" width="34.00" height="28.00" rx="0" fill="white" stroke="#000" stroke-width="1.4"/>
 <text x="161.00" y="72.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">≤</text>
-<path d="M 178.00 70.00 L 284.00 70.00 L 284.00 100.00 L 300.00 100.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 178.00 70.00 L 284.00 70.00 L 284.00 100.00 L 294.50 100.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="300.00,100.00 294.50,102.50 294.50,97.50" fill="#000"/>
 <text x="228.00" y="64.00" font-size="6.7" text-anchor="middle" fill="#507D26" font-weight="bold">length_ok = 1</text>
 <text x="318.00" y="50.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">PSN write from SN</text>
@@ -36,69 +36,69 @@
 <rect x="8.00" y="105.00" width="66.00" height="22.00" rx="0" fill="#F4F1F6" stroke="#000" stroke-width="1.4"/>
 <text x="41.00" y="118.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">PSN_A 16</text>
 <path d="M 38.00 127.00 L 41.00 123.00 L 44.00 127.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 74.00 116.00 L 90.00 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 74.00 116.00 L 84.50 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="90.00,116.00 84.50,118.50 84.50,113.50" fill="#000"/>
 <polygon points="90,105 108,105 118,116 108,127 90,127 95,116" fill="white" stroke="black" stroke-width="1.4"/>
 <text x="103.00" y="118.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">+1</text>
-<path d="M 118.00 116.00 L 144.00 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 118.00 116.00 L 138.50 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,116.00 138.50,118.50 138.50,113.50" fill="#000"/>
 <text x="130.00" y="129.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">17</text>
 <rect x="144.00" y="102.00" width="34.00" height="28.00" rx="0" fill="white" stroke="#000" stroke-width="1.4"/>
 <text x="161.00" y="118.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">=</text>
 <text x="126.00" y="95.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">SN 17</text>
-<path d="M 126.00 97.00 L 126.00 108.00 L 144.00 108.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 126.00 97.00 L 126.00 108.00 L 138.50 108.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,108.00 138.50,110.50 138.50,105.50" fill="#000"/>
-<path d="M 178.00 116.00 L 300.00 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 178.00 116.00 L 294.50 116.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="300.00,116.00 294.50,118.50 294.50,113.50" fill="#000"/>
 <text x="215.00" y="111.00" font-size="6.7" text-anchor="middle" fill="#507D26" font-weight="bold">IC = 1</text>
 <text x="8.00" y="141.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">IC example: SN = PSN + 1</text>
 <rect x="8.00" y="152.00" width="66.00" height="22.00" rx="0" fill="#F4F1F6" stroke="#000" stroke-width="1.4"/>
 <text x="41.00" y="165.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">RM last 16</text>
 <path d="M 38.00 174.00 L 41.00 170.00 L 44.00 174.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 74.00 163.00 L 84.00 163.00 L 84.00 168.00 L 95.00 168.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 74.00 163.00 L 84.00 163.00 L 84.00 168.00 L 89.50 168.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="95.00,168.00 89.50,170.50 89.50,165.50" fill="#000"/>
 <text x="108.00" y="145.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">SN 17</text>
-<path d="M 87.00 147.00 L 87.00 157.00 L 95.00 157.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 87.00 147.00 L 87.00 157.00 L 89.50 157.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="95.00,157.00 89.50,159.50 89.50,154.50" fill="#000"/>
 <polygon points="90,152 108,152 118,163 108,174 90,174 95,163" fill="white" stroke="black" stroke-width="1.4"/>
 <text x="103.00" y="165.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">−</text>
 <text x="105.00" y="185.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">mod 255</text>
-<path d="M 118.00 163.00 L 144.00 163.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 118.00 163.00 L 138.50 163.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,163.00 138.50,165.50 138.50,160.50" fill="#000"/>
 <text x="131.00" y="157.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">1</text>
 <rect x="144.00" y="149.00" width="34.00" height="28.00" rx="0" fill="white" stroke="#000" stroke-width="1.4"/>
 <text x="161.00" y="165.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">1…127</text>
-<path d="M 178.00 163.00 L 228.00 163.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 178.00 163.00 L 222.50 163.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="228.00,163.00 222.50,165.50 222.50,160.50" fill="#000"/>
 <text x="203.00" y="157.00" font-size="6.7" text-anchor="middle" fill="#507D26" font-weight="bold">1</text>
 <polygon points="228.00,151.00 244.00,157.84 244.00,182.16 228.00,189.00" fill="#EDEDED" stroke="#000" stroke-width="1.4"/>
 <text x="232.00" y="165.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">0</text>
 <text x="232.00" y="182.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">1</text>
-<path d="M 205.00 180.00 L 228.00 180.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 205.00 180.00 L 222.50 180.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="228.00,180.00 222.50,182.50 222.50,177.50" fill="#000"/>
 <text x="205.00" y="194.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">const 1</text>
-<path d="M 244.00 170.00 L 264.00 170.00 L 264.00 124.00 L 300.00 124.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 244.00 170.00 L 264.00 170.00 L 264.00 124.00 L 294.50 124.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="300.00,124.00 294.50,126.50 294.50,121.50" fill="#000"/>
 <text x="270.00" y="165.00" font-size="6.7" text-anchor="start" fill="#507D26" font-weight="bold">RM = 1</text>
 <rect x="8.00" y="205.00" width="66.00" height="22.00" rx="0" fill="#F4F1F6" stroke="#000" stroke-width="1.4"/>
 <text x="41.00" y="218.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">RM time 100</text>
 <path d="M 38.00 227.00 L 41.00 223.00 L 44.00 227.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 74.00 216.00 L 84.00 216.00 L 84.00 221.00 L 95.00 221.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 74.00 216.00 L 84.00 216.00 L 84.00 221.00 L 89.50 221.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="95.00,221.00 89.50,223.50 89.50,218.50" fill="#000"/>
 <text x="107.00" y="198.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">arrival 101</text>
-<path d="M 87.00 200.00 L 87.00 210.00 L 95.00 210.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 87.00 200.00 L 87.00 210.00 L 89.50 210.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="95.00,210.00 89.50,212.50 89.50,207.50" fill="#000"/>
 <polygon points="90,205 108,205 118,216 108,227 90,227 95,216" fill="white" stroke="black" stroke-width="1.4"/>
 <text x="103.00" y="218.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">|−|</text>
-<path d="M 118.00 216.00 L 144.00 216.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 118.00 216.00 L 138.50 216.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,216.00 138.50,218.50 138.50,213.50" fill="#000"/>
 <text x="131.00" y="210.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">1</text>
 <rect x="144.00" y="202.00" width="34.00" height="28.00" rx="0" fill="white" stroke="#000" stroke-width="1.4"/>
 <text x="161.00" y="218.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">&gt;</text>
 <text x="135.00" y="238.00" font-size="6.7" text-anchor="end" fill="#000" font-weight="bold">skew 4</text>
-<path d="M 137.00 230.00 L 137.00 224.00 L 144.00 224.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 137.00 230.00 L 137.00 224.00 L 138.50 224.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="144.00,224.00 138.50,226.50 138.50,221.50" fill="#000"/>
-<path d="M 178.00 216.00 L 236.00 216.00 L 236.00 186.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 178.00 216.00 L 236.00 216.00 L 236.00 191.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="236.00,186.00 238.50,191.50 233.50,191.50" fill="#000"/>
 <text x="207.00" y="230.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">expired = 0</text>
 <text x="312.00" y="91.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">Admit</text>
@@ -108,9 +108,9 @@
 <text x="275.00" y="106.00" font-size="6.7" text-anchor="end" fill="#000" font-weight="bold">en_A = 1</text>
 <path d="M 278.00 132.00 L 300.00 132.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <text x="300.00" y="148.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">DQ room = 1</text>
-<path d="M 324.00 116.00 L 334.00 116.00 L 334.00 164.00 L 346.00 164.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
+<path d="M 324.00 116.00 L 334.00 116.00 L 334.00 164.00 L 340.50 164.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
 <polygon points="346.00,164.00 340.50,166.50 340.50,161.50" fill="#507D26"/>
-<path d="M 334.00 164.00 L 334.00 216.00 L 346.00 216.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
+<path d="M 334.00 164.00 L 334.00 216.00 L 340.50 216.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
 <polygon points="346.00,216.00 340.50,218.50 340.50,213.50" fill="#507D26"/>
 <circle cx="334" cy="164" r="1.7" fill="#507D26"/>
 <text x="343.00" y="120.00" font-size="7.3" text-anchor="start" fill="#507D26" font-weight="bold">admit = 1</text>

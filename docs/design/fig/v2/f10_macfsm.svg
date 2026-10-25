@@ -14,23 +14,23 @@
 <rect x="160.00" y="38.00" width="73.00" height="34.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="196.50" y="54.13" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">CRC32_d8</text>
 <text x="196.50" y="62.71" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">8-bit update</text>
-<path d="M 138.00 49.00 L 160.00 49.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 138.00 49.00 L 154.50 49.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="160.00,49.00 154.50,51.50 154.50,46.50" fill="#008AA6"/>
 <rect x="264.00" y="39.00" width="6.00" height="32.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
 <path d="M 265.00 71.00 L 267.00 68.00 L 269.00 71.00" fill="none" stroke="#000" stroke-width="1.4"/>
-<path d="M 233.00 55.00 L 264.00 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 233.00 55.00 L 258.50 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="264.00,55.00 258.50,57.50 258.50,52.50" fill="#000"/>
 <text x="248.00" y="47.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">32</text>
-<path d="M 270.00 55.00 L 287.00 55.00 L 287.00 23.00 L 195.00 23.00 L 195.00 38.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<path d="M 270.00 55.00 L 287.00 55.00 L 287.00 23.00 L 195.00 23.00 L 195.00 32.50" fill="none" stroke="#000" stroke-width="1.1"/>
 <polygon points="195.00,38.00 192.50,32.50 197.50,32.50" fill="#000"/>
 <text x="242.00" y="20.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">crc_a / crc_b</text>
 <text x="269.00" y="82.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">state</text>
 <circle cx="287" cy="55" r="1.8" fill="#000"/>
-<path d="M 287.00 55.00 L 303.00 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 287.00 55.00 L 297.50 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="303.00,55.00 297.50,57.50 297.50,52.50" fill="#000"/>
 <path d="M303 46 L303 64 L320 55 Z" fill="white" stroke="#000" stroke-width="1.4"/>
 <circle cx="322.5" cy="55" r="2.5" fill="white" stroke="#000" stroke-width="1.4"/>
-<path d="M 325.00 55.00 L 343.00 55.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<path d="M 325.00 55.00 L 337.50 55.00" fill="none" stroke="#000" stroke-width="1.1"/>
 <polygon points="343.00,55.00 337.50,57.50 337.50,52.50" fill="#000"/>
 <rect x="343.00" y="44.00" width="25.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
 <text x="355.50" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F0</text>
@@ -77,10 +77,10 @@
 <path d="M 123.00 185.00 L 123.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 163.00 185.00 L 163.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 203.00 185.00 L 203.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 73.00 195.00 L 83.00 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 73.00 195.00 L 77.50 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="83.00,195.00 77.50,197.50 77.50,192.50" fill="#008AA6"/>
 <text x="38.00" y="199.00" font-size="8" text-anchor="middle" fill="#008AA6" font-weight="bold">F3</text>
-<path d="M 243.00 195.00 L 278.00 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 243.00 195.00 L 272.50 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="278.00,195.00 272.50,197.50 272.50,192.50" fill="#008AA6"/>
 <rect x="278.00" y="185.00" width="52.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
 <text x="304.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">SN17</text>

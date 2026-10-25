@@ -16,65 +16,65 @@
 <path d="M 189.00 81.00 L 189.00 247.00" fill="none" stroke="#888" stroke-width="0.9" stroke-dasharray="3 2"/>
 <path d="M 264.00 81.00 L 264.00 247.00" fill="none" stroke="#888" stroke-width="0.9" stroke-dasharray="3 2"/>
 <path d="M 421.00 81.00 L 421.00 247.00" fill="none" stroke="#888" stroke-width="0.9" stroke-dasharray="3 2"/>
-<path d="M 189.00 96.00 L 29.00 96.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 189.00 96.00 L 34.50 96.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="29.00,96.00 34.50,93.50 34.50,98.50" fill="#111"/>
 <text x="109.00" y="92.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">RRQ data file</text>
-<path d="M 29.00 114.00 L 189.00 114.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 29.00 114.00 L 183.50 114.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="189.00,114.00 183.50,116.50 183.50,111.50" fill="#008CA6"/>
 <text x="109.00" y="110.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">DATA1 · 512 B</text>
-<path d="M 189.00 132.00 L 29.00 132.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 189.00 132.00 L 34.50 132.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="29.00,132.00 34.50,129.50 34.50,134.50" fill="#111"/>
 <text x="109.00" y="128.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">LUS progress · 85%</text>
-<path d="M 189.00 150.00 L 29.00 150.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 189.00 150.00 L 34.50 150.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="29.00,150.00 34.50,147.50 34.50,152.50" fill="#111"/>
 <text x="109.00" y="146.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ACK1</text>
-<path d="M 29.00 168.00 L 189.00 168.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 29.00 168.00 L 183.50 168.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="189.00,168.00 183.50,170.50 183.50,165.50" fill="#008CA6"/>
 <text x="109.00" y="164.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">DATA2 · 88 B (last)</text>
-<path d="M 189.00 186.00 L 29.00 186.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 189.00 186.00 L 34.50 186.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="29.00,186.00 34.50,183.50 34.50,188.50" fill="#111"/>
 <text x="109.00" y="182.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ACK2 · length / CRC pass</text>
-<path d="M 189.00 204.00 L 29.00 204.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 189.00 204.00 L 34.50 204.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="29.00,204.00 34.50,201.50 34.50,206.50" fill="#111"/>
 <text x="109.00" y="200.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">LUS 0003 · 100%</text>
-<path d="M 29.00 222.00 L 189.00 222.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 29.00 222.00 L 183.50 222.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="189.00,222.00 183.50,224.50 183.50,219.50" fill="#111"/>
 <text x="109.00" y="218.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">final status ACK</text>
-<path d="M 421.00 96.00 L 264.00 96.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 421.00 96.00 L 269.50 96.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="264.00,96.00 269.50,93.50 269.50,98.50" fill="#111"/>
 <text x="342.50" y="92.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">WRQ MEMORY.BIN</text>
-<path d="M 264.00 114.00 L 421.00 114.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 264.00 114.00 L 415.50 114.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="421.00,114.00 415.50,116.50 415.50,111.50" fill="#111"/>
 <text x="342.50" y="110.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ACK0 · peer TID</text>
-<path d="M 421.00 132.00 L 264.00 132.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 421.00 132.00 L 269.50 132.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="264.00,132.00 269.50,129.50 269.50,134.50" fill="#008CA6"/>
 <text x="342.50" y="128.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">DATA1 · 512 B</text>
-<path d="M 264.00 150.00 L 421.00 150.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 264.00 150.00 L 415.50 150.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="421.00,150.00 415.50,152.50 415.50,147.50" fill="#111"/>
 <text x="342.50" y="146.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ACK1</text>
-<path d="M 421.00 168.00 L 264.00 168.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 421.00 168.00 L 269.50 168.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="264.00,168.00 269.50,165.50 269.50,170.50" fill="#111"/>
 <text x="342.50" y="164.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">LNS progress · 85%</text>
-<path d="M 421.00 186.00 L 264.00 186.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 421.00 186.00 L 269.50 186.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="264.00,186.00 269.50,183.50 269.50,188.50" fill="#008CA6"/>
 <text x="342.50" y="182.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">DATA2 · 88 B (last)</text>
-<path d="M 264.00 204.00 L 421.00 204.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 264.00 204.00 L 415.50 204.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="421.00,204.00 415.50,206.50 415.50,201.50" fill="#111"/>
 <text x="342.50" y="200.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ACK2</text>
-<path d="M 421.00 222.00 L 264.00 222.00" fill="none" stroke="#111" stroke-width="1.6"/>
+<path d="M 421.00 222.00 L 269.50 222.00" fill="none" stroke="#111" stroke-width="1.6"/>
 <polygon points="264.00,222.00 269.50,219.50 269.50,224.50" fill="#111"/>
 <text x="342.50" y="218.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">LNS 0003 · 100%</text>
-<path d="M 264.00 240.00 L 421.00 240.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 264.00 240.00 L 415.50 240.00" fill="none" stroke="#111" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="421.00,240.00 415.50,242.50 415.50,237.50" fill="#111"/>
 <text x="342.50" y="236.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">final status ACK</text>
 <text x="0.00" y="266.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Load RAM · 8 KiB</text>
-<path d="M 189.00 114.00 L 220.00 114.00 L 220.00 273.00 L 112.00 273.00 L 112.00 282.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 189.00 114.00 L 220.00 114.00 L 220.00 273.00 L 112.00 273.00 L 112.00 276.50" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="112.00,282.00 109.50,276.50 114.50,276.50" fill="#008CA6"/>
 <path d="M 189.00 168.00 L 220.00 168.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <circle cx="220" cy="168" r="2.3" fill="#008CA6"/>
-<path d="M 337.00 282.00 L 337.00 263.00 L 446.00 263.00 L 446.00 132.00 L 421.00 132.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 337.00 282.00 L 337.00 263.00 L 446.00 263.00 L 446.00 132.00 L 426.50 132.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="421.00,132.00 426.50,129.50 426.50,134.50" fill="#527D27"/>
-<path d="M 446.00 186.00 L 421.00 186.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<path d="M 446.00 186.00 L 426.50 186.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
 <polygon points="421.00,186.00 426.50,183.50 426.50,188.50" fill="#527D27"/>
 <circle cx="446" cy="186" r="2.3" fill="#527D27"/>
 <text x="382.00" y="259.00" font-size="6.7" text-anchor="middle" fill="#527D27" font-weight="bold">read addr 0 … 599</text>

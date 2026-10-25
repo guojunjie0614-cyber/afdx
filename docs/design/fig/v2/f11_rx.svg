@@ -21,8 +21,8 @@
 <path d="M 272.00 37.00 L 272.00 55.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 346.00 37.00 L 346.00 55.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="84.00" y="69.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">7 = bank 0, row 7</text>
-<path d="M 91.00 55.00 L 91.00 59.00 L 2.00 59.00 L 2.00 115.00 L 8.00 115.00" fill="none" stroke="#000" stroke-width="1.4"/>
-<polygon points="8.00,115.00 2.50,117.50 2.50,112.50" fill="#000"/>
+<path d="M 91.00 55.00 L 91.00 59.00 L 2.00 59.00 L 2.00 115.00 L 3.20 115.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="8.00,115.00 3.20,117.18 3.20,112.82" fill="#000"/>
 <text x="83.00" y="81.00" font-size="8" text-anchor="middle" fill="#000" font-weight="bold">rx_map · bank 0 / 32</text>
 <rect x="8.00" y="89.00" width="40.00" height="17.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
 <text x="28.00" y="99.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">row</text>
@@ -52,9 +52,9 @@
 <path d="M 48.00 124.00 L 48.00 144.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 92.00 124.00 L 92.00 144.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="83.00" y="157.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">2048 × 13 bits / bank</text>
-<path d="M 158.00 115.00 L 176.00 115.00 L 176.00 70.00 L 438.00 70.00 L 438.00 89.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 158.00 115.00 L 176.00 115.00 L 176.00 70.00 L 438.00 70.00 L 438.00 83.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="438.00,89.00 435.50,83.50 440.50,83.50" fill="#000"/>
-<path d="M 176.00 115.00 L 176.00 70.00 L 306.00 70.00 L 306.00 89.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 176.00 115.00 L 176.00 70.00 L 306.00 70.00 L 306.00 83.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="306.00,89.00 303.50,83.50 308.50,83.50" fill="#000"/>
 <rect x="166.68" y="100.16" width="18.64" height="7.67" rx="0" fill="#fff" stroke="none" stroke-width="0"/>
 <text x="176.00" y="106.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">idx 3</text>
@@ -106,13 +106,13 @@
 <text x="385.00" y="136.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">RM time 100</text>
 <rect x="328.00" y="124.00" width="114.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
 <text x="4.00" y="174.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(b) Select the payload ring</text>
-<path d="M 253.00 144.00 L 253.00 166.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 253.00 144.00 L 253.00 160.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="253.00,166.00 250.50,160.50 255.50,160.50" fill="#000"/>
-<path d="M 385.00 144.00 L 385.00 166.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 385.00 144.00 L 385.00 160.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="385.00,166.00 382.50,160.50 387.50,160.50" fill="#000"/>
 <rect x="194.00" y="166.00" width="248.00" height="20.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="318.00" y="179.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">IC pass · new SN · queue has room</text>
-<path d="M 194.00 176.00 L 190.00 176.00 L 190.00 214.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 194.00 176.00 L 190.00 176.00 L 190.00 208.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="190.00,214.00 187.50,208.50 192.50,208.50" fill="#000"/>
 <text x="98.00" y="203.00" font-size="8" text-anchor="middle" fill="#000" font-weight="bold">rx_dq[tail] · metadata only</text>
 <rect x="8.00" y="214.00" width="34.00" height="20.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
@@ -146,7 +146,7 @@
 <path d="M 313.00 214.00 L 313.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 356.00 214.00 L 356.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 399.00 214.00 L 399.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 206.00 224.00 L 270.00 224.00" fill="none" stroke="#000" stroke-width="1.4" stroke-dasharray="3 2"/>
+<path d="M 206.00 224.00 L 264.50 224.00" fill="none" stroke="#000" stroke-width="1.4" stroke-dasharray="3 2"/>
 <polygon points="270.00,224.00 264.50,226.50 264.50,221.50" fill="#000"/>
 <text x="237.00" y="217.00" font-size="6.7" text-anchor="middle" fill="#008DA5" font-weight="bold">A, 100, 4</text>
 <text x="350.00" y="252.00" font-size="7.3" text-anchor="middle" fill="#008DA5" font-weight="bold">p0 → p1 → p2 → p3 to RX deliver</text>

@@ -9,10 +9,10 @@
 <text x="277.50" y="46.45" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">TX / RX first-byte capture</text>
 <path d="M 56.00 53.00 L 56.00 148.00" fill="none" stroke="#777" stroke-width="0.9" stroke-dasharray="3 2"/>
 <path d="M 277.00 53.00 L 277.00 148.00" fill="none" stroke="#777" stroke-width="0.9" stroke-dasharray="3 2"/>
-<path d="M 56.00 76.00 L 277.00 94.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 56.00 76.00 L 271.52 93.55" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="277.00,94.00 271.32,96.05 271.72,91.06" fill="#008CA6"/>
 <text x="163.00" y="69.00" font-size="7.3" text-anchor="middle" fill="#008CA6" font-weight="bold">mode 3 · Transmit = t1</text>
-<path d="M 277.00 121.00 L 56.00 143.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<path d="M 277.00 121.00 L 61.47 142.46" fill="none" stroke="#008CA6" stroke-width="1.6"/>
 <polygon points="56.00,143.00 61.23,139.97 61.72,144.94" fill="#008CA6"/>
 <text x="163.00" y="114.00" font-size="7.3" text-anchor="middle" fill="#008CA6" font-weight="bold">mode 4 · Originate = t1</text>
 <circle cx="56" cy="76" r="2.3" fill="#111"/>
@@ -49,13 +49,13 @@
 <rect x="132.00" y="185.00" width="158.00" height="39.00" rx="0" fill="#F4F1F6" stroke="#000" stroke-width="1.4"/>
 <text x="211.00" y="203.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">offset = (19600 − 20600) / 2</text>
 <text x="211.00" y="212.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">−500 ns = (−1 s, 999999500 ns)</text>
-<path d="M 111.00 204.00 L 132.00 204.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 111.00 204.00 L 126.50 204.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="132.00,204.00 126.50,206.50 126.50,201.50" fill="#000"/>
 <rect x="314.00" y="185.00" width="136.00" height="39.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
 <text x="382.00" y="199.61" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Correct current time</text>
 <text x="382.00" y="208.19" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">11 s + 2000000 ns</text>
 <text x="382.00" y="216.23" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">→ 11 s + 1999500 ns</text>
-<path d="M 290.00 204.00 L 314.00 204.00" fill="none" stroke="#527D27" stroke-width="1.4"/>
+<path d="M 290.00 204.00 L 308.50 204.00" fill="none" stroke="#527D27" stroke-width="1.4"/>
 <polygon points="314.00,204.00 308.50,206.50 308.50,201.50" fill="#527D27"/>
 <rect x="0.00" y="239.00" width="111.00" height="24.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
 <text x="55.50" y="253.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ADD_OFFSET sample</text>

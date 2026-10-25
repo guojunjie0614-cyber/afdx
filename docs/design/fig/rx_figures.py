@@ -3,7 +3,7 @@
 Coordinates and strokes use print points. Every figure follows the same concrete
 message; values are illustrative and the report captions state its assumptions.
 """
-from jssc import Fig, T1, T2, PAL
+from jssc import Fig, T1, T2, PAL, tw
 
 DATA = '#008DA5'
 ACCEPT = '#507D26'
@@ -30,7 +30,7 @@ def cells(f, x, y, widths, labels, kinds, h=18, size=7.3):
 
 def ptr(f,x,y,label,color='#000',side='top',anchor='middle'):
     if side=='top':
-        f.tag(x,y-9,label,size=7.3,color=color,anchor=anchor)
+        f.tag(x,y-9,label,size=7.3,color=color,anchor=anchor,bg=True)
         f.arrow([(x,y-6),(x,y)],color=color)
     else:
         f.arrow([(x,y+15),(x,y)],color=color)
@@ -93,9 +93,18 @@ def f12_ring():
     # Every lane uses the same x(address), including the two alternative outcomes.
     for i in range(5):f.tag(x+i*w,29,str(100+i),size=NOTE)
     for xx in (x,x+4*w):f.arrow([(xx,33),(xx,232)],head=None,dash=True,color='#AAA',sw=.9,check=False)
-    def row(y,name,k,vals):
+    def row(y,name,k,vals,hatched=False):
         f.tag(8,y+13,name,size=8,anchor='start')
-        cells(f,x,y,[w]*4+[70],vals+['free'],[k]*4+['white'],h=20,size=8)
+        cells(f,x,y,[w]*4+[70],(['']*4 if hatched else vals)+['free'],[k]*4+['white'],h=20,size=8)
+        if hatched:
+            # Released slots retain their bits; keep the hatching clear of their labels.
+            for xx in range(102,357,10):
+                f.arrow([(xx,y+19),(xx+16,y+1)],head=None,sw=.7,color='#999',check=False)
+            for i,s in enumerate(vals):
+                cx=x+(i+.5)*w
+                width=tw(s,8,True)+3
+                f.rect(cx-width/2,y+5,width,10,PAL[k][0],'none',0)
+                f.text(cx,y+12.72,s,8)
     row(53,'1  Prewrite','rx',['p0','p1','p2','p3'])
     f.tag(96,45,'rd = commit = 100',size=7.3,anchor='end')
     f.arrow([(100,41),(100,53)])
@@ -107,15 +116,12 @@ def f12_ring():
     f.arrow([(372,86),(372,101)],color=ACCEPT)
     f.tag(96,97,'rd = 100',size=NOTE,anchor='end')
     f.tag(405,96,'commit = trial',size=NOTE,color=ACCEPT)
-    row(148,'3  Read A','gray',['p0','p1','p2','p3'])
-    for xx in range(102,357,10):f.arrow([(xx,167),(xx+16,149)],head=None,sw=.7,color='#999',check=False)
+    row(148,'3  Read A','gray',['p0','p1','p2','p3'],hatched=True)
     f.arrow([(100,134),(372,134)],color=DATA,sw=1.6)
     f.tag(236,129,'read p0, p1, p2, p3; rd 100 → 104',size=7.3,color=DATA)
     f.arrow([(372,134),(372,148)],color=DATA)
-    f.tag(8,178,'After read: rd = commit = trial = 104; reusable slots, unchanged RAM bits.',anchor='start',size=7.3)
-    row(210,'2b  Reject','gray',['p0','p1','p2','p3'])
-    # Hatching indicates stale bits which are no longer owned by a message.
-    for xx in range(102,357,10):f.arrow([(xx,229),(xx+16,211)],head=None,sw=.7,color='#999',check=False)
+    f.tag(8,178,'After read: rd = commit = trial = 104; reusable slots, unchanged RAM bits.',anchor='start',size=7.3,bg=True)
+    row(210,'2b  Reject','gray',['p0','p1','p2','p3'],hatched=True)
     f.arrow([(372,197),(100,197)],color=REJECT)
     f.tag(236,192,'trial 104 → 100; no descriptor queued',size=7.3,color=REJECT)
     f.arrow([(100,197),(100,210)],color=REJECT)
@@ -297,8 +303,8 @@ def f25_deliver():
         f.arrow([(111,yy),(120,yy)],head=None,sw=.9)
     f.cells(98,98,13,20,3,'ram')
     f.arrow([(111,108),(120,108)],head=None,sw=.9)
-    f.tag(X(0)+2,69,'count = 1',anchor='start',size=NOTE)
-    f.tag(X(2),70,'latch head',size=NOTE)
+    f.tag(X(0)+2,69,'count = 1',anchor='start',size=NOTE,bg=True)
+    f.tag(X(2),70,'latch head',size=NOTE,bg=True)
     f.arrow([(X(2),74),(X(3)-13,82)],color='#777',sw=.9,check=False)
     colors=[DATA,'#527C31','#AA6B25',REJECT]
     fills=['#DFF0F2','#E9F0DB','#F7E9D6','#EDE3F2']
@@ -314,7 +320,7 @@ def f25_deliver():
             f.body.append(f'<polygon points="{x-13},{y} {x-10},{y-8} {x+10},{y-8} {x+13},{y} {x+10},{y+8} {x-10},{y+8}" fill="{fill}" stroke="{color}" stroke-width="1.4"/>')
             f.text(x,y+2.5,str(100+i) if j==0 else 'p'+str(i),7.3,bold=True)
     f.arrow([(X(6),180),(X(9),180)],head='both',color=ACCEPT,sw=.9)
-    f.tag((X(6)+X(9))/2,193,'1 byte / clock',size=8,color=ACCEPT)
+    f.tag((X(6)+X(9))/2,193,'1 byte / clock',size=8,color=ACCEPT,bg=True)
     # Real level waveforms share the token time axis. Values are after each edge.
     def bit(y,name,on,off):
         f.tag(8,y+3,name,anchor='start',size=8)

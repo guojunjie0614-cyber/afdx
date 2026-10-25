@@ -2,23 +2,23 @@
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
 <text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) TX: one shared payload store feeds two network copies</text>
 <text x="7.00" y="38.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">App M0</text>
-<path d="M 63.00 34.50 L 82.00 34.50" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 63.00 34.50 L 76.50 34.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="82.00,34.50 76.50,37.00 76.50,32.00" fill="#000"/>
 <text x="7.00" y="59.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">RTC M1</text>
-<path d="M 63.00 55.50 L 82.00 55.50" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 63.00 55.50 L 76.50 55.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="82.00,55.50 76.50,58.00 76.50,53.00" fill="#000"/>
 <text x="7.00" y="80.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">SNMP</text>
-<path d="M 63.00 76.50 L 82.00 76.50" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 63.00 76.50 L 76.50 76.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="82.00,76.50 76.50,79.00 76.50,74.00" fill="#000"/>
 <text x="7.00" y="101.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">615A</text>
-<path d="M 63.00 97.50 L 82.00 97.50" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 63.00 97.50 L 76.50 97.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="82.00,97.50 76.50,100.00 76.50,95.00" fill="#000"/>
 <polygon points="82.00,27.00 97.00,41.04 97.00,90.96 82.00,105.00" fill="#EDEDED" stroke="#000" stroke-width="1.4"/>
 <text x="89.00" y="118.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">owner</text>
 <rect x="116.00" y="48.00" width="70.00" height="35.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="151.00" y="64.39" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Page writer</text>
 <text x="151.00" y="73.45" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">tx_buf</text>
-<path d="M 97.00 66.00 L 116.00 66.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 97.00 66.00 L 110.50 66.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="116.00,66.00 110.50,68.50 110.50,63.50" fill="#008AA6"/>
 <text x="109.00" y="42.00" font-size="7.3" text-anchor="middle" fill="#008AA6" font-weight="bold">M0</text>
 <rect x="209.00" y="25.00" width="106.00" height="76.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
@@ -37,7 +37,7 @@
 <path d="M 285.00 45.00 L 285.00 63.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="262.00" y="77.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">page 12 · offsets 0…3</text>
 <text x="262.00" y="91.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">256 pages × 512 B</text>
-<path d="M 186.00 66.00 L 209.00 66.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 186.00 66.00 L 203.50 66.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="209.00,66.00 203.50,68.50 203.50,63.50" fill="#008AA6"/>
 <rect x="335.00" y="25.00" width="111.00" height="76.00" rx="0" fill="#FFF3E8" stroke="#000" stroke-width="1.4"/>
 <text x="390.50" y="37.00" font-size="8" text-anchor="middle" fill="#000" font-weight="bold">VL scheduler</text>
@@ -52,21 +52,21 @@
 <path d="M 406.00 45.00 L 406.00 63.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="390.50" y="77.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">head=12 · length=4</text>
 <text x="390.50" y="91.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">SN=17 · next_time=T</text>
-<path d="M 154.00 83.00 L 154.00 109.00 L 358.00 109.00 L 358.00 101.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 154.00 83.00 L 154.00 109.00 L 358.00 109.00 L 358.00 106.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="358.00,101.00 360.50,106.50 355.50,106.50" fill="#000"/>
 <text x="190.00" y="118.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">enqueue descriptor</text>
 <rect x="209.00" y="134.00" width="106.00" height="27.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="262.00" y="146.39" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Header / payload / SN</text>
 <text x="262.00" y="155.45" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">tx_builder</text>
-<path d="M 262.00 101.00 L 262.00 134.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 262.00 101.00 L 262.00 128.50" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="262.00,134.00 259.50,128.50 264.50,128.50" fill="#008AA6"/>
-<path d="M 390.00 101.00 L 390.00 122.00 L 301.00 122.00 L 301.00 134.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 390.00 101.00 L 390.00 122.00 L 301.00 122.00 L 301.00 128.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="301.00,134.00 298.50,128.50 303.50,128.50" fill="#000"/>
 <text x="342.00" y="131.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">grant</text>
 <rect x="335.00" y="134.00" width="111.00" height="27.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="390.50" y="146.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Dual-net MAC</text>
 <text x="390.50" y="155.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">separate A / B CRC32</text>
-<path d="M 315.00 147.00 L 335.00 147.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 315.00 147.00 L 329.50 147.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="335.00,147.00 329.50,149.50 329.50,144.50" fill="#008AA6"/>
 <text x="4.00" y="141.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Before allocation</text>
 <rect x="4.00" y="148.00" width="25.00" height="16.00" rx="0" fill="#F5EBD3" stroke="none" stroke-width="0"/>
@@ -81,14 +81,14 @@
 <path d="M 29.00 148.00 L 29.00 164.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 54.00 148.00 L 54.00 164.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 79.00 148.00 L 79.00 164.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 116.00 75.00 L 109.00 75.00 L 109.00 156.00 L 104.00 156.00" fill="none" stroke="#557D2D" stroke-width="1.4"/>
-<polygon points="104.00,156.00 109.50,153.50 109.50,158.50" fill="#557D2D"/>
+<path d="M 110.50 75.00 L 109.00 75.00 L 109.00 156.00 L 108.00 156.00" fill="none" stroke="#557D2D" stroke-width="1.4"/>
 <polygon points="116.00,75.00 110.50,77.50 110.50,72.50" fill="#557D2D"/>
+<polygon points="104.00,156.00 108.00,154.18 108.00,157.82" fill="#557D2D"/>
 <text x="4.00" y="176.00" font-size="6.7" text-anchor="start" fill="#557D2D" font-weight="bold">allocate / return</text>
 <text x="337.00" y="177.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">A: H_A | P17 | SN17 | FCS_A</text>
 <text x="337.00" y="189.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">B: H_B | P17 | SN17 | FCS_B</text>
-<path d="M 390.00 161.00 L 390.00 166.00" fill="none" stroke="#000" stroke-width="1.4"/>
-<polygon points="390.00,166.00 387.50,160.50 392.50,160.50" fill="#000"/>
+<path d="M 390.00 161.00 L 390.00 162.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="390.00,166.00 388.18,162.00 391.82,162.00" fill="#000"/>
 <text x="4.00" y="206.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(b) RX: store both copies; publish one descriptor</text>
 <rect x="4.00" y="218.00" width="74.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="41.00" y="233.15" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">MAC + parser A</text>
@@ -104,7 +104,7 @@
 <path d="M 22.50 251.00 L 22.50 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 41.00 251.00 L 41.00 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 59.50 251.00 L 59.50 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 41.00 242.00 L 41.00 251.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 41.00 242.00 L 41.00 245.50" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="41.00,251.00 38.50,245.50 43.50,245.50" fill="#008AA6"/>
 <text x="41.00" y="281.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ring A: 4 KiB</text>
 <rect x="94.00" y="218.00" width="74.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
@@ -121,15 +121,15 @@
 <path d="M 112.50 251.00 L 112.50 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 131.00 251.00 L 131.00 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 149.50 251.00 L 149.50 269.00" fill="none" stroke="#000" stroke-width="0.9"/>
-<path d="M 131.00 242.00 L 131.00 251.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 131.00 242.00 L 131.00 245.50" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="131.00,251.00 128.50,245.50 133.50,245.50" fill="#008AA6"/>
 <text x="131.00" y="281.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">ring B: 4 KiB</text>
 <rect x="201.00" y="218.00" width="100.00" height="31.00" rx="0" fill="#DDF1F4" stroke="#000" stroke-width="1.4"/>
 <text x="251.00" y="232.39" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Shared RX engine</text>
 <text x="251.00" y="241.45" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">VL → IC → RM</text>
-<path d="M 78.00 230.00 L 85.00 230.00 L 85.00 211.00 L 190.00 211.00 L 190.00 228.00 L 201.00 228.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 78.00 230.00 L 85.00 230.00 L 85.00 211.00 L 190.00 211.00 L 190.00 228.00 L 195.50 228.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="201.00,228.00 195.50,230.50 195.50,225.50" fill="#000"/>
-<path d="M 168.00 230.00 L 181.00 230.00 L 181.00 240.00 L 201.00 240.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 168.00 230.00 L 181.00 230.00 L 181.00 240.00 L 195.50 240.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="201.00,240.00 195.50,242.50 195.50,237.50" fill="#000"/>
 <rect x="325.00" y="221.00" width="38.00" height="18.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
 <text x="344.00" y="232.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">A</text>
@@ -141,20 +141,20 @@
 <path d="M 363.00 221.00 L 363.00 239.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 406.00 221.00 L 406.00 239.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="385.00" y="215.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">rx_dq</text>
-<path d="M 301.00 233.00 L 325.00 233.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 301.00 233.00 L 319.50 233.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="325.00,233.00 319.50,235.50 319.50,230.50" fill="#000"/>
 <rect x="325.00" y="257.00" width="121.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
 <text x="385.50" y="272.42" font-size="8" text-anchor="middle" fill="#000000" font-weight="bold">Deliver p0…p3 once</text>
-<path d="M 385.00 239.00 L 385.00 257.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 385.00 239.00 L 385.00 251.50" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="385.00,257.00 382.50,251.50 387.50,251.50" fill="#000"/>
-<path d="M 78.00 261.00 L 85.00 261.00 L 85.00 289.00 L 313.00 289.00 L 313.00 269.00 L 325.00 269.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<path d="M 78.00 261.00 L 85.00 261.00 L 85.00 289.00 L 313.00 289.00 L 313.00 269.00 L 319.50 269.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="325.00,269.00 319.50,271.50 319.50,266.50" fill="#008AA6"/>
-<text x="252.00" y="278.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">descriptor selects ring</text>
-<rect x="201.00" y="257.00" width="100.00" height="14.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
-<text x="251.00" y="266.91" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">map / config / state</text>
-<path d="M 251.00 257.00 L 251.00 249.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="252.00" y="285.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">descriptor selects ring</text>
+<rect x="201.00" y="263.00" width="100.00" height="14.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
+<text x="251.00" y="272.91" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">map / config / state</text>
+<path d="M 251.00 257.50 L 251.00 254.50" fill="none" stroke="#000" stroke-width="0.9"/>
+<polygon points="251.00,263.00 248.50,257.50 253.50,257.50" fill="#000"/>
 <polygon points="251.00,249.00 253.50,254.50 248.50,254.50" fill="#000"/>
-<polygon points="251.00,257.00 248.50,251.50 253.50,251.50" fill="#000"/>
 <text x="4.00" y="311.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Host → configuration / counters</text>
 <path d="M 4.00 318.00 L 214.00 318.00" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="3 2"/>
 <text x="4.00" y="327.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">controlled table writes</text>

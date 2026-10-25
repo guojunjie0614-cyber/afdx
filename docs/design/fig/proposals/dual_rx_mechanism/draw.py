@@ -36,7 +36,8 @@ def bytes_row(ax,x,y,cell=7,h=7,fill=CYAN_FILL,released=False):
         if released:
             p.set_hatch('///');p.set_edgecolor(MID)
         label(ax,x+(i+.5)*cell,y+h/2,rf'$p_{i}$',FS_DATA,
-              GRAY if released else INK)
+              GRAY if released else INK,
+              **({'bbox':dict(facecolor=fill,edgecolor='none',pad=.3)} if released else {}))
     if released:rect(ax,x,y,4*cell,h,'none',INK,LW_MAIN,zorder=5)
 
 def stage(ax,x,y,title,sub):
@@ -88,7 +89,9 @@ def build():
     rect(ax,100,39.5,43,9,LIGHT,INK,LW_DETAIL)
     label(ax,121.5,42,'PSN_A / PSN_B',FS_LABEL)
     label(ax,121.5,46,'Shared RM record',FS_LABEL)
-    arrow(ax,[(110,39.5),(110,35)],INK,LW_DETAIL,ms=ARROW_HEAD,both=True)
+    # Separate read and write directions in this short inter-row gap.
+    arrow(ax,[(108,39.5),(108,35)],INK,LW_DETAIL,ms=ARROW_HEAD)
+    arrow(ax,[(112,35),(112,39.5)],INK,LW_DETAIL,ms=ARROW_HEAD)
     arrow(ax,[(133,39.5),(133,35)],INK,LW_DETAIL,ms=ARROW_HEAD)
     arrow(ax,[(161,35),(161,46),(143,46)],GREEN_DARK,LW_MAIN,ms=ARROW_HEAD)
     label(ax,166,48.5,'RM update',FS_NOTE,GREEN_DARK,True,'right')

@@ -90,7 +90,7 @@
 <path d="M 84.00 208.00 L 84.00 228.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 122.00 208.00 L 122.00 228.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <text x="84.00" y="242.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">commit 100 · trial 104</text>
-<path d="M 392.00 170.00 L 392.00 178.00 L 184.00 178.00 L 184.00 218.00 L 160.00 218.00" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<path d="M 392.00 170.00 L 392.00 178.00 L 184.00 178.00 L 184.00 218.00 L 165.50 218.00" fill="none" stroke="#008DA5" stroke-width="1.6"/>
 <polygon points="160.00,218.00 165.50,215.50 165.50,220.50" fill="#008DA5"/>
 <text x="230.00" y="188.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(c) Frame-end decision</text>
 <text x="336.00" y="205.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">f_end → SETTLE → REPORT</text>
@@ -116,9 +116,9 @@
 <path d="M 352.00 256.00 L 352.00 276.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 398.00 256.00 L 398.00 276.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 160.00 221.00 L 214.00 221.00 L 214.00 266.00" fill="none" stroke="#000" stroke-width="1.4"/>
-<path d="M 214.00 227.00 L 230.00 227.00" fill="none" stroke="#755092" stroke-width="1.4"/>
+<path d="M 214.00 227.00 L 224.50 227.00" fill="none" stroke="#755092" stroke-width="1.4"/>
 <polygon points="230.00,227.00 224.50,229.50 224.50,224.50" fill="#755092"/>
-<path d="M 214.00 266.00 L 230.00 266.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
+<path d="M 214.00 266.00 L 224.50 266.00" fill="none" stroke="#507D26" stroke-width="1.4"/>
 <polygon points="230.00,266.00 224.50,268.50 224.50,263.50" fill="#507D26"/>
 <text x="336.00" y="248.00" font-size="6.7" text-anchor="middle" fill="#755092" font-weight="bold">ev_fcs = 1; desc_valid = 0</text>
 <text x="336.00" y="288.00" font-size="6.7" text-anchor="middle" fill="#507D26" font-weight="bold">ev_good = 1; desc_valid = 1</text>

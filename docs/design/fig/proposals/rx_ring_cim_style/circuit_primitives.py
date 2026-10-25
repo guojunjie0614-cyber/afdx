@@ -32,10 +32,23 @@ def line(ax, pts, color=INK, lw=1.1, dash=None, dashed=False, zorder=4):
 
 
 def arrow(ax, pts, color=INK, lw=1.15, both=False, dashed=False, ms=9, zorder=5):
-    line(ax, pts, color, lw, dashed=dashed, zorder=zorder)
-    patch = FancyArrowPatch(pts[-2], pts[-1], arrowstyle="<|-|>" if both else "-|>",
+    # Arrow size is in points; trim the shaft in display space so the filled,
+    # unstroked heads retain their size at any export DPI or axis aspect ratio.
+    display = ax.transData.transform(pts)
+    ends = [(-1, -2)] + ([(0, 1)] if both else [])
+    lengths = [sum((display[a] - display[b]) ** 2) ** .5 for a, b in ends]
+    available = min(lengths) / (2 if both and len(pts) == 2 else 1)
+    ms = min(ms, available * .8 * 72 / ax.figure.dpi / .4)
+    head_length = .4 * ms * ax.figure.dpi / 72
+    shaft = display.copy()
+    for (tip, previous), length in zip(ends, lengths):
+        shaft[tip] += (display[previous] - display[tip]) * head_length / length
+    line(ax, ax.transData.inverted().transform(shaft), color, lw,
+         dashed=dashed, zorder=zorder)
+    path = Path(pts, [Path.MOVETO] + [Path.LINETO] * (len(pts) - 1))
+    patch = FancyArrowPatch(path=path, arrowstyle="<|-|>" if both else "-|>",
                             mutation_scale=ms, linewidth=0, color=color,
-                            shrinkA=0, shrinkB=0, zorder=zorder + 1)
+                            zorder=zorder + 1)
     ax.add_patch(patch)
     return patch
 
