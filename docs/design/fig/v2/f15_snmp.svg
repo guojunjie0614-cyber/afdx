@@ -1,62 +1,78 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="174pt" viewBox="0 0 450 174">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="294.0pt" viewBox="-1.5 -1.5 453.0 294.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<rect x="71.00" y="0.00" width="308.00" height="166.00" rx="4" fill="none" stroke="#6A5BA8" stroke-width="1.2"/>
-<text x="75.00" y="8.60" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">afdx_snmp</text>
-<rect x="0.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
-<text x="35.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">UDP 161</text>
-<text x="35.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">claimed by svc</text>
-<rect x="76.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
-<text x="111.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">BER decode</text>
-<text x="111.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">256 B request RAM</text>
-<rect x="152.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
-<text x="187.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Community</text>
-<text x="187.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">1–16 B compare</text>
-<rect x="228.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
-<text x="263.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">PDU dispatch</text>
-<text x="263.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Get / GetNext / Set</text>
-<rect x="304.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#6A5BA8" stroke="#000" stroke-width="1.0"/>
-<text x="339.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">GetResponse</text>
-<text x="339.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">response RAM</text>
-<rect x="380.00" y="14.00" width="70.00" height="28.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.0" stroke-dasharray="2.5 1.5"/>
-<text x="415.00" y="27.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Service port 2</text>
-<text x="415.00" y="35.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">to afdx_svc</text>
-<path d="M 70.00 28.00 L 76.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="76.00,28.00 71.00,30.10 71.00,25.90" fill="#000"/>
-<path d="M 146.00 28.00 L 152.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="152.00,28.00 147.00,30.10 147.00,25.90" fill="#000"/>
-<path d="M 222.00 28.00 L 228.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="228.00,28.00 223.00,30.10 223.00,25.90" fill="#000"/>
-<path d="M 298.00 28.00 L 304.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="304.00,28.00 299.00,30.10 299.00,25.90" fill="#000"/>
-<path d="M 374.00 28.00 L 380.00 28.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="380.00,28.00 375.00,30.10 375.00,25.90" fill="#000"/>
-<rect x="152.00" y="74.00" width="70.00" height="28.00" rx="0" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
-<text x="187.00" y="87.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Bad community</text>
-<text x="187.00" y="95.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">count, no reply</text>
-<rect x="76.00" y="130.00" width="146.00" height="28.00" rx="0" fill="#D5CFEA" stroke="#000" stroke-width="1.0"/>
-<text x="149.00" y="143.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">SNMPv2-Trap</text>
-<text x="149.00" y="151.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">coldStart / authenticationFailure</text>
-<rect x="228.00" y="74.00" width="146.00" height="28.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
-<text x="301.00" y="87.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">MIB access</text>
-<text x="301.00" y="95.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">36 objects · cfg read · Set USER_ID</text>
-<path d="M 187.00 42.00 L 187.00 74.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="187.00,74.00 184.90,69.00 189.10,69.00" fill="#000"/>
-<text x="190.00" y="58.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">mismatch</text>
-<path d="M 187.00 102.00 L 187.00 130.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="187.00,130.00 184.90,125.00 189.10,125.00" fill="#000"/>
-<text x="190.00" y="116.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">trap_enabled: auth_pending</text>
-<rect x="0.00" y="130.00" width="62.00" height="28.00" rx="0" fill="#A9C6EA" stroke="#000" stroke-width="1.0"/>
-<text x="31.00" y="143.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">cfg_activate</text>
-<text x="31.00" y="151.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">if trap_enabled</text>
-<path d="M 62.00 144.00 L 76.00 144.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="76.00,144.00 71.00,146.10 71.00,141.90" fill="#000"/>
-<path d="M 222.00 144.00 L 415.00 144.00 L 415.00 42.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="415.00,42.00 417.10,47.00 412.90,47.00" fill="#000"/>
-<text x="300.00" y="141.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">pending Trap served in IDLE</text>
-<path d="M 263.00 42.00 L 263.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="263.00,74.00 260.90,69.00 265.10,69.00" fill="#000"/>
-<text x="266.00" y="66.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">OID</text>
-<path d="M 351.00 74.00 L 351.00 42.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="351.00,42.00 353.10,47.00 348.90,47.00" fill="#000"/>
-<text x="354.00" y="66.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">value</text>
+<text x="0.00" y="9.00" font-size="8.5" text-anchor="start" fill="#000" font-weight="bold">(a) Set USER_ID = 42 · SNMPv2c / request-id 7 / community public</text>
+<text x="0.00" y="25.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">OID 1.3.6.1.4.1.424242.3.2.0 · request sent to UDP 161</text>
+<text x="0.00" y="44.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Request RAM · 44 B (selected fields)</text>
+<rect x="0.00" y="51.00" width="47.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="23.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">30 2A</text>
+<rect x="47.00" y="51.00" width="45.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="69.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">02 01 01</text>
+<rect x="92.00" y="51.00" width="77.00" height="23.00" rx="0" fill="#E5EDF7" stroke="#111" stroke-width="1.4"/>
+<text x="130.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">public</text>
+<rect x="169.00" y="51.00" width="45.00" height="23.00" rx="0" fill="#ECE3F2" stroke="#111" stroke-width="1.4"/>
+<text x="191.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">A3 1D</text>
+<rect x="214.00" y="51.00" width="49.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="238.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">id = 7</text>
+<rect x="263.00" y="51.00" width="113.00" height="23.00" rx="0" fill="#F5EBD3" stroke="#111" stroke-width="1.4"/>
+<text x="319.50" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">OID (11 B)</text>
+<rect x="376.00" y="51.00" width="74.00" height="23.00" rx="0" fill="#DDF1F4" stroke="#111" stroke-width="1.4"/>
+<text x="413.00" y="64.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">42 01 2A</text>
+<text x="23.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0–1</text>
+<text x="70.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">2–4</text>
+<text x="130.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">5–12</text>
+<text x="192.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">13–14</text>
+<text x="238.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">15–17</text>
+<text x="320.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">30–40</text>
+<text x="413.00" y="85.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">41–43</text>
+<rect x="0.00" y="103.00" width="108.00" height="35.00" rx="0" fill="#ECE3F2" stroke="#000" stroke-width="1.4"/>
+<text x="54.00" y="119.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">BER decode</text>
+<text x="54.00" y="128.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">A3 → Set; 42 → Gauge32</text>
+<rect x="145.00" y="103.00" width="133.00" height="35.00" rx="0" fill="#ECE3F2" stroke="#000" stroke-width="1.4"/>
+<text x="211.50" y="119.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Object index = 3</text>
+<text x="211.50" y="128.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">private arc 2 → USER_ID</text>
+<rect x="315.00" y="103.00" width="135.00" height="35.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
+<text x="382.50" y="119.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Set checks pass</text>
+<text x="382.50" y="128.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">writable · 0 ≤ 42 ≤ 65535</text>
+<path d="M 108.00 120.00 L 145.00 120.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<polygon points="145.00,120.00 139.50,122.50 139.50,117.50" fill="#008CA6"/>
+<path d="M 278.00 120.00 L 315.00 120.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<polygon points="315.00,120.00 309.50,122.50 309.50,117.50" fill="#008CA6"/>
+<path d="M 100.00 74.00 L 100.00 103.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<polygon points="100.00,103.00 97.50,97.50 102.50,97.50" fill="#008CA6"/>
+<text x="0.00" y="151.00" font-size="8.5" text-anchor="start" fill="#000" font-weight="bold">(b) Commit the value, then build the response from readback</text>
+<rect x="333.00" y="176.00" width="117.00" height="32.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
+<text x="391.50" y="191.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Configuration bus</text>
+<text x="391.50" y="199.83" font-size="7" text-anchor="middle" fill="#000000" font-weight="bold">address 0x00002</text>
+<rect x="173.00" y="176.00" width="123.00" height="32.00" rx="0" fill="#F5EBD3" stroke="#000" stroke-width="1.4"/>
+<text x="234.50" y="191.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">USER_ID register</text>
+<text x="234.50" y="199.83" font-size="7" text-anchor="middle" fill="#000000" font-weight="bold">0x0000 → 0x002A</text>
+<rect x="0.00" y="176.00" width="136.00" height="32.00" rx="0" fill="#ECE3F2" stroke="#000" stroke-width="1.4"/>
+<text x="68.00" y="191.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">VALUE_PREP</text>
+<text x="68.00" y="199.83" font-size="7" text-anchor="middle" fill="#000000" font-weight="bold">readback = 42</text>
+<path d="M 382.00 138.00 L 382.00 176.00" fill="none" stroke="#78529A" stroke-width="1.4" stroke-dasharray="3 2"/>
+<polygon points="382.00,176.00 379.50,170.50 384.50,170.50" fill="#78529A"/>
+<path d="M 333.00 188.00 L 296.00 188.00" fill="none" stroke="#008CA6" stroke-width="1.6"/>
+<polygon points="296.00,188.00 301.50,185.50 301.50,190.50" fill="#008CA6"/>
+<text x="314.00" y="183.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">write</text>
+<path d="M 173.00 193.00 L 136.00 193.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<polygon points="136.00,193.00 141.50,190.50 141.50,195.50" fill="#527D27"/>
+<text x="154.00" y="187.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">read</text>
+<text x="50.00" y="226.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Response RAM → afdx_mgmt_tx → requester</text>
+<rect x="0.00" y="236.00" width="47.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="23.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">30 2A</text>
+<rect x="47.00" y="236.00" width="45.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="69.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">02 01 01</text>
+<rect x="92.00" y="236.00" width="77.00" height="23.00" rx="0" fill="#E5EDF7" stroke="#111" stroke-width="1.4"/>
+<text x="130.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">public</text>
+<rect x="169.00" y="236.00" width="45.00" height="23.00" rx="0" fill="#EAF2DF" stroke="#111" stroke-width="1.4"/>
+<text x="191.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">A2 1D</text>
+<rect x="214.00" y="236.00" width="49.00" height="23.00" rx="0" fill="#F1F1F1" stroke="#111" stroke-width="1.4"/>
+<text x="238.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">id = 7</text>
+<rect x="263.00" y="236.00" width="113.00" height="23.00" rx="0" fill="#F5EBD3" stroke="#111" stroke-width="1.4"/>
+<text x="319.50" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">same OID</text>
+<rect x="376.00" y="236.00" width="74.00" height="23.00" rx="0" fill="#EAF2DF" stroke="#111" stroke-width="1.4"/>
+<text x="413.00" y="249.78" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">42 01 2A</text>
+<path d="M 23.00 208.00 L 23.00 236.00" fill="none" stroke="#527D27" stroke-width="1.6"/>
+<polygon points="23.00,236.00 20.50,230.50 25.50,230.50" fill="#527D27"/>
+<text x="0.00" y="280.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">A3 Set → A2 GetResponse · error-status = 0 · error-index = 0</text>
 </svg>

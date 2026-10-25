@@ -1,91 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="212pt" viewBox="0 0 450 212">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="251.0pt" viewBox="-1.5 -1.5 453.0 251.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<rect x="80.00" y="14.00" width="352.00" height="0.01" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
-<line x1="80.00" y1="14.00" x2="80.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="80.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0</text>
-<line x1="124.00" y1="14.00" x2="124.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="124.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4</text>
-<line x1="168.00" y1="14.00" x2="168.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="168.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8</text>
-<line x1="212.00" y1="14.00" x2="212.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="212.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">12</text>
-<line x1="256.00" y1="14.00" x2="256.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="256.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">16</text>
-<line x1="300.00" y1="14.00" x2="300.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="300.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">20</text>
-<line x1="344.00" y1="14.00" x2="344.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="344.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">24</text>
-<line x1="388.00" y1="14.00" x2="388.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="388.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">28</text>
-<line x1="432.00" y1="14.00" x2="432.00" y2="17.00" stroke="#000" stroke-width="0.5"/>
-<text x="432.00" y="11.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">32</text>
-<text x="74.00" y="31.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_buf</text>
-<rect x="91.00" y="22.00" width="22.00" height="13.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="102.00" y="31.53" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">desc</text>
-<text x="74.00" y="52.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_engine</text>
-<rect x="113.00" y="43.00" width="66.00" height="13.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="146.00" y="52.53" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ENQ</text>
-<rect x="179.00" y="43.00" width="99.00" height="13.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
-<text x="228.50" y="52.53" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">GRANT</text>
-<text x="74.00" y="73.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">tx_builder</text>
-<rect x="278.00" y="64.00" width="121.00" height="13.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="338.50" y="73.53" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">IP checksum, 10 steps</text>
-<rect x="399.00" y="64.00" width="11.00" height="13.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
-<text x="404.50" y="73.53" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold"></text>
-<text x="74.00" y="94.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">mac_tx</text>
-<rect x="410.00" y="85.00" width="11.00" height="13.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
-<text x="415.50" y="94.53" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold"></text>
-<path d="M 113.00 35.00 L 113.00 43.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="113.00,43.00 110.90,38.00 115.10,38.00" fill="#000"/>
-<path d="M 278.00 56.00 L 278.00 64.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="278.00,64.00 275.90,59.00 280.10,59.00" fill="#000"/>
-<path d="M 410.00 77.00 L 410.00 85.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="410.00,85.00 407.90,80.00 412.10,80.00" fill="#000"/>
-<text x="423.00" y="94.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">tx_sof</text>
-<text x="116.00" y="31.50" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">enq_valid</text>
-<text x="275.00" y="73.50" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">grant_valid</text>
-<text x="407.00" y="94.50" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">s_valid</text>
-<text x="225.00" y="104.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Transmit</text>
-<rect x="80.00" y="122.00" width="352.00" height="0.01" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
-<line x1="80.00" y1="122.00" x2="80.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="80.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">0</text>
-<line x1="124.00" y1="122.00" x2="124.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="124.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4</text>
-<line x1="168.00" y1="122.00" x2="168.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="168.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8</text>
-<line x1="212.00" y1="122.00" x2="212.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="212.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">12</text>
-<line x1="256.00" y1="122.00" x2="256.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="256.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">16</text>
-<line x1="300.00" y1="122.00" x2="300.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="300.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">20</text>
-<line x1="344.00" y1="122.00" x2="344.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="344.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">24</text>
-<line x1="388.00" y1="122.00" x2="388.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="388.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">28</text>
-<line x1="432.00" y1="122.00" x2="432.00" y2="125.00" stroke="#000" stroke-width="0.5"/>
-<text x="432.00" y="119.50" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">32</text>
-<text x="74.00" y="139.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">mac_rx</text>
-<rect x="80.00" y="130.00" width="33.00" height="13.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
-<text x="96.50" y="139.53" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">end</text>
-<text x="74.00" y="157.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">rx_parse</text>
-<rect x="113.00" y="148.00" width="33.00" height="13.00" rx="0" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
-<text x="129.50" y="157.53" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">class</text>
-<text x="74.00" y="175.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">rx_engine</text>
-<rect x="146.00" y="166.00" width="132.00" height="13.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
-<text x="212.00" y="175.53" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">FRAME phases 0–9</text>
-<text x="74.00" y="193.00" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">rx_deliver</text>
-<rect x="278.00" y="184.00" width="66.00" height="13.00" rx="0" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
-<text x="311.00" y="193.53" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">select, read</text>
-<path d="M 113.00 143.00 L 113.00 148.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="113.00,148.00 110.90,143.00 115.10,143.00" fill="#000"/>
-<path d="M 146.00 161.00 L 146.00 166.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="146.00,166.00 143.90,161.00 148.10,161.00" fill="#000"/>
-<path d="M 278.00 179.00 L 278.00 184.00" fill="none" stroke="#000" stroke-width="0.6"/>
-<polygon points="278.00,184.00 275.90,179.00 280.10,179.00" fill="#000"/>
-<text x="346.00" y="193.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">d_valid</text>
-<text x="116.00" y="139.50" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">f_end</text>
-<text x="149.00" y="157.50" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">desc_valid</text>
-<text x="281.00" y="175.50" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">dq_count</text>
-<text x="225.00" y="208.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) Receive</text>
+<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) TX: from the last application byte to the SFD byte</text>
+<rect x="77.00" y="28.00" width="336.00" height="0.01" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<line x1="77.00" y1="28.00" x2="77.00" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="77.00" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0</text>
+<line x1="110.60" y1="28.00" x2="110.60" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="110.60" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">4</text>
+<line x1="144.20" y1="28.00" x2="144.20" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="144.20" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">8</text>
+<line x1="177.80" y1="28.00" x2="177.80" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="177.80" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">12</text>
+<line x1="211.40" y1="28.00" x2="211.40" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="211.40" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">16</text>
+<line x1="245.00" y1="28.00" x2="245.00" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="245.00" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">20</text>
+<line x1="278.60" y1="28.00" x2="278.60" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="278.60" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">24</text>
+<line x1="312.20" y1="28.00" x2="312.20" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="312.20" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">28</text>
+<line x1="345.80" y1="28.00" x2="345.80" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="345.80" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">32</text>
+<line x1="379.40" y1="28.00" x2="379.40" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="379.40" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">36</text>
+<line x1="413.00" y1="28.00" x2="413.00" y2="31.00" stroke="#000" stroke-width="0.5"/>
+<text x="413.00" y="25.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">40</text>
+<text x="71.00" y="45.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">tx_buf</text>
+<rect x="77.00" y="36.00" width="8.40" height="13.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<text x="81.20" y="45.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+<rect x="85.40" y="36.00" width="25.20" height="13.00" rx="0" fill="#FFF3E8" stroke="#000" stroke-width="1.4"/>
+<text x="98.00" y="45.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">desc</text>
+<text x="71.00" y="65.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">tx_engine</text>
+<rect x="110.60" y="56.00" width="50.40" height="13.00" rx="0" fill="#FFF3E8" stroke="#000" stroke-width="1.4"/>
+<text x="135.80" y="65.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">ENQ</text>
+<rect x="161.00" y="56.00" width="75.60" height="13.00" rx="0" fill="#FCE7D5" stroke="#000" stroke-width="1.4"/>
+<text x="198.80" y="65.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">GRANT</text>
+<text x="71.00" y="85.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">tx_builder</text>
+<rect x="236.60" y="76.00" width="92.40" height="13.00" rx="0" fill="#FFF3E8" stroke="#000" stroke-width="1.4"/>
+<text x="282.80" y="85.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">IP sum / header</text>
+<rect x="329.00" y="76.00" width="8.40" height="13.00" rx="0" fill="#FCE7D5" stroke="#000" stroke-width="1.4"/>
+<text x="333.20" y="85.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+<text x="71.00" y="105.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">mac_tx</text>
+<rect x="337.40" y="96.00" width="8.40" height="13.00" rx="0" fill="#FCE7D5" stroke="#000" stroke-width="1.4"/>
+<text x="341.60" y="105.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold"></text>
+<rect x="345.80" y="96.00" width="67.20" height="13.00" rx="0" fill="#E5EDF7" stroke="#000" stroke-width="1.4"/>
+<text x="379.40" y="105.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">55 ×7 | D5</text>
+<path d="M 110.60 49.00 L 110.60 56.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="110.60,56.00 108.10,50.50 113.10,50.50" fill="#000"/>
+<path d="M 236.60 69.00 L 236.60 76.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="236.60,76.00 234.10,70.50 239.10,70.50" fill="#000"/>
+<path d="M 337.40 89.00 L 337.40 96.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="337.40,96.00 334.90,90.50 339.90,90.50" fill="#000"/>
+<text x="69.00" y="23.00" font-size="6.7" text-anchor="end" fill="#000" font-weight="bold">last byte</text>
+<text x="345.80" y="122.00" font-size="7.3" text-anchor="middle" fill="#008AA6" font-weight="bold">SOF 32</text>
+<text x="404.60" y="122.00" font-size="7.3" text-anchor="middle" fill="#008AA6" font-weight="bold">SFD 39</text>
+<text x="4.00" y="145.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(b) RX: from the last FCS byte to the first delivered payload byte</text>
+<rect x="77.00" y="163.00" width="268.80" height="0.01" rx="0" fill="none" stroke="#000" stroke-width="0.5"/>
+<line x1="77.00" y1="163.00" x2="77.00" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="77.00" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0</text>
+<line x1="110.60" y1="163.00" x2="110.60" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="110.60" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">4</text>
+<line x1="144.20" y1="163.00" x2="144.20" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="144.20" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">8</text>
+<line x1="177.80" y1="163.00" x2="177.80" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="177.80" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">12</text>
+<line x1="211.40" y1="163.00" x2="211.40" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="211.40" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">16</text>
+<line x1="245.00" y1="163.00" x2="245.00" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="245.00" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">20</text>
+<line x1="278.60" y1="163.00" x2="278.60" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="278.60" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">24</text>
+<line x1="312.20" y1="163.00" x2="312.20" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="312.20" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">28</text>
+<line x1="345.80" y1="163.00" x2="345.80" y2="166.00" stroke="#000" stroke-width="0.5"/>
+<text x="345.80" y="160.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">32</text>
+<text x="71.00" y="180.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">mac_rx</text>
+<rect x="77.00" y="171.00" width="25.20" height="13.00" rx="0" fill="#DDF1F4" stroke="#000" stroke-width="1.4"/>
+<text x="89.60" y="180.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">end</text>
+<text x="71.00" y="198.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">rx_parse</text>
+<rect x="102.20" y="189.00" width="25.20" height="13.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
+<text x="114.80" y="198.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">class</text>
+<text x="71.00" y="216.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">rx_engine</text>
+<rect x="127.40" y="207.00" width="117.60" height="13.00" rx="0" fill="#DDF1F4" stroke="#000" stroke-width="1.4"/>
+<text x="186.20" y="216.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">take · check · enqueue</text>
+<text x="71.00" y="234.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">rx_deliver</text>
+<rect x="245.00" y="225.00" width="50.40" height="13.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
+<text x="270.20" y="234.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">read</text>
+<rect x="295.40" y="225.00" width="33.60" height="13.00" rx="0" fill="#EAF2DF" stroke="#000" stroke-width="1.4"/>
+<text x="312.20" y="234.65" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">p0…</text>
+<path d="M 102.20 184.00 L 102.20 189.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="102.20,189.00 99.70,183.50 104.70,183.50" fill="#000"/>
+<path d="M 127.40 202.00 L 127.40 207.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="127.40,207.00 124.90,201.50 129.90,201.50" fill="#000"/>
+<path d="M 245.00 220.00 L 245.00 225.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="245.00,225.00 242.50,219.50 247.50,219.50" fill="#000"/>
+<text x="105.20" y="180.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">f_end</text>
+<text x="130.40" y="198.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">desc_valid</text>
+<text x="248.00" y="216.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">dq_count++</text>
+<text x="333.00" y="234.00" font-size="7.3" text-anchor="start" fill="#557D2D" font-weight="bold">d_valid at 26</text>
 </svg>

@@ -1,73 +1,113 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="257pt" viewBox="0 0 450 257">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="272.0pt" viewBox="-1.5 -1.5 453.0 272.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<text x="0.00" y="8.00" font-size="8.0" text-anchor="start" fill="#000" font-weight="bold">(a) afdx_mac_tx</text>
-<rect x="10.00" y="43.00" width="48.00" height="20.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="34.00" y="56.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">GAP</text>
-<rect x="135.00" y="43.00" width="70.00" height="20.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="170.00" y="56.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">PREAMBLE</text>
-<rect x="277.00" y="43.00" width="48.00" height="20.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="301.00" y="56.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">DATA</text>
-<rect x="392.00" y="43.00" width="48.00" height="20.00" rx="4" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="416.00" y="56.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">FCS</text>
-<rect x="350.00" y="99.00" width="68.00" height="20.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
-<text x="384.00" y="112.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">DRAIN</text>
-<path d="M 58.00 53.00 L 135.00 53.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="135.00,53.00 130.00,55.10 130.00,50.90" fill="#000"/>
-<text x="96.50" y="39.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">gap_left == 0</text>
-<text x="96.50" y="47.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">&amp;&amp; s_valid</text>
-<path d="M 205.00 53.00 L 277.00 53.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="277.00,53.00 272.00,55.10 272.00,50.90" fill="#000"/>
-<text x="241.00" y="39.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">pre_index == 7</text>
-<text x="241.00" y="47.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">&amp;&amp; s_valid</text>
-<path d="M 325.00 53.00 L 392.00 53.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="392.00,53.00 387.00,55.10 387.00,50.90" fill="#000"/>
-<text x="358.50" y="39.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">last_byte</text>
-<text x="358.50" y="47.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">|| !s_valid</text>
-<path d="M 416.00 43.00 L 416.00 22.00 L 34.00 22.00 L 34.00 43.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="34.00,43.00 31.90,38.00 36.10,38.00" fill="#000"/>
-<text x="225.00" y="19.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">fcs_index == 3 &amp;&amp; !discard_tail: start 12-cycle IFG</text>
-<path d="M 170.00 63.00 L 170.00 81.00 L 403.00 81.00 L 403.00 63.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="403.00,63.00 405.10,68.00 400.90,68.00" fill="#000"/>
-<text x="280.00" y="77.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">pre_index == 7 &amp;&amp; !s_valid: underrun</text>
-<path d="M 430.00 63.00 L 430.00 109.00 L 418.00 109.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="418.00,109.00 423.00,106.90 423.00,111.10" fill="#000"/>
-<text x="427.00" y="91.00" font-size="6.5" text-anchor="end" fill="#000" font-weight="bold">fcs_index == 3 &amp;&amp; discard_tail</text>
-<path d="M 350.00 109.00 L 34.00 109.00 L 34.00 63.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="34.00,63.00 36.10,68.00 31.90,68.00" fill="#000"/>
-<text x="175.00" y="105.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">s_valid &amp;&amp; s_last: tail consumed</text>
-<text x="0.00" y="138.00" font-size="8.0" text-anchor="start" fill="#000" font-weight="bold">(b) afdx_mac_rx</text>
-<rect x="10.00" y="173.00" width="48.00" height="20.00" rx="4" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="34.00" y="186.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">IDLE</text>
-<rect x="165.00" y="173.00" width="70.00" height="20.00" rx="4" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
-<text x="200.00" y="186.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">PREAMBLE</text>
-<rect x="370.00" y="173.00" width="70.00" height="20.00" rx="4" fill="#BFE3DC" stroke="#000" stroke-width="1.0"/>
-<text x="405.00" y="186.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">FRAME</text>
-<rect x="165.00" y="224.00" width="70.00" height="20.00" rx="4" fill="#F6D2B8" stroke="#000" stroke-width="1.0"/>
-<text x="200.00" y="237.42" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">BAD_PRE</text>
-<path d="M 58.00 183.00 L 165.00 183.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="165.00,183.00 160.00,185.10 160.00,180.90" fill="#000"/>
-<text x="111.00" y="179.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">armed &amp;&amp; valid_q</text>
-<text x="111.00" y="169.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">&amp;&amp; data_q == 0x55</text>
-<path d="M 235.00 183.00 L 370.00 183.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="370.00,183.00 365.00,185.10 365.00,180.90" fill="#000"/>
-<text x="302.00" y="179.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">valid_q &amp;&amp; data_q == 0xD5</text>
-<path d="M 44.00 173.00 L 44.00 153.00 L 405.00 153.00 L 405.00 173.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="405.00,173.00 402.90,168.00 407.10,168.00" fill="#000"/>
-<text x="225.00" y="150.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">armed &amp;&amp; valid_q &amp;&amp; data_q == 0xD5</text>
-<path d="M 58.00 189.00 L 76.00 189.00 L 76.00 234.00 L 165.00 234.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="165.00,234.00 160.00,236.10 160.00,231.90" fill="#000"/>
-<text x="80.00" y="216.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">armed &amp;&amp; valid_q</text>
-<text x="80.00" y="224.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">&amp;&amp; data_q not 0x55 / 0xD5</text>
-<path d="M 200.00 193.00 L 200.00 224.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="200.00,224.00 197.90,219.00 202.10,219.00" fill="#000"/>
-<text x="204.00" y="207.00" font-size="6.5" text-anchor="start" fill="#000" font-weight="bold">valid_q &amp;&amp; data_q not 0x55 / 0xD5</text>
-<path d="M 175.00 173.00 L 175.00 161.00 L 50.00 161.00 L 50.00 173.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="50.00,173.00 47.90,168.00 52.10,168.00" fill="#000"/>
-<text x="110.00" y="159.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">!valid_q</text>
-<path d="M 405.00 193.00 L 405.00 253.00 L 22.00 253.00 L 22.00 193.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="22.00,193.00 24.10,198.00 19.90,198.00" fill="#000"/>
-<text x="325.00" y="249.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">!valid_q: f_end, check length / FCS</text>
-<path d="M 165.00 240.00 L 46.00 240.00 L 46.00 193.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="46.00,193.00 48.10,198.00 43.90,198.00" fill="#000"/>
-<text x="105.00" y="249.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">!valid_q</text>
+<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) One CRC datapath per network: independent state for A and B</text>
+<text x="4.00" y="28.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">s_data_a / s_data_b · 8 bit</text>
+<rect x="4.00" y="38.00" width="42.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="25.00" y="51.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">H_A/B</text>
+<rect x="46.00" y="38.00" width="44.00" height="22.00" rx="0" fill="#DDF1F4" stroke="none" stroke-width="0"/>
+<text x="68.00" y="51.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">payload</text>
+<rect x="90.00" y="38.00" width="48.00" height="22.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="114.00" y="51.28" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">pad / SN</text>
+<rect x="4.00" y="38.00" width="134.00" height="22.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 46.00 38.00 L 46.00 60.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 90.00 38.00 L 90.00 60.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<rect x="160.00" y="38.00" width="73.00" height="34.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
+<text x="196.50" y="54.13" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">CRC32_d8</text>
+<text x="196.50" y="62.71" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">8-bit update</text>
+<path d="M 138.00 49.00 L 160.00 49.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<polygon points="160.00,49.00 154.50,51.50 154.50,46.50" fill="#008AA6"/>
+<rect x="264.00" y="39.00" width="6.00" height="32.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<path d="M 265.00 71.00 L 267.00 68.00 L 269.00 71.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 233.00 55.00 L 264.00 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="264.00,55.00 258.50,57.50 258.50,52.50" fill="#000"/>
+<text x="248.00" y="47.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">32</text>
+<path d="M 270.00 55.00 L 287.00 55.00 L 287.00 23.00 L 195.00 23.00 L 195.00 38.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="195.00,38.00 192.50,32.50 197.50,32.50" fill="#000"/>
+<text x="242.00" y="20.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">crc_a / crc_b</text>
+<text x="269.00" y="82.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">state</text>
+<circle cx="287" cy="55" r="1.8" fill="#000"/>
+<path d="M 287.00 55.00 L 303.00 55.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="303.00,55.00 297.50,57.50 297.50,52.50" fill="#000"/>
+<path d="M303 46 L303 64 L320 55 Z" fill="white" stroke="#000" stroke-width="1.4"/>
+<circle cx="322.5" cy="55" r="2.5" fill="white" stroke="#000" stroke-width="1.4"/>
+<path d="M 325.00 55.00 L 343.00 55.00" fill="none" stroke="#000" stroke-width="1.1"/>
+<polygon points="343.00,55.00 337.50,57.50 337.50,52.50" fill="#000"/>
+<rect x="343.00" y="44.00" width="25.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="355.50" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F0</text>
+<rect x="368.00" y="44.00" width="25.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="380.50" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F1</text>
+<rect x="393.00" y="44.00" width="25.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="405.50" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F2</text>
+<rect x="418.00" y="44.00" width="25.00" height="22.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="430.50" y="57.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F3</text>
+<rect x="343.00" y="44.00" width="100.00" height="22.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 368.00 44.00 L 368.00 66.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 393.00 44.00 L 393.00 66.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 418.00 44.00 L 418.00 66.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 347.00 66.00 L 350.00 62.00 L 353.00 66.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="393.00" y="35.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">FCS shift register</text>
+<text x="393.00" y="82.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">4 × 8-bit output</text>
+<text x="4.00" y="82.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">Init = FFFFFFFF; IF byte differs: 20 / 40</text>
+<text x="4.00" y="97.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">GAP → PREAMBLE → DATA → FCS → GAP</text>
+<rect x="4.00" y="105.00" width="91.00" height="21.00" rx="0" fill="#F1F1F1" stroke="none" stroke-width="0"/>
+<text x="49.50" y="117.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">7 ×55 + D5</text>
+<rect x="95.00" y="105.00" width="181.00" height="21.00" rx="0" fill="#DDF1F4" stroke="none" stroke-width="0"/>
+<text x="185.50" y="117.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">frame bytes incl. SN</text>
+<rect x="276.00" y="105.00" width="75.00" height="21.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="313.50" y="117.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">FCS 4 B</text>
+<rect x="351.00" y="105.00" width="95.00" height="21.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+<text x="398.50" y="117.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">IFG ≥12</text>
+<rect x="4.00" y="105.00" width="442.00" height="21.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 95.00 105.00 L 95.00 126.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 276.00 105.00 L 276.00 126.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 351.00 105.00 L 351.00 126.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="4.00" y="139.00" font-size="7.3" text-anchor="start" fill="#79539C" font-weight="bold">Underrun: finish bad-FCS frame → DRAIN remaining s_* → GAP</text>
+<text x="4.00" y="159.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(b) RX: the four-byte tail is held back, so FCS never reaches the parser</text>
+<text x="4.00" y="178.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Process F3</text>
+<text x="156.00" y="178.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">Before shift: delay0 → delay3</text>
+<rect x="83.00" y="185.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="103.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F2</text>
+<rect x="123.00" y="185.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="143.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F1</text>
+<rect x="163.00" y="185.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="183.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F0</text>
+<rect x="203.00" y="185.00" width="40.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="223.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">SN17</text>
+<rect x="83.00" y="185.00" width="160.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 123.00 185.00 L 123.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 163.00 185.00 L 163.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 203.00 185.00 L 203.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 73.00 195.00 L 83.00 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<polygon points="83.00,195.00 77.50,197.50 77.50,192.50" fill="#008AA6"/>
+<text x="38.00" y="199.00" font-size="8" text-anchor="middle" fill="#008AA6" font-weight="bold">F3</text>
+<path d="M 243.00 195.00 L 278.00 195.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
+<polygon points="278.00,195.00 272.50,197.50 272.50,192.50" fill="#008AA6"/>
+<rect x="278.00" y="185.00" width="52.00" height="20.00" rx="0" fill="#FCE7D5" stroke="none" stroke-width="0"/>
+<text x="304.00" y="197.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">SN17</text>
+<rect x="278.00" y="185.00" width="52.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="368.00" y="198.00" font-size="7.3" text-anchor="middle" fill="#557D2D" font-weight="bold">m_valid=1</text>
+<text x="4.00" y="227.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">After shift</text>
+<rect x="83.00" y="214.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="103.00" y="226.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F3</text>
+<rect x="123.00" y="214.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="143.00" y="226.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F2</text>
+<rect x="163.00" y="214.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="183.00" y="226.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F1</text>
+<rect x="203.00" y="214.00" width="40.00" height="20.00" rx="0" fill="#E5EDF7" stroke="none" stroke-width="0"/>
+<text x="223.00" y="226.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">F0</text>
+<rect x="83.00" y="214.00" width="160.00" height="20.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 123.00 214.00 L 123.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 163.00 214.00 L 163.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 203.00 214.00 L 203.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="345.00" y="226.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">valid_q falls: no more m_valid</text>
+<path d="M 86.00 205.00 L 89.00 201.00 L 92.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 126.00 205.00 L 129.00 201.00 L 132.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 166.00 205.00 L 169.00 201.00 L 172.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 206.00 205.00 L 209.00 201.00 L 212.00 205.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 86.00 234.00 L 89.00 230.00 L 92.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 126.00 234.00 L 129.00 230.00 L 132.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 166.00 234.00 L 169.00 230.00 L 172.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 206.00 234.00 L 209.00 230.00 L 212.00 234.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="4.00" y="253.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Frame end → length 64…1518 B AND CRC residue 0xDEBB20E3</text>
+<text x="4.00" y="267.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Bad prefix → BAD_PRE; invalid length / CRC → f_err; otherwise f_err = 0</text>
 </svg>

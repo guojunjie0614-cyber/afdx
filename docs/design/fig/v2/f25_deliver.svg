@@ -1,115 +1,146 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="134pt" viewBox="0 0 450 134">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="296.0pt" viewBox="-1.5 -1.5 453.0 296.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<path d="M 99.00 16.00 L 99.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="99.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C1</text>
-<path d="M 173.00 16.00 L 173.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="173.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C2</text>
-<path d="M 245.00 16.00 L 245.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="245.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C3</text>
-<path d="M 315.00 16.00 L 315.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="315.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C4</text>
-<path d="M 357.00 16.00 L 357.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="357.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C5</text>
-<path d="M 423.00 16.00 L 423.00 132.00" fill="none" stroke="#777" stroke-width="1.0" stroke-dasharray="3 2"/>
-<text x="423.00" y="12.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">C6</text>
-<rect x="0.00" y="26.00" width="40.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="20.00" y="38.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">bank 0</text>
-<rect x="0.00" y="52.00" width="40.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="20.00" y="64.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">bank 1</text>
-<rect x="0.00" y="78.00" width="40.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="20.00" y="90.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">bank 2</text>
-<rect x="0.00" y="104.00" width="40.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<text x="20.00" y="116.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">bank 3</text>
-<polygon points="56.00,26.00 74.00,29.24 74.00,40.76 56.00,44.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="65.00" y="37.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8:1</text>
-<polygon points="56.00,52.00 74.00,55.24 74.00,66.76 56.00,70.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="65.00" y="63.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8:1</text>
-<polygon points="56.00,78.00 74.00,81.24 74.00,92.76 56.00,96.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="65.00" y="89.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8:1</text>
-<polygon points="56.00,104.00 74.00,107.24 74.00,118.76 56.00,122.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="65.00" y="115.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">8:1</text>
-<rect x="96.00" y="26.00" width="6.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 97.00 44.00 L 99.00 41.00 L 101.00 44.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="99.00" y="23.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">group0</text>
-<rect x="96.00" y="52.00" width="6.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 97.00 70.00 L 99.00 67.00 L 101.00 70.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="99.00" y="49.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">group1</text>
-<rect x="96.00" y="78.00" width="6.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 97.00 96.00 L 99.00 93.00 L 101.00 96.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="99.00" y="75.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">group2</text>
-<rect x="96.00" y="104.00" width="6.00" height="18.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 97.00 122.00 L 99.00 119.00 L 101.00 122.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="99.00" y="101.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">group3</text>
-<path d="M 40.00 35.00 L 56.00 35.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="56.00,35.00 51.00,37.10 51.00,32.90" fill="#000"/>
-<path d="M 74.00 35.00 L 96.00 35.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="96.00,35.00 91.00,37.10 91.00,32.90" fill="#000"/>
-<path d="M 40.00 61.00 L 56.00 61.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="56.00,61.00 51.00,63.10 51.00,58.90" fill="#000"/>
-<path d="M 74.00 61.00 L 96.00 61.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="96.00,61.00 91.00,63.10 91.00,58.90" fill="#000"/>
-<path d="M 40.00 87.00 L 56.00 87.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="56.00,87.00 51.00,89.10 51.00,84.90" fill="#000"/>
-<path d="M 74.00 87.00 L 96.00 87.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="96.00,87.00 91.00,89.10 91.00,84.90" fill="#000"/>
-<path d="M 40.00 113.00 L 56.00 113.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="56.00,113.00 51.00,115.10 51.00,110.90" fill="#000"/>
-<path d="M 74.00 113.00 L 96.00 113.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="96.00,113.00 91.00,115.10 91.00,110.90" fill="#000"/>
-<polygon points="128.00,26.00 146.00,43.28 146.00,104.72 128.00,122.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="137.00" y="76.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">4:1</text>
-<path d="M 102.00 35.00 L 128.00 35.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="128.00,35.00 123.00,37.10 123.00,32.90" fill="#000"/>
-<path d="M 102.00 61.00 L 128.00 61.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="128.00,61.00 123.00,63.10 123.00,58.90" fill="#000"/>
-<path d="M 102.00 87.00 L 128.00 87.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="128.00,87.00 123.00,89.10 123.00,84.90" fill="#000"/>
-<path d="M 102.00 113.00 L 128.00 113.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="128.00,113.00 123.00,115.10 123.00,110.90" fill="#000"/>
-<rect x="170.00" y="62.00" width="6.00" height="24.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 171.00 86.00 L 173.00 83.00 L 175.00 86.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="173.00" y="59.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">dq_data</text>
-<path d="M 146.00 74.00 L 170.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="170.00,74.00 165.00,76.10 165.00,71.90" fill="#000"/>
-<rect x="196.00" y="58.00" width="46.00" height="32.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
-<text x="219.00" y="72.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Read ctrl</text>
-<text x="219.00" y="81.23" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">addr, left</text>
-<path d="M 176.00 74.00 L 196.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="196.00,74.00 191.00,76.10 191.00,71.90" fill="#000"/>
-<rect x="270.00" y="32.00" width="42.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
-<text x="291.00" y="47.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ring A</text>
-<rect x="270.00" y="92.00" width="42.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
-<text x="291.00" y="107.03" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">ring B</text>
-<path d="M 242.00 66.00 L 254.00 66.00 L 254.00 44.00 L 270.00 44.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="270.00,44.00 265.00,46.10 265.00,41.90" fill="#000"/>
-<path d="M 242.00 82.00 L 254.00 82.00 L 254.00 104.00 L 270.00 104.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="270.00,104.00 265.00,106.10 265.00,101.90" fill="#000"/>
-<rect x="354.00" y="32.00" width="6.00" height="24.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 355.00 56.00 L 357.00 53.00 L 359.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="357.00" y="29.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">data_a</text>
-<rect x="354.00" y="92.00" width="6.00" height="24.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 355.00 116.00 L 357.00 113.00 L 359.00 116.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<text x="357.00" y="89.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">data_b</text>
-<path d="M 312.00 44.00 L 354.00 44.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="354.00,44.00 349.00,46.10 349.00,41.90" fill="#000"/>
-<path d="M 312.00 104.00 L 354.00 104.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="354.00,104.00 349.00,106.10 349.00,101.90" fill="#000"/>
-<polygon points="382.00,48.00 398.00,57.36 398.00,90.64 382.00,100.00" fill="#EDEDED" stroke="#000" stroke-width="1.0"/>
-<text x="390.00" y="76.40" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">2:1</text>
-<path d="M 360.00 44.00 L 372.00 44.00 L 372.00 61.00 L 382.00 61.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="382.00,61.00 377.00,63.10 377.00,58.90" fill="#000"/>
-<path d="M 360.00 104.00 L 372.00 104.00 L 372.00 87.00 L 382.00 87.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="382.00,87.00 377.00,89.10 377.00,84.90" fill="#000"/>
-<rect x="420.00" y="62.00" width="6.00" height="24.00" rx="0" fill="#E6E6E6" stroke="#000" stroke-width="1.0"/>
-<path d="M 421.00 86.00 L 423.00 83.00 L 425.00 86.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<path d="M 398.00 74.00 L 420.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="420.00,74.00 415.00,76.10 415.00,71.90" fill="#000"/>
-<path d="M 426.00 74.00 L 450.00 74.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="450.00,74.00 445.00,76.10 445.00,71.90" fill="#000"/>
-<text x="439.00" y="71.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">d_*</text>
-<text x="390.00" y="117.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">d_net</text>
-<path d="M 390.00 108.00 L 390.00 100.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="390.00,100.00 392.10,105.00 387.90,105.00" fill="#000"/>
-<path d="M 390.00 100.00 L 390.00 95.32" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="390.00,95.32 392.10,100.32 387.90,100.32" fill="#000"/>
+<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">A four-byte read: startup latency, then one output byte per clock</text>
+<text x="8.00" y="25.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">rx_dq head</text>
+<rect x="8.00" y="31.00" width="30.00" height="19.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
+<text x="23.00" y="42.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">A</text>
+<rect x="38.00" y="31.00" width="40.00" height="19.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
+<text x="58.00" y="42.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">100</text>
+<rect x="78.00" y="31.00" width="34.00" height="19.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
+<text x="95.00" y="42.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">4</text>
+<rect x="8.00" y="31.00" width="104.00" height="19.00" rx="0" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 38.00 31.00 L 38.00 50.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 78.00 31.00 L 78.00 50.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<path d="M 120.00 30.00 L 294.00 30.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<polygon points="294.00,30.00 288.50,32.50 288.50,27.50" fill="#000"/>
+<polygon points="120.00,30.00 125.50,27.50 125.50,32.50" fill="#000"/>
+<text x="207.00" y="25.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">6 clocks to first output</text>
+<text x="120.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">0</text>
+<path d="M 120.00 55.00 L 120.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="149.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">1</text>
+<path d="M 149.00 55.00 L 149.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="178.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">2</text>
+<path d="M 178.00 55.00 L 178.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="207.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">3</text>
+<path d="M 207.00 55.00 L 207.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="236.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">4</text>
+<path d="M 236.00 55.00 L 236.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="265.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">5</text>
+<path d="M 265.00 55.00 L 265.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="294.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">6</text>
+<path d="M 294.00 55.00 L 294.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="323.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">7</text>
+<path d="M 323.00 55.00 L 323.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="352.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">8</text>
+<path d="M 352.00 55.00 L 352.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="381.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">9</text>
+<path d="M 381.00 55.00 L 381.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="410.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">10</text>
+<path d="M 410.00 55.00 L 410.00 277.00" fill="none" stroke="#D0D0D0" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="442.00" y="49.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">t</text>
+<text x="8.00" y="82.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Read request</text>
+<text x="8.00" y="93.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">ring_re / address</text>
+<path d="M 120.00 82.00 L 439.00 82.00" fill="none" stroke="#DDD" stroke-width="0.6"/>
+<text x="8.00" y="108.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">RAM result</text>
+<text x="8.00" y="119.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">ring_a_q</text>
+<path d="M 120.00 108.00 L 439.00 108.00" fill="none" stroke="#DDD" stroke-width="0.6"/>
+<text x="8.00" y="134.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Data register</text>
+<text x="8.00" y="145.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">data_a</text>
+<path d="M 120.00 134.00 L 439.00 134.00" fill="none" stroke="#DDD" stroke-width="0.6"/>
+<text x="8.00" y="160.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">Output</text>
+<text x="8.00" y="171.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">d_data when valid</text>
+<path d="M 120.00 160.00 L 439.00 160.00" fill="none" stroke="#DDD" stroke-width="0.6"/>
+<rect x="105.00" y="72.00" width="6.00" height="20.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<path d="M 106.00 92.00 L 108.00 89.00 L 110.00 92.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 111.00 82.00 L 120.00 82.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<rect x="105.00" y="124.00" width="6.00" height="20.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<path d="M 106.00 144.00 L 108.00 141.00 L 110.00 144.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 111.00 134.00 L 120.00 134.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<rect x="105.00" y="150.00" width="6.00" height="20.00" rx="0" fill="#F1F1F1" stroke="#000" stroke-width="1.4"/>
+<path d="M 106.00 170.00 L 108.00 167.00 L 110.00 170.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 111.00 160.00 L 120.00 160.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<rect x="98.00" y="98.00" width="13.00" height="20.00" rx="0" fill="#F5EBD3" stroke="#000" stroke-width="1.4"/>
+<path d="M 102.33 98.00 L 102.33 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 106.67 98.00 L 106.67 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 111.00 108.00 L 120.00 108.00" fill="none" stroke="#000" stroke-width="0.9"/>
+<text x="122.00" y="69.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">count = 1</text>
+<text x="178.00" y="70.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">latch head</text>
+<path d="M 178.00 74.00 L 194.00 82.00" fill="none" stroke="#777" stroke-width="0.9"/>
+<polygon points="194.00,82.00 187.96,81.78 190.20,77.30" fill="#777"/>
+<path d="M 216.31 90.34 L 226.69 99.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<polygon points="226.69,99.66 220.93,97.85 224.27,94.12" fill="#008DA5"/>
+<path d="M 245.31 116.34 L 255.69 125.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<polygon points="255.69,125.66 249.93,123.85 253.27,120.12" fill="#008DA5"/>
+<path d="M 274.31 142.34 L 284.69 151.66" fill="none" stroke="#008DA5" stroke-width="1.6"/>
+<polygon points="284.69,151.66 278.93,149.85 282.27,146.12" fill="#008DA5"/>
+<polygon points="194,82 197,74 217,74 220,82 217,90 197,90" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
+<text x="207.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">100</text>
+<polygon points="223,108 226,100 246,100 249,108 246,116 226,116" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
+<text x="236.00" y="110.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p0</text>
+<polygon points="252,134 255,126 275,126 278,134 275,142 255,142" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
+<text x="265.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p0</text>
+<polygon points="281,160 284,152 304,152 307,160 304,168 284,168" fill="#DFF0F2" stroke="#008DA5" stroke-width="1.4"/>
+<text x="294.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p0</text>
+<path d="M 245.31 90.34 L 255.69 99.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<polygon points="255.69,99.66 249.93,97.85 253.27,94.12" fill="#527C31"/>
+<path d="M 274.31 116.34 L 284.69 125.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<polygon points="284.69,125.66 278.93,123.85 282.27,120.12" fill="#527C31"/>
+<path d="M 303.31 142.34 L 313.69 151.66" fill="none" stroke="#527C31" stroke-width="1.6"/>
+<polygon points="313.69,151.66 307.93,149.85 311.27,146.12" fill="#527C31"/>
+<polygon points="223,82 226,74 246,74 249,82 246,90 226,90" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
+<text x="236.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">101</text>
+<polygon points="252,108 255,100 275,100 278,108 275,116 255,116" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
+<text x="265.00" y="110.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p1</text>
+<polygon points="281,134 284,126 304,126 307,134 304,142 284,142" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
+<text x="294.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p1</text>
+<polygon points="310,160 313,152 333,152 336,160 333,168 313,168" fill="#E9F0DB" stroke="#527C31" stroke-width="1.4"/>
+<text x="323.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p1</text>
+<path d="M 274.31 90.34 L 284.69 99.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<polygon points="284.69,99.66 278.93,97.85 282.27,94.12" fill="#AA6B25"/>
+<path d="M 303.31 116.34 L 313.69 125.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<polygon points="313.69,125.66 307.93,123.85 311.27,120.12" fill="#AA6B25"/>
+<path d="M 332.31 142.34 L 342.69 151.66" fill="none" stroke="#AA6B25" stroke-width="1.6"/>
+<polygon points="342.69,151.66 336.93,149.85 340.27,146.12" fill="#AA6B25"/>
+<polygon points="252,82 255,74 275,74 278,82 275,90 255,90" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
+<text x="265.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">102</text>
+<polygon points="281,108 284,100 304,100 307,108 304,116 284,116" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
+<text x="294.00" y="110.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p2</text>
+<polygon points="310,134 313,126 333,126 336,134 333,142 313,142" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
+<text x="323.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p2</text>
+<polygon points="339,160 342,152 362,152 365,160 362,168 342,168" fill="#F7E9D6" stroke="#AA6B25" stroke-width="1.4"/>
+<text x="352.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p2</text>
+<path d="M 303.31 90.34 L 313.69 99.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<polygon points="313.69,99.66 307.93,97.85 311.27,94.12" fill="#755092"/>
+<path d="M 332.31 116.34 L 342.69 125.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<polygon points="342.69,125.66 336.93,123.85 340.27,120.12" fill="#755092"/>
+<path d="M 361.31 142.34 L 371.69 151.66" fill="none" stroke="#755092" stroke-width="1.6"/>
+<polygon points="371.69,151.66 365.93,149.85 369.27,146.12" fill="#755092"/>
+<polygon points="281,82 284,74 304,74 307,82 304,90 284,90" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
+<text x="294.00" y="84.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">103</text>
+<polygon points="310,108 313,100 333,100 336,108 333,116 313,116" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
+<text x="323.00" y="110.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p3</text>
+<polygon points="339,134 342,126 362,126 365,134 362,142 342,142" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
+<text x="352.00" y="136.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p3</text>
+<polygon points="368,160 371,152 391,152 394,160 391,168 371,168" fill="#EDE3F2" stroke="#755092" stroke-width="1.4"/>
+<text x="381.00" y="162.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">p3</text>
+<path d="M 294.00 180.00 L 381.00 180.00" fill="none" stroke="#507D26" stroke-width="0.9"/>
+<polygon points="381.00,180.00 375.50,182.50 375.50,177.50" fill="#507D26"/>
+<polygon points="294.00,180.00 299.50,177.50 299.50,182.50" fill="#507D26"/>
+<text x="337.50" y="193.00" font-size="8" text-anchor="middle" fill="#507D26" font-weight="bold">1 byte / clock</text>
+<text x="8.00" y="214.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">d_valid</text>
+<path d="M 120.00 217.00 L 294.00 217.00 L 294.00 205.00 L 410.00 205.00 L 410.00 217.00 L 439.00 217.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="8.00" y="238.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">d_last</text>
+<path d="M 120.00 241.00 L 381.00 241.00 L 381.00 229.00 L 410.00 229.00 L 410.00 241.00 L 439.00 241.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="8.00" y="266.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">read_ptr_A</text>
+<path d="M 122 258 L 234 258 L 238 272 L 122 272 L 118 258 Z" fill="white" stroke="black" stroke-width="1"/>
+<text x="178.00" y="267.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">100</text>
+<path d="M 238 258 L 263 258 L 267 272 L 238 272 L 234 258 Z" fill="white" stroke="black" stroke-width="1"/>
+<text x="250.50" y="267.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">101</text>
+<path d="M 267 258 L 292 258 L 296 272 L 267 272 L 263 258 Z" fill="white" stroke="black" stroke-width="1"/>
+<text x="279.50" y="267.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">102</text>
+<path d="M 296 258 L 321 258 L 325 272 L 296 272 L 292 258 Z" fill="white" stroke="black" stroke-width="1"/>
+<text x="308.50" y="267.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">103</text>
+<path d="M 325 258 L 437 258 L 441 272 L 325 272 L 321 258 Z" fill="white" stroke="black" stroke-width="1"/>
+<text x="381.00" y="267.50" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">104</text>
+<text x="8.00" y="289.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">t9: p3 and d_last coincide; dq_req re-arms. Metadata stays fixed; ring B is not read.</text>
 </svg>

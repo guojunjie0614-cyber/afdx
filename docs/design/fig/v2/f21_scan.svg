@@ -1,45 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="94pt" viewBox="0 0 450 94">
+<svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="300.0pt" viewBox="-1.5 -1.5 453.0 300.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<rect x="0.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="32.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Issue</text>
-<text x="32.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">state_re, scan_vl0</text>
-<rect x="77.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
-<text x="109.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">tx_state</text>
-<text x="109.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">sync read</text>
-<rect x="154.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="186.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Capture</text>
-<text x="186.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">s0 ← state_q</text>
-<rect x="231.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="263.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Subtract</text>
-<text x="263.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">d = now − next</text>
-<rect x="308.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#F4CDAE" stroke="#000" stroke-width="1.0"/>
-<text x="340.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Window</text>
-<text x="340.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">d + 512 ≥ 0 ?</text>
-<rect x="385.00" y="22.00" width="65.00" height="32.00" rx="0" fill="#D9813F" stroke="#000" stroke-width="1.0"/>
-<text x="417.50" y="37.01" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">Decide</text>
-<text x="417.50" y="45.83" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">candidate</text>
-<path d="M 65.00 38.00 L 77.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="77.00,38.00 72.00,40.10 72.00,35.90" fill="#000"/>
-<path d="M 142.00 38.00 L 154.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="154.00,38.00 149.00,40.10 149.00,35.90" fill="#000"/>
-<path d="M 219.00 38.00 L 231.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="231.00,38.00 226.00,40.10 226.00,35.90" fill="#000"/>
-<path d="M 296.00 38.00 L 308.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="308.00,38.00 303.00,40.10 303.00,35.90" fill="#000"/>
-<path d="M 373.00 38.00 L 385.00 38.00" fill="none" stroke="#000" stroke-width="1.0"/>
-<polygon points="385.00,38.00 380.00,40.10 380.00,35.90" fill="#000"/>
-<text x="32.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c</text>
-<text x="109.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+1</text>
-<text x="186.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+2</text>
-<text x="263.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+3</text>
-<text x="340.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+4</text>
-<text x="417.50" y="14.00" font-size="6.5" text-anchor="middle" fill="#444" font-weight="bold">cycle c+5</text>
-<text x="109.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[0]</text>
-<text x="186.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[1]</text>
-<text x="263.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[2]</text>
-<text x="340.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[3]</text>
-<text x="417.50" y="66.00" font-size="6.5" text-anchor="middle" fill="#000" font-weight="bold">scan_valid[4]</text>
-<path d="M 391.00 54.00 L 391.00 80.00 L 83.00 80.00 L 83.00 54.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
-<polygon points="83.00,54.00 85.10,59.00 80.90,59.00" fill="#000"/>
-<text x="263.50" y="90.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">queue empty and due: write back timer_active = 0</text>
+<text x="4.00" y="9.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">Eligibility is a time window; pending temporarily excludes the selected VL</text>
+<text x="4.00" y="26.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Active timers; now = 249600; d = now − next_time</text>
+<path d="M 112.00 37.00 L 112.00 125.00" fill="none" stroke="#79539C" stroke-width="1.4" stroke-dasharray="3 2"/>
+<text x="112.00" y="33.00" font-size="6.7" text-anchor="middle" fill="#79539C" font-weight="bold">now</text>
+<text x="4.00" y="61.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">VL 7</text>
+<text x="4.00" y="75.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">q_count = 2</text>
+<rect x="89.60" y="53.00" width="102.40" height="20.00" rx="0" fill="#E8F0DC" stroke="none" stroke-width="0"/>
+<path d="M 72.00 63.00 L 235.00 63.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 89.60 50.00 L 89.60 78.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="89.60" y="47.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">249488</text>
+<path d="M 192.00 50.00 L 192.00 78.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="192.00" y="47.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">250000</text>
+<rect x="109.50" y="60.50" width="5.00" height="5.00" rx="0" fill="#628D36" stroke="none" stroke-width="0"/>
+<path d="M 192.00 63.00 L 235.00 63.00" fill="none" stroke="#628D36" stroke-width="1.4"/>
+<polygon points="235.00,63.00 229.50,65.50 229.50,60.50" fill="#628D36"/>
+<text x="244.00" y="66.00" font-size="7.3" text-anchor="start" fill="#628D36" font-weight="bold">select M0: d + 512 = 112</text>
+<text x="142.00" y="87.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">512-cycle window</text>
+<text x="4.00" y="101.00" font-size="8" text-anchor="start" fill="#000" font-weight="bold">VL 8</text>
+<text x="4.00" y="115.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">q_count = 1</text>
+<rect x="289.60" y="93.00" width="102.40" height="20.00" rx="0" fill="#F0F0F0" stroke="none" stroke-width="0"/>
+<path d="M 72.00 103.00 L 423.00 103.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<path d="M 289.60 90.00 L 289.60 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="289.60" y="87.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">250488</text>
+<path d="M 392.00 90.00 L 392.00 118.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="392.00" y="87.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">251000</text>
+<rect x="109.50" y="100.50" width="5.00" height="5.00" rx="0" fill="#fff" stroke="#777" stroke-width="1.4"/>
+<text x="144.00" y="98.00" font-size="6.7" text-anchor="start" fill="#000" font-weight="bold">too early: d + 512 = −888</text>
+<text x="340.00" y="128.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">512-cycle window</text>
+<text x="4.00" y="143.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Grant M0: q_count 2 → 1; pend_vl = 7 blocks M1 until START clears pending.</text>
+<text x="4.00" y="159.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">M0 timeline and the stored deadline (illustrative; lower axis not to scale)</text>
+<path d="M 64.00 187.00 L 442.00 187.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="442.00,187.00 436.50,189.50 436.50,184.50" fill="#000"/>
+<path d="M 70.00 182.00 L 70.00 192.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="70.00" y="179.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">249600</text>
+<path d="M 150.00 182.00 L 150.00 192.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="150.00" y="179.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">249630</text>
+<path d="M 300.00 182.00 L 300.00 192.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="300.00" y="179.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">250000</text>
+<path d="M 350.00 182.00 L 350.00 192.00" fill="none" stroke="#000" stroke-width="1.4"/>
+<text x="350.00" y="179.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">250040</text>
+<text x="405.00" y="179.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">write</text>
+<text x="405.00" y="168.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">after ack</text>
+<path d="M 405.00 182.00 L 405.00 258.00" fill="none" stroke="#628D36" stroke-width="1.4" stroke-dasharray="3 2"/>
+<rect x="70.00" y="200.00" width="80.00" height="14.00" rx="0" fill="#F0F0F0" stroke="none" stroke-width="0"/>
+<text x="110.00" y="225.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">prepare</text>
+<rect x="150.00" y="200.00" width="150.00" height="14.00" rx="0" fill="#EEE6F3" stroke="none" stroke-width="0"/>
+<text x="225.00" y="225.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">wait for T</text>
+<rect x="300.00" y="200.00" width="50.00" height="14.00" rx="0" fill="#F0F0F0" stroke="none" stroke-width="0"/>
+<text x="325.00" y="225.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">busy</text>
+<rect x="350.00" y="200.00" width="88.00" height="14.00" rx="0" fill="#E8F0DC" stroke="none" stroke-width="0"/>
+<text x="381.00" y="225.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">on wire</text>
+<path d="M 350.00 192.00 L 350.00 238.00" fill="none" stroke="#13899A" stroke-width="1.4"/>
+<polygon points="350.00,238.00 347.50,232.50 352.50,232.50" fill="#13899A"/>
+<text x="346.00" y="236.00" font-size="7.3" text-anchor="end" fill="#13899A" font-weight="bold">t_start</text>
+<text x="211.00" y="236.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">idle line → start at T</text>
+<path d="M 70.00 258.00 L 405.00 258.00 L 405.00 239.00 L 438.00 239.00" fill="none" stroke="#628D36" stroke-width="1.6"/>
+<polygon points="438.00,239.00 432.50,241.50 432.50,236.50" fill="#628D36"/>
+<text x="70.00" y="250.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">next_time = 250000</text>
+<text x="441.00" y="236.00" font-size="7.3" text-anchor="end" fill="#628D36" font-weight="bold">375040</text>
+<text x="70.00" y="274.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">new deadline = actual t_start + BAG = 250040 + 125000</text>
+<text x="4.00" y="294.00" font-size="7.3" text-anchor="start" fill="#000" font-weight="bold">Prepared before T + idle line → start at T.  timer_active = 0 → skip the T check.</text>
 </svg>
