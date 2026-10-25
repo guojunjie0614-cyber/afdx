@@ -1,22 +1,44 @@
-\chapter{测试结论}\label{ch:conclusion}
+\chapter{测试结论与复现指南}\label{ch:conclusion}
 
-本报告通过模块级、系统级与综合后网表三级验证体系，结合“在线自检 + 独立黄金参考模型离线比对 + 形式化断言”三重检查机制，对 AFDX 端系统 FPGA 设计完成了全需求覆盖与全工况验证。需求规格规定的 46 个测试点覆盖率达 100\%，\RegCount{} 项 RTL 自动化回归（累计 \countsep{\RegChecks} 次在线自检与 \countsep{\RegIndep} 项独立核对）、7 项 ModelSim 批量测试以及 2 项 eLinx 综合后网表仿真全部零错误通过，RTL 代码语句覆盖率达 \CovStmt\%、状态机转换覆盖率达 \CovFsmTrans\%。
+\section{测试结论总览}
 
-\section{功能完整性与异常恢复闭环}
-
+本报告通过模块级、系统级、服务级、指标级与门级网表五级递进验证体系，结合“在线硬件断言 + 独立黄金参考模型离线比对 + 门级网表逐拍对照”的三重校验机制，对 AFDX 端系统 FPGA 设计完成了全需求覆盖与全工况工程验证：
 \begin{enumerate}
-  \item \textbf{核心数据通路（模块 1、模块 2）：}发送侧 UDP/IP/Ethernet 组帧、页式缓存管理、BAG 定时整形、512 拍提前授权调度与双网同拍发送，以及接收侧 VLID 映射、完整性检查（IC）和冗余管理（RM）在全帧长范围（1--1471 字节）及各类边界工况下均准确无误。发送侧 4 类拒绝机制与接收侧 10 类异常过滤机制均能精确识错、分类计数并安全回收存储资源，无锁死或残留污染。
-  \item \textbf{协议与系统管理服务（模块 3、模块 4、模块 5）：}SNMP 代理准确支持 GetRequest、GetNextRequest、SetRequest 与 Trap 报文编解码及只读/团体名（\code{community}）访问控制；\mbox{ARINC 615A-2} 引擎可靠完成整块与非整块文件的上传下载、CRC16 校验及超时重传，传输前后的存储镜像与源文件逐字节一致；RTC 时钟同步模块在空载与 77 条 VL 满载并发下的最大同步误差分别为 \RtcIdle~ns 和 \RtcLoad~ns，且在响应丢失、时间戳失配及过期响应注入下具备确定性的防误校与恢复能力。五项核心功能在共享双网链路、应用口和配置口时互不干扰。
+  \item \textbf{功能与自动化回归通过率：}赛题规格及答疑要求的全部 46 个测试点覆盖率达到 100\%。\RegCount{} 项 RTL 自动化回归测试（累计通过 \countsep{\RegChecks} 次在线自检与 \countsep{\RegIndep} 项独立核对）、ModelSim 评审 8 项批处理测试以及 eLinx 综合后门级网表后仿真全部保持 0 错误通过。
+  \item \textbf{代码覆盖率签核：}在 ModelSim 2020.4 下对全设计 \textbf{24 个 Verilog RTL 模块}启用 \code{sbceft} 插桩，全设计语句覆盖率达 \textbf{\CovStmt\%}、分支覆盖率达 \textbf{\CovBranch\%}、条件覆盖率达 \textbf{\CovCond\%}、表达式覆盖率达 \textbf{\CovExpr\%}，全设计 110 个有限状态机状态实现 \textbf{100.00\% 全部覆盖}（\CovFsmState\%），状态转移覆盖率达 \CovFsmTrans\%，信号翻转覆盖率达 \CovToggle\%。
+  \item \textbf{有效载荷吞吐率与时延抖动：}在 125~MHz 八位 GMII 千兆接口下，定长 77 条与 81 条 VL 满载去重单向有效载荷吞吐分别达 \textbf{\Thru~Mbps} 与 \textbf{\ThruEightyOne~Mbps}；多 VL 变长高负载（\code{var_high}）单向吞吐达 \textbf{452.376~Mbps}（双向总吞吐达 \textbf{\ThruVarHigh~Mbps}），数倍超出 100~Mbps 规范要求。定长满载端到端时延稳态最大仅为 \textbf{\Lat~µs}（未扣除物理链路延迟前为 26.488~µs），发送间隔抖动严格为 \textbf{\Jit~µs}；按 1022 答疑 R97 口径统计的同 VL 端到端时延极差抖动定长满载仅为 \textbf{\JitSameVl~µs}（1 拍），变长循环工况为 \textbf{\JitVarCycle~µs}，且对最坏同 VL 样本完成了确定性的分段时延代数和物理拆解。
+  \item \textbf{突发排队与容量极值：}77 条与 81 条最长帧集中到期同拍突发实测队列排空耗时分别为 \textbf{\BurstSevSeven~µs} 与 \textbf{\BurstEightOne~µs}，交付末拍总排空耗时分别为 \textbf{\BurstSevSevenLast~µs} 与 \textbf{\BurstEightOneLast~µs}，严格优于 2~ms 门限；设计完整支持 128 条发送 VL 与 4096 条接收 VL 的满额配置与双网去重交付。
+  \item \textbf{布局布线时序闭环与网表一致性：}整机在目标芯片 EQ6HL130-CSG484\_H 上综合消耗 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Clb{} CLB（\ClbPct\%）与 \Mem{} EBR（\MemPct\%）。在 eLinx 官方布局布线流程（\code{S2d + PRES1.50}）与 125~MHz 时钟约束下，全芯片 45,745 个终点实现 0 违例收敛，8~ns 建立裕量达 \textbf{+\RoutedSetup~ns}（等效最高工作频率 \textbf{\RoutedFmax~MHz}），保持裕量达 \textbf{+\RoutedHold~ns}，多周期约束审计通过 2,755 个寄存器。导出的 VQM 门级网表通过联合仿真，7 份外部端口记录与 RTL 逐拍逐字节 100\% 一致。
 \end{enumerate}
 
-\section{性能指标与容量裕度}
+\section{关键测试一键复现指南}
 
-\begin{enumerate}
-  \item \textbf{吞吐与帧格式：}在 125~MHz GMII 千兆双网接口下，77 条与 81 条 VL 双向满载去重后的单向有效载荷吞吐分别达到 \Thru~Mbps 和 \ThruEightyOne~Mbps，高于 100~Mbps 指标要求；以太网与 AFDX 帧格式全面符合规范。
-  \item \textbf{时延与发送抖动：}稳态满载下端到端时延最大为 \Lat~µs，稳态发送抖动为 \Jit~µs；81 条最长帧同拍突发释放时的实测最坏排队交付耗时为 \BurstEightOne~µs（理论最坏上界 1.15~ms），远低于 2~ms 限值；在多 VL 同拍争用与服务报文并发抢占下，发送抖动均严格受控于 50~µs 门限以内。
-  \item \textbf{VL 容量：}硬件全量支持 128 条发送 VL 配置与 4096 条接收 VL 独立配置及双网冗余接收。
-\end{enumerate}
+为便于评审专家复核测试结果，本工程在 Windows PowerShell 5.1 与纯 ModelSim 环境下提供了完备的一键运行入口：
 
-\section{综合实现与网表一致性}
+\subsection{单项运行变长帧与 R97 抖动测试}
+在仓库根目录执行以下命令，可单独编译并运行 \code{tb_sys_perf_var}，自动生成分段时延报表与 R97 同 VL 抖动分析结果：
+\begin{runcommand}
+python3 sim/run.py --sim modelsim --tests tb_sys_perf_var
+\end{runcommand}
 
-在目标器件 EQ6HL130 上，整机综合消耗 \Lut{} 个 LUT（\LutPct\%）、\FF{} 个触发器（\FFPct\%）和 \Mem{} 个存储块（\MemPct\%）；125~MHz 时钟约束下建立时间最差裕量为 +\Setup~ns，最高评估频率达 \Fmax~MHz。eLinx 导出的综合后 VQM 网表顺利通过双向通信（\ElinxChecks{} 次自检）与五项功能联合测试（\SvcChecks{} 次自检、65 项独立核对），网表仿真的 7 份外部端口记录与 RTL 仿真含拍号逐字节一致，证实综合生成的门级结构完整保持了 RTL 的周期级确定性行为。
+\subsection{ModelSim 评审 8 项一键批处理}
+在纯 ModelSim 环境下无需依赖 Python，在终端执行以下命令（或在 ModelSim GUI 控制台中执行 \code{do sim/run_judge.do}），即可自动完成五功能、容量、SNMP、77/81 突发、RTC、性能与多 VL 变长等全部 8 项评审测试（实测总耗时 8787.198~s）：
+\begin{runcommand}
+vsim -do sim/run_judge.do
+\end{runcommand}
+
+\subsection{eLinx 综合、布局布线与时序签核完整命令链}
+在配置好 eLinx 环境变量的 PowerShell 终端中，依次执行以下官方命令链，即可端到端复现门级网表综合、布局布线实现、多周期约束审计及全量时序签核报告导出：
+\begin{runcommand}
+# 1. 官方逻辑综合与 VQM 导出
+powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1
+
+# 2. 官方布局布线实现（策略 S2d + PRES1.50）
+powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1
+
+# 3. 多周期引擎约束结构审计（2,755 个寄存器）
+python3 tools/check_multicycle.py
+
+# 4. 布局布线后全量静态时序分析与报告导出
+python3 tools/report_routed_timing.py
+\end{runcommand}

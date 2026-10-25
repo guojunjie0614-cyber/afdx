@@ -18,7 +18,7 @@ AFDX 端系统连接航电主机与交换网络。发送时，端系统将应用
 \Needspace{16\baselineskip}
 \section{主要成果}
 
-表~\ref{tab:func} 列出赛题五项功能的实现要点，表~\ref{tab:perf} 给出技术指标的设计值。
+表~\ref{tab:func} 列出赛题五项功能的实现要点，表~\ref{tab:perf} 给出技术指标要求、设计目标与实测结果。
 
 \begin{table}\centering\small
 \caption{赛题功能与实现要点}\label{tab:func}
@@ -28,7 +28,7 @@ AFDX 端系统连接航电主机与交换网络。发送时，端系统将应用
 \midrule
 ARINC 664 P7 通信 & 128 条发送 VL 按 BAG 调度，UDP/IP 封装，A、B 双网同时发送；4096 条接收 VL 按 VLID 直接查表 & 第~\ref{ch:tx}、\ref{ch:rx}~章 \\
 高完整性通信 & FCS、帧长、IP/UDP 头逐帧检查；每网独立的序号完整性检查；冗余管理按处理顺序交付首个有效副本 & 第~\ref{ch:rx}~章 \\
-SNMP 网络管理 & v1/v2c 的 Get、GetNext、Set 和 v2 Trap，36 个管理对象，BER 逐字节编解码 & 第~\ref{sec:snmp}~节 \\
+SNMP 网络管理 & v1/v2c 的 Get、GetNext、Set 和 v2 Trap，36 个管理对象，BER 逐字节编解码，多周期解耦 & 第~\ref{sec:snmp}~节 \\
 615A 数据加卸载 & 基于 TFTP 的上传（LUI、LUS、LUR、LUH、数据文件）与介质定义卸载，8~KiB 加载区，CRC-16 校验 & 第~\ref{sec:a615}~节 \\
 RTC 时钟同步 & SNTPv4 主从对时，32 位秒加纳秒，8~ns 分辨率，基于逐位加减与移位的时间戳换算 & 第~\ref{sec:rtc}~节 \\
 \bottomrule
@@ -36,16 +36,17 @@ RTC 时钟同步 & SNTPv4 主从对时，32 位秒加纳秒，8~ns 分辨率，�
 \end{table}
 
 \begin{table}\centering\small
-\caption{技术指标与设计值}\label{tab:perf}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{4.2cm}L}
+\caption{技术指标与实测映射}\label{tab:perf}\label{tab:metrics}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{4.0cm}L}
 \toprule
-指标 & 选题指南要求 & 设计值 & 依据 \\
+指标 & 赛题要求 & 设计目标 & 实测结果 & 依据与说明 \\
 \midrule
-传输速率 & 100~Mbps & 每网每方向载荷容量 956.44~Mbps & 每拍一字节；1471 字节满载帧连同前导码、FCS 和帧间隔占 1538 拍（第~\ref{sec:budget}~节） \\
-端到端时延 & $<$1--2~ms & 无争用端到端时延 26.360~µs（VL 已到期） & 发送 $\le$100 拍、线路 1525 拍、接收首字节 $\le$200 拍、逐字节交付 $n-1$ 拍；线路争用另加式~(\ref{eq:jitter}) 的等待 \\
-发送抖动 & $\le$ 几十微秒 & 无争用时为 0；争用上界见式~(\ref{eq:jitter})，满足第~\ref{sec:cfgrule}~节约束时不超过 50~µs & 提前 512 拍选择候选，在允许时刻启动发送；BAG 为 $2^k$~ms 时争用只造成一次相位后移（第~\ref{sec:jitter}~节） \\
-帧格式 & VLID、SN 1--255，载荷 $\le$1471~B，帧长 $\le$1518~B & 按 VL 配置生成帧，各 VL 独立维护 SN & 帧长 $47+\max(n,17)$，64--1518 字节（第~\ref{sec:frame}~节） \\
-VL 容量 & 128 发送 / 4096 接收 & 128 / 4096，接收 VLID 任意 & 各 VL 的状态存放在块 RAM 中；VLID 映射表含 65536 项 \\
+传输速率 & 100~Mbps & 载荷容量 956.44~Mbps & 定长满载 \Thru~Mbps；81~VL 极限 \ThruEightyOne~Mbps；变长高负载 \ThruVarHigh~Mbps & 按接收端去重有效载荷计数，千兆 GMII 每拍一字节（第~\ref{sec:budget}~节、表~\ref{tab:perf-meas}） \\
+端到端时延 & $<$1--2~ms & 无争用时延 24.424~µs；预算上界 26.360~µs & 满载最大时延 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs；$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs） & 1022 答疑 R95/R96 口径；无排队立即发送从提交至首前导码 32 拍（0.256~µs） \\
+传输抖动 & $\le$ 几十微秒 & 稳态无争用为 0；争用上界 $\le$50~µs & 发送间隔抖动 \Jit~µs；R97 同 VL 极差定长满载 \JitSameVl~µs、变长循环 \JitVarCycle~µs & 1022 答疑 R97 口径，同一 VL 多帧端到端时延最大减最小极差（第~\ref{sec:jitter}~节） \\
+工作时序 & 125~MHz 稳定工作 & 综合建立裕量 $\ge$2~ns；布线后零违例 & 布局布线后（\code{S2d + PRES1.50}）建立裕量 $+\RoutedSetup$~ns、保持裕量 $+\RoutedHold$~ns，最高频率 \RoutedFmax~MHz & 单周期路径 153,342 条，多周期路径 50,296 条（建立裕量 $+\MulticycleSetup$~ns），45,745 端点 0 违例 \\
+帧格式 & VLID、SN 1--255，载荷 $\le$1471~B & 支持以太网帧、IPv4、UDP、SN 及 FCS & 帧长 64--1518 字节，复位首帧 SN 为 0，之后 1--255 循环 & 符合 ARINC 664 P7 与 IEEE 802.3 标准 \\
+VL 容量 & 128 发送 / 4096 接收 & 128 发送 / 4096 接收，VLID 任意直接映射 & 128 发送与 4096 接收全配置抽测 100\% 交付 & 块 RAM 状态表管理，接收映射表 65536 项全覆盖 \\
 \bottomrule
 \end{tabularx}
 \end{table}

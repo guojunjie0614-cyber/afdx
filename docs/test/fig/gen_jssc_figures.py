@@ -139,10 +139,10 @@ def gen_t02_criteria():
 # ==============================================================================
 def gen_t20_thru():
     """Per-direction payload throughput, with the 100 Mbps requirement."""
-    w, h = 540, 290
+    w, h = 540, 310
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">', DEFS]
-    x0, y0 = 70, 244
-    gw, gh = 452, 220
+    x0, y0 = 70, 230
+    gw, gh = 452, 206
     scale = gh / 1100.0
 
     for mbps in range(0, 1001, 200):
@@ -152,23 +152,28 @@ def gen_t20_thru():
         svg.append(f'<line x1="{x0 - 5}" y1="{y:.3f}" x2="{x0}" y2="{y:.3f}" stroke="#000000" stroke-width="1"/>')
         svg.append(f'<text x="{x0 - 9}" y="{y + 3.3:.3f}" font-size="10" fill="#000000" text-anchor="end">{mbps}</text>')
 
-    data = [(10, 117.680, 146), (77, 906.136, 296), (81, 953.208, 446)]
+    data = [(10, 117.680, 146, "10 VLs"), (77, 906.136, 296, "77 VLs (var: 904.752)"), (81, 953.208, 446, "81 VLs")]
     bw = 76
-    for vl, val, cx in data:
+    for vl, val, cx, lbl in data:
         bh = val * scale
         by = y0 - bh
         svg.append(f'<rect x="{cx - bw / 2:.3f}" y="{by:.3f}" width="{bw}" height="{bh:.3f}" fill="#34668B" stroke="#000000" stroke-width="1"/>')
-        svg.append(f'<text x="{cx}" y="{by - 6:.3f}" font-size="10.5" font-weight="bold" fill="#000000" text-anchor="middle">{val:.3f} Mbps</text>')
+        svg.append(f'<text x="{cx}" y="{by - 6:.3f}" font-size="10" font-weight="bold" fill="#000000" text-anchor="middle">{val:.3f} Mbps</text>')
         svg.append(f'<line x1="{cx}" y1="{y0}" x2="{cx}" y2="{y0 + 5}" stroke="#000000" stroke-width="1"/>')
-        svg.append(f'<text x="{cx}" y="{y0 + 20}" font-size="10.5" fill="#000000" text-anchor="middle">{vl} VLs</text>')
+        svg.append(f'<text x="{cx}" y="{y0 + 18}" font-size="9.5" fill="#000000" text-anchor="middle">{lbl}</text>')
 
     # Draw the requirement across the bars, as in the supplied reference.
     y_spec = y0 - 100 * scale
     svg.append(f'<line x1="{x0}" y1="{y_spec:.3f}" x2="{x0 + gw}" y2="{y_spec:.3f}" stroke="#963C1E" stroke-width="1.1" stroke-dasharray="4 2"/>')
-    svg.append(f'<text x="225" y="{y_spec - 4:.3f}" font-size="8" font-weight="bold" fill="#963C1E" text-anchor="middle">Spec: 100 Mbps</text>')
+    svg.append(f'<text x="215" y="{y_spec - 4:.3f}" font-size="8.5" font-weight="bold" fill="#963C1E" text-anchor="middle">Spec: 100 Mbps</text>')
     svg.append(f'<rect x="{x0}" y="{y0 - gh}" width="{gw}" height="{gh}" fill="none" stroke="#000000" stroke-width="1.1"/>')
     svg.append(f'<text x="20" y="{y0 - gh / 2}" transform="rotate(-90 20 {y0 - gh / 2})" font-size="11" fill="#000000" text-anchor="middle">Throughput (Mbps)</text>')
-    svg.append(f'<text x="{x0 + gw / 2}" y="284" font-size="11" fill="#000000" text-anchor="middle">Active Virtual Links (VLs) per Direction</text>')
+
+    # Bottom annotation strip: Latency & Burst Summary
+    svg.append(f'<rect x="{x0}" y="254" width="{gw}" height="46" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="0.8"/>')
+    svg.append(f'<text x="{x0 + 10}" y="268" font-size="8.5" font-weight="bold" fill="#1F2937">Max Steady Latency: 24.432 µs (Link=0) | Same-VL R97 Jitter: 0.008 µs | TX Interval Jitter: 0.000 µs</text>')
+    svg.append(f'<text x="{x0 + 10}" y="281" font-size="8.0" fill="#4B5563">77 VL Burst Drain: 959.288 µs (Last Delivery: 959.376 µs) | 81 VL Burst Drain: 1008.504 µs (Total: 1464.592 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="293" font-size="8.0" fill="#6B7280">Multi-VL var_high: 904.752 Mbps | var_cycle Jitter: 9.992 µs (ΔL_tx=+11.904 µs, ΔL_rx=-1.912 µs)</text>')
     svg.append('</svg>')
     return '\n'.join(svg)
 
@@ -177,11 +182,11 @@ def gen_t20_thru():
 # Fig 4: t21_lat (End-to-End Latency vs. Payload Size)
 # ==============================================================================
 def gen_t21_lat():
-    """End-to-end latency for the five measured message lengths."""
-    w, h = 540, 290
+    """End-to-end latency for the five measured message lengths and pipeline breakdown."""
+    w, h = 540, 310
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">', DEFS]
-    x0, y0 = 70, 244
-    gw, gh = 452, 220
+    x0, y0 = 70, 218
+    gw, gh = 452, 194
     scale = gh / 30.0
 
     for us in range(0, 31, 5):
@@ -191,20 +196,27 @@ def gen_t21_lat():
         svg.append(f'<line x1="{x0 - 5}" y1="{y:.3f}" x2="{x0}" y2="{y:.3f}" stroke="#000000" stroke-width="1"/>')
         svg.append(f'<text x="{x0 - 9}" y="{y + 3.3:.3f}" font-size="10" fill="#000000" text-anchor="end">{us}</text>')
 
-    points = [(1, 1.056, 116), (17, 1.136, 206), (18, 1.152, 296),
-              (511, 9.040, 386), (1471, 24.400, 476)]
-    bw = 52
+    points = [(1, 1.056, 116), (17, 1.136, 196), (18, 1.152, 276),
+              (511, 9.040, 356), (1471, 24.424, 446)]
+    bw = 48
     for n, us, cx in points:
         bh = us * scale
         by = y0 - bh
         svg.append(f'<rect x="{cx - bw / 2:.3f}" y="{by:.3f}" width="{bw}" height="{bh:.3f}" fill="#34668B" stroke="#000000" stroke-width="1"/>')
-        svg.append(f'<text x="{cx}" y="{by - 10:.3f}" font-size="10.5" font-weight="bold" fill="#000000" text-anchor="middle">{us:.3f} µs</text>')
+        lbl_us = f"{us:.3f} µs" if n != 1471 else f"{us:.3f} µs (max 24.432)"
+        svg.append(f'<text x="{cx}" y="{by - 6:.3f}" font-size="9.5" font-weight="bold" fill="#000000" text-anchor="middle">{lbl_us}</text>')
         svg.append(f'<line x1="{cx}" y1="{y0}" x2="{cx}" y2="{y0 + 5}" stroke="#000000" stroke-width="1"/>')
-        svg.append(f'<text x="{cx}" y="{y0 + 20}" font-size="10.5" fill="#000000" text-anchor="middle">{n} B</text>')
+        svg.append(f'<text x="{cx}" y="{y0 + 18}" font-size="10" fill="#000000" text-anchor="middle">{n} B</text>')
 
     svg.append(f'<rect x="{x0}" y="{y0 - gh}" width="{gw}" height="{gh}" fill="none" stroke="#000000" stroke-width="1.1"/>')
     svg.append(f'<text x="20" y="{y0 - gh / 2}" transform="rotate(-90 20 {y0 - gh / 2})" font-size="11" fill="#000000" text-anchor="middle">Latency (µs)</text>')
-    svg.append(f'<text x="{x0 + gw / 2}" y="284" font-size="11" fill="#000000" text-anchor="middle">Application Message Length (Bytes)</text>')
+
+    # Pipeline breakdown box below the plot
+    svg.append(f'<rect x="{x0}" y="244" width="{gw}" height="56" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="0.8"/>')
+    svg.append(f'<text x="{x0 + 10}" y="258" font-size="8.5" font-weight="bold" fill="#1F2937">1471 B Full-Load Latency Pipeline Stages (125 MHz, 8 ns/cyc, Link=0 ns):</text>')
+    svg.append(f'<text x="{x0 + 10}" y="271" font-size="8.0" fill="#374151">TX Pipeline: 32 cyc (0.256 µs) [SFD: 39 cyc / 0.312 µs]  |  GMII Wire: 1526 cyc (12.208 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="283" font-size="8.0" fill="#374151">RX Core: 26 cyc (0.208 µs)  |  Deliver (app): 1469 cyc (11.752 µs)  |  Total: 3053 cyc = 24.424 µs (Max: 3054 cyc = 24.432 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="295" font-size="8.0" font-weight="bold" fill="#059669">Same-VL R97 Jitter: 0.008 µs (1 cyc AGE sweep interleaving)  |  TX Interval Jitter: 0.000 µs</text>')
     svg.append('</svg>')
     return '\n'.join(svg)
 

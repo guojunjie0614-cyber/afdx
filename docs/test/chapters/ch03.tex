@@ -1,18 +1,37 @@
-\chapter{测试设计}\label{ch:strategy}
+\chapter{赛题指标符合性总表与覆盖率分析}\label{ch:strategy}
 
-\section{测试层次}
+\section{赛题指标符合性总表}
+
+表~\ref{tab:compliance} 汇集了赛题 5 项核心功能、4 项技术指标以及门级网表综合实现的实测符合性结论。数据源于实测基准归档（\code{docs/evidence/perf_r97.json}、\code{t45_timing.json} 与 \code{sim/reference/judge_result.txt}）。
+
+\begin{table}[!htbp]\centering
+\caption{赛题指标符合性总表}\label{tab:compliance}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{3.4cm}L>{\centering\arraybackslash}p{1.2cm}@{}}
+\toprule
+\thead{指标项目} & \thead{赛题与答疑规范要求} & \thead{设计实测数据与技术特征} & \thead{结论} \\
+\midrule
+传输速率 & $\ge 100\text{ Mbps}$（R95-1 规定去重有效载荷，千兆 GMII） & 定长 77 条 VL 满载达 \Thru~Mbps（81 条 VL 达 \ThruEightyOne~Mbps）；多 VL 变长高负载（\code{var_high}）达 \ThruVarHigh~Mbps（单向 452.376~Mbps） & 符合 \\
+传输时延 & 端到端 $<1\sim 2\text{ ms}$（R96 单帧时延 $\le 2\text{ ms}$） & 定长满载稳态端到端最大时延 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs，$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs，含 257 拍线缆延迟最大 26.488~µs） & 符合 \\
+传输抖动 & 不超过几十微秒（R97-2 同 VL 时延极差口径） & 定长满载发送间隔抖动为 \Jit~µs；R97 同 VL 端到端时延极差定长满载为 \JitSameVl~µs（1 拍，\code{AGE} 扫描交错），变长循环工况为 \JitVarCycle~µs & 符合 \\
+帧格式 & 载荷 1--1471 B，帧长 $\le 1518\text{ B}$，含 VLID 与 1--255 序号 & 1--1471 字节载荷逐字节通过，64--1518 字节以太网封装正确；VLID 映射及 1--255 序号独立循环回绕正确 & 符合 \\
+虚拟链路容量 & 128 条发送 VL / 4096 条接收 VL & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表独立配置，接收核心逐条交付并完成双网去重 & 符合 \\
+时钟同步 & 支持网络时间报文同步 & 空载最大误差 \RtcIdle~ns，77 条 VL 满载并发下最大误差 \RtcLoad~ns（10.788~µs），且具备重发恢复与防误校能力 & 符合 \\
+布局布线时序 & 125~MHz 工作频率静态时序收敛 & 官方布局布线流程（\code{S2d + PRES1.50}）签核：8~ns 建立裕量 +\RoutedSetup~ns（等效 $F_\text{max}=\RoutedFmax\text{ MHz}$），保持裕量 +\RoutedHold~ns，45,745 端点 0 违例 & 符合 \\
+综合后仿真 & 综合后网表功能与 RTL 一致 & eLinx 导出 VQM 网表通过双向通信与五功能联合仿真，7 份外部端口记录与 RTL 逐拍逐字节完全一致 & 符合 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{测试层次与测试点分解}\label{sec:points}
 
 验证体系按由底向上的顺序划分为五个层次，各层均通过被测模块的外部接口直接注入激励、采集响应并执行自动比对：
 \begin{enumerate}
   \item \textbf{模块级：}分别针对同步双口 RAM、千兆以太网 MAC、发送核心和接收核心开展独立验证，覆盖边界帧长、畸形帧过滤和存储资源耗尽场景；
   \item \textbf{系统级：}将两个完整端系统经双网交叉互连，验证端到端双向传输、链路故障注入、双网到达时延差、配置总线读写与运行中复位恢复行为；
   \item \textbf{服务级：}验证 SNMP、615A 和 RTC 经由 AFDX 双网通路完成完整协议交互与差错恢复的过程；
-  \item \textbf{指标级：}定量测量有效载荷吞吐率、端到端时延与发送抖动，并检验多 VL 同拍突发排队行为及满额 VL 容量；
+  \item \textbf{指标级：}定量测量有效载荷吞吐率、端到端时延与抖动，检验多 VL 变长高负载、同拍突发排队行为及满额 VL 容量；
   \item \textbf{网表级：}复用与 RTL 完全相同的测试激励对综合后门级网表进行仿真，并与 RTL 端口记录逐字节对照。
 \end{enumerate}
-各层测试用例全面覆盖正常传输、畸形与异常输入、存储资源满溢、异步时机复位以及跨计时刻度扰动五类场景。
-
-\section{测试点分解}\label{sec:points}
 
 围绕 5 项功能、4 项技术指标及综合后仿真，设置 46 个测试点（表~\ref{tab:points}）。每个测试点至少由一个用例覆盖，用例定义见表~\ref{tab:cases}。
 
@@ -70,10 +89,10 @@ F5-05 & 响应丢失后重发恢复 & SVC-06 & \ref{sec:f-rtc} \\
 F5-06 & 回送时间戳错误或过期的响应不校时 & SVC-07 & \ref{sec:f-rtc} \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\*
-P-01 & 传输速率不低于 100~Mbps & PERF-01 & \ref{sec:p-rate} \\
+P-01 & 传输速率不低于 100~Mbps & PERF-01，PERF-04 & \ref{sec:p-rate} \\
 P-02 & 帧格式：载荷 1--1471 字节，帧长不超过 1518 字节，VLID，序号 1--255 & MAC-01，TX-01，RX-01，RX-03，SYS-09 & \ref{sec:p-frame} \\
-P-03 & 端到端时延：稳态与最坏情况 & PERF-01--03 & \ref{sec:p-lat} \\
-P-04 & 发送抖动 & PERF-01，TX-03 & \ref{sec:p-lat} \\
+P-03 & 端到端时延：稳态、变长与最坏情况 & PERF-01--04 & \ref{sec:p-lat} \\
+P-04 & 传输抖动：发送间隔抖动与 R97 同 VL 极差抖动 & PERF-01，PERF-04，TX-03 & \ref{sec:p-lat} \\
 P-05 & 128 条发送 VL & CAP-01，TX-04，SYS-04 & \ref{sec:p-vl} \\
 P-06 & 4096 条接收 VL & CAP-01，RX-01 & \ref{sec:p-vl} \\
 \midrule
@@ -81,9 +100,9 @@ N-01 & 综合后网表的功能与 RTL 一致 & NET-01、NET-02 & 6.1--6.3 \\
 \end{longtable}
 \endgroup
 
-\section{用例清单}
+\section{测试用例清单}
 
-用例按测试层次编号，见表~\ref{tab:cases}。正文和附录~\ref{app:regress} 均使用这些编号引用用例；同一测试平台采用不同参数运行时，分别编为不同用例。
+用例按测试层次编号，见表~\ref{tab:cases}。共编排 39 项 RTL 自动化测试用例与 2 项网表仿真用例。
 
 \begingroup\setlength{\tabcolsep}{5pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.55cm}>{\raggedright\arraybackslash}p{4.95cm}>{\raggedright\arraybackslash}p{8.75cm}@{}}
@@ -130,73 +149,62 @@ SVC-06 & \code{tb_rtc_recovery} & RTC 响应丢失后的重发恢复 \\
 SVC-07 & \code{tb_rtc_originate} & 错误或过期响应不校时 \\
 SVC-08 & \code{tb_net_services} & 五项功能联合测试 \\
 \midrule
-PERF-01 & \code{tb_sys_perf} & 吞吐、时延和抖动 \\
+PERF-01 & \code{tb_sys_perf} & 定长 10/77/81 VL 吞吐、分段时延和抖动 \\
 PERF-02 & \code{tb_gbe_burst}（77 条） & 77 条 VL 同时到期的排队与交付 \\
 PERF-03 & \code{tb_gbe_burst}（81 条） & 81 条 VL 同时到期的排队与交付 \\
+PERF-04 & \code{tb_sys_perf_var} & 多 VL 变长高负载、同 VL 帧长循环与 R97 极差抖动 \\
 CAP-01 & \code{tb_judge_capacity} & 128 条发送、4096 条接收 VL 全部配置 \\
 \midrule
 NET-01 & 界面综合，\code{tb_elinx} & SYS-09 的网表仿真 \\
-NET-02 & 界面综合，\code{tb_net_services} & SVC-08 的网表仿真，与 RTL 记录对照 \\
+NET-02 & 官方综合，\code{tb_net_services} & SVC-08 的网表仿真，与 RTL 记录对照 \\
 \end{longtable}
 \endgroup
 
-ModelSim 批量测试包含 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-05 和 PERF-01，共 7 项；其中 6 项选自 38 项 RTL 回归用例，SVC-08 为额外联合测试。NET-01、NET-02 分别复用 SYS-09、SVC-08 的激励。
+\section{全设计 24 个模块代码覆盖率分析}\label{sec:coverage}
 
-\section{检查数的统计口径}
+在 ModelSim SE-64 2020.4 的完整 39 项 RTL 回归中，对全设计完整的 \textbf{24 个 Verilog RTL 模块}启用 \code{sbceft}（语句、分支、条件、表达式、有限状态机状态与转移、信号翻转）覆盖率插桩，测试平台本身不计入统计。各模块代码覆盖率明细严格取自实测基准归档（\code{sim/reference/coverage/modules.csv} 和 \code{totals.json}），汇总于表~\ref{tab:coverage}。
 
-结果表中的检查数分两类：
-\begin{itemize}
-  \item \textbf{自检次数：}仿真中对载荷、握手和配置读回等进行比较的执行次数；负载测试的自检次数随运行时长增长。完整回归合计 \countsep{\RegChecks} 次。
-  \item \textbf{独立核对数：}参考检查器对帧编码、消息交付和计数器等项目进行判定的次数。完整回归合计 \countsep{\RegIndep} 项。
-\end{itemize}
-
-\section{参数缩放与边界构造}\label{sec:param-scale}
-
-由于收发核心的控制状态机与流水线逻辑同缓存地址位宽参数完全正交，测试中对部分用例调整顶层容量参数，以在合理仿真时长内高密度触发资源满溢、指针回退与恢复边界：
-\begin{itemize}
-  \item \textbf{分页粒度缩放（TX-02）：}将发送缓存由默认 $256\text{ 页}\times 512\text{ B}$ 调整为 $32\text{ 页}\times 2048\text{ B}$，验证分页链表与组帧预读逻辑在不同页长配置下的通用性；
-  \item \textbf{接收缓存与队列深度缩减（RX-05、SYS-07、RX-06）：}将单网接收环形缓冲缩减为 512~B（使 $>512\text{ B}$ 的长帧必然触发空间不足），或将交付描述队列缩减为 2 项（使长帧交付期间到达的后续短帧必然触发队列满），从而确定性地验证预写入指针回退、溢出计数与空间释放后的自动恢复；
-  \item \textbf{满载同拍突发（PERF-02、PERF-03）：}令 77 条或 81 条 VL 的 1471~B 最长消息在同一拍集中到期释放，直接检验调度器与线路串行发送的最坏排队时延上界。
-\end{itemize}
-
-\section{代码覆盖率}\label{sec:coverage}
-
-在 ModelSim SE-64 2020.4 的完整 38 项 RTL 回归中，对全部 21 个 RTL 模块启用 \code{sbceft}（语句、分支、条件、表达式、状态机、翻转）覆盖率插桩，统计结果见表~\ref{tab:coverage}（原始报告见附录~\ref{app:evidence}）。
-
-\begin{table}[!htbp]\centering
-\caption{主要模块的代码覆盖率（\%）}\label{tab:coverage}
+\begingroup
+\tablestyle
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.8cm}*{7}{C}@{}}
-\toprule
-\multirow{2}{*}{\thead{模块}} & \multirow{2}{*}{\thead{语句}} & \multirow{2}{*}{\thead{分支}} & \multirow{2}{*}{\thead{条件}} & \multicolumn{3}{c}{\thead{状态机}} & \multirow{2}{*}{\thead{翻转}} \\
-\cmidrule(lr){5-7}
- & & & & \thead{状态} & \thead{转换} & \thead{合并} & \\
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}*{7}{>{\raggedleft\arraybackslash}p{1.45cm}}@{}}
+\caption{各模块代码覆盖率明细（ModelSim SE-64 实测统计，\%）}\label{tab:coverage}\\
+\longtablehead{8}{\thead{模块名称} & \thead{语句} & \thead{分支} & \thead{条件} & \thead{表达式} & \thead{FSM状态} & \thead{FSM转移} & \thead{翻转}}
+\code{AFDX_top} & 100.00 & 100.00 & 100.00 & 75.67 & \text{---} & \text{---} & 83.61 \\
+\code{afdx_615a} & 100.00 & 92.68 & 69.23 & 100.00 & \text{---} & \text{---} & 58.72 \\
+\code{afdx_615a_engine} & 97.15 & 94.31 & 76.19 & 82.60 & 100.00 & 29.62 & 66.74 \\
+\code{afdx_cfg} & 99.84 & 98.87 & 75.60 & 86.75 & \text{---} & \text{---} & 64.12 \\
+\code{afdx_crc32_d8} & 100.00 & 100.00 & \text{---} & \text{---} & \text{---} & \text{---} & 50.00 \\
+\code{afdx_mac_rx} & 100.00 & 100.00 & 100.00 & 100.00 & 100.00 & 100.00 & 99.67 \\
+\code{afdx_mac_tx} & 98.93 & 93.15 & 84.61 & 76.92 & 100.00 & 88.88 & 92.41 \\
+\code{afdx_mgmt_tx} & 100.00 & 100.00 & 100.00 & 90.00 & \text{---} & \text{---} & 79.31 \\
+\code{afdx_ntp_fraction} & 96.42 & 95.83 & 100.00 & \text{---} & 100.00 & 80.00 & 99.12 \\
+\code{afdx_ram_sdp} & 50.00 & 62.50 & 0.00 & \text{---} & \text{---} & \text{---} & 99.64 \\
+\code{afdx_rtc} & 97.17 & 94.49 & 65.62 & 61.36 & 100.00 & 43.39 & 70.18 \\
+\code{afdx_rx_core} & 100.00 & 99.73 & 100.00 & 100.00 & \text{---} & \text{---} & 98.77 \\
+\code{afdx_rx_deliver} & 98.55 & 96.00 & 85.71 & 100.00 & 100.00 & 75.00 & 100.00 \\
+\code{afdx_rx_engine} & 99.24 & 98.17 & 96.66 & 99.07 & 100.00 & 75.00 & 71.50 \\
+\code{afdx_rx_parse} & 100.00 & 100.00 & 97.43 & 96.66 & 100.00 & 60.00 & 93.27 \\
+\code{afdx_snmp} & 98.66 & 94.00 & 57.14 & 100.00 & 100.00 & 83.33 & 46.84 \\
+\code{afdx_snmp_engine} & 97.17 & 93.92 & 85.18 & 86.20 & 100.00 & 26.36 & 63.40 \\
+\code{afdx_svc} & 100.00 & 100.00 & 100.00 & 70.76 & \text{---} & \text{---} & 100.00 \\
+\code{afdx_timebase} & 100.00 & 100.00 & \text{---} & \text{---} & \text{---} & \text{---} & 86.27 \\
+\code{afdx_tx_buf} & 98.62 & 94.93 & 81.25 & 90.90 & 100.00 & 70.83 & 100.00 \\
+\code{afdx_tx_builder} & 99.08 & 98.07 & 96.96 & 94.73 & 100.00 & 80.00 & 91.92 \\
+\code{afdx_tx_core} & 100.00 & 100.00 & 50.00 & 100.00 & \text{---} & \text{---} & 92.69 \\
+\code{afdx_tx_engine} & 99.23 & 98.13 & 87.50 & 95.91 & 100.00 & 72.72 & 92.74 \\
+\code{afdx_tx_free} & 98.38 & 96.66 & 83.33 & 83.33 & 100.00 & 66.66 & 99.09 \\
 \midrule
-\code{AFDX_top}、\code{afdx_cfg}、\code{afdx_timebase} & 98.86 & 96.53 & 90.91 & --- & --- & --- & 53.65 \\
-\code{afdx_mac_tx}、\code{afdx_mac_rx} & 99.24 & 94.38 & 92.59 & 100.00 & 94.12 & 96.15 & 95.12 \\
-\code{afdx_tx_core} 及子模块 & 99.20 & 95.87 & 81.71 & 100.00 & 71.74 & 81.16 & 92.85 \\
-\code{afdx_rx_core} 及子模块 & 99.42 & 97.63 & 98.59 & 100.00 & 70.59 & 81.48 & 92.54 \\
-\code{afdx_svc} & 94.02 & 90.69 & 100.00 & --- & --- & --- & 100.00 \\
-\code{afdx_snmp} & 94.62 & 89.00 & 60.57 & 100.00 & 26.36 & 41.72 & 58.92 \\
-\code{afdx_615a} & 94.89 & 90.19 & 51.74 & 100.00 & 29.62 & 41.53 & 62.11 \\
-\code{afdx_rtc}、\code{afdx_ntp_fraction} & 97.60 & 93.71 & 69.44 & 100.00 & 48.08 & 63.51 & 74.17 \\
-\midrule
-全设计（21 个 RTL 模块） & \textbf{\CovStmt} & \textbf{\CovBranch} & \textbf{\CovCond} & \textbf{\CovFsmState} & \textbf{\CovFsmTrans} & \textbf{\CovFsm} & \textbf{\CovToggle} \\
+\thead{全设计汇总（24 个模块）} & \textbf{\CovStmt} & \textbf{\CovBranch} & \textbf{\CovCond} & \textbf{\CovExpr} & \textbf{\CovFsmState} & \textbf{\CovFsmTrans} & \textbf{\CovToggle} \\
 \bottomrule
-\end{tabularx}
-\par\vspace{6pt}
-\begin{tabular}{@{}ccc@{}}
-\toprule
-\thead{全设计状态覆盖} & \thead{全设计转换覆盖} & \thead{全设计表达式覆盖} \\
-\midrule
-104 / 104（\CovFsmState\%） & 131 / 296（\CovFsmTrans\%） & 164 / 177 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\end{longtable}
+\endgroup
 
-状态与转换按 ModelSim 识别并纳入统计的有限状态机计算，全设计 104 个状态达到 100.00\% 覆盖；状态与转换合并覆盖率为 235 / 400（\CovFsm{}\%）。未达 100\% 的分项原因如下：
+全设计覆盖率实测汇总与统计分析如下：
 \begin{itemize}
-  \item \textbf{条件覆盖（\CovCond{}\%）：}测试激励遵循主机配置规范，未主动触发 615A 忙时改写控制寄存器、UDP 零端口及极端异常超时保护等防御性分支；此外，统计分母还包含了同步 RAM 模型的编译期辅助函数及仿真专用的同址读写碰撞断言逻辑。
-  \item \textbf{状态机转换（\CovFsmTrans{}\%）：}ModelSim 将受外层主状态约束的子状态机理论笛卡尔积转移一并计入分母，其中协议语义上不会发生的跨分支跳转保留为未命中。
-  \item \textbf{翻转覆盖（\CovToggle{}\%）：}\code{afdx_cfg} 中 32 位统计计数器的高比特位在回归测试的事件数量级下保持为 0，未发生 $0\leftrightarrow 1$ 翻转。
+  \item \textbf{语句与分支覆盖率（\CovStmt\%、\CovBranch\%）：}语句覆盖达到 6981 / 7083，分支覆盖达到 3844 / 3985。收发数据通路模块中，\code{afdx_mac_rx}、\code{afdx_rx_core}、\code{afdx_mgmt_tx} 语句覆盖率均达 100.00\%；\code{afdx_tx_builder} 语句覆盖 99.08\%、分支覆盖 98.07\%、条件覆盖 96.96\%；\code{afdx_rx_parse} 语句与分支均为 100.00\%。
+  \item \textbf{有限状态机覆盖率（状态 100.00\%，转移 \CovFsmTrans\%）：}工具自动识别出全设计共 110 个 FSM 状态，在 39 项回归测试下全部 110 个状态实现 100.00\% 覆盖（110/110）。状态机转移覆盖达到 138 / 308（\CovFsmTrans\%），状态与转移合并覆盖率为 248 / 418（\CovFsm\%）。未命中的转移主要是 ModelSim 识别的状态机笛卡尔积中，协议语义上互斥的跳转路径。
+  \item \textbf{条件与表达式覆盖率（\CovCond\%、\CovExpr\%）：}条件覆盖达 610 / 717，表达式覆盖达 1760 / 1991。未覆盖项主要包括：(1) \code{afdx_ram_sdp} 双口 RAM 包装模型中的仿真碰撞断言；(2) 协议引擎中的硬件异常超时溢出保护；(3) 控制寄存器并发写入防御分支。
+  \item \textbf{管理面解耦模块覆盖率：}在 \code{CE_DIV=2} 结构下，管理面拆分为独立多周期引擎与公共发送缓冲后，\code{afdx_mgmt_tx} 实现了 100.00\% 的语句、分支与条件覆盖；\code{afdx_snmp_engine} 与 \code{afdx_615a_engine} 语句覆盖率均超过 97.1\%、分支覆盖率超过 93.9\%。
+  \item \textbf{翻转覆盖率（\CovToggle\%）：}41,314 / 53,632 信号节点实现双向翻转。未翻转节点集中于 \code{afdx_cfg} 中 32 位统计计数器的高 16 位以及部分固定配置引脚。
 \end{itemize}

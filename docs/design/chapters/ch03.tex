@@ -20,47 +20,57 @@
 \end{longtable}
 
 \FloatBarrier
-\section{模块层次}
+\section{模块层次与 24 个 RTL 模块划分}
 
-\code{AFDX_top} 例化八个一级模块，模块归属与实例数量见表~\ref{tab:hierarchy}（各源文件的作用见附录~\ref{app:files}）。全设计共使用 19 个 \code{afdx_ram_sdp} 实例，其中发送核心 7 个、接收核心 5 个、SNMP 2 个、615A 5 个。
+\code{AFDX_top} 顶层下共划分为 24 个 Verilog RTL 模块（源码位于 \code{rtl/} 目录），模块归属、层次关系与片上 RAM 实例数量见表~\ref{tab:hierarchy}（各源文件的具体职责见附录~\ref{app:files}）。全设计共包含 21 张逻辑存储表，在物理实现上映射为 52 个 \code{afdx_ram_sdp} 双端口块 RAM 原语实例（其中发送核心 7 个、接收核心 37 个、SNMP 2 个、615A 6 个）。
+
+为兼顾管理面协议状态机复杂度与 125~MHz 时钟约束，设计对 SNMP 与 615A 实施了引擎分离：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{\code{afdx_snmp.v} 与 \code{afdx_snmp_engine.v}：}\code{afdx_snmp.v} 作为顶层封装，负责 UDP 报文捕获、配置总线路由、MIB/Trap RAM 访问控制以及 2 分频局部时钟使能（\code{CE_DIV=2}）复制树驱动；ASN.1/BER 解码、变量绑定查找与应答组装核心状态机位于 \code{afdx_snmp_engine.v}，运行于 16~ns 时序预算的 2 周期多周期使能域。
+  \item \textbf{\code{afdx_615a.v} 与 \code{afdx_615a_engine.v}：}\code{afdx_615a.v} 负责 TFTP 端口分发、超时计数器与 6 块协议 RAM（含第 6 块 \code{denial_ram}）的物理接口；加卸载协议主状态机、LUH 头文件与数据文件 CRC-16 校验位于 \code{afdx_615a_engine.v}，约束在 16~ns 多周期路径中。
+  \item \textbf{\code{afdx_mgmt_tx.v}：}管理面共享发送输出缓冲模块（集成 256 字节双端口帧缓冲），由 SNMP 与 615A 复用。该模块运行于 125~MHz 全速域，将多周期引擎生成的字节流暂存并适配为 125~MHz 发送握手，解耦管理面引擎与底层发送仲裁器的时序关联。
+\end{enumerate}
 
 \begingroup\tablestyle
 \setlength{\tabcolsep}{5pt}
 \setlength{\heavyrulewidth}{0.8pt}
 \setlength{\lightrulewidth}{0.35pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-4.5cm-4\tabcolsep\relax}>{\raggedleft\arraybackslash}p{1.3cm}@{}}
-\caption{一级模块及下级实例}\label{tab:hierarchy}\\
-\longtablehead{3}{\textbf{一级模块} & \textbf{子模块及下级关系} & \textbf{RAM\newline 实例数}}
-\textbf{\code{afdx_timebase}} & 无下级模块 & 0 \\
+\caption{24 个 RTL 模块分工与下级层次}\label{tab:hierarchy}\\
+\longtablehead{3}{\textbf{所属域与模块} & \textbf{子模块及下级关系} & \textbf{RAM\newline 物理数}}
+\textbf{\code{afdx_timebase}} & 周期计数 \code{now[31:0]} 与粗粒度计时 \code{now_c[15:0]} & 0 \\
 \addlinespace[3pt]
-\textbf{\code{afdx_cfg}} & 无下级模块 & 0 \\
+\textbf{\code{afdx_cfg}} & 寄存器译码、27 个统计计数器两级流水更新与配置写握手 & 0 \\
 \addlinespace[3pt]
-\textbf{\code{afdx_svc}} & 无下级模块 & 0 \\
+\textbf{\code{afdx_svc}} & 应用与服务 4 路轮询发送仲裁（寄存输出）与端口分发 & 0 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_tx_core}} &
-\code{afdx_tx_buf}、\code{afdx_tx_engine}、\code{afdx_tx_builder}\newline
-\code{afdx_tx_free}\newline
-\hspace*{1em}\(\hookrightarrow\) \code{afdx_ram_sdp}：\code{tx_free}\newline
-\code{afdx_mac_tx}\newline
-\hspace*{1em}\(\hookrightarrow\) \code{afdx_crc32_d8} $\times$2\newline
+\code{afdx_tx_buf}（写口寄存）、\code{afdx_tx_engine}、\code{afdx_tx_builder}\newline
+\code{afdx_tx_free}（\(\hookrightarrow\) \code{afdx_ram_sdp}：\code{tx_free}）\newline
+\code{afdx_mac_tx}（\(\hookrightarrow\) \code{afdx_crc32_d8} $\times$2）、1 级流缓冲结构\newline
 \code{afdx_ram_sdp} $\times$6：\code{tx_cfg}、\code{tx_state}、\code{tx_desc}、\newline
 \hspace*{1em}\code{tx_mnext}、\code{tx_pnext}、\code{tx_payload} & 7 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_rx_core}} &
-\code{afdx_mac_rx} $\times$2\newline
-\hspace*{1em}\(\hookrightarrow\) 每个 MAC 含 1 个 \code{afdx_crc32_d8}\newline
+\code{afdx_mac_rx} $\times$2（每个含 1 个 \code{afdx_crc32_d8}）\newline
 \code{afdx_rx_parse} $\times$2、\code{afdx_rx_engine}、\code{afdx_rx_deliver}\newline
-\code{afdx_ram_sdp} $\times$5：\code{rx_map}、\code{rx_cfg}、\code{rx_state}、\newline
-\hspace*{1em}\code{rx_ring_a}、\code{rx_ring_b} & 5 \\
+\code{rx_map}（划分为 32 个 $2048\times 13$ 子库，\code{afdx_ram_sdp} $\times$32）\newline
+\code{rx_dq}（迁入块 RAM，\code{afdx_ram_sdp} $\times$1，32$\times$68~bit）\newline
+\code{afdx_ram_sdp} $\times$4：\code{rx_cfg}、\code{rx_state}、\code{rx_ring_a}、\code{rx_ring_b} & 37 \\
 \addlinespace[5pt]
-\textbf{\code{afdx_rtc}} & \code{afdx_ntp_fraction} $\times$3 & 0 \\
+\textbf{\code{afdx_rtc}} & \code{afdx_ntp_fraction} $\times$3（时间戳换算器） & 0 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_snmp}} &
+\code{afdx_snmp_engine}（ASN.1/BER 核心，\code{CE_DIV=2} 多周期域）\newline
+\code{afdx_mgmt_tx}（与 615A 复用的 125~MHz 发送缓冲）\newline
 \code{afdx_ram_sdp} $\times$2：\code{request_ram}、\code{response_ram} & 2 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_615a}} &
-\code{afdx_ram_sdp} $\times$5：\code{packet_rx}、\code{packet_tx}、\newline
-\hspace*{1em}\code{lur_ram}、\code{header_ram}、\code{load_ram} & 5 \\
+\code{afdx_615a_engine}（加卸载状态机与 CRC16，\code{CE_DIV=2} 域）\newline
+\code{afdx_ram_sdp} $\times$6：\code{packet_rx}、\code{packet_tx}、\code{lur_ram}、\newline
+\hspace*{1em}\code{header_ram}、\code{load_ram}、\code{denial_ram}（拒绝原因表） & 6 \\
+\midrule
+\multicolumn{2}{l}{\textbf{全设计合计：24 个 RTL 模块，21 张逻辑表}} & \textbf{52} \\
 \end{longtable}
 \endgroup
 
@@ -85,11 +95,17 @@ VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直�
 
 \section{时钟与复位}\label{sec:clkrst}
 
-全设计使用单一时钟 \code{clk}，频率 125~MHz，周期 8~ns，所有寄存器在其上升沿更新。\code{reset} 为高有效的同步复位，外部须保证其释放与 \code{clk} 同步；上板时由板级复位同步器提供。
+全设计采用单一全局主时钟 \code{clk}，工作频率 125~MHz，周期 8~ns，所有触发器均在 \code{clk} 上升沿同步更新。\code{reset} 为高有效的同步复位，外部须保证其释放与 \code{clk} 上升沿严格同步；板级实现时由物理复位同步器提供。
+
+为满足航电高层管理协议（SNMP 与 ARINC 615A）在 125~MHz 主频下的静态时序收敛要求，系统在单一全局物理时钟树下设置了管理面两分频局部时钟使能结构：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{多周期引擎结构（$\text{CE\_DIV}=2$）：}在 \code{afdx_snmp} 与 \code{afdx_615a} 顶层生成 2 分频翻转使能信号 \code{ce}，并通过多级低扇出寄存器复制树（\code{CE_GROUPS}）分别驱动核心引擎。全工程共有 2,755 个引擎内部触发器约束为 2 周期（16~ns 建立时间预算）多周期路径，降低了深层协议分支在 8~ns 窗口下的时序压力。
+  \item \textbf{单周期外围与接口隔离：}以太网报文接收捕获、双端口协议 RAM 写口、32 位配置总线、RTC 纳秒时钟基准以及用于输出拼帧的 \code{afdx_mgmt_tx} 缓冲模块均保持在 125~MHz 单周期全速运行。这种结构既避免了异步跨时钟域（CDC）带来的亚稳态风险与同步 FIFO 开销，又为综合与布局布线提供了充裕的时序裕量。
+\end{enumerate}
 
 核心顶层采用与 \code{clk} 同步的 GMII 字节流接口。连接外部物理 PHY 时，接收数据随 PHY 恢复的 RX\_CLK 变化，发送侧需向外输出 GTX\_CLK；因此板级外围需在接收引脚与核心之间设置帧级弹性缓冲，将 RX\_CLK 域字节流同步至 \code{clk} 域，发送侧则由 \code{clk} 经输出寄存器驱动 GTX\_CLK。
 
-复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg}，并将 256 个页号写入空闲页池；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}。深度最大的 \code{rx_map} 有 65536 项，清表需 65536 拍。两个核心的 \code{init_done} 相与后，结果再寄存一拍，输出为顶层的 \code{tx_ready}，从解除复位到 \code{tx_ready} 为 1 共 65538 拍，即 524.304~µs。清表完成之前，\code{cfg_ready} 保持 0、配置写不被接受，凡在此期间开始接收的以太网帧均整帧忽略。
+复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg}，并将 256 个页号写入空闲页池；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}。深度最大的 \code{rx_map} 物理划分为 32 个子库并行清零，清表需 65536 拍。两个核心的 \code{init_done} 相与后，结果再寄存一拍，输出为顶层的 \code{tx_ready}，从解除复位到 \code{tx_ready} 为 1 共 65538 拍，即 524.304~µs。清表完成之前，\code{cfg_ready} 保持 0、配置写不被接受，凡在此期间开始接收的以太网帧均整帧忽略。
 
 \section{时间基准}\label{sec:timebase}
 

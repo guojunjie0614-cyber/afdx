@@ -214,6 +214,31 @@
 
 \pagenumbering{Roman}
 \hypersetup{pageanchor=true}
+
+% ---------- 摘要 ----------
+\clearpage
+\thispagestyle{plain}
+\vspace*{0.8cm}
+\begin{center}
+{\zihao{3}\heiti 摘\quad 要}
+\end{center}
+\vspace{12pt}
+
+本报告针对中科亿海微“基于以太网 MAC 总线实现 AFDX”赛题要求，对基于 EQ6HL130 FPGA 实现的高性能 AFDX 端系统（顶层模块 \code{AFDX_top}）展开仿真验证、代码覆盖率分析、布局布线后静态时序分析（STA）与门级网表后仿真验证。
+
+测试建立由底层存储原语、收发 MAC、核心引擎、系统级双端互连、高层网络管理与数据加卸载服务构成的五级递进验证体系，设计了包含正常通信、密集异常注入、存储满溢及跨计时刻度扰动等场景的 \RegCount{} 项自动化回归测试。测试结果表明：
+\begin{enumerate}[label=（\arabic*）]
+  \item \textbf{功能与协议一致性：}全面覆盖赛题规定的 ARINC 664 P7 通信、高完整性通信（14 类异常识别分类与双网冗余去重）、SNMP 网络管理（v1/v2c 查询、设置与 Trap 通知）、ARINC 615A 数据加卸载（8~KiB 加载区 RAM 逐字节一致与介质定义卸载）及 RTC 时钟同步（空载误差 \RtcIdle{}~ns、带载最大误差 \RtcLoad{}~ns）五项核心功能，\RegCount{} 项回归测试自检通过 \countsep{\RegChecks} 次、独立参考模型比对通过 \countsep{\RegIndep} 项，错误率均为 0。
+  \item \textbf{代码覆盖率：}在 ModelSim 2020.4 下对全设计 24 个 Verilog RTL 模块启用 \code{sbceft} 全插桩回归，实现语句覆盖率 \CovStmt\%（6981/7083）、分支覆盖率 \CovBranch\%（3844/3985）、条件覆盖率 \CovCond\%、表达式覆盖率 \CovExpr\%、有限状态机状态覆盖率 \CovFsmState\%（110/110 个状态全部覆盖）、状态转换覆盖率 \CovFsmTrans\%（138/308）及信号翻转覆盖率 \CovToggle\%。
+  \item \textbf{吞吐率与传输时延：}在 125~MHz 八位 GMII 接口下，77 条定长 VL 双向满载有效载荷吞吐达 \Thru~Mbps（81 条 VL 达 \ThruEightyOne~Mbps），多 VL 混合变长高负载（\code{var_high}）双向吞吐达 \ThruVarHigh~Mbps（单向 452.376~Mbps），优于赛题 100~Mbps 指标要求；定长满载稳态端到端传输时延最大为 \Lat~µs（含 257 拍链路延迟为 26.488~µs），优于 1--2~ms 赛题指标；发送间隔抖动为 \Jit~µs，按官方 1022 答疑 R97 口径统计的同 VL 端到端时延极差抖动为 \JitSameVl~µs（1 拍），变长循环工况同 VL 极差抖动为 \JitVarCycle~µs。
+  \item \textbf{VL 容量与突发承载：}硬件支持 128 条发送 VL 与 4096 条接收 VL 配置，77/81 条最长帧同拍突发队列排空时间分别为 \BurstSevSeven~µs 与 \BurstEightOne~µs，突发排空时延满足约束。
+  \item \textbf{综合、布局布线与门级网表：}整机在目标器件 EQ6HL130-CSG484\_H 上综合消耗 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Clb{} CLB（\ClbPct\%）与 \Mem{} EBR（\MemPct\%）。在 eLinx 官方布局布线流程（\code{S2d + PRES1.50}）与 125~MHz 单周期及多周期（\code{CE_DIV=2}）约束下，全芯片 45,745 个时序端点 0 违例，8~ns 建立裕量达 +\RoutedSetup~ns（等效最高工作频率 \RoutedFmax~MHz），保持裕量达 +\RoutedHold~ns。综合后 VQM 门级网表通过五功能联合后仿真，外部端口记录与 RTL 逐拍逐字节完全一致。
+\end{enumerate}
+
+\vspace{6pt}
+\noindent{\heiti 关键词：}AFDX 端系统；ARINC 664 P7；FPGA 验证；代码覆盖率；布局布线后时序闭环；门级网表仿真
+
+\clearpage
 \setcounter{tocdepth}{1}
 \begingroup
 \small\linespread{1.08}\selectfont
