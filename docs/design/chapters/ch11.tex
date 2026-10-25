@@ -1,18 +1,96 @@
-\chapter{设计总结}\label{ch:limit}
+\chapter{工程交付与复现指南}\label{ch:limit}
 
-\section{统一的设计方法}
+\section{统一的设计方法与架构收敛}\label{sec:designmethod}
 
-本设计以纯 RTL 将 AFDX 线速收发、完整性检查、冗余管理以及 RTC、SNMP、615A 三项高层服务收敛到同一套硬件架构中，核心工程方法可归纳为四点：
+本设计以纯 RTL 将 AFDX 线速收发、完整性检查、冗余管理以及 RTC、SNMP、615A 三项高层服务收敛到同一套硬件架构中，核心工程方法归纳如下：
 
-\begin{enumerate}
-  \item \textbf{单时钟同步数据通路。}核心统一运行于 125~MHz（8~ns 周期），字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一周期基准，模块间握手与状态演进全部具备确定性的拍数定义；与外部物理 PHY 的跨时钟域适配隔离在核心边界之外。
-  \item \textbf{状态入表与处理逻辑复用。}19 个 \code{afdx_ram_sdp} 实例统一采用“一写一读、同步读出”接口承载载荷、配置、各 VL 独立状态与协议报文。128 条发送 VL 和 4096 条接收 VL 的状态按地址索引，字节流水与判定逻辑在全链路间分时复用，使组合逻辑深度与 VL 容量解耦。
-  \item \textbf{读写端口独占与冲突门控。}每张表的读写端口归属唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过组合许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突。SNMP 与 615A 则通过公共子状态序列加返回状态寄存器复用同步 RAM 读取、字段拼接与报文输出时序。
-  \item \textbf{寄存边界切分与固定延迟补偿。}所有 RAM 读出数据先寄存一拍再进入算术或比较逻辑，帧头发送期间并行预读载荷，当前帧发送期间并行准备下一帧。RTC 采用逐拍移位加减完成纳秒与 NTP 小数互转，并对 4 拍固定写回流水精确补偿 32~ns。
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \textbf{单时钟同步数据通路与多周期使能域解耦。}核心统一运行于 125~MHz（8~ns 周期），字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一周期基准；对于复杂的管理协议状态机，通过局部使能两分频树（\code{CE_DIV=2}）获得 16~ns 宽松时序预算，在消除异步跨时钟域亚稳态风险的同时实现了物理时序的稳固收敛。
+  \item \textbf{状态入表与硬件逻辑分时复用。}52 个 \code{afdx_ram_sdp} 物理块 RAM 实例统一采用伪双口同步读写接口承载载荷、配置、各 VL 独立状态与协议报文。128 条发送 VL 和 4096 条接收 VL 的状态全部按地址检索，字节流水与判定逻辑在全链路间分时复用，使组合逻辑深度与 VL 数量完全解耦。
+  \item \textbf{读写端口独占与无锁互斥仲裁。}每张表的读写端口归属严格唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突；交付队列迁入块 RAM，由微状态机流式读出，消除宽位多路选择树。
+  \item \textbf{全流水寄存切分与精细时延补偿。}所有 RAM 读出数据先打拍再参与算术或比较；发送侧组帧器采用 6 拍提前量精确补偿内部读取流水与流缓冲延迟，保证到期首字节准点送出；RTC 对 4 拍写回流水补偿 32~ns，保障纳秒级时钟对齐精度。
 \end{enumerate}
 
-\section{时序与配置的统一预算}
+\section{工程交付清单与 24 个 RTL 模块}\label{sec:deliveryfiles}
 
-由于状态机步数与流水级数完全确定，系统的吞吐、时延、抖动和缓存边界均可由时钟拍数严格推导（第~\ref{sec:budget}~节）：发送侧通过 512 拍预取窗口隐藏扫描回访（约 400 拍）与授权准备（22 拍）开销，实现到期准点发送；接收侧采用“边接收边预写入、帧尾校验后提交或回退”的环形缓冲机制，在 4~KiB 单网缓存内实现线速无阻塞接纳。
+工程完整源码交付于仓库 \code{rtl/} 目录，共包含 24 个 Verilog 文件，职责划分见表~\ref{tab:rtl24}。
 
-与此同时，架构层面的资源共享也确立了主机配置须遵守的运行边界（第~\ref{sec:cfgrule}~节）：入队前，服务通道按整条消息轮询仲裁，限制单次服务传输对应用口的最大反压时间（约 31~µs）；入队后，服务报文与用户消息统一按各自 VL 的 BAG 调度，并共用单状态机双网 MAC，因此单网与双网 VL 的占线时间及提前授权等待统一纳入全系统带宽与抖动预算。
+\begin{table}\centering\small
+\caption{交付的 24 个 Verilog RTL 源码清单}\label{tab:rtl24}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{2.6cm}L}
+\toprule
+源文件名 & 所属子系统 & 模块核心功能与职责 \\
+\midrule
+\code{AFDX_top.v} & 顶层模块 & 顶层封装，整合双网收发、高层服务、配置总线与时间基准 \\
+\code{afdx_timebase.v} & 时间基准 & 维护 32 位 \code{now} 时基与 16 位 \code{now_c} 冗余粗计时 \\
+\code{afdx_cfg.v} & 配置与统计 & 32 位配置总线译码、27 个计数器两级流水维护与写握手 \\
+\code{afdx_svc.v} & 服务通道 & 4 路整消息轮询发送仲裁（寄存输出）与 UDP 端口接收分发 \\
+\code{afdx_tx_core.v} & 发送核心 & 发送顶层包装，集成分页缓存、引擎、组帧器、MAC 与输出流缓冲 \\
+\code{afdx_tx_buf.v} & 发送核心 & 消息分页写入、写口流水寄存、描述符登记与失败还页 \\
+\code{afdx_tx_free.v} & 发送核心 & 256 页空闲页池 FIFO，支持双还页口并发回收 \\
+\code{afdx_tx_engine.v} & 发送核心 & 128 条 VL 的 BAG 轮询调度、入队许可、帧授权与到期起始确认 \\
+\code{afdx_tx_builder.v} & 发送核心 & 帧头组装、IP 校验和准备、载荷流预读与 -6 拍提前补偿 \\
+\code{afdx_mac_tx.v} & 发送核心 & 纯 RTL 自研双网 MAC，单状态机两网同拍起始与欠载检测 \\
+\code{afdx_crc32_d8.v} & 通用算术 & 8 位并行 CRC-32 组合逻辑生成与校验器 \\
+\code{afdx_rx_core.v} & 接收核心 & 接收顶层包装，集成双 MAC、解析器、分体式映射表与交付模块 \\
+\code{afdx_mac_rx.v} & 接收核心 & 接收 MAC，SFD 定界、CRC32 流式累加校验与 FCS 剥离 \\
+\code{afdx_rx_parse.v} & 接收核心 & 帧头检查、UDP 校验和验证、载荷预写入与帧尾分类 \\
+\code{afdx_rx_engine.v} & 接收核心 & VLID 映射、完整性检查（IC）、冗余管理（RM）与老化扫描 \\
+\code{afdx_rx_deliver.v} & 接收核心 & 读取块 RAM 交付队列 \code{rx_dq}，从环形缓冲逐字节流式交付 \\
+\code{afdx_ram_sdp.v} & 存储原语 & 伪双口（Simple Dual-Port）同步 RAM 原语封装 \\
+\code{afdx_rtc.v} & 高层服务 & 实时时钟、SNTPv4 主从对时与时间戳收发状态机 \\
+\code{afdx_ntp_fraction.v} & 高层服务 & 本地纳秒时基与 NTP 32 位二进制小数逐位迭代换算器 \\
+\code{afdx_snmp.v} & 高层服务 & SNMP 顶层包装、UDP 请求捕获与 \code{CE_DIV=2} 使能复制树 \\
+\code{afdx_snmp_engine.v} & 高层服务 & SNMPv1/v2c ASN.1/BER 解码、MIB 读写与响应生成（16~ns 域） \\
+\code{afdx_615a.v} & 高层服务 & 615A 顶层包装、TFTP 捕获、6 块协议 RAM 接口与使能树 \\
+\code{afdx_615a_engine.v} & 高层服务 & ARINC 615A 加卸载协议状态机与文件 CRC-16 校验（16~ns 域） \\
+\code{afdx_mgmt_tx.v} & 高层服务 & 管理面共享发送输出缓冲（256 字节，125~MHz 全速域解耦） \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{仿真测试复现指南}\label{sec:simrepro}
+
+全套验证用例均可由纯脚本自动化一键复现，环境要求为 ModelSim SE-64 2020.4 或兼容版本：
+
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \textbf{8 项核心评审用例一键运行：}
+    在 ModelSim 命令行窗口或脚本中进入工程根目录，直接执行：
+\begin{verbatim}
+    do sim/run_judge.do
+\end{verbatim}
+    该入口无需配置 Python 环境，自动连续执行 8 项核心评审用例（\code{services}、\code{capacity}、\code{snmp}、\code{burst77}、\code{burst81}、\code{rtc}、\code{performance}、\code{perf_var}），实测总耗时为 8787.198 秒，判定全部为 PASS。
+  \item \textbf{全量 39 项自动化回归测试：}
+    在 PowerShell 下执行全量回归脚本（可附加 \code{-Coverage} 统计覆盖率）：
+\begin{verbatim}
+    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
+\end{verbatim}
+    自动完成全套 39 项测试平台的编译、仿真与参考模型交叉断言校验。
+\end{enumerate}
+
+\section{eLinx 物理实现与时序签核四步闭环}\label{sec:elintropro}
+
+工程提供基于中科亿海微官方 eLinx 3.0.7 工具链的完整命令行批处理脚本，支持全流程一键复现与物理签核闭环：
+
+\begin{enumerate}[leftmargin=2em,itemsep=3pt]
+  \item \textbf{步骤一：官方逻辑综合与 VQM 导出}
+\begin{verbatim}
+    powershell -ExecutionPolicy Bypass -File elinx\synth.ps1
+\end{verbatim}
+    执行 \code{S2d} 综合策略，保持模块层级与时钟使能拓扑，生成门级网表与装箱报告。
+  \item \textbf{步骤二：物理布局布线（Place \& Route）}
+\begin{verbatim}
+    powershell -ExecutionPolicy Bypass -File elinx\impl.ps1
+\end{verbatim}
+    执行 \code{PRES1.50} 物理优化，完成管脚布局布线并生成物理时序数据库。
+  \item \textbf{步骤三：多周期路径约束合法性审计}
+\begin{verbatim}
+    python3 tools/check_multicycle.py
+\end{verbatim}
+    对全芯片时序约束进行严格审计，核对 2,755 个引擎寄存器的使能引脚与多周期声明，确认 0 非法路径、0 漏约束。
+  \item \textbf{步骤四：布线后静态时序全量导出与签核}
+\begin{verbatim}
+    python3 tools/report_routed_timing.py
+\end{verbatim}
+    自动解析布局布线后的真实时序数据库，核验 8~ns 单周期路径（最差建立裕量 $+\RoutedSetup$~ns）、16~ns 多周期路径（最差建立裕量 $+\MulticycleSetup$~ns）以及同沿保持时间裕量（$+\RoutedHold$~ns），输出 45,745 个端点 0 违例的权威签核报告。
+\end{enumerate}

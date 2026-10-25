@@ -1,85 +1,137 @@
 \chapter{时序与存储设计}\label{ch:timing}
 
-\section{时序设计规则}
+\section{时延预算与流水账本}\label{sec:latbudget}
 
-为使 4096 条 VL 的查表通路和逐字节数据通路满足 8~ns 的时钟周期要求，全部 RTL 按表~\ref{tab:rules} 的十条规则组织寄存器、RAM 访问和组合运算。
+端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 与 \code{m_valid \&\& m_ready} 握手完成）起算，至接收端应用接口完成末字节交付时（$d_\text{last}$ 有效）结束。按照官方 1022 答疑 R97 口径，端到端时延严格分解为发送处理段 $L_\text{tx}$、网络链路传输段 $L_\text{gmii}$ 与接收处理段 $L_\text{rx}$。
+
+在收发通路无其他消息争用、当前 VL 已满足 BAG 最小发送间隔的基准条件下，表~\ref{tab:latency} 详细列出 1471 字节满载帧（对应最大以太网帧 1518 字节）在各子模块流水中的逐拍开销与时间预算：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{发送处理流水：}\code{afdx_tx_buf} 载荷 RAM 写口增加 1 拍流水寄存，写描述符并向调度引擎发起入队请求需 3 拍；\code{afdx_tx_engine} 入队判定需 6 拍、帧授权需 9 拍；\code{afdx_tx_builder} 帧头组装与 IP 校验和准备需 11 拍；核心输出端插入的 1 级流缓冲与双网 MAC 启动共 2 拍。从 $m_\text{last}$ 到 GMII 首个前导码字节 \code{tx_sof} 固定为 32 拍（0.256~µs，原基线为 31 拍 / 0.248~µs）；若按 R95 规则计至以太网帧起始定界符（SFD，\code{8'hD5}，前导码第 8 字节）结束，发送处理时延 $L_\text{tx}$ 典型为 39 拍（\Ttx~µs）。
+  \item \textbf{物理链路传输：}前导码首字节至 FCS 末字节共 $8 + 1518 = 1526$ 字节，在线路上占 1525 拍（扣除与发送首拍重叠的 1 拍），折合 12.200~µs。直连仿真模型下 SFD 间的链路延迟 $L_\text{gmii} = 0.000$~µs。
+  \item \textbf{接收处理流水：}接收 MAC 检测帧尾需 3 拍；\code{afdx_rx_parse} 帧尾分类需 3 拍；分体式 \code{rx_map} 增加 2 拍读回流水，接收引擎执行 VL 映射、配置/状态查表、完整性检查、冗余管理与入队共需 14 拍；交付模块读取块 RAM 队头并自环形缓冲读出首字节需 6 拍。从 FCS 结束到首个交付字节 \code{d_valid} 由 24 拍更新为 26 拍（0.208~µs）。接收段首字节时延 $L_\text{rx}$ 为 \Trx~µs，末字节时延 $L_\text{rx,last}$ 为 \TrxLast~µs。
+  \item \textbf{逐字节交付：}交付模块每拍交付一个有效字节，1471 字节载荷从首字节到末字节需 $n-1 = 1470$ 拍（11.760~µs）。
+\end{enumerate}
+
+\begin{table}\centering\small
+\caption{端到端时延流水账本（1471 字节满载消息）}\label{tab:latency}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.4cm}L}
+\toprule
+阶段与区段 & 典型拍数 & 典型时间 & 上界时间 & 详细流水构成与硬件依据 \\
+\midrule
+发送写缓存与入队 & 4 & 0.032~µs & 0.080~µs & 载荷写寄存 1 拍，写 \code{tx_desc} 并置 \code{enq_valid} 3 拍 \\
+调度引擎入队与授权 & 15 & 0.120~µs & 0.240~µs & ENQ 状态 6 拍，GRANT 状态 9 拍 \\
+组帧准备与流缓冲 & 12 & 0.096~µs & 0.160~µs & IP 校验和准备 11 拍，流缓冲双缓冲锁存 1 拍 \\
+MAC 起始响应 & 1 & 0.008~µs & 0.016~µs & 检测起始并在第 32 拍输出首前导码 \code{tx_sof}（0.256~µs） \\
+前导码发送至 SFD & 7 & 0.056~µs & 0.056~µs & 7 字节 \code{0x55} 占 7 拍，第 39 拍输出 SFD（$L_\text{tx}=\Ttx$~µs） \\
+以太网帧传输 & 1518 & 12.144~µs & 12.144~µs & 帧头 42 字节、载荷 1471 字节、SN 1 字节、FCS 4 字节 \\
+MAC 帧尾与解析分类 & 6 & 0.048~µs & 0.064~µs & MAC 帧尾判定 3 拍，解析器 FIN 状态机两级分类 3 拍 \\
+分体映射与引擎判定 & 14 & 0.112~µs & 0.160~µs & 32 子库查表 3 拍，读 cfg/state 2 拍，IC/RM 判定与提交 9 拍 \\
+交付队头读取与流水 & 6 & 0.048~µs & 0.064~µs & 块 RAM 队头读出 2 拍，读控制与环形缓冲读出 4 拍 \\
+逐字节流式交付 & 1470 & 11.760~µs & 11.760~µs & 接收应用口每拍交付 1 字节，首字节至末字节（$n-1$ 拍） \\
+\midrule
+无冲突合计（典型） & 3053 & 24.424~µs & 26.360~µs & $m_\text{last}$ 至 $d_\text{last}$ 纯硬件流水开销 \\
+含 AGE 让出 1 拍 & 3054 & \Lat~µs & 26.368~µs & 恰好遇接收引擎 AGE 老化扫描打断 1 拍，与实测吻合 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+无争用基准下端到端总时延为 3053 拍（24.424~µs）；当接收端引擎在收到帧描述的当拍恰好处于 AGE 状态而让出 1 拍时，时延为 3054 拍（\Lat~µs），这与性能仿真实测的最大端到端时延 \Lat~µs 完全一致。
+
+\section{片上 RAM 分配与物理存储规划}\label{sec:ramalloc}
+
+全系统共规划 21 张逻辑存储表，在物理实现中映射为 52 个 \code{afdx_ram_sdp} 模块实例，见表~\ref{tab:ram}。所有 RAM 均采用严格的一写一读伪双口（Simple Dual-Port）同步时序，消除异步读写风险。
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.8cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.4cm-10\tabcolsep\relax}}
+\caption{片上存储器分配与物理映射}\label{tab:ram}\\
+\longtablehead{5}{存储表名称 & 逻辑规模（深$\times$宽） & 逻辑位宽（bit） & 物理例化 & 架构分工与物理优化说明}
+\multicolumn{5}{l}{\textit{发送通路（共 7 张逻辑表，7 个物理模块）}} \\
+\code{tx_payload} & 131072$\times$8 & 1,048,576 & 1 & 128~KiB 载荷缓冲（256 页 $\times$ 512 字节），写口增加流水寄存 \\
+\code{tx_cfg} & 1024$\times$32 & 32,768 & 1 & 128 条发送 VL 配置表（每条 VL 占 8 个 32 位字） \\
+\code{tx_desc} & 256$\times$44 & 11,264 & 1 & 消息元数据描述符表（长度、端口使能、源/目的 UDP 端口） \\
+\code{tx_state} & 128$\times$63 & 8,064 & 1 & 发送调度状态（\code{next_time}、\code{sn}、\code{q_count}、队头/队尾） \\
+\code{tx_free} & 256$\times$8 & 2,048 & 1 & 空闲页池 FIFO，支持双还页口并发归还 \\
+\code{tx_mnext} & 256$\times$8 & 2,048 & 1 & 发送消息链表（同 VL 下一条消息首页号） \\
+\code{tx_pnext} & 256$\times$8 & 2,048 & 1 & 消息内分页链表（同一消息下一页号） \\
+\textit{发送小计} & --- & \textit{1,106,816} & \textit{7} & 发送侧总存储容量约 135.1~KB \\
+\midrule
+\multicolumn{5}{l}{\textit{接收通路（共 6 张逻辑表，37 个物理模块）}} \\
+\code{rx_map} & 65536$\times$13 & 851,968 & 32 & 物理拆分为 32 个 $2048\times 13$ 子库，两级读流水，16 路配置总线复制 \\
+\code{rx_state} & 4096$\times$44 & 180,224 & 1 & 4096 条接收 VL 状态（双网 PSN、冗余时间戳与有效位） \\
+\code{rx_cfg} & 4096$\times$32 & 131,072 & 1 & 4096 条接收 VL 配置字（使能、网络选择、skew\_max、最大长度） \\
+\code{rx_ring_a} & 4096$\times$8 & 32,768 & 1 & A 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
+\code{rx_ring_b} & 4096$\times$8 & 32,768 & 1 & B 网环形载荷缓冲（4~KiB），支持预写入与指针回退 \\
+\code{rx_dq} & 32$\times$68 & 2,176 & 1 & 接收交付队列（迁入块 RAM，消除 32 项寄存器多路选择树） \\
+\textit{接收小计} & --- & \textit{1,230,976} & \textit{37} & 接收侧总存储容量约 150.3~KB \\
+\midrule
+\multicolumn{5}{l}{\textit{网络服务（共 8 张逻辑表，8 个物理模块）}} \\
+\code{snmp/req_ram} & 256$\times$8 & 2,048 & 1 & SNMP 请求报文缓冲（256 字节，支持单变量绑定请求） \\
+\code{snmp/resp_ram} & 256$\times$8 & 2,048 & 1 & SNMP 应答与 Trap 组装缓冲（256 字节） \\
+\code{615a/load_ram} & 8192$\times$8 & 65,536 & 1 & 615A 数据加载暂存区（8~KiB），支持主机读回与介质卸载 \\
+\code{615a/header_ram} & 2048$\times$8 & 16,384 & 1 & 615A LUH 头文件缓存区（2~KiB） \\
+\code{615a/pkt_rx} & 1024$\times$8 & 8,192 & 1 & 615A TFTP 接收报文缓冲（1~KiB） \\
+\code{615a/pkt_tx} & 1024$\times$8 & 8,192 & 1 & 615A TFTP 发送与超时重传报文缓冲（1~KiB） \\
+\code{615a/lur_ram} & 512$\times$8 & 4,096 & 1 & 615A 上传请求文件（LUR）暂存区（512 字节） \\
+\code{615a/denial_ram} & 32$\times$8 & 256 & 1 & 615A 拒绝原因文本表（消除状态机大位宽组合选择） \\
+\textit{服务小计} & --- & \textit{106,752} & \textit{8} & 网络服务总存储容量约 13.0~KB \\
+\midrule
+\textbf{全设计合计} & --- & \textbf{2,444,544} & \textbf{52} & 逻辑总容量约 298.4~KB，综合映射为 \Mem~个 EBR（占比 \MemPct\%） \\
+\end{longtable}
+
+全系统逻辑 RAM 总位宽为 2,444,544 位（约 298.4~KB）。在 EQ6HL130 目标器件中，经 eLinx 官方综合映射，共消耗 \Mem{} 个嵌入式块 RAM（EBR），占器件全部 1,200 个存储块资源的 \MemPct\%，片上存储资源裕量达 69.5\%。
+
+\section{静态时序收敛与关键路径工程优化}\label{sec:timingopt}
+
+在 125~MHz（8~ns 周期）工作频率下，端系统不仅要在单周期内完成每拍一字节的 GMII 吞吐，还要支持 4096 条接收 VL 的查表与深层协议解析。为了达成最终布局布线后的严苛静态时序收敛，本设计在架构设计与物理实现上实施了六项关键工程措施：
+
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \textbf{管理面协议引擎 $\text{CE\_DIV}=2$ 多周期解耦：}ARINC 615A 与 SNMPv1/v2c 协议包含深层状态转移分支；若按 8~ns 单周期约束，状态译码与字段组装路径较长。设计将核心引擎（\code{afdx_snmp_engine.v} 与 \code{afdx_615a_engine.v}）分离，采用局部 2 分频使能树（\code{CE_GROUPS}）驱动，在约束中定义为 2 周期多周期路径（建立时间预算 16~ns）；同时在顶层设置 \code{afdx_mgmt_tx} 缓冲模块，实现多周期引擎向 125~MHz 发送仲裁的数据适配。
+  \item \textbf{\code{rx_map} 32 子库分体式存储与配置总线复制：}\code{rx_map} 逻辑规模达 $65536\times 13$~bit，若由单一大模块实现，其写使能、地址线与读出选择器将产生较大扇出。物理设计将其均匀拆解为 32 个独立的 $2048\times 13$~bit 块 RAM 子库，并在配置写侧引入 16 路总线复制树（\code{RX_CONFIG_BANKS=16}），读侧增加两级流水多路复用，降低了长连线对布局布线的时序压力。
+  \item \textbf{\code{rx_dq} 迁入块 RAM 消除寄存器阵列选择树：}原交付队列采用 32 项 $\times$ 68~bit 寄存器数组，队头读取需经过 32 选 1 宽位组合逻辑。重构为 \code{afdx_ram_sdp} 块 RAM 后，交付模块通过微状态机（\code{HEAD_IDLE -> HEAD_SELECT -> HEAD_RELEASE}）按地址流式读出，消除了宽位选择树的逻辑级数。
+  \item \textbf{\code{afdx_tx_buf} 写口寄存与输出流缓冲解耦：}在分页写载荷端口插入 \code{payload_we_r} 流水寄存，切断应用输入到 RAM 写口的路径；在组帧器与双网 MAC 间插入包含乒乓双缓冲结构的 1 级流缓冲，并更新提前启动参数 \code{START_LEAD_REGISTERED = -6}，兼顾路径隔离与到期准点发送。
+  \item \textbf{服务仲裁与统计事件两级流水寄存：}\code{afdx_svc} 对 4 路发送仲裁授权向量进行寄存输出（\code{served_r}）；\code{afdx_cfg} 对跨越核心长距离布线的 5 路统计脉冲插入两级寄存（\code{_p} 与 \code{_q}），消除了远距离信号直驱 32 位累加器的建立时间压力。
+  \item \textbf{\code{S2d} 综合策略与 \code{PRES1.50} 物理布局布线协同：}综合脚本启用 \code{S2d} 模式，保持模块层级边界与局部时钟使能树拓扑；布局布线工具配置物理优化强度为 1.50（\code{PRES1.50}），提升全局时钟网络与关键信号连线的布线收敛度。
+\end{enumerate}
+
+\begin{table}\centering\small
+\caption{综合与布局布线后全量静态时序签核指标}\label{tab:routed-timing}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}L}
+\toprule
+时序分析指标 & 官方综合估算值 & 布局布线后实测值 & 签核标准与工程结论 \\
+\midrule
+分析主时钟周期 & 8.000~ns（125~MHz） & 8.000~ns（125~MHz） & 全系统单一全局物理时钟 \\
+最差建立时间裕量（Worst Setup） & $+\Setup$~ns & $+\RoutedSetup$~ns & 全量 45,745 个时序端点 0 违例 \\
+最差保持时间裕量（Worst Hold） & $-\Hold$~ns & $+\RoutedHold$~ns & 布局布线后保持时间完全收敛 \\
+最高工作频率（Fmax） & \Fmax~MHz & \RoutedFmax~MHz & 满足 125~MHz 线速运行要求 \\
+8~ns 单周期路径数 / 最差裕量 & --- & 153,342 条 / $+\RoutedSetup$~ns & 最差路径位于收发核心内部控制 \\
+16~ns 多周期路径数 / 最差裕量 & --- & 50,296 条 / $+\MulticycleSetup$~ns & 覆盖 2,755 个管理面引擎寄存器 \\
+同沿保持时间路径数 & --- & 203,638 条 & 全部正裕量，无保持时间违例 \\
+多周期约束合法性审计 & --- & 0 非法 / 0 漏约束 & 经 \code{tools/check_multicycle.py} 审计 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+表~\ref{tab:routed-timing} 汇总了官方综合估算与布局布线后静态时序的闭环签核结果。在 S2d 综合策略与 PRES1.50 物理实现下，全芯片 45,745 个时序端点建立时间与保持时间违例数均为 0：153,342 条 8~ns 单周期路径的最差建立裕量为 $+\RoutedSetup$~ns，50,296 条 16~ns 多周期路径的最差建立裕量为 $+\MulticycleSetup$~ns，保持裕量为 $+\RoutedHold$~ns，布线后等效最高工作频率为 \RoutedFmax~MHz，满足 125~MHz 稳定运行的指标要求。
+
+\section{时序设计规则与流水划分}\label{sec:timingrules}
+
+为使 4096 条 VL 的查表通路和逐字节数据通路满足严谨的工程规范，全部 RTL 严格遵守表~\ref{tab:rules} 的十条时序组织规则。
 
 \begin{table}\centering\small
 \caption{时序设计规则}\label{tab:rules}
 \begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{0.8cm}L}
 \toprule
-编号 & 规则 \\
+编号 & 规则内容与工程实现 \\
 \midrule
-1 & 全设计使用单一时钟。 \\
-2 & 各 VL 的独立数据集中存放于 RAM，通过地址访问；各 VL 共用状态处理与比较逻辑。 \\
-3 & 所有 RAM 仅通过 \code{afdx_ram_sdp} 例化，地址、写数据和使能均直接来自寄存器。小寄存器组须注明用途（载荷 FIFO 8 项、还页 FIFO 4 项、接收描述 32 项）。 \\
-4 & RAM 读出数据先寄存，再做加、减或比较；两者之间最多允许一级选择逻辑，选择规模不超过 4 选 1。 \\
-5 & 以寄存器为边界，将算术运算分配到不同拍；RTC 换算与校正每拍至多一级 32 位加减，常数乘除采用移位加减，页地址以位拼接生成。 \\
-6 & 多于 8 选 1 的多路选择分两拍完成。 \\
-7 & 数据逐拍连续推进；RAM 与算术采用寄存流水，帧头期间执行预读。 \\
-8 & 同一 RAM 的同拍同址读写必须互斥。 \\
-9 & 模块输出以寄存器为主；组合输出仅限 ready 握手、\code{cfg_ok}，以及 \code{afdx_svc} 的数据选择与接收分发直通，后者只做选择和门控。 \\
-10 & 时钟统一约束为 125~MHz、周期 8~ns，内部设计目标为综合阶段（布线前）估算的 setup 裕量不小于 2.0~ns；所有内部路径均按该单周期约束检查。 \\
+1 & 全设计使用单一 125~MHz 全局物理时钟树，消除异步 CDC 亚稳态风险。 \\
+2 & 虚拟链路状态全部集中于块 RAM，通过地址顺序访问；各 VL 共用数据通路与算术逻辑。 \\
+3 & 所有块 RAM 统一通过 \code{afdx_ram_sdp} 例化，写使能、写地址和写数据均直接来自寄存器输出。 \\
+4 & RAM 读出数据必须寄存后再做算术或比较；两者之间最多允许一级 4 选 1 选择逻辑。 \\
+5 & 复杂算术拆解到不同拍执行：RTC 时间戳换算每轮两拍迭代，615A 乘 100 采用移位相加分步求商。 \\
+6 & 大于 8 选 1 的多路选择逻辑必须分两拍两级流水完成。 \\
+7 & 字节流水线连续推进；RAM 读取与数据组装执行超前预读（例如组帧器提前 6 拍补偿启动流水）。 \\
+8 & 同一 RAM 的同拍同址读写严格互斥，写操作必须获得引擎的 \code{cfg_ok} 许可。 \\
+9 & 模块间通信以寄存器输出为主；跨模块长距离脉冲（如统计事件脉冲）必须打两拍流水。 \\
+10 & 管理面复杂协议状态机通过 \code{CE_DIV=2} 局部使能树解耦为 16~ns 多周期路径，实现全局时序闭环。 \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-规则 2 和 4 支撑了“表加单主状态机”的结构：各 VL 的独立状态全部保存在 RAM 中，由对应引擎按固定流水读写，因此每拍的逻辑深度不随 VL 数量增加。按规则 5，各项算术运算结合协议处理步骤分拍完成：RTC 换算每轮用两拍完成加减与移位，固定校时写回路径补偿 32~ns；615A 在缩放状态内将三个移位项相加完成乘 100，再逐拍减去总字节数并累计商值，卸载地址的加减则在报文字段准备状态完成。
-
-\section{存储预算}
-
-表~\ref{tab:ram} 汇总 19 个 \code{afdx_ram_sdp} 实例，按 RTL 数组声明的深度和位宽计算逻辑存储位数。
-
-\begingroup
-\renewcommand{\tablestyle}{\small\linespread{1.04}\selectfont\renewcommand{\arraystretch}{1.10}}
-\setlength{\LTpre}{4pt}
-\setlength{\LTpost}{4pt}
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedleft\arraybackslash}p{2.4cm}>{\raggedleft\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.0cm-8\tabcolsep\relax}}
-\caption{存储预算（逻辑位数）}\label{tab:ram}\\
-\longtablehead{4}{表 & 深度$\times$位宽 & 位数 & 说明}
-\code{tx_payload} & 131072$\times$8 & 1048576 & 256 页 $\times$ 512 字节 \\
-\code{tx_cfg} & 1024$\times$32 & 32768 & 128 条 VL $\times$ 8 字 \\
-\code{tx_desc} & 256$\times$44 & 11264 & 每页一项 \\
-\code{tx_state} & 128$\times$63 & 8064 & 每条 VL 一项 \\
-\code{tx_mnext/pnext/free} & 3$\times$256$\times$8 & 6144 & 链表与空闲页 FIFO \\
-\midrule
-\code{rx_map} & 65536$\times$13 & 851968 & 任意 VLID 直接映射 \\
-\code{rx_state} & 4096$\times$44 & 180224 & 每条 VL 一项 \\
-\code{rx_cfg} & 4096$\times$32 & 131072 & 每条 VL 一字 \\
-\code{rx_ring_a/b} & 2$\times$4096$\times$8 & 65536 & 每网 4~KiB \\
-\midrule
-SNMP 请求、响应 & 2$\times$256$\times$8 & 4096 & \\
-615A 五块 & --- & 102400 & 收发报文各 1~KiB，LUR 512~B，LUH 2~KiB，加载区 8~KiB \\
-\midrule
-合计 & --- & 2442112 & 发送 1106816，接收 1228800，服务 106496 \\
-\end{longtable}
-\endgroup
-
-各存储模块均通过 \code{afdx_ram_sdp} 使用统一的单写口、单读口同步读接口，并按深度、位宽及访问需求组织存储：
-\begin{itemize}
-  \item \textbf{深表沿地址方向扩展：}\code{tx_payload}、\code{rx_map} 按存储块支持的深度划分地址区间，用高位地址选块、低位地址定位块内字；读出选择遵循统一的同步读接口时序。
-  \item \textbf{宽表沿数据位方向拼接：}\code{tx_state}、\code{rx_state} 按存储块支持的位宽与深度组合划分位片，状态按整字读写；较深的宽表同时沿地址方向扩展。
-  \item \textbf{浅表按访问关系合并：}\code{tx_cfg} 合为 1024$\times$32 并顺序读取，减少存储块内部的闲置空间；载荷、链表与状态表按端口归属和并行访问需求分别保存。
-\end{itemize}
-EQ6HL130 的物理存储块映射用量见测试报告。
-
-
-\section{流水划分}
-
-收发通路将查表、判定和数据传送安排在不同阶段。查表地址由寄存器驱动，RAM 读出数据先寄存，下一拍再做算术运算或比较；组帧和接收解析则随字节流逐拍推进。各模块的寄存边界见表~\ref{tab:pipeline-rule}。
-
-\begin{table}\centering\small
-\caption{主要通路的流水划分}\label{tab:pipeline-rule}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.4cm}L}
-\toprule
-通路 & 组合处理 & 寄存边界与推进方式 \\
-\midrule
-发送调度 & 到期比较、链表指针更新、候选选择 & 配置和状态读出先寄存；入队、授权和扫描按操作阶段推进（第~\ref{sec:txeng}~节） \\
-组帧与 MAC & 帧头选择、校验和、CRC 更新 & 帧头期间预读载荷；每拍输出一个字节，双网共用发送状态机（第~\ref{sec:txbld}、\ref{sec:mactx}~节） \\
-接收映射与判定 & VLID 查表、配置检查、序号与冗余窗口比较 & 映射表读出寄存后进入判定，各阶段逐拍完成，结果用于提交或回退（第~\ref{sec:rxtables}~节、表~\ref{tab:rxphase}） \\
-服务协议处理 & 字节解析、字段比较、时间戳换算 & 同步读出字节后再解析；时间换算和偏差计算拆成逐拍加减（第~\ref{ch:svc}~章） \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-通过 \code{cfg_ok} 将配置写与引擎读访问安排在不同拍，避免同拍读写同一表项；具体许可和写入时刻见第~\ref{sec:cfgok}~节。综合资源、建立与保持时间检查结果集中列于测试报告。

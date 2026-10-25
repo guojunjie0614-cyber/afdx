@@ -156,6 +156,27 @@
 
 \pagenumbering{Roman}
 \hypersetup{pageanchor=true}
+
+\chapter*{摘要}
+\addcontentsline{toc}{chapter}{摘要}
+
+本文档阐述针对全国大学生嵌入式芯片与系统设计竞赛 FPGA 创新设计赛道“选题一：基于以太网 MAC 总线实现 AFDX”的端系统 FPGA 完整设计方案与工程实现。设计目标器件为中科亿海微 EQ6HL130（CSG484\_H 封装），全系统基于单一 125~MHz（8~ns 周期）全局时钟树构建，以纯 Verilog HDL 实现高完整性、双网冗余的 ARINC 664 Part 7 航电端系统，支持 128 条发送虚拟链路（VL）与 4096 条接收虚拟链路的线速硬件处理，并集成 ARINC 615A 数据加卸载、SNMPv1/v2c 网络管理与 SNTP/RTC 纳秒级时钟同步服务。
+
+针对大规模虚拟链路状态维护与时序收敛约束，系统采用片上块 RAM 状态表化存储与单主控状态机架构，全设计划分 24 个 RTL 模块，通过物理分体式子库流水、读写端口独占与无锁许可仲裁隔离长线延迟；在管理面协议引擎中采用局部时钟使能（$\text{CE\_DIV}=2$）结构，将 ASN.1/BER 与 TFTP 解析状态机解耦至 16~ns 多周期路径，而报文收发捕获、RAM 接口、配置总线与发送输出缓冲保持 125~MHz 单周期全速运行。
+
+经系统性能仿真与官方工具链物理签核，系统达成以下核心技术指标：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{吞吐率与确定性时延：}定长满载（77 VL）有效载荷吞吐率为 \Thru~Mbps（81 VL 容量达 \ThruEightyOne~Mbps），多 VL 混合变长高负载（\code{var_high}）吞吐率为 \ThruVarHigh~Mbps；单帧端到端硬件流水时延典型值为 24.424~µs，满载稳态最大时延为 \Lat~µs（其中发送段 $L_\text{tx}$ 典型为 \Ttx~µs、至首前导码 \TtxSof~µs，接收段 $L_\text{rx}$ 首字节为 \Trx~µs、末字节为 \TrxLast~µs），优于赛题 1--2~ms 指标要求。
+  \item \textbf{传输抖动控制：}稳态发送间隔抖动测量值为 \Jit~µs；按照官方 1022 答疑 R97 口径，定长满载同 VL 端到端时延极差抖动为 \JitSameVl~µs（多 VL 变长循环工况下为 \JitVarCycle~µs），满足航电确定性通信要求。
+  \item \textbf{硬件资源与物理时序收敛：}全设计逻辑综合占用查找表（LUT）\Lut{} 个（占比 \LutPct\%）、触发器（FF）\FF{} 个（占比 \FFPct\%）、存储器（Memory）\Mem{} 个 EBR（占比 \MemPct\%）；在 eLinx 官方工具链（\code{S2d + PRES1.50}）下实现 125~MHz 布局布线后静态时序收敛，单周期路径最差建立裕量为 $+\RoutedSetup$~ns、保持裕量为 $+\RoutedHold$~ns，多周期路径建立裕量为 $+\MulticycleSetup$~ns，全芯片 45,745 个时序端点 0 违例，布线后最高工作频率为 \RoutedFmax~MHz。
+  \item \textbf{验证覆盖：}构建包含 \RegCount{} 项自动化回归用例的验证环境，累计通过 \RegChecks{} 次自检断言与 \RegIndep{} 项独立参考模型交叉比对，有限状态机状态覆盖率达 \CovFsmState\%、语句覆盖率达 \CovStmt\%、分支覆盖率达 \CovBranch\%；官方综合后 VQM 网表仿真通过全部五功能自检。
+\end{enumerate}
+
+\vspace{0.8em}
+\noindent\textbf{关键词：}AFDX 端系统；ARINC 664；FPGA；高完整性通信；静态时序收敛；布局布线
+
+\clearpage
+
 % 印刷目录列章、节；PDF 书签保留小节，便于定位具体机制。
 \setcounter{tocdepth}{1}
 \begingroup

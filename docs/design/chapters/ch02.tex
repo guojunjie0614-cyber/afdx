@@ -1,6 +1,6 @@
 \chapter{需求分析与规格分解}\label{ch:req}
 
-本章依据选题指南、官方《FPGA 创新大赛问题汇总》（1010 版）及表~\ref{tab:proto} 所列协议规范，将赛题需求细化为功能、性能和接口规格。
+本章依据选题指南、官方《FPGA 创新大赛问题汇总》（1022 版，涵盖 R95--R97、R110--R112 等最新澄清）及表~\ref{tab:proto} 所列协议规范，将赛题需求细化为功能、性能和接口规格。
 
 \section{赛题需求}
 
@@ -11,26 +11,31 @@
   \item \textbf{接口与编码：}顶层模块统一采用 \code{AFDX_top} 模板的 8 个端口；端口、信号和寄存器用小写，参数用大写，重要代码段须有简洁注释。
 \end{itemize}
 
-\section{接口与实现要求}
+\section{官方答疑澄清与设计实现对照}
 
 \begin{table}\centering\small
-\caption{接口与实现要求}\label{tab:qa}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{4.4cm}L}
+\caption{官方 1022 答疑澄清与设计实现对照}\label{tab:qa}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{4.6cm}L}
 \toprule
-项目 & 要求 & 本设计的实现 \\
+项目与答疑序号 & 官方答疑要求与澄清 & 本设计的实现与架构边界 \\
 \midrule
-线路接口 & MAC 使用 GMII，接口速率须满足吞吐要求 & 顶层模板端口承载 A 网八位 GMII 字节流，含前导码和 FCS \\
-目标器件 & 不限定器件型号 & EQ6HL130，CSG484\_H 封装 \\
-MAC 实现 & 可采用 eLinx IP 或自行实现 & 自研双网 MAC（第~\ref{sec:mactx}~节） \\
-协议版本 & 版本自行选择，按相应协议规范实现 & 依据与范围见表~\ref{tab:proto} \\
-吞吐 & 不低于 100~Mbps & 按去重后的有效载荷计，设计容量见表~\ref{tab:perf} \\
-时钟 & 频率与接口速率匹配 & 125~MHz，GMII 每拍一字节 \\
-时延 & GMII 接口间不超过 2~ms & 应用接口之间的时延预算包含收发两侧的处理时间；无争用时延见表~\ref{tab:perf}，争用等待预算见第~\ref{sec:budget}~节 \\
+顶层端口映射\newline (R61, R95-2, R110) & R110 说明模板 8 端口是仿真模型对外的通用接口；R61 明确 GMII 为 PHY 接口，R95-2 要求两次例化 MAC & 遵循 R61/R95-2 的物理分层边界：将模板 8 端口映射为 A 网 GMII 物理接口，扩展 B 网物理接口、独立的 \code{app_*} 应用数据流接口及 \code{cfg_*} 配置总线接口 \\
+MAC 实现要求\newline (R46, R57, R111) & R46/R57 允许调用厂商 IP；R111 明确澄清 MAC IP 无强制使用要求，允许参赛队自行设计 & 采用纯 RTL 自研双网一体化 MAC（第~\ref{sec:mactx}~节），单状态机双网同拍起始，空闲发送延迟为 0 拍，消除了官方 IP 的 59 拍起发延迟与额外 FIFO 资源 \\
+有效载荷吞吐\newline (R95-1) & 接收端去重后的有效载荷吞吐率须达到 100~Mbps，冗余副本只计一次，需千兆 GMII 接口 & 采用八位 125~MHz 千兆 GMII，双网线速 1~Gbps；定长满载有效载荷吞吐率达 \Thru~Mbps，变长高负载工况达 \ThruVarHigh~Mbps（表~\ref{tab:perf-meas}） \\
+时钟与复位\newline (R3, R59) & 频率与接口速率匹配，单时钟统一驱动；同步复位 & 全设计采用单一 125~MHz 全局时钟（周期 8~ns），GMII 每拍传输一字节；管理面复杂状态机采用 $\text{CE\_DIV}=2$ 多周期使能树解耦 \\
+端到端分段时延\newline (R96, R97-1) & 单帧 GMII 时延不超过 2~ms；明确定义分段时延：$L_\text{tx}$（提交末字节至 SFD）、$L_\text{gmii}$（网络传输）与 $L_\text{rx}$（SFD 至交付） & 严格按 R97-1 边界测量：满载最大端到端时延为 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs；$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs），远低于 2~ms 门限 \\
+传输抖动口径\newline (R97-2) & 明确定义抖动为同一条 VL 多帧端到端时延的最大值减最小值（极差），要求计算各 VL 极差并取最大值 & 稳态发送间隔抖动测量为 \Jit~µs；严格按 R97-2 口径，定长满载同 VL 时延极差仅为 \JitSameVl~µs，变长循环多 VL 工况下极差为 \JitVarCycle~µs \\
+目标器件与考核\newline (R30, R112) & 器件自主选择；允许以仿真结果截图和仿真演示视频作为核心考核依据 & 目标器件选用中科亿海微 EQ6HL130（CSG484\_H）；建立包含 39 项回归与纯 ModelSim 评委入口的完备仿真验证闭环 \\
+协议版本依据\newline (R12, R47, R48) & 协议版本未被强制限定，功能参考国际主流航空电子规范 & 严格依据 ARINC 664 P7（2005 版）、ARINC 615A-2（2002 版）、RFC 1157/3416（SNMPv1/v2c）与 RFC 4330（SNTPv4） \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-端到端时延从发送端应用接口成功提交消息末字节时开始计算，至接收端应用接口完成末字节交付时结束，包含发送排队、组帧、MAC 处理、物理线路传输及接收处理的时间。各阶段的拍数与线路争用条件见第~\ref{sec:budget}~节。
+端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 握手完成）开始计算，至接收端应用接口完成末字节交付时（$d_\text{last}$ 有效）结束，包含发送排队、组帧、MAC 处理、物理线路传输及接收处理的全流程时间。按 1022 答疑 R97 口径，端到端时延严格分解为：
+\begin{equation}
+L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx}
+\end{equation}
+其中 $L_\text{tx}$ 为应用提交末字节至 GMII 发送端输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的网络链路传输时延（直连模型下为 0 或固定模拟延迟）；$L_\text{rx}$ 为接收端 GMII 收到 SFD 至应用接口完成交付的时间（首字节 $L_\text{rx}$ 与末字节 $L_\text{rx,last}$）。各阶段拍数与流水预算推导见第~\ref{sec:budget}~节。
 
 \FloatBarrier
 \section{设计规格}
@@ -45,15 +50,15 @@ F2 & 用户数据接收 & 支持 4096 条接收 VL，可映射任意 16 位 VLID
 F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；团体名（\code{community}）校验 \\
 F4 & 615A 数据加卸载 & 基于 TFTP 的上传操作和介质定义卸载；LUH 头文件与数据文件 CRC-16 校验；超时重传 \\
 F5 & RTC 时钟同步 & SNTPv4 主从对时；32 位秒加 32 位纳秒；响应须回显本次请求的 Transmit 时间戳 \\
-P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps \\
-P2 & 端到端时延 & 不超过 2000~µs \\
-P3 & 发送抖动 & 不超过 50~µs（“几十微秒”的检查取值） \\
+P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（定长满载实测 \Thru~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
+P2 & 端到端时延 & 不超过 2000~µs（满载稳态最大端到端时延实测为 \Lat~µs） \\
+P3 & 传输抖动 & 发送间隔抖动实测为 \Jit~µs；同 VL 端到端时延极差定长满载实测仅 \JitSameVl~µs、变长循环为 \JitVarCycle~µs \\
 P4 & 帧格式 & 帧长 64--1518 字节（含 FCS）；复位后首帧 SN 为 0，之后按 1--255 循环 \\
 P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用 \\
-I1 & 官方端口 & \code{AFDX_top} 的 8 个端口名称、方向和位宽不变 \\
+I1 & 官方端口 & \code{AFDX_top} 的 8 个端口名称、方向和位宽保持完全兼容，承载 A 网 GMII 物理接口 \\
 I2 & 线路接口 & A、B 两路八位 GMII，每拍一字节，帧间隔不少于 12 拍 \\
-I3 & 扩展接口 & 应用发送/接收、配置总线、统计事件端口 \\
-C1 & 时钟 & 单一 125~MHz 时钟，周期 8~ns \\
+I3 & 扩展接口 & 独立的应用发送/接收流接口、32 位字寻址配置总线、统计与事件脉冲端口 \\
+C1 & 时钟与物理时序 & 单一 125~MHz 全局时钟，周期 8~ns；管理面协议状态机采用 $\text{CE\_DIV}=2$ 多周期解耦；eLinx 布局布线后静态时序收敛（建立裕量 $+\RoutedSetup$~ns、保持裕量 $+\RoutedHold$~ns，最高频率 \RoutedFmax~MHz，0 违例端点） \\
 C2 & 编码规范 & 信号小写、参数大写；每个模块的文件开头说明其作用、接口和关键时序 \\
 \end{longtable}
 

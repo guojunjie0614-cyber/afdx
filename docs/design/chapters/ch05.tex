@@ -207,7 +207,9 @@ GRANT & 有候选且 \code{grant_ready} & 0--4：依次读配置字 1--5；1：�
 \end{tabularx}
 \end{table}
 
-启动发送时，必须已置位 \code{prepared} 且上一帧已送完，同时满足以下任一条件：本帧无定时约束（\code{grant_timed}$=0$，即该 VL 此前队列为空、允许立即发送）、允许时刻已过，或距离允许时刻至多 4 拍。4 拍提前量补偿起始路径上的四级寄存器：\code{now} 寄存 1 拍、差值 \code{now_q}$-T$ 寄存 1 拍、\code{s_valid} 寄存 1 拍、MAC 判断起始并寄存输出 1 拍。于是线路空闲时，首个前导码字节在 \code{now}$=T$ 的一拍输出。
+启动发送时，必须已置位 \code{prepared} 且上一帧已送完，同时满足以下任一条件：本帧无定时约束（\code{grant_timed}$=0$，即该 VL 此前队列为空、允许立即发送）、允许时刻已过，或距离允许时刻至多 6 拍。
+
+为隔离组帧状态机与双网 MAC 发送器之间的跨模块路径，\code{afdx_tx_core} 在 \code{afdx_tx_builder} 与双路 \code{afdx_mac_tx} 之间插入了\textbf{一级流缓冲}（stream buffer，含 \code{buf_valid}/\code{buf_ready} 与 \code{out_valid}/\code{out_ready} 的双缓冲解耦结构）。为精确补偿载荷读流水与输出流缓冲引入的寄存拍数，\code{afdx_tx_builder} 的提前启动偏移配置为 6 拍（参数 \code{START_LEAD_REGISTERED = -6}，对应 \code{now + 6 >= T} 时在 \code{S_IDLE} 锁存槽位）。由此，在线路空闲时，MAC 输出首个前导码字节的时刻与理论到期时刻对齐在 \code{now}$=T$ 当拍。
 
 起始拍将 42 字节帧头并行装入移位寄存器，A、B 两路共用，仅将 B 网的第 11 字节（网络接口标识）替换为 \code{0x40}。每当 MAC 取走一个字节，组帧器便按 \code{part} 推进输出：先发送 42 字节帧头，再发送 $n$ 字节载荷；若 $n<17$，则补零至 17 字节。最后发送带 \code{s_last} 的 SN。\code{tx_sof} 所在拍的 \code{now} 作为 $t_\text{start}$ 回报引擎。
 

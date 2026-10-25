@@ -39,6 +39,16 @@
 
 顶层参数 \code{TX_PAGE_AW}、\code{TX_OFF_AW}、\code{LOOKAHEAD}、\code{RX_RING_AW}、\code{RX_DQ_AW} 的默认值分别为 8、9、512、12、5，直接传递给收发核心。
 
+\subsection{顶层端口映射与网络分层定义}
+
+按照 ARINC 664 Part 7 标准物理分层与官方 1022 答疑澄清（R61、R95-2、R110）：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{A 网物理接口：}顶层模板的 8 个端口（\code{clk}、\code{reset}、\code{tx_data}、\code{tx_valid}、\code{rx_data}、\code{rx_valid}、\code{tx_ready}、\code{rx_ready}）对应 A 网 GMII 物理接口，传输包含前导码、SFD 与 FCS 的线速以太网字节流。
+  \item \textbf{双网冗余扩展：}按标准双网冗余要求对称扩展 B 网 GMII 物理端口（\code{tx/rx_data_b_*}），支持单网独立收发与双网并行收发。
+  \item \textbf{应用层与配置接口：}主机应用数据通过独立的流式消息接口 \code{app_tx_*}/\code{app_rx_*} 收发，端系统配置表与统计计数器通过 32 位字寻址总线 \code{cfg_*} 访问，硬件状态变化由 \code{ev_*} 脉冲输出。
+  \item \textbf{MAC 实现与评测依据（R111、R112）：}MAC 模块采用纯 RTL 自研实现（R111 允许参赛队自研 MAC）；功能仿真波形、日志与覆盖率记录作为设计验证的依据（R112）。
+\end{enumerate}
+
 \section{GMII 接口}\label{sec:gmii}
 
 A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一个字节。

@@ -2,32 +2,35 @@
 
 \section{源文件}\label{app:files}
 
-RTL 共 21 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
+RTL 共 24 个 Verilog 文件，均在仓库 \code{rtl/} 目录。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{9.6cm}}
-\caption{RTL 源文件}\label{tab:files}\\
+\caption{RTL 源文件清单（24 个模块）}\label{tab:files}\\
 \longtablehead{2}{文件 & 作用}
 \code{AFDX_top.v} & 顶层：双网收发核心、服务通道、三项服务、配置与时间基准 \\
 \code{afdx_timebase.v} & 周期计数 \code{now} 与粗粒度计时 \code{now_c} \\
-\code{afdx_cfg.v} & 地址译码、寄存器、27 个计数器、配置表写握手 \\
-\code{afdx_svc.v} & 应用与服务的消息轮询发送、按端口分发接收 \\
-\code{afdx_tx_core.v} & 发送核心集成模块，例化发送侧各模块和 7 张表 \\
-\code{afdx_tx_buf.v} & 消息分页写入、入队请求、失败后回收缓存页 \\
-\code{afdx_tx_free.v} & 空闲页 FIFO \\
+\code{afdx_cfg.v} & 地址译码、寄存器、27 个计数器两级流水维护、配置表写握手 \\
+\code{afdx_svc.v} & 应用与服务的消息轮询发送（授权寄存）、按端口分发接收 \\
+\code{afdx_tx_core.v} & 发送核心集成模块，例化发送侧各模块、输出流缓冲和 7 张表 \\
+\code{afdx_tx_buf.v} & 消息分页写入（写口流水寄存）、入队请求、失败后回收缓存页 \\
+\code{afdx_tx_free.v} & 256 页空闲页 FIFO，支持双还页口并发回收 \\
 \code{afdx_tx_engine.v} & BAG 调度：扫描、入队、授权、起始确认 \\
-\code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、缓存页回收 \\
+\code{afdx_tx_builder.v} & 组帧、IP 头校验和、载荷预读、-6 拍提前补偿 \\
 \code{afdx_mac_tx.v} & 双网发送 MAC：前导码、FCS、帧间隔、欠载检测与异常帧终止 \\
 \code{afdx_crc32_d8.v} & 逐字节 CRC32 组合逻辑 \\
-\code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块和 5 张表 \\
+\code{afdx_rx_core.v} & 接收核心集成模块，例化接收侧各模块、分体式映射表和交付模块 \\
 \code{afdx_mac_rx.v} & 接收 MAC：SFD 检测、CRC 校验、剥离 FCS \\
 \code{afdx_rx_parse.v} & 帧头检查、载荷预写入环形缓冲、帧尾分类 \\
-\code{afdx_rx_engine.v} & VL 查表、完整性检查、冗余管理、过期清理 \\
-\code{afdx_rx_deliver.v} & 从环形缓冲逐字节交付 \\
+\code{afdx_rx_engine.v} & 32 子库查表、完整性检查、冗余管理、过期清理 \\
+\code{afdx_rx_deliver.v} & 读取块 RAM 交付队列 \code{rx_dq}，从环形缓冲逐字节交付 \\
 \code{afdx_ram_sdp.v} & 伪双口（Simple Dual-Port）同步 RAM，全设计唯一的 RAM 例化原语 \\
 \code{afdx_rtc.v} & 实时时钟与 SNTP 主从对时 \\
 \code{afdx_ntp_fraction.v} & 纳秒与 NTP 小数的逐位换算 \\
-\code{afdx_snmp.v} & SNMP 代理：BER 编解码、MIB、Set、Trap \\
-\code{afdx_615a.v} & 615A 目标端：TFTP、LUH/数据文件检查、上传与卸载 \\
+\code{afdx_snmp.v} & SNMP 顶层包装：请求捕获、MIB/Trap RAM 接口与 \code{CE_DIV=2} 使能树 \\
+\code{afdx_snmp_engine.v} & SNMP 协议核心：ASN.1/BER 编解码、MIB 读写与响应生成（16~ns 域） \\
+\code{afdx_615a.v} & 615A 顶层包装：TFTP 捕获、6 块协议 RAM 接口与使能树 \\
+\code{afdx_615a_engine.v} & 615A 协议核心：加卸载状态机与文件 CRC-16 校验（16~ns 域） \\
+\code{afdx_mgmt_tx.v} & 管理面共享发送输出缓冲：256 字节帧缓冲，供 SNMP 与 615A 复用解耦 \\
 \end{longtable}
 
 \Needspace{19\baselineskip}
@@ -176,11 +179,11 @@ RTC 同步周期 & 125000 拍 & 1~ms，可经寄存器修改 \\
 \code{desc_valid}、\code{desc_take} & 1、1 & 交接握手 \\*
 \code{resolve_valid}、\code{resolve_commit} & 1、1 & 引擎判定：提交则 \code{wr_commit} 前进到本帧末，否则 \code{wr_trial} 回退 \\*
 \midrule
-\multicolumn{3}{l}{\textit{交付队列项（\code{rx_engine} $\rightarrow$ \code{rx_deliver}，32 项寄存器）}} \\*
-\code{net} & 1 & 0 为 A 网，1 为 B 网 \\
-\code{start}、\code{n} & 12、11 & 环形缓冲起点和字节数 \\
-\code{idx} & 12 & 接收 VL 索引 \\
-\code{sport}、\code{dport} & 16、16 & UDP 端口 \\
+\multicolumn{3}{l}{\textit{交付队列项（\code{rx_engine} $\rightarrow$ \code{rx_deliver}，32 项 $\times$ 68~bit 块 RAM \code{rx_dq}，高位在前）}} \\*
+\code{net[67]} & 1 & 0 为 A 网，1 为 B 网 \\
+\code{start[66:55]}、\code{n[54:44]} & 12、11 & 环形缓冲起点和字节数 \\
+\code{idx[43:32]} & 12 & 接收 VL 索引 \\
+\code{sport[31:16]}、\code{dport[15:0]} & 16、16 & UDP 源端口与目的端口（共 68 位） \\
 \end{longtable}
 
 交付口 \code{d_*} 的字段与应用接收口对应（目的端口在内部记为 \code{d_dport}，在顶层记为 \code{app_rx_port}）。服务通道将这些信号同时广播给应用和三个服务。各服务在首字节到达当拍，根据 UDP 目的端口产生组合匹配信号 \code{svc_rx_claim}；匹配结果寄存并保持至末字节。端口匹配的消息由对应服务接收，不向应用口输出。
