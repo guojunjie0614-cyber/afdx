@@ -29,10 +29,10 @@ if {[examine -radix unsigned $dut/cfg_rvalid] != 1 ||
     error "The second sampling edge must return cfg_rvalid=1 and cfg_rdata=1"
 }
 run 27ns
-set cursor_error [wave cursor add -time 799180ns -name FCS_error]
-wave_snapshot rx_fcs_error_1 798350ns 799600ns
-set cursor_byte [wave cursor add -time 798800ns -name Wire_byte]
-wave_snapshot rx_fcs_error_2 798700ns 799020ns
+set cursor_error [wave cursor add -time 799276ns -name FCS_error]
+wave_snapshot rx_fcs_error_1 798446ns 799696ns
+set cursor_byte [wave cursor add -time 798880ns -name Wire_byte]
+wave_snapshot rx_fcs_error_2 798780ns 799100ns
 delete wave *
 catch {wave cursor delete $cursor_byte}
 catch {wave cursor delete $cursor_error}
@@ -43,12 +43,12 @@ wave_signal $dut/host_read_pipe host_read_pipe binary
 wave_signal $dut/cfg_rvalid cfg_rvalid binary
 wave_signal $dut/cfg_rdata cfg_rdata
 wave_signal $dut/cfg_regs/count_a_fcs count_a_fcs unsigned
-wave cursor add -time 973013ns -name Read_response
-wave_snapshot rx_fcs_error_3 972992ns 973040ns
+wave cursor add -time 973012ns -name Read_response
+wave_snapshot rx_fcs_error_3 972991ns 973039ns
 run -all
 if {[examine -radix unsigned /tb_sys_net/suite/errors] != 0 ||
     [examine -radix unsigned $host/errors] != 0} {
     error "The waveform simulation's self-checks failed"
 }
-# GUI 最终保留独立读窗口；错误帧窗口为 798350ns--799600ns。
-wave zoom range 972992ns 973040ns
+# GUI 最终保留独立读窗口；错误帧窗口为 798446ns--799696ns。
+wave zoom range 972991ns 973039ns
