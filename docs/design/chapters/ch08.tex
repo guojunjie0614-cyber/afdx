@@ -68,7 +68,7 @@
 
 读数据的多路选择分两拍完成，读延迟固定为 2 拍：第 1 拍按地址低 3 位从四组数据源（全局寄存器、发送计数器、A 网计数器、B 网计数器）及三项服务寄存器中并行预选出候选字并锁存，同时按地址位 17:3 锁存组号；第 2 拍按组号从各路寄存值中选出目标字送至 \code{cfg_rdata}，并拉高 \code{cfg_rvalid}，每拍至多经过一级 8 选 1 逻辑。
 
-\code{cfg_ready} 为 1 时，总线在当拍接受 \code{cfg_wr} 写请求：普通寄存器和服务寄存器直接写入；配置表写请求则先装入暂存寄存器并拉低 \code{cfg_ready}，等待对应核心给出 \code{cfg_ok}（第~\ref{sec:intif}~节）。\code{tx_ready} 为 0 时，配置表写暂存寄存器保持清零，\code{cfg_ready} 为 0，不接受清表期间的写请求。
+\code{cfg_ready} 为 1 时，总线在当拍接受 \code{cfg_wr} 写请求：普通寄存器和服务寄存器直接写入；配置表写请求则先装入暂存寄存器并拉低 \code{cfg_ready}，等待对应核心给出 \code{cfg_ok}（第~\ref{sec:intif}~节）。\code{tx_ready} 为 0 时，配置表写暂存寄存器保持清零，\code{cfg_ready} 为 0，不接受表初始化期间的写请求。
 
 SNMP 代理读写管理对象使用同一条总线。顶层的仲裁规则是：主机在本拍写入，或主机与代理读取不同地址时，优先处理主机请求；主机读与代理读同一地址时合并为一次读，两者各自在 2 拍后取得数据；代理写只在主机无读写且 \code{cfg_ready} 为 1 时授予总线访问权。主机与代理的读数据分别由各自的 2 拍有效标记对齐。
 
@@ -77,7 +77,10 @@ SNMP 代理读写管理对象使用同一条总线。顶层的仲裁规则是：
 配置表的读口归收发引擎，写口归配置总线。配置写通过 \code{cfg_ok} 与引擎读请求互斥，避免同步 RAM 同拍同址读写冲突。各引擎的许可条件为：
 \begin{align}
 \text{发送侧：}\ & \text{cfg\_ok} = \text{enable} \wedge (\text{op}=\text{IDLE}) \wedge \neg\text{want\_enq} \wedge \neg\text{want\_grant} \\
-\text{接收侧：}\ & \text{cfg\_ok} = \text{enable} \wedge (\text{op}\in\{\text{IDLE},\text{AGE}\}) \wedge \neg\text{desc\_a\_valid} \wedge \neg\text{desc\_b\_valid}
+\text{接收侧：}\ & \begin{aligned}[t]
+  \text{cfg\_ok} = \text{enable} &\wedge (\text{op}\in\{\text{IDLE},\text{AGE}\}) \\
+  &\wedge \neg\text{desc\_a\_valid} \wedge \neg\text{desc\_b\_valid}
+\end{aligned}
 \end{align}
 \code{cfg_ok} 由引擎自身的状态寄存器与同级模块的寄存输出（入队请求、帧描述有效、\code{grant_ready}）组合生成。\code{afdx_cfg} 接收一次写表请求后，保持写使能（\code{tx_cfg_we}、\code{rx_map_we} 或 \code{rx_cfg_we}）及地址、数据；当对应核心的 \code{cfg_ok} 为 1 时，引擎本拍不置位对应配置表的读使能寄存器，核心模块在该拍把写请求锁存到写口寄存器并于下一拍写入 RAM，\code{afdx_cfg} 撤销写请求。接收侧在许可后的下一拍恢复 \code{cfg_ready}；发送侧通过 \code{tx_cfg_ok_q} 与 \code{tx_cfg_rearm} 再延后一拍恢复就绪，保证本地应答与真实写请求完成对齐。时序为：
 \begin{equation}
@@ -93,13 +96,13 @@ u=\min\{\,\tau \ge t+1 : \text{cfg\_ok}(\tau)=1\,\},\\
 
 \section{复位与初始化}
 
-复位与清表过程见第~\ref{sec:clkrst}~节。配置模块复位后，各寄存器恢复默认值，27 个计数器清零。\code{tx_ready} 为 0 期间，配置表写暂存寄存器保持清零，\code{cfg_ready} 保持为 0；此时不接受配置写请求，读访问照常进行。
+复位与表初始化过程见第~\ref{sec:clkrst}~节。配置模块复位后，各寄存器恢复默认值，27 个计数器清零。\code{tx_ready} 为 0 期间，配置表写暂存寄存器保持清零，\code{cfg_ready} 保持为 0；此时不接受配置写请求，读访问照常进行。
 
 \section{统计计数器}
 
 27 个计数器均为 32 位，计满后回绕至 0，仅在复位时清零。为隔离发送核心与接收核心长距离跨模块引入的时序关键路径，\code{afdx_cfg} 对来自 TX/RX 通路的 5 路事件统计脉冲（\code{ev_tx}、\code{ev_a}、\code{ev_b}、\code{ev_rm_drop}、\code{ev_deliver}）插入了\textbf{两级流水寄存}（\code{_p} 与 \code{_q}）后再驱动 32 位加法器，降低了跨芯片远距离脉冲直接驱动大位宽累加器的布线延迟。
 
-受读通路两级流水结构决定，第 1 拍锁存的是当拍更新前的计数值，因此在 $t$ 拍发出读请求，$t+2$ 拍返回对应统计脉冲在 $t-1$ 拍及以前出现的累计次数。计数器分为：
+计入事件输入两级流水打拍（\code{_p} 与 \code{_q}）及读数据通路的两级流水结构，在 $t$ 拍发出配置总线读请求，$t+2$ 拍返回对应事件脉冲截至 $t-3$ 拍在核心源头产生的累计次数（对应配置模块内部计数值在 $t-1$ 拍及以前的累加状态）。计数器分为：
 \begin{itemize}
   \item \textbf{发送（7 个）：}接纳的消息数；因 VL 未启用、队列满、超长、无空闲页而丢弃的消息数；A、B 网发出帧数。
   \item \textbf{接收，每网 8 个：}正确帧、FCS 错误、帧长错误、帧头错误、未知 VL、配置不允许、完整性检查丢弃、溢出。
@@ -119,7 +122,7 @@ VL 或两网均未启用 & \code{tx_engine} & 拒绝入队，回收已用缓存�
 队列已满 & \code{tx_engine} & 同上 & \code{drop_full} \\
 超过 \code{max_payload} 或 1471 字节 & \code{tx_engine}、\code{tx_buf} & 同上；继续接收并丢弃剩余字节 & \code{drop_long} \\
 无空闲页 & \code{tx_buf} & 同上 & \code{drop_nopage} \\
-MAC 欠载 & \code{mac_tx} & 发送未取反的 FCS，使对端判为错误帧，继续接收并丢弃本帧剩余字节 & 不计 \code{tx_a}/\code{tx_b} \\
+MAC 发送下溢（TX Underrun） & \code{mac_tx} & 发送未取反的 FCS，使对端判为错误帧，继续接收并丢弃本帧剩余字节 & 不计 \code{tx_a}/\code{tx_b} \\
 \midrule
 \multicolumn{4}{l}{\textit{接收（每网独立）}} \\*
 前导码错误、帧长越界 & \code{mac_rx} & 整帧丢弃 & 帧长错误 \\
@@ -131,14 +134,14 @@ VL 或本网未启用、超过 \code{max_payload} & \code{rx_engine} & 回退预
 SN 不连续 & \code{rx_engine} & 回退预写入指针，PSN 仍更新为本次 SN & 完整性检查丢弃 \\
 另一网已交付的副本 & \code{rx_engine} & 回退预写入指针 & \code{rm_drop} \\
 交付队列已满 & \code{rx_engine} & 回退预写入指针 & 溢出 \\
-清表完成前开始的帧 & \code{rx_parse} & 整帧忽略 & 不计 \\
+表初始化完成前开始的帧 & \code{rx_parse} & 整帧忽略 & 不计 \\
 \midrule
 \multicolumn{4}{l}{\textit{服务与配置}} \\*
 SNMP community 不符 & \code{afdx_snmp} & 不响应；Trap 启用时发 \code{authenticationFailure} & \code{BAD_COMMUNITY} \\
 SNMP 请求超过 256 字节或代理忙 & \code{afdx_snmp} & 端口匹配后丢弃，由管理端超时重发 & 忙时计入 \code{REQUESTS} \\
 615A 数据/文件检查错、状态传输失败、请求错误 & \code{afdx_615a} & 数据/文件错：ERROR 及失败状态文件；状态传输失败（含重试耗尽）：直接结束；名称/模式错：仅 ERROR；LCI/LNO：初始化拒绝 & \code{STATUS} 原因码 1--5（第~\ref{sec:a615}~节） \\
 SNTP 响应版本、模式或 Originate 不符 & \code{afdx_rtc} & 丢弃，下一周期重发请求 & --- \\
-清表期间写配置 & \code{afdx_cfg} & \code{cfg_ready}$=0$，不接受 & --- \\
+表初始化期间写配置 & \code{afdx_cfg} & \code{cfg_ready}$=0$，不接受 & --- \\
 未映射的地址 & \code{afdx_cfg} & 忽略写请求，读出 0 & --- \\
 \end{longtable}
 
@@ -173,8 +176,8 @@ SNTP 响应版本、模式或 Originate 不符 & \code{afdx_rtc} & 丢弃，下�
 
 主机须检查各项配置的组合是否满足带宽、抖动、缓存和交付要求。具体约束及超限处理如下。
 \begin{itemize}
-  \item \textbf{带宽：}A、B 两网由同一个 MAC 状态机同拍驱动，只发 A 网或只发 B 网的帧同样占用一个发送时隙，所以约束针对全部发送 VL，不分网络：$\sum_v C(n_v)/\text{BAG}_v \le 1$，其中 $n_v$ 为 \code{max_payload}，$C(n_v)$ 为第~\ref{sec:budget}~节式~(3-1) 的占线拍数，服务 VL 计入求和。超出该约束时，各帧只能串行发出，实际发送间隔将大于 BAG。
-  \item \textbf{抖动：}BAG 取 $2^k$~ms；错开各 VL 首条消息的提交时刻，使任一 VL 之前排队发送的帧的占线与等待之和按式~(\ref{eq:jitter}) 不超过 5828 拍（50~µs）。
+  \item \textbf{带宽：}A、B 两网由同一个 MAC 状态机同拍驱动，只发 A 网或只发 B 网的帧同样占用一个发送时隙，所以约束针对全部发送 VL，不分网络：$\sum_v C(n_v)/\text{BAG}_v \le 1$，其中 $n_v$ 为 \code{max_payload}，$C(n_v)$ 为第~\ref{sec:budget}~节式~(3-1) 的线路占用拍数，服务 VL 计入求和。超出该约束时，各帧只能串行发送出，实际发送间隔将大于 BAG。
+  \item \textbf{抖动：}BAG 取 $2^k$~ms；错开各 VL 首条消息的提交时刻，使任一 VL 之前排队发送的帧的线路占用与等待之和按式~(\ref{eq:jitter}) 不超过 5828 拍（50~µs）。
   \item \textbf{缓存：}缓存页在组帧器读完后才回收，而 \code{q_count} 在授权时已减 1；正在接收的消息也会在入队判定前分配缓存页。因此，除各队列中的消息外，还须计入组帧器持有的两帧（下一帧与正在发送的帧），以及 \code{tx_buf} 正在接收的一条消息，每帧或每条消息至多占 3 页。满足 $\sum_v \text{qmax}_v \times \lceil n_v / 512 \rceil + 9 \le 256$ 时，256 页即可容纳上述消息同时驻留时的最大需求；超出时，因无空闲页而丢弃的消息计入 \code{drop_nopage}。256 页按每条最长消息占 3 页计算，最多驻留 85 条最长消息。
   \item \textbf{交付：}交付口每拍一字节。若某条 VL 关闭冗余管理，且同时接收两网数据，则每条消息交付两次。所有接收 VL 的载荷交付总速率须低于 1 字节每拍；两网独立满速且都要交付时，所需交付速率超过该上限，超出部分按溢出计数。
   \item \textbf{顺序与冗余窗口：}跨 VL 的发送顺序由各 VL 的 BAG 与候选选择共同决定；提前选中的候选可能使后到的小帧等待。接收副本的到达间隔超过 \code{skew_max} 时，冗余记录按过期处理，该副本可能再次交付。

@@ -56,7 +56,7 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
 \begin{itemize}
   \item \textbf{发送：}\code{tx_valid} 从前导码首字节至 FCS 末字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的 \code{tx_valid} 与 \code{tx_data} 全程保持为 0。
   \item \textbf{接收：}\code{rx_valid} 的上升沿表示一帧开始，下降沿表示该帧结束。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始定界符（SFD）、累加 CRC 并剥离 FCS。
-  \item \textbf{复位：}复位期间输出为 0；对于清表完成前开始接收的帧，接收核心将整帧忽略（第~\ref{sec:clkrst}~节）。
+  \item \textbf{复位：}复位期间输出为 0；对于表初始化完成前开始接收的帧，接收核心将整帧忽略（第~\ref{sec:clkrst}~节）。
   \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节均与 \code{clk} 同步，不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导码、帧长和 FCS；连接外部 PHY 时，外围适配逻辑须处理 PHY 错误标记并丢弃带错帧。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
@@ -131,17 +131,17 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 \section{事件接口}
 
-\code{ev_*} 端口在统计事件发生时输出单周期脉冲，与第~\ref{ch:cfg}~章的计数器一一对应，供外部逻辑监视各类事件。对于每条发送消息，发送核心均产生且仅产生 \code{accept} 或四类丢弃脉冲中的一种。对于清表完成后开始接收的每一帧，接收核心在对应网络上产生一个帧分类脉冲；若判定为正确帧，还会输出一个处理结果脉冲（第~\ref{sec:rxclass}~节）。
+\code{ev_*} 端口在统计事件发生时输出单周期脉冲，与第~\ref{ch:cfg}~章的计数器一一对应，供外部逻辑监视各类事件。对于每条发送消息，发送核心均产生且仅产生 \code{accept} 或四类丢弃脉冲中的一种。对于表初始化完成后开始接收的每一帧，接收核心在对应网络上产生一个帧分类脉冲；若判定为正确帧，还会输出一个处理结果脉冲（第~\ref{sec:rxclass}~节）。
 
-\Needspace{26\baselineskip}
+\Needspace{8\baselineskip}
 \section{内部接口}\label{sec:intif}
 
 一级模块之间及核心内部子模块之间的接口以寄存器输出为主。ready 握手与 \code{cfg_ok} 采用组合输出；\code{afdx_svc} 的数据选择和接收分发也采用组合直通，仅包含选择与门控逻辑。内部接口主要采用以下四种约定：
 \begin{itemize}
   \item \textbf{字节流握手}（\code{valid}/\code{ready}/\code{last}）：\code{valid} 与 \code{ready} 同拍为 1 时传送一个字节；附带字段在首字节锁存并保持到末字节。
   \item \textbf{请求应答}（\code{req}/\code{ack}）：请求持续有效，直到接收到应答脉冲；应答与结果在同一拍输出。
-  \item \textbf{单槽交接}（\code{valid}/\code{take} 或 \code{valid}/\code{ready}）：生产者置 \code{valid} 并保持字段不变，消费者接收后，生产者才能送入下一项。
-  \item \textbf{写许可}（\code{cfg_ok}）：表的读写控制模块通过组合信号给出写许可。许可有效时，核心寄存外部写请求，并在下一拍写入 RAM；该拍不再发出冲突的表读请求（第~\ref{sec:cfgok}~节）。
+  \item \textbf{单深缓冲握手（Single-Slot Handshake）}（\code{valid}/\code{take} 或 \code{valid}/\code{ready}）：生产者置 \code{valid} 并保持字段不变，消费者接收后，生产者才能送入下一项。
+  \item \textbf{写允许授权}（\code{cfg_ok}）：表的读写控制模块通过组合信号给出写允许授权。许可有效时，核心寄存外部写请求，并在下一拍写入 RAM；该拍不再发出冲突的表读请求（第~\ref{sec:cfgok}~节）。
 \end{itemize}
 
 表~\ref{tab:ifsum} 汇总各内部接口，各信号的定义见附录~\ref{app:intif}。
@@ -154,14 +154,14 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 \midrule
 消息 \code{m_*} & \code{afdx_svc} $\rightarrow$ \code{tx_buf} & 字节流 & 每次分配缓存页时，\code{m_ready} 为低 6 拍；消息末尾为低约 10 拍；连续为低不超过 96 拍 \\
 入队 \code{enq_*} & \code{tx_buf} $\rightarrow$ \code{tx_engine} & 请求应答 & 应答不晚于请求后 64 拍 \\
-授权 \code{grant_*} & \code{tx_engine} $\rightarrow$ \code{tx_builder} & 单槽交接 & 从当前帧 \code{tx_sof} 有效的当拍起，可接受下一帧授权 \\
-起始回报 & \code{tx_builder} $\rightarrow$ \code{tx_engine} & 单拍脉冲 & 回报首个前导字节输出当拍的 \code{now} \\
+授权 \code{grant_*} & \code{tx_engine} $\rightarrow$ \code{tx_builder} & 单深缓冲握手 & 从当前帧 \code{tx_sof} 有效的当拍起，可接受下一帧授权 \\
+发送起始指示 & \code{tx_builder} $\rightarrow$ \code{tx_engine} & 单拍脉冲 & 回报首个前导字节输出当拍的 \code{now} \\
 帧字节 \code{s_*} & \code{tx_builder} $\leftrightarrow$ \code{mac_tx} & 字节流 & MAC 控制字节接收时刻，在前导码的最后一拍接收第 0 字节 \\
-帧描述 \code{desc_*} & \code{rx_parse} $\rightarrow$ \code{rx_engine} & 单槽交接 & \code{f_end} 后第 3 拍给出；判定至多 13 拍 \\
+帧描述 \code{desc_*} & \code{rx_parse} $\rightarrow$ \code{rx_engine} & 单深缓冲握手 & \code{f_end} 后第 3 拍给出；单网判定耗时 8--15 拍（含取描述与写回） \\
 交付队列 \code{rx_dq} & \code{rx_engine} $\rightarrow$ \code{rx_deliver} & 32 项队列 & 队列非空后的第 6 拍输出首个 \code{d_valid} \\
 交付 \code{d_*} & \code{rx_deliver} $\rightarrow$ \code{afdx_svc} & 字节流，无反压 & 服务在首字节当拍完成端口匹配 \\
 服务发送 \code{svc_tx_*} & 三个服务 $\rightarrow$ \code{afdx_svc} & 字节流 & 按整条消息轮询 \\
-配置表写 & \code{afdx_cfg} $\rightarrow$ 收发核心 & 写许可 & 等待不超过 64 拍（第~\ref{sec:cfgok}~节） \\
+配置表写 & \code{afdx_cfg} $\rightarrow$ 收发核心 & 写允许授权 & 等待不超过 64 拍（第~\ref{sec:cfgok}~节） \\
 \bottomrule
 \end{tabularx}
 \end{table}

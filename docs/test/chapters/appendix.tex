@@ -1,11 +1,11 @@
 \chapter{完整回归结果}\label{app:regress}
 
 \section{完整 RTL 回归}
-完整回归共包含 \textbf{\RegCount{} 项测试}（表~\ref{tab:all_tests}），全部通过验证，错误数为 0。全系统平台自检累计通过 \countsep{\RegChecks} 次，独立黄金参考模型核对累计通过 \countsep{\RegIndep} 项，完整回归总仿真耗时为 5217.57~s。表中测试平台名称下方列出该用例采用的非默认容量与控制参数。
+完整回归共包含 \textbf{\RegCount{} 项测试}（表~\ref{tab:all_tests}），全部通过验证，错误数为 0。全系统平台自检累计通过 \countsep{\RegChecks} 次，独立参考模型（Golden Model）核对累计通过 \countsep{\RegIndep} 项，完整回归总仿真耗时为 5217.57~s。表中测试平台名称下方列出该用例采用的非默认容量与控制参数。
 
 \begingroup
 \renewcommand{\tablearraystretch}{1.18}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{5.9cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedleft\arraybackslash}p{1.5cm}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{1.6cm}@{}}
 \caption{完整 RTL 回归结果（\RegCount{} 项均为 PASS）}\label{tab:all_tests}\label{tab:regress}\\
 \longtablehead{5}{\thead{编号} & \thead{测试平台} & \thead{测试内容} & \thead{自检通过} & \thead{独立核对}}
 BAS-01 & \code{tb_ram_sdp} & 核对不同存储器配置的写入、同步读取和读使能 & 20764 & 平台自检 \\
@@ -35,30 +35,29 @@ SYS-06 & \code{tb_sys_reset} & 传输途中复位，核对旧残帧不混入新�
 SYS-07 & \code{tb_sys_ovf}\par \code{RX_RING_AW=9} & 完整系统接收环形缓冲溢出时，核对丢弃、计数和恢复 & 9681880 & 1488 \\
 SYS-08 & \code{tb_sys_net} & 通过顶层执行配置、正常及异常传输，供网表对照 & 2944324 & 1265 \\
 SYS-09 & \code{tb_elinx} & 在 eLinx 中运行双端双网互发仿真，核对字节、端口和去重 & 9238 & 平台自检 \\
-SVC-01 & \code{tb_sys_snmp} & 核对查询、团体名（\code{community}）和编码边界，并比较配置口读值 & 37611 & 926 \\
+SVC-01 & \code{tb_sys_snmp} & 核对查询、Community（\code{community}）和编码边界，并比较配置口读值 & 37611 & 926 \\
 SVC-02 & \code{tb_sys_snmp_settrap} & 核对设置、非法写入拒绝、启动和认证失败通知 & 8563 & 188 \\
 SVC-03 & \code{tb_judge_snmp} & 解码查询、设置和通知，核对字段与配置口读值 & 699 & 平台自检 \\
 SVC-04 & \code{tb_sys_615a} & 核对加载卸载、文件内容、校验错误和丢包重试 & 44098 & 752 \\
 SVC-05 & \code{tb_sys_rtc} & 核对空载及有流量时的时钟同步、秒边界和交付 & 10675857 & 1811 \\
 SVC-06 & \code{tb_rtc_recovery} & 丢弃同步响应并交换使能顺序，核对重发恢复 & 28 & 平台自检 \\
-SVC-07 & \code{tb_rtc_originate} & 响应回送的请求时间戳错误或过期时不校时，合法响应仍能同步 & 34 & 平台自检 \\
+SVC-07 & \code{tb_rtc_originate} & 应答回送的请求时间戳错误或过期时不误校准，合法响应仍能同步 & 34 & 平台自检 \\
 PERF-01 & \code{tb_sys_perf} & 测量定长吞吐、发送与接收时延、端到端时延和抖动 & 756655316 & 1212916 \\
 PERF-02 & \code{tb_gbe_burst}\par \code{COUNT=77} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 643552 & 平台自检 \\
-PERF-03 & \code{tb_gbe_burst}\par \code{COUNT=81} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 673500 & 平台自检 \\
-CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双网只交付一次 & 49924 & 平台自检 \\
-PERF-04 & \code{tb_sys_perf_var} & 多 VL 变长高负载、同 VL 帧长循环与 R97 极差抖动核对 & 1402134376 & 1573773 \\
+PERF-03 & \code{tb_gbe_burst}\par \code{COUNT=81} & 同时提交多 VL 消息，测量排队时间并逐字节查重 & 673500 & 平台自检 \\*
+CAP-01 & \code{tb_judge_capacity} & 配置全部收发 VL，逐字节核对双网只交付一次 & 49924 & 平台自检 \\*
+PERF-04 & \code{tb_sys_perf_var} & 多 VL 变长高负载、同 VL 帧长循环与 R97 极差抖动核对 & 1402134376 & 1573773 \\*
 \midrule
 \multicolumn{3}{l}{\thead{合计（39 项测试全部 PASS，0 失败，总仿真耗时 5217.57~s）}} & \thead{\countsep{\RegChecks}} & \thead{\countsep{\RegIndep}} \\
-\bottomrule
 \end{longtable}
 \endgroup
 
 \section{ModelSim 评审 8 项批处理测试}
-纯 ModelSim 评审批处理共运行 \textbf{8 个核心用例}（表~\ref{tab:judge_batch}），执行 \code{do sim/run_judge.do} 即可一键完成。实测 8 个用例全部通过，Warning 与 Error 均为 0，总耗时 \textbf{8787.198~s}，自检累计通过 \textbf{2,466,851,264} 次，独立检查累计通过 \textbf{3,522,068} 项。
+纯 ModelSim 评审批处理共运行 \textbf{8 个核心用例}（表~\ref{tab:judge_batch}），执行 \code{do sim/run_judge.do} 即可一键完成。实测 8 个用例全部通过，Warning 与 Error 均为 0，总耗时 \textbf{8787.198~s}，自检累计通过 \textbf{2,170,834,348} 次。
 
-\begin{table}[!htbp]\centering
+\begin{table}[!htbp]\centering\tablestyle
 \caption{ModelSim 评审 8 项批处理测试结果}\label{tab:judge_batch}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{6.4cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedleft\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{6.1cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedleft\arraybackslash}X@{}}
 \toprule
 \thead{用例名称} & \thead{测试平台与验证内容} & \thead{自检通过数} & \thead{结果} & \thead{实测耗时 (s)} \\
 \midrule
@@ -108,7 +107,7 @@ vsim -do sim/run_judge.do
 
 \textbf{3. 单项运行变长帧与 R97 抖动测试：}
 \begin{runcommand}
-python3 sim/run.py --sim modelsim --tests tb_sys_perf_var
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_perf_var
 \end{runcommand}
 
 \textbf{4. 完整 39 项 RTL 回归：}执行以下命令。通过判据为 \RegCount{} 项结果均为 PASS。汇总写入 \code{out/regress/}，逐项输出写入 \code{out/sim/}。
@@ -118,26 +117,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
 
 \section{综合、布局布线与门级网表后仿真}\label{sec:repro-netlist}
 
+\Needspace{5\baselineskip}
 \textbf{1. 官方逻辑综合与 VQM 网表导出：}
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1
 \end{runcommand}
 
+\Needspace{5\baselineskip}
 \textbf{2. 官方布局布线实现（策略 S2d + PRES1.50）：}
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1
 \end{runcommand}
 
+\Needspace{5\baselineskip}
 \textbf{3. 多周期引擎约束结构审计（2,755 个寄存器）：}
 \begin{runcommand}
-python3 tools/check_multicycle.py
+python3 tools/check_multicycle.py <VQM_PATH> --constraints elinx/constraints.edc --output out/multicycle_audit
 \end{runcommand}
 
+\Needspace{5\baselineskip}
 \textbf{4. 布局布线后全量静态时序分析与报告导出：}
 \begin{runcommand}
 python3 tools/report_routed_timing.py
 \end{runcommand}
 
+\Needspace{6\baselineskip}
 \textbf{5. 综合后门级网表仿真：}先对 RTL 运行五项功能联合测试，再对综合网表运行同一测试，并比较两次仿真的 7 份端口记录（\mbox{NET-02}）：
 \begin{runcommand}
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services
@@ -179,7 +183,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Coverage
 \code{coverage/modules.csv} & 24 个 RTL 模块的细分代码覆盖率明细表。 \\
 \code{coverage/coverage_numbers.json} & 39 项完整回归 24 个 RTL 模块的覆盖率精确统计数值导出文件。 \\
 \code{coverage/vcover_report.txt} & ModelSim \code{vcover} 导出的完整覆盖率文本报告。 \\
-\bottomrule
 \end{longtable}
 
 \section{关键数据溯源索引}
@@ -193,9 +196,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Coverage
 \ElinxChecks/0、\SvcChecks/0、65/0 & \code{gui_elinx_summary.json} 和 \code{gui_services_summary.json} 的 \code{results} 与 \code{check.items/errors}。 \\
 7 份一致记录；卸载检查 41 项、16 字节 & \code{gui_services_summary.json} 的 \code{exact_external_records}、\code{check.download.items}。 \\
 \CapChecks{}、\SnmpChecks{}；128 发送 / 4096 接收 & \code{capacity.log} 的 \code{[RESULT]}、\code{[CAPACITY_SUMMARY]} 及 \code{snmp.log} 的 \code{[RESULT]}。 \\
-吞吐 \Thru{}、\ThruEightyOne{}、\ThruVarHigh{} Mbps；时延 \Lat{}、\Ttx{}、\Trx{} µs；抖动 \Jit{}、\JitSameVl{}、\JitVarCycle{} µs & \code{perf_r97.json} 的 \code{main_table}，对应工况中的吞吐、\code{L_tx}、\code{L_rx}、\code{L_app_last} 及 R97 同 VL 抖动。 \\
-突发消息交付耗时 \BurstSevSeven{}、\BurstEightOne{} µs；RTC 误差 \RtcIdle{}、\RtcLoad{} ns & \code{judge_result.txt} 的 \code{JUDGE METRIC}；RTC 另见 \code{rtc.json} 的 \code{idle_max_ns}、\code{loaded_max_ns}。 \\
+吞吐 \Thru{}、\ThruEightyOne{}、\ThruVarHigh{}~Mbps；时延 \Lat{}、\Ttx{}、\Trx{}~µs；抖动 \Jit{}、\JitSameVl{}、\JitVarCycle{}~µs & \code{perf_r97.json} 的 \code{main_table}，对应工况中的吞吐、\code{L_tx}、\code{L_rx}、\code{L_app_last} 及 R97 同 VL 抖动。 \\
+突发消息交付耗时 \BurstSevSeven{}、\BurstEightOne{}~µs；RTC 误差 \RtcIdle{}、\RtcLoad{}~ns & \code{judge_result.txt} 的 \code{JUDGE METRIC}；RTC 另见 \code{rtc.json} 的 \code{idle_max_ns}、\code{loaded_max_ns}。 \\
 布线后建立裕量 +\RoutedSetup~ns、保持裕量 +\RoutedHold~ns、0 违例终点 & \code{docs/evidence/t45_timing.json} 的 \code{metrics} 与 \code{full_report}。 \\
 覆盖率 \CovStmt{}\% 语句、\CovBranch{}\% 分支、\CovCond{}\% 条件、\CovExpr{}\% 表达式、\CovFsmState{}\% 状态、\CovFsmTrans{}\% 转换、\CovToggle{}\% 翻转 & \code{sim/reference/coverage/totals.json} 的 \code{metrics} 及 \code{modules.csv} 24 个模块汇总。 \\
-\bottomrule
 \end{longtable}

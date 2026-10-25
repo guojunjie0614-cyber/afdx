@@ -15,11 +15,11 @@
 ARINC 664 通信 & 支持 P7 规定的通信功能 & UDP/IP 封装、VL 配置、BAG 调度与双网收发交付全部正确（\ref{sec:f-comm}~节） & 符合 \\
 高完整性通信 & 必须支持 & 收发 14 类异常均准确识别、分类和计数；冗余窗口内双网副本严格单次交付（\ref{sec:f-ic}~节） & 符合 \\
 SNMP 网络管理 & 支持 & v1/v2c 的 Get、GetNext、Set 与 v2 Trap 编解码正确，MIB 读回值与硬件寄存器一致（\ref{sec:f-snmp}~节） & 符合 \\
-615A 数据加卸载 & 支持 & 单文件上传后片内 RAM 数据与介质定义卸载回传文件均逐字节一致；差错与丢包按协议重传或终止（\ref{sec:f-615a}~节） & 符合 \\
-RTC 时钟同步 & 支持 & 空载/满载同步误差分别为 \RtcIdle{}/\RtcLoad{}~ns；响应丢失后自动重发恢复，非法或过期响应不误校时（\ref{sec:f-rtc}~节） & 符合 \\
+615A 软件数据加载 & 支持 & 单文件上传后片内 RAM 数据与介质定义下载（Media-Defined Download, MDD）回传文件均逐字节一致；差错与丢包按协议重传或终止（\ref{sec:f-615a}~节） & 符合 \\
+RTC 时钟同步 & 支持 & 空载/满载同步误差分别为 \RtcIdle{}/\RtcLoad{}~ns；应答丢失后自动重发恢复，非法或过期应答不误触发时钟校准（\ref{sec:f-rtc}~节） & 符合 \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\
-传输速率 & 100~Mbps & 125~MHz 八位 GMII 下，77/81 条 VL 满载每方向有效载荷吞吐达 \Thru{}/\ThruEightyOne{}~Mbps，变长高负载达 \ThruVarHigh{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
+传输速率 & 100~Mbps & 125~MHz 八位 GMII 下，77/81 条 VL 满载每方向有效载荷吞吐达 \Thru{}/\ThruEightyOne{}~Mbps，变长高负载单向达 \ThruVarHigh{}~Mbps（双向合计 1809.504~Mbps，\ref{sec:p-rate}~节） & 符合 \\
 帧格式 & 载荷 $\le$1471 字节，帧长 $\le$1518 字节，含 VLID 和 1--255 序号 & 1--1471 字节载荷、64--1518 字节帧长逐字节核对正确；VLID 映射、复位首帧 SN$=0$ 及 1--255 循环回绕正确（\ref{sec:p-frame}~节） & 符合 \\
 时延与抖动 & 端到端 $<$1--2~ms，抖动不超过几十微秒 & 稳态最大时延 \Lat{}~µs，发送间隔抖动 \Jit{}~µs；R97 同 VL 极差抖动定长为 \JitSameVl{}~µs、变长循环为 \JitVarCycle{}~µs；81 条最长帧突发排空耗时 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
 VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表配置并逐条完成双网去重交付（\ref{sec:p-vl}~节） & 符合 \\
@@ -29,7 +29,7 @@ VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全量并发
 \end{tabularx}
 \end{table}
 
-\begin{table}[!htbp]\centering
+\begin{table}[!htbp]\centering\tablestyle
 \caption{测试规模}\label{tab:summary-scale}
 \begin{tabularx}{\linewidth}{@{}lLc@{}}
 \toprule

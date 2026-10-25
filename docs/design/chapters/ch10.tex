@@ -12,17 +12,17 @@
 
 测试包含定长满载（\code{gbe77}）与四组多 VL 变长并发场景（\code{var_fixed}、\code{var_cycle}、\code{var_high}、\code{var_burst}），覆盖 1、17、256、1024、1471 字节等典型载荷，测试结果汇总于表~\ref{tab:perf-meas}。
 
-\begin{table}\centering\small
+\begin{table}[!htbp]\centering\small
 \caption{多工况性能与分段时延实测结果（直连 0 拍链路）}\label{tab:perf-meas}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{1.8cm}L}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.7cm}>{\centering\arraybackslash}p{1.3cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.5cm}>{\centering\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}X}
 \toprule
-测试工况 & 激活 VL 数 & 单向吞吐 & $L_\text{tx}$ 最大 & $L_\text{rx}$ 首/末最大 & $L_\text{app}$ 首/末最大 & R97 抖动极差 \\
+测试工况 & 激活 VL 数 & 单向吞吐\newline (Mbps) & $L_\text{tx}$ 最大\newline (µs) & $L_\text{rx}$ 首/末\newline (µs) & $L_\text{app}$ 首/末\newline (µs) & R97 抖动\newline (µs) \\
 \midrule
-\code{gbe77} & 77 VL & \Thru~Mbps & \Ttx~µs & \Trx~µs / \TrxLast~µs & 12.672~µs / \Lat~µs & \JitSameVl~µs \\
-\code{var_fixed} & 32 VL & 57.794~Mbps & 0.360~µs & 12.360~µs / 24.120~µs & 12.672~µs / 24.432~µs & 0.008~µs \\
-\code{var_cycle} & 32 VL & 70.403~Mbps & 12.216~µs & 12.352~µs / 24.112~µs & 12.936~µs / 24.424~µs & \JitVarCycle~µs \\
-\code{var_high} & 80 VL & \ThruVarHigh~Mbps & 12.016~µs & 12.360~µs / 24.120~µs & 23.872~µs / \Lat~µs & 0.008~µs \\
-\code{var_burst} & 32 VL & 57.794~Mbps & 21.128~µs & 12.352~µs / 24.112~µs & 32.824~µs / 32.888~µs & 0.008~µs \\
+\code{gbe77} & 77 & \Thru & \Ttx & \Trx{} / \TrxLast & 12.672 / \Lat & \JitSameVl \\
+\code{var_fixed} & 32 & 57.794 & 0.360 & 12.360 / 24.120 & 12.672 / 24.432 & 0.008 \\
+\code{var_cycle} & 32 & 70.403 & 12.216 & 12.352 / 24.112 & 12.936 / 24.424 & \JitVarCycle \\
+\code{var_high} & 80 & \ThruVarHigh & 12.016 & 12.360 / 24.120 & 23.872 / \Lat & 0.008 \\
+\code{var_burst} & 32 & 57.794 & 21.128 & 12.352 / 24.112 & 32.824 / 32.888 & 0.000 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -39,18 +39,18 @@
 对全工程 24 个 RTL 模块统一开启 ModelSim 代码覆盖率插桩（\code{-coverage} 参数，插桩类型包括语句 \code{s}、分支 \code{b}、条件 \code{c}、表达式 \code{e}、状态机 \code{f} 和翻转 \code{t}），回归测试平台不计入统计范围。39 项全量回归累计覆盖率如表~\ref{tab:coverage} 所示。
 
 \begin{table}\centering\small
-\caption{24 个 RTL 模块代码覆盖率汇总}\label{tab:coverage}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.6cm}L}
+\caption{24 个 RTL 模块代码覆盖率汇总与未覆盖项分类分析}\label{tab:coverage}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.0cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.4cm}L}
 \toprule
-覆盖率统计类别 & 覆盖项数 / 总统计项数 & 百分比 & 统计依据与未覆盖分析 \\
+覆盖率统计类别 & 覆盖项数 / 总项数 & 覆盖率 & 统计口径与未覆盖项分类说明 \\
 \midrule
-语句覆盖率（Statement） & 6981 / 7083 & \CovStmt\% & 未覆盖项主要为硬件异常超时与死锁保护逻辑 \\
-分支覆盖率（Branch） & 3844 / 3985 & \CovBranch\% & 覆盖正常传输、边界与异常处理分支 \\
-条件覆盖率（Condition） & 610 / 717 & \CovCond\% & 多信号组合输入判定覆盖率良好 \\
-表达式覆盖率（Expression） & 1760 / 1991 & \CovExpr\% & 逻辑表达式真值表覆盖充分 \\
-状态机状态覆盖率（FSM State） & 110 / 110 & \CovFsmState\% & 全设计所有协议与调度状态机状态全部覆盖 \\
-状态机转换覆盖率（FSM Transition） & 138 / 308 & \CovFsmTrans\% & 未覆盖部分主要为协议状态机理论互斥的转移 \\
-翻转覆盖率（Toggle） & 41314 / 53632 & \CovToggle\% & 内部总线与寄存器翻转充分 \\
+语句覆盖率（Statement） & 6981 / 7083 & \CovStmt\% & 未覆盖项主要为硬件异常超时与死锁保护熔断分支 \\
+分支覆盖率（Branch） & 3844 / 3985 & \CovBranch\% & 覆盖正常收发、协议边界与 14 类故障注入处理分支 \\
+条件覆盖率（Condition） & 610 / 717 & \CovCond\% & 覆盖各核心多信号组合输入判定；未覆盖为极端故障并发组合 \\
+表达式覆盖率（Expression） & 1760 / 1991 & \CovExpr\% & 覆盖关键数据通路表达式；未覆盖项为互斥使能判定分支 \\
+状态机状态覆盖率（FSM State） & 110 / 110 & \CovFsmState\% & 工具识别纳入统计的 110 个状态机状态全部覆盖 \\
+状态机转换覆盖率（FSM Transition） & 138 / 308 & \CovFsmTrans\% & 已覆盖 138 条主干与异常转移；未覆盖 170 条转移统计项主要包含防御性非法跳转与互斥分支 \\
+翻转覆盖率（Toggle） & 41314 / 53632 & \CovToggle\% & 未翻转主要为静态配置高位、未用地址高位及测试专用引脚 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -61,8 +61,9 @@
 
 为了验证综合与布局布线工具未改变 RTL 的行为语义，工程基于官方 eLinx 导出的真实门级网表（VQM 格式，包含芯片厂商专用原语网表）开展了综合后门级功能回归仿真。
 
-在五功能综合测试平台 \code{tb_net_services} 激励下，门级网表仿真通过 \textbf{\SvcChecks{} 项自检断言}（0 错误），仿真耗时 \textbf{\NetCliTime{} 秒}。测试平台导出的七份外部记录（包含用户消息交付内容、SNMP 读写数据、615A 加载与卸载字节、RTC 同步偏差等）与同激励 RTL 行为仿真记录逐字节完全一致，验证了综合与布局布线网表的功能正确性。
+在五功能综合测试平台 \code{tb_net_services} 激励下，门级网表仿真通过 \textbf{\SvcChecks{} 项自检断言}（0 错误），仿真耗时 \textbf{\NetCliTime{} 秒}。测试平台导出的七份外部记录（包含用户消息交付内容、SNMP 读写数据、615A 加载与卸载字节、RTC 同步偏差等）与同激励 RTL 行为仿真记录逐字节完全一致，验证了综合网表在联合测试场景下的功能正确性。
 
+\Needspace{8\baselineskip}
 \section{硬件可观察性与可控性机制}\label{sec:observability}
 
 设计在硬件架构层提供了全方位的调试与验证支持：

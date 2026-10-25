@@ -6,7 +6,7 @@
 
 选题指南（正文第 2--4 页）对 AFDX 端系统提出三类要求：
 \begin{itemize}
-  \item \textbf{功能：}ARINC 664 Part 7 通信、高完整性数据通信、SNMP 网络管理、615A 数据加卸载、RTC 时钟同步。
+  \item \textbf{功能：}ARINC 664 Part 7 通信、高完整性数据通信、SNMP 网络管理、ARINC 615A 软件数据加载、RTC 纳秒时钟同步。
   \item \textbf{技术指标：}传输速率 100~Mbps；帧格式采用 IEEE 802.3 格式及 ARINC 664 扩展，含 VLID 和 1--255 的序列号，有效载荷不超过 1471 字节，总帧长不超过 1518 字节；端到端时延小于 1--2~ms，抖动不超过几十微秒；最多 128 条发送 VL、4096 条接收 VL。
   \item \textbf{接口与编码：}顶层模块统一采用 \code{AFDX_top} 模板的 8 个端口；端口、信号和寄存器用小写，参数用大写，重要代码段须有简洁注释。
 \end{itemize}
@@ -31,11 +31,11 @@ MAC 实现要求\newline (R46, R57, R111) & R46/R57 允许调用厂商 IP；R111
 \end{tabularx}
 \end{table}
 
-端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 握手完成）开始计算，至接收端应用接口完成末字节交付时（$d_\text{last}$ 有效）结束，包含发送排队、组帧、MAC 处理、物理线路传输及接收处理的全流程时间。按 1022 答疑 R97 口径，端到端时延严格分解为：
+端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 握手完成）开始计算，涵盖发送排队、组帧、MAC 处理、物理链路串行传输及接收处理的全流程时间。严格依据官方 1022 答疑 R97 口径，分别定义首字节端到端交付时延 $L_\text{app}$ 与末字节端到端交付时延 $L_\text{app,last}$：
 \begin{equation}
-L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx}
+L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx},\qquad L_\text{app,last} = L_\text{tx} + L_\text{gmii} + L_\text{rx,last}
 \end{equation}
-其中 $L_\text{tx}$ 为应用提交末字节至 GMII 发送端输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的网络链路传输时延（直连模型下为 0 或固定模拟延迟）；$L_\text{rx}$ 为接收端 GMII 收到 SFD 至应用接口完成交付的时间（首字节 $L_\text{rx}$ 与末字节 $L_\text{rx,last}$）。各阶段拍数与流水预算推导见第~\ref{sec:budget}~节。
+其中 $L_\text{tx}$ 为应用提交末字节至 GMII 发送端输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的网络链路传输时延（直连模型下为 0 或固定仿真延迟）；$L_\text{rx}$ 为接收端 GMII 收到 SFD 至应用接口输出首字节交付的时间，$L_\text{rx,last}$ 为交付末字节的时间。各阶段拍数与流水预算推导见第~\ref{sec:budget}~节。
 
 \FloatBarrier
 \section{设计规格}
@@ -47,9 +47,9 @@ L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx}
 \longtablehead{3}{编号 & 规格 & 内容}
 F1 & 用户数据发送 & 每个端系统支持 128 条发送 VL，每条均可独立配置 BAG（以时钟周期计，不超过 $2^{30}$）、VLID、源/目的 IP 与端口、最大载荷和队列深度；消息长度为 1--1471 字节；按 VL 配置选择 A 网、B 网或双网发送 \\
 F2 & 用户数据接收 & 支持 4096 条接收 VL，可映射任意 16 位 VLID；检查前导码、FCS、帧长、IP 头校验和、UDP 长度与校验和；两网分别进行完整性检查；启用冗余管理且副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次 \\
-F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；团体名（\code{community}）校验 \\
-F4 & 615A 数据加卸载 & 基于 TFTP 的上传操作和介质定义卸载；LUH 头文件与数据文件 CRC-16 校验；超时重传 \\
-F5 & RTC 时钟同步 & SNTPv4 主从对时；32 位秒加 32 位纳秒；响应须回显本次请求的 Transmit 时间戳 \\
+F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；Community（\code{community}）校验 \\
+F4 & 615A 软件数据加载 & 基于 TFTP 的单文件上传与介质定义下载（Media-Defined Download, MDD）；LUH 头文件与数据文件 CRC-16 硬件校验；超时重传机制 \\
+F5 & RTC 时钟同步 & SNTPv4 纳秒级时钟同步；32 位秒加 32 位纳秒时间戳；应答报文回显客户端 Transmit 时间戳 \\
 P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（定长满载实测 \Thru~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
 P2 & 端到端时延 & 不超过 2000~µs（满载稳态最大端到端时延实测为 \Lat~µs） \\
 P3 & 传输抖动 & 发送间隔抖动实测为 \Jit~µs；同 VL 端到端时延极差定长满载实测仅 \JitSameVl~µs、变长循环为 \JitVarCycle~µs \\
@@ -62,14 +62,14 @@ C1 & 时钟与物理时序 & 单一 125~MHz 全局时钟，周期 8~ns；管理�
 C2 & 编码规范 & 信号小写、参数大写；每个模块的文件开头说明其作用、接口和关键时序 \\
 \end{longtable}
 
-\Needspace{26\baselineskip}
+\Needspace{8\baselineskip}
 \section{协议依据}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.2cm-6\tabcolsep\relax}}
 \caption{协议依据与版本}\label{tab:proto}\\
 \longtablehead{3}{功能 & 依据 & 实现范围}
 AFDX 网络 & ARINC 664 Part 7（2005-06-27） & 帧格式、VL 与 BAG、完整性检查、冗余管理 \\
-数据加卸载 & ARINC 615A-2（2002-05-10）、ARINC 665-1、RFC 1350 & 上传、介质定义卸载；协议文件版本 A4，兼容 A3 \\
+数据加载 & ARINC 615A-2（2002-05-10）、ARINC 665-1、RFC 1350 & 单文件上传与介质定义下载（MDD）；协议文件版本 A4，向下兼容 A3 \\
 网络管理 & RFC 1157、RFC 3416、RFC 3418 & SNMPv1/v2c，BER 编码 \\
 时钟同步 & RFC 4330 & SNTPv4 48 字节报文 \\
 \end{longtable}
