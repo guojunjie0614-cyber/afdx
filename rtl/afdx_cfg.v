@@ -23,6 +23,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
     // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
     output wire [7:0] snmp_wr_sel,
+    output wire [6:0] loader_wr_sel,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
@@ -208,6 +209,18 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         cfg_wr && cfg_write_addr == ADDR_SNMP_ENABLE
     };
     assign snmp_wr_sel = {8{cfg_ready_m}} & snmp_write_hit;
+    // 加卸载同样先译码完整主机地址，ready 只参与末级选通，不增加写入拍数。
+    // 位 0..6 对应 b0、b1、b4、b8、b9、ba、bb。
+    (* keep = 1 *) wire [6:0] loader_write_hit = {
+        cfg_wr && cfg_write_addr == 18'h000bb,
+        cfg_wr && cfg_write_addr == 18'h000ba,
+        cfg_wr && cfg_write_addr == 18'h000b9,
+        cfg_wr && cfg_write_addr == 18'h000b8,
+        cfg_wr && cfg_write_addr == 18'h000b4,
+        cfg_wr && cfg_write_addr == 18'h000b1,
+        cfg_wr && cfg_write_addr == 18'h000b0
+    };
+    assign loader_wr_sel = {7{cfg_ready_m}} & loader_write_hit;
 
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
     // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
