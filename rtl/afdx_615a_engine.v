@@ -139,96 +139,96 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam REASON_RETRY_LIMIT = 5;
     localparam IDLE = 0;
     localparam WAIT_PACKET = 1;
-    localparam DISPATCH = 2;
-    localparam DISPATCH_CHECK = 72, DISPATCH_SELECT = 73, PACKET_START = 74, BUILD_CANDIDATE = 75;
-    localparam NAME = 3;
+    localparam [7:0] DISPATCH = 8'd2;
+    localparam [7:0] DISPATCH_CHECK = 8'd72, DISPATCH_SELECT = 8'd73, PACKET_START = 8'd74, BUILD_CANDIDATE = 8'd75;
+    localparam [7:0] NAME = 8'd3;
     localparam NAME_BYTE = 4;
-    localparam MODE = 5;
+    localparam [7:0] MODE = 8'd5;
     localparam MODE_BYTE = 6;
-    localparam REQUEST_OK = 7;
-    localparam DENY_SEND = 70;
+    localparam [7:0] REQUEST_OK = 8'd7;
+    localparam [7:0] DENY_SEND = 8'd70;
 
     // 这些状态从存储器读取字节或数字。
-    localparam FETCH = 8;
-    localparam FETCH_WAIT = 9;
-    localparam FETCH_CAPTURE = 10;
-    localparam FETCH_DONE = 11;
+    localparam [7:0] FETCH = 8'd8;
+    localparam [7:0] FETCH_WAIT = 8'd9;
+    localparam [7:0] FETCH_CAPTURE = 8'd10;
+    localparam [7:0] FETCH_DONE = 8'd11;
     localparam NUMBER = 12;
-    localparam NUMBER_BYTE = 13;
+    localparam [7:0] NUMBER_BYTE = 8'd13;
 
     // 这些状态构造并发送报文。
-    localparam BUILD = 14;
+    localparam [7:0] BUILD = 8'd14;
     localparam BUILD_PREP = 60;
     localparam EMIT = 15;
     localparam BUILD_FLUSH = 16;
-    localparam TX_ADDR = 17;
+    localparam [7:0] TX_ADDR = 8'd17;
     localparam TX_WAIT = 18;
     localparam TX_CAPTURE = 19;
-    localparam TX_SEND = 20;
-    localparam ACK_MAIN = 28;
+    localparam [7:0] TX_SEND = 8'd20;
+    localparam [7:0] ACK_MAIN = 8'd28;
 
     // 这些状态计算进度并报告加载状态。
-    localparam START_LUS = 21;
-    localparam RATIO_SCALE = 22;
-    localparam RATIO_SUB = 23;
-    localparam RATIO_DEC = 24;
-    localparam LUS_WRQ = 25;
-    localparam LUS_DATA = 26;
-    localparam LUS_DONE = 27;
+    localparam [7:0] START_LUS = 8'd21;
+    localparam [7:0] RATIO_SCALE = 8'd22;
+    localparam [7:0] RATIO_SUB = 8'd23;
+    localparam [7:0] RATIO_DEC = 8'd24;
+    localparam [7:0] LUS_WRQ = 8'd25;
+    localparam [7:0] LUS_DATA = 8'd26;
+    localparam [7:0] LUS_DONE = 8'd27;
 
     // 这些状态接收并保存文件内容。
-    localparam DATA_COPY = 29;
+    localparam [7:0] DATA_COPY = 8'd29;
     localparam DATA_BYTE = 30;
-    localparam DATA_END = 31;
+    localparam [7:0] DATA_END = 8'd31;
 
     // 这些状态检查上传请求列表。
-    localparam LUR_START = 32;
+    localparam [7:0] LUR_START = 8'd32;
     localparam LUR_LENGTH = 33;
     localparam LUR_VERSION = 34;
     localparam LUR_COUNT = 35;
     localparam LUR_HLEN = 36;
     localparam LUR_PLEN = 37;
-    localparam LUR_OFFSETS = 61;
-    localparam LUR_READY = 38;
+    localparam [7:0] LUR_OFFSETS = 8'd61;
+    localparam [7:0] LUR_READY = 8'd38;
 
     // 这些状态获取并检查头文件。
-    localparam RRQ_HEADER = 39;
-    localparam HEADER_START = 40;
+    localparam [7:0] RRQ_HEADER = 8'd39;
+    localparam [7:0] HEADER_START = 8'd40;
     localparam HEADER_LENGTH = 41;
     localparam HEADER_VERSION = 42;
     localparam HEADER_PTR = 43;
-    localparam HEADER_PTR_CHECK = 71;
-    localparam HEADER_PTR_MERGE = 76;
-    localparam HEADER_CRC = 44;
+    localparam [7:0] HEADER_PTR_CHECK = 8'd71;
+    localparam [7:0] HEADER_PTR_MERGE = 8'd76;
+    localparam [7:0] HEADER_CRC = 8'd44;
     localparam HEADER_CRC_BYTE = 45;
     localparam HEADER_CRC_EXPECT = 46;
     localparam HEADER_CRC_CHECK = 47;
     localparam HEADER_COUNT = 48;
     localparam HEADER_NLEN = 49;
     localparam HEADER_PLEN = 50;
-    localparam HEADER_SIZE = 51;
+    localparam [7:0] HEADER_SIZE = 8'd51;
     localparam HEADER_DCRC = 52;
     localparam HEADER_READY = 53;
 
     // 这些状态获取并校验数据文件。
-    localparam RRQ_DATA = 54;
-    localparam DATA_CHECK = 55;
-    localparam DATA_SUCCESS = 56;
+    localparam [7:0] RRQ_DATA = 8'd54;
+    localparam [7:0] DATA_CHECK = 8'd55;
+    localparam [7:0] DATA_SUCCESS = 8'd56;
 
     // 这些状态检查卸载请求并传送加载区内容。
     localparam LNR_USER = 62;
-    localparam LNR_NAME = 63;
+    localparam [7:0] LNR_NAME = 8'd63;
     localparam LNR_BYTE = 64;
-    localparam LNR_READY = 65;
-    localparam DL_WRQ = 66;
-    localparam DL_BLOCK = 67;
-    localparam DL_SIZE = 68;
-    localparam DL_ACK = 69;
+    localparam [7:0] LNR_READY = 8'd65;
+    localparam [7:0] DL_WRQ = 8'd66;
+    localparam [7:0] DL_BLOCK = 8'd67;
+    localparam [7:0] DL_SIZE = 8'd68;
+    localparam [7:0] DL_ACK = 8'd69;
 
     // 这些状态报告失败或结束本次操作。
-    localparam FAILURE = 57;
+    localparam [7:0] FAILURE = 8'd57;
     localparam FAILURE_SENT = 58;
-    localparam DONE = 59;
+    localparam [7:0] DONE = 8'd59;
 
     // state 记录当前文件处理步骤，HEADER_CRC_EXPECT 是未使用的编码。
     // wait_kind 记录当前等待哪一种确认或文件，packet_type 选择待发报文。
@@ -238,10 +238,12 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam PK_ACK = 0, PK_LUI = 1, PK_RRQ = 2, PK_LUS_WRQ = 3, PK_LUS = 4, PK_ERROR = 5, PK_DL_DATA = 6;
 
     // status 寄存器的取值：空闲、进行中、成功、失败。
-    localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
+    localparam ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
+    localparam [1:0] ST_IDLE = 2'd0;
 
     // 状态文件里的操作状态码：已接受、进行中、已完成，以及目标端中止（0x1003）。
-    localparam LUS_NONE = 0, LUS_ACCEPTED = 1, LUS_IN_PROGRESS = 2, LUS_COMPLETED = 3, LUS_ABORTED = 16'h1003;
+    localparam LUS_IN_PROGRESS = 2, LUS_COMPLETED = 3, LUS_ABORTED = 16'h1003;
+    localparam [15:0] LUS_NONE = 16'd0, LUS_ACCEPTED = 16'd1;
 
     // 目标端中止时，状态文件里逐文件的状态码是 0x1007，下面是它的高、低字节。
     localparam FILE_ABORTED_HIGH = 8'h10, FILE_ABORTED_LOW = 7;
@@ -302,7 +304,8 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam HEADER_MIN_BYTES = 32, HEADER_DATA_PTR_MIN_WORDS = 13, HEADER_TRAILER_BYTES = 6;
     localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 10;
 
-    localparam FETCH_WAIT_A = 240, FETCH_WAIT_B = 241, DENY_FLUSH = 242, DENY_FINISH = 243, FETCH_WAIT_C = 244, DATA_DISPATCH = 245, RATIO_TEST = 246, NUMBER_READY = 247, LNR_USER_CHECK = 248, RETRY_DECIDE = 249;
+    localparam NUMBER_READY = 247;
+    localparam [7:0] FETCH_WAIT_A = 8'd240, FETCH_WAIT_B = 8'd241, DENY_FLUSH = 8'd242, DENY_FINISH = 8'd243, FETCH_WAIT_C = 8'd244, DATA_DISPATCH = 8'd245, RATIO_TEST = 8'd246, LNR_USER_CHECK = 8'd248, RETRY_DECIDE = 8'd249;
     reg  enable;
     reg  configured;
     reg [15:0] request_port;
@@ -1205,7 +1208,7 @@ next_error_position = packet_pos - 10'd4;
             next_number = 0;
             next_number_left = count;
             next_num_return = destination;
-            next_state = NUMBER;
+            next_state = 8'd12;
         end
     endtask
 
@@ -1273,7 +1276,7 @@ next_error_position = packet_pos - 10'd4;
         input [7:0] code;
         begin
             next_reason = code;
-            next_status = ST_FAILED;
+            next_status = 2'd3;
             next_state = FAILURE;
         end
     endtask
@@ -1434,7 +1437,7 @@ next_error_position = packet_pos - 10'd4;
                     next_command_length = rx_length;
                     next_command_sport = peer_sp;
                     next_command_dport = peer_dp;
-                    next_request_resume = IDLE;
+                    next_request_resume = 8'd0;
                     next_state = DISPATCH_CHECK;
                 end
 
@@ -1447,7 +1450,7 @@ next_error_position = packet_pos - 10'd4;
                         next_command_length = rx_length;
                         next_command_sport = peer_sp;
                         next_command_dport = peer_dp;
-                        next_request_resume = WAIT_PACKET;
+                        next_request_resume = 8'd1;
                         next_state = DISPATCH_CHECK;
                         next_timer = timeout_cycles;
                     end
@@ -1461,8 +1464,8 @@ next_error_position = packet_pos - 10'd4;
                 RETRY_DECIDE : begin
                         if (retries == retry_limit) begin
                             if (wait_kind == WK_LUS_ACK0 || wait_kind == WK_LUS_ACK1) begin
-                                next_reason = REASON_RETRY_LIMIT;
-                                next_status = ST_FAILED;
+                                next_reason = 8'd5;
+                                next_status = 2'd3;
                                 next_state = DONE;
                             end
                             else fail (REASON_RETRY_LIMIT);
@@ -1515,8 +1518,8 @@ next_error_position = packet_pos - 10'd4;
                     end
                     dispatch_action[1] : fail (REASON_TFTP_ERROR);
                     dispatch_action[2] : begin
-                        next_reason = REASON_TFTP_ERROR;
-                        next_status = ST_FAILED;
+                        next_reason = 8'd4;
+                        next_status = 2'd3;
                         next_state = DONE;
                     end
                     dispatch_action[3] : begin
@@ -1551,7 +1554,7 @@ next_error_position = packet_pos - 10'd4;
                             next_ack_number = command_block;
                             make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, command_sport, WAIT_PACKET);
                         end
-                        else next_state = WAIT_PACKET;
+                        else next_state = 8'd1;
                     end
 
                 // NAME：读取文件名的下一字节，然后转 NAME_BYTE。
@@ -1570,7 +1573,7 @@ next_error_position = packet_pos - 10'd4;
                     next_state = NAME;
                 end
                 else if (name_bad) begin
-                    next_reason = REASON_DESCRIPTION;
+                    next_reason = 8'd1;
                     make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                 end
                 else if (name_terminal) begin
@@ -1587,7 +1590,7 @@ next_error_position = packet_pos - 10'd4;
 
                 // MODE_BYTE：只接受 octet 模式，读完后转 REQUEST_OK，否则返回错误。
                 MODE_BYTE : if (mode_bad) begin
-                    next_reason = REASON_TFTP_ERROR;
+                    next_reason = 8'd4;
                     make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     // 按 RFC 2347 忽略模式字段后的选项，继续使用基本文件传输方式。
                 end
@@ -1616,16 +1619,16 @@ next_error_position = packet_pos - 10'd4;
                         next_main_peer = command_sport;
                         next_main_tid = tid_sequence;
                         next_tid_sequence = tid_sequence + 1'b1;
-                        next_file_kind = FILE_LIST;
+                        next_file_kind = 2'd0;
                         next_metadata_size = 0;
                         next_block_number = 1;
                         next_ack_number = 0;
-                        next_wait_kind = WK_DATA;
+                        next_wait_kind = 3'd2;
                         make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else if ( ! request_write) begin
-                        next_status = ST_BUSY;
-                        next_reason = REASON_NONE;
+                        next_status = 2'd1;
+                        next_reason = 8'd0;
                         next_download_mode = request_download;
                         next_main_peer = command_sport;
                         next_main_tid = tid_sequence;
@@ -1638,11 +1641,11 @@ next_error_position = packet_pos - 10'd4;
                         next_dl_acked = 0;
                         next_manifest = 0;
                         next_lus_counter = 0;
-                        next_wait_kind = WK_LUI_ACK;
+                        next_wait_kind = 3'd0;
                         make_packet (PK_LUI, LUI_PACKET_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
                     else begin
-                        next_reason = REASON_TFTP_ERROR;
+                        next_reason = 8'd4;
                         make_packet (PK_ERROR, ERROR_PACKET_BYTES, tid_sequence, command_sport, IDLE);
                     end
                 end
@@ -1738,7 +1741,7 @@ next_error_position = packet_pos - 10'd4;
                     next_after_tx = pending_after;
                     next_retries = 0;
                     next_timer = 0;
-                    next_state = BUILD_PREP;
+                    next_state = 8'd60;
                 end
 
                 // BUILD_PREP：计算本字节使用的地址，然后转 BUILD。
@@ -1758,7 +1761,7 @@ next_error_position = packet_pos - 10'd4;
                 // BUILD：选择本字节内容，需读存储器时先读取，随后转 EMIT。
                 BUILD : begin
                     next_build_value = 0;
-                    next_state = EMIT;
+                    next_state = 8'd15;
                     case (packet_type) // synthesis parallel_case
                         PK_ACK : begin
                             next_build_value = candidate_byte[PK_ACK];
@@ -1874,26 +1877,26 @@ next_error_position = packet_pos - 10'd4;
 
                 // LUS_WRQ：请求发送状态文件，发完后等待第零块确认。
                 LUS_WRQ : begin
-                    next_wait_kind = WK_LUS_ACK0;
+                    next_wait_kind = 3'd3;
                     make_packet (PK_LUS_WRQ, LUS_WRQ_PACKET_BYTES, status_tid, request_port, WAIT_PACKET);
                 end
 
                 // LUS_DATA：发送状态文件数据，发完后等待第一块确认。
                 LUS_DATA : begin
-                    next_wait_kind = WK_LUS_ACK1;
+                    next_wait_kind = 3'd4;
                     make_packet (PK_LUS, manifest ? lus_packet_len : LUS_SHORT_PACKET_BYTES, status_tid,
                                  status_peer, WAIT_PACKET);
                 end
 
                 // LUS_DONE：初始状态文件获确认后转 IDLE，等待文件列表。
                 LUS_DONE : begin
-                    next_wait_kind = WK_LUR;
-                    next_state = IDLE;
+                    next_wait_kind = 3'd1;
+                    next_state = 8'd0;
                 end
 
                 // ACK_MAIN：构造当前数据块的确认，发送后返回 ack_return。
                 ACK_MAIN : begin
-                    next_wait_kind = WK_DATA;
+                    next_wait_kind = 3'd2;
                     make_packet (PK_ACK, TFTP_HEADER_BYTES, main_tid, main_peer, ack_return);
                 end
 
@@ -1956,9 +1959,9 @@ next_error_position = packet_pos - 10'd4;
                         else next_state = DATA_COUNTS_WAIT;
                     end
                     else begin
-                        next_ack_return = WAIT_PACKET;
+                        next_ack_return = 8'd1;
                         if (file_kind == FILE_DATA && block_number == 1) begin
-                            next_lus_status = LUS_IN_PROGRESS;
+                            next_lus_status = 16'd2;
                             next_lus_return = ACK_MAIN;
                             next_state = START_LUS;
                         end
@@ -2010,7 +2013,7 @@ next_error_position = packet_pos - 10'd4;
                 LUR_READY : begin
                     next_lus_packet_len = lus_tail_pos + LUS_TAIL_BYTES;
                     next_manifest = 1;
-                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_status = 16'd2;
                     next_lus_return = RRQ_HEADER;
                     next_state = START_LUS;
                 end
@@ -2043,7 +2046,7 @@ next_error_position = packet_pos - 10'd4;
 
                 // LNR_READY：报告卸载列表已接受，状态获确认后转 DL_WRQ。
                 LNR_READY : begin
-                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_status = 16'd2;
                     next_lus_return = DL_WRQ;
                     next_state = START_LUS;
                 end
@@ -2078,12 +2081,12 @@ next_error_position = packet_pos - 10'd4;
                     next_dl_acked = dl_acked + copy_len;
                     next_block_number = block_number + 1'b1;
                     if (copy_len < TFTP_BLOCK_BYTES) begin
-                        next_lus_status = LUS_COMPLETED;
+                        next_lus_status = 16'd3;
                         next_lus_return = DONE;
                         next_state = START_LUS;
                     end
                     else if (block_number == 1) begin
-                        next_lus_status = LUS_IN_PROGRESS;
+                        next_lus_status = 16'd2;
                         next_lus_return = DL_BLOCK;
                         next_state = START_LUS;
                     end
@@ -2093,13 +2096,13 @@ next_error_position = packet_pos - 10'd4;
                 // ======== 第七部分：获取并检查头文件和数据文件 ========
                 // RRQ_HEADER：请求加载头文件，发完后等待第一块数据。
                 RRQ_HEADER : begin
-                    next_file_kind = FILE_HEADER;
+                    next_file_kind = 2'd1;
                     next_metadata_size = 0;
                     next_main_tid = tid_sequence;
                     next_main_peer = 0;
                     next_tid_sequence = tid_sequence + 1'b1;
                     next_block_number = 1;
-                    next_wait_kind = WK_DATA;
+                    next_wait_kind = 3'd2;
                     make_packet (PK_RRQ, header_name_len + 8, tid_sequence, request_port, WAIT_PACKET);
                 end
 
@@ -2193,21 +2196,21 @@ next_error_position = packet_pos - 10'd4;
                 // HEADER_READY：保存预期校验值并报告进度，获确认后转 RRQ_DATA。
                 HEADER_READY : begin
                     next_expected_crc = number[15:0];
-                    next_lus_status = LUS_IN_PROGRESS;
+                    next_lus_status = 16'd2;
                     next_lus_return = RRQ_DATA;
                     next_state = START_LUS;
                 end
 
                 // RRQ_DATA：请求数据文件，发完后等待第一块数据。
                 RRQ_DATA : begin
-                    next_file_kind = FILE_DATA;
+                    next_file_kind = 2'd2;
                     next_loaded = 0;
                     next_data_crc = CRC16_INIT;
                     next_main_tid = tid_sequence;
                     next_main_peer = 0;
                     next_tid_sequence = tid_sequence + 1'b1;
                     next_block_number = 1;
-                    next_wait_kind = WK_DATA;
+                    next_wait_kind = 3'd2;
                     make_packet (PK_RRQ, data_name_len + 9, tid_sequence, request_port, WAIT_PACKET);
                 end
 
@@ -2223,7 +2226,7 @@ next_error_position = packet_pos - 10'd4;
                 // DATA_SUCCESS：公布加载区有效长度并报告成功，获确认后转 DONE。
                 DATA_SUCCESS : begin
                     next_available_size = loaded;
-                    next_lus_status = LUS_COMPLETED;
+                    next_lus_status = 16'd3;
                     next_lus_return = DONE;
                     next_state = START_LUS;
                 end
@@ -2245,11 +2248,11 @@ next_error_position = packet_pos - 10'd4;
                 // DONE：保存最终结果，然后转 IDLE 等待下一次操作。
                 DONE : begin
                     next_status = reason == REASON_NONE ? ST_SUCCESS : ST_FAILED;
-                    next_state = IDLE;
-                    next_wait_kind = WK_LUR;
+                    next_state = 8'd0;
+                    next_wait_kind = 3'd1;
                 end
 
-                default : next_state = IDLE;
+                default : next_state = 8'd0;
             endcase
     end
     always @(posedge clk) begin
@@ -2279,8 +2282,8 @@ next_error_position = packet_pos - 10'd4;
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_29) begin
         if (reset) begin
-            reason <= REASON_NONE;
-            state <= IDLE;
+            reason <= 8'd0;
+            state <= 8'd0;
             command_op <= 0;
         end
         else begin
@@ -2406,7 +2409,7 @@ next_error_position = packet_pos - 10'd4;
             download_mode <= 0;
             request_download <= 0;
             request_unsupported <= 0;
-            request_resume <= IDLE;
+            request_resume <= 8'd0;
             deny_empty <= 0;
             deny_unsupported <= 0;
             deny_pos <= 0;
@@ -2575,7 +2578,7 @@ next_error_position = packet_pos - 10'd4;
             load_re <= 0;
             load_ra <= 0;
             manifest <= 0;
-            file_kind <= FILE_LIST;
+            file_kind <= 2'd0;
         end
         else begin
             load_wd <= next_load_wd;

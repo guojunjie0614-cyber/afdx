@@ -32,7 +32,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     localparam PREAMBLE_BYTE = 8'h55, SFD_BYTE = 8'hd5, CRC_INIT = 32'hffffffff;
 
     // 两帧之间至少空闲的拍数。
-    localparam IFG_CYCLES = 12;
+    localparam [6:0] IFG_CYCLES = 7'd12;
 
     // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
     // gap_left 保证两帧之间至少空闲 12 拍。

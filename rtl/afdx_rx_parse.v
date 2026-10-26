@@ -38,7 +38,7 @@ module afdx_rx_parse #(
     // ev[7] 表示用户数据缓存已满。
     output reg [7:0] ev);
 
-    localparam [RX_RING_AW:0] CAPACITY = (1 << RX_RING_AW);
+    localparam [RX_RING_AW:0] CAPACITY = {1'b1, {RX_RING_AW{1'b0}}};
 
     // 帧内字节位置，从目的以太网地址的首字节数起（首字节为 0）。
     localparam POS_VLID_LOW = 5, POS_ETHERTYPE_HIGH = 12, POS_ETHERTYPE_LOW = 13;
@@ -68,7 +68,7 @@ module afdx_rx_parse #(
 
     // length_phase 和 finish_phase 的取值。
     localparam LEN_WAIT = 0, LEN_SIZES = 1, LEN_LIMITS = 2;
-    localparam FIN_WAIT = 0, FIN_SETTLE = 1, FIN_REPORT = 2;
+    localparam [1:0] FIN_WAIT = 2'd0, FIN_SETTLE = 2'd1, FIN_REPORT = 2'd2;
 
     // committed 指向已接纳数据的末端，trial 指向本帧暂存位置。
     // frame_begin 记录本帧起点，失败时写位置退回这里。

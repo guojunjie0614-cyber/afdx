@@ -84,15 +84,16 @@ module afdx_tx_engine #(
         end
     end
 
-    localparam ENQ_ACCEPTED = 0;
-    localparam ENQ_DISABLED = 1;
-    localparam ENQ_FULL = 2;
-    localparam ENQ_TOO_LONG = 3;
-    localparam INIT = 0, IDLE = 1, ENQ = 2, GRANT = 3, START = 4;
+    localparam [2:0] ENQ_ACCEPTED = 3'd0;
+    localparam [2:0] ENQ_DISABLED = 3'd1;
+    localparam [2:0] ENQ_FULL = 3'd2;
+    localparam [2:0] ENQ_TOO_LONG = 3'd3;
+    localparam [2:0] INIT = 3'd0, IDLE = 3'd1, ENQ = 3'd2, GRANT = 3'd3, START = 3'd4;
 
     // 发送虚拟链路共 128 条，LAST_VL 是最后一条的序号。
     // 连续扫描满 SCAN_QUOTA 条后，先让等待中的新消息入队。
-    localparam LAST_VL = 127, SCAN_QUOTA = 16;
+    localparam LAST_VL = 127;
+    localparam [4:0] SCAN_QUOTA = 5'd16;
 
     // 帧序号用到 255 后回到 1；0 只用于复位后的第一帧。
     localparam SN_MAX = 255, SN_FIRST = 8'd1;
