@@ -60,13 +60,19 @@ def report(route_path,deadline):
         proof=check_multicycle.audit(netlist,ROOT/'elinx/constraints.edc',audit_path)
         measured=check_multicycle.timing(database,proof['patterns'],audit_path)
         if not proof['passed'] or not measured['passed']:raise RuntimeError('Multicycle scope/timing audit failed')
+        clock=next((row for row in measured['clocks'] if row['name']=='clk'),measured['clocks'][0])
+        setup_worst_ns=clock['setup_worst_slack']/1000.0
         flow.result.update(completed=True,timing_database=str(database),audit=str(audit_path),
+                           setup_uncertainty_ns=proof['setup_uncertainty_ns'],
+                           setup_slack_at_period_ns=round(setup_worst_ns+proof['setup_uncertainty_ns'],6),
                            constrained_registers=proof['constrained_registers'],
                            invalid_registers=proof['invalid_registers'],
                            internal_register_arcs=proof['internal_register_arcs'],
                            uncovered_internal_arcs=proof['uncovered_internal_arcs'],
                            timing=measured)
-        print('FULL ROUTED TIMING PASS '+json.dumps(measured,ensure_ascii=False),flush=True)
+        print('FULL ROUTED TIMING PASS setup_uncertainty_ns={:g} setup_slack_at_period_ns={:+.3f} '
+              .format(proof['setup_uncertainty_ns'],flow.result['setup_slack_at_period_ns'])
+              +json.dumps(measured,ensure_ascii=False),flush=True)
     except Exception as error:
         flow.result.update(completed=False,error=str(error))
         print('FULL ROUTED TIMING FAIL '+str(error),flush=True)

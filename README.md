@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-当前源码采用 T45 的 S2d 结构改动（9b277556）与初始化参考修复（bb1180d1），使用可由界面复现的 PRES1.50 布线选项；验证截至 2026-10-24。125 MHz 全量内部路径 setup 0 失败，最差 +0.013 ns、hold +0.229 ns，满足 125 MHz 时序要求。
+当前源码为 t51 交付候选（T49 C1–C3、T50 R1），使用可由界面复现的 PRES1.50 布线选项；验证截至 2026-10-25。时钟约束为 125 MHz（周期 8.000 ns），并为建立时间额外设置 0.30 ns 时钟不确定度。实现后全部 45792 个端点满足要求：setup 0 失败、最差 +0.024 ns、hold +0.229 ns；按 8 ns 周期计，setup 实际余量为 +0.324 ns。
 
 本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
 
@@ -69,48 +69,48 @@
 
 | 图片 | 时间窗口（us） | 观察内容 |
 |---|---:|---|
-| `tx_dual_1.png` | 685.900–688.900 | 应用输入与 A、B 双网发送的时序总览 |
-| `tx_dual_2.png` | 688.100–688.420 | 放大双网帧起点和部分帧头字节 |
-| `rx_redundancy_1.png` | 3013.980–3014.240 | A 网交付事件及交付给应用的字节 |
-| `rx_redundancy_2.png` | 3029.820–3030.080 | B 网帧尾字节与副本丢弃事件，光标间隔 16.016 us |
-| `rx_fcs_error_1.png` | 798.350–799.600 | A 网 FCS 错误计数从 0 变为 1，B 网正常交付 |
-| `rx_fcs_error_2.png` | 798.700–799.020 | 放大错误帧的部分字节 |
-| `rx_fcs_error_3.png` | 972.992–973.040 | 独立读地址 0x49，一拍请求经两级流水后有效返回 1 |
+| `tx_dual_1.png` | 686.020–689.020 | 应用输入与 A、B 双网发送的时序总览 |
+| `tx_dual_2.png` | 688.220–688.540 | 放大双网帧起点和部分帧头字节 |
+| `rx_redundancy_1.png` | 3014.186–3014.446 | A 网交付事件及交付给应用的字节 |
+| `rx_redundancy_2.png` | 3030.026–3030.286 | B 网帧尾字节与副本丢弃事件，光标间隔 16.016 us |
+| `rx_fcs_error_1.png` | 798.446–799.696 | A 网 FCS 错误计数从 0 变为 1，B 网正常交付 |
+| `rx_fcs_error_2.png` | 798.780–799.100 | 放大错误帧的部分字节 |
+| `rx_fcs_error_3.png` | 972.991–973.039 | 独立读地址 0x49，一拍请求经两级流水后有效返回 1 |
 | `tx_bag.png` | 10.000–830.000 | 两个帧起点的光标间隔为 800 us |
-| `snmp_get_1.png` | 525.280–525.600 | Get 请求的双网帧起点及部分帧头字节 |
-| `snmp_get_2.png` | 531.660–531.980 | Response 的双网帧起点及部分帧头字节 |
+| `snmp_get_1.png` | 525.400–525.720 | Get 请求的双网帧起点及部分帧头字节 |
+| `snmp_get_2.png` | 537.804–538.124 | Response 的双网帧起点及部分帧头字节 |
 
 本轮 CE2 八用例实测如下；耗时随电脑和当时负载变化，合计包含编译、生成输入和检查记录。
 
 | 用例 | 实测耗时（秒） |
 |---|---|
-| 五功能（`services`） | 12.923 |
-| 128 条发送 / 4096 条接收配置（`capacity`） | 18.341 |
-| 网络管理报文字段核对（`snmp`） | 87.429 |
-| 77 条虚拟链路突发（`burst77`） | 6.709 |
-| 81 条虚拟链路突发（`burst81`） | 6.852 |
-| 时钟同步（`rtc`） | 439.326 |
-| 吞吐、时延和抖动（`performance`） | 3535.807 |
-| 变长帧与多虚拟链路（`perf_var`） | 4678.308 |
-| 合计 | 8787.198 |
+| 五功能（`services`） | 13.195 |
+| 128 条发送 / 4096 条接收配置（`capacity`） | 18.233 |
+| 网络管理报文字段核对（`snmp`） | 89.618 |
+| 77 条虚拟链路突发（`burst77`） | 7.086 |
+| 81 条虚拟链路突发（`burst81`） | 6.309 |
+| 时钟同步（`rtc`） | 365.872 |
+| 吞吐、时延和抖动（`performance`） | 2925.978 |
+| 变长帧与多虚拟链路（`perf_var`） | 3755.466 |
+| 合计 | 7183.721 |
 
-该次运行在 `out/` 下生成 **1016.6 MiB** 的工作库、输入、波形和记录。每次运行使用新目录。
+该次运行在 `out/` 下生成 **1016.5 MiB** 的工作库、输入、波形和记录。每次运行使用新目录。
 
 下面是本轮八行用例结果和总结果：
 
 ```text
-JUDGE CASE PASS services checks=1124 errors=0 warnings=0 elapsed_s=12.923
-JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=18.341
-JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=87.429
-JUDGE CASE PASS burst77 checks=643552 errors=0 warnings=0 elapsed_s=6.709
-JUDGE CASE PASS burst81 checks=673500 errors=0 warnings=0 elapsed_s=6.852
-JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=439.326
-JUDGE CASE PASS performance checks=756655316 errors=0 warnings=0 elapsed_s=3535.807
-JUDGE CASE PASS perf_var checks=1402134376 errors=0 warnings=0 elapsed_s=4678.308
-JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=8787.198 output_mib=1016.6
+JUDGE CASE PASS services checks=1124 errors=0 warnings=0 elapsed_s=13.195
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=18.233
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=89.618
+JUDGE CASE PASS burst77 checks=643552 errors=0 warnings=0 elapsed_s=7.086
+JUDGE CASE PASS burst81 checks=673500 errors=0 warnings=0 elapsed_s=6.309
+JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=365.872
+JUDGE CASE PASS performance checks=756655316 errors=0 warnings=0 elapsed_s=2925.978
+JUDGE CASE PASS perf_var checks=1402134376 errors=0 warnings=0 elapsed_s=3755.466
+JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=7183.721 output_mib=1016.5
 ```
 
-[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对应 2026-10-24 冻结版 `83e5d5e8`；性能定义与数值见 [性能证据](docs/evidence/perf_r97.json)。耗时、时间戳、输出目录和文件大小随运行变化。参考汇总中的 `Folder`、`Ucdb` 路径相对于仓库根目录，统一为 `out/sim/...`，指向该次运行的输出位置；这里只规范化原路径前缀，检查数、结果及原 UCDB 绑定保持不变。本仓库不附带这些原运行目录及各测试的原始 UCDB。
+[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对应 2026-10-25 的 t54 提交 `c68fac81`（RTL 与约束同 t51 候选 `19d205ce`）；性能定义与数值见 [性能证据](docs/evidence/perf_r97.json)。耗时、时间戳、输出目录和文件大小随运行变化。参考汇总中的 `Folder`、`Ucdb` 路径相对于仓库根目录，统一为 `out/sim/...`，指向该次运行的输出位置；这里只规范化原路径前缀，检查数、结果及原 UCDB 绑定保持不变。本仓库不附带这些原运行目录及各测试的原始 UCDB。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -135,6 +135,10 @@ vsim -c -do 'do sim/run_judge.do'
 ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执行 `vlog -lint -vlog01compat -work out/lint_work rtl/*.v`；ModelSim 工具目录需在 PATH 中。
 本轮官方流程覆盖当前 24 个 RTL 模块；编译及静态检查结果由对应日志定位。
 
+综合和界面共用的唯一源文件入口是 `elinx/afdx_all.v`：`elinx/AFDX_EndSystem.epr` 只列这一个文件，增删 RTL 文件时改总文件，不改 epr。
+总文件按固定顺序包含 `rtl/` 下每个 `.v` 恰好一次，界面与命令行因此读到同一份源文件集合。
+修改后运行 `python tools/check_wrapper.py`，确认 epr 只列总文件、包含关系不多不漏且总文件没有其它语句。
+
 代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
 用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。参考数字、原始报告和合并数据库在 `sim/reference/coverage/`，统计口径见该目录 README。
 
@@ -142,14 +146,14 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
-| 语句 | 6981 / 7083 | 98.55% |
-| 分支 | 3844 / 3985 | 96.46% |
+| 语句 | 6985 / 7090 | 98.51% |
+| 分支 | 3855 / 3999 | 96.39% |
 | 条件 | 610 / 717 | 85.07% |
-| 表达式 | 1760 / 1991 | 88.39% |
+| 表达式 | 1746 / 1977 | 88.31% |
 | 状态机，含状态和转换 | 248 / 418 | 59.33% |
 | 状态 | 110 / 110 | 100.00% |
 | 转换 | 138 / 308 | 44.80% |
-| 翻转 | 41314 / 53632 | 77.03% |
+| 翻转 | 41386 / 53744 | 77.00% |
 
 逐模块数字和原始报告见 `sim/reference/coverage/`；未覆盖项保持原统计范围，不沿用旧版源码行号或未重新核对的原因说明。
 
@@ -164,7 +168,7 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 
    预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
 
-综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方布局布线。`elinx/constraints.edc` 设置 PRES_FAC_MULT=1.50，eLinx 工程与命令行均读取这一份约束源；输出 constraints.sdc 是它的副本。本次 PRES1.50 在 125 MHz 下为 0 个失败、setup +0.013 ns、hold +0.229 ns；交付工程没有 cluster 坐标赋值。
+综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方布局布线。`elinx/constraints.edc` 设置 PRES_FAC_MULT=1.50，eLinx 工程与命令行均读取这一份约束源；输出 constraints.sdc 是它的副本。本次 PRES1.50 在 125 MHz 下为 0 个失败、setup +0.024 ns、hold +0.229 ns；交付工程没有 cluster 坐标赋值。
 
 主机配置访问优先；主机与 SNMP MIB 同时读同一地址时共用返回值，不同地址时 MIB 保持请求到主机释放总线。主机读延迟仍为两拍。接收映射、配置或序号检查拒绝的报文多用一拍登记判断，正常数据帧保持原处理拍数。
 
@@ -217,37 +221,37 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 入口先仿真 RTL，再用相同激励仿真新生成的 VQM，逐字节比较七份外部记录。自检项数必须与本次 RTL 一致，独立检查错误为 0；`exact_external_records` 七项均须为 `true`。
 
-冻结版 `83e5d5e8` 的本次官方 VQM 与同次 RTL 在 tb_net_services 中均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 8793.406 秒，同激励 RTL 17.469 秒；原网表 SHA-256 与冻结版官方综合一致。
+t54 本次官方 VQM 与同次 RTL 在 tb_net_services 中均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 7973.093 秒，同激励 RTL 15.516 秒；网表 SHA-256 与本次官方综合的 VQM 一致。
 
 使用界面产物时省略 `-Netlist`，默认读取 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`。两种入口都不重新综合；每次仿真的网表副本、日志、独立检查和 `summary.json` 放在 `out/gui_netlist/` 下的新目录。出错时打印 `GUI NETLIST FAIL` 或 `GUI NETLIST ENTRY FAIL` 并返回非零退出码，总时限为五小时。
 
-较长的双端双网互发自检可用 `sim/run_gui_netlist.ps1 -Test tb_elinx -Netlist $net`。此前界面网表已通过 9238 项检查、0 错误，仿真约 130 分钟；本次只重跑新网表的五功能测试。
+较长的双端双网互发自检可用 `sim/run_gui_netlist.ps1 -Test tb_elinx -Netlist $net`。此前界面网表已通过 9238 项检查、0 错误，仿真约 130 分钟；本轮只重跑新网表的五功能测试。
 
 官方导出的网表省略了取默认值的输入和参数，而配套单元仿真模型没有给这些输入和参数设默认值，直接仿真时寄存器不会更新。`tools/adapt_gui_vqm.py` 仅在仿真副本上补齐：省略输入按组件声明和单元模型的默认上拉、下拉取值；原有进位连接补上 `cin_used="true"`。原有连接、功能参数、查找表内容以及厂商模型均不改。复制寄存器的 `created_from` 仅记录综合来源，厂商仿真模型没有该参数；仿真副本将这项元数据转存审计报告。补全数量和来源记录保存在 `summary.json` 的 `adaptation` 中。
 
 ## 综合与布线结果
 
-当前结果来自冻结版 `83e5d5e8` 的 S2d + PRES1.50 官方测量，RTL 与工程设置保持一致。器件 EQ6HL130、封装 CSG484_H，唯一主时钟为 8 ns（125 MHz），顶层 CE_DIV=2。125 MHz 全量内部路径 setup 0 失败、最差 +0.013 ns，hold +0.229 ns，多周期最差 +0.940 ns，满足 125 MHz 时序要求；交付工程使用 PRES1.50，无单元坐标约束。
+当前结果来自 t54（RTL 与约束同 t51 候选 `19d205ce`）的 PRES1.50 官方综合、布局布线与全量端点报告，RTL 与工程设置保持一致。器件 EQ6HL130、封装 CSG484_H，唯一主时钟为 8 ns（125 MHz），顶层 CE_DIV=2，另外为建立时间设置了 0.30 ns 时钟不确定度。125 MHz 全量内部路径 setup 0 失败、最差 +0.024 ns，hold +0.229 ns，多周期最差 +0.701 ns；按 8 ns 周期计，setup 实际余量为 +0.324 ns。交付工程使用 PRES1.50，无单元坐标约束。
 
 | 项目 | 当前官方结果 |
 |---|---:|
-| 查找表（LUT） | 34294 |
-| 触发器（FF） | 17454 |
-| 可配置逻辑块（CLB） | 4521 |
+| 查找表（LUT） | 34396 |
+| 触发器（FF） | 17491 |
+| 可配置逻辑块（CLB） | 4546 |
 | 存储器（Memory） | 366 |
 | 用户引脚 | 259 |
-| 布线后建立裕量／保持裕量 | +0.013 / +0.229 ns |
-| 布线后最高频率估算 | 125.203 MHz |
-| 布线后 setup 失败端点 | 0 / 45745 |
-| 8 ns 路径数／最差 setup | 153342 / +0.013 ns |
-| 16 ns 路径数／最差 setup | 50296 / +0.940 ns |
-| 同沿 hold 路径数 | 203638 |
+| 布线后建立裕量／保持裕量 | +0.024 / +0.229 ns |
+| 布线后最高频率估算 | 不显示（设 0.30 ns 时钟不确定度） |
+| 布线后 setup 失败端点 | 0 / 45792 |
+| 8 ns 路径数／最差 setup | 153463 / +0.024 ns |
+| 16 ns 路径数／最差 setup | 50296 / +0.701 ns |
+| 同沿 hold 路径数 | 203759 |
 
-约束检查为 2755 个引擎寄存器，不合格寄存器和遗漏内部连接均为 0；综合、实现与全量报告三次审查通过。轻量结果及前十路径见 [T45 时序证据](docs/evidence/t45_timing.json)。D3 f60aaacd 的历史对照为 LUT/FF 38297/19947、1 个失败、setup −0.090 ns；本版 LUT 减少 4003（10.5%）、FF 减少 2493（12.5%），原始口径保留在 [T43 时序证据](docs/evidence/t43_timing.json)。
+约束检查为 2755 个引擎寄存器，不合格寄存器和遗漏内部连接均为 0；综合、实现与全量报告三次审查通过。轻量结果及前十路径见 [T54 时序证据](docs/evidence/t54_timing.json)。D3 f60aaacd 的历史对照为 LUT/FF 38297/19947、1 个失败、setup −0.090 ns；本版 LUT 减少 3901（10.2%）、FF 减少 2456（12.3%），原始口径保留在 [T43 时序证据](docs/evidence/t43_timing.json)。
 
-本次 CE2 回归 39/39、评委 8/8、16 份初始化等价检查均通过；回归中的一次槽位准入错误已真实补跑，原失败记录保留。源码包括接收交付队列 RAM、统计事件两拍流水、数据发送缓冲、接收 payload 预登记与管理请求/元数据两级寄存。数据发送增加一拍（8 ns），管理发送相对前一版再增加一拍；性能基线和 R97 参考按本次完整窗口测量更新。
+本次 CE1 与 CE2 完整回归均 39/39 通过，CE2 覆盖率回归 39/39 并产出 39 个 UCDB，评委入口 8/8，官方 VQM 五功能对照通过。并发的五线终验中有 11 项因抢占单测时间预算或进程中断而失败，均已单独重跑通过，原失败记录保留在各批 summary.json。相对冻结版，T49 C1–C3 为 SNMP 地址比较与数据寄存器增加保留副本，T50 R1 将 RTC 快照使能拆成四个局部缓冲；性能基线和 R97 参考沿用同源完整窗口测量。
 
-冻结版五线终验已全部通过：官方 VQM 五功能对照、CE1 并行 39 项、CE2 覆盖率 39 项及双 CE 评委各 8 项；39 个 UCDB 与原生结果已逐项核对。sim/reference/ 对应本次冻结版。布线后静态时序不是上板实测，也未覆盖完整外部 I/O 延迟预算。
+t54 五线终验已全部通过：官方 VQM 五功能对照、CE1 并行 39 项、CE2 并行 39 项、CE2 覆盖率 39 项及评委入口 8 项；39 个 UCDB 与原生结果已逐项核对。sim/reference/ 对应本次 t54 结果。布线后静态时序不是上板实测，也未覆盖完整外部 I/O 延迟预算。
 
 ## 模块一览
 

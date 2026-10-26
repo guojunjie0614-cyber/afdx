@@ -6,9 +6,9 @@ foreach name {rx_valid rx_data rx_valid_b rx_data_b ev_deliver app_rx_valid app_
     wave_signal $dut/$name $name
 }
 run 3040us
-set cursor_a [wave cursor add -time 3014030ns -name A_delivered]
-set cursor_b [wave cursor add -time 3030046ns -name B_duplicate]
+set cursor_a [wave cursor add -time 3014236ns -name A_delivered]
+set cursor_b [wave cursor add -time 3030252ns -name B_duplicate]
 wave cursor active $cursor_a
-wave_snapshot rx_redundancy_1 3013980ns 3014240ns
+wave_snapshot rx_redundancy_1 3014186ns 3014446ns
 wave cursor active $cursor_b
-wave_snapshot rx_redundancy_2 3029820ns 3030080ns
+wave_snapshot rx_redundancy_2 3030026ns 3030286ns
