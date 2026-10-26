@@ -35,14 +35,15 @@ module afdx_rx_core #(
     // 所有接收表初始化完成后，init_done 才变高。
     // ev_a/b 分别报告两网检查结果。
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
-    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg init_done,
+    (* preserve = 1, dont_merge = 1 *) output reg init_done,
     output reg [7:0] ev_a, ev_b,
     output reg ev_rm_drop, ev_deliver,
     output wire [CFG_COPIES - 1:0] cfg_ok);
 
     // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
     // flush_init 等待最后一次写入完成。
-    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg cfg_we, flush_init;
+    (* preserve = 1, dont_merge = 1 *) reg cfg_we;
+    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg flush_init;
     reg [15:0] clear_addr;
     reg [11:0] cfg_wa;
     reg [31:0] cfg_wd;
