@@ -14,7 +14,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     output reg read_mode,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
     input wire tx_ready,
-    output reg [7:0] tx_data,
+    output wire [7:0] tx_data,
     output reg tx_last,
     output reg [6:0] tx_vl,
     output reg [15:0] tx_sport, tx_dport
@@ -69,11 +69,23 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     (* preserve = 1, dont_merge = 1 *) reg at_last;
     reg [3:0] queued, reserved;
     reg [2:0] write_pos, read_pos;
-    (* ramstyle = "no_rw_check" *) reg [7:0] bytes [0:7];
+    wire [7:0] bytes_q;
+    reg bytes_zero;
     wire issue = active && issued < packet_length && reserved < 8;
     // 远端 tx_ready 只进末级与门，本地项先行会合。
     wire take_armed = active && queued != 0;
     wire take = take_armed && (!tx_valid || tx_ready);
+    // 存储器使用统一的无同址读写模板；复位值在读口外保持，不参与 RAM 推断。
+    // 首次有效读取时同时解除零值屏蔽，输出更新与原来的 take 同拍。
+    afdx_ram_sdp #(.WIDTH(8), .DEPTH(8)) bytes_ram (
+        .clk(clk), .write_enable(!reset && return_valid), .write_address(write_pos), .write_data(read_data),
+        .read_enable(!reset && take), .read_address(read_pos), .read_data(bytes_q)
+    );
+    assign tx_data = bytes_zero ? 8'd0 : bytes_q;
+    always @(posedge clk) begin
+        if (reset) bytes_zero <= 1;
+        else if (take) bytes_zero <= 0;
+    end
     always @(posedge clk) begin
         if (reset) begin
             active <= 0;
@@ -92,7 +104,6 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             complete <= 0;
             read_mode <= 0;
             tx_valid <= 0;
-            tx_data <= 0;
             tx_last <= 0;
             tx_vl <= 0;
             tx_sport <= 0;
@@ -114,13 +125,11 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 2'b01 : queued <= queued - 1'b1;
             endcase
             if (return_valid) begin
-                bytes[write_pos] <= read_data;
                 write_pos <= write_pos + 1'b1;
             end
             if (!tx_valid || tx_ready) begin
                 tx_valid <= take;
                 if (take) begin
-                    tx_data <= bytes[read_pos];
                     tx_last <= at_last;
                     output_left <= output_left - 1'b1;
                     at_last <= output_left == 2;
