@@ -124,6 +124,7 @@ module AFDX_top #(
     // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
     wire cfg_ready_m;
     wire [7:0] snmp_wr_sel;
+    wire [6:0] loader_wr_sel;
     wire snmp_tx_valid, snmp_tx_last, snmp_claim, snmp_mib_rd, snmp_mib_wr, snmp_mib_ready, snmp_grant;
     wire [7:0] snmp_tx_data;
     wire [6:0] snmp_tx_vl;
@@ -192,12 +193,13 @@ module AFDX_top #(
     // SNMP 状态机保证 mib_rd/mib_wr 互斥，读抓拍不依赖写 ready。
     wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
         || (!cfg_rd && !cfg_wr && snmp_mib_rd && mib_snapshot_seconds);
-    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) loader (
+    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1), .CE_DIV(CE_DIV)) loader (
         .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
         .enable(loader_ready_q),
         .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == LOAD_ADDR_GROUP),
+        .cfg_wr_sel(loader_wr_sel),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
@@ -437,6 +439,7 @@ module AFDX_top #(
         .cfg_ready(cfg_ready),
         .cfg_ready_m(cfg_ready_m),
         .snmp_wr_sel(snmp_wr_sel),
+        .loader_wr_sel(loader_wr_sel),
         .cfg_rvalid(),
         .cfg_rdata(cfg_rdata),
         .user_id(user_id),

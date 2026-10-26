@@ -3,7 +3,7 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72, CFG_WRITE_SELECT = 0) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input wire clk, reset, enable,
@@ -12,6 +12,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
     input wire cfg_we,
+    input wire [6:0] cfg_wr_sel,
     input wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata, cfg_extra_data,
@@ -46,6 +47,16 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     localparam DEFAULT_REQUEST_PORT = 16'd59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 8'd1;
     localparam REG_ENABLE = 8'hb0, REG_TX_VL = 8'hb1, REG_MEMORY_ADDRESS = 8'hb4, REG_REQUEST_PORT = 8'hb8;
     localparam REG_TIMEOUT = 8'hb9, REG_RETRY_LIMIT = 8'hba, REG_VERSION = 8'hbb;
+    // 顶层提供同拍独热写选通；默认参数保留独立实例的原地址译码接口。
+    wire [6:0] cfg_write_sel = CFG_WRITE_SELECT ? cfg_wr_sel : {
+        cfg_we && cfg_write_addr == REG_VERSION,
+        cfg_we && cfg_write_addr == REG_RETRY_LIMIT,
+        cfg_we && cfg_write_addr == REG_TIMEOUT,
+        cfg_we && cfg_write_addr == REG_REQUEST_PORT,
+        cfg_we && cfg_write_addr == REG_MEMORY_ADDRESS,
+        cfg_we && cfg_write_addr == REG_TX_VL,
+        cfg_we && cfg_write_addr == REG_ENABLE
+    };
 
     reg configured, protocol_a4;
     reg [6:0] configured_vl;
@@ -256,16 +267,14 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             retry_total <= engine_retry_total;
             status <= engine_status;
             status_tid <= engine_status_tid;
-            if (cfg_we) case (cfg_write_addr)
-                REG_ENABLE : if (status != ST_BUSY) configured <= cfg_wdata[0];
-                REG_TX_VL : if (status != ST_BUSY) configured_vl <= cfg_wdata[6:0];
-                REG_MEMORY_ADDRESS : memory_addr <= cfg_wdata[12:0];
-                REG_REQUEST_PORT : if (status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
-                REG_TIMEOUT : if (status != ST_BUSY && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
-                REG_RETRY_LIMIT : if (status != ST_BUSY) retry_limit <= cfg_wdata[7:0];
-                REG_VERSION : if (status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
-                    || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
-            endcase
+            if (cfg_write_sel[0] && status != ST_BUSY) configured <= cfg_wdata[0];
+            if (cfg_write_sel[1] && status != ST_BUSY) configured_vl <= cfg_wdata[6:0];
+            if (cfg_write_sel[2]) memory_addr <= cfg_wdata[12:0];
+            if (cfg_write_sel[3] && status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
+            if (cfg_write_sel[4] && status != ST_BUSY && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
+            if (cfg_write_sel[5] && status != ST_BUSY) retry_limit <= cfg_wdata[7:0];
+            if (cfg_write_sel[6] && status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
+                || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
             if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_rdata <= { 31'b0, configured };
