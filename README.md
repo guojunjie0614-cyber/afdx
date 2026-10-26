@@ -208,7 +208,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
 3. 点击 Flow → Run Behavioral Simulation。ModelSim 会运行两个端系统经双网互发 1、64、1471 字节消息的自检；预期依次看到三条 `[ELINX_MESSAGE] ... both_directions=PASS`，最后是 `[RESULT] tb_elinx PASS checks=9238 errors=0`。测试不需要 Python、输入文件或额外的 include 路径和宏。
 
-此入口已在 eLinx 界面实测通过，仿真时间约 2.56 ms，界面截图见 `sim/wave/png/tb_elinx.png`。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
+此入口已在 eLinx 界面实测通过，仿真时间约 2.56 ms，交付版界面截图见 `docs/screenshots/tb_elinx.png`。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
 
 ## 综合后网表仿真
 
@@ -246,6 +246,8 @@ t54 本次官方 VQM 与同次 RTL 在 tb_net_services 中均通过 1124 项自�
 | 8 ns 路径数／最差 setup | 153463 / +0.024 ns |
 | 16 ns 路径数／最差 setup | 50296 / +0.701 ns |
 | 同沿 hold 路径数 | 203759 |
+
+eLinx 界面综合与布局布线后的工程总览（资源与 clk 时序统计）见 `docs/screenshots/elinx_overview.png`，数字与上表一致。
 
 约束检查为 2755 个引擎寄存器，不合格寄存器和遗漏内部连接均为 0；综合、实现与全量报告三次审查通过。轻量结果及前十路径见 [T54 时序证据](docs/evidence/t54_timing.json)。D3 f60aaacd 的历史对照为 LUT/FF 38297/19947、1 个失败、setup −0.090 ns；本版 LUT 减少 3901（10.2%）、FF 减少 2456（12.3%），原始口径保留在 [T43 时序证据](docs/evidence/t43_timing.json)。
 
