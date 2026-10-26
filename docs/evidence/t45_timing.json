@@ -1,4 +1,7 @@
 {
+  "historical": true,
+  "status": "历史对照：冻结版 83e5d5e8 的时序记录，已被 docs/evidence/t54_timing.json 取代，不作为当前版本证据",
+  "superseded_by": "docs/evidence/t54_timing.json",
   "measurement_date": "2026-10-24",
   "source_commit": "9b277556eee64cfef1aab52b75a91a9f91105b74",
   "initialization_checker_commit": "bb1180d1",

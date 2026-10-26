@@ -121,11 +121,14 @@ module afdx_rx_engine #(
     endgenerate
 
     // 每个配置目标使用自己的描述符有效位副本，避免同一组合 ready 横跨全部 RAM bank。
+    // cfg_ok 改用上一拍的“无待处理帧”副本，不再把跨区 desc_valid 直接串入
+    // 各 bank 的写选通；desc_valid 变高当拍仍可能接受写入，写读先后见 ARCH.md。
+    (* preserve = 1, dont_merge = 1 *) reg [DESC_COPIES - 1:0] desc_quiet_copy;
     genvar ready_copy;
     generate
         for (ready_copy = 0; ready_copy < DESC_COPIES; ready_copy = ready_copy + 1) begin : config_ready
             assign cfg_ok[ready_copy] = enable && (op == IDLE || op == AGE)
-                && !desc_a_valid[ready_copy] && !desc_b_valid[ready_copy];
+                && desc_quiet_copy[ready_copy];
         end
     endgenerate
 
@@ -214,6 +217,12 @@ module afdx_rx_engine #(
     always @(posedge clk) begin
         if (reset) desc_quiet <= 0;
         else desc_quiet <= !desc_a_valid[0] && !desc_b_valid[0];
+    end
+
+    // 每副本独立寄存“上一拍无待处理帧”；复位值与 desc_valid=0 一致。
+    always @(posedge clk) begin
+        if (reset) desc_quiet_copy <= {DESC_COPIES{1'b1}};
+        else desc_quiet_copy <= ~(desc_a_valid | desc_b_valid);
     end
 
     localparam DQ_WRITE_SLICES = (DQ_WIDTH + 23) / 24;
