@@ -148,6 +148,9 @@ module afdx_tx_builder #(
     wire return_push = payload_pipe[1] && return_pipe[1];
     wire return_pop = ( ! ret_valid || ret_ready) && return_count != 0;
     reg [TX_OFF_AW - 1:0] fetch_offset;
+    // 与偏移同步预判页尾，页号和下一页读使能不再经过全位归约与。
+    (* preserve = 1, dont_merge = 1 *) reg offset_last;
+    localparam [TX_OFF_AW - 1:0] OFFSET_BEFORE_LAST = {TX_OFF_AW{1'b1}} - 1'b1;
     reg complete_a, complete_b, bad;
 
     assign grant_ready = ! pending;
@@ -233,6 +236,7 @@ module afdx_tx_builder #(
             padding_left <= 0;
             fetch_page <= 0;
             fetch_offset <= 0;
+            offset_last <= 0;
             next_page <= 0;
             payload_qr <= 0;
             pnext_qr <= 0;
@@ -310,14 +314,18 @@ module afdx_tx_builder #(
                 payload_re <= 1;
                 payload_ra <= { fetch_page[TX_PAGE_AW - 1:0], fetch_offset };
                 issue_page <= fetch_page;
-                issue_end <= fetch_left == 1 || ( & fetch_offset);
+                issue_end <= fetch_left == 1 || offset_last;
                 fetch_left <= fetch_left - 1'b1;
-                if ( & fetch_offset) begin
+                if (offset_last) begin
                     fetch_page <= next_page;
                     fetch_offset <= 0;
+                    offset_last <= 0;
                     pnext_re <= 1;
                     pnext_ra <= next_page;
-                end else fetch_offset <= fetch_offset + 1'b1;
+                end else begin
+                    fetch_offset <= fetch_offset + 1'b1;
+                    offset_last <= fetch_offset == OFFSET_BEFORE_LAST;
+                end
             end
             if (grant_valid && grant_ready) begin
                 pending <= 1;
@@ -393,6 +401,7 @@ module afdx_tx_builder #(
                 payload_more <= p_len != 0;
                 fetch_page <= p_page;
                 fetch_offset <= 0;
+                offset_last <= 0;
                 fetch_left <= p_len;
                 fifo_wr <= 0;
                 fifo_rd <= 0;
