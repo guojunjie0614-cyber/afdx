@@ -37,7 +37,7 @@ module afdx_rx_deliver #(
     localparam [1:0] HEAD_IDLE = 2'd0, HEAD_SELECT = 2'd1, HEAD_RELEASE = 2'd2;
 
     // rd_ptr 指向下一条消息，直接作为队列存储器的读地址。
-    (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [RX_DQ_AW - 1:0] rd_ptr;
+    (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW - 1:0] rd_ptr;
     assign dq_ra = rd_ptr;
 
     // HEAD_IDLE：有消息且收到读请求时转 HEAD_SELECT；存储器在这一拍读出队首项。
