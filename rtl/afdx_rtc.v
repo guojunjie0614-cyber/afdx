@@ -3,7 +3,8 @@
 // 本模块对应赛题的 RTC（Real-Time Clock，实时时钟）同步功能。
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
-module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0) (
+module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0,
+    CFG_WRITE_SELECT = 0) (
 
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
     input wire clk, reset, enable,
@@ -11,6 +12,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     input wire cfg_we, cfg_re,
+    input wire [5:0] cfg_wr_sel,
     input wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
@@ -80,6 +82,15 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // 配置字的序号。
     localparam REG_CONTROL = 0, REG_PERIOD = 1, REG_VL = 2, REG_PORT = 3, REG_SECONDS = 4, REG_NS = 5;
     localparam REG_OFFSET_SEC = 6, REG_OFFSET_NS = 7;
+    // 顶层传入当拍独热选通；独立实例保留原来的地址译码接口。
+    wire [5:0] cfg_write_sel = CFG_WRITE_SELECT ? cfg_wr_sel : {
+        cfg_we && cfg_write_addr == REG_NS,
+        cfg_we && cfg_write_addr == REG_SECONDS,
+        cfg_we && cfg_write_addr == REG_PORT,
+        cfg_we && cfg_write_addr == REG_VL,
+        cfg_we && cfg_write_addr == REG_PERIOD,
+        cfg_we && cfg_write_addr == REG_CONTROL
+    };
 
     // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
     // active 表示服务已启用，master 为高表示本机是服务端。
@@ -107,7 +118,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tick_overflow;
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
-    wire load_time = cfg_we && cfg_write_addr == 0 && cfg_wdata[2];
+    wire load_time = cfg_write_sel[REG_CONTROL] && cfg_wdata[2];
     // 远端配置信号只进这一个寄存器，装载生效推迟一拍，各使能锥不再含译码。
     reg load_pending;
 
@@ -128,7 +139,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             rx_port_stage <= rx_port;
             rx_port_local <= rx_port_stage;
             // 与本拍更新后的本地端口比较；配置写同时发生时也保持原匹配语义。
-            local_port_match <= cfg_we && cfg_write_addr == REG_PORT
+            local_port_match <= cfg_write_sel[REG_PORT]
                 ? rx_port_stage == cfg_wdata[15:0] : rx_port_stage == port_number;
         end
     end
@@ -382,20 +393,18 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             // 配置字 3 设置服务端口。
             // 配置字 4 设置秒。
             // 配置字 5 设置纳秒。
-            if (cfg_we) case (cfg_write_addr)
-                REG_CONTROL : begin
-                    active <= cfg_wdata[0];
-                    master <= cfg_wdata[1];
-                end
-                REG_PERIOD : period <= cfg_wdata;
-                REG_VL : vl <= cfg_wdata[6:0];
-                REG_PORT : port_number <= cfg_wdata[15:0];
-                REG_SECONDS : load_sec <= cfg_wdata;
-                REG_NS : begin
-                    load_ns <= cfg_wdata;
-                    load_overflow <= ge32(cfg_wdata, LAST_TICK_NS);
-                end
-            endcase
+            if (cfg_write_sel[REG_CONTROL]) begin
+                active <= cfg_wdata[0];
+                master <= cfg_wdata[1];
+            end
+            if (cfg_write_sel[REG_PERIOD]) period <= cfg_wdata;
+            if (cfg_write_sel[REG_VL]) vl <= cfg_wdata[6:0];
+            if (cfg_write_sel[REG_PORT]) port_number <= cfg_wdata[15:0];
+            if (cfg_write_sel[REG_SECONDS]) load_sec <= cfg_wdata;
+            if (cfg_write_sel[REG_NS]) begin
+                load_ns <= cfg_wdata;
+                load_overflow <= ge32(cfg_wdata, LAST_TICK_NS);
+            end
             if (SPLIT_CFG_ADDR == 2) begin
                 if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
                 if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];

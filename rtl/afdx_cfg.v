@@ -24,6 +24,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
     output wire [7:0] snmp_wr_sel,
     output wire [6:0] loader_wr_sel,
+    output wire [5:0] rtc_wr_sel,
     output reg [31:0] cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
@@ -221,6 +222,16 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         cfg_wr && cfg_write_addr == 18'h000b0
     };
     assign loader_wr_sel = {7{cfg_ready_m}} & loader_write_hit;
+    // RTC 的六个可写寄存器同样先译码，ready 只驱动末级选通。
+    (* keep = 1 *) wire [5:0] rtc_write_hit = {
+        cfg_wr && cfg_write_addr == 18'h00085,
+        cfg_wr && cfg_write_addr == 18'h00084,
+        cfg_wr && cfg_write_addr == 18'h00083,
+        cfg_wr && cfg_write_addr == 18'h00082,
+        cfg_wr && cfg_write_addr == 18'h00081,
+        cfg_wr && cfg_write_addr == 18'h00080
+    };
+    assign rtc_wr_sel = {6{cfg_ready_m}} & rtc_write_hit;
 
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
     // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
