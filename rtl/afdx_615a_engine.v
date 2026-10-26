@@ -633,8 +633,6 @@ build_position[byte_kind] <= packet_pos;
         end
     end
     reg number_header_version_ok, number_crc_ok, number_name_ok, number_part_ok, number_data_size_ok;
-    // 字段长度校验通过后只用地址宽度内的偶数长度，显式保留原运算的低 11 位。
-    wire [31:0] number_even_length = (number + 1) & EVEN_MASK;
     reg [8:0] lnr_expected_length;
     reg lnr_name_ok;
     // 下一状态保持原非阻塞赋值的旧值语义；每组 CE 最多驱动 32 个数据位。
@@ -2178,7 +2176,7 @@ next_error_position = packet_pos - 10'd4;
                 // HEADER_PLEN：检查件号长度并处理偶数字节对齐，然后转 HEADER_SIZE。
                 HEADER_PLEN : if (!number_part_ok) fail (REASON_DESCRIPTION);
                 else begin
-                    next_scan_pos = fetch_addr[10:0] + number_even_length[10:0];
+                    next_scan_pos = fetch_addr + ((number + 1) & EVEN_MASK);
                     next_state = HEADER_SIZE;
                 end
 
