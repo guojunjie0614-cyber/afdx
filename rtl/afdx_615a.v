@@ -405,10 +405,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         .clk(clk), .write_enable(ram_load_we), .write_address(ram_load_wa), .write_data(ram_load_wd),
         .read_enable(ram_load_re), .read_address(ram_load_ra), .read_data(load_q)
     );
-    always @(posedge clk) begin
-        if (reset) load_sample_local <= 0;
-        else load_sample_local <= load_q;
-    end
+    // 原 RAM 读值无复位约束；配置采样寄存器仍按原协议复位。
+    always @(posedge clk) load_sample_local <= load_q;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(32)) denial_ram (
         .clk(clk), .write_enable(ram_deny_we), .write_address(ram_deny_wa), .write_data(ram_deny_wd),
         .read_enable(tx_re), .read_address(tx_ra[4:0]), .read_data(deny_q)
