@@ -58,12 +58,13 @@ module afdx_rx_engine #(
     localparam RX_BAD_SEQUENCE = 3;
     localparam RX_DUPLICATE = 4;
     localparam RX_QUEUE_FULL = 5;
-    localparam EV_NONE = 0;
+    localparam [7:0] EV_NONE = 8'd0;
     localparam EV_UNMAPPED = 8'h10;
     localparam EV_CONFIG_REJECT = 8'h20;
     localparam EV_BAD_SEQUENCE = 8'h40;
     localparam EV_QUEUE_FULL = 8'h80;
-    localparam INIT = 0, IDLE = 1, FRAME = 2, AGE = 3, DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 56;
+    localparam DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 56;
+    localparam [1:0] INIT = 2'd0, IDLE = 2'd1, FRAME = 2'd2, AGE = 2'd3;
 
     // 接收虚拟链路共 4096 条，LAST_VL 是最后一条的序号。
     localparam LAST_VL = 4095;
@@ -82,7 +83,7 @@ module afdx_rx_engine #(
         : (age_high_difference > AGE_LIMIT_HIGH || (age_high_difference == AGE_LIMIT_HIGH && !age_low_equal));
 
     // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
-    localparam STEP_DELIVER = 11, STEP_WRITE = 12, STEP_FINISH = 13;
+    localparam [3:0] STEP_DELIVER = 4'd11, STEP_WRITE = 4'd12, STEP_FINISH = 4'd13;
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] op;
 
     // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。

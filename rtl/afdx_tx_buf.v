@@ -52,11 +52,11 @@ module afdx_tx_buf #(
     // ev_* 每次输出一个结果脉冲，表示接纳或本次拒绝原因。
     output reg ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
 
-    localparam ENQ_ACCEPTED = 0;
+    localparam [2:0] ENQ_ACCEPTED = 3'd0;
     localparam ENQ_DISABLED = 1;
     localparam ENQ_FULL = 2;
-    localparam ENQ_TOO_LONG = 3;
-    localparam ENQ_NO_PAGE = 4;
+    localparam [2:0] ENQ_TOO_LONG = 3'd3;
+    localparam [2:0] ENQ_NO_PAGE = 3'd4;
 
     // 一条消息最多 1471 字节，加上协议头和序号后正好是最长的以太网帧。
     localparam MAX_PAYLOAD = 1471;

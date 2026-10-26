@@ -105,29 +105,38 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
 
     // 下面是主状态机的状态，按用途分组。
     // 接收请求，并从请求存储器里读一个字节：
-    localparam IDLE = 0, CAPTURE = 1, START = 2, FETCH0 = 3, FETCH1 = 4, FETCH2 = 5, FETCH3 = 6;
+    localparam IDLE = 0, CAPTURE = 1;
+    localparam [6:0] START = 7'd2, FETCH0 = 7'd3, FETCH1 = 7'd4, FETCH2 = 7'd5, FETCH3 = 7'd6;
 
     // 解析请求的各字段：
-    localparam TAG = 7, LENGTH = 8, LONG_LENGTH = 9, DISPATCH = 10, VERSION = 11, COMMUNITY = 12;
-    localparam INTEGER_VALUE = 13, DISPATCH_SUM = 45, DISPATCH_CHECK = 46;
+    localparam TAG = 7, LENGTH = 8, LONG_LENGTH = 9, VERSION = 11, COMMUNITY = 12;
+    localparam [6:0] DISPATCH = 7'd10;
+    localparam INTEGER_VALUE = 13;
+    localparam [6:0] DISPATCH_SUM = 7'd45, DISPATCH_CHECK = 7'd46;
 
     // 查找对象，再读取或设置它的值：
-    localparam LOOK_START = 14, LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17, MISSING = 18;
-    localparam MIB_ADDRESS = 44;
-    localparam MIB_REQUEST = 19, MIB_WAIT = 20, SET_VALUE = 34, SET_CHECK = 35, SET_WRITE = 36, SET_ERROR = 37;
+    localparam LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17;
+    localparam [6:0] LOOK_START = 7'd14, MISSING = 7'd18;
+    localparam [6:0] MIB_ADDRESS = 7'd44;
+    localparam MIB_REQUEST = 19, SET_VALUE = 34;
+    localparam [6:0] MIB_WAIT = 7'd20, SET_CHECK = 7'd35, SET_WRITE = 7'd36, SET_ERROR = 7'd37;
 
     // 计算各层长度并构造回应：
-    localparam VALUE_PREP = 21, LEN1 = 22, LEN2 = 23, LEN3 = 24, LEN4 = 25, BUILD = 26;
+    localparam LEN4 = 25, BUILD = 26;
+    localparam [6:0] VALUE_PREP = 7'd21, LEN1 = 7'd22, LEN2 = 7'd23, LEN3 = 7'd24;
     localparam COPY_COMM = 27, COPY_OID = 28, COPY_VALUE = 38;
 
     // 发送回应：
-    localparam TX_FLUSH = 29, TX_ADDR = 30, TX_WAIT1 = 31, TX_WAIT2 = 32, TX_SEND = 33;
+    localparam TX_FLUSH = 29, TX_ADDR = 30, TX_WAIT1 = 31, TX_WAIT2 = 32;
+    localparam [6:0] TX_SEND = 7'd33;
 
     // 构造事件通知：
-    localparam TRAP_INIT = 39, TRAP_COMM0 = 40, TRAP_COMM1 = 41, TRAP_WORD = 42, TRAP_BYTE = 43;
+    localparam TRAP_WORD = 42;
+    localparam [6:0] TRAP_INIT = 7'd39, TRAP_COMM0 = 7'd40, TRAP_COMM1 = 7'd41, TRAP_BYTE = 7'd43;
 
     // 管理请求和事件通知使用的 UDP 端口。
-    localparam SNMP_PORT = 161, TRAP_PORT = 162;
+    localparam SNMP_PORT = 161;
+    localparam [15:0] TRAP_PORT = 16'd162;
 
     // 报文按“类型、长度、内容”逐层编码，下面是用到的类型字节。
     // 基本类型：整数、字节串、空值、对象标识符、序列。
@@ -176,12 +185,13 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     localparam FIELD_OID = 9, FIELD_VALUE = 10;
 
     // part 的取值：正在写回应的第几个字段，每个字段依次是类型、长度、内容。
-    localparam B_MESSAGE_TAG = 0, B_MESSAGE_LENGTH = 1, B_VERSION_TAG = 2, B_VERSION_LENGTH = 3, B_VERSION = 4;
-    localparam B_COMMUNITY_TAG = 5, B_COMMUNITY_LENGTH = 6, B_COMMUNITY = 7, B_PDU_TAG = 8, B_PDU_LENGTH = 9;
-    localparam B_ID_TAG = 10, B_ID_LENGTH = 11, B_ID = 12, B_STATUS_TAG = 13, B_STATUS_LENGTH = 14, B_STATUS = 15;
-    localparam B_INDEX_TAG = 16, B_INDEX_LENGTH = 17, B_INDEX = 18, B_LIST_TAG = 19, B_LIST_LENGTH = 20;
-    localparam B_BINDING_TAG = 21, B_BINDING_LENGTH = 22, B_OID_TAG = 23, B_OID_LENGTH = 24, B_OID = 25;
-    localparam B_VALUE_TAG = 26, B_VALUE_LENGTH = 27, B_VALUE = 28;
+    localparam [4:0] B_MESSAGE_TAG = 5'd0, B_MESSAGE_LENGTH = 5'd1, B_VERSION_TAG = 5'd2, B_VERSION_LENGTH = 5'd3, B_VERSION = 5'd4;
+    localparam [4:0] B_COMMUNITY_TAG = 5'd5, B_COMMUNITY_LENGTH = 5'd6, B_COMMUNITY = 5'd7, B_PDU_TAG = 5'd8, B_PDU_LENGTH = 5'd9;
+    localparam [4:0] B_ID_TAG = 5'd10, B_ID_LENGTH = 5'd11, B_ID = 5'd12, B_STATUS_TAG = 5'd13, B_STATUS_LENGTH = 5'd14, B_STATUS = 5'd15;
+    localparam [4:0] B_INDEX_TAG = 5'd16, B_INDEX_LENGTH = 5'd17, B_INDEX = 5'd18, B_LIST_TAG = 5'd19, B_LIST_LENGTH = 5'd20;
+    localparam B_OID = 25;
+    localparam [4:0] B_BINDING_TAG = 5'd21, B_BINDING_LENGTH = 5'd22, B_OID_TAG = 5'd23, B_OID_LENGTH = 5'd24;
+    localparam [4:0] B_VALUE_TAG = 5'd26, B_VALUE_LENGTH = 5'd27, B_VALUE = 5'd28;
 
     // 对象标识符开头的 1.3 合并编码为 43；私有分支的企业数字为 424242。
     // 企业数字使用每字节七个有效位编码为 0x99、0xf2、0x32。
@@ -193,13 +203,13 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
 
     // 请求与回应各有 256 字节存储；请求写到下标 255 后不能再增加字节。
     localparam PACKET_BUFFER_BYTES = 256, REQUEST_LAST_POS = 255;
-    localparam ADDR_USER_ID = 2;
+    localparam [17:0] ADDR_USER_ID = 18'd2;
 
     // snmpTrapOID.0 变量绑定的固定编码，最后一个字节另填事件编号。
     localparam TRAP_OID_WORD0 = 64'h3017060a2b060106, TRAP_OID_WORD1 = 64'h0301010401000609;
     localparam TRAP_OID_WORD2 = 64'h2b06010603010105, TRAP_OID_LAST_POS = 24;
 
-    localparam FETCH_WAIT_A = 120, FETCH_WAIT_B = 121, FETCH_WAIT_C = 122;
+    localparam [6:0] FETCH_WAIT_A = 7'd120, FETCH_WAIT_B = 7'd121, FETCH_WAIT_C = 7'd122;
     reg  enable;
     reg [31:0] now;
     reg  configured;
@@ -793,7 +803,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
             next_out_we = 0;
 
             if ( ! configured || ! enable) begin
-                next_state = IDLE;
+                next_state = 7'd0;
 
             end
             // 模块依次解析请求、访问寄存器、构造回应，再逐字节发送。
@@ -820,18 +830,18 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 // START：复位本次解析位置，然后读取 TAG。
                 START : begin
                     next_cursor = 0;
-                    next_field = FIELD_MESSAGE;
+                    next_field = 4'd0;
                     next_community_bad = 0;
                     next_request_id = 0;
                     next_missing = 0;
                     next_echo_value = 0;
-                    next_error_status = ERR_NONE;
+                    next_error_status = 8'd0;
                     fetch (TAG);
                 end
 
                 // FETCH0：检查读取范围并发出读请求，然后转 FETCH1。
                 FETCH0 : begin
-                    if (cursor >= request_length) next_state = IDLE;
+                    if (cursor >= request_length) next_state = 7'd0;
                     else begin
                         next_req_re = 1;
                         next_req_ra = cursor[7:0];
@@ -910,7 +920,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         next_field_length = 0;
                         fetch (LONG_LENGTH);
                     end
-                    else next_state = IDLE;
+                    else next_state = 7'd0;
                 end
 
                 // LONG_LENGTH：逐字节拼出长度，读够后转 DISPATCH。
@@ -954,18 +964,18 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
                 DISPATCH : begin
                     next_value_pos = 0;
-                    if (!field_bounds_ok) next_state = IDLE;
+                    if (!field_bounds_ok) next_state = 7'd0;
                     else case (field) // synthesis parallel_case
 
                         FIELD_MESSAGE : if (field_accept[FIELD_MESSAGE]) begin
                             next_outer_end = field_end;
-                            next_field = FIELD_VERSION;
+                            next_field = 4'd1;
                             fetch (TAG);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_VERSION : if (field_accept[FIELD_VERSION]) fetch (VERSION);
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_COMMUNITY : if (field_accept[FIELD_COMMUNITY]) begin
                             next_community_length = field_length[4:0];
@@ -976,47 +986,47 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         else begin
                             next_bad_community = bad_community + 32'd1;
                             if (trap_enabled) next_auth_pending = 1;
-                            next_state = IDLE;
+                            next_state = 7'd0;
                         end
 
                         FIELD_PDU : if (field_accept[FIELD_PDU]) begin
                             next_get_next = (tag_value == PDU_GET_NEXT);
                             next_get_set = (tag_value == PDU_SET);
                             next_pdu_end = field_end;
-                            next_field = FIELD_REQUEST_ID;
+                            next_field = 4'd4;
                             fetch (TAG);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX :
                             if (field_accept[FIELD_REQUEST_ID]) begin
                             if (field == FIELD_REQUEST_ID) next_request_id_length = field_length[2:0];
                             fetch (INTEGER_VALUE);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_BINDING_LIST : if (field_accept[FIELD_MESSAGE]) begin
                             next_list_end = field_end;
-                            next_field = FIELD_BINDING;
+                            next_field = 4'd8;
                             fetch (TAG);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_BINDING : if (field_accept[FIELD_MESSAGE]) begin
                             next_binding_end = field_end;
-                            next_field = FIELD_OID;
+                            next_field = 4'd9;
                             fetch (TAG);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_OID : if (field_accept[FIELD_OID]) begin
                             next_oid_start = cursor[7:0];
                             next_oid_length = field_length[4:0];
                             next_cursor = field_end;
-                            next_field = FIELD_VALUE;
+                            next_field = 4'd10;
                             fetch (TAG);
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
                         FIELD_VALUE : if (field_accept[FIELD_VALUE] && value_chain_ok) begin
                             next_set_value_start = cursor[7:0];
@@ -1025,9 +1035,9 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                             next_candidate = 0;
                             next_state = LOOK_START;
                         end
-                        else next_state = IDLE;
+                        else next_state = 7'd0;
 
-                        default : next_state = IDLE;
+                        default : next_state = 7'd0;
                     endcase
                 end
 
@@ -1036,10 +1046,10 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     if (byte_value <= 1) begin
                         next_version = byte_value[0];
                         next_cursor = cursor + 9'd1;
-                        next_field = FIELD_COMMUNITY;
+                        next_field = 4'd2;
                         fetch (TAG);
                     end
-                    else next_state = IDLE;
+                    else next_state = 7'd0;
                 end
 
                 // COMMUNITY：逐字节核对口令，通过后读下一字段，否则转 IDLE。
@@ -1051,10 +1061,10 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         if (community_bad || byte_value != community_expected) begin
                             next_bad_community = bad_community + 32'd1;
                             if (trap_enabled) next_auth_pending = 1;
-                            next_state = IDLE;
+                            next_state = 7'd0;
                         end
                         else begin
-                            next_field = FIELD_PDU;
+                            next_field = 4'd3;
                             fetch (TAG);
                         end
                     end
@@ -1086,7 +1096,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 // LOOK_COMPARE：逐个数字比较对象编号，匹配转 FOUND，否则转 LOOK_NEXT。
                 LOOK_COMPARE : begin
                     if (byte_value[7]) begin
-                        if (oid_last_byte) next_state = IDLE;
+                        if (oid_last_byte) next_state = 7'd0;
                         else begin
                             next_oid_acc = decoded_arc;
                             next_cursor = cursor + 9'd1;
@@ -1095,14 +1105,14 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         end
                     end
                     else if (arc_less) next_state = get_next ? FOUND : LOOK_NEXT;
-                    else if (arc_greater) next_state = LOOK_NEXT;
+                    else if (arc_greater) next_state = 7'd16;
                     else if (oid_last_byte) begin
                         if (oid_last_arc)
                             next_state = get_next ? LOOK_NEXT : FOUND;
                         else next_state = get_next ? FOUND : LOOK_NEXT;
                     end
                     else if (oid_last_arc)
-                        next_state = LOOK_NEXT;
+                        next_state = 7'd16;
                     else begin
                         next_oid_acc = 0;
                         next_arc_index = arc_index + 4'd1;
@@ -1267,7 +1277,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 // LEN3：计算协议数据单元的长度，然后转 LEN4。
                 LEN3 : begin
                     next_pdu_length = list_length + { 5'b0, request_id_length } + 8'd10;
-                    next_state = LEN4;
+                    next_state = 7'd25;
                 end
 
                 // LEN4：计算整条消息的长度，然后转 BUILD。
@@ -1280,7 +1290,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     next_part = B_MESSAGE_TAG;
                     next_part_pos = 0;
                     next_output_count = 0;
-                    next_state = BUILD;
+                    next_state = 7'd26;
                 end
 
                 // BUILD：依次写入回应的各字段，全部完成后进入发送过程。
@@ -1413,7 +1423,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
 
                     B_OID_LENGTH : begin
                         emit (response_oid_length);
-                        next_part = B_OID;
+                        next_part = 5'd25;
                         next_part_pos = 0;
                     end
 
@@ -1438,7 +1448,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         emit (value_length);
                         next_part = B_VALUE;
                         next_part_pos = 0;
-                        if (value_length == 0) next_state = TX_FLUSH;
+                        if (value_length == 0) next_state = 7'd29;
                     end
 
                     B_VALUE : if (echo_value) begin
@@ -1462,7 +1472,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         end
                     end
 
-                    default : next_state = IDLE;
+                    default : next_state = 7'd0;
                 endcase
 
                 // COPY_COMM：写入口令字节，写完后继续构造协议头。
@@ -1470,7 +1480,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     emit (byte_value);
                     next_part_pos = part_pos + 5'd1;
                     if (part_pos + 1 == community_length) next_part = B_PDU_TAG;
-                    next_state = BUILD;
+                    next_state = 7'd26;
                 end
 
                 // COPY_OID：写入请求中的对象编号，写完后继续值字段。
@@ -1478,7 +1488,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     emit (byte_value);
                     next_part_pos = part_pos + 5'd1;
                     if (part_pos + 1 == response_oid_length) next_part = B_VALUE_TAG;
-                    next_state = BUILD;
+                    next_state = 7'd26;
                 end
 
                 // COPY_VALUE：复制错误请求中的值，写完后转 TX_FLUSH。
@@ -1495,7 +1505,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     next_get_set = 0;
                     next_missing = 0;
                     next_echo_value = 0;
-                    next_error_status = ERR_NONE;
+                    next_error_status = 8'd0;
                     next_request_id = 0;
                     next_request_id_length = 1;
                     next_community_length = configured_length;
@@ -1523,7 +1533,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         2 : next_byte_value = community_word[15:8];
                         3 : next_byte_value = community_word[7:0];
                     endcase
-                    next_state = COPY_COMM;
+                    next_state = 7'd27;
                 end
 
                 // TRAP_WORD：选择事件编号所在的字，然后转 TRAP_BYTE。
@@ -1559,11 +1569,11 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     next_state = TX_SEND;
                 end
                 TX_SEND : if (send_complete == send_request) begin
-                    next_state = IDLE;
+                    next_state = 7'd0;
                     if (sending_trap) next_traps_sent = traps_sent + 32'd1;
                 end
 
-                default : next_state = IDLE;
+                default : next_state = 7'd0;
             endcase
             // 关闭事件通知后，模块丢弃尚未发送的通知请求。
             if ( ! configured || ! trap_enabled) begin
@@ -1587,8 +1597,8 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
             send_request <= 0;
             mib_request <= 0;
             mib_write <= 0;
-            state <= IDLE;
-            return_state <= IDLE;
+            state <= 7'd0;
+            return_state <= 7'd0;
             arc_less_byte <= 0;
             arc_equal_byte <= 0;
             arc_less <= 0;
@@ -1779,7 +1789,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         if (reset) begin
             request_length <= 0;
             cursor <= 0;
-            field <= FIELD_MESSAGE;
+            field <= 4'd0;
             byte_value <= 0;
         end
         else begin
@@ -1944,7 +1954,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
             candidate <= 0;
             object_index <= 0;
             missing <= 0;
-            error_status <= ERR_NONE;
+            error_status <= 8'd0;
             value_tag <= 0;
         end
         else begin

@@ -41,7 +41,7 @@ module afdx_mac_rx (
     localparam FCS_LENGTH = 4, MIN_FRAME_LENGTH = 64, MAX_FRAME_LENGTH = 1518, LENGTH_LIMIT = 1519;
 
     // f_err 的取值。
-    localparam ERR_NONE = 0, ERR_FCS = 1, ERR_LENGTH = 2, ERR_PREAMBLE = 3;
+    localparam [1:0] ERR_NONE = 2'd0, ERR_FCS = 2'd1, ERR_LENGTH = 2'd2, ERR_PREAMBLE = 2'd3;
 
     // data_q/valid_q 将数据与有效标记一起延迟一拍。
     // armed 要求复位后先看到线路空闲，避免从半帧开始接收。

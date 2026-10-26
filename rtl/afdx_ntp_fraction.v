@@ -50,7 +50,7 @@ module afdx_ntp_fraction (
                 STEP_IDLE : if (start) begin
                     inverse <= to_nanoseconds;
                     bit_count <= 0;
-                    remainder <= to_nanoseconds ? 0 : value[30:0];
+                    remainder <= to_nanoseconds ? 31'd0 : value[30:0];
                     work <= to_nanoseconds ? value : 0;
                     state <= STEP_ADD;
                 end

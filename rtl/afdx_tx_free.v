@@ -26,7 +26,7 @@ module afdx_tx_free #(
     input wire [7:0] ret2_page,
     output wire ret2_ready);
 
-    localparam PAGES = (1 << TX_PAGE_AW);
+    localparam [TX_PAGE_AW:0] PAGES = {1'b1, {TX_PAGE_AW{1'b0}}};
 
     // phase 的取值：取一个空闲页要经过的四步。
     localparam POP_IDLE = 0, POP_READ = 1, POP_CAPTURE = 2, POP_REPLY = 3;

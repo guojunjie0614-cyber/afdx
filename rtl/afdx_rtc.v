@@ -65,7 +65,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     localparam CLOCK_NS = 32'd8, LAST_TICK_NS = 32'd999999992, PIPELINE_NS = 32'd40;
 
     // 复位后的请求周期（125000 拍即 1 ms）和服务端口。
-    localparam DEFAULT_PERIOD = 125000, NTP_PORT = 123;
+    localparam DEFAULT_PERIOD = 125000;
+    localparam [15:0] NTP_PORT = 16'd123;
 
     // 报文共 48 字节，PACKET_LAST 是末字节的下标。
     localparam PACKET_LAST = 47;
