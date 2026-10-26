@@ -119,7 +119,6 @@ module afdx_rx_parse #(
     // FIN_REPORT：报告错误或提交完整帧信息，然后转 FIN_WAIT。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
-    reg [15:0] arrival;
     reg [RX_RING_AW + 82:0] end_desc;
 
     // 先登记本拍校验字，再累加；帧尾检查直接使用累加值的补码关系。
@@ -214,7 +213,6 @@ module afdx_rx_parse #(
             end_bad <= 0;
             end_overflow <= 0;
             end_alloc <= 0;
-            arrival <= 0;
             end_desc <= 0;
         end
         else begin
@@ -339,7 +337,6 @@ module afdx_rx_parse #(
             // 帧信息还包含用户数据长度、缓存起点和到达时间。
             if (f_end && allowed) begin
                 err_saved <= f_err;
-                arrival <= now_c;
                 end_overflow <= overflow;
                 end_alloc <= has_payload;
                 end_bad <= header_bad || ! n_ok || !ip_checksum_good || ip_len != ip_expected

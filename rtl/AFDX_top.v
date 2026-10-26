@@ -65,11 +65,9 @@ module AFDX_top #(
 
     // ev_tx 报告发送结果，ev_a 和 ev_b 分别报告两网接收结果。
     // ev_rm_drop 表示丢弃一份重复帧，ev_deliver 表示接纳一条消息。
-    // ev_gdrop 是预留的丢帧事件口，本设计中固定为零。
     output wire [6:0] ev_tx,
     output wire [7:0] ev_a, ev_b,
-    output wire ev_rm_drop, ev_deliver,
-    output wire [1:0] ev_gdrop);
+    output wire ev_rm_drop, ev_deliver);
 
     // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
     (* preserve = 1, dont_merge = 1 *) reg rx_init_a, rx_init_b, tx_init_a, tx_init_b;
@@ -115,8 +113,6 @@ module AFDX_top #(
     wire [31:0] tx_cfg_wdata;
     wire [RX_CONFIG_BANKS * 32 - 1:0] rx_cfg_wdata;
 
-    // 收发核心直接连接千兆线路，中间没有会丢帧的缓存，所以 ev_gdrop 固定为零。
-    assign ev_gdrop = 2'b00;
     wire m_valid, m_ready, m_last, m_port_en;
     wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data;
     wire [6:0] m_vl, rtc_tx_vl;
@@ -458,7 +454,7 @@ module AFDX_top #(
         .ev_b(ev_b),
         .ev_rm_drop(ev_rm_drop),
         .ev_deliver(ev_deliver),
-        .ev_gdrop(ev_gdrop),
+        .ev_gdrop(2'b00),
         .rtc_rdata(rtc_rdata),
         .rtc_sync_count(rtc_sync_count),
         .snmp_control_data(snmp_control_data),

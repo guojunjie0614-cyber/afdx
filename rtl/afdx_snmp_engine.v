@@ -54,17 +54,6 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     (* direct_enable = 1, keep = 1 *) wire ce_9 = ce_phase[9] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_10 = ce_phase[10] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_11 = ce_phase[11] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_12 = ce_phase[12] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_13 = ce_phase[13] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_14 = ce_phase[14] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_15 = ce_phase[15] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_16 = ce_phase[16] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_17 = ce_phase[17] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_18 = ce_phase[18] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_19 = ce_phase[19] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_20 = ce_phase[20] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_21 = ce_phase[21] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_22 = ce_phase[22] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_23 = ce_phase[23] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_24 = ce_phase[24] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_25 = ce_phase[25] | reset;
@@ -634,15 +623,9 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     // 对象选择、字节位置选择和回应字段选择因此不再落在同一拍。
     genvar oid_byte;
     generate
-        for (oid_byte = 0; oid_byte < PRIVATE_OID_BYTES; oid_byte = oid_byte + 1) begin : oid_encoding
+        for (oid_byte = 0; oid_byte < PRIVATE_OID_BYTES - 1; oid_byte = oid_byte + 1) begin : oid_encoding
             (* direct_enable = 1, keep = 1 *) wire local_ce = ce_phase[12 + oid_byte] | reset;
-            wire [7:0] next_byte;
-            if (oid_byte == PRIVATE_OID_BYTES - 1) begin : tail
-                assign next_byte = 0;
-            end
-            else begin : body
-                assign next_byte = oid_shift[79 - oid_byte * 8 -: 8];
-            end
+            wire [7:0] next_byte = oid_shift[79 - oid_byte * 8 -: 8];
             always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (local_ce) begin
@@ -656,6 +639,14 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     end
         end
     endgenerate
+
+    // OID 最后一个字节的编码和移入值均为零，不保留已无负载的 CE 缓冲。
+    always @(posedge clk) begin
+        if (ce_phase[12 + PRIVATE_OID_BYTES - 1] | reset) begin
+            if (reset || state == LEN4 || (state == BUILD && part == B_OID && !missing))
+                oid_shift[7:0] <= 8'b0;
+        end
+    end
 
     // 私有对象对应配置或统计地址，只有索引 3 的 user_id 允许设置。
     // 对象 0–5 依次是描述、运行时间、版本、user_id、时钟秒和同步次数。

@@ -30,8 +30,8 @@ module afdx_rx_engine #(
     input wire [31:0] cfg_q,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg state_re, state_we,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] state_ra, state_wa,
-    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [43:0] state_wd,
-    input wire [43:0] state_q,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [42:0] state_wd,
+    input wire [42:0] state_q,
 
     // dq_we 为高时，dq_wd 是写入 dq_wa 的交付信息。
     // dq_pop 表示读走一项，dq_count 表示已写入的项数。
@@ -88,10 +88,6 @@ module afdx_rx_engine #(
 
     // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。
     // 独立使用本模块时仍保持原来的一拍请求接口。
-    // 本地解析器的 desc_valid 已经受初始化使能保护；独立接口保留原 enable 条件。
-    wire map_start = !reset && op == IDLE && (LOCAL_MAP_READ || enable) && (desc_a_valid[0] || desc_b_valid[0]);
-    wire [15:0] map_address = desc_a_valid[0] ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67]
-        : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
     genvar map_copy;
     generate
         if (LOCAL_MAP_READ) begin : local_map
@@ -104,6 +100,10 @@ module afdx_rx_engine #(
             end
         end
         else begin : registered_map
+            // 独立接口保留原 enable 条件。
+            wire map_start = !reset && op == IDLE && enable && (desc_a_valid[0] || desc_b_valid[0]);
+            wire [15:0] map_address = desc_a_valid[0] ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67]
+                : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
             reg request;
             reg [15:0] address;
             always @(posedge clk) begin
@@ -159,11 +159,11 @@ module afdx_rx_engine #(
     // saved_state[24] 表示重复帧检查记录有效。
     // saved_state[23:16] 保存最近交付的序号。
     // saved_state[15:0] 保存该帧的到达时间。
-    reg [43:0] saved_state;
+    reg [42:0] saved_state;
 
     // age_ptr 逐项检查旧记录，age_pending 保存尚未处理的检查请求。
     // elapsed 保存两份帧的到达时间差。
-    reg [15:0] now_q, now_previous, age_time, elapsed;
+    reg [15:0] now_previous, age_time, elapsed;
     reg [7:0] next_sn, second_sn;
     reg [8:0] raw_distance, forward_distance;
     reg [2:0] result;
@@ -269,7 +269,6 @@ module afdx_rx_engine #(
     always @(posedge clk) begin
         if (reset) saved_state <= 0;
         else begin
-            if (load_saved_q) saved_state[43] <= state_q[43];
             if (load_saved_q || write_saved_a)
                 saved_state[42:34] <= ({9{load_saved_q}} & state_q[42:34])
                     | ({9{write_saved_a}} & {1'b1, sn});
@@ -363,7 +362,6 @@ module afdx_rx_engine #(
             sn_match <= 0;
             zero_shortcut <= 0;
             forward_ok <= 0;
-            now_q <= 0;
             now_previous <= 0;
             age_time <= 0;
             elapsed <= 0;
@@ -379,7 +377,6 @@ module afdx_rx_engine #(
             ev_deliver <= 0;
         end
         else begin
-            now_q <= now_c_value;
             now_previous <= now_c_value;
             // 时间基准直接给出同拍变化脉冲；独立模块保持外部 now_c_value 比较语义。
             if (age_tick) age_pending <= 1;
@@ -576,7 +573,7 @@ module afdx_rx_engine #(
                                 age_ptr <= age_ptr + 1'b1;
                                 age_pending <= now_c_value != now_previous;
                                 state_wa <= op_idx;
-                                state_wd <= { saved_state[43:25], 1'b0, saved_state[23:0] };
+                                state_wd <= { saved_state[42:25], 1'b0, saved_state[23:0] };
                                 if (saved_state[24] && age_expired) state_we <= 1;
                                 op <= IDLE;
                             end
