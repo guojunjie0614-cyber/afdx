@@ -3175,4 +3175,4 @@ set_multicycle_path -setup 2 -from $from_snmp_version -to $to_snmp_version
 set_multicycle_path -hold 0 -from $from_snmp_version -to $to_snmp_version
 
 # Independent S2d routing coefficient; original clock/MCP prefix is unchanged.
-set_global_assignment -name PRES_FAC_MULT 1.50
+set_global_assignment -name PRES_FAC_MULT 1.40

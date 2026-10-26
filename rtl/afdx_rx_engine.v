@@ -28,8 +28,8 @@ module afdx_rx_engine #(
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg cfg_re,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] cfg_ra,
     input wire [31:0] cfg_q,
-    (* preserve = 1, dont_merge = 1 *) output reg state_re, state_we,
-    (* preserve = 1, dont_merge = 1 *) output reg [11:0] state_ra, state_wa,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg state_re, state_we,
+    (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] state_ra, state_wa,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [42:0] state_wd,
     input wire [42:0] state_q,
 
