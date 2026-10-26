@@ -1149,6 +1149,7 @@ next_error_position = packet_pos - 10'd4;
                 17 : denial_byte = deny_empty ? "A" : 0;
                 18 : denial_byte = deny_empty ? "T" : 0;
                 19 : denial_byte = deny_empty ? "A" : 0;
+                default : ;
             endcase
         end
     endfunction
@@ -1799,6 +1800,7 @@ next_error_position = packet_pos - 10'd4;
                             if (candidate_read[PK_LUS])
                                 get_byte(candidate_source[PK_LUS], candidate_address[PK_LUS], EMIT);
                         end
+                        default : ;
                     endcase
                 end
 

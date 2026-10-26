@@ -308,6 +308,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 ADDR_A_GDROP : register_select[5] = 1;
                 ADDR_B_GDROP : register_select[6] = 1;
                 ADDR_RTC_SYNC_COUNT : register_select[7] = 1;
+                default : ;
             endcase
         end
     endfunction
