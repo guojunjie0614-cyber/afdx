@@ -69,7 +69,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     (* preserve = 1, dont_merge = 1 *) reg at_last;
     reg [3:0] queued, reserved;
     reg [2:0] write_pos, read_pos;
-    reg [7:0] bytes [0:7];
+    (* ramstyle = "no_rw_check" *) reg [7:0] bytes [0:7];
     wire issue = active && issued < packet_length && reserved < 8;
     // 远端 tx_ready 只进末级与门，本地项先行会合。
     wire take_armed = active && queued != 0;
@@ -153,4 +153,11 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             end
         end
     end
+
+    // 空队列不出队，满队列没有在途返回；同拍同址读写不属于有效操作。
+`ifndef SYNTHESIS
+    always @(posedge clk) if (!reset && return_valid && take
+        && write_pos == read_pos) $display ("** Error: [RAMCOLL] %m time=%0t address=%0d",
+        $time, write_pos);
+`endif
 endmodule
