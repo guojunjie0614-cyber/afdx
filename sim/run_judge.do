@@ -14,8 +14,8 @@ proc judge_read {name} {
 proc judge_diagnostics {report label} {
     set warnings [regexp -all -line {^[ \t]*(#[ \t]*)?\*\* Warning([ \t]+\([^)]*\))?:} $report]
     puts "JUDGE WARNINGS $label count=$warnings"
-    if {[regexp -line {^[ \t]*(#[ \t]*)?(\*\* (Error|Fatal)([ \t]+\([^)]*\))?:|.*\mFAIL\M)} $report]} {
-        error "$label reported Error, Fatal or FAIL; see its log"
+    if {[string first "RAMCOLL" $report] >= 0 || [regexp -line {^[ \t]*(#[ \t]*)?(\*\* (Error|Fatal)([ \t]+\([^)]*\))?:|.*\mFAIL\M)} $report]} {
+        error "$label reported RAMCOLL, Error, Fatal or FAIL; see its log"
     }
     return $warnings
 }
