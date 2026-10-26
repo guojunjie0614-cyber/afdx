@@ -247,7 +247,7 @@ t54 本次官方 VQM 与同次 RTL 在 tb_net_services 中均通过 1124 项自�
 | 16 ns 路径数／最差 setup | 50296 / +0.701 ns |
 | 同沿 hold 路径数 | 203759 |
 
-eLinx 界面综合与布局布线后的工程总览（资源与 clk 时序统计）见 `docs/screenshots/elinx_overview.png`，数字与上表一致。
+eLinx 界面综合与布局布线后的工程总览（资源与 clk 时序统计）见 `sim/wave/png/elinx_overview.png`，数字与上表一致。
 
 约束检查为 2755 个引擎寄存器，不合格寄存器和遗漏内部连接均为 0；综合、实现与全量报告三次审查通过。轻量结果及前十路径见 [T54 时序证据](docs/evidence/t54_timing.json)。D3 f60aaacd 的历史对照为 LUT/FF 38297/19947、1 个失败、setup −0.090 ns；本版 LUT 减少 3901（10.2%）、FF 减少 2456（12.3%），原始口径保留在 [T43 时序证据](docs/evidence/t43_timing.json)。
 
