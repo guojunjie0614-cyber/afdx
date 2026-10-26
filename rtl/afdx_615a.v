@@ -115,6 +115,9 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [7:0] lur_q;
     wire [7:0] hdr_q;
     wire [7:0] load_q;
+    // 配置采样单独跨一拍，给 RAM 读口到配置读回区之间留下寄存级。
+    // 引擎仍直接使用 load_q；只把寄存器 5 的采样更新推迟一拍。
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] load_sample_local;
     reg  ram_deny_we, cmd_deny_we;
     reg [4:0] ram_deny_wa, cmd_deny_wa;
     reg [7:0] ram_deny_wd, cmd_deny_wd;
@@ -241,7 +244,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         else begin
             consume_q <= consume;
             consume_previous <= consume_q;
-            load_sample <= load_q;
+            load_sample <= load_sample_local;
             deny_tid <= engine_deny_tid;
             loaded <= engine_loaded;
             lus_counter <= engine_lus_counter;
@@ -402,6 +405,10 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         .clk(clk), .write_enable(ram_load_we), .write_address(ram_load_wa), .write_data(ram_load_wd),
         .read_enable(ram_load_re), .read_address(ram_load_ra), .read_data(load_q)
     );
+    always @(posedge clk) begin
+        if (reset) load_sample_local <= 0;
+        else load_sample_local <= load_q;
+    end
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(32)) denial_ram (
         .clk(clk), .write_enable(ram_deny_we), .write_address(ram_deny_wa), .write_data(ram_deny_wd),
         .read_enable(tx_re), .read_address(tx_ra[4:0]), .read_data(deny_q)
