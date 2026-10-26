@@ -4,7 +4,7 @@
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
 module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 59,
-    PREDECODED_CFG_WR = 0) (
+    PREDECODED_CFG_WR = 0, SPLIT_MIB_READY = 0) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
@@ -28,6 +28,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     (* preserve = 1, dont_merge = 1 *) output reg [17:0] mib_addr_cmp,
     output reg [31:0] mib_wdata,
     input wire mib_ready, mib_rvalid,
+    input wire mib_write_ready,
     input wire [31:0] mib_rdata,
 
     // tx_valid 和 tx_ready 同为高时发送一个回应或通知字节。
@@ -349,14 +350,20 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                     mib_wr <= mib_write_q;
                     mib_state <= 1;
                 end
-                1 : if (mib_ready) begin
-                    mib_rd <= 0;
-                    mib_wr <= 0;
+                1 : begin
+                    // 读共享需要地址比较，写握手只需主机空闲和配置就绪。
+                    // 两种请求互斥，分别释放各自选通，避免读比较驱动 mib_wr。
                     if (mib_wr) begin
-                        mib_complete <= mib_transaction;
-                        mib_state <= 0;
+                        if (SPLIT_MIB_READY ? mib_write_ready : mib_ready) begin
+                            mib_wr <= 0;
+                            mib_complete <= mib_transaction;
+                            mib_state <= 0;
+                        end
                     end
-                    else mib_state <= 2;
+                    else if (mib_ready) begin
+                        mib_rd <= 0;
+                        mib_state <= 2;
+                    end
                 end
                 2 : if (mib_rvalid) begin
                     mib_result <= mib_rdata;
