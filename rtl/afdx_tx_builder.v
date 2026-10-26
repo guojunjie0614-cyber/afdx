@@ -467,7 +467,9 @@ module afdx_tx_builder #(
     always @(negedge clk) begin
         if (!reset && (payload_more !== (payload_index < active_len))) begin
             $display("[FAIL] payload_more invariant index=%0d len=%0d", payload_index, active_len);
+            // synthesis translate_off
             $fatal(1, "payload_more invariant");
+            // synthesis translate_on
         end
     end
 `endif
