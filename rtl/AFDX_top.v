@@ -218,7 +218,7 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1), .SPLIT_MIB_READY(1)) snmp (
         .clk(clk),
         .reset(reset),
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
@@ -236,6 +236,7 @@ module AFDX_top #(
         .mib_addr(snmp_mib_addr),
         .mib_addr_cmp(snmp_mib_addr_cmp),
         .mib_ready(snmp_mib_ready),
+        .mib_write_ready(!cfg_wr && !cfg_rd && cfg_ready),
         .mib_rvalid(snmp_read_pipe[1]),
         .mib_rdata(cfg_rdata),
         .tx_valid(snmp_tx_valid),
