@@ -35,7 +35,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
-    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0) +: 8];
 
     // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
@@ -43,7 +43,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     localparam VERSION_A3_WORD = 32'h4133, VERSION_A4_WORD = 32'h4134;
     localparam MAIN_TID_INIT = 16'h8000, STATUS_TID_INIT = 16'h9000, TID_SEQUENCE_INIT = 16'h8100;
     localparam DENY_TID_INIT = 16'ha000;
-    localparam DEFAULT_REQUEST_PORT = 59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 1;
+    localparam DEFAULT_REQUEST_PORT = 16'd59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 8'd1;
     localparam REG_ENABLE = 8'hb0, REG_TX_VL = 8'hb1, REG_MEMORY_ADDRESS = 8'hb4, REG_REQUEST_PORT = 8'hb8;
     localparam REG_TIMEOUT = 8'hb9, REG_RETRY_LIMIT = 8'hba, REG_VERSION = 8'hbb;
 

@@ -213,7 +213,15 @@ module afdx_rx_engine #(
         end
     end
 
-    wire age_tick = REGISTERED_TIME_TICK ? (now_c >> 16) : now_c_value != now_previous;
+    wire age_tick;
+    generate
+        if (REGISTERED_TIME_TICK) begin : registered_age_tick
+            assign age_tick = now_c[16];
+        end
+        else begin : observed_age_tick
+            assign age_tick = now_c_value != now_previous;
+        end
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) desc_quiet <= 0;

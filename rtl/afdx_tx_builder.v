@@ -438,7 +438,7 @@ module afdx_tx_builder #(
                 else if (part == PART_PAYLOAD) begin
                     if (active_len < MIN_PAYLOAD) begin
                         part <= PART_PADDING;
-                        padding_left <= MIN_PAYLOAD - active_len;
+                        padding_left <= MIN_PAYLOAD[4:0] - active_len[4:0];
                         s_data_a <= 0;
                         s_data_b <= 0;
                     end

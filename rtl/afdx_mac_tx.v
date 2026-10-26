@@ -120,8 +120,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                         en_b <= s_en_b;
                         tx_valid_a <= s_en_a;
                         tx_valid_b <= s_en_b;
-                        tx_data_a <= s_en_a ? PREAMBLE_BYTE : 0;
-                        tx_data_b <= s_en_b ? PREAMBLE_BYTE : 0;
+                        tx_data_a <= s_en_a ? PREAMBLE_BYTE : 8'd0;
+                        tx_data_b <= s_en_b ? PREAMBLE_BYTE : 8'd0;
                         crc_a <= CRC_INIT;
                         crc_b <= CRC_INIT;
                         pre_index <= 0;
@@ -135,12 +135,12 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                     PREAMBLE : begin
                         if (pre_index < 7) begin
                             pre_index <= pre_index + 1'b1;
-                            tx_data_a <= en_a ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 0;
-                            tx_data_b <= en_b ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 0;
+                            tx_data_a <= en_a ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 8'd0;
+                            tx_data_b <= en_b ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 8'd0;
                         end
                         else if (s_valid) begin
-                            tx_data_a <= en_a ? s_data_a : 0;
-                            tx_data_b <= en_b ? s_data_b : 0;
+                            tx_data_a <= en_a ? s_data_a : 8'd0;
+                            tx_data_b <= en_b ? s_data_b : 8'd0;
                             crc_a <= next_a;
                             crc_b <= next_b;
                             last_byte <= s_last;
@@ -151,8 +151,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             discard_tail <= 1;
                             state <= FCS;
                             fcs_index <= 0;
-                            tx_data_a <= en_a ? crc_a[7:0] : 0;
-                            tx_data_b <= en_b ? crc_b[7:0] : 0;
+                            tx_data_a <= en_a ? crc_a[7:0] : 8'd0;
+                            tx_data_b <= en_b ? crc_b[7:0] : 8'd0;
                             fcs_a <= { 8'b0, crc_a[31:8] };
                             fcs_b <= { 8'b0, crc_b[31:8] };
                         end
@@ -164,23 +164,23 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             state <= FCS;
                             fcs_index <= 0;
                             if (last_byte) begin
-                                tx_data_a <= en_a ? ~ crc_a[7:0] : 0;
-                                tx_data_b <= en_b ? ~ crc_b[7:0] : 0;
+                                tx_data_a <= en_a ? ~ crc_a[7:0] : 8'd0;
+                                tx_data_b <= en_b ? ~ crc_b[7:0] : 8'd0;
                                 fcs_a <= { 8'b0, ~ crc_a[31:8] };
                                 fcs_b <= { 8'b0, ~ crc_b[31:8] };
                             end
                             else begin
                                 tx_underrun <= 1;
                                 discard_tail <= 1;
-                                tx_data_a <= en_a ? crc_a[7:0] : 0;
-                                tx_data_b <= en_b ? crc_b[7:0] : 0;
+                                tx_data_a <= en_a ? crc_a[7:0] : 8'd0;
+                                tx_data_b <= en_b ? crc_b[7:0] : 8'd0;
                                 fcs_a <= { 8'b0, crc_a[31:8] };
                                 fcs_b <= { 8'b0, crc_b[31:8] };
                             end
                         end
                         else begin
-                            tx_data_a <= en_a ? s_data_a : 0;
-                            tx_data_b <= en_b ? s_data_b : 0;
+                            tx_data_a <= en_a ? s_data_a : 8'd0;
+                            tx_data_b <= en_b ? s_data_b : 8'd0;
                             crc_a <= next_a;
                             crc_b <= next_b;
                             last_byte <= s_last;
@@ -201,8 +201,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                         end
                         else begin
                             fcs_index <= fcs_index + 1'b1;
-                            tx_data_a <= en_a ? fcs_a[7:0] : 0;
-                            tx_data_b <= en_b ? fcs_b[7:0] : 0;
+                            tx_data_a <= en_a ? fcs_a[7:0] : 8'd0;
+                            tx_data_b <= en_b ? fcs_b[7:0] : 8'd0;
                             fcs_a <= { 8'b0, fcs_a[31:8] };
                             fcs_b <= { 8'b0, fcs_b[31:8] };
                         end

@@ -53,7 +53,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         else en_q <= enable;
     end
 
-    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0) +: 8];
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
     localparam SNMP_PORT = 161, TRAP_PORT = 162;
     localparam MAX_COMMUNITY_LENGTH = 16, MAX_OID_LENGTH = 16;

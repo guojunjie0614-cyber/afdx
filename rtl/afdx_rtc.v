@@ -34,7 +34,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     output wire rx_claim);
 
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
-    wire [3:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 4 : cfg_addr;
+    wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 4 : 0) +: 4];
 
     localparam CALC_OFFSET_CANDIDATES = 15, CALC_TIME_CANDIDATES = 16;
     localparam CALC_IDLE = 0;
