@@ -258,8 +258,7 @@ module AFDX_top #(
         .reset(reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
         .enable(1'b1),
-        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == RTC_ADDR_GROUP),
-        .cfg_wr_sel(rtc_wr_sel),
+        .cfg_we(rtc_wr_sel),
         .cfg_re(rtc_snapshot_read),
         .cfg_addr({cfg_addr[3:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),

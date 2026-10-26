@@ -11,8 +11,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
 
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
-    input wire cfg_we, cfg_re,
-    input wire [5:0] cfg_wr_sel,
+    // 预译码模式在原写使能端口上传六位独热选通，默认仍为单比特。
+    input wire [(CFG_WRITE_SELECT ? 6 : 1) - 1:0] cfg_we,
+    input wire cfg_re,
     input wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata,
@@ -83,7 +84,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     localparam REG_CONTROL = 0, REG_PERIOD = 1, REG_VL = 2, REG_PORT = 3, REG_SECONDS = 4, REG_NS = 5;
     localparam REG_OFFSET_SEC = 6, REG_OFFSET_NS = 7;
     // 顶层传入当拍独热选通；独立实例保留原来的地址译码接口。
-    wire [5:0] cfg_write_sel = CFG_WRITE_SELECT ? cfg_wr_sel : {
+    wire [5:0] cfg_write_sel = CFG_WRITE_SELECT ? cfg_we : {
         cfg_we && cfg_write_addr == REG_NS,
         cfg_we && cfg_write_addr == REG_SECONDS,
         cfg_we && cfg_write_addr == REG_PORT,
