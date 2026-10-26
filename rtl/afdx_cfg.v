@@ -221,7 +221,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     localparam SEL_SNMP_CONTROL = 3'd5, SEL_SNMP_STATUS = 3'd6, SEL_SHARED = 3'd7;
 
     // read_loader 的取值：SEL_SHARED 这一组里再选哪个读值。
-    localparam SHARED_SNMP_DESCR = 0, SHARED_LOAD = 1, SHARED_LOAD_EXTRA = 2;
+    localparam [1:0] SHARED_SNMP_DESCR = 2'd0, SHARED_LOAD = 2'd1, SHARED_LOAD_EXTRA = 2'd2;
 
     // read_valid 将读有效标记与请求后第二拍的本地选择结果对齐。
     reg read_valid;

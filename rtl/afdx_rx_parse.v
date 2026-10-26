@@ -91,6 +91,7 @@ module afdx_rx_parse #(
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
+    wire [(RX_RING_AW > 15 ? RX_RING_AW : 15):0] space_limit_value = CAPACITY - n;
     // 长度是否超过整环容量提前登记；占用量仍按首个用户字节提交拍的读指针判断。
     (* preserve = 1, dont_merge = 1 *) reg fits_q;
     reg [15:0] last_data;
@@ -247,7 +248,7 @@ module afdx_rx_parse #(
                     last_data <= n + HEADER_LENGTH - 16'd1;
                     sn_position <= n < MIN_PAYLOAD ? MIN_SN_POSITION : n + HEADER_LENGTH;
                     expected_len <= n < MIN_PAYLOAD ? MIN_FRAME_LENGTH : n + FRAME_OVERHEAD;
-                    space_limit <= CAPACITY - n;
+                    space_limit <= space_limit_value[RX_RING_AW:0];
                     fits_q <= n <= CAPACITY;
                     length_phase <= LEN_WAIT;
                 end
