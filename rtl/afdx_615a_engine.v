@@ -60,13 +60,6 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
     // 含复位的使能保证复位拍也更新；各局部 CE 只驱动至多 32 位。
     (* direct_enable = 1, keep = 1 *) wire ce_1 = ce_phase[1] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_2 = ce_phase[2] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_3 = ce_phase[3] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_4 = ce_phase[4] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_5 = ce_phase[5] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_6 = ce_phase[6] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_7 = ce_phase[7] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_8 = ce_phase[8] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_9 = ce_phase[9] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_10 = ce_phase[10] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_11 = ce_phase[11] | reset;

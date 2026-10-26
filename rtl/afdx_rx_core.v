@@ -52,7 +52,7 @@ module afdx_rx_core #(
     wire [12:0] map_q;
     wire [11:0] cfg_ra, state_ra, state_wa;
     wire [31:0] cfg_q;
-    wire [43:0] state_wd, state_q;
+    wire [42:0] state_wd, state_q;
     wire ma_valid, mb_valid, ma_first, mb_first, fa_end, fb_end;
     wire [7:0] ma_data, mb_data;
     wire [1:0] fa_err, fb_err;
@@ -237,7 +237,7 @@ module afdx_rx_core #(
         .read_address(cfg_ra),
         .read_data(cfg_q)
     );
-    afdx_ram_sdp #(.WIDTH(44), .DEPTH(4096)) rx_state (
+    afdx_ram_sdp #(.WIDTH(43), .DEPTH(4096)) rx_state (
         .clk(clk),
         .write_enable(state_we),
         .write_address(state_wa),

@@ -61,11 +61,11 @@ module afdx_svc (
     // 四个发送方的编号，也是 request 里对应的位：应用、时钟同步、网络管理、加卸载。
     localparam SRC_APP = 0, SRC_RTC = 1, SRC_SNMP = 2, SRC_LOAD = 3;
 
-    // busy 为高时，owner 保存当前消息的发送方。
+    // busy 为高时，served 的独热位保持当前消息的发送方。
     // turn 指定下次从哪一方开始查找待发消息。
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
     reg busy, rx_active, rx_claimed;
-    reg [1:0] owner, turn, selected;
+    reg [1:0] turn, selected;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] served;
     reg [3:0] next_granted;
     wire [3:0] request = { svc_tx_valid, app_tx_valid };
@@ -112,7 +112,7 @@ module afdx_svc (
         else if (!((busy || m_valid) && !finishing)) served <= next_granted;
     end
 
-    // 消费端只使用寄存后的独热位，隔断 turn/owner 到跨模块数据和 ready 的译码链。
+    // 消费端只使用寄存后的独热位，隔断 turn 到跨模块数据和 ready 的译码链。
     always @* begin
         selected = {served[2] | served[3], served[1] | served[3]};
         m_valid = |(request & served);
@@ -164,14 +164,11 @@ module afdx_svc (
     always @(posedge clk) begin
         if (reset) begin
             busy <= 0;
-            owner <= 0;
             turn <= 0;
             rx_active <= 0;
             rx_claimed <= 0;
         end
         else begin
-            // 空闲时保存候选来源，busy 时 selected 本来就是 owner；无需再串入 valid 使能。
-            owner <= selected;
             if (m_valid) begin
                 if (m_ready && m_last) begin
                     busy <= 0;
