@@ -1,5 +1,8 @@
 # ModelSim-only entry: run from the repository root with do sim/run_judge.do.
 # ModelSim creates local vectors and libraries; Python is not required.
+# Compilation and each case are launched as external `vlog`/`vsim -batch`
+# processes: `vsim -c` uses the local vish<->vsim RPC transport, which is
+# unavailable on some hosts, and `transcript` is not available in -batch mode.
 onerror {resume}
 # Testbenches finish with $finish; validate the final result after run returns.
 onbreak {}
@@ -18,6 +21,23 @@ proc judge_diagnostics {report label} {
         error "$label reported RAMCOLL, Error, Fatal or FAIL; see its log"
     }
     return $warnings
+}
+
+proc judge_tools {} {
+    if {[info exists ::env(MODEL_TECH)] && [file isfile [file join $::env(MODEL_TECH) vsim.exe]]} {
+        return $::env(MODEL_TECH)
+    }
+    return [file dirname [info nameofexecutable]]
+}
+
+proc judge_run {log command} {
+    # Child tools resolve the library map from their own -modelsimini/cwd; the
+    # outer session's MODELSIM pointer is not valid for them.
+    if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
+    if {[catch {exec {*}$command > $log 2>@1} message]} {
+        if {![file isfile $log]} {error "launch failed: $message"}
+    }
+    return [judge_read $log]
 }
 
 proc judge_case {root output ini label test parameters} {
@@ -42,17 +62,12 @@ proc judge_case {root output ini label test parameters} {
     }
     cd $folder
     set logfile [file join $folder simulation.log]
-    transcript file $logfile
-    transcript on
-    set failed [catch {
-        vsim -quiet -modelsimini $ini -t 1ps -onfinish stop -wlf simulation.wlf {*}$parameters work.$test
-        run -all
-    } message options]
-    catch {quit -sim}
-    transcript file ""
-    set report [judge_read $logfile]
+    set command [list [file join [judge_tools] vsim.exe] -batch -quiet]
+    if {$ini ne ""} {lappend command -modelsimini $ini}
+    lappend command -t 1ps -onfinish stop -wlf simulation.wlf {*}$parameters work.$test \
+        -do "run -all; quit -f"
+    set report [judge_run $logfile $command]
     set warnings [judge_diagnostics $report $label]
-    if {$failed} {return -options $options $message}
     set pattern [format {\[RESULT\] %s PASS checks=([0-9]+) errors=0} $test]
     if {![regexp $pattern $report match checks]} {
         error "$label failed; see $label/simulation.log"
@@ -117,25 +132,21 @@ proc judge_main {root} {
     set ::judge_output $output
     file mkdir $output
     cd $output
-    vmap -c
     set ini [file join $output modelsim.ini]
+    if {[catch {vmap -c}] || ![file isfile $ini]} {set ini ""}
     vlib work
-    vmap -modelsimini $ini work [file join $output work]
-    transcript file [file join $output compile.log]
-    transcript on
+    if {$ini ne ""} {catch {vmap -modelsimini $ini work [file join $output work]}}
     set sources [concat [lsort [glob [file join $root rtl *.v]]] [lsort [glob [file join $root tb lib *.v]]]]
     foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_sys_perf_var tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
     if {$ce_div ni {1 2}} {error "AFDX_CE_DIV must be 1 or 2"}
     puts "JUDGE CE_DIV=$ce_div"
-    set failed [catch {
-        vlog -modelsimini $ini -work work -vlog01compat +define+AFDX_CE_DIV=$ce_div +incdir+[file join $root tb lib] {*}$sources
-    } message options]
-    transcript file ""
-    set compiled [judge_read [file join $output compile.log]]
+    set command [list [file join [judge_tools] vlog.exe] -work work -vlog01compat \
+        +define+AFDX_CE_DIV=$ce_div +incdir+[file join $root tb lib]]
+    if {$ini ne ""} {set command [linsert $command 1 -modelsimini $ini]}
+    set compiled [judge_run [file join $output compile.log] [concat $command $sources]]
     set ::judge_warnings [judge_diagnostics $compiled compile]
-    if {$failed} {return -options $options $message}
     puts "JUDGE COMPILE PASS warnings=$::judge_warnings"
     set summary {}
     foreach {label test parameters} {
@@ -159,11 +170,8 @@ proc judge_main {root} {
     puts "Outputs: [file join out modelsim [file tail $output]]"
 }
 
-# Both exits restore the caller's directory and transcript before reporting.
+# Both exits restore the caller's directory before reporting.
 set judge_root [file normalize [pwd]]
-set judge_transcript [transcript file]
-if {$judge_transcript ne ""} {set judge_transcript [file normalize $judge_transcript]}
-set judge_echo [transcript -q]
 set judge_started [clock milliseconds]
 set judge_warnings 0
 set judge_cases 0
@@ -172,8 +180,6 @@ set judge_failed [catch {judge_main $judge_root} judge_message]
 set judge_cleanup_failed [catch {
     catch {quit -sim}
     cd $judge_root
-    transcript file $judge_transcript
-    if {$judge_echo} {transcript on} else {transcript off}
 } judge_cleanup_message]
 if {$judge_cleanup_failed} {set judge_failed 1; append judge_message " Cleanup: $judge_cleanup_message"}
 set judge_seconds [expr {([clock milliseconds]-$judge_started)/1000.0}]
