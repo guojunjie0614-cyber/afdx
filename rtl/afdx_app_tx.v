@@ -58,7 +58,7 @@ module afdx_app_tx (
     wire [8:0] memory_q;
     wire read_en;
     wire [11:0] read_addr;
-    afdx_ram_sdp #(.WIDTH(9),.DEPTH(4096)) payload(
+    afdx_app_map #(.WIDTH(9)) payload(
         .clk(clk),.write_enable(store),.write_address(write_ptr[11:0]),
         .write_data({!valid,dq}),.read_enable(read_en),.read_address(read_addr),.read_data(memory_q));
     wire q_valid,q_ready;
