@@ -17,10 +17,28 @@ module afdx_app_tx (
 );
     reg [15:0] vlids[0:127];
     reg [127:0] enabled;
-    always @(posedge clk)begin
-        if(reset)enabled<=0;
-        else if(cfg_write)begin vlids[cfg_index]<=cfg_vlid;enabled[cfg_index]<=1'b1;end
-    end
+    // 配置先复制到各 16 项局部银行，避免全表写数据和译码扇出。
+    genvar cb,cv;
+    generate for(cb=0;cb<8;cb=cb+1)begin:configuration_bank
+        (* preserve=1,dont_merge=1 *) reg [15:0] data_q;
+        (* preserve=1,dont_merge=1 *) reg [3:0] index_q;
+        (* preserve=1,dont_merge=1 *) reg write_q;
+        always @(posedge clk)begin
+            if(reset)begin data_q<=0;index_q<=0;write_q<=0;end
+            else begin
+                data_q<=cfg_vlid;index_q<=cfg_index[3:0];
+                write_q<=cfg_write && cfg_index[6:4]==cb;
+            end
+        end
+        for(cv=0;cv<16;cv=cv+1)begin:entry
+            always @(posedge clk)begin
+                if(reset)enabled[cb*16+cv]<=0;
+                else if(write_q && index_q==cv)begin
+                    vlids[cb*16+cv]<=data_q;enabled[cb*16+cv]<=1'b1;
+                end
+            end
+        end
+    end endgenerate
     reg vq,active,bad;
     reg [7:0] dq,hi;
     reg [15:0] message_id;
