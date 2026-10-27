@@ -1,6 +1,6 @@
 {
   "test": "tb_sys_perf",
-  "items": 1212916,
+  "items": 1228832,
   "errors": 0,
   "reports": {
     "es1_tx": {
@@ -53,7 +53,7 @@
       "test": "tb_sys_perf_es1_rx",
       "items": 85889,
       "errors": 0,
-      "either": 30,
+      "either": 28,
       "segments": 15616,
       "segments_a": 7808,
       "segments_b": 7808,
@@ -64,7 +64,7 @@
         "rm_drop": 7808
       },
       "deliveries": 7808,
-      "max_delivery_latency": 25,
+      "max_delivery_latency": 27,
       "stages": {
         "light_d0": {
           "segments": 80,
@@ -121,7 +121,7 @@
       "test": "tb_sys_perf_es2_rx",
       "items": 90949,
       "errors": 0,
-      "either": 35,
+      "either": 31,
       "segments": 16536,
       "segments_a": 8268,
       "segments_b": 8268,
@@ -132,7 +132,7 @@
         "rm_drop": 8268
       },
       "deliveries": 8268,
-      "max_delivery_latency": 25,
+      "max_delivery_latency": 27,
       "stages": {
         "light_d0": {
           "segments": 80,
@@ -199,7 +199,7 @@
     },
     "system": {
       "test": "tb_sys_perf",
-      "items": 451729,
+      "items": 467645,
       "errors": 0,
       "either": 0,
       "w_over": 0,
@@ -209,14 +209,14 @@
           "limit_min": 20380,
           "limit_max": 20380,
           "W_samples": 451,
-          "W_max": 31,
-          "W_mean": 0.7560975609756098,
+          "W_max": 32,
+          "W_mean": 0.7804878048780488,
           "rx_samples": 460,
-          "rx_max": 24,
-          "rx_mean": 23.002173913043478,
+          "rx_max": 26,
+          "rx_mean": 25.002173913043478,
           "e2e_samples": 460,
-          "e2e_max": 1581,
-          "e2e_mean": 1580.0021739130434,
+          "e2e_max": 1584,
+          "e2e_mean": 1583.0021739130434,
           "w_over": 0
         },
         "duplex_d257": {
@@ -224,14 +224,14 @@
           "limit_min": 20380,
           "limit_max": 20380,
           "W_samples": 460,
-          "W_max": 31,
-          "W_mean": 1.3478260869565217,
+          "W_max": 32,
+          "W_mean": 1.391304347826087,
           "rx_samples": 460,
-          "rx_max": 24,
-          "rx_mean": 23.002173913043478,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 460,
-          "e2e_max": 1838,
-          "e2e_mean": 1837.0021739130434,
+          "e2e_max": 1840,
+          "e2e_mean": 1840.0,
           "w_over": 0
         },
         "gbe77_d0": {
@@ -239,14 +239,14 @@
           "limit_min": 123426,
           "limit_max": 123426,
           "W_samples": 3408,
-          "W_max": 31,
-          "W_mean": 0.18192488262910797,
+          "W_max": 32,
+          "W_mean": 0.18779342723004694,
           "rx_samples": 3542,
-          "rx_max": 24,
-          "rx_mean": 23.001129305477132,
+          "rx_max": 26,
+          "rx_mean": 25.001129305477132,
           "e2e_samples": 3542,
-          "e2e_max": 1581,
-          "e2e_mean": 1580.0011293054772,
+          "e2e_max": 1584,
+          "e2e_mean": 1583.0011293054772,
           "w_over": 0
         },
         "gbe77_d257": {
@@ -254,14 +254,14 @@
           "limit_min": 123426,
           "limit_max": 123426,
           "W_samples": 3542,
-          "W_max": 31,
-          "W_mean": 1.3478260869565217,
+          "W_max": 32,
+          "W_mean": 1.391304347826087,
           "rx_samples": 3542,
-          "rx_max": 24,
-          "rx_mean": 23.001129305477132,
+          "rx_max": 26,
+          "rx_mean": 25.001129305477132,
           "e2e_samples": 3542,
-          "e2e_max": 1838,
-          "e2e_mean": 1837.0011293054772,
+          "e2e_max": 1841,
+          "e2e_mean": 1840.0011293054772,
           "w_over": 0
         },
         "gbe81_d0": {
@@ -269,14 +269,14 @@
           "limit_min": 129578,
           "limit_max": 129578,
           "W_samples": 3718,
-          "W_max": 31,
-          "W_mean": 1.2840236686390532,
+          "W_max": 32,
+          "W_mean": 1.3254437869822486,
           "rx_samples": 3726,
-          "rx_max": 23,
-          "rx_mean": 23.0,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 3726,
-          "e2e_max": 1580,
-          "e2e_mean": 1580.0,
+          "e2e_max": 1583,
+          "e2e_mean": 1583.0,
           "w_over": 0
         },
         "gbe81_d257": {
@@ -284,14 +284,14 @@
           "limit_min": 129578,
           "limit_max": 129578,
           "W_samples": 3726,
-          "W_max": 31,
-          "W_mean": 1.3478260869565217,
+          "W_max": 32,
+          "W_mean": 1.391304347826087,
           "rx_samples": 3726,
-          "rx_max": 23,
-          "rx_mean": 23.0,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 3726,
-          "e2e_max": 1837,
-          "e2e_mean": 1837.0,
+          "e2e_max": 1840,
+          "e2e_mean": 1840.0,
           "w_over": 0
         },
         "light_d0": {
@@ -299,14 +299,14 @@
           "limit_min": 6538,
           "limit_max": 6538,
           "W_samples": 78,
-          "W_max": 37,
-          "W_mean": 32.07692307692308,
+          "W_max": 38,
+          "W_mean": 33.07692307692308,
           "rx_samples": 80,
-          "rx_max": 23,
-          "rx_mean": 23.0,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 80,
-          "e2e_max": 1580,
-          "e2e_mean": 517.0,
+          "e2e_max": 1583,
+          "e2e_mean": 520.0,
           "w_over": 0
         },
         "light_d257": {
@@ -314,14 +314,14 @@
           "limit_min": 6538,
           "limit_max": 6538,
           "W_samples": 80,
-          "W_max": 37,
-          "W_mean": 32.2,
+          "W_max": 38,
+          "W_mean": 33.2,
           "rx_samples": 80,
-          "rx_max": 23,
-          "rx_mean": 23.0,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 80,
-          "e2e_max": 1837,
-          "e2e_mean": 774.0,
+          "e2e_max": 1840,
+          "e2e_mean": 777.0,
           "w_over": 0
         },
         "throughput_d0": {
@@ -329,14 +329,14 @@
           "limit_min": 20380,
           "limit_max": 20380,
           "W_samples": 221,
-          "W_max": 31,
-          "W_mean": 0.14027149321266968,
+          "W_max": 32,
+          "W_mean": 0.14479638009049775,
           "rx_samples": 230,
-          "rx_max": 24,
-          "rx_mean": 23.004347826086956,
+          "rx_max": 25,
+          "rx_mean": 25.0,
           "e2e_samples": 230,
-          "e2e_max": 1581,
-          "e2e_mean": 1580.004347826087,
+          "e2e_max": 1583,
+          "e2e_mean": 1583.0,
           "w_over": 0
         },
         "throughput_d257": {
@@ -344,14 +344,14 @@
           "limit_min": 20380,
           "limit_max": 20380,
           "W_samples": 230,
-          "W_max": 31,
-          "W_mean": 1.3478260869565217,
+          "W_max": 32,
+          "W_mean": 1.391304347826087,
           "rx_samples": 230,
-          "rx_max": 24,
-          "rx_mean": 23.004347826086956,
+          "rx_max": 26,
+          "rx_mean": 25.004347826086956,
           "e2e_samples": 230,
-          "e2e_max": 1838,
-          "e2e_mean": 1837.004347826087,
+          "e2e_max": 1841,
+          "e2e_mean": 1840.004347826087,
           "w_over": 0
         }
       },
@@ -370,7 +370,7 @@
             "rm_drop": 7808,
             "deliver": 7808
           },
-          "max_write_wait": 1,
+          "max_write_wait": 2,
           "pulse_stages": {
             "light_d0": {
               "accept": 40,
@@ -469,7 +469,7 @@
             "rm_drop": 8268,
             "deliver": 8268
           },
-          "max_write_wait": 1,
+          "max_write_wait": 2,
           "pulse_stages": {
             "light_d0": {
               "accept": 40,
@@ -589,38 +589,38 @@
               "BAG_wait_definition": "max(P_slow+BAG-M,0)",
               "T_tx": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_rx": {
                 "samples": 40,
-                "max": 1494,
-                "mean": 426.6,
-                "max_us": 11.952,
-                "mean_us": 3.4128
+                "max": 1496,
+                "mean": 428.6,
+                "max_us": 11.968,
+                "mean_us": 3.4288000000000003
               },
               "T_e2e_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "T_tx_BAG_removed": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "BAG_wait": {
                 "samples": 40,
@@ -634,17 +634,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 37,
-                    "mean": 37.0,
-                    "max_us": 0.296,
-                    "mean_us": 0.296
+                    "max": 38,
+                    "mean": 38.0,
+                    "max_us": 0.304,
+                    "mean_us": 0.304
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 132,
-                    "mean": 132.0,
-                    "max_us": 1.056,
-                    "mean_us": 1.056
+                    "max": 135,
+                    "mean": 135.0,
+                    "max_us": 1.08,
+                    "mean_us": 1.08
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -660,17 +660,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 142,
-                    "mean": 142.0,
-                    "max_us": 1.1360000000000001,
-                    "mean_us": 1.1360000000000001
+                    "max": 145,
+                    "mean": 145.0,
+                    "max_us": 1.16,
+                    "mean_us": 1.16
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -686,17 +686,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 144,
-                    "mean": 144.0,
-                    "max_us": 1.1520000000000001,
-                    "mean_us": 1.1520000000000001
+                    "max": 147,
+                    "mean": 147.0,
+                    "max_us": 1.176,
+                    "mean_us": 1.176
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -712,17 +712,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 1130,
-                    "mean": 1130.0,
-                    "max_us": 9.040000000000001,
-                    "mean_us": 9.040000000000001
+                    "max": 1133,
+                    "mean": 1133.0,
+                    "max_us": 9.064,
+                    "mean_us": 9.064
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -738,17 +738,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 3050,
-                    "mean": 3050.0,
-                    "max_us": 24.400000000000002,
-                    "mean_us": 24.400000000000002
+                    "max": 3053,
+                    "mean": 3053.0,
+                    "max_us": 24.424,
+                    "mean_us": 24.424
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -764,7 +764,7 @@
               "tx_jitter_cycles": 0,
               "e2e_jitter_cycles": 0,
               "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
-              "average_payload_mbps": 2.634792811180635,
+              "average_payload_mbps": 2.634780340856754,
               "jitter": {
                 "max": 0,
                 "max_us": 0.0,
@@ -779,10 +779,10 @@
               },
               "raw_gap_minus_BAG": {
                 "samples": 39,
-                "max": 48581,
-                "mean": 27197.05128205128,
-                "max_us": 388.648,
-                "mean_us": 217.57641025641024
+                "max": 48584,
+                "mean": 27197.410256410258,
+                "max_us": 388.672,
+                "mean_us": 217.57928205128206
               },
               "formula_limit": 6538,
               "formula_limit_us": 52.304
@@ -798,38 +798,38 @@
               "BAG_wait_definition": "max(P_slow+BAG-M,0)",
               "T_tx": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_rx": {
                 "samples": 40,
-                "max": 1494,
-                "mean": 426.6,
-                "max_us": 11.952,
-                "mean_us": 3.4128
+                "max": 1496,
+                "mean": 428.6,
+                "max_us": 11.968,
+                "mean_us": 3.4288000000000003
               },
               "T_e2e_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "T_tx_BAG_removed": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "BAG_wait": {
                 "samples": 40,
@@ -843,17 +843,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 37,
-                    "mean": 37.0,
-                    "max_us": 0.296,
-                    "mean_us": 0.296
+                    "max": 38,
+                    "mean": 38.0,
+                    "max_us": 0.304,
+                    "mean_us": 0.304
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 132,
-                    "mean": 132.0,
-                    "max_us": 1.056,
-                    "mean_us": 1.056
+                    "max": 135,
+                    "mean": 135.0,
+                    "max_us": 1.08,
+                    "mean_us": 1.08
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -869,17 +869,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 142,
-                    "mean": 142.0,
-                    "max_us": 1.1360000000000001,
-                    "mean_us": 1.1360000000000001
+                    "max": 145,
+                    "mean": 145.0,
+                    "max_us": 1.16,
+                    "mean_us": 1.16
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -895,17 +895,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 144,
-                    "mean": 144.0,
-                    "max_us": 1.1520000000000001,
-                    "mean_us": 1.1520000000000001
+                    "max": 147,
+                    "mean": 147.0,
+                    "max_us": 1.176,
+                    "mean_us": 1.176
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -921,17 +921,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 1130,
-                    "mean": 1130.0,
-                    "max_us": 9.040000000000001,
-                    "mean_us": 9.040000000000001
+                    "max": 1133,
+                    "mean": 1133.0,
+                    "max_us": 9.064,
+                    "mean_us": 9.064
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -947,17 +947,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 3050,
-                    "mean": 3050.0,
-                    "max_us": 24.400000000000002,
-                    "mean_us": 24.400000000000002
+                    "max": 3053,
+                    "mean": 3053.0,
+                    "max_us": 24.424,
+                    "mean_us": 24.424
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -973,7 +973,7 @@
               "tx_jitter_cycles": 0,
               "e2e_jitter_cycles": 0,
               "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
-              "average_payload_mbps": 2.634792811180635,
+              "average_payload_mbps": 2.634780340856754,
               "jitter": {
                 "max": 0,
                 "max_us": 0.0,
@@ -988,10 +988,10 @@
               },
               "raw_gap_minus_BAG": {
                 "samples": 39,
-                "max": 48581,
-                "mean": 27197.05128205128,
-                "max_us": 388.648,
-                "mean_us": 217.57641025641024
+                "max": 48584,
+                "mean": 27197.410256410258,
+                "max_us": 388.672,
+                "mean_us": 217.57928205128206
               },
               "formula_limit": 6538,
               "formula_limit_us": 52.304
@@ -1014,38 +1014,38 @@
               "BAG_wait_definition": "max(P_slow+BAG-M,0)",
               "T_tx": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_rx": {
                 "samples": 40,
-                "max": 1494,
-                "mean": 426.6,
-                "max_us": 11.952,
-                "mean_us": 3.4128
+                "max": 1496,
+                "mean": 428.6,
+                "max_us": 11.968,
+                "mean_us": 3.4288000000000003
               },
               "T_e2e_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "T_tx_BAG_removed": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "BAG_wait": {
                 "samples": 40,
@@ -1059,17 +1059,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 37,
-                    "mean": 37.0,
-                    "max_us": 0.296,
-                    "mean_us": 0.296
+                    "max": 38,
+                    "mean": 38.0,
+                    "max_us": 0.304,
+                    "mean_us": 0.304
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 132,
-                    "mean": 132.0,
-                    "max_us": 1.056,
-                    "mean_us": 1.056
+                    "max": 135,
+                    "mean": 135.0,
+                    "max_us": 1.08,
+                    "mean_us": 1.08
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1085,17 +1085,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 142,
-                    "mean": 142.0,
-                    "max_us": 1.1360000000000001,
-                    "mean_us": 1.1360000000000001
+                    "max": 145,
+                    "mean": 145.0,
+                    "max_us": 1.16,
+                    "mean_us": 1.16
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1111,17 +1111,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 144,
-                    "mean": 144.0,
-                    "max_us": 1.1520000000000001,
-                    "mean_us": 1.1520000000000001
+                    "max": 147,
+                    "mean": 147.0,
+                    "max_us": 1.176,
+                    "mean_us": 1.176
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1137,17 +1137,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 1130,
-                    "mean": 1130.0,
-                    "max_us": 9.040000000000001,
-                    "mean_us": 9.040000000000001
+                    "max": 1133,
+                    "mean": 1133.0,
+                    "max_us": 9.064,
+                    "mean_us": 9.064
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1163,17 +1163,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 3050,
-                    "mean": 3050.0,
-                    "max_us": 24.400000000000002,
-                    "mean_us": 24.400000000000002
+                    "max": 3053,
+                    "mean": 3053.0,
+                    "max_us": 24.424,
+                    "mean_us": 24.424
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1189,7 +1189,7 @@
               "tx_jitter_cycles": 0,
               "e2e_jitter_cycles": 0,
               "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
-              "average_payload_mbps": 2.6343865113666665,
+              "average_payload_mbps": 2.6343792034168603,
               "jitter": {
                 "max": 0,
                 "max_us": 0.0,
@@ -1204,10 +1204,10 @@
               },
               "raw_gap_minus_BAG": {
                 "samples": 39,
-                "max": 48838,
-                "mean": 27223.410256410258,
-                "max_us": 390.704,
-                "mean_us": 217.78728205128203
+                "max": 48841,
+                "mean": 27223.76923076923,
+                "max_us": 390.728,
+                "mean_us": 217.79015384615386
               },
               "formula_limit": 6538,
               "formula_limit_us": 52.304
@@ -1223,38 +1223,38 @@
               "BAG_wait_definition": "max(P_slow+BAG-M,0)",
               "T_tx": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_rx": {
                 "samples": 40,
-                "max": 1494,
-                "mean": 426.6,
-                "max_us": 11.952,
-                "mean_us": 3.4128
+                "max": 1496,
+                "mean": 428.6,
+                "max_us": 11.968,
+                "mean_us": 3.4288000000000003
               },
               "T_e2e_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "T_tx_BAG_removed": {
                 "samples": 40,
-                "max": 37,
-                "mean": 32.2,
-                "max_us": 0.296,
-                "mean_us": 0.2576
+                "max": 38,
+                "mean": 33.2,
+                "max_us": 0.304,
+                "mean_us": 0.2656
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 40,
-                "max": 3050,
-                "mean": 919.6,
-                "max_us": 24.400000000000002,
-                "mean_us": 7.3568
+                "max": 3053,
+                "mean": 922.6,
+                "max_us": 24.424,
+                "mean_us": 7.380800000000001
               },
               "BAG_wait": {
                 "samples": 40,
@@ -1268,17 +1268,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 37,
-                    "mean": 37.0,
-                    "max_us": 0.296,
-                    "mean_us": 0.296
+                    "max": 38,
+                    "mean": 38.0,
+                    "max_us": 0.304,
+                    "mean_us": 0.304
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 132,
-                    "mean": 132.0,
-                    "max_us": 1.056,
-                    "mean_us": 1.056
+                    "max": 135,
+                    "mean": 135.0,
+                    "max_us": 1.08,
+                    "mean_us": 1.08
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1294,17 +1294,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 142,
-                    "mean": 142.0,
-                    "max_us": 1.1360000000000001,
-                    "mean_us": 1.1360000000000001
+                    "max": 145,
+                    "mean": 145.0,
+                    "max_us": 1.16,
+                    "mean_us": 1.16
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1320,17 +1320,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 144,
-                    "mean": 144.0,
-                    "max_us": 1.1520000000000001,
-                    "mean_us": 1.1520000000000001
+                    "max": 147,
+                    "mean": 147.0,
+                    "max_us": 1.176,
+                    "mean_us": 1.176
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1346,17 +1346,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 1130,
-                    "mean": 1130.0,
-                    "max_us": 9.040000000000001,
-                    "mean_us": 9.040000000000001
+                    "max": 1133,
+                    "mean": 1133.0,
+                    "max_us": 9.064,
+                    "mean_us": 9.064
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1372,17 +1372,17 @@
                   "samples": 8,
                   "T_tx": {
                     "samples": 8,
-                    "max": 31,
-                    "mean": 31.0,
-                    "max_us": 0.248,
-                    "mean_us": 0.248
+                    "max": 32,
+                    "mean": 32.0,
+                    "max_us": 0.256,
+                    "mean_us": 0.256
                   },
                   "T_e2e": {
                     "samples": 8,
-                    "max": 3050,
-                    "mean": 3050.0,
-                    "max_us": 24.400000000000002,
-                    "mean_us": 24.400000000000002
+                    "max": 3053,
+                    "mean": 3053.0,
+                    "max_us": 24.424,
+                    "mean_us": 24.424
                   },
                   "accepted_intervals": {
                     "samples": 7,
@@ -1398,7 +1398,7 @@
               "tx_jitter_cycles": 0,
               "e2e_jitter_cycles": 0,
               "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
-              "average_payload_mbps": 2.6343865113666665,
+              "average_payload_mbps": 2.6343792034168603,
               "jitter": {
                 "max": 0,
                 "max_us": 0.0,
@@ -1413,10 +1413,10 @@
               },
               "raw_gap_minus_BAG": {
                 "samples": 39,
-                "max": 48838,
-                "mean": 27223.410256410258,
-                "max_us": 390.704,
-                "mean_us": 217.78728205128203
+                "max": 48841,
+                "mean": 27223.76923076923,
+                "max_us": 390.728,
+                "mean_us": 217.79015384615386
               },
               "formula_limit": 6538,
               "formula_limit_us": 52.304
@@ -1425,8 +1425,8 @@
         },
         "throughput_d0": {
           "window": [
-            12717569,
-            15342569
+            12717677,
+            15342677
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -1459,24 +1459,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1495,
-                "mean": 1494.0047619047618,
-                "max_us": 11.96,
-                "mean_us": 11.952038095238095
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968000000000002
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3051,
-                "mean": 3050.004761904762,
-                "max_us": 24.408,
-                "mean_us": 24.400038095238095
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1487,17 +1487,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3020,
-                "mean": 3019.004761904762,
-                "max_us": 24.16,
-                "mean_us": 24.152038095238094
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -1527,8 +1527,8 @@
         },
         "duplex_d0": {
           "window": [
-            15760681,
-            18385681
+            15760909,
+            18385909
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -1561,24 +1561,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968000000000002
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.4
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1589,17 +1589,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -1653,24 +1653,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1495,
-                "mean": 1494.0047619047618,
-                "max_us": 11.96,
-                "mean_us": 11.952038095238095
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968000000000002
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3051,
-                "mean": 3050.004761904762,
-                "max_us": 24.408,
-                "mean_us": 24.400038095238095
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1681,17 +1681,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3020,
-                "mean": 3019.004761904762,
-                "max_us": 24.16,
-                "mean_us": 24.152038095238094
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -1721,8 +1721,8 @@
         },
         "throughput_d257": {
           "window": [
-            18802273,
-            21427273
+            18802561,
+            21427561
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -1755,24 +1755,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1495,
-                "mean": 1494.0047619047618,
-                "max_us": 11.96,
-                "mean_us": 11.952038095238095
+                "max": 1497,
+                "mean": 1496.0047619047618,
+                "max_us": 11.976,
+                "mean_us": 11.968038095238095
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3051,
-                "mean": 3050.004761904762,
-                "max_us": 24.408,
-                "mean_us": 24.400038095238095
+                "max": 3054,
+                "mean": 3053.004761904762,
+                "max_us": 24.432000000000002,
+                "mean_us": 24.424038095238092
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1783,17 +1783,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3020,
-                "mean": 3019.004761904762,
-                "max_us": 24.16,
-                "mean_us": 24.152038095238094
+                "max": 3022,
+                "mean": 3021.004761904762,
+                "max_us": 24.176000000000002,
+                "mean_us": 24.168038095238096
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -1823,8 +1823,8 @@
         },
         "duplex_d257": {
           "window": [
-            21845385,
-            24470385
+            21845793,
+            24470793
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -1857,24 +1857,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968000000000002
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.4
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1885,17 +1885,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -1949,24 +1949,24 @@
               "window_rm_drop": 210,
               "T_tx": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 210,
-                "max": 1495,
-                "mean": 1494.0047619047618,
-                "max_us": 11.96,
-                "mean_us": 11.952038095238095
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968000000000002
               },
               "T_e2e_link_removed": {
                 "samples": 210,
-                "max": 3051,
-                "mean": 3050.004761904762,
-                "max_us": 24.408,
-                "mean_us": 24.400038095238095
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 210,
@@ -1977,17 +1977,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 210,
-                "max": 3020,
-                "mean": 3019.004761904762,
-                "max_us": 24.16,
-                "mean_us": 24.152038095238094
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168
               },
               "BAG_wait": {
                 "samples": 210,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 210,
@@ -2017,8 +2017,8 @@
         },
         "gbe77_d0": {
           "window": [
-            24908865,
-            27533865
+            24910197,
+            27535197
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -2051,24 +2051,24 @@
               "window_rm_drop": 1617,
               "T_tx": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1617,
-                "max": 1495,
-                "mean": 1494.00061842919,
-                "max_us": 11.96,
-                "mean_us": 11.952004947433519
+                "max": 1497,
+                "mean": 1496.0012368583798,
+                "max_us": 11.976,
+                "mean_us": 11.968009894867038
               },
               "T_e2e_link_removed": {
                 "samples": 1617,
-                "max": 3051,
-                "mean": 3050.0006184291897,
-                "max_us": 24.408,
-                "mean_us": 24.400004947433516
+                "max": 3054,
+                "mean": 3053.00123685838,
+                "max_us": 24.432000000000002,
+                "mean_us": 24.42400989486704
               },
               "T_tx_BAG_removed": {
                 "samples": 1617,
@@ -2079,17 +2079,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1617,
-                "max": 3020,
-                "mean": 3019.0006184291897,
-                "max_us": 24.16,
-                "mean_us": 24.152004947433518
+                "max": 3022,
+                "mean": 3021.00123685838,
+                "max_us": 24.176000000000002,
+                "mean_us": 24.168009894867037
               },
               "BAG_wait": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1617,
@@ -2143,24 +2143,24 @@
               "window_rm_drop": 1617,
               "T_tx": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1617,
-                "max": 1495,
-                "mean": 1494.0012368583798,
-                "max_us": 11.96,
-                "mean_us": 11.95200989486704
+                "max": 1497,
+                "mean": 1496.00061842919,
+                "max_us": 11.976,
+                "mean_us": 11.968004947433519
               },
               "T_e2e_link_removed": {
                 "samples": 1617,
-                "max": 3051,
-                "mean": 3050.00123685838,
-                "max_us": 24.408,
-                "mean_us": 24.400009894867036
+                "max": 3054,
+                "mean": 3053.0006184291897,
+                "max_us": 24.432000000000002,
+                "mean_us": 24.42400494743352
               },
               "T_tx_BAG_removed": {
                 "samples": 1617,
@@ -2171,17 +2171,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1617,
-                "max": 3020,
-                "mean": 3019.00123685838,
-                "max_us": 24.16,
-                "mean_us": 24.15200989486704
+                "max": 3022,
+                "mean": 3021.0006184291897,
+                "max_us": 24.176000000000002,
+                "mean_us": 24.16800494743352
               },
               "BAG_wait": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1617,
@@ -2211,8 +2211,8 @@
         },
         "gbe77_d257": {
           "window": [
-            27975260,
-            30600260
+            27977519,
+            30602519
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -2245,24 +2245,24 @@
               "window_rm_drop": 1617,
               "T_tx": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1617,
-                "max": 1495,
-                "mean": 1494.0012368583798,
-                "max_us": 11.96,
-                "mean_us": 11.95200989486704
+                "max": 1497,
+                "mean": 1496.0012368583798,
+                "max_us": 11.976,
+                "mean_us": 11.968009894867038
               },
               "T_e2e_link_removed": {
                 "samples": 1617,
-                "max": 3051,
-                "mean": 3050.00123685838,
-                "max_us": 24.408,
-                "mean_us": 24.400009894867036
+                "max": 3054,
+                "mean": 3053.00123685838,
+                "max_us": 24.432000000000002,
+                "mean_us": 24.42400989486704
               },
               "T_tx_BAG_removed": {
                 "samples": 1617,
@@ -2273,17 +2273,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1617,
-                "max": 3020,
-                "mean": 3019.00123685838,
-                "max_us": 24.16,
-                "mean_us": 24.15200989486704
+                "max": 3022,
+                "mean": 3021.00123685838,
+                "max_us": 24.176000000000002,
+                "mean_us": 24.168009894867037
               },
               "BAG_wait": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1617,
@@ -2337,24 +2337,24 @@
               "window_rm_drop": 1617,
               "T_tx": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1617,
-                "max": 1495,
-                "mean": 1494.0012368583798,
-                "max_us": 11.96,
-                "mean_us": 11.95200989486704
+                "max": 1497,
+                "mean": 1496.00061842919,
+                "max_us": 11.976,
+                "mean_us": 11.968004947433519
               },
               "T_e2e_link_removed": {
                 "samples": 1617,
-                "max": 3051,
-                "mean": 3050.00123685838,
-                "max_us": 24.408,
-                "mean_us": 24.400009894867036
+                "max": 3054,
+                "mean": 3053.0006184291897,
+                "max_us": 24.432000000000002,
+                "mean_us": 24.42400494743352
               },
               "T_tx_BAG_removed": {
                 "samples": 1617,
@@ -2365,17 +2365,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1617,
-                "max": 3020,
-                "mean": 3019.00123685838,
-                "max_us": 24.16,
-                "mean_us": 24.15200989486704
+                "max": 3022,
+                "mean": 3021.0006184291897,
+                "max_us": 24.176000000000002,
+                "mean_us": 24.16800494743352
               },
               "BAG_wait": {
                 "samples": 1617,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1617,
@@ -2405,8 +2405,8 @@
         },
         "gbe81_d0": {
           "window": [
-            31043128,
-            33668128
+            31046362,
+            33671362
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -2439,24 +2439,24 @@
               "window_rm_drop": 1701,
               "T_tx": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1701,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968
               },
               "T_e2e_link_removed": {
                 "samples": 1701,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.400000000000002
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 1701,
@@ -2467,17 +2467,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1701,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168000000000003
               },
               "BAG_wait": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1701,
@@ -2531,24 +2531,24 @@
               "window_rm_drop": 1701,
               "T_tx": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1701,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968
               },
               "T_e2e_link_removed": {
                 "samples": 1701,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.400000000000002
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 1701,
@@ -2559,17 +2559,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1701,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168000000000003
               },
               "BAG_wait": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1701,
@@ -2599,8 +2599,8 @@
         },
         "gbe81_d257": {
           "window": [
-            34110819,
-            36735819
+            34115028,
+            36740028
           ],
           "measured_cycles": 2625000,
           "measured_ms": 21.0,
@@ -2633,24 +2633,24 @@
               "window_rm_drop": 1701,
               "T_tx": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1701,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968
               },
               "T_e2e_link_removed": {
                 "samples": 1701,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.400000000000002
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 1701,
@@ -2661,17 +2661,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1701,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168000000000003
               },
               "BAG_wait": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1701,
@@ -2725,24 +2725,24 @@
               "window_rm_drop": 1701,
               "T_tx": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "T_rx": {
                 "samples": 1701,
-                "max": 1494,
-                "mean": 1494.0,
-                "max_us": 11.952,
-                "mean_us": 11.952
+                "max": 1496,
+                "mean": 1496.0,
+                "max_us": 11.968,
+                "mean_us": 11.968
               },
               "T_e2e_link_removed": {
                 "samples": 1701,
-                "max": 3050,
-                "mean": 3050.0,
-                "max_us": 24.400000000000002,
-                "mean_us": 24.400000000000002
+                "max": 3053,
+                "mean": 3053.0,
+                "max_us": 24.424,
+                "mean_us": 24.424
               },
               "T_tx_BAG_removed": {
                 "samples": 1701,
@@ -2753,17 +2753,17 @@
               },
               "T_e2e_BAG_and_link_removed": {
                 "samples": 1701,
-                "max": 3019,
-                "mean": 3019.0,
-                "max_us": 24.152,
-                "mean_us": 24.152
+                "max": 3021,
+                "mean": 3021.0,
+                "max_us": 24.168,
+                "mean_us": 24.168000000000003
               },
               "BAG_wait": {
                 "samples": 1701,
-                "max": 31,
-                "mean": 31.0,
-                "max_us": 0.248,
-                "mean_us": 0.248
+                "max": 32,
+                "mean": 32.0,
+                "max_us": 0.256,
+                "mean_us": 0.256
               },
               "jitter": {
                 "samples": 1701,
@@ -2842,5 +2842,6 @@
       },
       "diagnostics": []
     }
-  }
+  },
+  "r97_fields": 1780
 }
