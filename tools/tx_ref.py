@@ -213,7 +213,7 @@ def check(test, folder):
             name=p[2]
             if name in ('tx_a','tx_b'):tx_events[name[-1].upper()].append(cycle)
             else:
-                expect(len(pending)==1,f'G2 one pending M at E {cycle}')
+                expect(len(pending)>=1,f'G2 queued M available at E {cycle}')
                 if pending:
                     m=pending.pop(0);m['result']=name;m['event']=cycle
                     expect(0<cycle-m['cycle']<=96,f'G2 outcome deadline message {m["index"]}')

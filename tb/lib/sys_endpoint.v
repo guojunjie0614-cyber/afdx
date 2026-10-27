@@ -112,6 +112,7 @@ module sys_endpoint #(
     integer message_start=0,stall_run=0,stall_max=0,message_input_end=0,message_stalls=0;
     reg m_seen=0;
     integer delivery_len=0,delivery_start=0;
+    integer outcome_end[0:63],outcome_index[0:63],ow=0,orr=0;
     reg [11:0] delivery_vl;
     reg [15:0] delivery_sp,delivery_dp;
     reg delivery_net,delivery_active=0;
@@ -216,7 +217,7 @@ module sys_endpoint #(
                 if(CAPTURE_CORE)$fwrite(tf,"Z %0d\n",cycle);
                 if(CAPTURE_CORE)$fwrite(rf,"Z %0d\n",cycle);
             end
-            outstanding=0;pending_tx=0;message_len=0;outcome_vl=0;delivery_len=0;delivery_active=0;
+            outstanding=0;ow=0;orr=0;pending_tx=0;message_len=0;outcome_vl=0;delivery_len=0;delivery_active=0;
             message_start=0;stall_run=0;stall_max=0;m_seen=0;
             read_pending0=0;read_pending1=0;bus_pending=0;ready_check=0;
             user_shadow=0;low_run=0;
@@ -319,7 +320,9 @@ module sys_endpoint #(
                 if(message_len<8192)message_bytes[message_len]=dut.core_data;
                 message_len=message_len+1;
                 if(dut.core_last)begin
-                    check(!outstanding && cycle>last_outcome,"one result before next message end");
+                    if(DIRECT_CORE)check(!outstanding && cycle>last_outcome,"one result before next message end");
+                    check(ow-orr<64,"outcome queue capacity");
+                    outcome_end[ow%64]=cycle;outcome_index[ow%64]=message_vl;ow=ow+1;
                     if(CAPTURE_CORE)$fwrite(tf,"M %0d %0d %0d %0d %04x %04x ",cycle,message_vl,message_len,message_pen,message_sp[15:0],message_dp[15:0]);
                     for(k=0;k<message_len && k<8192;k=k+1)if(CAPTURE_CORE)$fwrite(tf,"%02x",message_bytes[k]);
                     if(CAPTURE_CORE)begin
@@ -327,14 +330,15 @@ module sys_endpoint #(
                         else $fwrite(tf," %0d %0d %0d %0d\n",message_start,stall_max,message_input_end,message_stalls);
                     end
                     outcome_vl=message_vl;
-                    message_len=0;outstanding=1;last_message=cycle;
+                    message_len=0;outstanding=outstanding+1;last_message=outcome_end[orr%64];
                 end
             end
             pulses=(ev_tx[0]?1:0)+(ev_tx[1]?1:0)+(ev_tx[2]?1:0)+(ev_tx[3]?1:0)+(ev_tx[4]?1:0);
             check(pulses<=1,"exclusive transmit outcome");
             if(pulses)begin
-                check(outstanding && cycle>last_message && cycle-last_message<=96,"transmit outcome deadline");
-                outstanding=0;last_outcome=cycle;
+                check(outstanding>0 && cycle>outcome_end[orr%64] && cycle-outcome_end[orr%64]<=96,"transmit outcome deadline");
+                outcome_vl=outcome_index[orr%64];orr=orr+1;
+                outstanding=outstanding-1;last_outcome=cycle;last_message=outcome_end[orr%64];
                 if(ev_tx[0])pending_tx=pending_tx+(cfg_shadow[outcome_vl*8][1]?1:0)+(cfg_shadow[outcome_vl*8][2]?1:0);
             end
             if(outstanding)check(cycle-last_message<=96,"missing transmit outcome");
