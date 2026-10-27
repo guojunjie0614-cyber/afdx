@@ -81,11 +81,18 @@ module afdx_app_tx (
     reg [127:0] hit;
     reg [7:0] bank_hit;
     reg [3:0] bank_index[0:7];
+    reg [3:0] pair_hit;
+    reg [6:0] pair_index[0:3];
+    reg [1:0] half_hit;
+    reg [6:0] half_index[0:1];
     reg found,discard;
     integer bank,item;
     always @(posedge clk)begin
         if(reset)begin
             desc_rd<=0;state<=0;hit<=0;bank_hit<=0;app_vl<=0;found<=0;discard<=0;drop[0]<=0;
+            pair_hit<=0;half_hit<=0;
+            for(bank=0;bank<4;bank=bank+1)pair_index[bank]<=0;
+            for(bank=0;bank<2;bank=bank+1)half_index[bank]<=0;
             for(bank=0;bank<8;bank=bank+1)begin query[bank]<=0;bank_index[bank]<=0;end
         end else begin
             drop[0]<=empty_message;
@@ -108,9 +115,25 @@ module afdx_app_tx (
                     end
                     state<=3;
                 end
+                // 每级只选择两个候选，保持重复 VLID 的最小索引优先。
                 3:begin
-                    found<=|bank_hit;
-                    for(bank=7;bank>=0;bank=bank-1)if(bank_hit[bank])app_vl<={bank[2:0],bank_index[bank]};
+                    for(bank=0;bank<4;bank=bank+1)begin
+                        pair_hit[bank]<=|bank_hit[bank*2+:2];
+                        pair_index[bank]<=bank_hit[bank*2] ?
+                            {bank[1:0],1'b0,bank_index[bank*2]} :
+                            {bank[1:0],1'b1,bank_index[bank*2+1]};
+                    end
+                    state<=7;
+                end
+                7:begin
+                    for(bank=0;bank<2;bank=bank+1)begin
+                        half_hit[bank]<=|pair_hit[bank*2+:2];
+                        half_index[bank]<=pair_hit[bank*2]?pair_index[bank*2]:pair_index[bank*2+1];
+                    end
+                    state<=8;
+                end
+                8:begin
+                    found<=|half_hit;app_vl<=half_hit[0]?half_index[0]:half_index[1];
                     state<=4;
                 end
                 4:begin discard<=!found;drop[0]<=!found || empty_message;state<=5;end
