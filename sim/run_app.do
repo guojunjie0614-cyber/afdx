@@ -164,6 +164,7 @@ proc app_entry::compile {folder} {
     cd $folder
     file delete -force work
     catch {vlib work}
+    if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
     set sources [concat [lsort [glob [file join $root rtl *.v]]] \
         [lsort [glob [file join $root tb lib *.v]]] [list [file join $root tb tb_app_entry.v]]]
     set ce_div 2
