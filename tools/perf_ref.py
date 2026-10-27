@@ -168,7 +168,7 @@ def measure_r97(folder, stages=None, output=None):
             elif p[0]=='M':
                 n=int(p[3]);cycle=int(p[1])
                 first=int(p[8]) if len(p)>9 and p[8].lstrip('-').isdigit() else cycle-n+1
-                maxrun=int(p[9]) if len(p)>10 and p[9].isdigit() else 0
+                maxrun=int(p[9]) if len(p)>9 and p[9].isdigit() else 0
                 m=dict(id=len(ms)+1,stage=stage,cycle=cycle,vl=int(p[2]),n=n,data=p[7],tx={},rx={},delivery=None,
                        first=first,maxrun=maxrun)
                 key=(stage,es,m['vl']);index=offer_index[key];offer_index[key]+=1
@@ -223,6 +223,7 @@ def measure_r97(folder, stages=None, output=None):
     for stage in scope:
         assert stage in windows and set(windows[stage])=={'begin','end'},('measurement window',stage)
         begin,end=windows[stage]['begin'],windows[stage]['end'];assert end>begin
+        stage_lengths=sorted({m['n'] for ep in endpoints.values() for m in ep['messages'] if m['stage']==stage})
         for es in (1,2):
             direction=f'es{es}_to_es{3-es}';ep=endpoints[es];ms=[m for m in ep['messages'] if m['stage']==stage]
             selected=[m for m in ms if begin<=m['cycle']<end]
@@ -237,7 +238,8 @@ def measure_r97(folder, stages=None, output=None):
             for m in ms:
                 for net in ('A','B'):
                     k=(m['vl'],net);now=m['tx'][net][0]
-                    bag=125000 if stage.startswith(('gbe77','var_high')) else (125000,250000,500000,1000000)[m['vl']//8]
+                    bag=125000
+                    if stage.startswith('var_') and not stage.startswith('var_high'):bag=(125000,250000,500000,1000000)[m['vl']//8]
                     if k in previous and begin<=m['cycle']<end:interval=max(interval,abs(now-previous[k]-bag))
                     previous[k]=now
             answer[prefix+'/tx_interval_jitter/max']=interval
@@ -267,7 +269,6 @@ def measure_r97(folder, stages=None, output=None):
             answer[prefix+'/inject/lag_max']=lag if lagsamples else 'NA'
             answer[prefix+'/inject/lag_samples']=lagsamples
             buckets=collections.defaultdict(list);entry_samples=[]
-            lengths=sorted({m['n'] for m in ms})
             for m in ms:
                 d,winner=m['delivery']
                 for net in ('A','B'):
@@ -286,7 +287,7 @@ def measure_r97(folder, stages=None, output=None):
                                 buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
                     frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,in_window=begin<=m['cycle']<end,M=m['cycle'],release=m['release'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
             for net in ('accepted','A','B'):
-                for group in ['all']+list(map(str,lengths)):
+                for group in ['all']+list(map(str,stage_lengths)):
                     for metric in metrics:
                         rows=buckets[net,group,metric];key=f'{stage}/{direction}/{net}/{group}/{metric}'
                         stats=dict(samples=len(rows),min='NA',max='NA',jitter='NA',vl='NA',min_frame='NA',max_frame='NA')
