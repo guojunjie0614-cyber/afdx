@@ -65,7 +65,7 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
         if re.search(r'\*\* (Error|Fatal)', compile_log):
             raise RuntimeError('编译出错，见 compile.log')
         print('GUI NETLIST START ' + test + ' mode=' + mode + ' output=' + str(flow.folder), flush=True)
-        log = flow.job('simulation', [sim / 'vsim.exe', '-c', '-t', '1ps', 'work.' + test,
+        log = flow.job('simulation', [sim / 'vsim.exe', '-batch', '-t', '1ps', 'work.' + test,
                                     '-wlf', 'simulation.wlf', '-do', 'do run.do'], 5 * 3600)
         rows = re.findall(r'\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)', log)
         diagnostics = {kind: len(re.findall(r'\*\* ' + kind + ':', log)) for kind in ('Error', 'Fatal', 'Warning')}
