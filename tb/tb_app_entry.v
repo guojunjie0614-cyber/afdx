@@ -1,5 +1,5 @@
 // 本测试按“VLID + 应用数据”激励文件驱动两个端系统，只使用公开端口。
-// sim/run_app.do 把激励文件转成 vectors/ 下的配置、调度和载荷文件；本文件按绝对拍注入。
+// 本文件读取原始 VL 配置并经 cfg 写入；调度以两端配置完成后的时刻为零点。
 // 交付、时延和抖动由外层脚本从记录计算；本文件只统计自身检查项和错误数。
 `timescale 1ns/1ps
 module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
@@ -93,7 +93,15 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
                 es1.write_cfg(18'h1005+vi*8,(sport<<16)|dport,0);
                 es2.write_cfg(18'h10000+vlid,4096+vi,0);
                 es2.write_cfg(18'h20000+vi,lmax*131072+20*32+31,0);
-                vi=vi+1;cfg_count=cfg_count+8;
+                es2.write_cfg(18'h1000+vi*8,lmax*512+63*8+7,0);
+                es2.write_cfg(18'h1001+vi*8,bag*125,0);
+                es2.write_cfg(18'h1002+vi*8,vlid,0);
+                es2.write_cfg(18'h1003+vi*8,32'h0a000201+vi,0);
+                es2.write_cfg(18'h1004+vi*8,32'he0e00000|vlid,0);
+                es2.write_cfg(18'h1005+vi*8,(sport<<16)|dport,0);
+                es1.write_cfg(18'h10000+vlid,4096+vi,0);
+                es1.write_cfg(18'h20000+vi,lmax*131072+20*32+31,0);
+                vi=vi+1;cfg_count=cfg_count+16;
             end else rc=$fgets(command,cf);
         end
         $fclose(cf);
