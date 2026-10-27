@@ -81,20 +81,55 @@ proc judge_perf::vectors {folder} {
 proc judge_perf::require {condition message} {if {!$condition} {error "Performance check: $message"}}
 proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)-max($start,$begin))}}
 
-proc judge_perf::limits {stage es rate maximum variation wire_a wire_b} {
+# R119/R120 baseline from the T59 measurement; see docs/evidence/perf_r97.json.
+# baseline fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles
+proc judge_perf::baseline {stage} {
+    if {[string match gbe77_d0 $stage]} {return {906.136 0.0 0.0 0.0 0 0}}
+    if {[string match gbe77_d257 $stage]} {return {906.136 0.0 0.0 0.0 0 0}}
+    return {}
+}
+
+proc judge_perf::limits {stage es rate maximum variation wire_a wire_b results p} {
     set direction es${es}_to_es[expr {3-$es}]
-    set meets [expr {$rate>=100.0 && $maximum<=2000.0 && $variation<=50.0}]
-    # T39: 54877a09 adds two RX map pipeline cycles, 24.408 + 0.016 us.
-    set expected_e2e_us [expr {3054*0.008}]
-    set same [expr {abs($rate-906.136)<0.000000001 && $maximum==$expected_e2e_us && $variation==0 && abs($wire_a-906.136)<0.000000001 && abs($wire_b-906.136)<0.000000001}]
-    set lines [list [format {JUDGE METRIC tb_sys_perf stage=%s direction=%s delivered_mbps=%.3f max_e2e_us=%.3f jitter_us=%.3f gmii_a_mbps=%.3f gmii_b_mbps=%.3f} \
-        $stage $direction $rate $maximum $variation $wire_a $wire_b]]
-    lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s min_mbps=100 throughput_margin_mbps=%.3f max_e2e_us=2000 latency_margin_us=%.3f max_jitter_us=50 jitter_margin_us=%.3f} \
-        [expr {$meets ? "PASS" : "FAIL"}] $stage $direction [expr {$rate-100.0}] [expr {2000.0-$maximum}] [expr {50.0-$variation}]]
-    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_mbps=906.136 expected_e2e_us=24.432 expected_jitter_us=0} \
-        [expr {$same ? "PASS" : "FAIL"}] $stage $direction]
+    set inject [dict get $results $p/inject/mbps]
+    set e2e [dict get $results $p/L_entry_last/max]
+    set first [dict get $results $p/L_entry_first/max]
+    set jitter [dict get $results $p/jitter_r119/jitter]
+    set jvl [dict get $results $p/jitter_r119/vl]
+    set jlen [dict get $results $p/jitter_r119/len]
+    set stalls [dict get $results $p/inject/stall_cycles]
+    set stallmax [dict get $results $p/inject/stall_maxrun]
+    set lag [dict get $results $p/inject/lag_max]
+    set dropped [dict get $results $p/integrity/dropped]
+    set duplicate [dict get $results $p/integrity/duplicate]
+    set overflow [dict get $results $p/integrity/overflow]
+    set lag_ok [expr {$lag eq "NA" || $lag<=1471}]
+    set meets [expr {$inject>=100.0 && $e2e ne "NA" && $e2e<=250000 && $jitter ne "NA" &&
+        $jitter<=6250 && $dropped==0 && $overflow==0 && $duplicate==0 && $lag_ok}]
+    set expected [baseline $stage]
+    set same 1; set problems {}
+    if {[llength $expected]==6} {
+        lassign $expected bi be bf bj bs bl
+        foreach {name actual want} {inject_mbps $inject $bi max_e2e_us [expr {$e2e*0.008}] $be \
+            max_e2e_first_us [expr {$first*0.008}] $bf jitter_r119_us [expr {$jitter*0.008}] $bj \
+            stall_cycles $stalls $bs lag_max_cycles $lag $bl} {
+            if {$actual ne "NA" && abs($actual-$want)>0.000000001} {lappend problems "$name=$actual!= $want"}
+        }
+        if {[llength $problems]} {set same 0}
+    } else {set same 0}
+    set metric [format {JUDGE METRIC tb_sys_perf stage=%s direction=%s inject_mbps=%.3f max_e2e_us=%.3f max_e2e_first_us=%.3f jitter_r119_us=%.3f jitter_vl=%s jitter_len=%s stall_cycles=%d stall_maxrun=%d lag_max_cycles=%s dropped=%d duplicate=%d overflow=%d delivered_mbps=%.3f gmii_a_mbps=%.3f gmii_b_mbps=%.3f} \
+        $stage $direction $inject [expr {$e2e*0.008}] [expr {$first*0.008}] [expr {$jitter*0.008}] \
+        $jvl $jlen $stalls $stallmax $lag $dropped $duplicate $overflow $rate $wire_a $wire_b]
+    set lines [list $metric]
+    lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=%.3f latency_margin_us=%.3f jitter_margin_us=%.3f lag_max_cycles=%s} \
+        [expr {$meets ? "PASS" : "FAIL"}] $stage $direction [expr {$inject-100.0}] \
+        [expr {$e2e eq "NA" ? "NA" : 2000.0-$e2e*0.008}] [expr {$jitter eq "NA" ? "NA" : 50.0-$jitter*0.008}] $lag]
+    lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_inject_mbps=%s expected_max_e2e_us=%s expected_jitter_r119_us=%s} \
+        [expr {$same ? "PASS" : "FAIL"}] $stage $direction \
+        [lindex $expected 0] [lindex $expected 1] [lindex $expected 3]]
     if {!$meets || !$same} {
         foreach line $lines {puts $line}
+        if {[llength $problems]} {puts "JUDGE BASELINE DETAIL [join $problems {; }]"}
         if {!$meets} {error "Performance requirement not met: $stage $direction"}
         error "Performance baseline mismatch: $stage $direction"
     }
@@ -200,8 +235,11 @@ proc judge_perf::measure {folder} {
         }
     }
     set lines {}
+    set newmetrics [r97::measure $folder {gbe77_d0 gbe77_d257}]
     foreach stage $phases {
         foreach es {1 2} {
+            set direction es${es}_to_es[expr {3-$es}]
+            set p $stage/$direction/accepted/all
             for {set vl 0} {$vl<77} {incr vl} {
                 require [expr {$delivered($es,$stage,$vl)==23}] "missing delivery"
                 foreach net {A B} {require [expr {$sent($es,$stage,$vl,$net)==23}] "missing wire frame"}
@@ -213,20 +251,8 @@ proc judge_perf::measure {folder} {
             foreach net {A B} {
                 set wire_rate($net) [expr {$wirebytes($es,$stage,$net)*1000.0/($end($stage)-$begin($stage))}]
             }
-            set lines [concat $lines [limits $stage $es $rate $maximum $variation $wire_rate(A) $wire_rate(B)]]
+            set lines [concat $lines [limits $stage $es $rate $maximum $variation $wire_rate(A) $wire_rate(B) $newmetrics $p]]
         }
     }
-    set newmetrics [r97::measure $folder {gbe77_d0 gbe77_d257}]
-    set augmented {}
-    foreach line $lines {
-        if {[regexp {^JUDGE METRIC tb_sys_perf stage=(\S+) direction=(\S+)} $line all stage direction]} {
-            set key "$stage/$direction/accepted/all"
-            append line [format { l_gmii_max_us=%.3f l_app_max_us=%.3f jitter_r97_us=%.3f jitter_r97_gmii_us=%.3f tx_interval_jitter_us=%.3f} \
-                [expr {[dict get $newmetrics $key/L_gmii/max]*0.008}] [expr {[dict get $newmetrics $key/L_app/max]*0.008}] \
-                [expr {[dict get $newmetrics $key/L_app/jitter]*0.008}] [expr {[dict get $newmetrics $key/L_gmii/jitter]*0.008}] [expr {[dict get $newmetrics $key/tx_interval_jitter/max]*0.008}]]
-        }
-        lappend augmented $line
-    }
-    set lines $augmented
     return $lines
 }

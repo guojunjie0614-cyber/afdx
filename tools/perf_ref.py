@@ -158,24 +158,32 @@ def measure_r97(folder, stages=None, output=None):
         if p and p[0]=='F' and p[2] in ('begin','end'):windows.setdefault(p[3],{})[p[2]]=int(p[1])
     endpoints={}
     for es in (1,2):
-        ms=[];stage='initial';by_vl=collections.defaultdict(list);offer_index=collections.Counter()
+        ms=[];stage='initial';by_vl=collections.defaultdict(list);offer_index=collections.Counter();txpulses=collections.Counter()
+        tx_vlids={}
         for line in (folder/f'es{es}_tx/events.txt').read_text(encoding='ascii').splitlines():
             p=line.split()
             if p[0]=='P':stage=p[2]
+            elif p[0]=='E':txpulses[stage,p[2]]+=1
+            elif p[0]=='C' and p[2]=='tx' and (int(p[3],16)&7)==2:tx_vlids[int(p[4],16)]=int(p[3],16)>>3
             elif p[0]=='M':
-                m=dict(id=len(ms)+1,stage=stage,cycle=int(p[1]),vl=int(p[2]),n=int(p[3]),data=p[7],tx={},rx={},delivery=None)
+                n=int(p[3]);cycle=int(p[1])
+                first=int(p[8]) if len(p)>9 and p[8].lstrip('-').isdigit() else cycle-n+1
+                maxrun=int(p[9]) if len(p)>10 and p[9].isdigit() else 0
+                m=dict(id=len(ms)+1,stage=stage,cycle=cycle,vl=int(p[2]),n=n,data=p[7],tx={},rx={},delivery=None,
+                       first=first,maxrun=maxrun)
                 key=(stage,es,m['vl']);index=offer_index[key];offer_index[key]+=1
                 if key in offers:
                     assert index<len(offers[key]) and offers[key][index][1]==m['n'],'planned release matching'
-                    m['release']=offers[key][index][0]
-                else:m['release']=m['cycle']  # Legacy captures lack a separate planned-release record.
+                    m['release']=offers[key][index][0];m['planned']=True
+                else:m['release']=m['cycle'];m['planned']=False  # Legacy captures lack a separate planned-release record.
                 ms.append(m);by_vl[m['vl']].append(m)
-        endpoints[es]=dict(messages=ms,by_vl=by_vl)
+        endpoints[es]=dict(messages=ms,by_vl=by_vl,txpulses=txpulses,tx_vlids=tx_vlids)
         for net in ('A','B'):
             for kind,dest in [('tx',es),('rx',3-es)]:
                 cursor=collections.Counter()
                 for line in (folder/f'es{dest}_gmii_{kind}/dump_{net.lower()}.txt').read_text(encoding='ascii').splitlines():
-                    p=line.split();wire=p[3];vl=int(wire[24:28],16)-(100 if es==1 else 2000)
+                    p=line.split();wire=p[3];raw=int(wire[24:28],16)
+                    vl=tx_vlids[raw] if raw in tx_vlids else raw-(100 if es==1 else 2000)
                     assert vl in by_vl and cursor[vl]<len(by_vl[vl]),('unmatched GMII',es,net,vl)
                     m=by_vl[vl][cursor[vl]];cursor[vl]+=1
                     assert int(p[2])*2==len(wire) and wire[100:100+2*m['n']]==m['data'],('GMII payload',es,net,m['id'])
@@ -196,7 +204,22 @@ def measure_r97(folder, stages=None, output=None):
         endpoints[es]['pulses']=pulses
     scope=sorted({m['stage'] for ep in endpoints.values() for m in ep['messages'] if (m['stage'] in stages if stages else m['stage'].startswith(('var_','gbe77_')))})
     answer={};frame_rows=[]
-    metrics=('L_gmii','L_tx','L_rx','L_rx_last','L_app','L_app_last','L_release_app','L_release_app_last')
+    metrics=('L_gmii','L_tx','L_rx','L_rx_last','L_app','L_app_last','L_release_app','L_release_app_last','L_entry_first','L_entry_last')
+    def stats_len(samples):
+        result=dict(samples=len(samples),min='NA',max='NA',jitter='NA',vl='NA',len='NA',min_frame='NA',max_frame='NA')
+        if not samples:return result
+        groups=collections.defaultdict(list)
+        for vl,n,i,v in samples:groups[(vl,n)].append((i,v))
+        result['min']=min(v for _,_,_,v in samples);result['max']=max(v for _,_,_,v in samples)
+        best=-1;witness=None
+        for (vl,n) in sorted(groups):
+            rows=groups[(vl,n)];lo=min(v for _,v in rows);hi=max(v for _,v in rows)
+            li=min(i for i,v in rows if v==lo);hi_id=min(i for i,v in rows if v==hi)
+            delta=hi-lo
+            if delta>best or (delta==best and witness is not None and (vl<witness[0] or (vl==witness[0] and n<witness[1]))):
+                best=delta;witness=(vl,n,li,hi_id)
+        result.update(jitter=best,vl=witness[0],len=witness[1],min_frame=witness[2],max_frame=witness[3])
+        return result
     for stage in scope:
         assert stage in windows and set(windows[stage])=={'begin','end'},('measurement window',stage)
         begin,end=windows[stage]['begin'],windows[stage]['end'];assert end>begin
@@ -218,7 +241,32 @@ def measure_r97(folder, stages=None, output=None):
                     if k in previous and begin<=m['cycle']<end:interval=max(interval,abs(now-previous[k]-bag))
                     previous[k]=now
             answer[prefix+'/tx_interval_jitter/max']=interval
-            buckets=collections.defaultdict(list)
+            # R120-1 injection side: handshake bytes and stalls at the application port.
+            inject=stalls=stallmax=lag=0;lagsamples=0;drops=overflow=errors=0
+            for m in ms:
+                first=m['first'];cycle=m['cycle'];n=m['n']
+                if begin<=first<end and cycle<end:
+                    inject+=n;stalls+=max(0,cycle-first+1-n);stallmax=max(stallmax,m['maxrun'])
+                    if m['planned']:
+                        lag=max(lag,first-m['release']);lagsamples+=1
+                elif first<end and cycle>=begin:
+                    inject+=min(n,max(0,min(cycle+1,end)-max(first,begin)))
+            for (st,event),count in ep['txpulses'].items():
+                if st==stage and event in ('drop_dis','drop_full','drop_long','drop_nopage'):drops+=count
+                if event in ('a_ovf','b_ovf'):overflow+=count
+                if event in ('a_fcs','a_len','a_hdr','a_unk','a_cfg','a_ic','a_ovf','a_gdrop','b_fcs','b_len','b_hdr','b_unk','b_cfg','b_ic','b_ovf','b_gdrop'):errors+=count
+            answer[prefix+'/integrity/dropped']=drops
+            answer[prefix+'/integrity/duplicate']=sum(m['delivery'] is not None for m in ms)-len(ms)
+            answer[prefix+'/integrity/overflow']=overflow
+            answer[prefix+'/integrity/errors']=errors
+            answer[prefix+'/inject/payload_bytes']=inject
+            answer[prefix+'/inject/window_cycles']=end-begin
+            answer[prefix+'/inject/mbps']=inject*1000.0/(end-begin)
+            answer[prefix+'/inject/stall_cycles']=stalls
+            answer[prefix+'/inject/stall_maxrun']=stallmax
+            answer[prefix+'/inject/lag_max']=lag if lagsamples else 'NA'
+            answer[prefix+'/inject/lag_samples']=lagsamples
+            buckets=collections.defaultdict(list);entry_samples=[]
             lengths=sorted({m['n'] for m in ms})
             for m in ms:
                 d,winner=m['delivery']
@@ -226,10 +274,16 @@ def measure_r97(folder, stages=None, output=None):
                     tx=m['tx'][net][0];rx=m['rx'][net][0]
                     assert rx-tx==(257 if stage.endswith('_d257') else 0),'link delay'
                     values=dict(L_gmii=rx-tx,L_tx=tx-m['cycle'])
-                    if net==winner:values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'],L_release_app=d-m['release'],L_release_app_last=d+m['n']-1-m['release'])
+                    if net==winner:
+                        values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'],
+                                      L_release_app=d-m['release'],L_release_app_last=d+m['n']-1-m['release'],
+                                      L_entry_first=d-m['first'],L_entry_last=d+m['n']-1-m['first'])
+                        if begin<=m['cycle']<end:entry_samples.append((m['vl'],m['n'],m['id'],d+m['n']-1-m['first']))
                     for scope_net in (([net,'accepted'] if net==winner else [net]) if begin<=m['cycle']<end else []):
                         for group in ['all',str(m['n'])]:
-                            for metric,value in values.items():buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
+                            for metric,value in values.items():
+                                if metric.startswith('L_entry') and net!=winner:continue
+                                buckets[scope_net,group,metric].append((value,m['vl'],m['id']))
                     frame_rows.append(dict(stage=stage,direction=direction,net=net,frame=m['id'],vl=m['vl'],length=m['n'],accepted=net==winner,in_window=begin<=m['cycle']<end,M=m['cycle'],release=m['release'],TX_SFD=tx,RX_SFD=rx,D=d if net==winner else None,**values))
             for net in ('accepted','A','B'):
                 for group in ['all']+list(map(str,lengths)):
@@ -246,6 +300,7 @@ def measure_r97(folder, stages=None, output=None):
                             neg,vl,low,high=min(candidates)
                             stats.update(min=min(v for v,_,_ in rows),max=max(v for v,_,_ in rows),jitter=-neg,vl=vl,min_frame=low,max_frame=high)
                         answer.update({key+'/'+k:v for k,v in stats.items()})
+            for k,v in stats_len(entry_samples).items():answer[f'{prefix}/jitter_r119/{k}']=v
     output=Path(output) if output else folder/'r97_python.tsv'
     output.write_bytes(''.join(k+'\t'+str(answer[k])+'\n' for k in sorted(answer)).encode('ascii'))
     (folder/'r97_frames.json').write_text(json.dumps(frame_rows,separators=(',',':')),encoding='utf8')
@@ -274,15 +329,17 @@ def check_r97_var(folder, measured):
             rows=[f for f in accepted if f['stage']==stage and f['direction']==direction]
             key=f'{stage}/{direction}/accepted/all';duration=measured[key+'/throughput/window_cycles']
             rate=measured[key+'/throughput/payload_bytes']*1000/duration
+            inject=measured[key+'/inject/mbps']
             requirement(duration>=2500000,stage+' '+direction+' window >=20ms')
             count=collections.Counter(f['vl'] for f in rows);vls=80 if stage.startswith('var_high') else 32
             requirement(set(count)==set(range(vls)) and min(count.values(),default=0)>=8,stage+' '+direction+' >=8 frames per VL')
             requirement({f['length'] for f in rows}=={1,17,256,1024,1471},stage+' '+direction+' five payload lengths')
             if stage.startswith('var_high'):
-                requirement(rate>=100,stage+' '+direction+' payload >=100Mbps',measured_mbps=rate)
-            else:requirements.append(dict(status='REPORT',label=stage+' '+direction+' offered-load throughput',measured_mbps=rate))
+                requirement(inject>=100,stage+' '+direction+' injection payload >=100Mbps',measured_inject_mbps=inject)
+            else:requirements.append(dict(status='REPORT',label=stage+' '+direction+' offered-load throughput',measured_mbps=inject))
+            requirement(all(f['L_entry_last']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame R119 latency <=2000us')
             requirement(all(f['L_gmii']<=250000 and f['L_app']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame first-byte latency <=2000us')
-            requirements.append(dict(status='REPORT',label=stage+' '+direction+' R97 jitter',cycles=measured[key+'/L_app/jitter']))
+            requirements.append(dict(status='REPORT',label=stage+' '+direction+' R119 jitter',cycles=measured[key+'/jitter_r119/jitter']))
     (folder/'r97_requirements.json').write_text(json.dumps(requirements,indent=2),encoding='utf8')
     for row in requirements:print('[R97 '+row['status']+'] '+row['label']+' '+str({k:v for k,v in row.items() if k not in ('status','label')}))
     return requirements
