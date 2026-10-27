@@ -30,7 +30,10 @@ module afdx_app_rx (
         .clk(clk),.write_enable(cfg_write),.write_address(cfg_index),.write_data(cfg_vlid),
         .read_enable(first && !reject && !map_collision),.read_address(app_index),.read_data(map_q));
     reg map_pending;
-    reg [15:0] ids[0:31];
+    wire [15:0] descriptor_id;
+    afdx_ram_sdp #(.WIDTH(16),.DEPTH(32)) descriptor_ids(
+        .clk(clk),.write_enable(map_pending),.write_address(dw[4:0]),.write_data(map_bypass?map_write_value:map_q),
+        .read_enable(state==0 && descriptors!=0 && q_valid),.read_address(dr[4:0]),.read_data(descriptor_id));
     wire read_en;
     wire [11:0] read_addr;
     wire [8:0] memory_q;
@@ -46,7 +49,7 @@ module afdx_app_rx (
             drop<=first && reject;
             map_pending<=first && !reject;
             map_bypass<=map_collision;map_write_value<=cfg_vlid;
-            if(map_pending)begin ids[dw[4:0]]<=map_bypass?map_write_value:map_q;dw<=dw+1'b1;end
+            if(map_pending)dw<=dw+1'b1;
             if(app_valid)begin
                 active<=!app_last;
                 if(first)discard<=reject;
@@ -62,7 +65,8 @@ module afdx_app_rx (
         else begin
             valid<=0;data<=0;
             case(state)
-                0:if(descriptors!=0 && q_valid)begin id<=ids[dr[4:0]];state<=1;end
+                0:if(descriptors!=0 && q_valid)state<=5;
+                5:begin id<=descriptor_id;state<=1;end
                 1:begin valid<=1;data<=id[15:8];state<=2;end
                 2:begin valid<=1;data<=id[7:0];state<=3;end
                 3:if(q_valid)begin
