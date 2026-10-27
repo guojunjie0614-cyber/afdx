@@ -160,12 +160,13 @@ def measure_r97(folder, stages=None, output=None):
     endpoints={}
     for es in (1,2):
         ms=[];stage='initial';by_vl=collections.defaultdict(list);offer_index=collections.Counter();txpulses=collections.Counter()
-        tx_vlids={}
+        tx_vlids={};wire_inputs=[];wire_index=0
         for line in (folder/f'es{es}_tx/events.txt').read_text(encoding='ascii').splitlines():
             p=line.split()
             if p[0]=='P':stage=p[2]
             elif p[0]=='E':txpulses[stage,p[2]]+=1
             elif p[0]=='C' and p[2]=='tx' and (int(p[3],16)&7)==2:tx_vlids[int(p[4],16)]=int(p[3],16)>>3
+            elif p[0]=='A':wire_inputs.append(p)
             elif p[0]=='M':
                 n=int(p[3]);cycle=int(p[10]) if len(p)>11 else int(p[1])
                 first=int(p[8]) if len(p)>9 and p[8].lstrip('-').isdigit() else cycle-n+1
@@ -173,12 +174,18 @@ def measure_r97(folder, stages=None, output=None):
                 m=dict(id=len(ms)+1,stage=stage,cycle=cycle,vl=int(p[2]),n=n,data=p[7],tx={},rx={},delivery=None,
                        first=first,maxrun=maxrun,stream=len(p)>11,stalls=int(p[11]) if len(p)>11 else max(0,cycle-first+1-n))
                 offervl=next((k for k,v in tx_vlids.items() if v==m['vl']),m['vl']) if offer_vlid else m['vl']
+                if wire_inputs:
+                    a=wire_inputs[wire_index];wire_index+=1
+                    assert int(a[1])==m['cycle'] and int(a[3])==n and a[4]==m['data'], 'public tx_data payload and end match core M'
+                    assert tx_vlids[int(a[2],16)]==m['vl'] and int(a[5])==first, 'public tx_data VLID and first match core M'
+                    assert int(a[6])==m['stalls'] and int(a[7])==m['maxrun'], 'public tx_data stall record'
                 key=(stage,es,offervl);index=offer_index[key];offer_index[key]+=1
                 if key in offers:
                     assert index<len(offers[key]) and offers[key][index][1]==m['n'],'planned release matching'
                     m['release']=offers[key][index][0];m['planned']=True
                 else:m['release']=m['cycle'];m['planned']=False  # Legacy captures lack a separate planned-release record.
                 ms.append(m);by_vl[m['vl']].append(m)
+        assert not wire_inputs or wire_index==len(wire_inputs), 'every public tx_data message accounted for'
         endpoints[es]=dict(messages=ms,by_vl=by_vl,txpulses=txpulses,tx_vlids=tx_vlids)
         for net in ('A','B'):
             for kind,dest in [('tx',es),('rx',3-es)]:

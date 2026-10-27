@@ -43,6 +43,7 @@ module top_stream_endpoint #(
     wire core_valid,core_ready,core_last;
     wire [31:0] current_source_first,current_source_last,current_stalls,current_maxstall;
     wire input_empty;
+    wire [31:0] last_input_stalls,last_input_maxstall;
     wire [7:0] core_data;
     wire [6:0] core_vl;
     wire core_dvalid,core_dlast,core_dnet;
@@ -60,6 +61,7 @@ module top_stream_endpoint #(
             .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
             .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver));
         assign initialized=tx_ready;
+        assign last_input_stalls=0;assign last_input_maxstall=0;
         assign current_source_first=cycle;assign current_source_last=cycle;assign current_stalls=0;assign current_maxstall=0;assign input_empty=1;
         assign core_valid=app_tx_valid;assign core_ready=app_tx_ready;assign core_last=app_tx_last;assign core_data=app_tx_data;assign core_vl=app_tx_vl;
         assign core_dvalid=app_rx_valid;assign core_dlast=app_rx_last;assign core_ddata=app_rx_data;assign core_dvl=app_rx_vl;
@@ -99,6 +101,7 @@ module top_stream_endpoint #(
         assign current_source_first=firsts[core_read%64];
         assign current_source_last=lasts[core_read%64];assign current_stalls=stalls[core_read%64];assign current_maxstall=maxstalls[core_read%64];
         assign input_empty=source_write==core_read;
+        assign last_input_stalls=stalls[(source_write-1)%64];assign last_input_maxstall=maxstalls[(source_write-1)%64];
         reg [15:0] receive_id;
         integer gmii_pos=0;reg gmii_previous=0;
         reg [15:0] gmii_id,gmii_sp,gmii_dp;

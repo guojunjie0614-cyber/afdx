@@ -210,6 +210,26 @@ module sys_endpoint #(
         $readmemh("vectors/sys_payload.hex",stimulus,0,payload_total-1);
     end
 
+    // A 行独立采集新顶层 tx_data 的完整输入，统计器须与核心 M 行逐字节核对。
+    reg raw_previous=0;integer raw_count=0,raw_first=0,raw_last=0,raw_j,raw_cycle=0;
+    reg [7:0] raw_bytes[0:8191];
+    always @(posedge clk)begin
+        raw_cycle=raw_cycle+1;
+        if(reset)begin raw_previous=0;raw_count=0;end
+        else if(!DIRECT_CORE)begin
+            if(dut.stream_tv)begin
+                if(!raw_previous)begin raw_count=0;raw_first=raw_cycle;end
+                if(raw_count<8192)raw_bytes[raw_count]=dut.stream_tx;
+                raw_count=raw_count+1;raw_last=raw_cycle;
+            end else if(raw_previous)begin
+                $fwrite(tf,"A %0d %02x%02x %0d ",raw_last,raw_bytes[0],raw_bytes[1],raw_count-2);
+                for(raw_j=2;raw_j<raw_count;raw_j=raw_j+1)$fwrite(tf,"%02x",raw_bytes[raw_j]);
+                $fwrite(tf," %0d %0d %0d\n",raw_first,dut.last_input_stalls,dut.last_input_maxstall);
+            end
+            raw_previous=dut.stream_tv;
+        end
+    end
+
     always @(posedge clk)begin
         cycle=cycle+1;
         if(reset)begin
