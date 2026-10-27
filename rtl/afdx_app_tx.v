@@ -83,11 +83,11 @@ module afdx_app_tx (
                 end
                 if(!valid)begin
                     active<=0;count<=0;
-                    if(bad || (count>=2 && used>=4096) || (!active && (!initialized || descriptors==32)))begin
+                    if(active && count>=2)begin
+                        if(bad || used>=4096)begin write_ptr<=start_ptr;drop[1]<=1;end
+                        else begin desc_wr<=desc_wr+1'b1;committed<=write_ptr+1'b1;end
+                    end else if(bad || (!active && (!initialized || descriptors==32)))begin
                         write_ptr<=active?start_ptr:write_ptr;drop[1]<=1;
-                    end else if(active && count>=2)begin
-                        desc_wr<=desc_wr+1'b1;
-                        committed<=write_ptr+1'b1;
                     end
                 end
             end
