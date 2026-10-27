@@ -95,7 +95,7 @@ module afdx_app_tx (
     end
     // 只有 VLID、没有载荷的消息也只报告一次未命中。
     wire empty_message=vq && !valid && (!active || count<2) && !bad;
-    (* preserve=1,dont_merge=1 *) reg [15:0] query[0:31];
+    (* preserve=1,dont_merge=1 *) reg [15:0] query[0:7];
     reg [127:0] hit,hit_low,hit_high,nibble0,nibble1,nibble2,nibble3;
     reg [7:0] bank_hit;
     reg [3:0] bank_index[0:7];
@@ -104,35 +104,42 @@ module afdx_app_tx (
     reg [1:0] half_hit;
     reg [6:0] half_index[0:1];
     reg found,discard;
+    integer compare_bank,compare_item;
+    // 比较流水每拍运行，FSM 只等待结果，消除 512 个比较寄存器的共享使能。
+    always @(posedge clk)begin
+        if(reset)begin hit<=0;hit_low<=0;hit_high<=0;nibble0<=0;nibble1<=0;nibble2<=0;nibble3<=0;end
+        else begin
+            for(compare_bank=0;compare_bank<8;compare_bank=compare_bank+1)
+                for(compare_item=0;compare_item<16;compare_item=compare_item+1)begin
+                    nibble0[compare_bank*16+compare_item]<=enabled[compare_bank*16+compare_item] && vlids[compare_bank*16+compare_item][3:0]==query[compare_bank][3:0];
+                    nibble1[compare_bank*16+compare_item]<=vlids[compare_bank*16+compare_item][7:4]==query[compare_bank][7:4];
+                    nibble2[compare_bank*16+compare_item]<=vlids[compare_bank*16+compare_item][11:8]==query[compare_bank][11:8];
+                    nibble3[compare_bank*16+compare_item]<=vlids[compare_bank*16+compare_item][15:12]==query[compare_bank][15:12];
+                end
+            hit_low<=nibble0 & nibble1;hit_high<=nibble2 & nibble3;
+            hit<=hit_low & hit_high;
+        end
+    end
     integer bank,item;
     always @(posedge clk)begin
         if(reset)begin
-            desc_rd<=0;state<=0;hit<=0;hit_low<=0;hit_high<=0;nibble0<=0;nibble1<=0;nibble2<=0;nibble3<=0;bank_hit<=0;app_vl<=0;found<=0;discard<=0;drop[0]<=0;
+            desc_rd<=0;state<=0;bank_hit<=0;app_vl<=0;found<=0;discard<=0;drop[0]<=0;
             pair_hit<=0;half_hit<=0;
             for(bank=0;bank<4;bank=bank+1)pair_index[bank]<=0;
             for(bank=0;bank<2;bank=bank+1)half_index[bank]<=0;
-            for(bank=0;bank<32;bank=bank+1)query[bank]<=0;
+            for(bank=0;bank<8;bank=bank+1)query[bank]<=0;
             for(bank=0;bank<8;bank=bank+1)bank_index[bank]<=0;
         end else begin
             drop[0]<=empty_message;
             case(state)
                 0:if(descriptors!=0)state<=6;
                 6:begin
-                    for(bank=0;bank<32;bank=bank+1)query[bank]<=descriptor_id;
+                    for(bank=0;bank<8;bank=bank+1)query[bank]<=descriptor_id;
                     state<=1;
                 end
-                1:begin
-                    for(bank=0;bank<8;bank=bank+1)
-                        for(item=0;item<16;item=item+1)begin
-                            nibble0[bank*16+item]<=enabled[bank*16+item] && vlids[bank*16+item][3:0]==query[bank*4+item/4][3:0];
-                            nibble1[bank*16+item]<=vlids[bank*16+item][7:4]==query[bank*4+item/4][7:4];
-                            nibble2[bank*16+item]<=vlids[bank*16+item][11:8]==query[bank*4+item/4][11:8];
-                            nibble3[bank*16+item]<=vlids[bank*16+item][15:12]==query[bank*4+item/4][15:12];
-                        end
-                    state<=9;
-                end
-                9:begin hit_low<=nibble0 & nibble1;hit_high<=nibble2 & nibble3;state<=10;end
-                10:begin hit<=hit_low & hit_high;state<=2;end
+                1:state<=9;
+                9:state<=10;
+                10:state<=2;
                 2:begin
                     for(bank=0;bank<8;bank=bank+1)begin
                         bank_hit[bank]<=|hit[bank*16+:16];bank_index[bank]<=0;
