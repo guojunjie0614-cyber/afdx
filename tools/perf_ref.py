@@ -342,7 +342,11 @@ def check_r97_var(folder, measured):
             else:requirements.append(dict(status='REPORT',label=stage+' '+direction+' offered-load throughput',measured_mbps=inject))
             requirement(all(f['L_entry_last']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame R119 latency <=2000us')
             requirement(all(f['L_gmii']<=250000 and f['L_app']<=250000 for f in accepted_all if f['stage']==stage and f['direction']==direction),stage+' '+direction+' all-frame first-byte latency <=2000us')
-            requirements.append(dict(status='REPORT',label=stage+' '+direction+' R119 jitter',cycles=measured[key+'/jitter_r119/jitter']))
+            jitter=measured[key+'/jitter_r119/jitter'];lag=measured[key+'/inject/lag_max']
+            requirement(isinstance(jitter,(int,float)) and 0<=jitter<=6250,stage+' '+direction+' same-VL same-length jitter <=50us',cycles=jitter)
+            requirement(lag=='NA' or lag<=1471,stage+' '+direction+' injection lag <= one maximum payload',cycles=lag)
+            for metric in ('dropped','duplicate','overflow'):
+                requirement(measured[key+'/integrity/'+metric]==0,stage+' '+direction+' no '+metric)
     (folder/'r97_requirements.json').write_text(json.dumps(requirements,indent=2),encoding='utf8')
     for row in requirements:print('[R97 '+row['status']+'] '+row['label']+' '+str({k:v for k,v in row.items() if k not in ('status','label')}))
     return requirements
