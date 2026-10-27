@@ -1,0 +1,126 @@
+{
+  "name": "baseline",
+  "started": "2026-10-10T21:25:38.157750+08:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137",
+  "scope": "Current RTL; isolated GUI-equivalent post-route flow",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 10.0,
+  "project": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline",
+  "settings": {
+    "label": "baseline",
+    "fanout": null,
+    "packing": "classic",
+    "smart": null
+  },
+  "utilization": "Implementation Status : Successful\neLinx Version : 3.0 \nTop-level Entity Name : AFDX_top\nTotal LUTs : 32847 / 136160 (24%)\nTotal FFs : 13869 / 136160 (10%)\nTotal Memorys : 340 / 1200 (28%)\nTotal DSPs : 0 / 48 (0%)\nTotal PLLs : 0 / 8 (0%)\nTotal CLBs : 4648 / 13616 (34%)\nTotal Pins : 259 / 339 (76%)\nMin Slack : -10368\nEndPoints : 27148\n",
+  "timing": {
+    "setup_ns": -10.368,
+    "hold_ns": 0.449,
+    "fmax_mhz": 54.442508697509766,
+    "failed": 10596,
+    "endpoints": 40008
+  },
+  "map_summary": "Analysis & Synthesis Status : Successful - Sat Oct 10 21:28:29 2026\nQuartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version\nRevision Name : AFDX_EndSystem\nTop-level Entity Name : AFDX_top\nFamily : Stratix\nTotal logic elements : 32,846\nTotal pins : 259\nTotal virtual pins : 0\nTotal memory bits : 2,421,632\nDSP block 9-bit elements : 0\nTotal PLLs : 0\nTotal DLLs : 0\n",
+  "generated": {
+    "AFDX_EndSystem.sdo": {
+      "bytes": 33432876,
+      "sha256": "2207C6C92B6B103CD3DA78D46D42564897489301B6EED46044CB01ABC7C650E7"
+    },
+    "AFDX_EndSystem.vo": {
+      "bytes": 33156634,
+      "sha256": "CA15C7F0AFD10AC16F5BFA1248E58CC9440F9FF7B919BB73016C9A9CF870E8A4"
+    }
+  },
+  "completed": true,
+  "finished": "2026-10-10T21:41:24.572989+08:00",
+  "jobs": [
+    {
+      "name": "map",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_map.exe",
+        "--read_settings_files=on",
+        "--write_settings_files=off",
+        "AFDX_EndSystem"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\elinx",
+      "pid": 10320,
+      "created": 1791638738.195848,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 172.093,
+      "peak_tree_bytes": 418803712,
+      "budget_seconds": 3600,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\map.log"
+    },
+    {
+      "name": "export",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_cdb.exe",
+        "AFDX_EndSystem",
+        "-c",
+        "AFDX_EndSystem",
+        "--vqm=E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\elinx\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\elinx",
+      "pid": 48944,
+      "created": 1791638910.3003159,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 3.562,
+      "peak_tree_bytes": 214630400,
+      "budget_seconds": 600,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\export.log"
+    },
+    {
+      "name": "pack",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+        "-f",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\pack.tcl"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+      "pid": 33020,
+      "created": 1791638913.9409971,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 62.328,
+      "peak_tree_bytes": 500064256,
+      "budget_seconds": 1800,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\pack.log"
+    },
+    {
+      "name": "route",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+        "-f",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\route.tcl"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+      "pid": 45400,
+      "created": 1791638976.1904695,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 707.062,
+      "peak_tree_bytes": 659509248,
+      "budget_seconds": 1800,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\route.log"
+    },
+    {
+      "name": "timing",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+        "-f",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\timing.tcl"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+      "pid": 41560,
+      "created": 1791639683.275092,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 1.094,
+      "peak_tree_bytes": 94097408,
+      "budget_seconds": 1800,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\jobs\\baseline\\20261010_212538_157137\\timing.log"
+    }
+  ]
+}

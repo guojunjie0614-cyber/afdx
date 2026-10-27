@@ -27,31 +27,44 @@
     "file": "gui_behavior.log",
     "source": "elinx/AFDX_EndSystem.sim/sim_1/behav/transcript",
     "bytes": 36932,
-    "sha256": "51c646d8a4b87febc725cc81db361e14604dd9e6b8d3cd5027174218a59b8d23"
+    "sha256": "51c646d8a4b87febc725cc81db361e14604dd9e6b8d3cd5027174218a59b8d23",
+    "historical": true,
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "gui_resources.rpt",
-    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\elinx\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem_utilization_synth.rpt",
+    "operation": "Copy existing T57 output; no simulation or implementation",
     "bytes": 239,
-    "sha256": "834b748a2cc8f7ee2bafa43b06a142a5be6345667571f77ec6ec38030e787dec"
+    "sha256": "c67099e0d288ba0b72ff40aa4b713396de151e820bd06bfc1ffee25245b025a6",
+    "source_commit": "f1393d44",
+    "source_sha256": "c67099e0d288ba0b72ff40aa4b713396de151e820bd06bfc1ffee25245b025a6"
   },
   {
     "file": "gui_elinx.log",
     "source": "out/t26c/out/runs/tb_elinx_gui/20261013_181549_198506/simulation.log",
     "bytes": 3064,
-    "sha256": "33e9f42e342a16e7f1ed056d6f480cdc2f6f9295d180a33a33adcc5e210bb6dc"
+    "sha256": "33e9f42e342a16e7f1ed056d6f480cdc2f6f9295d180a33a33adcc5e210bb6dc",
+    "historical": true,
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "gui_elinx_summary.json",
     "source": "out/t26c/out/runs/tb_elinx_gui/20261013_181549_198506/summary.json",
     "bytes": 3324,
-    "sha256": "179686560164972d1fd0f1ad66f04f5f663d3c1275228d655734352c16cfeb0e"
+    "sha256": "179686560164972d1fd0f1ad66f04f5f663d3c1275228d655734352c16cfeb0e",
+    "historical": true,
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "gui_services_summary.json",
-    "source": "out/gui_netlist/tb_net_services_gui/20261013_213142_900813/summary.json",
-    "bytes": 18183,
-    "sha256": "874b8d049058a0a8d4843836e2eb0e9b34eb8027499140405fb6ea835ec410ab"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\summary.json",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 31882,
+    "sha256": "3f31568041b6de32bc802d1fc9b36549313cbfa6330025d679e9d50ca45bc870",
+    "source_commit": "f1393d44",
+    "source_sha256": "3f31568041b6de32bc802d1fc9b36549313cbfa6330025d679e9d50ca45bc870",
+    "note": "T57 official CLI VQM tested with the common GUI-netlist simulation entrypoint."
   },
   {
     "file": "contention.json",
@@ -61,9 +74,12 @@
   },
   {
     "file": "route_default.json",
-    "source": "out/latest_baseline.json",
-    "bytes": 5483,
-    "sha256": "dbbc843e083f4cdcc9e60e281aaa2a579a93b79c4c8010b510fabf1459e4d235"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\implementation\\AFDX_top_route\\20261026_111806_425283\\summary.json",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 4317,
+    "sha256": "731bd58a223b57e02b239c59f3a9c88aa5c2bbe9acd867b9858c1b237335ef98",
+    "source_commit": "f1393d44",
+    "source_sha256": "731bd58a223b57e02b239c59f3a9c88aa5c2bbe9acd867b9858c1b237335ef98"
   },
   {
     "file": "vo_functional.json",
@@ -127,35 +143,50 @@
   },
   {
     "file": "gui_timing.json",
-    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
-    "operation": "read-only SQLite query of elinx_intra_clock_summary",
-    "source_sha256": "e2331149bdd121fff8500aeea85ff715a33809364833dd4bc6a5c70d4cef36d1",
-    "sha256": "2601802d041c8814a0a727615261c2f161ec419e28647483ce019efb32e8aad0"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\synth\\AFDX_top\\20261026_111158_306529\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.tan.pb",
+    "operation": "Read-only SQLite query; explicitly labeled CLI fallback",
+    "bytes": 8918,
+    "sha256": "94585ffaef8839cbc93bdaeccfa8acbb7c36ab99adfdea113980672fa5924cff",
+    "source_commit": "f1393d44",
+    "source_sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121"
   },
   {
     "file": "route_timing.json",
-    "source": "out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.tan.pb",
-    "operation": "read-only SQLite query of elinx_intra_clock_summary",
-    "source_sha256": "85ad0b58eee78d0ae256ea3d309c22e212580c9d2b93b39991cde4b798005354",
-    "sha256": "5d9aee0df713eb60dfc6b3be676afd2818eb8834f6f85d6b08edc9ee72f90625"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\elinx\\AFDX_EndSystem.runs\\imple_1\\AFDX_EndSystem.tan.pb",
+    "operation": "Read-only SQLite clock and top-path query",
+    "bytes": 7318,
+    "sha256": "d6438ad29f46ea16f6583cfad21cc0d6a512822ab5926a54f28f6053331b5cbc",
+    "source_commit": "f1393d44",
+    "source_sha256": "75bb7763a867d27c46af5d5a08167076bf5fce488d35a95fd1780dc1e35db185"
   },
   {
     "file": "gui_hierarchy.rpt",
-    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.rpt",
-    "bytes": 842063,
-    "sha256": "78a1a452f0046497f219e43d3c9050d349a67d80ec325ea70d5e2f61ef8242bc"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\elinx\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.map.rpt",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 2591980,
+    "sha256": "c6b7bc0460d6cbed625a0cc477373a60055e30474b392eb7f3704b00178b7f2d",
+    "source_commit": "f1393d44",
+    "source_sha256": "c6b7bc0460d6cbed625a0cc477373a60055e30474b392eb7f3704b00178b7f2d"
   },
   {
     "file": "device_capacity.rpt",
-    "source": "../c3_github/out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem_utilization_placed.rpt",
-    "bytes": 348,
-    "sha256": "ce6018cc1a18400be4861ac4f9eb5029d2ae140a31664a93f0aca0b665854b5f"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\elinx\\AFDX_EndSystem.runs\\imple_1\\AFDX_EndSystem_utilization_placed.rpt",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 347,
+    "sha256": "168d2dc6bb30fd511410337353162659eb636dbe2a00148b18123c3aa80d46a6",
+    "source_commit": "f1393d44",
+    "source_sha256": "168d2dc6bb30fd511410337353162659eb636dbe2a00148b18123c3aa80d46a6",
+    "note": "Resource capacity only; native Min Slack=1e+30 and EndPoints=26701 are not the routed timing result. Use route_timing.json and t57_timing.json."
   },
   {
     "file": "gui_synthesis_timing.pb",
-    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.tan.pb",
-    "bytes": 2351104,
-    "sha256": "e2331149bdd121fff8500aeea85ff715a33809364833dd4bc6a5c70d4cef36d1"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\synth\\AFDX_top\\20261026_111158_306529\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.tan.pb",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 1482752,
+    "sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121",
+    "source_commit": "f1393d44",
+    "source_sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121",
+    "note": "GUI synthesis timing database absent; copied same-source official CLI synthesis database, not a GUI capture."
   },
   {
     "file": "fault_checks.json",
@@ -240,7 +271,9 @@
     "file": "t43_timing.json",
     "source": "T43 native synthesis/full timing and terminal JSON",
     "bytes": 17107,
-    "sha256": "a04e72884640d0030c4103870b776f796a5b181190f88a08a0f3a14eebd54c15"
+    "sha256": "a04e72884640d0030c4103870b776f796a5b181190f88a08a0f3a14eebd54c15",
+    "historical": true,
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "t54_timing.json",
@@ -248,7 +281,9 @@
     "operation": "Official eLinx synthesis, implementation and full endpoint report at PRES1.50 with 0.30 ns setup clock uncertainty",
     "bytes": 12212,
     "sha256": "396f53b9ae7a28516f7003cc3ea222f57e21274e80738883fffb5918ea0e159e",
-    "source_commit": "c68fac81"
+    "source_commit": "c68fac81",
+    "historical": true,
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "t45_timing.json",
@@ -316,7 +351,8 @@
       "original_manifest_files": 149,
       "refreshed_reference_outputs": 8,
       "unchanged_protected_files": 141
-    }
+    },
+    "note": "Historical measurement retained unchanged; not T57 delivery evidence. Current delivery: t57_timing.json."
   },
   {
     "file": "../../sim/reference/regression.json",
@@ -539,5 +575,147 @@
     "bytes": 1129,
     "sha256": "e395d1caa1a506f241e14cb59db10a891b874d251fcd04cc2cff5261ce29075b",
     "source_commit": "c68fac81"
+  },
+  {
+    "file": "history/route_timing_20261010.json",
+    "source": "out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.tan.pb",
+    "operation": "read-only SQLite query of elinx_intra_clock_summary",
+    "source_sha256": "85ad0b58eee78d0ae256ea3d309c22e212580c9d2b93b39991cde4b798005354",
+    "sha256": "5d9aee0df713eb60dfc6b3be676afd2818eb8834f6f85d6b08edc9ee72f90625",
+    "historical": true,
+    "note": "Archived unchanged before T57 refresh"
+  },
+  {
+    "file": "history/route_default_20261010.json",
+    "source": "out/latest_baseline.json",
+    "bytes": 5483,
+    "sha256": "dbbc843e083f4cdcc9e60e281aaa2a579a93b79c4c8010b510fabf1459e4d235",
+    "historical": true,
+    "note": "Archived unchanged before T57 refresh"
+  },
+  {
+    "file": "history/gui_hierarchy_20261015.rpt",
+    "source": "elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.rpt",
+    "bytes": 842063,
+    "sha256": "78a1a452f0046497f219e43d3c9050d349a67d80ec325ea70d5e2f61ef8242bc",
+    "historical": true,
+    "note": "Archived unchanged before T57 refresh"
+  },
+  {
+    "file": "history/gui_services_summary_20261013.json",
+    "source": "out/gui_netlist/tb_net_services_gui/20261013_213142_900813/summary.json",
+    "bytes": 18183,
+    "sha256": "874b8d049058a0a8d4843836e2eb0e9b34eb8027499140405fb6ea835ec410ab",
+    "historical": true,
+    "note": "Archived unchanged before T57 refresh"
+  },
+  {
+    "file": "t57_synthesis_warnings.json",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_synthesis_warnings.json",
+    "operation": "Copy existing T57 output; no simulation or implementation",
+    "bytes": 1960,
+    "sha256": "ff2a0cdc12c7fac41291b02143c58b5c52e053755ac7d89809b547d47d2cfa50",
+    "source_commit": "f1393d44",
+    "source_sha256": "ff2a0cdc12c7fac41291b02143c58b5c52e053755ac7d89809b547d47d2cfa50"
+  },
+  {
+    "file": "t57_timing.json",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_result.json",
+    "operation": "Extract official summaries and read-only top-ten SQLite paths; preserve v02 final verdict",
+    "bytes": 14596,
+    "sha256": "42a859e88cd7983627aa2b9da07a8cd1af2112012b0f70d272b51cd252324360",
+    "source_commit": "f1393d44",
+    "terminal_results": {
+      "ce1": {
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce1\\summary.json",
+        "sha256": "6671b045c68c395a11026d39451d67379ae2eb23ec0a0643b5c6f8b81e0e7742",
+        "passed": true,
+        "tests": 39,
+        "started": "2026-10-26T18:21:50.747017+00:00",
+        "finished": "2026-10-26T19:26:03.006664+00:00",
+        "seconds": 3852.26
+      },
+      "ce2": {
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2\\summary.json",
+        "sha256": "445a8d2d07cfd70b6b1c703c6bc352625faa58cae6ab03f8343c5338b11eae31",
+        "passed": true,
+        "tests": 39,
+        "started": "2026-10-26T18:21:50.744542+00:00",
+        "finished": "2026-10-26T19:41:41.520097+00:00",
+        "seconds": 4790.776
+      },
+      "ce2cov": {
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+        "sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+        "passed": true,
+        "tests": 39,
+        "started": "2026-10-26T18:21:50.743000+00:00",
+        "finished": "2026-10-26T21:11:13.571490+00:00",
+        "seconds": 10162.828
+      },
+      "judge": {
+        "passed": true,
+        "seconds": 6912.578,
+        "started": "2026-10-26T18:21:50.739470+00:00",
+        "finished": "2026-10-26T20:17:04.689557+00:00",
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\judge\\result_rechecked.json",
+        "sha256": "e0a2cf9589323ade9c51751e68011b4abf923eb62d17e8b0612b4bc2d11e07f5",
+        "cases": 8,
+        "errors": 0,
+        "warnings": 0,
+        "verdict_file": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\judge\\judge_20261026_112154_38652\\result.txt",
+        "verdict_sha256": "ffeda8a1592b00646aa5d4214705eb994e87c583d3153eff5a54138f75e98cc7",
+        "result_collection_correction": "Read unchanged official result.txt instead of batch-launch stdout; no simulation or verdict changed."
+      },
+      "netlist": {
+        "passed": true,
+        "seconds": 7991.843,
+        "started": "2026-10-26T18:21:50.738470+00:00",
+        "finished": "2026-10-26T20:35:03.963395+00:00",
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\netlist\\result.json",
+        "sha256": "a683229798890a45aacbecb88ff64542362e780ea9cc8cd9aeac2286b7ea5bd2",
+        "rtl_checks": 1124,
+        "netlist_checks": 1124,
+        "errors": 0,
+        "independent_items": 65,
+        "exact_external_records": {
+          "net_services.txt": true,
+          "es1_a.txt": true,
+          "es1_b.txt": true,
+          "es2_a.txt": true,
+          "es2_b.txt": true,
+          "es2_rx_a.txt": true,
+          "download_results.txt": true
+        }
+      },
+      "check_wrapper": {
+        "passed": true,
+        "seconds": 1.031,
+        "started": "2026-10-26T18:21:50.738470+00:00",
+        "finished": "2026-10-26T18:21:51.781123+00:00",
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\check_wrapper\\result.json",
+        "sha256": "3696f379afc154315f95f89ddb2f37607c04a23746dd6808d87e10caafcb08de",
+        "checks": 5
+      }
+    },
+    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42"
+  },
+  {
+    "file": "version_match.json",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\final_summary.json",
+    "operation": "Bind delivery source hashes and existing validation inputs",
+    "bytes": 13140,
+    "sha256": "5cc584d3c056a2a72ba12a3b5244d4a9095c26345fab513d49b6923bafba46d8",
+    "source_commit": "f1393d44",
+    "source_sha256": "adca19642dcaf99451d9252fe9883ef79d6f334be1683d1afc5a773736ff38cc"
+  },
+  {
+    "file": "post_route_timing_campaign.md",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_result.json",
+    "operation": "Summarize current delivery; replace obsolete open-ended campaign state",
+    "bytes": 1981,
+    "sha256": "e0940f267d704883240429514f66c363121c43cd244b7fbc8dbe73c55ac5e8cb",
+    "source_commit": "f1393d44",
+    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42"
   }
 ]
