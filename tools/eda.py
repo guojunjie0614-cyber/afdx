@@ -202,7 +202,7 @@ def sim(options):
         if options.test in ("tb_sys_perf", "tb_sys_perf_var") and not netlists:sim_budget=max(sim_budget,5400)
         if options.test=="tb_sys_perf_var" and not netlists:sim_budget=max(sim_budget,14400)
         if options.coverage:sim_budget=max(sim_budget,9000 if options.test=="tb_sys_perf" else 3600)
-        log=f.job("simulation",[MS/"vsim.exe","-c",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
+        log=f.job("simulation",[MS/"vsim.exe","-batch",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
         if options.coverage:
             ucdb=f.folder/"coverage.ucdb"
             if not ucdb.is_file() or not ucdb.stat().st_size:raise RuntimeError("Coverage database absent; see simulation.log")
