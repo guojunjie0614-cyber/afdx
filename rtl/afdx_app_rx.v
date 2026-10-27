@@ -23,9 +23,12 @@ module afdx_app_rx (
     wire reject=used>2625 || descriptors>=31;
     wire store=app_valid && (active?!discard:!reject);
     wire [15:0] map_q;
+    wire map_collision=cfg_write && cfg_index==app_index;
+    reg map_bypass;
+    reg [15:0] map_write_value;
     afdx_ram_sdp #(.WIDTH(16),.DEPTH(4096)) reverse_map(
         .clk(clk),.write_enable(cfg_write),.write_address(cfg_index),.write_data(cfg_vlid),
-        .read_enable(first && !reject),.read_address(app_index),.read_data(map_q));
+        .read_enable(first && !reject && !map_collision),.read_address(app_index),.read_data(map_q));
     reg map_pending;
     reg [15:0] ids[0:31];
     wire read_en;
@@ -38,11 +41,12 @@ module afdx_app_rx (
     wire [8:0] q_data;
     afdx_app_read reader(clk,reset,write_ptr,read_ptr,read_en,read_addr,memory_q,q_valid,q_ready,q_data);
     always @(posedge clk)begin
-        if(reset)begin active<=0;discard<=0;write_ptr<=0;dw<=0;map_pending<=0;drop<=0;end
+        if(reset)begin active<=0;discard<=0;write_ptr<=0;dw<=0;map_pending<=0;drop<=0;map_bypass<=0;map_write_value<=0;end
         else begin
             drop<=first && reject;
             map_pending<=first && !reject;
-            if(map_pending)begin ids[dw[4:0]]<=map_q;dw<=dw+1'b1;end
+            map_bypass<=map_collision;map_write_value<=cfg_vlid;
+            if(map_pending)begin ids[dw[4:0]]<=map_bypass?map_write_value:map_q;dw<=dw+1'b1;end
             if(app_valid)begin
                 active<=!app_last;
                 if(first)discard<=reject;
