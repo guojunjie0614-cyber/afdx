@@ -6,9 +6,9 @@ module afdx_app_read #(parameter AW=12) (
     output wire read_enable,
     output wire [AW-1:0] read_address,
     input wire [8:0] read_data,
-    output wire valid,
+    output reg valid,
     input wire ready,
-    output wire [8:0] data
+    output reg [8:0] data
 );
     reg pending;
     reg [3:0] reserved, queued;
@@ -16,12 +16,12 @@ module afdx_app_read #(parameter AW=12) (
     reg [8:0] bytes[0:7];
     assign read_enable = pointer != limit && reserved < 8;
     assign read_address = pointer[AW-1:0];
-    assign valid = queued != 0;
-    assign data = bytes[rd];
+    // 输出寄存切断小队列 RAM 到下游核心的组合路径，允许每拍替换。
     wire take = valid && ready;
+    wire refill = queued != 0 && (!valid || ready);
     always @(posedge clk) begin
         if (reset) begin
-            pointer<=0;pending<=0;reserved<=0;queued<=0;wr<=0;rd<=0;
+            pointer<=0;pending<=0;reserved<=0;queued<=0;wr<=0;rd<=0;valid<=0;data<=0;
         end else begin
             pending<=read_enable;
             if(read_enable) pointer<=pointer+1'b1;
@@ -29,12 +29,15 @@ module afdx_app_read #(parameter AW=12) (
                 2'b10:reserved<=reserved+1'b1;
                 2'b01:reserved<=reserved-1'b1;
             endcase
-            case({pending,take})
+            case({pending,refill})
                 2'b10:queued<=queued+1'b1;
                 2'b01:queued<=queued-1'b1;
             endcase
             if(pending)begin bytes[wr]<=read_data;wr<=wr+1'b1;end
-            if(take)rd<=rd+1'b1;
+            if(!valid || ready)begin
+                valid<=refill;
+                if(refill)begin data<=bytes[rd];rd<=rd+1'b1;end
+            end
         end
     end
 endmodule
