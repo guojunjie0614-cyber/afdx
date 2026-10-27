@@ -81,11 +81,11 @@ proc judge_perf::vectors {folder} {
 proc judge_perf::require {condition message} {if {!$condition} {error "Performance check: $message"}}
 proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)-max($start,$begin))}}
 
-# R119/R120 baseline from the T59 measurement; see docs/evidence/perf_r97.json.
-# baseline fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles
+# R119/R120 baseline measured by T59 on 2026-10-27 (docs/evidence/perf_r97.json).
+# fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles
 proc judge_perf::baseline {stage} {
-    if {[string match gbe77_d0 $stage]} {return {906.136 0.0 0.0 0.0 0 0}}
-    if {[string match gbe77_d257 $stage]} {return {906.136 0.0 0.0 0.0 0 0}}
+    if {[string match gbe77_d0 $stage]} {return {906.136 36.336 24.576 0.008 29106 1}}
+    if {[string match gbe77_d257 $stage]} {return {906.136 38.392 26.632 0.008 29106 1}}
     return {}
 }
 
@@ -110,10 +110,19 @@ proc judge_perf::limits {stage es rate maximum variation wire_a wire_b results p
     set same 1; set problems {}
     if {[llength $expected]==6} {
         lassign $expected bi be bf bj bs bl
-        foreach {name actual want} {inject_mbps $inject $bi max_e2e_us [expr {$e2e*0.008}] $be \
-            max_e2e_first_us [expr {$first*0.008}] $bf jitter_r119_us [expr {$jitter*0.008}] $bj \
-            stall_cycles $stalls $bs lag_max_cycles $lag $bl} {
-            if {$actual ne "NA" && abs($actual-$want)>0.000000001} {lappend problems "$name=$actual!= $want"}
+        set e2e_us [expr {$e2e eq "NA" ? "NA" : $e2e*0.008}]
+        set first_us [expr {$first eq "NA" ? "NA" : $first*0.008}]
+        set jitter_us [expr {$jitter eq "NA" ? "NA" : $jitter*0.008}]
+        set pairs [list inject_mbps $inject $bi max_e2e_us $e2e_us $be \
+            max_e2e_first_us $first_us $bf jitter_r119_us $jitter_us $bj \
+            stall_cycles $stalls $bs lag_max_cycles $lag $bl]
+        foreach {name actual want} $pairs {
+            if {$actual eq "NA"} {continue}
+            if {$name in {stall_cycles lag_max_cycles}} {
+                if {$actual != $want} {lappend problems "$name=$actual!=$want"}
+            } elseif {[format %.3f $actual] ne [format %.3f $want]} {
+                lappend problems "$name=$actual!=$want"
+            }
         }
         if {[llength $problems]} {set same 0}
     } else {set same 0}
@@ -161,7 +170,8 @@ proc judge_perf::measure {folder} {
         while {[gets $fh line]>=0} {
             if {[regexp {^P [0-9]+ (\S+)$} $line all label]} {set stage $label}
             if {$stage ni $phases} {continue}
-            if {[regexp {^M ([0-9]+) ([0-9]+) ([0-9]+) [0-9]+ [0-9a-f]+ [0-9a-f]+ ([0-9a-f]+)$} $line all cycle vl n data]} {
+            # M rows end with two T59 fields: first-valid cycle and longest stall run.
+            if {[regexp {^M ([0-9]+) ([0-9]+) ([0-9]+) [0-9]+ [0-9a-f]+ [0-9a-f]+ ([0-9a-f]+)(?: [0-9-]+ [0-9]+)?$} $line all cycle vl n data]} {
                 require [expr {$vl<77 && $n==1471 && [string length $data]==$n*2}] "invalid application message"
                 lappend messages($es,$stage,$vl) [list $cycle $n $data]
             }
