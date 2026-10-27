@@ -1,9 +1,11 @@
 [
   {
     "file": "performance.json",
-    "source": "out/sim/tb_sys_perf/20261014_095826_964006/check_summary.json",
-    "bytes": 89211,
-    "sha256": "9f19bc6cafcf877b959ee6c082ef412dd4486c6b1eda1263ac389555e3a2248c"
+    "source": "out/sim/tb_sys_perf/20261026_221027_627481/check_summary.json",
+    "bytes": 88723,
+    "sha256": "8d8b28919b7b0c77eb56a081af5ca643dfc08c9f2d600a1f5920f1e14f59604b",
+    "operation": "Copy the T59 tb_sys_perf independent check summary",
+    "source_commit": "286fa1b6"
   },
   {
     "file": "rtc.json",
@@ -262,10 +264,11 @@
   },
   {
     "file": "perf_r97.json",
-    "source": "../c3_t45az/out/t45/s2d_functional/r97_full_window_crosscheck/result.json",
-    "operation": "Completed real S2d measurements matching the integrated source",
-    "bytes": 209681,
-    "sha256": "c392fac9f2f02bf9ee2f93ad50bad0297a5e8cb18bef21dea09e0b3139946bb6"
+    "source": "out/t59/make_evidence.py over out/sim/tb_sys_perf, out/sim/tb_sys_perf_var and out/app",
+    "operation": "Build R119/R120 latency, jitter and injection evidence from the T59 runs; Tcl and Python fields compared",
+    "bytes": 66492,
+    "sha256": "0873672d00d098fd680e90dc292a60cca08d6e541b1816f205a5093c1670a400",
+    "source_commit": "286fa1b6"
   },
   {
     "file": "t43_timing.json",
@@ -356,21 +359,21 @@
   },
   {
     "file": "../../sim/reference/regression.json",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Collect original summary results into Runs schema; normalize only Folder/Ucdb prefixes to out/sim",
-    "bytes": 11681,
-    "sha256": "e33ebbc38e8c81481e21b27cb79f050248346f51bd28382db49da96e9ce1daf0"
+    "source": "out/t59/regress_final.json",
+    "source_sha256": "173c6a7a17b06d5c4bd148d0060a0819991c52971166e8b45dd98b81b58062ef",
+    "source_commit": "286fa1b6",
+    "operation": "Convert the T59 parallel CE2 batch into the Runs schema",
+    "bytes": 8759,
+    "sha256": "3ae7f192702e80c9fbca79ed74918c0bf37d6bbfb0fe7be7fd4a6d9160159956"
   },
   {
     "file": "../../sim/reference/judge_result.txt",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\judge\\judge_20261026_112154_38652\\result.txt",
-    "source_sha256": "ffeda8a1592b00646aa5d4214705eb994e87c583d3153eff5a54138f75e98cc7",
-    "source_commit": "f1393d44",
-    "operation": "Copy unchanged native CE2 judge result",
-    "bytes": 13598,
-    "sha256": "ffeda8a1592b00646aa5d4214705eb994e87c583d3153eff5a54138f75e98cc7"
+    "source": "out/modelsim/judge_20261026_220821_4004/result.txt",
+    "source_sha256": "ebb60a848cbebdd5c771462bf865b7406496bf922591f27d9c491c0e1b1b56fa",
+    "source_commit": "286fa1b6",
+    "operation": "Copy the T59 batch-mode judge result",
+    "bytes": 17264,
+    "sha256": "ebb60a848cbebdd5c771462bf865b7406496bf922591f27d9c491c0e1b1b56fa"
   },
   {
     "file": "../../sim/reference/coverage/merged.ucdb",
