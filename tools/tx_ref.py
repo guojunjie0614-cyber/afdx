@@ -192,6 +192,7 @@ def check(test, folder):
         events.append((int(p[1]),number,p))
     events.sort()
     params={};cfg={};uid=0;epoch=0;stage='initial';messages=[];stages={};pending=[];tx_events={'A':[],'B':[]};resets=[];now_points=[]
+    public_inputs=collections.deque()
     for cycle,_,p in events:
         code=p[0]
         if code=='G':params[p[2]]=int(p[3])
@@ -199,13 +200,24 @@ def check(test, folder):
         elif code=='U':uid=int(p[2],16)
         elif code=='N':now_points.append((cycle,int(p[2],16)))
         elif code=='Z':
-            resets.append(cycle);epoch+=1;cfg={};pending=[]
+            resets.append(cycle);epoch+=1;cfg={};pending=[];public_inputs.clear()
         elif code=='C':
             expect(p[2]=='tx','C table is tx');cfg[int(p[3],16)]=int(p[4],16)
+        elif code=='A':
+            expect(len(p)==8 and len(p[4])==int(p[3])*2,'A public input format')
+            public_inputs.append(p)
         elif code=='M':
             vl,n,pen=map(int,p[2:5]);sp,dp=int(p[5],16),int(p[6],16);body=bytes.fromhex(p[7])
             expect(len(body)==n and p[7]==p[7].lower(),'M payload format')
             words=[cfg.get(vl*8+w,0) for w in range(6)]
+            if len(p)>11:
+                expect(bool(public_inputs),'A public input exists for core M')
+                if public_inputs:
+                    a=public_inputs.popleft()
+                    expect(int(a[2],16)==(words[2]&65535) and int(a[3])==n and a[4]==p[7],
+                           'A public VLID/payload matches core M')
+                    expect(int(a[1])==int(p[10]) and int(a[5])==int(p[8]),'A public input timing matches M')
+                    expect(int(a[6])==int(p[11]) and int(a[7])==int(p[9]),'A public backpressure matches M')
             m=dict(cycle=cycle,vl=vl,n=n,pen=pen,sp=sp,dp=dp,payload=body,words=words,uid=uid,
                    epoch=epoch,stage=stage,index=len(messages),result=None,frame=None)
             messages.append(m);stages.setdefault(stage,[]).append(m);pending.append(m)
@@ -218,6 +230,7 @@ def check(test, folder):
                     m=pending.pop(0);m['result']=name;m['event']=cycle
                     expect(0<cycle-m['cycle']<=96,f'G2 outcome deadline message {m["index"]}')
         elif code!='R':expect(False,'unexpected event '+code)
+    expect(not public_inputs,'A no unaccounted public input')
     expect(not pending,'G2 no missing outcome')
     expect(set(params)=={'TX_PAGE_AW','TX_OFF_AW','LOOKAHEAD'},'G parameter set')
     captures=[]
