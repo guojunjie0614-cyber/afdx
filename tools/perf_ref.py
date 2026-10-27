@@ -150,9 +150,10 @@ def measure_r97(folder, stages=None, output=None):
     from pathlib import Path
     import json
     folder=Path(folder)
-    windows={};offers=collections.defaultdict(list);current='initial'
+    windows={};offers=collections.defaultdict(list);current='initial';offer_vlid=False
     for line in (folder/'sys_events.txt').read_text(encoding='ascii').splitlines():
         p=line.split()
+        if p and p[0]=='G' and len(p)>3 and p[2]=='OFFER_VLID':offer_vlid=True
         if p and p[0]=='P':current=p[2]
         if p and p[0]=='O':offers[current,int(p[2]),int(p[3])].append((int(p[5]),int(p[4])))
         if p and p[0]=='F' and p[2] in ('begin','end'):windows.setdefault(p[3],{})[p[2]]=int(p[1])
@@ -166,12 +167,13 @@ def measure_r97(folder, stages=None, output=None):
             elif p[0]=='E':txpulses[stage,p[2]]+=1
             elif p[0]=='C' and p[2]=='tx' and (int(p[3],16)&7)==2:tx_vlids[int(p[4],16)]=int(p[3],16)>>3
             elif p[0]=='M':
-                n=int(p[3]);cycle=int(p[1])
+                n=int(p[3]);cycle=int(p[10]) if len(p)>11 else int(p[1])
                 first=int(p[8]) if len(p)>9 and p[8].lstrip('-').isdigit() else cycle-n+1
                 maxrun=int(p[9]) if len(p)>9 and p[9].isdigit() else 0
                 m=dict(id=len(ms)+1,stage=stage,cycle=cycle,vl=int(p[2]),n=n,data=p[7],tx={},rx={},delivery=None,
-                       first=first,maxrun=maxrun)
-                key=(stage,es,m['vl']);index=offer_index[key];offer_index[key]+=1
+                       first=first,maxrun=maxrun,stream=len(p)>11,stalls=int(p[11]) if len(p)>11 else max(0,cycle-first+1-n))
+                offervl=next((k for k,v in tx_vlids.items() if v==m['vl']),m['vl']) if offer_vlid else m['vl']
+                key=(stage,es,offervl);index=offer_index[key];offer_index[key]+=1
                 if key in offers:
                     assert index<len(offers[key]) and offers[key][index][1]==m['n'],'planned release matching'
                     m['release']=offers[key][index][0];m['planned']=True
@@ -199,7 +201,7 @@ def measure_r97(folder, stages=None, output=None):
                 vl=int(p[3]);assert vl in by_vl and cursor[vl]<len(by_vl[vl]),'unmatched delivery'
                 m=by_vl[vl][cursor[vl]];cursor[vl]+=1
                 assert int(p[6])==m['n'] and p[7]==m['data'],'delivery payload/order'
-                m['delivery']=(int(p[1]),p[2])
+                m['delivery']=(int(p[8])+2 if len(p)>9 else int(p[1]),p[2]);m['header_bytes']=2 if len(p)>9 else 0
         assert all(cursor[v]==len(mm) for v,mm in by_vl.items()),'exactly one delivery'
         endpoints[es]['pulses']=pulses
     scope=sorted({m['stage'] for ep in endpoints.values() for m in ep['messages'] if (m['stage'] in stages if stages else m['stage'].startswith(('var_','gbe77_')))})
@@ -248,11 +250,11 @@ def measure_r97(folder, stages=None, output=None):
             for m in ms:
                 first=m['first'];cycle=m['cycle'];n=m['n']
                 if begin<=first<end and cycle<end:
-                    inject+=n;stalls+=max(0,cycle-first+1-n);stallmax=max(stallmax,m['maxrun'])
+                    inject+=n;stalls+=m['stalls'];stallmax=max(stallmax,m['maxrun'])
                     if m['planned']:
                         lag=max(lag,first-m['release']);lagsamples+=1
                 elif first<end and cycle>=begin:
-                    inject+=min(n,max(0,min(cycle+1,end)-max(first,begin)))
+                    inject+=min(n,max(0,min(cycle+1,end)-max(first+(2 if m['stream'] else 0),begin)))
             for (st,event),count in ep['txpulses'].items():
                 if st==stage and event in ('drop_dis','drop_full','drop_long','drop_nopage'):drops+=count
                 if event in ('a_ovf','b_ovf'):overflow+=count
@@ -278,7 +280,7 @@ def measure_r97(folder, stages=None, output=None):
                     if net==winner:
                         values.update(L_rx=d-rx,L_rx_last=d+m['n']-1-rx,L_app=d-m['cycle'],L_app_last=d+m['n']-1-m['cycle'],
                                       L_release_app=d-m['release'],L_release_app_last=d+m['n']-1-m['release'],
-                                      L_entry_first=d-m['first'],L_entry_last=d+m['n']-1-m['first'])
+                                      L_entry_first=d-m.get('header_bytes',0)-m['first'],L_entry_last=d+m['n']-1-m['first'])
                         if begin<=m['cycle']<end:entry_samples.append((m['vl'],m['n'],m['id'],d+m['n']-1-m['first']))
                     for scope_net in (([net,'accepted'] if net==winner else [net]) if begin<=m['cycle']<end else []):
                         for group in ['all',str(m['n'])]:

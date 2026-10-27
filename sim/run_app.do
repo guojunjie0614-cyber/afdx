@@ -1,7 +1,7 @@
 # ModelSim-only entry for "VLID + application payload" stimulus (T59 W1).
 # Run from the repository root: do sim/run_app.do [stimulus] [vl_config] [run_name]
 # The judge only edits sim/vectors/app/stimulus.txt; register writes and app_tx_vl
-# indices are generated here from sim/vectors/app/vl_config.txt. Python is not required.
+# The testbench reads VL configuration and injects the original VLID bytes. Python is not required.
 onerror {resume}
 onbreak {}
 
@@ -103,7 +103,7 @@ proc app_entry::write_vectors {folder msgs cfg stimulus} {
     foreach message $msgs {
         lassign $message due index length hex vlid
         puts $payload [join [regexp -all -inline {..} $hex] "\n"]
-        puts $schedule [format "%d %d %d %d" $due $index $length $offset]
+        puts $schedule [format "%d %d %d %d" $due $vlid $length $offset]
         incr offset $length
     }
     puts $count $offset
@@ -216,7 +216,7 @@ proc app_entry::read_deliveries {folder msgs cfg} {
     set good 0
     set path [file join $folder es2_rx events.txt]
     foreach line [split [read_text $path] "\n"] {
-        if {[regexp {^D (\d+) ([AB]) (\d+) [0-9a-f]+ [0-9a-f]+ (\d+) ([0-9a-f]+)$} \
+        if {[regexp {^D (\d+) ([AB]) (\d+) [0-9a-f]+ [0-9a-f]+ (\d+) ([0-9a-f]+)(?: \d+ \d+)?$} \
                 $line -> start net index length payload]} {
             set position 0
             if {[dict exists $received $index]} {set position [dict get $received $index]}
@@ -252,12 +252,21 @@ proc app_entry::read_deliveries {folder msgs cfg} {
 proc app_entry::analyse {folder msgs cfg window} {
     variable root
     lassign [read_deliveries $folder $msgs $cfg] order total rm_drop good
-    set rx [open [file join $folder rx.txt] w]
-    fconfigure $rx -translation crlf -encoding ascii
-    foreach row $order {
-        lassign $row start last index payload
-        lassign [dict get $cfg item $index] vlid bag lmax sport dport
-        puts $rx [format "%d %d %04X %s" $start $last $vlid $payload]
+    set rx [open [file join $folder rx.txt] r]
+    set raw_rows [split [string trim [read $rx]] "\n"]
+    if {[llength $raw_rows]!=$total} {fail "raw rx.txt message count"}
+    set raw_expected [dict create]
+    foreach message $msgs {
+        lassign $message due index length hex vlid
+        dict lappend raw_expected $vlid $hex
+    }
+    set cursor [dict create]
+    foreach line $raw_rows {
+        lassign $line first last id payload
+        scan $id %x id
+        set n 0;if {[dict exists $cursor $id]} {set n [dict get $cursor $id]}
+        if {![dict exists $raw_expected $id] || $payload ne [lindex [dict get $raw_expected $id] $n]} {fail "raw VLID/payload mismatch"}
+        dict set cursor $id [expr {$n+1}]
     }
     close $rx
     source [file join $root sim r97_measure.tcl]
@@ -323,6 +332,7 @@ proc app_entry::main {root parameters} {
     while {[file exists $folder]} {incr suffix; set folder ${base}_$suffix}
     file mkdir $folder
     set window [write_vectors $folder $msgs $cfg $stimulus]
+    file copy -force $vl_config [file join $folder vectors vl_config.txt]
     compile $folder
     lassign [simulate $folder] checks warnings
     set result [analyse $folder $msgs $cfg $window]

@@ -61,7 +61,7 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
             'onerror {quit -code 1}\nonbreak {quit -code 1}\nrun -all\nquit -code 0\n', encoding='ascii')
         sim = eda.modelsim_dir()
         flow.job('library', [sim / 'vlib.exe', 'work'], 60)
-        compile_log = flow.job('compile', [sim / 'vlog.exe', '-vlog01compat', '+incdir+lib', *sources], 600)
+        compile_log = flow.job('compile', [sim / 'vlog.exe', '-vlog01compat', '+incdir+lib', *(['+define+SYS_TOP_NETLIST'] if netlist else []), *sources], 600)
         if re.search(r'\*\* (Error|Fatal)', compile_log):
             raise RuntimeError('编译出错，见 compile.log')
         print('GUI NETLIST START ' + test + ' mode=' + mode + ' output=' + str(flow.folder), flush=True)
