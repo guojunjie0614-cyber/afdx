@@ -34,8 +34,8 @@ module judge_endpoint #(parameter ES = 1) (
     reg [15:0] rx_sport, rx_dport;
     reg previous_a = 0, previous_b = 0;
 
-    AFDX_top dut (
-        .clk(clk), .reset(reset),
+    top_stream_endpoint dut (
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized(),.clk(clk), .reset(reset),
         .tx_data(ta), .tx_valid(tva), .rx_data(ra), .rx_valid(rva),
         .tx_ready(ready), .rx_ready(1'b0),
         .tx_data_b(tb), .tx_valid_b(tvb), .rx_data_b(rb), .rx_valid_b(rvb),
@@ -141,6 +141,7 @@ module judge_endpoint #(parameter ES = 1) (
         integer i;
         reg taken;
         begin
+            write_cfg(18'h1005+index*8,(sport<<16)|dport);
             m_vl = index; m_sp = sport; m_dp = dport;
             for (i = 0; i < length; i = i + 1) begin
                 @(negedge clk);

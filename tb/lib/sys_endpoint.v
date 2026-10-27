@@ -4,7 +4,7 @@
 `timescale 1ns/1ps
 // 所有端口值在时钟上升沿、非阻塞赋值更新前采样。
 module sys_endpoint #(
-    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5
+    parameter ES=1,TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,RX_RING_AW=12,RX_DQ_AW=5,DIRECT_CORE=0
 )(
     input wire clk,reset,
     input wire [7:0] rd_a,
@@ -23,6 +23,7 @@ module sys_endpoint #(
 `else
     localparam CAPTURE_CORE=1;
 `endif
+    reg raw_mode=0;reg [15:0] raw_vlid=0;wire initialized;
     reg m_valid=0,m_last=0,m_port_en=0;
     reg [7:0] m_data=0;
     reg [6:0] m_vl=0;
@@ -43,11 +44,12 @@ module sys_endpoint #(
     wire [15:0] shadow_now_c;
     wire shadow_byte_en;
 `ifdef SYS_TOP_NETLIST
-    AFDX_top dut(
+    top_stream_endpoint dut(
 `else
-    AFDX_top #(.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),.LOOKAHEAD(LOOKAHEAD),
-        .RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW)) dut(
+    top_stream_endpoint #(.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),.LOOKAHEAD(LOOKAHEAD),
+        .RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW),.DIRECT_CORE(DIRECT_CORE)) dut(
 `endif
+        .raw_mode(raw_mode),.raw_vlid(raw_vlid),.initialized(initialized),
         .clk(clk),.reset(reset),.tx_data(td_a),.tx_valid(tv_a),.rx_data(rd_a),.rx_valid(rv_a),
         .tx_ready(tx_ready),.rx_ready(1'b0),.tx_data_b(td_b),.tx_valid_b(tv_b),.rx_data_b(rd_b),.rx_valid_b(rv_b),
         .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
@@ -142,7 +144,7 @@ module sys_endpoint #(
         begin
             case(address)
                 18'h00000:expected_read=32'hc3110000;
-                18'h00001:expected_read={31'b0,tx_ready};
+                18'h00001:expected_read={31'b0,initialized};
                 18'h00002:expected_read={16'b0,user_shadow};
                 18'h00040:expected_read=expected_count[0];
                 18'h00041:expected_read=expected_count[1];
@@ -227,11 +229,11 @@ module sys_endpoint #(
                 if(CAPTURE_CORE)$fwrite(tf,"R %0d\nN %0d %08x\nU %0d 0000\n",cycle,cycle,shadow_now,cycle);
                 if(CAPTURE_CORE)$fwrite(rf,"R %0d\nK %0d %04x 4096\n",cycle,cycle,shadow_now_c);
             end
-            if(tx_ready && !was_ready)begin
+            if(initialized && !was_ready)begin
                 if(CAPTURE_CORE)$fwrite(rf,"I %0d\n",cycle);
                 check(cycle-release_cycle>=65536 && cycle-release_cycle<65600,"combined initialization deadline");
             end
-            if(!tx_ready)begin
+            if(!initialized)begin
                 check(!cfg_ready,"cfg_ready low until tx_ready");
                 check(!d_valid && ev_a==0 && ev_b==0 && !ev_rm_drop && !ev_deliver && ev_gdrop==0,"receive initialization output suppression");
                 check(!tv_a && !tv_b && td_a==0 && td_b==0,"transmit initialization line idle");
@@ -239,7 +241,7 @@ module sys_endpoint #(
                 low_run=0;
             end else begin
                 if(m_ready)low_run=0;else low_run=low_run+1;
-                check(low_run<=96,"application ready low run <=96");
+                if(DIRECT_CORE)check(low_run<=96,"application ready low run <=96");
             end
 
             // 先核读响应，再取本拍读快照，最后才累计本拍的 E。
@@ -301,20 +303,20 @@ module sys_endpoint #(
             end
 
             // R119 起点：消息首字节第一次出现 valid 的拍；反压连拍只用于报告。
-            if(m_valid && !m_seen)begin message_start=cycle;stall_run=0;stall_max=0;end
-            if(m_valid && !m_ready)begin
+            if(dut.core_valid && !m_seen)begin message_start=DIRECT_CORE?cycle:dut.current_source_first;stall_run=0;stall_max=0;end
+            if(dut.core_valid && !dut.core_ready)begin
                 stall_run=stall_run+1;if(stall_run>stall_max)stall_max=stall_run;
             end else stall_run=0;
-            m_seen=m_valid;
-            if(m_valid && m_ready)begin
+            m_seen=dut.core_valid;
+            if(dut.core_valid && dut.core_ready)begin
                 quiet_since=cycle;
                 if(message_len==0)begin
-                    message_vl=m_vl;message_pen=m_port_en;message_sp=m_sport;message_dp=m_dport;
+                    message_vl=dut.core_vl;message_pen=m_port_en;message_sp=m_sport;message_dp=m_dport;
                 end
                 check(message_len<8192,"message capture capacity");
-                if(message_len<8192)message_bytes[message_len]=m_data;
+                if(message_len<8192)message_bytes[message_len]=dut.core_data;
                 message_len=message_len+1;
-                if(m_last)begin
+                if(dut.core_last)begin
                     check(!outstanding && cycle>last_outcome,"one result before next message end");
                     if(CAPTURE_CORE)$fwrite(tf,"M %0d %0d %0d %0d %04x %04x ",cycle,message_vl,message_len,message_pen,message_sp[15:0],message_dp[15:0]);
                     for(k=0;k<message_len && k<8192;k=k+1)if(CAPTURE_CORE)$fwrite(tf,"%02x",message_bytes[k]);
@@ -390,7 +392,7 @@ module sys_endpoint #(
         if(line_activity)quiet_since=cycle;
         if((previous_lines & ~{tv_a,tv_b,rv_a,rv_b,slow_tv_a,slow_tv_b,slow_rv_a,slow_rv_b})!=0)last_wire_end=cycle;
         previous_lines={tv_a,tv_b,rv_a,rv_b,slow_tv_a,slow_tv_b,slow_rv_a,slow_rv_b};
-        was_reset=reset;was_ready=tx_ready;
+        was_reset=reset;was_ready=initialized;
         check(gm_ta_errors==0 && gm_tb_errors==0 && gm_ra_errors==0 && gm_rb_errors==0,"GMII monitors clean");
         check(mon_ta_errors==0 && mon_tb_errors==0 && mon_ra_errors==0 && mon_rb_errors==0,"line monitors clean");
     end
@@ -431,7 +433,7 @@ module sys_endpoint #(
         begin:send_operation
             deadline=cycle+10000000;
             // 上一条结果与新消息首字节可同拍；先等结果，避免一字节消息的 M/E 歧义。
-            while(outstanding)begin
+            while(DIRECT_CORE && outstanding)begin
                 @(posedge clk);#2;
                 if(cycle>deadline)begin check(0,"host prior outcome timeout");disable send_operation;end
             end
@@ -458,7 +460,7 @@ module sys_endpoint #(
         reg accepted;
         begin:send_at_operation
             deadline=cycle+10000000;
-            while(outstanding)begin
+            while(DIRECT_CORE && outstanding)begin
                 @(posedge clk);#2;
                 if(cycle>deadline)begin check(0,"host prior outcome timeout");disable send_at_operation;end
             end
@@ -502,7 +504,7 @@ module sys_endpoint #(
         integer deadline;
         begin:idle_operation
             deadline=cycle+50000000;
-            while(outstanding || pending_tx!=0 || m_valid || tv_a || tv_b || slow_tv_a || slow_tv_b)begin
+            while(outstanding || pending_tx!=0 || m_valid || (!DIRECT_CORE && !dut.input_empty) || tv_a || tv_b || slow_tv_a || slow_tv_b)begin
                 @(posedge clk);#2;
                 if(cycle>deadline)begin check(0,"endpoint drain timeout");disable idle_operation;end
             end

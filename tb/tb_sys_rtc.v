@@ -171,7 +171,8 @@ module rtc_test_endpoint #(parameter ES=1)(
     wire [6:0] ev_tx;wire [7:0] ev_a,ev_b;wire [1:0] gdrop=2'b00;wire rm_drop,deliver;
     integer received=0,byte_index=0,gbe_mode=0,max_source_lateness=0,max_source_duration=0;
     reg [7:0] expected_byte;
-    AFDX_top dut(
+    top_stream_endpoint dut(
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized(),
         .clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
         .tx_data_b(tb),.tx_valid_b(tvb),.rx_data_b(rb),.rx_valid_b(rvb),
         .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
