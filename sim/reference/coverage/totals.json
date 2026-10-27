@@ -6,24 +6,29 @@
   "aggregation": "design-unit covered bins / design-unit total bins; FSM = states + transitions",
   "metrics": {
     "Statements": {
-      "covered": 6985,
-      "total": 7090,
-      "percent": 98.51
+      "covered": 6973,
+      "total": 7076,
+      "percent": 98.54
     },
     "Branches": {
-      "covered": 3855,
-      "total": 3999,
-      "percent": 96.39
+      "covered": 3850,
+      "total": 3987,
+      "percent": 96.56
     },
     "Conditions": {
-      "covered": 610,
-      "total": 717,
-      "percent": 85.07
+      "covered": 618,
+      "total": 725,
+      "percent": 85.24
     },
-    "Expressions": {
-      "covered": 1746,
-      "total": 1977,
-      "percent": 88.31
+    "FSM": {
+      "covered": 248,
+      "total": 418,
+      "percent": 59.33
+    },
+    "Toggles": {
+      "covered": 41408,
+      "total": 53786,
+      "percent": 76.98
     },
     "FSM States": {
       "covered": 110,
@@ -35,28 +40,22 @@
       "total": 308,
       "percent": 44.8
     },
-    "Toggles": {
-      "covered": 41386,
-      "total": 53744,
-      "percent": 77.0
-    },
-    "FSM": {
-      "covered": 248,
-      "total": 418,
-      "percent": 59.33
+    "Expressions": {
+      "covered": 1708,
+      "total": 1940,
+      "percent": 88.04
     }
   },
   "coverage_regression": {
     "tests": 39,
     "passed": 39,
-    "started": "2026-10-25T16:33:13.080960+08:00",
-    "finished": "2026-10-25T20:22:12.124942+08:00",
-    "elapsed_seconds": 23542.957,
-    "finished_source": "latest individual run finish; batch summary has no per-batch wall clock",
+    "started": "2026-10-26T18:21:50.743000+00:00",
+    "finished": "2026-10-26T21:11:13.571490+00:00",
+    "elapsed_seconds": 10162.828,
     "reference_counts_match": true
   },
-  "merged_ucdb_bytes": 2923275,
-  "source_summary": "E:/2026_Embedded_FPGA/worktrees/active/c3_t54/out/t54/regress_ce2cov/summary.json",
+  "merged_ucdb_bytes": 2916591,
+  "source_summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
   "ce_div": 2,
   "rtl_modules": {
     "afdx_615a": "rtl/afdx_615a.v",
@@ -87,10 +86,10 @@
   "coverage_off_regression": {
     "tests": 39,
     "passed": 39,
-    "started": "2026-10-25T16:33:13.076887+08:00",
-    "finished": "2026-10-25T18:24:08.556229+08:00",
-    "elapsed_seconds": 10954.645,
-    "finished_source": "latest individual run finish; batch summary has no per-batch wall clock",
+    "started": "2026-10-26T18:21:50.744542+00:00",
+    "finished": "2026-10-26T19:41:41.520097+00:00",
+    "elapsed_seconds": 4790.776,
     "reference_counts_match": true
-  }
+  },
+  "source_commit": "f1393d44"
 }

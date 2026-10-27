@@ -356,225 +356,233 @@
   },
   {
     "file": "../../sim/reference/regression.json",
-    "source": "out/t54/regress_ce2cov/summary.json",
-    "operation": "Normalize Folder/Ucdb prefixes to repository-relative out/sim paths only",
-    "bytes": 11449,
-    "sha256": "0a17cd851128ab7252be7c02759ae291150c689b04b8b1503320bfef28d297d8",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Collect original summary results into Runs schema; normalize only Folder/Ucdb prefixes to out/sim",
+    "bytes": 11681,
+    "sha256": "e33ebbc38e8c81481e21b27cb79f050248346f51bd28382db49da96e9ce1daf0"
   },
   {
     "file": "../../sim/reference/judge_result.txt",
-    "source": "out/modelsim/judge_20261025_165356_34824/result.txt",
-    "operation": "Copy official CE2 judge result; preserve CRLF reference format",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\judge\\judge_20261026_112154_38652\\result.txt",
+    "source_sha256": "ffeda8a1592b00646aa5d4214705eb994e87c583d3153eff5a54138f75e98cc7",
+    "source_commit": "f1393d44",
+    "operation": "Copy unchanged native CE2 judge result",
     "bytes": 13598,
-    "sha256": "72e6546546cbea34491fd0cfaabf10c38faed359c22e124cf35d0c178096c985",
-    "source_commit": "c68fac81"
+    "sha256": "ffeda8a1592b00646aa5d4214705eb994e87c583d3153eff5a54138f75e98cc7"
   },
   {
     "file": "../../sim/reference/coverage/merged.ucdb",
-    "source": "out/t54/coverage/merged.ucdb",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 2923275,
-    "sha256": "3007bf0f170c91b8d0036536a99231c1fd28ae73756bb7353937a48d2d9f99e0",
-    "source_commit": "c68fac81",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 2916591,
+    "sha256": "e000db372a9d6274b00955fea9c2aab2914f413569d8daf1e8dce7576cd42b88",
     "inputs": [
       {
-        "source": "out/sim/tb_ram_sdp/20261025_165530_421936/coverage.ucdb",
-        "sha256": "04df0733fc2c0a701c63f1c483315b2412d89a18f615d8ca81cfc20f6173d604"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_ram_sdp\\20261026_122543_111611\\coverage.ucdb",
+        "sha256": "ecbcc69a4f6724eda05e501f0b934a85dbfdc1b985b4afa5cf9d47420e89ad04"
       },
       {
-        "source": "out/sim/tb_mac_tx/20261025_165530_602991/coverage.ucdb",
-        "sha256": "7af2c9f0798a969793bfe65ade9e40bfae16e9df53b5e8f83c29287f9535cd07"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_tx\\20261026_122513_904706\\coverage.ucdb",
+        "sha256": "d43291da99dbe58c96a66bd5763b795775a3087169ce09f39f4ffcac0317eac1"
       },
       {
-        "source": "out/sim/tb_mac_rx/20261025_165540_082100/coverage.ucdb",
-        "sha256": "05d8d75f1f1aa4f3fbe426c740357954e019e98f665f62fd1c5e1446c71dc391"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_rx\\20261026_122530_040979\\coverage.ucdb",
+        "sha256": "b78afd8a3bea60feaed15083b21712566ac9b814ca913910298fbbfbcef7ed33"
       },
       {
-        "source": "out/sim/tb_mac_loop/20261025_165501_499503/coverage.ucdb",
-        "sha256": "bc71923d706dce3a3c9d84088a120b7ac4da30675d9c770fa1ba845f94bdaf0e"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_loop\\20261026_122435_669186\\coverage.ucdb",
+        "sha256": "55ea27b7099524bb830cbf512361b36c4435cf0bb74baa829b02de05e21e8a6c"
       },
       {
-        "source": "out/sim/tb_tx_basic/20261025_165446_197715/coverage.ucdb",
-        "sha256": "3f8620656603d1aba27a991fef761eb7434b7166bcd77a85f24470198a5a2363"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_basic\\20261026_122428_597964\\coverage.ucdb",
+        "sha256": "a2f00926424b883fb68c1f7734972da23a3a43c33b9c8d7b2a3db7d68b32497c"
       },
       {
-        "source": "out/sim/tb_tx_basic/20261025_165501_422335/coverage.ucdb",
-        "sha256": "49e687b761d46ffb195b0e66265ae1b316e935fa3d22443a3562b1c448063d48"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_basic\\20261026_122442_699696\\coverage.ucdb",
+        "sha256": "c2ae166e2832c43097eb8d7cf376dd16819d20e4841d077195b2662b53d6933b"
       },
       {
-        "source": "out/sim/tb_tx_bag/20261025_164238_522681/coverage.ucdb",
-        "sha256": "9b001c66bb963bb536cc80d75244595b731bcaf59b2cf0700e5e073ac8158249"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_bag\\20261026_122022_148592\\coverage.ucdb",
+        "sha256": "101ec14a28c08212ade08fbf2f79c35fe1fe6f72f8898900eb24941115215c23"
       },
       {
-        "source": "out/sim/tb_tx_multi/20261025_164101_548040/coverage.ucdb",
-        "sha256": "2a3a8e5990f12718d5e9037cd3744615ce19115f5c64d1336d15d0ae1ae8f82c"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_multi\\20261026_121817_571134\\coverage.ucdb",
+        "sha256": "6b936a0bccdd0362d46f532cc3daf074bbc3744ad3936045c2a00ac481098b5e"
       },
       {
-        "source": "out/sim/tb_tx_drop/20261025_165414_816188/coverage.ucdb",
-        "sha256": "6273fe93c823ab76b835f8c9d347bd7a3998646118cbb2c8ee4ac8ef9ff8f581"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_drop\\20261026_121646_823592\\coverage.ucdb",
+        "sha256": "3a6d0f73c477e6e7d49e7fa952739fea2ccf242e858531f6d19012c10c6827a9"
       },
       {
-        "source": "out/sim/tb_tx_net/20261025_165542_217219/coverage.ucdb",
-        "sha256": "cdb60c9459a2d2178519c6f0b43a6e62f52cbd545ccb9f3adb5010416b348d76"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_net\\20261026_122506_794732\\coverage.ucdb",
+        "sha256": "757bade0788a8602ac24d23de0fc3567edba61009add2e38771a1bdc5639cff8"
       },
       {
-        "source": "out/sim/tb_rx_basic/20261025_165304_309229/coverage.ucdb",
-        "sha256": "fbe8bf9ef41d505881cbd6ba3ed23fc3798b7ae344a2ea121326a9a06ec0120d"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_basic\\20261026_121819_636920\\coverage.ucdb",
+        "sha256": "90d7591c68fce5f7de42ae7c91103b8b4959b7bc51fe3e4d98bd047ac7cc2866"
       },
       {
-        "source": "out/sim/tb_rx_fault/20261025_165550_213625/coverage.ucdb",
-        "sha256": "7629de7a8d58e0ba51caf61fca410ddf6dd7646df7aa35ff79831d5018eff528"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_fault\\20261026_122427_587812\\coverage.ucdb",
+        "sha256": "831e975dcbe14f75e0df60445597082728004a34583b8485b276e22686ef44ce"
       },
       {
-        "source": "out/sim/tb_rx_icrm/20261025_165429_304809/coverage.ucdb",
-        "sha256": "52522e4b0183b5479f72bc1224d2ef882eb04efed4ca2835c70c6fdacc2b6f53"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_icrm\\20261026_122334_133436\\coverage.ucdb",
+        "sha256": "32843f7a956e3d62a8fa5fde95ff877297cc5611ed7b374d2039ff6d1ac75152"
       },
       {
-        "source": "out/sim/tb_rx_load/20261025_165403_302656/coverage.ucdb",
-        "sha256": "59c8c5f1ff89480d02d1a399ba3a8d747b7fbaad4f81d0b582ad281b78b93f09"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_load\\20261026_122255_378102\\coverage.ucdb",
+        "sha256": "49040ae9d9bc8700f8a5e63344103c5f5bbf03e00bf6bd150cfb2473e21370c1"
       },
       {
-        "source": "out/sim/tb_rx_ovf_ring/20261025_165515_842150/coverage.ucdb",
-        "sha256": "07cae64fca4441b47ce95cf7916c197271a3ebb859048a2141d3d5f4cdd4708d"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_ovf_ring\\20261026_122432_614915\\coverage.ucdb",
+        "sha256": "e8039eaa4da05908159589f5951ed391ffd66d1fb2d2eb960a80f5d61b84c672"
       },
       {
-        "source": "out/sim/tb_rx_ovf_dq/20261025_165515_978472/coverage.ucdb",
-        "sha256": "e1e414e0aa5cfd0dc2947d57f04906e54353b653dad7eb97d124733134403d51"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_ovf_dq\\20261026_122433_630001\\coverage.ucdb",
+        "sha256": "cf033b5bad3f1a9ede859def27415349dd0fced40830ea3f92ccc37f39cecbf3"
       },
       {
-        "source": "out/sim/tb_rx_net/20261025_165554_943459/coverage.ucdb",
-        "sha256": "7e7c9105df9d618bc63372fe8b9eb119f2320c565302d7bbc474af1c690d4fd3"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_net\\20261026_122422_605346\\coverage.ucdb",
+        "sha256": "86f2cadbf422f7023ba83d729c8b5bfb5796996233505b8f3564715f75b676ea"
       },
       {
-        "source": "out/sim/tb_sys_basic/20261025_164345_338228/coverage.ucdb",
-        "sha256": "10940e6ca99c59d99d782c14cf3fc96429b1362368ab400621f454ee5acd24cc"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_basic\\20261026_121818_593014\\coverage.ucdb",
+        "sha256": "696455a309c33da9e81fc21eacc8194b4dca9fcc9afe009b90454941565e2e9a"
       },
       {
-        "source": "out/sim/tb_sys_fault/20261025_163604_058378/coverage.ucdb",
-        "sha256": "d403d7bf86967c6a5b3109b52d8358bc43c7b65e793101954cd7a84266b2e6fe"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_fault\\20261026_115041_293287\\coverage.ucdb",
+        "sha256": "9cb0f3dc61f983345d7ac41e74679d4c60cb8f21937972b4a4984d4e67b49c3c"
       },
       {
-        "source": "out/sim/tb_sys_delay/20261025_163313_079430/coverage.ucdb",
-        "sha256": "2bb390288046be46d326400dba0b1d9d854f561436f19d7e40f42bc0c2349958"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_delay\\20261026_121442_899742\\coverage.ucdb",
+        "sha256": "c30fd46e766f79fa29fbc6149b1f5728e2e05336778637b8b6c53fe48ab37857"
       },
       {
-        "source": "out/sim/tb_sys_load/20261025_172255_229366/coverage.ucdb",
-        "sha256": "bcdc1bb8f3c49a3b75e196535d15f6bfdc872fe7ea9dd8fb2b34c793d22e8a0c"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_load\\20261026_112151_152119\\coverage.ucdb",
+        "sha256": "eb88577bd6820319c23d3018a5bab7358a925965679ef245222a9e3c27004e96"
       },
       {
-        "source": "out/sim/tb_sys_cfg/20261025_164548_832815/coverage.ucdb",
-        "sha256": "1ecc55df7df2f5ee3de88fa4583da929718ef43b099374c4dfaee7676ee47137"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_cfg\\20261026_120832_990781\\coverage.ucdb",
+        "sha256": "2d2c47e60654bc2dd835247bab84126782ba34764e83afdc99c2976c37425179"
       },
       {
-        "source": "out/sim/tb_sys_reset/20261025_163620_459709/coverage.ucdb",
-        "sha256": "19310948d7fdb02c1de0595154584ecc325c34cd4da057342fdf3b5224aff864"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_reset\\20261026_121506_419287\\coverage.ucdb",
+        "sha256": "37646db25de6f1b21eee5f6f0fe3daf2ffab8f11fea178016930a2e170db512b"
       },
       {
-        "source": "out/sim/tb_sys_ovf/20261025_163845_895510/coverage.ucdb",
-        "sha256": "b9147027054ebf3e45fc7bcc6d35635c120a4cd6055e16cb24d61ee8142739b6"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_ovf\\20261026_121512_432080\\coverage.ucdb",
+        "sha256": "aa80d7adbb5de9630da2213c20d2d89a566c7d994dfe13fa5ecbce3342434ef2"
       },
       {
-        "source": "out/sim/tb_sys_net/20261025_165111_230077/coverage.ucdb",
-        "sha256": "ad69df6bfa4004eb6e529c7528fa8f4fabf6f0596c0d2f5d366a43de205e665c"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_net\\20261026_122144_707811\\coverage.ucdb",
+        "sha256": "ae03cb1c1cf4c8ed83b215cd02847796ba7ce5847242a1a513817cc13a317d03"
       },
       {
-        "source": "out/sim/tb_sys_perf/20261025_185352_239340/coverage.ucdb",
-        "sha256": "c159c6bfa1c5f84c491aa17a45a9f39cfcaec9c8ee208c741ac8ff87ad4cdb7f"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_perf\\20261026_112151_120728\\coverage.ucdb",
+        "sha256": "f65e0b6466ac7a5f8eb6bbdc684dbfdeea4f446cd7902750707a00929ead075c"
       },
       {
-        "source": "out/sim/tb_sys_rtc/20261025_170333_708661/coverage.ucdb",
-        "sha256": "07f633353f20d3f366d1c458bdcbc13c5eef571af6b15e6ba7eb949d48c33fc9"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_rtc\\20261026_112151_127229\\coverage.ucdb",
+        "sha256": "18c3321fd74dddc456b80d0ea9ae6cee7ddf5adacac3e95ecb5dbdd8e1d1c6ce"
       },
       {
-        "source": "out/sim/tb_sys_snmp/20261025_164511_797743/coverage.ucdb",
-        "sha256": "674555b8dff012cfe1899c4cf3ae74292a46088059a316edfba6bcd1b8d1fe24"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_snmp\\20261026_120528_935304\\coverage.ucdb",
+        "sha256": "247022538a9bbbfa5f7c787d5b38da010f075635bc4af8b2a2c2eb856c5ab7f7"
       },
       {
-        "source": "out/sim/tb_sys_snmp_settrap/20261025_165314_277711/coverage.ucdb",
-        "sha256": "bee901d6851ba90ce4a927751421b15868a750cdcc26e0f39897bff392a9763a"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_snmp_settrap\\20261026_120754_352363\\coverage.ucdb",
+        "sha256": "43c2dc214bdd83391d6a142e0cee6a3bf33226e928916837b79fef75d80c8ca9"
       },
       {
-        "source": "out/sim/tb_sys_615a/20261025_165313_446151/coverage.ucdb",
-        "sha256": "e4935584d125fd757e4611daef5f8fb79fda243116e24f6024d1a1c5b7815671"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_615a\\20261026_115344_759686\\coverage.ucdb",
+        "sha256": "6cf2adcdec250153c3e08d4f2d7b53d4695ddef59cdeb9331ee992bfcc00ec28"
       },
       {
-        "source": "out/sim/tb_gbe_burst/20261025_165051_544259/coverage.ucdb",
-        "sha256": "1d8f233dbb58b3222f5c57b156ae11511f5d554cb1643e36f2cd788595455b85"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_gbe_burst\\20261026_122417_658433\\coverage.ucdb",
+        "sha256": "9ba6f742082b38669ee1d4b0c819ca5160d5924fa70aa328bf5ec65a3b1075c2"
       },
       {
-        "source": "out/sim/tb_gbe_burst/20261025_165037_162965/coverage.ucdb",
-        "sha256": "cfccae943fbc8c69d0fcb6be95f68d85f34e13d754a7b9abcb0f550d65fef145"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_gbe_burst\\20261026_122400_463508\\coverage.ucdb",
+        "sha256": "c7099c6d51e2cff6eca3d93f34c01159f97d07ab369a7040644d743d97934f40"
       },
       {
-        "source": "out/sim/tb_rm_phase/20261025_165617_884860/coverage.ucdb",
-        "sha256": "463afec3653db460ede7c7e0e0ee439e015988c1217be3aa15b1642a017027c1"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rm_phase\\20261026_121921_786960\\coverage.ucdb",
+        "sha256": "cb2caf9338d0e03725f69218ccd50f6c4955c1be00162953c6c566c5a67943b7"
       },
       {
-        "source": "out/sim/tb_rtc_recovery/20261025_165605_884567/coverage.ucdb",
-        "sha256": "5bec5991aaf5e0a46e724056f7ea63b6e94722140299de9b2d6b31c2169d2f9e"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rtc_recovery\\20261026_122533_057084\\coverage.ucdb",
+        "sha256": "9aecfce47e66c1c4a9294e63dc33257aa6388fa439cdee0de6afeced58ad11d3"
       },
       {
-        "source": "out/sim/tb_rtc_originate/20261025_165610_575446/coverage.ucdb",
-        "sha256": "4b80231b3a706edaa735d8b77b4101b41996d52ff02795a30fa6a4d2e710835e"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rtc_originate\\20261026_122535_078368\\coverage.ucdb",
+        "sha256": "ff11ec5dd537dd2db3bf8599b9c0de105014fa402901590a574768a522e051af"
       },
       {
-        "source": "out/sim/tb_judge_capacity/20261025_165304_172946/coverage.ucdb",
-        "sha256": "72ec3f2eab657854e02d702a20cf7269c8f99502de68f95c8b356e588dd0c4fa"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_judge_capacity\\20261026_122116_464141\\coverage.ucdb",
+        "sha256": "dd73a94b3ec81aaccadf0cc9c71f5676290a770a3daf1d558783f12c1da9a7dd"
       },
       {
-        "source": "out/sim/tb_judge_snmp/20261025_165343_771712/coverage.ucdb",
-        "sha256": "f1ae259f98ac667ca1733ec3c6d98c23f16df76ebafaa33a1acb99bc477bf72d"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_judge_snmp\\20261026_121200_804491\\coverage.ucdb",
+        "sha256": "c5fcb4917e22def65a91b02480948ded608c01a2897261a0fe7033153ee4a563"
       },
       {
-        "source": "out/sim/tb_elinx/20261025_165304_211660/coverage.ucdb",
-        "sha256": "3a3b08a58bcb52c27c2aac0843538dd3785cefafeb758f5a7ebec9e37b0e469e"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_elinx\\20261026_121922_892246\\coverage.ucdb",
+        "sha256": "084ec0b1c163ab443c4bf87bfc18c6779edef58e1f018e866d110ae9d53f1df2"
       },
       {
-        "source": "out/sim/tb_sys_perf_var/20261025_165343_135152/coverage.ucdb",
-        "sha256": "aa1ef3a20c7534137ffc653e3a671f0f7e6103ca8ab8b47079f0a05a2c733b87"
+        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_perf_var\\20261026_112151_133459\\coverage.ucdb",
+        "sha256": "f865119abc555d05fc0aab442fe42782e002a154a63daea9282b97c2429e2b11"
       }
     ]
   },
   {
     "file": "../../sim/reference/coverage/vcover_report.txt",
-    "source": "out/t54/coverage/vcover_report.txt",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 20118,
-    "sha256": "097e21ef47c14c2d9648b75a34c4286458b9ff43d0c1f624ce806db9d9338b94",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 20142,
+    "sha256": "c3b399396d98e75e219c454f023429d49a0d2f16c55cc557b35d441ac35abfbb"
   },
   {
     "file": "../../sim/reference/coverage/modules.csv",
-    "source": "out/t54/coverage/modules.csv",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 2924,
-    "sha256": "1716a519584c26d42d814d85b3af8438faa5258887f6d7f4b8831ce1e8db5ee9",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 2928,
+    "sha256": "070400d36337d5cd92f2371aba511c6b50f2c84e850bc847da265475b7d09578"
   },
   {
     "file": "../../sim/reference/coverage/totals.json",
-    "source": "out/t54/coverage/totals.json",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 2829,
-    "sha256": "cd2ca88d799544e8a8ba1f7f7f554abfa07e45ec1594ca320744cbf8b5585de7",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 2776,
+    "sha256": "17fc81d9fe9d6f03773e1923b674e8a0f74479f38370c781f82d7f16522321ff"
   },
   {
     "file": "../../sim/reference/coverage/coverage_numbers.json",
-    "source": "out/t54/coverage/coverage_numbers.json",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 5277,
-    "sha256": "2a8561fab5ff9e247bfb45023297cc4111d78bc8ca45a6c42d39b94135b861c4",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 14749,
+    "sha256": "d1ea0796af89060de65b0b714baca1a38258411bddb0ea1423c95526a228efeb"
   },
   {
     "file": "../../sim/reference/coverage/README.md",
-    "source": "out/t54/coverage/README.md",
-    "operation": "T54 CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
-    "bytes": 1129,
-    "sha256": "e395d1caa1a506f241e14cb59db10a891b874d251fcd04cc2cff5261ce29075b",
-    "source_commit": "c68fac81"
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
+    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
+    "source_commit": "f1393d44",
+    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
+    "bytes": 1284,
+    "sha256": "2d9aa9224e9183f369d85838a0930327fa2be14c0f7553c94832ced0985bad90"
   },
   {
     "file": "history/route_timing_20261010.json",
