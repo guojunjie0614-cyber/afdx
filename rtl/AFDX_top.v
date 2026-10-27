@@ -65,11 +65,9 @@ module AFDX_top #(
 
     // ev_tx 报告发送结果，ev_a 和 ev_b 分别报告两网接收结果。
     // ev_rm_drop 表示丢弃一份重复帧，ev_deliver 表示接纳一条消息。
-    // ev_gdrop 是预留的丢帧事件口，本设计中固定为零。
     output wire [6:0] ev_tx,
     output wire [7:0] ev_a, ev_b,
-    output wire ev_rm_drop, ev_deliver,
-    output wire [1:0] ev_gdrop);
+    output wire ev_rm_drop, ev_deliver);
 
     // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
     (* preserve = 1, dont_merge = 1 *) reg rx_init_a, rx_init_b, tx_init_a, tx_init_b;
@@ -115,8 +113,6 @@ module AFDX_top #(
     wire [31:0] tx_cfg_wdata;
     wire [RX_CONFIG_BANKS * 32 - 1:0] rx_cfg_wdata;
 
-    // 收发核心直接连接千兆线路，中间没有会丢帧的缓存，所以 ev_gdrop 固定为零。
-    assign ev_gdrop = 2'b00;
     wire m_valid, m_ready, m_last, m_port_en;
     wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data;
     wire [6:0] m_vl, rtc_tx_vl;
@@ -128,6 +124,8 @@ module AFDX_top #(
     // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
     wire cfg_ready_m;
     wire [7:0] snmp_wr_sel;
+    wire [6:0] loader_wr_sel;
+    wire [5:0] rtc_wr_sel;
     wire snmp_tx_valid, snmp_tx_last, snmp_claim, snmp_mib_rd, snmp_mib_wr, snmp_mib_ready, snmp_grant;
     wire [7:0] snmp_tx_data;
     wire [6:0] snmp_tx_vl;
@@ -196,12 +194,13 @@ module AFDX_top #(
     // SNMP 状态机保证 mib_rd/mib_wr 互斥，读抓拍不依赖写 ready。
     wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
         || (!cfg_rd && !cfg_wr && snmp_mib_rd && mib_snapshot_seconds);
-    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV)) loader (
+    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1), .CE_DIV(CE_DIV)) loader (
         .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
         .enable(loader_ready_q),
         .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == LOAD_ADDR_GROUP),
+        .cfg_wr_sel(loader_wr_sel),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
         .cfg_rdata(load_rdata),
@@ -220,7 +219,7 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1), .SPLIT_MIB_READY(1)) snmp (
         .clk(clk),
         .reset(reset),
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
@@ -238,6 +237,7 @@ module AFDX_top #(
         .mib_addr(snmp_mib_addr),
         .mib_addr_cmp(snmp_mib_addr_cmp),
         .mib_ready(snmp_mib_ready),
+        .mib_write_ready(!cfg_wr && !cfg_rd && cfg_ready),
         .mib_rvalid(snmp_read_pipe[1]),
         .mib_rdata(cfg_rdata),
         .tx_valid(snmp_tx_valid),
@@ -253,12 +253,12 @@ module AFDX_top #(
         .rx_dport(svc_rx_port),
         .rx_claim(snmp_claim)
     );
-    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2)) rtc (
+    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1)) rtc (
         .clk(clk),
         .reset(reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
         .enable(1'b1),
-        .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == RTC_ADDR_GROUP),
+        .cfg_we(rtc_wr_sel),
         .cfg_re(rtc_snapshot_read),
         .cfg_addr({cfg_addr[3:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
@@ -441,6 +441,8 @@ module AFDX_top #(
         .cfg_ready(cfg_ready),
         .cfg_ready_m(cfg_ready_m),
         .snmp_wr_sel(snmp_wr_sel),
+        .loader_wr_sel(loader_wr_sel),
+        .rtc_wr_sel(rtc_wr_sel),
         .cfg_rvalid(),
         .cfg_rdata(cfg_rdata),
         .user_id(user_id),
@@ -458,7 +460,7 @@ module AFDX_top #(
         .ev_b(ev_b),
         .ev_rm_drop(ev_rm_drop),
         .ev_deliver(ev_deliver),
-        .ev_gdrop(ev_gdrop),
+        .ev_gdrop(2'b00),
         .rtc_rdata(rtc_rdata),
         .rtc_sync_count(rtc_sync_count),
         .snmp_control_data(snmp_control_data),

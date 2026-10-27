@@ -11,7 +11,7 @@ module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
     reg [6:0] m_vl=1;reg [15:0] m_sp=3001,m_dp=4001;
     wire d_valid,d_last,d_net;wire [7:0] d_data;wire [11:0] d_vl;wire [15:0] d_sp,d_dp;
     reg wr=0,rd=0;reg [17:0] address=0;reg [31:0] wdata=0;
-    wire [31:0] rdata;wire rvalid,bready;wire [6:0] ev_tx;wire [7:0] ev_a,ev_b;wire [1:0] gdrop;wire rm_drop,deliver;
+    wire [31:0] rdata;wire rvalid,bready;wire [6:0] ev_tx;wire [7:0] ev_a,ev_b;wire [1:0] gdrop=2'b00;wire rm_drop,deliver;
     integer received=0,sent=0,byte_index=0,head=0,tail=0,reply_length=0,log_fd,current_case,j;
     reg [7:0] expected_byte,queue[0:65535],send_bytes[0:1023];
     integer lengths[0:63],sports[0:63],dports[0:63];
@@ -23,7 +23,7 @@ module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
         .app_rx_valid(d_valid),.app_rx_data(d_data),.app_rx_last(d_last),.app_rx_vl(d_vl),
         .app_rx_sport(d_sp),.app_rx_port(d_dp),.app_rx_net(d_net),
         .cfg_wr(wr),.cfg_rd(rd),.cfg_addr(address),.cfg_wdata(wdata),.cfg_rdata(rdata),.cfg_rvalid(rvalid),.cfg_ready(bready),
-        .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(rm_drop),.ev_deliver(deliver),.ev_gdrop(gdrop)
+        .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(rm_drop),.ev_deliver(deliver)
     );
     task check;
         input ok;input [8*100-1:0] why;

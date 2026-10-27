@@ -212,6 +212,7 @@ def sim(options):
         name,status,checks,errors=rows[-1]
         good=name==options.test and status=="PASS" and int(errors)==0 and all(row[1]=="PASS" for row in rows)
         diagnostics={kind:len(re.findall(r"\*\* "+kind+":",log)) for kind in ("Error","Fatal","Warning")}
+        diagnostics["RAMCOLL"]=log.count("RAMCOLL")
         f.result["simulation_diagnostics"]=diagnostics
         good=good and not any(diagnostics.values())
         good=good and all(sha(Path(r["path"]))==r["sha256"] for r in f.result["inputs"])

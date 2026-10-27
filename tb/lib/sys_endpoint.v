@@ -33,7 +33,7 @@ module sys_endpoint #(
     wire [11:0] d_vl;
     wire [15:0] d_sport,d_dport;
     wire ev_rm_drop,ev_deliver;
-    wire [1:0] ev_gdrop;
+    wire [1:0] ev_gdrop=2'b00;
     reg cfg_wr=0,cfg_rd=0,cfg_rewrite=0,cfg_live=0;
     reg [17:0] cfg_addr=0;
     reg [31:0] cfg_wdata=0;
@@ -56,7 +56,7 @@ module sys_endpoint #(
         .app_rx_sport(d_sport),.app_rx_port(d_dport),.app_rx_net(d_net),
         .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),
         .cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
-        .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver),.ev_gdrop(ev_gdrop)
+        .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver)
     );
     afdx_timebase shadow_timebase(clk,reset,shadow_now,shadow_byte_en,shadow_now_c);
     wire [7:0] slow_td_a,slow_td_b,slow_rd_a,slow_rd_b;

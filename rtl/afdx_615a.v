@@ -3,7 +3,7 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72) (
+module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72, CFG_WRITE_SELECT = 0) (
 
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input wire clk, reset, enable,
@@ -12,6 +12,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
     input wire cfg_we,
+    input wire [6:0] cfg_wr_sel,
     input wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
     input wire [31:0] cfg_wdata,
     output reg [31:0] cfg_rdata, cfg_extra_data,
@@ -35,7 +36,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
-    wire [7:0] cfg_write_addr = SPLIT_CFG_ADDR == 2 ? cfg_addr >> 7 : SPLIT_CFG_ADDR ? cfg_addr >> 3 : cfg_addr;
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0) +: 8];
 
     // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
@@ -43,9 +44,19 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     localparam VERSION_A3_WORD = 32'h4133, VERSION_A4_WORD = 32'h4134;
     localparam MAIN_TID_INIT = 16'h8000, STATUS_TID_INIT = 16'h9000, TID_SEQUENCE_INIT = 16'h8100;
     localparam DENY_TID_INIT = 16'ha000;
-    localparam DEFAULT_REQUEST_PORT = 59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 1;
+    localparam DEFAULT_REQUEST_PORT = 16'd59, DEFAULT_TIMEOUT_CYCLES = 250000000, DEFAULT_RETRY_LIMIT = 8'd1;
     localparam REG_ENABLE = 8'hb0, REG_TX_VL = 8'hb1, REG_MEMORY_ADDRESS = 8'hb4, REG_REQUEST_PORT = 8'hb8;
     localparam REG_TIMEOUT = 8'hb9, REG_RETRY_LIMIT = 8'hba, REG_VERSION = 8'hbb;
+    // 顶层提供同拍独热写选通；默认参数保留独立实例的原地址译码接口。
+    wire [6:0] cfg_write_sel = CFG_WRITE_SELECT ? cfg_wr_sel : {
+        cfg_we && cfg_write_addr == REG_VERSION,
+        cfg_we && cfg_write_addr == REG_RETRY_LIMIT,
+        cfg_we && cfg_write_addr == REG_TIMEOUT,
+        cfg_we && cfg_write_addr == REG_REQUEST_PORT,
+        cfg_we && cfg_write_addr == REG_MEMORY_ADDRESS,
+        cfg_we && cfg_write_addr == REG_TX_VL,
+        cfg_we && cfg_write_addr == REG_ENABLE
+    };
 
     reg configured, protocol_a4;
     reg [6:0] configured_vl;
@@ -62,7 +73,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg rx_we, packet_pending, receiving;
     reg [9:0] rx_wa, rx_index, rx_length;
     // 块号字节的前瞻译码随接收索引一起更新；无有效字节时保持，允许字节间有空拍。
-    (* preserve = 1, dont_merge = 1 *) reg capture_hi_q, capture_lo_q;
+    (* preserve = 1, dont_merge = 1 *) reg capture_op_q, capture_hi_q, capture_lo_q;
     reg [7:0] rx_wd;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
@@ -115,6 +126,9 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [7:0] lur_q;
     wire [7:0] hdr_q;
     wire [7:0] load_q;
+    // 配置采样单独跨一拍，给 RAM 读口到配置读回区之间留下寄存级。
+    // 引擎仍直接使用 load_q；只把寄存器 5 的采样更新推迟一拍。
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] load_sample_local;
     reg  ram_deny_we, cmd_deny_we;
     reg [4:0] ram_deny_wa, cmd_deny_wa;
     reg [7:0] ram_deny_wd, cmd_deny_wd;
@@ -168,6 +182,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             rx_wa <= 0;
             rx_wd <= 0;
             rx_index <= 0;
+            capture_op_q <= 0;
             capture_hi_q <= 0;
             capture_lo_q <= 0;
             packet_pending <= 0;
@@ -183,7 +198,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             // RAM 端口预存当前输入，写脉冲独立确认字节；未握手时这些候选值不会被使用。
             rx_wa <= rx_index;
             rx_wd <= rx_data;
-            if (rx_valid && receiving && rx_index == 1) rx_op[7:0] <= rx_data;
+            if (rx_valid && capture_op_q) rx_op[7:0] <= rx_data;
             // 前瞻位等价于本拍 receiving && rx_index==2/3，逐字节选通和数据不加流水。
             if (rx_valid && capture_hi_q) rx_block[15:8] <= rx_data;
             if (rx_valid && capture_lo_q) rx_block[7:0] <= rx_data;
@@ -199,6 +214,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 if (rx_last) begin
                     rx_length <= rx_index + 1'b1;
                     rx_index <= 0;
+                    capture_op_q <= 0;
                     capture_hi_q <= 0;
                     capture_lo_q <= 0;
                     receiving <= 0;
@@ -206,6 +222,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 end
                 else begin
                     rx_index <= rx_index + 1'b1;
+                    capture_op_q <= rx_index == 0;
                     capture_hi_q <= rx_index == 1;
                     capture_lo_q <= rx_index == 2;
                     receiving <= 1;
@@ -241,7 +258,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         else begin
             consume_q <= consume;
             consume_previous <= consume_q;
-            load_sample <= load_q;
+            load_sample <= load_sample_local;
             deny_tid <= engine_deny_tid;
             loaded <= engine_loaded;
             lus_counter <= engine_lus_counter;
@@ -250,16 +267,14 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             retry_total <= engine_retry_total;
             status <= engine_status;
             status_tid <= engine_status_tid;
-            if (cfg_we) case (cfg_write_addr)
-                REG_ENABLE : if (status != ST_BUSY) configured <= cfg_wdata[0];
-                REG_TX_VL : if (status != ST_BUSY) configured_vl <= cfg_wdata[6:0];
-                REG_MEMORY_ADDRESS : memory_addr <= cfg_wdata[12:0];
-                REG_REQUEST_PORT : if (status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
-                REG_TIMEOUT : if (status != ST_BUSY && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
-                REG_RETRY_LIMIT : if (status != ST_BUSY) retry_limit <= cfg_wdata[7:0];
-                REG_VERSION : if (status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
-                    || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
-            endcase
+            if (cfg_write_sel[0] && status != ST_BUSY) configured <= cfg_wdata[0];
+            if (cfg_write_sel[1] && status != ST_BUSY) configured_vl <= cfg_wdata[6:0];
+            if (cfg_write_sel[2]) memory_addr <= cfg_wdata[12:0];
+            if (cfg_write_sel[3] && status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
+            if (cfg_write_sel[4] && status != ST_BUSY && cfg_wdata != 0) timeout_cycles <= cfg_wdata;
+            if (cfg_write_sel[5] && status != ST_BUSY) retry_limit <= cfg_wdata[7:0];
+            if (cfg_write_sel[6] && status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
+                || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
             if (SPLIT_CFG_ADDR != 2) begin
             case (cfg_addr[2:0])
                 0 : cfg_rdata <= { 31'b0, configured };
@@ -402,6 +417,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         .clk(clk), .write_enable(ram_load_we), .write_address(ram_load_wa), .write_data(ram_load_wd),
         .read_enable(ram_load_re), .read_address(ram_load_ra), .read_data(load_q)
     );
+    // 原 RAM 读值无复位约束；配置采样寄存器仍按原协议复位。
+    always @(posedge clk) load_sample_local <= load_q;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(32)) denial_ram (
         .clk(clk), .write_enable(ram_deny_we), .write_address(ram_deny_wa), .write_data(ram_deny_wd),
         .read_enable(tx_re), .read_address(tx_ra[4:0]), .read_data(deny_q)

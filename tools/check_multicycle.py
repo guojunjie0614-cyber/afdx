@@ -38,8 +38,8 @@ def constraints(path):
     uncertainty=0.0
     for line in lines:
         if line==clock:continue
-        # Native default and installed SmartExploreRun values; no timing exceptions.
-        if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.3|1\.50)',line):continue
+        # Physical routing values used by the prescribed scan; no timing exceptions.
+        if re.fullmatch(r'set_global_assignment -name PRES_FAC_MULT (?:1\.3|1\.30|1\.40|1\.45|1\.50|1\.55|1\.60|1\.70)',line):continue
         # Setup over-constraint: a clock property, not a path exception. Hold keeps 0 ns.
         m=uncertainty_rule.fullmatch(line)
         if m:

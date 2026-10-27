@@ -26,7 +26,7 @@ module judge_endpoint #(parameter ES = 1) (
     wire rvalid, bready, rm_drop, deliver;
     wire [6:0] ev_tx;
     wire [7:0] ev_a, ev_b;
-    wire [1:0] gdrop;
+    wire [1:0] gdrop=2'b00;
     reg [7:0] tx_bytes[0:2047], rx_bytes[0:2047];
     integer received = 0, rx_length = 0, rx_pos = 0;
     integer accepted = 0, duplicates = 0, frames_a = 0, frames_b = 0;
@@ -47,7 +47,7 @@ module judge_endpoint #(parameter ES = 1) (
         .cfg_wr(wr), .cfg_rd(rd), .cfg_addr(address), .cfg_wdata(wdata),
         .cfg_rdata(rdata), .cfg_rvalid(rvalid), .cfg_ready(bready),
         .ev_tx(ev_tx), .ev_a(ev_a), .ev_b(ev_b),
-        .ev_rm_drop(rm_drop), .ev_deliver(deliver), .ev_gdrop(gdrop)
+        .ev_rm_drop(rm_drop), .ev_deliver(deliver)
     );
 
     task check;
