@@ -71,7 +71,6 @@ A / B 网 GMII ─► afdx_rx_core ─► afdx_svc ─► 应用 / 三项服务
 | `cfg_rdata[31:0]`、`cfg_rvalid`、`cfg_ready` | 出 | 配置读回和写就绪 |
 | `ev_tx[6:0]` | 出 | 发送接纳、四种拒收和两网发送完成事件，位定义见第 5 节 |
 | `ev_a[7:0]`、`ev_b[7:0]`、`ev_rm_drop`、`ev_deliver` | 出 | 两网接收分类、冗余丢弃和接纳交付事件 |
-| `ev_gdrop[1:0]` | 出 | 预留事件口，取值及对应计数见第 5 节 |
 
 应用发送只有 `valid` 与 `ready` 同拍为 1 才传输一个字节。消息首字节握手时锁存 `vl`、`port_en`、`sport`、`dport`，`last` 标记末字节；等待期间发送方保持待传字节和 `last`。应用接收没有反压接口，`valid` 为 1 时必须接收，`last` 与末字节同拍。
 
@@ -234,7 +233,7 @@ B 网 ─► mac_rx ─► rx_parse ─► rx_ring_b ─┤
 |---|---|---|---|---|
 | `rx_map` | 65536×13 | 配置口，初始化时为清表逻辑 | `rx_engine` | `valid[12]`、`idx[11:0]`，以 16 位 VLID 直接寻址 |
 | `rx_cfg` | 4096×32 | 同上 | `rx_engine` | `en[0]`、`net_a[1]`、`net_b[2]`、ic_en[3]、`rm_en[4]`、`skew_max[16:5]`、`max_payload[27:17]` |
-| `rx_state` | 4096×44 | `rx_engine` | `rx_engine` | 保留位[43]、`psn_a_valid[42]`、`psn_a[41:34]`、`psn_b_valid[33]`、`psn_b[32:25]`、`rm_time_valid[24]`、`rm_last[23:16]`、`rm_time[15:0]` |
+| `rx_state` | 4096×43 | `rx_engine` | `rx_engine` | `psn_a_valid[42]`、`psn_a[41:34]`、`psn_b_valid[33]`、`psn_b[32:25]`、`rm_time_valid[24]`、`rm_last[23:16]`、`rm_time[15:0]` |
 | `rx_ring_a`、`rx_ring_b` | 各 4096×8 | 本网 `rx_parse` | `rx_deliver` | 未经提交与已提交的消息载荷 |
 | `rx_dq` | 32 项寄存器，每项 `RX_RING_AW`+56 位 | `rx_engine` | `rx_deliver` | 来源网、环内起点、长度、`idx`、源/目的 UDP 端口 |
 
@@ -330,7 +329,7 @@ B 网 ─► mac_rx ─► rx_parse ─► rx_ring_b ─┤
 
 服务区中未定义的地址、表读和其他未映射地址读出 0，写未定义地址无效。TX 表译码为地址位 17:10 等于 00000100，映射表为位 17:16 等于 01，RX 配置为位 17:12 等于 100000。
 
-写请求在 `cfg_wr` 与 `cfg_ready` 同拍为 1 时接受。普通寄存器当拍写；表写进入保持寄存器，下一拍起 `cfg_ready` 为 0，地址、数据和写使能保持到对应核心 `cfg_ok`。接受后下一拍恢复 `cfg_ready`，不受阻时低一拍，表写等待检查预算为 64 拍。
+写请求在 `cfg_wr` 与 `cfg_ready` 同拍为 1 时接受。普通寄存器当拍写；loader/RTC 在配置模块预译码为 `loader_wr_sel[6:0]`、`rtc_wr_sel[5:0]`，`cfg_ready_m` 只参与末级选通，不增加写入拍数。RTC 通过参数化的原 `cfg_we` 端口接收六位选通，默认独立实例仍为单比特，端口数量和顺序不变；表写进入保持寄存器，下一拍起 `cfg_ready` 为 0，地址、数据和写使能保持到对应核心 `cfg_ok`。接受后下一拍恢复 `cfg_ready`，不受阻时低一拍，表写等待检查预算为 64 拍。
 
 配置写避开引擎发起查表读取的周期。TX 的 `cfg_ok` 为 `enable` && `op`==IDLE && !`want_enq` && !`want_grant`；RX 为 `enable` && (`op`==IDLE || `op`==AGE) && `desc_quiet_copy[c]`（上一拍两网 `desc_valid` 均为 0）。`desc_valid` 变高当拍 `cfg_ok` 仍可能为 1，但外壳写使能与引擎读使能同沿寄存，下一拍才作用于 RAM；写请求至少比同一次帧处理的 map 读早一拍到达 RAM 口。其余配置/状态写与读的先后见 T49 报告。
 
@@ -364,7 +363,7 @@ B 网 ─► mac_rx ─► rx_parse ─► rx_ring_b ─┤
 | `ev_a`/b[7] | ovf | 载荷环或交付队列满 |
 | `ev_rm_drop`、`ev_deliver` | `rm_drop`、deliver | 冗余管理丢弃、接纳进入交付队列 |
 
-每网输入帧先有一次 MAC/解析类别事件；类别为 good 后，再有一次查表/序号/冗余/交付结果事件。good 不等于最终交付，`ev_deliver` 表示接纳入交付队列。所有计数为 32 位自然回绕，仅复位清零。预留 `ev_gdrop` 固定为 0，对应 `0x5A`、`0x5B` 计数也为 0。
+每网输入帧先有一次 MAC/解析类别事件；类别为 good 后，再有一次查表/序号/冗余/交付结果事件。good 不等于最终交付，`ev_deliver` 表示接纳入交付队列。所有计数为 32 位自然回绕，仅复位清零。顶层已删除预留 `ev_gdrop[1:0]` 输出；配置模块的同名内部输入接常量 0，`0x5A`、`0x5B` 计数仍为 0。
 
 ## 6. 服务通道与三项服务
 
@@ -444,7 +443,7 @@ UDP 载荷采用抽象语法记法（Abstract Syntax Notation One，ASN.1）的�
 | `0x0009C` | `TRAPS_SENT` | RO，完整 Trap 提交发送核心的次数 |
 | `0x000A0`–`0x000A3` | `DESCRIPTION_0`–3 | RO，16 字节 sysDescr，按高字节先读 |
 
-管理信息库（Management Information Base，MIB）用配置寄存器作为数据源。主机优先，同地址主机读与 SNMP 读可合并，其他冲突时 SNMP 保持请求。SNMP 写仅在主机无读写且 `cfg_ready` 时授予，写后读回生成回应；内部读不产生主机 `cfg_rvalid`。`ENABLE`、community、`TX_VL` 应在管理消息不在途时设置。
+管理信息库（Management Information Base，MIB）用配置寄存器作为数据源。主机优先，同地址主机读与 SNMP 读可合并，其他冲突时 SNMP 保持请求。SNMP 读、写握手分别使用 `mib_ready` 和 `mib_write_ready`，读保留同地址共享比较，写仅在主机无读写且 `cfg_ready` 时授予，写后读回生成回应；内部读不产生主机 `cfg_rvalid`。`ENABLE`、community、`TX_VL` 应在管理消息不在途时设置。
 
 ### 6.4 SNMP 对象与设置、通知
 
@@ -541,7 +540,7 @@ LUH 的字数和绝对指针以 16 位字为单位，字符串填充到偶数字
 | `0x000B2` | `STATUS` | RO，位 1:0 为 0 空闲、1 进行中、2 成功、3 失败；位 15:8 为原因 |
 | `0x000B3` | `LOADED_BYTES` | RO，本次已写字节数，新上传清零 |
 | `0x000B4` | `MEMORY_ADDRESS` | RW，低 13 位，读回加载区字节地址 |
-| `0x000B5` | `MEMORY_DATA` | RO，低 8 位为 RAM 字节，B4 写后等至少 4 拍再读，仅非进行中有效 |
+| `0x000B5` | `MEMORY_DATA` | RO，低 8 位为 RAM 字节，B4 写后等至少 4 拍再读，仅非进行中有效；`load_q` 经 `load_sample_local` 再更新 `load_sample`，比原采样晚一拍，引擎直接读 `load_q` 及配置口两拍读协议不变 |
 | `0x000B6` | `LUS_COUNTER` | RO，本次新 LUS/LNS 文件数，16 位回绕 |
 | `0x000B7` | `RETRY_TOTAL` | RO，复位以来的超时重传次数，32 位回绕 |
 | `0x000B8` | `REQUEST_PORT` | RW，低 16 位，复位 59，写 0 无效 |
