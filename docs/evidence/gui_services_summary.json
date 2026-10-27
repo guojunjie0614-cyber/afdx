@@ -1,53 +1,444 @@
 {
   "name": "tb_net_services_gui",
-  "started": "2026-10-13T21:31:42.900813+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
+  "started": "2026-10-26T11:22:10.509599-07:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
   "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
-  "memory_floor_gib": 2.0,
-  "memory_limit_gib": 10.0,
+  "memory_floor_gib": 0.0,
+  "memory_limit_gib": 0.0,
   "adaptation": {
-    "source_sha256": "3d98d1b93be02287d2a058ec349dd745a3e368e361ea923def7ae9de181c57eb",
-    "adapted_sha256": "57841773a21957d9914e8fbc909984a0cc844333d9f94bfc6092b23fc3aa2291",
+    "source_sha256": "0fe67cdc159c1199ccda4e18438c5f9c6b0841164f15bf76de618a94adfbd2ea",
+    "adapted_sha256": "d563aed56949edc33977c80cf06f1a134286b8e73198efc6a61e0252a299ed7e",
     "cells": {
-      "stratix_lcell": 32846,
-      "stratix_ram_block": 538
+      "stratix_lcell": 33799,
+      "stratix_ram_block": 837
     },
     "added_input_defaults": {
       "stratix_lcell": {
-        "datac=1'b1": 17973,
-        "datad=1'b1": 13406,
-        "clk=1'b0": 18977,
-        "aclr=1'b0": 18977,
-        "aload=1'b0": 32846,
-        "sclr=1'b0": 26110,
-        "sload=1'b0": 32372,
-        "ena=1'b1": 23399,
-        "cin=1'b0": 28913,
-        "cin0=1'b0": 32846,
-        "cin1=1'b0": 32846,
-        "inverta=1'b0": 32846,
-        "regcascin=1'b0": 32846,
-        "devclrn=1'b1": 32846,
-        "devpor=1'b1": 32846,
-        "datab=1'b1": 12398,
-        "dataa=1'b1": 379
+        "datac=1'b1": 19592,
+        "aload=1'b0": 33799,
+        "sload=1'b0": 32520,
+        "cin=1'b0": 29652,
+        "cin0=1'b0": 33799,
+        "cin1=1'b0": 33799,
+        "inverta=1'b0": 33799,
+        "regcascin=1'b0": 33799,
+        "devclrn=1'b1": 33799,
+        "devpor=1'b1": 33799,
+        "datab=1'b1": 13532,
+        "sclr=1'b0": 25772,
+        "ena=1'b1": 23199,
+        "datad=1'b1": 12660,
+        "clk=1'b0": 16713,
+        "aclr=1'b0": 16713,
+        "dataa=1'b1": 401
       },
       "stratix_ram_block": {
-        "ena0=1'b1": 298,
-        "ena1=1'b1": 298,
-        "clk1=1'b0": 298,
-        "clr0=1'b0": 538,
-        "clr1=1'b0": 538,
-        "devclrn=1'b1": 538,
-        "devpor=1'b1": 538,
-        "portbdatain=1'b0": 538,
-        "portabyteenamasks={1{1'b1}}": 538,
-        "portbbyteenamasks={1{1'b1}}": 538
+        "clr0=1'b0": 837,
+        "clr1=1'b0": 837,
+        "devclrn=1'b1": 837,
+        "devpor=1'b1": 837,
+        "portbdatain=1'b0": 837,
+        "portabyteenamasks={1{1'b1}}": 837,
+        "portbbyteenamasks={1{1'b1}}": 837,
+        "ena0=1'b1": 16,
+        "ena1=1'b1": 16,
+        "clk1=1'b0": 16
       }
     },
-    "original_connections_and_parameters_unchanged": true,
+    "original_connections_and_functional_parameters_unchanged": true,
+    "synthesis_provenance_not_model_parameters": [
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~9_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~23_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~7_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~8_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~14_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~1_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[0]~4_I",
+        "created_from": "REGOUT(phase[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~0_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_cfg:cfg_regs|tx_cfg_we~0_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|dq_valid~2_I",
+        "created_from": "REGOUT(dq_valid)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|dq_req~0_I",
+        "created_from": "REGOUT(dq_req)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~10_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~11_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~24_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~5_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~19_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~25_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~1_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~15_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~13_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_cfg:cfg_regs|tx_cfg_we~1_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~14_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~12_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~2_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~26_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_parse:parse_a|desc_valid[0]~33_I",
+        "created_from": "REGOUT(desc_valid[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~6_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~20_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~16_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~18_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~4_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|dq_req~1_I",
+        "created_from": "REGOUT(dq_req)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|dq_valid~3_I",
+        "created_from": "REGOUT(dq_valid)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~8_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~3_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~17_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~22_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|phase[3]~11_I",
+        "created_from": "REGOUT(phase[3])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[1]~21_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_engine:engine|op[0]~9_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_parse:parse_a|desc_valid[0]~34_I",
+        "created_from": "REGOUT(desc_valid[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|d_valid~3_I",
+        "created_from": "REGOUT(d_valid)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_parse:parse_a|desc_valid[0]~32_I",
+        "created_from": "REGOUT(desc_valid[0])"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|d_valid~1_I",
+        "created_from": "REGOUT(d_valid)"
+      },
+      {
+        "cell": "\\afdx_rx_core:rx_core|afdx_rx_deliver:deliver|d_valid~2_I",
+        "created_from": "REGOUT(d_valid)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|final_overflow~3_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|tick_overflow~9_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|tick_overflow~7_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|final_overflow~1_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|tick_overflow~8_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_rtc:rtc|final_overflow~2_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|init_done~0_I",
+        "created_from": "REGOUT(init_done)"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~2_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~10_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~16_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~22_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_builder:builder|pending~0_I",
+        "created_from": "REGOUT(pending)"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[0]~21_I",
+        "created_from": "REGOUT(cfg_ra[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[1]~22_I",
+        "created_from": "REGOUT(cfg_ra[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[2]~23_I",
+        "created_from": "REGOUT(cfg_ra[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[4]~25_I",
+        "created_from": "REGOUT(cfg_ra[4])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[5]~26_I",
+        "created_from": "REGOUT(cfg_ra[5])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[6]~27_I",
+        "created_from": "REGOUT(cfg_ra[6])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[7]~28_I",
+        "created_from": "REGOUT(cfg_ra[7])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[8]~29_I",
+        "created_from": "REGOUT(cfg_ra[8])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[9]~30_I",
+        "created_from": "REGOUT(cfg_ra[9])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|init_done~1_I",
+        "created_from": "REGOUT(init_done)"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~3_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~17_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[0]~8_I",
+        "created_from": "REGOUT(state_wa[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[1]~9_I",
+        "created_from": "REGOUT(state_wa[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[2]~10_I",
+        "created_from": "REGOUT(state_wa[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[3]~11_I",
+        "created_from": "REGOUT(state_wa[3])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[4]~12_I",
+        "created_from": "REGOUT(state_wa[4])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[5]~13_I",
+        "created_from": "REGOUT(state_wa[5])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_wa[6]~14_I",
+        "created_from": "REGOUT(state_wa[6])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[0]~22_I",
+        "created_from": "REGOUT(state_ra[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[1]~23_I",
+        "created_from": "REGOUT(state_ra[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[2]~24_I",
+        "created_from": "REGOUT(state_ra[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[3]~25_I",
+        "created_from": "REGOUT(state_ra[3])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[4]~26_I",
+        "created_from": "REGOUT(state_ra[4])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[5]~27_I",
+        "created_from": "REGOUT(state_ra[5])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[6]~28_I",
+        "created_from": "REGOUT(state_ra[6])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~4_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~18_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~11_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~6_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~20_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~12_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~5_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~19_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~21_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~13_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~7_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[3]~24_I",
+        "created_from": "REGOUT(cfg_ra[3])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~15_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_tx_core:tx_core|init_done~2_I",
+        "created_from": "REGOUT(init_done)"
+      }
+    ],
+    "provenance_parameter_count": 97,
     "carry_use_parameters_added": {
-      "cin_used": 3933
+      "cin_used": 4147
     },
     "lut_masks_changed": 0
   },
@@ -55,7 +446,7 @@
     [
       "tb_net_services",
       "PASS",
-      "1123",
+      "1124",
       "0"
     ]
   ],
@@ -71,7 +462,7 @@
       "errors": 0,
       "cases": {
         "0": {
-          "start": 78646,
+          "start": 85372,
           "size": 16,
           "version": 16692,
           "port": 59,
@@ -81,7 +472,7 @@
           "retries": 0,
           "lost": 0,
           "nstatus": 3,
-          "end": 124759,
+          "end": 133733,
           "lnr": {
             "version": "A4",
             "names": [
@@ -145,34 +536,34 @@
     "errors": 0,
     "functions": {
       "users": {
-        "start_cycle": 65645,
-        "end_cycle": 65951,
-        "cycles": 306
+        "start_cycle": 65684,
+        "end_cycle": 65993,
+        "cycles": 309
       },
       "integrity": {
-        "start_cycle": 65951,
-        "end_cycle": 66151,
-        "cycles": 200
+        "start_cycle": 65993,
+        "end_cycle": 66196,
+        "cycles": 203
       },
       "snmp": {
-        "start_cycle": 66151,
-        "end_cycle": 67144,
-        "cycles": 993
+        "start_cycle": 66196,
+        "end_cycle": 67677,
+        "cycles": 1481
       },
       "rtc": {
-        "start_cycle": 67144,
-        "end_cycle": 68114,
-        "cycles": 970
+        "start_cycle": 67677,
+        "end_cycle": 68681,
+        "cycles": 1004
       },
       "upload": {
-        "start_cycle": 68114,
-        "end_cycle": 78644,
-        "cycles": 10530
+        "start_cycle": 68681,
+        "end_cycle": 85370,
+        "cycles": 16689
       },
       "download": {
-        "start_cycle": 78644,
-        "end_cycle": 124759,
-        "cycles": 46115
+        "start_cycle": 85370,
+        "end_cycle": 133733,
+        "cycles": 48363
       }
     },
     "rtc_error_ns": 0,
@@ -349,7 +740,7 @@
         "label": "download exact 16 bytes from loaded RAM"
       }
     ],
-    "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_rtl\\20261013_213137_742202"
+    "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_rtl\\20261026_112151_131792"
   },
   "exact_external_records": {
     "net_services.txt": true,
@@ -360,38 +751,38 @@
     "es2_rx_a.txt": true,
     "download_results.txt": true
   },
-  "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_rtl\\20261013_213137_742202",
+  "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_rtl\\20261026_112151_131792",
   "passed": true,
   "inputs": {
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\elinx\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm": "3D98D1B93BE02287D2A058EC349DD745A3E368E361EA923DEF7AE9DE181C57EB",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\synth\\AFDX_top\\20261026_111158_306529\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm": "0FE67CDC159C1199CCDA4E18438C5F9C6B0841164F15BF76DE618A94ADFBD2EA",
     "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\220model.v": "86B57BE6BBA90BBCE156DBAC2641512095FD9CBDC182AF18AAC5488E0BC5C3B6",
     "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\altera_mf.v": "8096BD395E8A8AF515643CF46F76A0A077FEB7F6D7593722209E71B95802134A",
     "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\altera_primitives.v": "F8670B892DCC9F3B10647F9818E4A381FA0B0856A3933DD902E733E53E643E33",
     "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\stratix_atoms.v": "98F26BE0121DE5ACEA108E774668491E39AF47659E903F2D309E8AEAB613B278",
     "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\elinx_lib\\stratixiv_atoms.v": "1115498A11E74A6E80AAFCA487CD3FE8F698389F6B29E89C42C9E10B549D5577",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\download_test_tasks.vh": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\gmii_monitor.v": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\judge_endpoint.v": "9F0258498783F9F02F3622CE9946C4E77D78BCE2950CD1F3AE9125490F2A3A0B",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\line_driver.v": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\line_monitor.v": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\link_model.v": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\load_test_endpoint.v": "0E0FA29D5031050EE8CFBB8BDE78C5FC4771196B40BFDEB89E3293D60CFC8CCC",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\mac_tx_suite.v": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\rm_age_probe.v": "DB399B7E721C49632E32A71F11A1F6F359622A1E4863F52E81382B669A4D2AF1",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\rtc_retry_suite.v": "7C884C7C403244455500881A3FCD22F4E6E116A603F25B8F98A6E35A98BB95A1",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\rx_core_suite.v": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\snmp_test_endpoint.v": "9DA9A92F94737CDC6F3AE6F20EF25BCC2752E8E19B6214D1EDD2B4727DD19D0F",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\sys_endpoint.v": "48890C08CCA46A05C857258B3B411E8CA13DC18E40DE5F8DD64785186C759CE8",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\sys_suite.v": "D1A6DD68F91E035BAE8C4437A95DB23A649248EDCE9C13095CEED22116B44AE5",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\lib\\tx_core_suite.v": "B9F5E6BD4EFDE1337C1297EB65BAB82097D8AD5CDA6DE5655A02760C707D9011",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tb\\tb_net_services.v": "D023AA619B169EE5AC483C45DF7AD317B3C1008266FF2A06234042D70D4F902B",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\net_services_ref.py": "D9E73859DC0CC304FA3D18DC46F64FB45037547751EB8786CC92E352F7DB8F4C",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\load_ref.py": "7D40E7B866E193743DF1E94E70DB64BDB15F90DEC5B22BF139F0284D41C34F2E",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\download_ref.py": "8F0494877CA8C5F0ABF5AC83DC1778A5C96EEF1BC2794659B74CC91AE8F895B7",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\snmp_ref.py": "DD0DC77D3AD7C72714A483CB91A8B3B5A2898AEBC72328EC7F061F5856263B40",
-    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\afdx_ref.py": "A6D8FA1B4D199BBFE265EA9DEE1BE2C581D79D80548D3931743F708A45D55F7E"
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\download_test_tasks.vh": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\gmii_monitor.v": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\judge_endpoint.v": "5623ACEA3FC96D0554900816BADCFFC4B11F8553F818C97CC7C5D1D8116647A5",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\line_driver.v": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\line_monitor.v": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\link_model.v": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\load_test_endpoint.v": "E24D2CF1549FE0545DA50202645745C5C74C54EC482C56C0E4B2967E4BD99F35",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\mac_tx_suite.v": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\rm_age_probe.v": "E5A8D8FDA7B4C0DD6F74EB83CA0B99EC22E27467092216BDE5FB2E2D661CD0BE",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\rtc_retry_suite.v": "7C884C7C403244455500881A3FCD22F4E6E116A603F25B8F98A6E35A98BB95A1",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\rx_core_suite.v": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\snmp_test_endpoint.v": "790245895C439418F650B1AF6C2E96EFF8CFC79B8C70FDFD1213D6F8E5E93077",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\sys_endpoint.v": "B59CB9D7DE86876C8B82B7C54E95FE4C1542C73235F934A2D6E7111431ADBE4B",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\sys_suite.v": "4D9ED01B818D188F0CFDBB1AD2755F0F2F15AE7BFB849367E2931BFD87280689",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\lib\\tx_core_suite.v": "B9F5E6BD4EFDE1337C1297EB65BAB82097D8AD5CDA6DE5655A02760C707D9011",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tb\\tb_net_services.v": "D023AA619B169EE5AC483C45DF7AD317B3C1008266FF2A06234042D70D4F902B",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\net_services_ref.py": "274261DF4998D8F3D395C14326CBCFD4BCE88A4E2A2B2D37A3C0C20A99E7B9AD",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\load_ref.py": "7D40E7B866E193743DF1E94E70DB64BDB15F90DEC5B22BF139F0284D41C34F2E",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\download_ref.py": "8F0494877CA8C5F0ABF5AC83DC1778A5C96EEF1BC2794659B74CC91AE8F895B7",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\snmp_ref.py": "DD0DC77D3AD7C72714A483CB91A8B3B5A2898AEBC72328EC7F061F5856263B40",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\afdx_ref.py": "B2F0F2010A26F8F4861C7BE0F80D6621BFA1AFABE6EFEEC59342FBCF9D212327"
   },
-  "finished": "2026-10-13T22:23:52.393264+08:00",
+  "finished": "2026-10-26T13:35:03.589003-07:00",
   "jobs": [
     {
       "name": "vectors",
@@ -400,20 +791,20 @@
         "-B",
         "-X",
         "utf8",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\net_services_ref.py",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\net_services_ref.py",
         "vectors",
         "--dir",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813"
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
-      "pid": 38120,
-      "created": 1791898305.423246,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
+      "pid": 27784,
+      "created": 1793038938.204984,
       "exit_code": 0,
       "stop_reason": null,
-      "seconds": 0.265,
-      "peak_tree_bytes": 8232960,
+      "seconds": 0.828,
+      "peak_tree_bytes": 29020160,
       "budget_seconds": 60,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813\\vectors.log"
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\vectors.log"
     },
     {
       "name": "library",
@@ -421,15 +812,15 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "work"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
-      "pid": 8384,
-      "created": 1791898305.6938038,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
+      "pid": 520,
+      "created": 1793038939.0302124,
       "exit_code": 0,
       "stop_reason": null,
-      "seconds": 0.266,
-      "peak_tree_bytes": 8146944,
+      "seconds": 0.281,
+      "peak_tree_bytes": 8572928,
       "budget_seconds": 60,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813\\library.log"
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\library.log"
     },
     {
       "name": "compile",
@@ -459,15 +850,15 @@
         "lib/tx_core_suite.v",
         "tb_net_services.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
-      "pid": 38752,
-      "created": 1791898305.9609191,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
+      "pid": 32160,
+      "created": 1793038939.3021953,
       "exit_code": 0,
       "stop_reason": null,
-      "seconds": 4.968,
-      "peak_tree_bytes": 559759360,
+      "seconds": 11.563,
+      "peak_tree_bytes": 582021120,
       "budget_seconds": 600,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813\\compile.log"
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\compile.log"
     },
     {
       "name": "simulation",
@@ -482,15 +873,15 @@
         "-do",
         "do run.do"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
-      "pid": 46372,
-      "created": 1791898310.9533613,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
+      "pid": 41872,
+      "created": 1793039893.3048928,
       "exit_code": 0,
       "stop_reason": null,
-      "seconds": 3121.109,
-      "peak_tree_bytes": 2368270336,
-      "budget_seconds": 5205.0484137535095,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813\\simulation.log"
+      "seconds": 7008.5,
+      "peak_tree_bytes": 2407292928,
+      "budget_seconds": 10966.697389125824,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\simulation.log"
     },
     {
       "name": "check",
@@ -499,22 +890,22 @@
         "-B",
         "-X",
         "utf8",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\net_services_ref.py",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\tools\\net_services_ref.py",
         "check",
         "--dir",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
         "--rtl-reference",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_rtl\\20261013_213137_742202"
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_rtl\\20261026_112151_131792"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813",
-      "pid": 33012,
-      "created": 1791901432.0616894,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780",
+      "pid": 23404,
+      "created": 1793046903.2053187,
       "exit_code": 0,
       "stop_reason": null,
       "seconds": 0.266,
-      "peak_tree_bytes": 7053312,
+      "peak_tree_bytes": 8765440,
       "budget_seconds": 120,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\gui_netlist\\tb_net_services_gui\\20261013_213142_900813\\check.log"
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2\\out\\gui_netlist\\tb_net_services_gui\\20261026_112210_508780\\check.log"
     }
   ]
 }

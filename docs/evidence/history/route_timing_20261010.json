@@ -1,0 +1,17 @@
+{
+  "source": "out/t21/projects/baseline/elinx/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.tan.pb",
+  "table": "elinx_intra_clock_summary",
+  "time_unit": "ps",
+  "rows": [
+    {
+      "name": "clk",
+      "period": 8000,
+      "fmax": 54.442508697509766,
+      "setup_worst_slack": -10368,
+      "hold_worst_slack": 449,
+      "setup_fail_ends": 10596,
+      "setup_total_ends": 40008,
+      "hold_fail_ends": 0
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_synthesis.json",
+  "report": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\synth\\AFDX_top\\20261026_111158_306529\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.map.rpt",
+  "completed": true,
+  "resources": {
+    "lut": 33799,
+    "ff": 17086,
+    "clb": 4331,
+    "memory": 366,
+    "pins": 257,
+    "dsp": 0,
+    "pll": 0
+  },
+  "warning_totals": [
+    "0",
+    "7"
+  ],
+  "warning_ids": {
+    "10230": 1,
+    "276026": 2,
+    "276020": 2,
+    "21074": 1,
+    "15610": 1
+  },
+  "warnings": [
+    [
+      "10230",
+      "Verilog HDL assignment warning at afdx_615a_engine.v(2179): truncated value with size 32 to match size of target (11)"
+    ],
+    [
+      "276026",
+      "Inferred RAM node \"afdx_615a:loader|afdx_ram_sdp:load_ram|memory_rtl_0\" from synchronous design logic.  The RAM node maps into an M-RAM that powers up into an unknown state"
+    ],
+    [
+      "276026",
+      "Inferred RAM node \"afdx_tx_core:tx_core|afdx_ram_sdp:tx_payload|memory_rtl_0\" from synchronous design logic.  The RAM node maps into an M-RAM that powers up into an unknown state"
+    ],
+    [
+      "276020",
+      "Inferred RAM node \"afdx_snmp:snmp|afdx_mgmt_tx:sender|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    ],
+    [
+      "276020",
+      "Inferred RAM node \"afdx_615a:loader|afdx_mgmt_tx:sender|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    ],
+    [
+      "21074",
+      "Design contains 1 input pin(s) that do not drive logic"
+    ],
+    [
+      "15610",
+      "No output dependent on input pin \"rx_ready\""
+    ]
+  ],
+  "elapsed_seconds": 367.484
+}
