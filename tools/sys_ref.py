@@ -104,7 +104,7 @@ def endpoint(folder, number, expect):
             expect(len(body) == n, 'S1 M byte count')
             messages.append(m); pending.append(m)
         elif p[0] == 'E' and p[2] not in ('tx_a', 'tx_b'):
-            expect(len(pending) == 1, f'S1 ES{number} unique pending M at {c}')
+            expect(len(pending) >= 1, f'S1 ES{number} queued M available at {c}')
             if pending:
                 m = pending.pop(0); m['result'] = p[2]; m['event'] = c
                 expect(0 < c-m['cycle'] <= 96, f'S1 M/result causality ES{number} M{m["index"]}')

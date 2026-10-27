@@ -2,7 +2,7 @@
 // 它逐字节检查接收内容，并检查每条消息只交付一次。
 // 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
-// 测试先装入全部消息，再同时允许发送，以统一排队计时的起点。
+// 通过新顶层连续注入；排队计时从第一条消息注入前开始，ready 只控制消息开始。
 module tb_gbe_burst #(parameter COUNT=77);
     reg clk=0,reset=1,release_mac=0;always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,accepted=0,received=0,rm_count=0;
@@ -18,18 +18,29 @@ module tb_gbe_burst #(parameter COUNT=77);
     wire [7:0] ta,tb,ea,eb,d_data;wire tva,tvb,d_valid,d_last,d_net,rm,deliver;
     wire [11:0] d_vl;wire [15:0] d_sp,d_dp;
     wire ev_accept,dd,df,dl,dn;
-    afdx_tx_core tx(.clk(clk),.reset(reset),.now(cycle),.byte_en(release_mac),
-        .m_valid(m_valid),.m_ready(m_ready),.m_data(m_data),.m_last(m_last),.m_vl(m_vl),
-        .m_port_en(1'b0),.m_sport(16'd0),.m_dport(16'd0),.cfg_we(cfg_we),
-        .cfg_addr(cfg_addr),.cfg_wdata(cfg_data),.user_id(16'h2344),.init_done(tx_ready),
-        .tx_data_a(ta),.tx_valid_a(tva),.tx_data_b(tb),.tx_valid_b(tvb),.ev_tx_a(),.ev_tx_b(),
-        .cfg_ok(tx_cfg_ok),.ev_accept(ev_accept),.ev_drop_dis(dd),.ev_drop_full(df),
-        .ev_drop_long(dl),.ev_drop_nopage(dn));
-    afdx_rx_core rx(.clk(clk),.reset(reset),.now_c(cycle[27:12]),.rx_data_a(ta),.rx_valid_a(tva),
-        .rx_data_b(tb),.rx_valid_b(tvb),.cfg_map_we(map_we),.cfg_cfg_we(rx_cfg_we),
-        .cfg_addr(rx_addr),.cfg_wdata(rx_data),.init_done(rx_ready),.cfg_ok(rx_cfg_ok),
-        .d_valid(d_valid),.d_data(d_data),.d_last(d_last),.d_vl(d_vl),.d_sport(d_sp),.d_dport(d_dp),
-        .d_net(d_net),.ev_a(ea),.ev_b(eb),.ev_rm_drop(rm),.ev_deliver(deliver));
+    reg cfg_wr=0;reg [17:0] cfg_word_addr=0;reg [31:0] cfg_word_data=0;
+    wire tx_bus_ready,rx_bus_ready;reg target=0;
+    wire [6:0] tx_events;wire [7:0] unused_a,unused_b;
+    wire [7:0] unused_ta,unused_tb;wire unused_tva,unused_tvb;
+    top_stream_endpoint tx(
+        .clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(8'd0),.rx_valid(1'b0),.tx_ready(tx_ready),.rx_ready(1'b0),
+        .tx_data_b(tb),.tx_valid_b(tvb),.rx_data_b(8'd0),.rx_valid_b(1'b0),
+        .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
+        .app_tx_port_en(1'b0),.app_tx_sport(16'd0),.app_tx_dport(16'd0),
+        .app_rx_valid(),.app_rx_data(),.app_rx_last(),.app_rx_vl(),.app_rx_port(),.app_rx_sport(),.app_rx_net(),
+        .cfg_wr(cfg_wr && !target),.cfg_rd(1'b0),.cfg_addr(cfg_word_addr),.cfg_wdata(cfg_word_data),
+        .cfg_ready(tx_bus_ready),.cfg_rdata(),.cfg_rvalid(),.ev_tx(tx_events),.ev_a(unused_a),.ev_b(unused_b),.ev_rm_drop(),.ev_deliver(),
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized());
+    top_stream_endpoint rx(
+        .clk(clk),.reset(reset),.tx_data(unused_ta),.tx_valid(unused_tva),.rx_data(ta),.rx_valid(tva),.tx_ready(rx_ready),.rx_ready(1'b0),
+        .tx_data_b(unused_tb),.tx_valid_b(unused_tvb),.rx_data_b(tb),.rx_valid_b(tvb),
+        .app_tx_valid(1'b0),.app_tx_ready(),.app_tx_data(8'd0),.app_tx_last(1'b0),.app_tx_vl(7'd0),
+        .app_tx_port_en(1'b0),.app_tx_sport(16'd0),.app_tx_dport(16'd0),
+        .app_rx_valid(d_valid),.app_rx_data(d_data),.app_rx_last(d_last),.app_rx_vl(d_vl),.app_rx_port(d_dp),.app_rx_sport(d_sp),.app_rx_net(d_net),
+        .cfg_wr(cfg_wr && target),.cfg_rd(1'b0),.cfg_addr(cfg_word_addr),.cfg_wdata(cfg_word_data),
+        .cfg_ready(rx_bus_ready),.cfg_rdata(),.cfg_rvalid(),.ev_tx(),.ev_a(ea),.ev_b(eb),.ev_rm_drop(rm),.ev_deliver(deliver),
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized());
+    assign {dn,dl,df,dd,ev_accept}=tx_events[4:0];
     wire [31:0] ma_errors,mb_errors,ma_frames,mb_frames;
     gmii_monitor #(.FILE_NAME("burst_a.txt")) ma(clk,reset,ta,tva,ma_errors,ma_frames);
     gmii_monitor #(.FILE_NAME("burst_b.txt")) mb(clk,reset,tb,tvb,mb_errors,mb_frames);
@@ -71,12 +82,14 @@ module tb_gbe_burst #(parameter COUNT=77);
             $display("[RESULT] tb_gbe_burst FAIL checks=%0d errors=%0d",checks,errors+1);$finish;
         end
     end
+    task write_bus;input integer who,addr;input [31:0] value;
+    begin @(negedge clk);while(!(who?rx_bus_ready:tx_bus_ready))@(negedge clk);
+        target=who;cfg_word_addr=addr;cfg_word_data=value;cfg_wr=1;
+        @(negedge clk);cfg_wr=0;while(!(who?rx_bus_ready:tx_bus_ready))@(negedge clk);end endtask
     task write_tx;input integer addr;input [31:0] value;
-    begin @(negedge clk);while(!tx_cfg_ok)@(negedge clk);cfg_addr=addr;cfg_data=value;cfg_we=1;
-        @(negedge clk);cfg_we=0;repeat(2)@(negedge clk);end endtask
+    begin write_bus(0,18'h1000+addr,value);end endtask
     task write_rx;input integer map,addr;input [31:0] value;
-    begin @(negedge clk);while(!rx_cfg_ok)@(negedge clk);rx_addr=addr;rx_data=value;map_we=map;rx_cfg_we=!map;
-        @(negedge clk);map_we=0;rx_cfg_we=0;repeat(3)@(negedge clk);end endtask
+    begin write_bus(1,(map?18'h10000:18'h20000)+addr,value);end endtask
     initial begin
         repeat(4)@(negedge clk);reset=0;wait(tx_ready&&rx_ready);
         for(v=0;v<COUNT;v=v+1)begin
@@ -84,15 +97,16 @@ module tb_gbe_burst #(parameter COUNT=77);
             write_tx(v*8+3,32'h0a000001);write_tx(v*8+4,32'he0e00064+v);write_tx(v*8+5,32'h0bb90fa1);
             write_rx(1,100+v,4096+v);write_rx(0,v,1471*131072+20*32+31);
         end
+        released=cycle;
         for(v=0;v<COUNT;v=v+1)begin
             m_vl=v;
             for(j=0;j<1471;j=j+1)begin
                 @(negedge clk);m_valid=1;m_last=(j==1470);m_data=j+v;
                 @(posedge clk);while(!m_ready)@(posedge clk);#1;
             end
-            m_valid=0;m_last=0;wait(accepted==v+1);
+            m_valid=0;m_last=0;
         end
-        @(negedge clk);released=cycle;release_mac=1;
+
         wait(received==COUNT);repeat(30)@(negedge clk);
         check(accepted==COUNT&&received==COUNT&&rm_count==COUNT,"all queued messages delivered once and duplicates rejected");
         check(ma_errors==0&&mb_errors==0&&ma_frames==COUNT&&mb_frames==COUNT,"both native GMII frame streams");
