@@ -65,6 +65,7 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
         repeat(4)tick;@(negedge clk);reset1=0;
         repeat(13)tick;@(negedge clk);reset2=0;
         while(!ready1||!ready2)tick;repeat(64)tick;
+        es1.stage("app");es2.stage("app");
         while(!$feof(cf))begin
             command=0;rc=$fscanf(cf,"%s %d %h %h",command,es,addr,value);
             if(rc==4)begin
