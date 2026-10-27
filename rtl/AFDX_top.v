@@ -32,6 +32,17 @@ module AFDX_top #(
     wire [7:0] m_data,d_data;
     wire [6:0] m_vl;
     wire [11:0] d_index;
+    // 核心交付端含服务选择组合逻辑；在封装边界整组寄存后再驱动接收 RAM。
+    reg delivery_valid,delivery_last;
+    reg [7:0] delivery_data;
+    reg [11:0] delivery_index;
+    always @(posedge clk)begin
+        if(reset)begin delivery_valid<=0;delivery_last<=0;delivery_data<=0;delivery_index<=0;end
+        else begin
+            delivery_valid<=d_valid;delivery_last<=d_last;
+            delivery_data<=d_data;delivery_index<=d_index;
+        end
+    end
     reg tx_cfg_write,rx_cfg_write;
     reg [6:0] tx_cfg_index;
     reg [11:0] rx_cfg_index;
@@ -48,7 +59,7 @@ module AFDX_top #(
     afdx_app_tx application_tx(clk,reset,initialized,tx_data,tx_valid,tx_ready,
         tx_cfg_write,tx_cfg_index,tx_cfg_vlid,m_valid,m_ready,m_data,m_last,m_vl,ev_app[1:0]);
     afdx_app_rx application_rx(clk,reset,rx_cfg_write,rx_cfg_index,rx_cfg_vlid,
-        d_valid,d_data,d_last,d_index,rx_valid,rx_data,ev_app[2]);
+        delivery_valid,delivery_data,delivery_last,delivery_index,rx_valid,rx_data,ev_app[2]);
     afdx_es #(.CE_DIV(CE_DIV),.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),
         .LOOKAHEAD(LOOKAHEAD),.RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW),.RX_CONFIG_BANKS(RX_CONFIG_BANKS)) es(
         .clk(clk),.reset(reset),.tx_data(gmii_txd_a),.tx_valid(gmii_tx_en_a),
