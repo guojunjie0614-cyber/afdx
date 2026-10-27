@@ -1,7 +1,7 @@
 {
-  "measurement_date": "2026-10-26",
-  "source_commit": "286fa1b6",
-  "executed_head": "286fa1b6",
+  "measurement_date": "2026-10-27",
+  "source_commit": "b5658983",
+  "executed_head": "b5658983",
   "environment": {
     "simulator": "ModelSim SE-64 2020.4",
     "mode": "vsim -batch",
@@ -2913,6 +2913,6 @@
     },
     "tb_sys_perf_folder": "out\\sim\\tb_sys_perf\\20261026_221027_627481",
     "tb_sys_perf_var_folder": "out\\sim\\tb_sys_perf_var\\20261026_221027_607203",
-    "app_folder": "out\\app\\20261026_222339"
+    "app_folder": "out\\app\\20261027_000437"
   }
 }
