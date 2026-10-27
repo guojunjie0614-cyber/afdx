@@ -29,6 +29,7 @@ module afdx_app_tx (
     wire [12:0] used=write_ptr-read_ptr;
     reg [5:0] desc_wr,desc_rd;
     wire [5:0] descriptors=desc_wr-desc_rd;
+    reg [3:0] state;
     wire [15:0] descriptor_id;
     wire descriptor_write=vq && !valid && active && count>=2 && !bad && used<4096;
     wire descriptor_read=state==0 && descriptors!=0;
@@ -76,7 +77,6 @@ module afdx_app_tx (
     end
     // 只有 VLID、没有载荷的消息也只报告一次未命中。
     wire empty_message=vq && !valid && (!active || count<2) && !bad;
-    reg [3:0] state;
     (* preserve=1,dont_merge=1 *) reg [15:0] query[0:7];
     reg [127:0] hit;
     reg [7:0] bank_hit;

@@ -30,6 +30,8 @@ module afdx_app_rx (
         .clk(clk),.write_enable(cfg_write),.write_address(cfg_index),.write_data(cfg_vlid),
         .read_enable(first && !reject && !map_collision),.read_address(app_index),.read_data(map_q));
     reg map_pending;
+    reg [2:0] state;
+    wire q_valid,q_ready;
     wire [15:0] descriptor_id;
     afdx_ram_sdp #(.WIDTH(16),.DEPTH(32)) descriptor_ids(
         .clk(clk),.write_enable(map_pending),.write_address(dw[4:0]),.write_data(map_bypass?map_write_value:map_q),
@@ -40,7 +42,6 @@ module afdx_app_rx (
     afdx_ram_sdp #(.WIDTH(9),.DEPTH(4096)) payload(
         .clk(clk),.write_enable(store),.write_address(write_ptr[11:0]),.write_data({app_last,app_data}),
         .read_enable(read_en),.read_address(read_addr),.read_data(memory_q));
-    wire q_valid,q_ready;
     wire [8:0] q_data;
     afdx_app_read reader(clk,reset,write_ptr,read_ptr,read_en,read_addr,memory_q,q_valid,q_ready,q_data);
     always @(posedge clk)begin
@@ -57,7 +58,6 @@ module afdx_app_rx (
             if(store)write_ptr<=write_ptr+1'b1;
         end
     end
-    reg [2:0] state;
     reg [15:0] id;
     assign q_ready=state==3;
     always @(posedge clk)begin
