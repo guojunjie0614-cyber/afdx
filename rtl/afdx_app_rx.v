@@ -20,15 +20,19 @@ module afdx_app_rx (
     reg [5:0] dw,dr;
     wire [5:0] descriptors=dw-dr;
     wire first=app_valid && !active;
-    wire reject=used>2625 || descriptors>=31;
+    reg reject;
+    always @(posedge clk)begin
+        if(reset)reject<=1'b1;
+        else reject<=used>2624 || descriptors>=30;
+    end
     wire store=app_valid && (active?!discard:!reject);
     wire [15:0] map_q;
     wire map_collision=cfg_write && cfg_index==app_index;
     reg map_bypass;
     reg [15:0] map_write_value;
-    afdx_ram_sdp #(.WIDTH(16),.DEPTH(4096)) reverse_map(
+    afdx_app_map reverse_map(
         .clk(clk),.write_enable(cfg_write),.write_address(cfg_index),.write_data(cfg_vlid),
-        .read_enable(first && !reject && !map_collision),.read_address(app_index),.read_data(map_q));
+        .read_enable(1'b1),.read_address(app_index),.read_data(map_q));
     reg map_pending;
     reg [2:0] state;
     wire q_valid,q_ready;
