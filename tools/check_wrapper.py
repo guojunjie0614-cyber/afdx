@@ -69,7 +69,7 @@ def report():
     for error in errors:
         print('ERROR ' + error)
     print('CHECK %s wrapper=%s rtl_files=%d includes=%d errors=%d'
-          % (status, WRAPPER.name, len(list((ROOT / 'rtl').glob('*.v'))), 24, len(errors)))
+          % (status, WRAPPER.name, len(list((ROOT / 'rtl').glob('*.v'))), len(list((ROOT / 'rtl').glob('*.v'))), len(errors)))
     print('RESULT check_wrapper %s checks=5 errors=%d' % (status, len(errors)))
     return 0 if not errors else 1
 

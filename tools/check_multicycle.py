@@ -14,7 +14,9 @@ import sys
 from adapt_gui_vqm import CELL, OUTPUTS
 
 def native_name(name):
-    return '|'.join(token.split(':')[-1] for token in name.lstrip('\\').split('|'))
+    result = '|'.join(token.split(':')[-1] for token in name.lstrip('\\').split('|'))
+    # The T60 wrapper adds exactly one known hierarchy level; retain engine scope.
+    return result[3:] if result.startswith('es|') else result
 
 def signals(value):
     value=re.sub(r"\b\d+'[sS]?[bBoOdDhH][0-9a-fA-FxXzZ_]+",'',value)
