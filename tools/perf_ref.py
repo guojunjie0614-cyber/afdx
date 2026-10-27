@@ -253,15 +253,17 @@ def measure_r97(folder, stages=None, output=None):
                     previous[k]=now
             answer[prefix+'/tx_interval_jitter/max']=interval
             # R120-1 injection side: handshake bytes and stalls at the application port.
-            inject=stalls=stallmax=lag=0;lagsamples=0;drops=overflow=errors=0
+            inject=stalls=stallmax=lag=rawlag=0;lagsamples=0;drops=overflow=errors=0;previous_end=None
             for m in ms:
                 first=m['first'];cycle=m['cycle'];n=m['n']
                 if begin<=first<end and cycle<end:
                     inject+=n;stalls+=m['stalls'];stallmax=max(stallmax,m['maxrun'])
                     if m['planned']:
-                        lag=max(lag,first-m['release']);lagsamples+=1
+                        earliest=max(m['release'],previous_end+1) if stage.startswith('var_burst') and previous_end is not None else m['release']
+                        lag=max(lag,first-earliest);rawlag=max(rawlag,first-m['release']);lagsamples+=1
                 elif first<end and cycle>=begin:
                     inject+=min(n,max(0,min(cycle+1,end)-max(first+(2 if m['stream'] else 0),begin)))
+                previous_end=cycle
             for (st,event),count in ep['txpulses'].items():
                 if st==stage and event in ('drop_dis','drop_full','drop_long','drop_nopage'):drops+=count
                 if event in ('a_ovf','b_ovf'):overflow+=count
@@ -277,6 +279,7 @@ def measure_r97(folder, stages=None, output=None):
             answer[prefix+'/inject/stall_maxrun']=stallmax
             answer[prefix+'/inject/lag_max']=lag if lagsamples else 'NA'
             answer[prefix+'/inject/lag_samples']=lagsamples
+            answer[prefix+'/inject/raw_lag_max']=rawlag if lagsamples else 'NA'
             buckets=collections.defaultdict(list);entry_samples=[]
             for m in ms:
                 d,winner=m['delivery']

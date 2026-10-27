@@ -195,7 +195,7 @@ proc r97::measure {folder {stages {}}} {
         set groups [linsert [lsort -integer [dict keys [dict get $lengths $stage]]] 0 all]
         foreach es {1 2} {
             set direction es${es}_to_es[expr {3-$es}]; set samples {}; set offered 0; set delivered 0; set bytes 0; set interval 0; set previous {}
-            set entry {}; set inject 0; set stalls 0; set stallmax 0; set lag 0; set lagsamples 0
+            set entry {}; set inject 0; set stalls 0; set stallmax 0; set lag 0; set rawlag 0; set previous_end -1; set lagsamples 0
             foreach id [lsort -integer [dict keys [dict get $messages $es]]] {
                 set m [dict get $messages $es $id]
                 if {[dict get $m stage] ne $stage} {continue}
@@ -212,10 +212,17 @@ proc r97::measure {folder {stages {}}} {
                     incr inject $n
                     incr stalls [dict get $m stalls]
                     if {$maxrun>$stallmax} {set stallmax $maxrun}
-                    if {[dict get $m planned]} {set l [expr {$first-[dict get $m release]}]; incr lagsamples; if {$l>$lag} {set lag $l}}
+                    if {[dict get $m planned]} {
+                        set release [dict get $m release]
+                        set earliest $release
+                        if {[string match var_burst* $stage] && $previous_end>=0} {set earliest [expr {max($release,$previous_end+1)}]}
+                        set l [expr {$first-$earliest}]; incr lagsamples
+                        set lag [expr {max($lag,$l)}]; set rawlag [expr {max($rawlag,$first-$release)}]
+                    }
                 } elseif {$first<$end && $cycle>=$begin} {
                     incr inject [expr {min($n,max(0,min($cycle+1,$end)-max($first+2*[dict get $m stream],$begin)))}]
                 }
+                set previous_end $cycle
                 foreach net {A B} {
                     foreach side {tx rx} {require [dict exists $frames $es,$id,$side,$net] "missing $side/$net ES$es frame$id"}
                     set tx [expr {[lindex [dict get $frames $es,$id,tx,$net] 0]+7}]
@@ -266,6 +273,7 @@ proc r97::measure {folder {stages {}}} {
             dict set out $prefix/inject/stall_maxrun $stallmax
             dict set out $prefix/inject/lag_max [expr {$lagsamples ? $lag : "NA"}]
             dict set out $prefix/inject/lag_samples $lagsamples
+            dict set out $prefix/inject/raw_lag_max [expr {$lagsamples ? $rawlag : "NA"}]
             set dropped 0; if {[dict exists $drops $es,$stage]} {set dropped [dict get $drops $es,$stage]}
             set ovf 0; if {[dict exists $overflow $es,$stage]} {set ovf [dict get $overflow $es,$stage]}
             set bad 0; if {[dict exists $badevents $es,$stage]} {set bad [dict get $badevents $es,$stage]}
