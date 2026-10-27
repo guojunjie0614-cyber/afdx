@@ -54,17 +54,6 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     (* direct_enable = 1, keep = 1 *) wire ce_9 = ce_phase[9] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_10 = ce_phase[10] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_11 = ce_phase[11] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_12 = ce_phase[12] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_13 = ce_phase[13] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_14 = ce_phase[14] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_15 = ce_phase[15] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_16 = ce_phase[16] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_17 = ce_phase[17] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_18 = ce_phase[18] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_19 = ce_phase[19] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_20 = ce_phase[20] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_21 = ce_phase[21] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_22 = ce_phase[22] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_23 = ce_phase[23] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_24 = ce_phase[24] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_25 = ce_phase[25] | reset;
@@ -115,23 +104,23 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     localparam [6:0] DISPATCH_SUM = 7'd45, DISPATCH_CHECK = 7'd46;
 
     // 查找对象，再读取或设置它的值：
-    localparam LOOK_COMPARE = 15, LOOK_NEXT = 16, FOUND = 17;
+    localparam [6:0] LOOK_COMPARE = 7'd15, LOOK_NEXT = 7'd16, FOUND = 7'd17;
     localparam [6:0] LOOK_START = 7'd14, MISSING = 7'd18;
     localparam [6:0] MIB_ADDRESS = 7'd44;
     localparam MIB_REQUEST = 19, SET_VALUE = 34;
     localparam [6:0] MIB_WAIT = 7'd20, SET_CHECK = 7'd35, SET_WRITE = 7'd36, SET_ERROR = 7'd37;
 
     // 计算各层长度并构造回应：
-    localparam LEN4 = 25, BUILD = 26;
+    localparam LEN4 = 25, BUILD = 7'd26;
     localparam [6:0] VALUE_PREP = 7'd21, LEN1 = 7'd22, LEN2 = 7'd23, LEN3 = 7'd24;
     localparam COPY_COMM = 27, COPY_OID = 28, COPY_VALUE = 38;
 
     // 发送回应：
-    localparam TX_FLUSH = 29, TX_ADDR = 30, TX_WAIT1 = 31, TX_WAIT2 = 32;
+    localparam TX_FLUSH = 7'd29, TX_ADDR = 30, TX_WAIT1 = 31, TX_WAIT2 = 32;
     localparam [6:0] TX_SEND = 7'd33;
 
     // 构造事件通知：
-    localparam TRAP_WORD = 42;
+    localparam [6:0] TRAP_WORD = 7'd42;
     localparam [6:0] TRAP_INIT = 7'd39, TRAP_COMM0 = 7'd40, TRAP_COMM1 = 7'd41, TRAP_BYTE = 7'd43;
 
     // 管理请求和事件通知使用的 UDP 端口。
@@ -156,8 +145,8 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     localparam LENGTH_1_BYTE = 8'h81, LENGTH_2_BYTES = 8'h82;
 
     // 回应里的错误码。v1 用 2、3；v2c 用 7、8、10、17。
-    localparam ERR_NONE = 0, ERR_NO_SUCH_NAME = 2, ERR_BAD_VALUE = 3, ERR_WRONG_TYPE = 7;
-    localparam ERR_WRONG_LENGTH = 8, ERR_WRONG_VALUE = 10, ERR_NOT_WRITABLE = 17;
+    localparam [7:0] ERR_NONE = 8'd0, ERR_NO_SUCH_NAME = 8'd2, ERR_BAD_VALUE = 8'd3, ERR_WRONG_TYPE = 8'd7;
+    localparam [7:0] ERR_WRONG_LENGTH = 8'd8, ERR_WRONG_VALUE = 8'd10, ERR_NOT_WRITABLE = 8'd17;
 
     // 事件通知的编号：冷启动和认证失败。
     localparam TRAP_COLD_START = 8'd1, TRAP_AUTH_FAILURE = 8'd5;
@@ -199,7 +188,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     localparam OID_ENTERPRISE_BYTE0 = 8'h99, OID_ENTERPRISE_BYTE1 = 8'hf2, OID_ENTERPRISE_BYTE2 = 8'h32;
     localparam SYSTEM_OBJECT_COUNT = 2, LAST_OBJECT_INDEX = 35;
     localparam SYSTEM_OID_LAST_ARC = 7, PRIVATE_OID_LAST_ARC = 8;
-    localparam SYSTEM_OID_BYTES = 8, PRIVATE_OID_BYTES = 11;
+    localparam SYSTEM_OID_BYTES = 8'd8, PRIVATE_OID_BYTES = 8'd11;
 
     // 请求与回应各有 256 字节存储；请求写到下标 255 后不能再增加字节。
     localparam PACKET_BUFFER_BYTES = 256, REQUEST_LAST_POS = 255;
@@ -618,11 +607,11 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 0 : mib_oid_byte = OID_FIRST_BYTE;
                 1 : mib_oid_byte = 6;
                 2 : mib_oid_byte = 1;
-                3 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 2 : 4;
+                3 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd2 : 8'd4;
                 4 : mib_oid_byte = 1;
-                5 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 1 : OID_ENTERPRISE_BYTE0;
-                6 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 1 : 3) : OID_ENTERPRISE_BYTE1;
-                7 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 0 : OID_ENTERPRISE_BYTE2;
+                5 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd1 : OID_ENTERPRISE_BYTE0;
+                6 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 8'd1 : 8'd3) : OID_ENTERPRISE_BYTE1;
+                7 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd0 : OID_ENTERPRISE_BYTE2;
                 8 : mib_oid_byte = 3;
                 9 : mib_oid_byte = { 2'b0, item } - 8'd1;
                 default : mib_oid_byte = 0;
@@ -634,15 +623,9 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     // 对象选择、字节位置选择和回应字段选择因此不再落在同一拍。
     genvar oid_byte;
     generate
-        for (oid_byte = 0; oid_byte < PRIVATE_OID_BYTES; oid_byte = oid_byte + 1) begin : oid_encoding
+        for (oid_byte = 0; oid_byte < PRIVATE_OID_BYTES - 1; oid_byte = oid_byte + 1) begin : oid_encoding
             (* direct_enable = 1, keep = 1 *) wire local_ce = ce_phase[12 + oid_byte] | reset;
-            wire [7:0] next_byte;
-            if (oid_byte == PRIVATE_OID_BYTES - 1) begin : tail
-                assign next_byte = 0;
-            end
-            else begin : body
-                assign next_byte = oid_shift[79 - oid_byte * 8 -: 8];
-            end
+            wire [7:0] next_byte = oid_shift[79 - oid_byte * 8 -: 8];
             always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (local_ce) begin
@@ -656,6 +639,14 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     end
         end
     endgenerate
+
+    // OID 最后一个字节的编码和移入值均为零，不保留已无负载的 CE 缓冲。
+    always @(posedge clk) begin
+        if (ce_phase[12 + PRIVATE_OID_BYTES - 1] | reset) begin
+            if (reset || state == LEN4 || (state == BUILD && part == B_OID && !missing))
+                oid_shift[7:0] <= 8'b0;
+        end
+    end
 
     // 私有对象对应配置或统计地址，只有索引 3 的 user_id 允许设置。
     // 对象 0–5 依次是描述、运行时间、版本、user_id、时钟秒和同步次数。
@@ -675,10 +666,10 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 34 : mib_address = ADDR_BAD_COMMUNITY;
                 35 : mib_address = ADDR_TRAPS_SENT;
                 default : begin
-                    if (item <= 12) mib_address = ADDR_TX_COUNT + item - 6;
-                    else if (item <= 20) mib_address = ADDR_A_COUNT + item - 13;
-                    else if (item <= 28) mib_address = ADDR_B_COUNT + item - 21;
-                    else mib_address = ADDR_SHARED_COUNT + item - 29;
+                    if (item <= 12) mib_address = ADDR_TX_COUNT + item - 18'd6;
+                    else if (item <= 20) mib_address = ADDR_A_COUNT + item - 18'd13;
+                    else if (item <= 28) mib_address = ADDR_B_COUNT + item - 18'd21;
+                    else mib_address = ADDR_SHARED_COUNT + item - 18'd29;
                 end
             endcase
         end
@@ -968,7 +959,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     else case (field) // synthesis parallel_case
 
                         FIELD_MESSAGE : if (field_accept[FIELD_MESSAGE]) begin
-                            next_outer_end = field_end;
+                            next_outer_end = field_end[8:0];
                             next_field = 4'd1;
                             fetch (TAG);
                         end
@@ -992,7 +983,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         FIELD_PDU : if (field_accept[FIELD_PDU]) begin
                             next_get_next = (tag_value == PDU_GET_NEXT);
                             next_get_set = (tag_value == PDU_SET);
-                            next_pdu_end = field_end;
+                            next_pdu_end = field_end[8:0];
                             next_field = 4'd4;
                             fetch (TAG);
                         end
@@ -1006,14 +997,14 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         else next_state = 7'd0;
 
                         FIELD_BINDING_LIST : if (field_accept[FIELD_MESSAGE]) begin
-                            next_list_end = field_end;
+                            next_list_end = field_end[8:0];
                             next_field = 4'd8;
                             fetch (TAG);
                         end
                         else next_state = 7'd0;
 
                         FIELD_BINDING : if (field_accept[FIELD_MESSAGE]) begin
-                            next_binding_end = field_end;
+                            next_binding_end = field_end[8:0];
                             next_field = 4'd9;
                             fetch (TAG);
                         end
@@ -1022,7 +1013,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         FIELD_OID : if (field_accept[FIELD_OID]) begin
                             next_oid_start = cursor[7:0];
                             next_oid_length = field_length[4:0];
-                            next_cursor = field_end;
+                            next_cursor = field_end[8:0];
                             next_field = 4'd10;
                             fetch (TAG);
                         end

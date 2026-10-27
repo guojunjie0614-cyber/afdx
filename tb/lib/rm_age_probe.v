@@ -6,8 +6,8 @@
 module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,errors=0);
     reg reset=1;reg [15:0] now_c=0;reg [94:0] desc=0;reg valid=0;
     wire init,take,resolve,commit,mre,cre,sre,swe,dwe,rm,deliver,ok;
-    wire [15:0] ma;wire [11:0] ca,sa,wa;wire [43:0] wd;
-    reg [12:0] mq=0;reg [31:0] cq=0;reg [43:0] sq=0,states[0:4095];
+    wire [15:0] ma;wire [11:0] ca,sa,wa;wire [42:0] wd;
+    reg [12:0] mq=0;reg [31:0] cq=0;reg [42:0] sq=0,states[0:4095];
     wire [4:0] dwa;wire [67:0] dwd;wire [5:0] count;wire [7:0] ea,eb;
     integer cycle=0,origin=0,sent=0,delivered=0,limit,before_d;reg running=0;
     afdx_rx_engine dut(clk,reset,1'b1,now_c,init,valid,1'b0,desc,95'b0,

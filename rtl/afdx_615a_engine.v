@@ -60,13 +60,6 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
     // 含复位的使能保证复位拍也更新；各局部 CE 只驱动至多 32 位。
     (* direct_enable = 1, keep = 1 *) wire ce_1 = ce_phase[1] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_2 = ce_phase[2] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_3 = ce_phase[3] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_4 = ce_phase[4] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_5 = ce_phase[5] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_6 = ce_phase[6] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_7 = ce_phase[7] | reset;
-    (* direct_enable = 1, keep = 1 *) wire ce_8 = ce_phase[8] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_9 = ce_phase[9] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_10 = ce_phase[10] | reset;
     (* direct_enable = 1, keep = 1 *) wire ce_11 = ce_phase[11] | reset;
@@ -137,8 +130,8 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam REASON_CHECKSUM = 3;
     localparam REASON_TFTP_ERROR = 4;
     localparam REASON_RETRY_LIMIT = 5;
-    localparam IDLE = 0;
-    localparam WAIT_PACKET = 1;
+    localparam [7:0] IDLE = 8'd0;
+    localparam [7:0] WAIT_PACKET = 8'd1;
     localparam [7:0] DISPATCH = 8'd2;
     localparam [7:0] DISPATCH_CHECK = 8'd72, DISPATCH_SELECT = 8'd73, PACKET_START = 8'd74, BUILD_CANDIDATE = 8'd75;
     localparam [7:0] NAME = 8'd3;
@@ -153,14 +146,14 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam [7:0] FETCH_WAIT = 8'd9;
     localparam [7:0] FETCH_CAPTURE = 8'd10;
     localparam [7:0] FETCH_DONE = 8'd11;
-    localparam NUMBER = 12;
+    localparam [7:0] NUMBER = 8'd12;
     localparam [7:0] NUMBER_BYTE = 8'd13;
 
     // 这些状态构造并发送报文。
     localparam [7:0] BUILD = 8'd14;
-    localparam BUILD_PREP = 60;
+    localparam [7:0] BUILD_PREP = 8'd60;
     localparam EMIT = 15;
-    localparam BUILD_FLUSH = 16;
+    localparam [7:0] BUILD_FLUSH = 8'd16;
     localparam [7:0] TX_ADDR = 8'd17;
     localparam TX_WAIT = 18;
     localparam TX_CAPTURE = 19;
@@ -233,12 +226,12 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     // state 记录当前文件处理步骤，HEADER_CRC_EXPECT 是未使用的编码。
     // wait_kind 记录当前等待哪一种确认或文件，packet_type 选择待发报文。
     localparam WK_LUI_ACK = 0, WK_LUR = 1, WK_DATA = 2, WK_LUS_ACK0 = 3, WK_LUS_ACK1 = 4,
-        WK_DL_ACK0 = 5, WK_DL_ACK = 6;
+        WK_DL_ACK0 = 3'd5, WK_DL_ACK = 3'd6;
 
     localparam PK_ACK = 0, PK_LUI = 1, PK_RRQ = 2, PK_LUS_WRQ = 3, PK_LUS = 4, PK_ERROR = 5, PK_DL_DATA = 6;
 
     // status 寄存器的取值：空闲、进行中、成功、失败。
-    localparam ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
+    localparam ST_BUSY = 1, ST_SUCCESS = 2'd2, ST_FAILED = 2'd3;
     localparam [1:0] ST_IDLE = 2'd0;
 
     // 状态文件里的操作状态码：已接受、进行中、已完成，以及目标端中止（0x1003）。
@@ -246,7 +239,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     localparam [15:0] LUS_NONE = 16'd0, LUS_ACCEPTED = 16'd1;
 
     // 目标端中止时，状态文件里逐文件的状态码是 0x1007，下面是它的高、低字节。
-    localparam FILE_ABORTED_HIGH = 8'h10, FILE_ABORTED_LOW = 7;
+    localparam FILE_ABORTED_HIGH = 8'h10, FILE_ABORTED_LOW = 8'd7;
 
     // 状态文件里头文件名字段的起始位置。
     localparam LUS_NAME_POS = 10'd33;
@@ -280,7 +273,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
 
     // TFTP 数据块最多 512 字节，数据和确认报文都从四字节报头开始。
     localparam TFTP_OPCODE_WRQ = 2, TFTP_OPCODE_DATA = 3, TFTP_OPCODE_ACK = 4, TFTP_OPCODE_ERROR = 5;
-    localparam TFTP_HEADER_BYTES = 4, TFTP_BLOCK_BYTES = 512, TFTP_MAX_PACKET_BYTES = 516;
+    localparam TFTP_HEADER_BYTES = 11'd4, TFTP_BLOCK_BYTES = 11'd512, TFTP_MAX_PACKET_BYTES = 10'd516;
     localparam TFTP_DATA_POS = 10'd4, PACKET_BUFFER_BYTES = 1024;
 
     // 请求列表、头文件和数据文件各自的存储容量；数据长度字段按双字节计。
@@ -289,7 +282,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
 
     // 状态报文的固定字段和尾部长度，文件名、部件名插在这些字段之间。
     localparam LUS_PART_POS_BASE = 10'd34, LUS_DOWNLOAD_LENGTH_BASE = 10'd44, LUS_TAIL_BYTES = 10'd14;
-    localparam LUR_FIXED_BYTES = 12'd10, LNR_NAME_POS = 13'd9;
+    localparam LUR_FIXED_BYTES = 9'd10, LNR_NAME_POS = 13'd9;
 
     // 固定请求文件名及 octet 模式字段的位置和长度。
     localparam RRQ_NAME_POS = 11'd2, RRQ_MODE_POS = 11'd14;
@@ -302,9 +295,9 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
 
     // 头文件指针按双字节计，末尾六字节保存校验字段。
     localparam HEADER_MIN_BYTES = 32, HEADER_DATA_PTR_MIN_WORDS = 13, HEADER_TRAILER_BYTES = 6;
-    localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 10;
+    localparam MAX_PROGRESS_PERCENT = 99, DECIMAL_BASE = 7'd10;
 
-    localparam NUMBER_READY = 247;
+    localparam [7:0] NUMBER_READY = 8'd247;
     localparam [7:0] FETCH_WAIT_A = 8'd240, FETCH_WAIT_B = 8'd241, DENY_FLUSH = 8'd242, DENY_FINISH = 8'd243, FETCH_WAIT_C = 8'd244, DATA_DISPATCH = 8'd245, RATIO_TEST = 8'd246, LNR_USER_CHECK = 8'd248, RETRY_DECIDE = 8'd249;
     reg  enable;
     reg  configured;
@@ -761,7 +754,7 @@ next_error_position = packet_pos - 10'd4;
             candidate_read[PK_ERROR] <= 0;
             case (build_position[PK_ERROR])
                 1 : candidate_byte[PK_ERROR] <= 5;
-                3 : candidate_byte[PK_ERROR] <= reason == REASON_DESCRIPTION ? 1 : reason == REASON_TFTP_ERROR ? 4 : 0;
+                3 : candidate_byte[PK_ERROR] <= reason == REASON_DESCRIPTION ? 8'd1 : reason == REASON_TFTP_ERROR ? 8'd4 : 8'd0;
                 default : if (build_position[PK_ERROR] >= 4) candidate_byte[PK_ERROR] <= description (error_position);
             endcase
         end
@@ -804,7 +797,7 @@ next_error_position = packet_pos - 10'd4;
             candidate_byte[PK_RRQ] <= 0;
             candidate_read[PK_RRQ] <= 0;
             begin
-                if (build_position[PK_RRQ] == 1) candidate_byte[PK_RRQ] <= download_mode ? 2 : 1;
+                if (build_position[PK_RRQ] == 1) candidate_byte[PK_RRQ] <= download_mode ? 8'd2 : 8'd1;
                 else if (build_position[PK_RRQ] >= 2 && build_position[PK_RRQ] < name_end) begin
                     if (download_mode) candidate_byte[PK_RRQ] <= memory_name(filename_position);
                     else if (file_kind == FILE_HEADER)
@@ -868,7 +861,7 @@ next_error_position = packet_pos - 10'd4;
 
                     3 : candidate_byte[PK_LUS] <= 1;
 
-                    7 : candidate_byte[PK_LUS] <= packet_len - 4;
+                    7 : candidate_byte[PK_LUS] <= packet_len[7:0] - 8'd4;
 
                     8 : candidate_byte[PK_LUS] <= "A";
 
@@ -884,7 +877,7 @@ next_error_position = packet_pos - 10'd4;
 
                     22 : candidate_byte[PK_LUS] <= lus_counter[7:0];
 
-                    25, 26 : candidate_byte[PK_LUS] <= lus_status == LUS_IN_PROGRESS ? 8'hff : 0;
+                    25, 26 : candidate_byte[PK_LUS] <= lus_status == LUS_IN_PROGRESS ? 8'hff : 8'd0;
 
                     27 : candidate_byte[PK_LUS] <= ratio_h;
 
@@ -915,7 +908,7 @@ next_error_position = packet_pos - 10'd4;
                             end
                         else if (download_mode && build_position[PK_LUS] >= 33
                             && build_position[PK_LUS] >= lus_tail_pos) case (tail_index)
-                            0 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
+                            0 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 8'd0;
                             1 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
                                 : lus_status[7:0];
                             2 : candidate_byte[PK_LUS] <= 8;
@@ -926,7 +919,7 @@ next_error_position = packet_pos - 10'd4;
                             0 : candidate_byte[PK_LUS] <= ratio_h;
                             1 : candidate_byte[PK_LUS] <= ratio_t;
                             2 : candidate_byte[PK_LUS] <= ratio_u;
-                            3 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 0;
+                            3 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_HIGH : 8'd0;
                             4 : candidate_byte[PK_LUS] <= lus_status == LUS_ABORTED ? FILE_ABORTED_LOW
                                 : lus_status[7:0];
                             5 : candidate_byte[PK_LUS] <= 8;
@@ -1136,19 +1129,19 @@ next_error_position = packet_pos - 10'd4;
             case (p)
                 1 : denial_byte = 3;
                 3 : denial_byte = 1;
-                7 : denial_byte = deny_unsupported ? 9 : 17;
+                7 : denial_byte = deny_unsupported ? 8'd9 : 8'd17;
                 8 : denial_byte = "A";
                 9 : denial_byte = protocol_a4 ? "4" : "3";
                 10 : denial_byte = 8'h10;
-                11 : denial_byte = deny_unsupported ? 2 : 0;
-                12 : denial_byte = deny_unsupported ? 0 : 8;
+                11 : denial_byte = deny_unsupported ? 8'd2 : 8'd0;
+                12 : denial_byte = deny_unsupported ? 8'd0 : 8'd8;
                 13 : denial_byte = deny_empty ? "N" : "B";
                 14 : denial_byte = deny_empty ? "O" : "U";
                 15 : denial_byte = deny_empty ? " " : "S";
                 16 : denial_byte = deny_empty ? "D" : "Y";
-                17 : denial_byte = deny_empty ? "A" : 0;
-                18 : denial_byte = deny_empty ? "T" : 0;
-                19 : denial_byte = deny_empty ? "A" : 0;
+                17 : denial_byte = deny_empty ? "A" : 8'd0;
+                18 : denial_byte = deny_empty ? "T" : 8'd0;
+                19 : denial_byte = deny_empty ? "A" : 8'd0;
                 default : ;
             endcase
         end
@@ -1214,6 +1207,9 @@ next_error_position = packet_pos - 10'd4;
     endtask
 
     // 请求字节的读取等待拍用于预先选择目标字符并比较，解析状态只消费一位结果。
+    wire [7:0] expected_name_byte = target_name(name_pos,
+        request_write ? "R" : request_download ? "D" : "I", request_download);
+    wire [7:0] expected_mode_byte = octet_byte(name_pos);
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_26) begin
@@ -1229,9 +1225,8 @@ next_error_position = packet_pos - 10'd4;
             request_reject <= 0;
         end
         else begin
-            expected_name <= target_name(name_pos, request_write ? "R" : request_download ? "D" : "I",
-                request_download);
-            expected_mode <= octet_byte(name_pos);
+            expected_name <= expected_name_byte[6:0];
+            expected_mode <= expected_mode_byte[6:0];
             name_mark <= name_pos == 9 && (byte_value == "U" || byte_value == "N"
                 || (!request_write && byte_value == "C"));
             name_option <= name_pos == TARGET_DOWNLOAD_MARK_POS && !request_write && request_download
@@ -1638,7 +1633,7 @@ next_error_position = packet_pos - 10'd4;
                             next_loaded = 0;
                             next_available_size = 0;
                         end
-                        next_file_size = request_download ? available_size : 0;
+                        next_file_size = request_download ? available_size : 14'd0;
                         next_dl_acked = 0;
                         next_manifest = 0;
                         next_lus_counter = 0;
@@ -1860,7 +1855,7 @@ next_error_position = packet_pos - 10'd4;
                     end
                     else begin
                         next_decimal_tens = 0;
-                        next_decimal_rest = lus_status == LUS_COMPLETED ? 0 : percent;
+                        next_decimal_rest = lus_status == LUS_COMPLETED ? 7'd0 : percent;
                         next_ratio_h = lus_status == LUS_COMPLETED ? "1" : " ";
                         next_state = RATIO_DEC;
                     end
@@ -1999,7 +1994,7 @@ next_error_position = packet_pos - 10'd4;
                 LUR_PLEN : if (byte_value < 2 || byte_value > MAX_FILENAME_BYTES) fail (REASON_DESCRIPTION);
                 else begin
                     next_part_len = byte_value[6:0];
-                    next_part_addr = 10 + header_name_len;
+                    next_part_addr = 10'd10 + header_name_len;
                     next_lus_partlen_pos = LUS_NAME_POS + header_name_len;
                     next_lus_part_pos = LUS_PART_POS_BASE + header_name_len;
                     next_state = LUR_OFFSETS;
@@ -2174,7 +2169,7 @@ next_error_position = packet_pos - 10'd4;
                 HEADER_NLEN : if (!number_name_ok) fail (REASON_DESCRIPTION);
                 else begin
                     next_data_name_len = number[6:0];
-                    next_data_name_addr = header_pointer + 6;
+                    next_data_name_addr = header_pointer + 12'd6;
                     get_number (2, header_pointer + 6 + ((number + 1) & EVEN_MASK), 2, HEADER_PLEN);
                 end
 

@@ -91,6 +91,7 @@ module afdx_rx_parse #(
     reg [7:0] high_byte, sn;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
     reg [RX_RING_AW:0] space_limit;
+    wire [(RX_RING_AW > 15 ? RX_RING_AW : 15):0] space_limit_value = CAPACITY - n;
     // 长度是否超过整环容量提前登记；占用量仍按首个用户字节提交拍的读指针判断。
     (* preserve = 1, dont_merge = 1 *) reg fits_q;
     reg [15:0] last_data;
@@ -119,7 +120,6 @@ module afdx_rx_parse #(
     // FIN_REPORT：报告错误或提交完整帧信息，然后转 FIN_WAIT。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
-    reg [15:0] arrival;
     reg [RX_RING_AW + 82:0] end_desc;
 
     // 先登记本拍校验字，再累加；帧尾检查直接使用累加值的补码关系。
@@ -214,7 +214,6 @@ module afdx_rx_parse #(
             end_bad <= 0;
             end_overflow <= 0;
             end_alloc <= 0;
-            arrival <= 0;
             end_desc <= 0;
         end
         else begin
@@ -249,7 +248,7 @@ module afdx_rx_parse #(
                     last_data <= n + HEADER_LENGTH - 16'd1;
                     sn_position <= n < MIN_PAYLOAD ? MIN_SN_POSITION : n + HEADER_LENGTH;
                     expected_len <= n < MIN_PAYLOAD ? MIN_FRAME_LENGTH : n + FRAME_OVERHEAD;
-                    space_limit <= CAPACITY - n;
+                    space_limit <= space_limit_value[RX_RING_AW:0];
                     fits_q <= n <= CAPACITY;
                     length_phase <= LEN_WAIT;
                 end
@@ -339,7 +338,6 @@ module afdx_rx_parse #(
             // 帧信息还包含用户数据长度、缓存起点和到达时间。
             if (f_end && allowed) begin
                 err_saved <= f_err;
-                arrival <= now_c;
                 end_overflow <= overflow;
                 end_alloc <= has_payload;
                 end_bad <= header_bad || ! n_ok || !ip_checksum_good || ip_len != ip_expected

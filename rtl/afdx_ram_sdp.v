@@ -34,7 +34,7 @@ module afdx_ram_sdp #(
     output reg [WIDTH - 1:0] read_data;
 
     // memory 保存数据，独立的读写过程用于推断片内存储器。
-    reg [WIDTH - 1:0] memory[0:DEPTH - 1];
+    (* ramstyle = "no_rw_check" *) reg [WIDTH - 1:0] memory[0:DEPTH - 1];
 
     always @(posedge clk) if (write_enable) memory[write_address] <= write_data;
 
