@@ -1,12 +1,12 @@
 # AFDX 端系统补充数据
 
-当前参考输出、五线终验与资源时序对应 2026-10-25 的 t54 提交 `c68fac81`（RTL 与约束同 t51 候选 `19d205ce`）；时延细分采用同源 S2d 实测。
+当前参考输出、五线终验与资源时序对应 2026-10-26 的 T57 `f1393d44`（master 合并 `8ef6f0cd`）；时延细分采用2026-10-24 S2d `9b277556` 历史实测。
 
 本轮回归、评委、资源和布线后全量时序按当前证据更新；历史异常注入与独立实验保留原日期和原始数字，旧源码行号只作为归档定位。汇总见 [sim/reference](../sim/reference/)，测量边界见 [事实清单](FACTS.md)；证据摘要见 [manifest.json](evidence/manifest.json)。
 
 ## 逐项回归与评委入口
 
-下表采用 2026-10-25 t54 的本次 CE2 覆盖率终验计数，按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](../sim/reference/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
+下表采用 2026-10-26 T57 的本次 CE2 覆盖率终验计数，按 [sim/tests.txt](../sim/tests.txt) 排列；说明来自各测试平台开头的注释，数字取 [regression.json](../sim/reference/regression.json) 的 `Runs[].Checks/CheckItems/Status`。独立项为“—”表示该汇总没有单独项数，不能据此断言没有独立检查。
 
 | 测试名及非默认参数 | 测什么 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---|---|---|
@@ -50,7 +50,7 @@
 | [tb_elinx](../tb/tb_elinx.v) | 由界面入口运行双端双网互发，核对字节、端口和去重。 | 9238 | — | PASS |
 | [tb_sys_perf_var](../tb/tb_sys_perf_var.v) | 变长帧、多虚拟链路并发、吞吐与分段时延检查。 | 1402134376 | 1573773 | PASS |
 
-本轮 t54 的 CE2 纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge_result.txt)。CE1 回归 39/39 通过、评委 8/8 通过；CE2 回归 39/39 通过、评委 8/8 通过；CE2 覆盖率回归 39/39，产出 39 个 UCDB。
+本轮 T57 的 CE2 纯 ModelSim 入口记录见 [judge_result.txt](../sim/reference/judge_result.txt)。CE1/CE2 回归均 39/39 通过；CE2 覆盖率回归 39/39，产出 39 个 UCDB；CE2 评委入口 8/8 通过。
 
 | 入口用例 | 测试平台与目的 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---|---|---|
@@ -69,32 +69,32 @@
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
-| 语句 | 6985 / 7090 | 98.51% |
-| 分支 | 3855 / 3999 | 96.39% |
-| 条件 | 610 / 717 | 85.07% |
-| 表达式 | 1746 / 1977 | 88.31% |
+| 语句 | 6973 / 7076 | 98.54% |
+| 分支 | 3850 / 3987 | 96.56% |
+| 条件 | 618 / 725 | 85.24% |
+| 表达式 | 1708 / 1940 | 88.04% |
 | 状态机，含状态和转换 | 248 / 418 | 59.33% |
 | 状态 | 110 / 110 | 100.00% |
 | 转换 | 138 / 308 | 44.80% |
-| 翻转 | 41386 / 53744 | 77.00% |
+| 翻转 | 41408 / 53786 | 76.98% |
 
 逐模块数字和原始报告见 `sim/reference/coverage/`；未覆盖项保持原统计范围，不沿用旧版源码行号或未重新核对的原因说明。
 
 ## 综合资源占比与模块分工
 
-当前官方综合用量见下表及本轮 `t54_timing.json`；归档界面报告仍保留于 [gui_resources.rpt](evidence/gui_resources.rpt)；EQ6HL130/CSG484_H 的器件总量取 [device_capacity.rpt](evidence/device_capacity.rpt) 各行斜线后的数。这里只借用器件容量，不把其中的布局后用量混进综合结果。比例按“综合用量 ÷ 总量”计算，四舍五入到小数点后两位。
+当前官方综合用量见下表及本轮 `t57_timing.json`；T57 界面资源报告见 [gui_resources.rpt](evidence/gui_resources.rpt)；EQ6HL130/CSG484_H 的器件总量取 [device_capacity.rpt](evidence/device_capacity.rpt) 各行斜线后的数。这里只借用器件容量，不把其中的布局后用量混进综合结果。比例按“综合用量 ÷ 总量”计算，四舍五入到小数点后两位。
 
 | 资源 | 当前官方综合用量 | 器件总量 | 占比 |
 |---|---|---|---|
-| 查找表（Lookup Table，LUT） | 34396 | 136160 | 25.26% |
-| 触发器（Flip-Flop，FF） | 17491 | 136160 | 12.85% |
-| 可配置逻辑块（Configurable Logic Block，CLB） | 4546 | 13616 | 33.39% |
+| 查找表（Lookup Table，LUT） | 33799 | 136160 | 24.82% |
+| 触发器（Flip-Flop，FF） | 17086 | 136160 | 12.55% |
+| 可配置逻辑块（Configurable Logic Block，CLB） | 4331 | 13616 | 31.81% |
 | 存储块（Memory） | 366 | 1200 | 30.50% |
 | 数字信号处理单元（Digital Signal Processing，DSP） | 0 | 48 | 0.00% |
 | 锁相环（Phase-Locked Loop，PLL） | 0 | 8 | 0.00% |
-| 用户引脚 | 259 | 339 | 76.40% |
+| 用户引脚 | 257 | 339 | 75.81% |
 
-以下分模块数据是 2026-10-15 归档，模块边界与当前 24 个 RTL 模块不同，不作为本轮分模块资源。数据取 [gui_hierarchy.rpt](evidence/gui_hierarchy.rpt) 的 `Resource Utilization by Entity` 表（第 366–458 行）。同类模块的实例合并，数字包含子模块，父子行不可相加。存储单位是有效位数，不是物理块数；存储器包装模块的数已包含在调用它的模块中。
+以下分模块数据是 2026-10-15 归档，模块边界与当前 24 个 RTL 模块不同，不作为本轮分模块资源。数据取 [历史层次报告](evidence/history/gui_hierarchy_20261015.rpt) 的 `Resource Utilization by Entity` 表（第 366–458 行）。同类模块的实例合并，数字包含子模块，父子行不可相加。存储单位是有效位数，不是物理块数；存储器包装模块的数已包含在调用它的模块中。
 “逻辑单元”含仅使用寄存器的单元；“功能 LUT”由 `LUT-Only LCs + LUT/Register LCs` 计算。它与工具总体 `Total LUTs` 的统计口径不同。
 
 | 模块类型 | 实例数 | 逻辑单元 | 功能 LUT | FF | 存储位数 |
@@ -125,7 +125,7 @@
 
 ## 各工况的时延细分
 
-2026-10-24、S2d 源码 `9b277556` 的完整窗口实测见 [perf_r97.json](evidence/perf_r97.json) 的 `main_table`。本次 CE2 Python 与正式 Tcl 的 17592 字段、20 个窗口组合逐字段及逐字节一致，差异为 0；两项性能测试分别通过 756655316、1402134376 项自检，错误均为 0。完整 CE2 回归 39/39、正式评委 8/8 通过；上方逐项表已更新为本次 t54 计数。定义见[事实清单](FACTS.md#时延与抖动定义)；所有时延及极差单位为 µs，吞吐为 Mbps。首/末分别为应用交付首/末字节，L_app 包含链路。各列最大值可来自不同帧；逐帧才满足分段加和。
+2026-10-24、S2d 源码 `9b277556` 的完整窗口实测见 [perf_r97.json](evidence/perf_r97.json) 的 `main_table`。本次 CE2 Python 与正式 Tcl 的 17592 字段、20 个窗口组合逐字段及逐字节一致，差异为 0；两项性能测试分别通过 756655316、1402134376 项自检，错误均为 0。完整 CE2 回归 39/39、正式评委 8/8 通过；上方逐项表已更新为本次 T57 计数。定义见[事实清单](FACTS.md#时延与抖动定义)；所有时延及极差单位为 µs，吞吐为 Mbps。首/末分别为应用交付首/末字节，L_app 包含链路。各列最大值可来自不同帧；逐帧才满足分段加和。
 
 | 工况 | 方向 | 吞吐 | L_gmii | L_tx | L_rx首/末 | L_app首/末 | J_app（VL:min帧→max帧） | J_gmii | 发送间隔偏差 |
 |---|---|---:|---:|---:|---|---|---|---:|---:|
@@ -169,42 +169,45 @@ A/B两网、逐载荷长度及各口径极差见 `证据/perf_r97.json:grouped_m
 
 | 流程 | 模块与路径起点 → 终点 | 逻辑级数 | 逻辑延迟（ns） | 建立裕量（ns） |
 |---|---|---|---|---|
-| 官方综合 | `\afdx_615a:loader\|afdx_ram_sdp:load_ram\|altsyncram:memory_rtl_0\|altsyncram_h8c1:auto_generated\|altsyncram:ram_block1a0\|altsyncram_2c63:auto_generated\|ram_block1a10~I\|port_b_address_dff[0]/Q` → `\afdx_615a:loader\|afdx_ram_sdp:load_ram\|read_data[2]~I\|ff/D` | 2 | 3.097 | +4.159 |
+| 官方综合 | `\afdx_615a:loader\|afdx_ram_sdp:denial_ram\|altsyncram:memory_rtl_0\|altsyncram_1bd1:auto_generated\|ram_block1a0~I\|port_b_address_dff[0]/Q` → `\afdx_615a:loader\|afdx_mgmt_tx:sender\|bytes_rtl_0_bypass[7]~I\|ff/D` | 2 | 3.108 | +4.148 |
 
 ### 本轮布线后全量时序
 
+setup +0.011 ns（含 0.30 ns 不确定度；按 8 ns 为 +0.311 ns），hold +0.229 ns。8 ns 路径数沿用原单周期组口径，最差路径总延时 7.519 ns、5 级、扇出 16。
+
 | 项目 | 当前官方结果 |
 |---|---|
-| 查找表（LUT） | 34396 |
-| 触发器（FF） | 17491 |
-| 可配置逻辑块（CLB） | 4546 |
-| 存储器（Memory） | 366 |
-| 用户引脚 | 259 |
-| 综合后建立裕量／保持裕量 | +4.159 / -0.068 ns |
+| 查找表（LUT） | 33799 / 136160（24.82%） |
+| 触发器（FF） | 17086 / 136160（12.55%） |
+| 可配置逻辑块（CLB） | 4331 / 13616（31.81%） |
+| 存储器（Memory） | 366 / 1200（30.50%） |
+| 用户引脚 | 257 / 339（75.81%） |
+| DSP / PLL | 0 / 0 |
+| 综合后建立裕量／保持裕量 | +4.148 / -0.068 ns |
 | 综合后最高频率估算 | 不显示（设 0.30 ns 时钟不确定度） |
-| 布线后建立裕量／保持裕量 | +0.024 / +0.229 ns |
+| 布线后建立裕量／保持裕量 | +0.011 / +0.229 ns |
 | 布线后最高频率估算 | 不显示（设 0.30 ns 时钟不确定度） |
-| 布线后 setup 失败端点 | 0 / 45792 |
-| 8 ns 路径数／最差 setup | 153463 / +0.024 ns |
-| 16 ns 路径数／最差 setup | 50296 / +0.701 ns |
-| 同沿 hold 路径数 | 203759 |
+| 布线后 setup / hold 失败端点 | 0 / 46325；0 / 46325 |
+| 8 ns 单周期路径数／最差 setup | 147349 / +0.011 ns |
+| 16 ns 路径数／最差 setup | 50296 / +1.580 ns |
+| 同沿 hold 路径数 | 197645 |
 
 最差十条真实路径：
 
 | 起点 → 终点 | 级数 | 逻辑 ns | 连线 ns | setup ns |
 |---|---|---|---|---|
-| `\rx_core\|parse_a\|committed[0]~I\|ff/Q` → `\rx_core\|parse_a\|overflow~I\|ff/D` | 4 | 2.755 | 4.846 | +0.024 |
-| `\tx_core\|init_done~2_I\|ff/Q` → `\cfg_regs\|tx_cfg_ok_q~I\|ff/D` | 2 | 1.132 | 6.460 | +0.033 |
-| `\rx_core\|parse_b\|position[5]~I\|ff/Q` → `\rx_core\|parse_b\|has_payload~I\|ff/D` | 5 | 2.103 | 5.432 | +0.090 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_wdata[10]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_addr[5]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_addr[6]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_wdata[0]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_wdata[11]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_wdata[12]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
-| `\cfg_regs\|tx_ready_q~I\|ff/Q` → `\cfg_regs\|tx_cfg_wdata[13]~I\|ff/ena` | 3 | 1.320 | 6.116 | +0.094 |
+| `\rx_core\|parse_b\|position[7]~I\|ff/Q` → `\rx_core\|parse_b\|vlid[6]~I\|ff/ena` | 5 | 2.020 | 5.499 | +0.011 |
+| `\rx_core\|parse_b\|position[7]~I\|ff/Q` → `\rx_core\|parse_b\|vlid[7]~I\|ff/ena` | 5 | 2.020 | 5.499 | +0.011 |
+| `\rx_core\|parse_b\|position[7]~I\|ff/Q` → `\rx_core\|parse_b\|vlid[8]~I\|ff/ena` | 5 | 2.020 | 5.499 | +0.011 |
+| `\rx_core\|parse_b\|position[7]~I\|ff/Q` → `\rx_core\|parse_b\|vlid[9]~I\|ff/ena` | 5 | 2.020 | 5.499 | +0.011 |
+| `\rx_core\|init_done~I\|ff/Q` → `\rx_core\|engine\|op_idx[1]~I\|ff/D` | 3 | 1.403 | 6.203 | +0.019 |
+| `\rx_core\|init_done~I\|ff/Q` → `\rx_core\|engine\|state_ra[1]~I\|ff/D` | 3 | 1.403 | 6.203 | +0.019 |
+| `\rtc\|correction_ns_calc[2]~I\|ff/Q` → `\rtc\|adjusted_ns[25]~I\|ff/D` | 3 | 2.341 | 5.259 | +0.025 |
+| `\rtc\|correction_ns_calc[1]~I\|ff/Q` → `\rtc\|adjusted_ns[25]~I\|ff/D` | 3 | 2.391 | 5.199 | +0.035 |
+| `\rx_core\|deliver\|d_data[0]~I\|ff/Q` → `\rtc\|local_receive.data_stage[0]~I\|ff/D` | 1 | 0.773 | 6.810 | +0.042 |
+| `\rtc\|correction_ns_calc[2]~I\|ff/Q` → `\rtc\|adjusted_ns[26]~I\|ff/D` | 3 | 2.321 | 5.259 | +0.045 |
 
-冻结版 `83e5d5e8` 时网表对照的原始记录保留为历史对照；本轮 t54 官方 VQM 与同次 RTL 在 `tb_net_services` 中均通过 1124 项自检，错误均为 0；网表独立检查 65 项、错误 0，同激励 RTL 独立检查 59 项，网表另含 6 项精确记录对照；七份外部记录逐字节一致。网表仿真 7973.093 秒，同激励 RTL 15.516 秒；网表 SHA-256 与本次官方综合的 VQM 一致。
+冻结版 `83e5d5e8` 时网表对照的原始记录保留为历史对照；T57 官方 VQM 与同次 RTL 在 `tb_net_services` 中均通过 1124 项自检、0 错误；网表独立检查 65 项、同激励 RTL 独立检查 59 项，均 0 错误，七份外部记录逐字节一致。网表验证入口总耗时 7991.843 秒（含同激励 RTL、编译和独立检查），来源为 `docs/evidence/t57_timing.json` 的 `terminal_results.netlist`。
 
 ## 设计默认参数
 
@@ -237,9 +240,9 @@ A/B两网、逐载荷长度及各口径极差见 `证据/perf_r97.json:grouped_m
 
 | 目录 | 文件数 | 物理行数 |
 |---|---|---|
-| `rtl/` | 24 | 12568 |
-| `tb/` | 55 | 4287 |
-| `tools/` | 27 | 5346 |
+| `rtl/` | 24 | 12630 |
+| `tb/` | 55 | 4296 |
+| `tools/` | 28 | 5466 |
 | `sim/` | 21 | 3591 |
 
 ```powershell
