@@ -171,7 +171,7 @@ proc judge_perf::measure {folder} {
             if {[regexp {^P [0-9]+ (\S+)$} $line all label]} {set stage $label}
             if {$stage ni $phases} {continue}
             # M rows end with two T59 fields: first-valid cycle and longest stall run.
-            if {[regexp {^M ([0-9]+) ([0-9]+) ([0-9]+) [0-9]+ [0-9a-f]+ [0-9a-f]+ ([0-9a-f]+)(?: [0-9-]+ [0-9]+)?$} $line all cycle vl n data]} {
+            if {[regexp {^M ([0-9]+) ([0-9]+) ([0-9]+) [0-9]+ [0-9a-f]+ [0-9a-f]+ ([0-9a-f]+)(?: [0-9-]+ [0-9]+(?: [0-9]+ [0-9]+)?)?$} $line all cycle vl n data]} {
                 require [expr {$vl<77 && $n==1471 && [string length $data]==$n*2}] "invalid application message"
                 lappend messages($es,$stage,$vl) [list $cycle $n $data]
             }
@@ -197,7 +197,7 @@ proc judge_perf::measure {folder} {
             if {[regexp {^P [0-9]+ (\S+)$} $line all label]} {set stage $label}
             if {$stage ni $phases} {continue}
             if {[regexp {^E [0-9]+ [ab]_(fcs|len|hdr|unk|cfg|ic|ovf|gdrop)$} $line]} {error "Performance check: receive error"}
-            if {![regexp {^D ([0-9]+) [AB] ([0-9]+) [0-9a-f]+ [0-9a-f]+ ([0-9]+) ([0-9a-f]+)$} $line all cycle vl n data]} {continue}
+            if {![regexp {^D ([0-9]+) [AB] ([0-9]+) [0-9a-f]+ [0-9a-f]+ ([0-9]+) ([0-9a-f]+)(?: [0-9]+ [0-9]+)?$} $line all cycle vl n data]} {continue}
             set key $es,$stage,$vl
             require [info exists messages($key)] "unexpected delivered virtual link"
             set index $delivered($key)
@@ -221,7 +221,7 @@ proc judge_perf::measure {folder} {
         foreach net {A B} {
             set fh [open [file join $folder es${es}_gmii_tx dump_[string tolower $net].txt] r]
             while {[gets $fh line]>=0} {
-                require [regexp {^[AB] ([0-9]+) ([0-9]+) ([0-9a-f]+)$} $line all cycle n data] "malformed wire record"
+                require [regexp {^[AB] ([0-9]+) ([0-9]+) ([0-9a-f]+)(?: [0-9]+ [0-9]+)?$} $line all cycle n data] "malformed wire record"
                 set stage ""
                 foreach candidate $phases {if {$cycle >= $start($candidate) && $cycle < $stop($candidate)} {set stage $candidate}}
                 if {$stage eq ""} {continue}

@@ -109,7 +109,7 @@ module sys_endpoint #(
     integer pending_tx=0,outstanding=0,last_message=0,last_outcome=-1,low_run=0;
     integer message_len=0,message_vl=0,message_pen=0,message_sp=0,message_dp=0,outcome_vl=0;
     // R119：应用发送口首次 valid 为高的拍与消息内最长反压连拍，随 M 行附在最后。
-    integer message_start=0,stall_run=0,stall_max=0;
+    integer message_start=0,stall_run=0,stall_max=0,message_input_end=0,message_stalls=0;
     reg m_seen=0;
     integer delivery_len=0,delivery_start=0;
     reg [11:0] delivery_vl;
@@ -311,6 +311,8 @@ module sys_endpoint #(
             if(dut.core_valid && dut.core_ready)begin
                 quiet_since=cycle;
                 if(message_len==0)begin
+                    message_input_end=DIRECT_CORE?cycle:dut.current_source_last;message_stalls=DIRECT_CORE?0:dut.current_stalls;
+                    if(!DIRECT_CORE)stall_max=dut.current_maxstall;
                     message_vl=dut.core_vl;message_pen=m_port_en;message_sp=m_sport;message_dp=m_dport;
                 end
                 check(message_len<8192,"message capture capacity");
@@ -320,7 +322,10 @@ module sys_endpoint #(
                     check(!outstanding && cycle>last_outcome,"one result before next message end");
                     if(CAPTURE_CORE)$fwrite(tf,"M %0d %0d %0d %0d %04x %04x ",cycle,message_vl,message_len,message_pen,message_sp[15:0],message_dp[15:0]);
                     for(k=0;k<message_len && k<8192;k=k+1)if(CAPTURE_CORE)$fwrite(tf,"%02x",message_bytes[k]);
-                    if(CAPTURE_CORE)$fwrite(tf," %0d %0d\n",message_start,stall_max);
+                    if(CAPTURE_CORE)begin
+                        if(DIRECT_CORE)$fwrite(tf," %0d %0d\n",message_start,stall_max);
+                        else $fwrite(tf," %0d %0d %0d %0d\n",message_start,stall_max,message_input_end,message_stalls);
+                    end
                     outcome_vl=message_vl;
                     message_len=0;outstanding=1;last_message=cycle;
                 end
@@ -353,7 +358,8 @@ module sys_endpoint #(
                 if(d_last)begin
                     $fwrite(rf,"D %0d %s %0d %04x %04x %0d ",delivery_start,delivery_net ? "B" : "A",delivery_vl,delivery_sp,delivery_dp,delivery_len);
                     for(k=0;k<delivery_len && k<4096;k=k+1)$fwrite(rf,"%02x",delivered_bytes[k]);
-                    $fwrite(rf,"\n");
+                    if(DIRECT_CORE)$fwrite(rf,"\n");
+                    else $fwrite(rf," %0d %0d\n",dut.receive_first,dut.receive_last);
                     delivery_active=0;delivery_len=0;
                 end
             end
@@ -481,6 +487,12 @@ module sys_endpoint #(
             end
             m_valid=0;m_last=0;
         end
+    endtask
+
+    // 原始 VLID 两字节由测试流适配直接送入顶层，不在这里转换为发送序号。
+    task send_vlid_at;
+        input integer due,id,n,offset;
+        begin raw_mode=1;raw_vlid=id;send_at(due,0,n,offset);raw_mode=0;end
     endtask
 
     task stage;

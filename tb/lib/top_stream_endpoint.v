@@ -41,7 +41,7 @@ module top_stream_endpoint #(
     integer cycle=0,source_first=0,source_last=0,receive_first=0,receive_last=0;
     integer backpressure=0,backpressure_max=0,stall=0;
     wire core_valid,core_ready,core_last;
-    wire [31:0] current_source_first;
+    wire [31:0] current_source_first,current_source_last,current_stalls,current_maxstall;
     wire input_empty;
     wire [7:0] core_data;
     wire [6:0] core_vl;
@@ -60,7 +60,7 @@ module top_stream_endpoint #(
             .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
             .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver));
         assign initialized=tx_ready;
-        assign current_source_first=cycle;assign input_empty=1;
+        assign current_source_first=cycle;assign current_source_last=cycle;assign current_stalls=0;assign current_maxstall=0;assign input_empty=1;
         assign core_valid=app_tx_valid;assign core_ready=app_tx_ready;assign core_last=app_tx_last;assign core_data=app_tx_data;assign core_vl=app_tx_vl;
         assign core_dvalid=app_rx_valid;assign core_dlast=app_rx_last;assign core_ddata=app_rx_data;assign core_dvl=app_rx_vl;
         assign core_dsp=app_rx_sport;assign core_ddp=app_rx_port;assign core_dnet=app_rx_net;
@@ -94,10 +94,15 @@ module top_stream_endpoint #(
         reg [15:0] id;
         reg previous_tv=0,previous_rv=0;
         integer rx_pos=0,source_write=0,core_read=0;
-        integer firsts[0:63];
+        integer firsts[0:63],lasts[0:63],stalls[0:63],maxstalls[0:63];
+        integer pending_stall=0,pending_max=0;
         assign current_source_first=firsts[core_read%64];
+        assign current_source_last=lasts[core_read%64];assign current_stalls=stalls[core_read%64];assign current_maxstall=maxstalls[core_read%64];
         assign input_empty=source_write==core_read;
         reg [15:0] receive_id;
+        integer gmii_pos=0;reg gmii_previous=0;
+        reg [15:0] gmii_id,gmii_sp,gmii_dp;
+        reg [31:0] wire_ports[0:65535];
         reg [7:0] previous_data;
         reg d_valid=0,d_last=0;
         reg [7:0] d_data=0;
@@ -128,13 +133,24 @@ module top_stream_endpoint #(
                     4:tx_state<=0;
                 endcase
                 if(app_tx_valid && tx_state==0 && !stream_ready)begin
-                    backpressure=backpressure+1;stall=stall+1;if(stall>backpressure_max)backpressure_max=stall;
+                    backpressure=backpressure+1;pending_stall=pending_stall+1;stall=stall+1;if(stall>backpressure_max)backpressure_max=stall;if(stall>pending_max)pending_max=stall;
                 end else stall=0;
-                if(stream_tv && !previous_tv)begin source_first=cycle;firsts[source_write%64]=cycle;source_write=source_write+1;end
+                if(stream_tv && !previous_tv)begin source_first=cycle;firsts[source_write%64]=cycle;stalls[source_write%64]=pending_stall;maxstalls[source_write%64]=pending_max;pending_stall=0;pending_max=0;source_write=source_write+1;end
                 if(core_valid && core_ready && core_last)core_read<=core_read+1;
-                if(stream_tv)source_last=cycle;
+                if(stream_tv)begin source_last=cycle;lasts[(source_write-1)%64]=cycle;end
                 previous_tv=stream_tv;
                 if(|ev_app)$display("** Error: [APP_DROP] events=%b",ev_app);
+                if(rx_valid)begin
+                    if(!gmii_previous)gmii_pos=0;
+                    case(gmii_pos)
+                        12:gmii_id[15:8]=rx_data;13:gmii_id[7:0]=rx_data;
+                        42:gmii_sp[15:8]=rx_data;43:gmii_sp[7:0]=rx_data;
+                        44:gmii_dp[15:8]=rx_data;
+                        45:begin gmii_dp[7:0]=rx_data;wire_ports[gmii_id]={gmii_sp,gmii_dp};end
+                    endcase
+                    gmii_pos=gmii_pos+1;
+                end
+                gmii_previous=rx_valid;
                 if(core_dvalid)begin
                     if(!receiving_core)begin metadata[mw%64]={core_dnet,core_dvl,core_dsp,core_ddp};mw=mw+1;end
                     receiving_core=!core_dlast;
@@ -150,7 +166,12 @@ module top_stream_endpoint #(
 `endif
                     end
                     if(rx_pos==0)receive_id[15:8]=stream_rx;
-                    if(rx_pos==1)begin receive_id[7:0]=stream_rx;d_index<=indices[receive_id];end
+                    if(rx_pos==1)begin
+                        receive_id[7:0]=stream_rx;d_index<=indices[receive_id];
+`ifdef SYS_TOP_NETLIST
+                        {d_sp,d_dp}<=wire_ports[receive_id];d_net<=0;
+`endif
+                    end
                     rx_pos=rx_pos+1;receive_last=cycle;
                 end else if(previous_rv)rx_pos=0;
                 previous_rv=stream_rv;previous_data=stream_rx;

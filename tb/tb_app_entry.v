@@ -21,7 +21,9 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
     integer due[0:MAX_MESSAGES-1],wl[0:MAX_MESSAGES-1];
     integer blen[0:MAX_MESSAGES-1],boff[0:MAX_MESSAGES-1];
     integer messages=0,win_begin=0,win_end=0;
-    integer i,es,addr,value,cfg_count=0;
+    integer i,es,addr,value,cfg_count=0,epoch=0,vlid,bag,lmax,sport,dport,vi=0;
+    integer wire_fd,wire_n=0,wire_start=0,wire_last=0,wj;
+    reg wire_previous=0;reg [7:0] wire_bytes[0:1472];
     reg [8*40-1:0] command;
     task tick;begin @(posedge clk);#2;end endtask
     task check;input ok;input [8*100-1:0] label;
@@ -38,10 +40,24 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
                 errors+e1+e2+l0e+l1e+l2e+l3e+1);$finish;
         end
     end
+    // rx.txt 直接记录 ES2 新顶层输出，VLID 来自头两字节，不由配置表重建。
+    always @(posedge clk)if(!reset2)begin
+        if(es2.dut.stream_rv)begin
+            if(!wire_previous)begin wire_n=0;wire_start=cycle;end
+            if(wire_n<1473)wire_bytes[wire_n]=es2.dut.stream_rx;
+            wire_n=wire_n+1;wire_last=cycle;
+        end else if(wire_previous)begin
+            $fwrite(wire_fd,"%0d %0d %02x%02x ",wire_start,wire_last,wire_bytes[0],wire_bytes[1]);
+            for(wj=2;wj<wire_n;wj=wj+1)$fwrite(wire_fd,"%02x",wire_bytes[wj]);
+            $fwrite(wire_fd,"\n");$fflush(wire_fd);
+        end
+        wire_previous=es2.dut.stream_rv;
+    end
     initial begin
         sf=$fopen("sys_events.txt","w");
         if(!sf)begin $display("[APP_FAIL] cannot open sys_events.txt");$finish;end
-        cf=$fopen("vectors/app_config.txt","r");
+        wire_fd=$fopen("rx.txt","w");
+        cf=$fopen("vectors/vl_config.txt","r");
         if(!cf)begin $display("[APP_FAIL] cannot open app_config.txt");$finish;end
         pf=$fopen("vectors/app_schedule.txt","r");
         if(!pf)begin $display("[APP_FAIL] cannot open app_schedule.txt");$finish;end
@@ -50,7 +66,7 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
         for(i=0;i<messages;i=i+1)begin
             rc=$fscanf(pf,"%d %d %d %d",due[i],wl[i],blen[i],boff[i]);
             check(rc==4,"schedule row");
-            check(blen[i]>=1 && blen[i]<=1471 && wl[i]>=0 && wl[i]<128,"schedule bounds");
+            check(blen[i]>=1 && blen[i]<=1471 && wl[i]>=0 && wl[i]<65536,"schedule bounds");
         end
         $fclose(pf);
         pf=$fopen("vectors/app_window.txt","r");
@@ -67,18 +83,27 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
         while(!ready1||!ready2)tick;repeat(64)tick;
         es1.stage("app");es2.stage("app");
         while(!$feof(cf))begin
-            command=0;rc=$fscanf(cf,"%s %d %h %h",command,es,addr,value);
-            if(rc==4)begin
-                cfg_count=cfg_count+1;
-                check(es==1||es==2,"config endpoint");
-                if(es==1)es1.write_cfg(addr,value,0);else es2.write_cfg(addr,value,0);
-            end
+            rc=$fscanf(cf,"%h %d %d %d %d",vlid,bag,lmax,sport,dport);
+            if(rc==5)begin
+                es1.write_cfg(18'h1000+vi*8,lmax*512+63*8+7,0);
+                es1.write_cfg(18'h1001+vi*8,bag*125,0);
+                es1.write_cfg(18'h1002+vi*8,vlid,0);
+                es1.write_cfg(18'h1003+vi*8,32'h0a000101+vi,0);
+                es1.write_cfg(18'h1004+vi*8,32'he0e00000|vlid,0);
+                es1.write_cfg(18'h1005+vi*8,(sport<<16)|dport,0);
+                es2.write_cfg(18'h10000+vlid,4096+vi,0);
+                es2.write_cfg(18'h20000+vi,lmax*131072+20*32+31,0);
+                vi=vi+1;cfg_count=cfg_count+8;
+            end else rc=$fgets(command,cf);
         end
         $fclose(cf);
         check(cfg_count>0,"configuration rows present");
+        epoch=cycle+16;win_begin=win_begin+epoch;win_end=win_end+epoch;
+        $fwrite(sf,"G %0d OFFER_VLID 1\nG %0d STIMULUS_EPOCH %0d\n",cycle,cycle,epoch);
         for(i=0;i<messages;i=i+1)begin
+            due[i]=due[i]+epoch;
             $fwrite(sf,"O %0d %0d %0d %0d %0d\n",cycle,1,wl[i],blen[i],due[i]);
-            es1.send_at(due[i],wl[i],blen[i],boff[i]);
+            es1.send_vlid_at(due[i],wl[i],blen[i],boff[i]);
         end
         es1.wait_idle;es2.wait_idle;
         while(l0.next_regular<=l0.frame_count || l1.next_regular<=l1.frame_count ||

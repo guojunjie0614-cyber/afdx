@@ -70,11 +70,12 @@ proc r97::stats_len {samples} {
 }
 proc r97::measure {folder {stages {}}} {
     set marks {}; set windows {}; set finalcycle 0
-    set releases {}; set release_stage ""
+    set releases {}; set release_stage "";set offer_vlid 0
     foreach row [rows [file join $folder sys_events.txt]] {
         set kind [lindex $row 0]; set cycle [lindex $row 1]
         if {[string is integer -strict $cycle]} {set finalcycle [expr {max($finalcycle,$cycle)}]}
         if {$kind eq "P"} {set release_stage [lindex $row 2]; lappend marks [list $cycle $release_stage]}
+        if {$kind eq "G" && [lindex $row 2] eq "OFFER_VLID"} {set offer_vlid 1}
         if {$kind eq "O"} {
             lassign $row kind actual source vl size planned
             dict lappend releases $release_stage,$source,$vl [list $size $planned]
@@ -104,14 +105,17 @@ proc r97::measure {folder {stages {}}} {
             }
             if {$kind ne "M"} {continue}
             incr id
-            lassign $row kind cycle vl n pen sport dport payload first maxrun
+            lassign $row kind cycle vl n pen sport dport payload first maxrun input_end input_stalls
+            set stream [expr {$input_end ne ""}];if {$stream} {set cycle $input_end}
             # 旧记录没有首字节拍，按连续握手回退；新记录由端系统模型附加。
             if {$first eq "" || ![string is integer -strict $first]} {set first [expr {$cycle-$n+1}]}
             if {$maxrun eq "" || ![string is integer -strict $maxrun]} {set maxrun 0}
             require [expr {[string length $payload]==2*$n}] "M payload length ES$es frame$id"
             # Legacy records without O use M as release; no existing metric changes.
             # Variable cases use the host-queue planned release, not actual dispatch.
-            set release $cycle; set planned 0; set release_key $stage,$es,$vl
+            set release $cycle; set planned 0;set offervl $vl
+            if {$offer_vlid} {dict for {raw index} [dict get $tx_vlids $es] {if {$index==$vl} {set offervl $raw;break}}}
+            set release_key $stage,$es,$offervl
             if {[dict exists $releases $release_key]} {
                 set ri 0; if {[dict exists $release_counts $release_key]} {set ri [dict get $release_counts $release_key]}
                 require [expr {$ri<[llength [dict get $releases $release_key]]}] "missing planned release $release_key"
@@ -120,7 +124,7 @@ proc r97::measure {folder {stages {}}} {
                 dict incr release_counts $release_key; set planned 1
             } elseif {[string match var_* $stage]} {error "R97: missing O record $release_key"}
             dict set messages $es $id [dict create cycle $cycle vl $vl n $n payload $payload stage $stage \
-                release $release planned $planned first $first maxrun $maxrun]
+                release $release planned $planned first $first maxrun $maxrun stream $stream stalls [expr {$stream?$input_stalls:max(0,$cycle-$first+1-$n)}]]
             dict lappend queues $es,$vl $id
             if {$stage in $wanted} {dict set lengths $stage $n 1}
         }
@@ -135,7 +139,8 @@ proc r97::measure {folder {stages {}}} {
                 error "R97: receive error ES$destination at $cycle"
             }
             if {$kind ne "D"} {continue}
-            lassign $row kind cycle net vl sport dport n payload
+            lassign $row kind cycle net vl sport dport n payload wire_first wire_last
+            set header [expr {$wire_first ne "" ? 2 : 0}];if {$header} {set cycle [expr {$wire_first+2}]}
             set key $es,$vl; set index 0
             if {[dict exists $count $key]} {set index [dict get $count $key]}
             require [dict exists $queues $key] "D unknown VL $key"
@@ -143,7 +148,7 @@ proc r97::measure {folder {stages {}}} {
             set id [lindex [dict get $queues $key] $index]; dict incr count $key
             set m [dict get $messages $es $id]
             require [expr {$n==[dict get $m n] && $payload eq [dict get $m payload]}] "D payload/order ES$es frame$id"
-            dict set arrivals $es,$id [list $cycle $net $n]
+            dict set arrivals $es,$id [list $cycle $net $n $header]
         }
         foreach side {tx rx} {
             set endpoint [expr {$side eq "tx" ? $es : $destination}]
@@ -189,18 +194,18 @@ proc r97::measure {folder {stages {}}} {
                 set cycle [dict get $m cycle]; set vl [dict get $m vl]; set n [dict get $m n]
                 set first [dict get $m first]; set maxrun [dict get $m maxrun]
                 require [dict exists $arrivals $es,$id] "missing D $stage ES$es frame$id"
-                incr delivered; lassign [dict get $arrivals $es,$id] dc winner dn
+                incr delivered; lassign [dict get $arrivals $es,$id] dc winner dn header
                 incr bytes [expr {max(0,min($dc+$dn,$end)-max($dc,$begin))}]
                 set selected [expr {$begin<=$cycle && $cycle<$end}]
                 # R120-1：注入侧按应用口握手拍统计；整条在窗口内直接计载荷，跨界按区间截取。
                 set accept [expr {$cycle-$first+1}]
                 if {$first>=$begin && $cycle<$end} {
                     incr inject $n
-                    incr stalls [expr {max(0,$accept-$n)}]
+                    incr stalls [dict get $m stalls]
                     if {$maxrun>$stallmax} {set stallmax $maxrun}
                     if {[dict get $m planned]} {set l [expr {$first-[dict get $m release]}]; incr lagsamples; if {$l>$lag} {set lag $l}}
                 } elseif {$first<$end && $cycle>=$begin} {
-                    incr inject [expr {min($n,max(0,min($cycle+1,$end)-max($first,$begin)))}]
+                    incr inject [expr {min($n,max(0,min($cycle+1,$end)-max($first+2*[dict get $m stream],$begin)))}]
                 }
                 foreach net {A B} {
                     foreach side {tx rx} {require [dict exists $frames $es,$id,$side,$net] "missing $side/$net ES$es frame$id"}
@@ -217,7 +222,7 @@ proc r97::measure {folder {stages {}}} {
                         dict set values L_app [expr {$dc-$cycle}]; dict set values L_app_last [expr {$dc+$n-1-$cycle}]
                         dict set values L_release_app [expr {$dc-[dict get $m release]}]
                         dict set values L_release_app_last [expr {$dc+$n-1-[dict get $m release]}]
-                        dict set values L_entry_first [expr {$dc-$first}]
+                        dict set values L_entry_first [expr {$dc-$header-$first}]
                         dict set values L_entry_last [expr {$dc+$n-1-$first}]
                     }
                     foreach group [list all $n] {
@@ -392,7 +397,8 @@ proc r97::all_frame_limits {folder marks required} {
                 if {($c_addr & 7)==2} {dict set tx_vlids $c_value [expr {$c_addr>>3}]}
             }
             if {[lindex $row 0] ne "M"} {continue}
-            lassign $row kind cycle vl n pen sport dport payload first maxrun
+            lassign $row kind cycle vl n pen sport dport payload first maxrun input_end input_stalls
+            set stream [expr {$input_end ne ""}];if {$stream} {set cycle $input_end}
             if {$first eq "" || ![string is integer -strict $first]} {set first [expr {$cycle-$n+1}]}
             incr id; dict lappend queues $vl $id
             dict set messages $id [list $cycle [stage_at $marks $cycle] $first $n]
@@ -401,6 +407,7 @@ proc r97::all_frame_limits {folder marks required} {
         foreach row [rows [file join $folder es${destination}_rx events.txt]] {
             if {[lindex $row 0] ne "D"} {continue}
             lassign $row kind cycle net vl
+            if {[llength $row]>9} {set cycle [expr {[lindex $row 8]+2}]}
             set index 0; if {[dict exists $counts $vl]} {set index [dict get $counts $vl]}
             require [dict exists $queues $vl] "all-frame D unknown VL ES$es/$vl"
             require [expr {$index<[llength [dict get $queues $vl]]}] "all-frame extra D ES$es/$vl"
