@@ -327,7 +327,7 @@ module sys_endpoint #(
                     for(k=0;k<message_len && k<8192;k=k+1)if(CAPTURE_CORE)$fwrite(tf,"%02x",message_bytes[k]);
                     if(CAPTURE_CORE)begin
                         if(DIRECT_CORE)$fwrite(tf," %0d %0d\n",message_start,stall_max);
-                        else $fwrite(tf," %0d %0d %0d %0d\n",message_start,stall_max,message_input_end,message_stalls);
+                        else $fwrite(tf," %0d %0d %0d %0d\n",message_start,dut.current_maxstall,message_input_end,message_stalls);
                     end
                     outcome_vl=message_vl;
                     message_len=0;outstanding=outstanding+1;last_message=outcome_end[orr%64];

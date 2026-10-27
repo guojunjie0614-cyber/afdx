@@ -1,7 +1,7 @@
-# ModelSim-only entry for "VLID + application payload" stimulus (T59 W1).
+# ModelSim-only entry for the T60 synthesizable VLID application stream top.
 # Run from the repository root: do sim/run_app.do [stimulus] [vl_config] [run_name]
-# The judge only edits sim/vectors/app/stimulus.txt; register writes and app_tx_vl
-# The testbench reads VL configuration and injects the original VLID bytes. Python is not required.
+# The judge edits stimulus.txt; the testbench reads vl_config.txt and writes cfg.
+# Original VLID bytes are injected without conversion to a transmit index.
 onerror {resume}
 onbreak {}
 
@@ -92,11 +92,9 @@ proc app_entry::write_vectors {folder msgs cfg stimulus} {
     }
     set payload [open [file join $folder vectors sys_payload.hex] w]
     set schedule [open [file join $folder vectors app_schedule.txt] w]
-    set config [open [file join $folder vectors app_config.txt] w]
     set count [open [file join $folder vectors sys_payload.count] w]
     fconfigure $payload -translation crlf -encoding ascii
     fconfigure $schedule -translation crlf -encoding ascii
-    fconfigure $config -translation crlf -encoding ascii
     fconfigure $count -translation crlf -encoding ascii
     set offset 0
     puts $schedule [llength $msgs]
@@ -110,21 +108,6 @@ proc app_entry::write_vectors {folder msgs cfg stimulus} {
     close $payload
     close $schedule
     close $count
-    dict for {index item} [dict get $cfg item] {
-        lassign $item vlid bag lmax sport dport
-        set bag_cycles [expr {int(round($bag*125.0))}]
-        set words [list [expr {($lmax<<9)|(63<<3)|(3<<1)|1}] $bag_cycles $vlid \
-            [expr {0x0a000001+256+$index}] [expr {0xe0e00000|$vlid}] [expr {($sport<<16)|$dport}]]
-        set word 0
-        foreach value $words {
-            puts $config [format {C 1 %x %x} [expr {0x1000+$index*8+$word}] $value]
-            incr word
-        }
-        puts $config [format {C 2 %x %x} [expr {0x10000+$vlid}] [expr {0x1000|$index}]]
-        puts $config [format {C 2 %x %x} [expr {0x20000+$index}] \
-            [expr {1|(3<<1)|(1<<3)|(1<<4)|(20<<5)|($lmax<<17)}]]
-    }
-    close $config
     # Optional window file: <stimulus root>.window, or window.txt for the default stimulus.
     # Two times in us; without it throughput is reported but not judged.
     set window_path [file rootname $stimulus].window
@@ -284,7 +267,11 @@ proc app_entry::analyse {folder msgs cfg window} {
     set dropped [dict get $results $p/integrity/dropped]
     set duplicate [dict get $results $p/integrity/duplicate]
     set overflow [dict get $results $p/integrity/overflow]
-    set begin [lindex $window 0]; set end [lindex $window 1]
+    set epoch 0
+    foreach line [split [read_text [file join $folder sys_events.txt]] "\n"] {
+        if {[regexp {^G \d+ STIMULUS_EPOCH (\d+)$} $line -> offset]} {set epoch $offset}
+    }
+    set begin [expr {[lindex $window 0]+$epoch}]; set end [expr {[lindex $window 1]+$epoch}]
     set has_window [expr {$end > $begin}]
     set meets [expr {$has_window && $inject >= 100.0 && $e2e <= 250000 && $jitter <= 6250 &&
         $dropped == 0 && $overflow == 0 && $duplicate == 0 && ($lag eq "NA" || $lag <= 1471)}]
