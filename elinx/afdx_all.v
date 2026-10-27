@@ -23,3 +23,7 @@
 `include "../rtl/afdx_tx_core.v"
 `include "../rtl/afdx_tx_engine.v"
 `include "../rtl/afdx_tx_free.v"
+`include "../rtl/afdx_es.v"
+`include "../rtl/afdx_app_tx.v"
+`include "../rtl/afdx_app_rx.v"
+`include "../rtl/afdx_app_read.v"
