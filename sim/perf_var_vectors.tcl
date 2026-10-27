@@ -69,10 +69,13 @@ proc judge_perf::var_measure {folder} {
         lassign [split $key /] stage direction
         set prefix $stage/$direction/accepted/all
         set rate [expr {[dict get $results $prefix/throughput/payload_bytes]*1000.0/[dict get $results $prefix/throughput/window_cycles]}]
-        set ok [expr {(![string match var_high_* $stage] || $rate>=100) && [dict get $results $prefix/L_gmii/max]<=250000 && [dict get $results $prefix/L_app/max]<=250000}]
-        lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s max_latency_us=2000} [expr {$ok ? "PASS" : "FAIL"}] $stage $direction]
-        set throughput_status [expr {[string match var_high_* $stage] ? ($rate>=100 ? "PASS" : "FAIL") : "REPORT"}]
-        lappend lines [format {JUDGE THROUGHPUT %s stage=%s direction=%s delivered_mbps=%.3f} $throughput_status $stage $direction $rate]
+        set inject [dict get $results $prefix/inject/mbps]
+        set ok [expr {(![string match var_high_* $stage] || $inject>=100) && [dict get $results $prefix/L_entry_last/max]<=250000 &&
+            [dict get $results $prefix/integrity/dropped]==0 && [dict get $results $prefix/integrity/overflow]==0 &&
+            [dict get $results $prefix/integrity/duplicate]==0}]
+        lappend lines [format {JUDGE REQUIREMENT %s stage=%s direction=%s max_e2e_us=2000} [expr {$ok ? "PASS" : "FAIL"}] $stage $direction]
+        set throughput_status [expr {[string match var_high_* $stage] ? ($inject>=100 ? "PASS" : "FAIL") : "REPORT"}]
+        lappend lines [format {JUDGE THROUGHPUT %s stage=%s direction=%s inject_mbps=%.3f delivered_mbps=%.3f} $throughput_status $stage $direction $inject $rate]
         lappend lines "JUDGE JITTER REPORT stage=$stage direction=$direction policy=no_failure_threshold"
         if {!$ok} {incr failures}
     }

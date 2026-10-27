@@ -126,6 +126,8 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
    target=base+r*period+(v*period)/vls;
    while(cycle<target)tick;
    check(cycle==target,"performance submission slot not missed");
+   // 计划释放拍用于 R120 注入落后判据；实际首字节拍由端系统记录。
+   $fwrite(sf,"O %0d %0d %0d %0d %0d\n",cycle,who,v,1471,target);
    if(who==1)es1.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*vls+v)*1471);
    else es2.send_payload(v,1471,0,16'h1234,16'h4321,off+(r*vls+v)*1471);
   end
