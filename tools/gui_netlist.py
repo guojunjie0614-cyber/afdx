@@ -77,7 +77,7 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
             else:
                 expected = rows[0][2] if len(rows) == 1 and int(rows[0][2]) > 0 else 'invalid'
         flow.result.update(results=rows, diagnostics=diagnostics, mode=mode)
-        if rows != [(test, 'PASS', expected, '0')] or diagnostics['Error'] or diagnostics['Fatal']:
+        if rows != [(test, 'PASS', expected, '0')] or diagnostics['Error'] or diagnostics['Fatal'] or 'RAMCOLL' in log:
             raise RuntimeError('测试没有完整通过，见 simulation.log')
         if test == 'tb_net_services':
             command = [sys.executable, '-B', '-X', 'utf8', checker, 'check', '--dir', flow.folder]
