@@ -24,7 +24,11 @@ def run(test,folder):
         result['r97_fields']=len(measure_r97(folder))
         if test=='tb_sys_perf_var':
             measured=dict(line.split('\t') for line in (folder/'r97_python.tsv').read_text().splitlines())
-            measured={k:(int(v) if v!='NA' else v) for k,v in measured.items()}
+            def number(value):
+                if value=='NA':return value
+                try:return int(value)
+                except ValueError:return float(value)
+            measured={k:number(v) for k,v in measured.items()}
             requirements=check_r97_var(folder,measured)
             result['r97_requirement_failures']=sum(row['status']=='FAIL' for row in requirements)
             result['errors']+=result['r97_requirement_failures']
