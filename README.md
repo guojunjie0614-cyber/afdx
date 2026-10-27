@@ -73,7 +73,7 @@ do sim/run_app.do
 do sim/run_app.do sim/vectors/app/small_stimulus.txt
 ```
 
-- `sim/vectors/app/vl_config.txt`：每行一条发送 VL，`<VLID> <BAG µs> <Lmax 字节> <源端口> <目的端口>`，默认 21 条，VLID 为四位十六进制。脚本据此生成两端的发送/接收配置，并把 VLID 换算成 `app_tx_vl` 序号。
+- `sim/vectors/app/vl_config.txt`：每行一条发送 VL，`<VLID> <BAG µs> <Lmax 字节> <源端口> <目的端口>`，默认 21 条，VLID 为四位十六进制。测试平台读取该文件，经 `cfg_*` 写两端配置；激励中的 VLID 两字节直接送入新顶层，不在测试平台换算成发送序号。
 - `sim/vectors/app/stimulus.txt`：每行一条消息，`<发送时刻 µs> <VLID 四位十六进制> <载荷十六进制>`，`#` 开头为注释；时刻可以相同，相同时刻按文件顺序排队注入；载荷 1–1471 字节。VLID 不在配置中的行直接报错停止。
 - 默认激励同时覆盖 1、17、256、1024、1471 字节，21 条 VL 并发，并在 1–4 ms 的窗口内以约 210 Mbps 注入有效载荷；`tools/gen_app_vectors.py` 可重新生成这两份默认文件。
 
@@ -308,7 +308,7 @@ sim/reference/ 对应本次 T59 结果；RTL 仍是 master `5a71a5ff`，综合�
 
 `AFDX_top` 保留赛题模板的 `clk`、`reset`、`tx_data`、`rx_data`、`tx_valid`、`rx_valid`、`tx_ready`、`rx_ready`，这一组是 A 网 GMII。另外增加了 B 网 GMII（`*_b`）、应用收发口（`app_tx_*`、`app_rx_*`）和配置口（`cfg_*`），用于双网冗余、提交和取回用户消息、写入虚拟链路配置。以太网线路不能暂停，`rx_ready` 不使用。
 
-R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接收端处理完的输出，数据流是包含 VLID 的原始有效载荷；R124、R126 说明评测时顶层激励文件只注入 VLID 和应用数据，用于综合的 TOP 端口可以自定。本设计把模板八位口用作 A 网 GMII、应用另走 `app_*`，因此另外提供只注入 VLID 和应用数据的评测封装 `sim/run_app.do`（格式见“应用激励入口”），本轮不改 `AFDX_top` 端口。R122 说明只要能正常综合，资源占用不作为评分项；R112 允许用仿真截图及演示视频代替开发板照片和视频。
+R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接收端处理完的输出，数据流是包含 VLID 的原始有效载荷；R124、R126 说明评测时顶层激励文件只注入 VLID 和应用数据，用于综合的 TOP 端口可以自定。本设计的可综合 `AFDX_top` 直接接收并交付 VLID 两字节及载荷，GMII 单独引出为 `gmii_*_a/_b`，不再有顶层 `app_*` 端口；`sim/run_app.do` 直接驱动并记录这组应用端口。PDF 模板的 tx_data 方向与 R120-3 相反，本设计按 R120-3。R122 说明只要能正常综合，资源占用不作为评分项；R112 允许用仿真截图及演示视频代替开发板照片和视频。
 
 测试与参考模型的对应：`tb_tx_*`、`tb_rx_*` 对应 `afdx_ref.py`、`tx_ref.py`、`rx_ref.py`；`tb_sys_*` 对应系统、GMII 和各服务的参考模型；`tb_net_services` 对应 `net_services_ref.py`。`tools/eda.py` 负责生成向量、调用仿真和检查器。ModelSim do 入口使用 `sim/vectors/` 中的固定向量和测试平台自检，不调用 Python。
 
