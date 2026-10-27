@@ -15,8 +15,8 @@ module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
     integer received=0,sent=0,byte_index=0,head=0,tail=0,reply_length=0,log_fd,current_case,j;
     reg [7:0] expected_byte,queue[0:65535],send_bytes[0:1023];
     integer lengths[0:63],sports[0:63],dports[0:63];
-    AFDX_top dut(
-        .clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
+    top_stream_endpoint dut(
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized(),.clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
         .tx_data_b(tb),.tx_valid_b(tvb),.rx_data_b(rb),.rx_valid_b(rvb),
         .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
         .app_tx_port_en(1'b1),.app_tx_sport(m_sp),.app_tx_dport(m_dp),
@@ -85,7 +85,7 @@ module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
     endtask
     task packet;
         input integer length,sport,dport;integer n;
-        begin m_vl=0;m_sp=sport;m_dp=dport;
+        begin write_cfg(18'h1005,(sport<<16)|dport);m_vl=0;m_sp=sport;m_dp=dport;
             for(n=0;n<length;n=n+1)send_byte(send_bytes[n],n+1==length);
             m_valid=0;m_last=0;end
     endtask

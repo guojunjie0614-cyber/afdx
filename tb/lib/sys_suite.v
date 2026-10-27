@@ -11,9 +11,9 @@ module sys_suite #(parameter NAME="tb_sys_basic",TX_PAGE_AW=8,TX_OFF_AW=9,
  wire [7:0] t1a,t1b,t2a,t2b,r1a,r1b,r2a,r2b;
  wire v1a,v1b,v2a,v2b,i1a,i1b,i2a,i2b,ready1,ready2;
  wire [31:0] c1,c2,e1,e2,l0e,l1e,l2e,l3e;
- sys_endpoint #(1,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW)
+ sys_endpoint #(1,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW,NAME=="tb_sys_basic")
  es1(clk,reset1,r1a,i1a,r1b,i1b,sf,t1a,v1a,t1b,v1b,ready1,c1,e1);
- sys_endpoint #(2,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW)
+ sys_endpoint #(2,TX_PAGE_AW,TX_OFF_AW,LOOKAHEAD,RX_RING_AW,RX_DQ_AW,NAME=="tb_sys_basic")
  es2(clk,reset2,r2a,i2a,r2b,i2b,sf,t2a,v2a,t2b,v2b,ready2,c2,e2);
  link_model #(.LINK_ID(0),.MAX_FRAMES(LINK_FRAMES)) l0(clk,reset1,t1a,v1a,r2a,i2a,sf,l0e);
  link_model #(.LINK_ID(1),.MAX_FRAMES(LINK_FRAMES)) l1(clk,reset1,t1b,v1b,r2b,i2b,sf,l1e);

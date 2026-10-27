@@ -19,8 +19,8 @@ module snmp_test_endpoint #(parameter ES=1)(
     wire [31:0] sample_now;wire sample_en;wire [15:0] sample_coarse;
     afdx_timebase test_clock(clk,reset,sample_now,sample_en,sample_coarse);
     initial $readmemh("vectors/bytes.hex",request_bytes);
-    AFDX_top dut(
-        .clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
+    top_stream_endpoint dut(
+        .raw_mode(1'b0),.raw_vlid(16'd0),.initialized(),.clk(clk),.reset(reset),.tx_data(ta),.tx_valid(tva),.rx_data(ra),.rx_valid(rva),.tx_ready(ready),.rx_ready(1'b0),
         .tx_data_b(tb),.tx_valid_b(tvb),.rx_data_b(rb),.rx_valid_b(rvb),
         .app_tx_valid(m_valid),.app_tx_ready(m_ready),.app_tx_data(m_data),.app_tx_last(m_last),.app_tx_vl(m_vl),
         .app_tx_port_en(1'b1),.app_tx_sport(m_sp),.app_tx_dport(m_dp),
@@ -104,7 +104,7 @@ module snmp_test_endpoint #(parameter ES=1)(
     task request_message;
         input integer offset,length,sport;integer n;
         begin
-            m_vl=0;m_sp=sport;m_dp=161;
+            write_cfg(18'h1005,(sport<<16)|161);m_vl=0;m_sp=sport;m_dp=161;
             for(n=0;n<length;n=n+1)send_byte(request_bytes[offset+n],n+1==length);
             m_valid=0;m_last=0;
         end
