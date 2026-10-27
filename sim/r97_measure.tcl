@@ -91,7 +91,7 @@ proc r97::measure {folder {stages {}}} {
     set messages {}; set queues {}; set lengths {}; set rejects {}; set arrivals {}; set frames {}
     set drops {}; set badevents {}; set overflow {}; set tx_vlids {}
     foreach es {1 2} {
-        set id 0; set release_counts {}; dict set messages $es [dict create]
+        set id 0; set release_counts {};set wire_inputs {};set wire_index 0; dict set messages $es [dict create]
         foreach row [rows [file join $folder es${es}_tx events.txt]] {
             set kind [lindex $row 0]; set cycle [lindex $row 1]; set stage [stage_at $marks $cycle]
             # TX 表第 2 字是 VLID：读取配置记录换算出 VLID 到配置序号的映射。
@@ -103,6 +103,7 @@ proc r97::measure {folder {stages {}}} {
                 dict incr drops $es,$stage
                 error "R97: application rejection ES$es at $cycle"
             }
+            if {$kind eq "A"} {lappend wire_inputs $row}
             if {$kind ne "M"} {continue}
             incr id
             lassign $row kind cycle vl n pen sport dport payload first maxrun input_end input_stalls
@@ -111,6 +112,13 @@ proc r97::measure {folder {stages {}}} {
             if {$first eq "" || ![string is integer -strict $first]} {set first [expr {$cycle-$n+1}]}
             if {$maxrun eq "" || ![string is integer -strict $maxrun]} {set maxrun 0}
             require [expr {[string length $payload]==2*$n}] "M payload length ES$es frame$id"
+            if {[llength $wire_inputs]} {
+                set a [lindex $wire_inputs $wire_index];incr wire_index
+                require [expr {[lindex $a 1]==$cycle && [lindex $a 3]==$n && [lindex $a 4] eq $payload}] "public tx_data bytes/end vs core M"
+                set raw [scan [lindex $a 2] %x]
+                require [expr {[dict get $tx_vlids $es $raw]==$vl && [lindex $a 5]==$first}] "public tx_data VLID/first vs core M"
+                require [expr {[lindex $a 6]==$input_stalls && [lindex $a 7]==$maxrun}] "public tx_data stalls vs core M"
+            }
             # Legacy records without O use M as release; no existing metric changes.
             # Variable cases use the host-queue planned release, not actual dispatch.
             set release $cycle; set planned 0;set offervl $vl
@@ -128,6 +136,7 @@ proc r97::measure {folder {stages {}}} {
             dict lappend queues $es,$vl $id
             if {$stage in $wanted} {dict set lengths $stage $n 1}
         }
+        require [expr {![llength $wire_inputs] || $wire_index==[llength $wire_inputs]}] "all public inputs accounted for"
         set destination [expr {3-$es}]
         set count {}
         foreach row [rows [file join $folder es${destination}_rx events.txt]] {
