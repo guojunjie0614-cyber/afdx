@@ -29,7 +29,12 @@ module afdx_app_tx (
     wire [12:0] used=write_ptr-read_ptr;
     reg [5:0] desc_wr,desc_rd;
     wire [5:0] descriptors=desc_wr-desc_rd;
-    reg [15:0] ids[0:31];
+    wire [15:0] descriptor_id;
+    wire descriptor_write=vq && !valid && active && count>=2 && !bad && used<4096;
+    wire descriptor_read=state==0 && descriptors!=0;
+    afdx_ram_sdp #(.WIDTH(16),.DEPTH(32)) descriptor_ids(
+        .clk(clk),.write_enable(descriptor_write),.write_address(desc_wr[4:0]),.write_data(message_id),
+        .read_enable(descriptor_read),.read_address(desc_rd[4:0]),.read_data(descriptor_id));
     wire store=vq && active && count>=2 && !bad && used<4096;
     wire [8:0] memory_q;
     wire read_en;
@@ -62,7 +67,7 @@ module afdx_app_tx (
                     if(bad || (count>=2 && used>=4096) || (!active && (!initialized || descriptors==32)))begin
                         write_ptr<=active?start_ptr:write_ptr;drop[1]<=1;
                     end else if(active && count>=2)begin
-                        ids[desc_wr[4:0]]<=message_id;desc_wr<=desc_wr+1'b1;
+                        desc_wr<=desc_wr+1'b1;
                         committed<=write_ptr+1'b1;
                     end
                 end
@@ -85,8 +90,9 @@ module afdx_app_tx (
         end else begin
             drop[0]<=empty_message;
             case(state)
-                0:if(descriptors!=0)begin
-                    for(bank=0;bank<8;bank=bank+1)query[bank]<=ids[desc_rd[4:0]];
+                0:if(descriptors!=0)state<=6;
+                6:begin
+                    for(bank=0;bank<8;bank=bank+1)query[bank]<=descriptor_id;
                     state<=1;
                 end
                 1:begin
