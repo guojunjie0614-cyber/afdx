@@ -106,6 +106,9 @@ module sys_endpoint #(
     integer tf,rf,cycle=0,release_cycle=0,quiet_since=0,last_wire_end=-100000;
     integer pending_tx=0,outstanding=0,last_message=0,last_outcome=-1,low_run=0;
     integer message_len=0,message_vl=0,message_pen=0,message_sp=0,message_dp=0,outcome_vl=0;
+    // R119：应用发送口首次 valid 为高的拍与消息内最长反压连拍，随 M 行附在最后。
+    integer message_start=0,stall_run=0,stall_max=0;
+    reg m_seen=0;
     integer delivery_len=0,delivery_start=0;
     reg [11:0] delivery_vl;
     reg [15:0] delivery_sp,delivery_dp;
@@ -212,6 +215,7 @@ module sys_endpoint #(
                 if(CAPTURE_CORE)$fwrite(rf,"Z %0d\n",cycle);
             end
             outstanding=0;pending_tx=0;message_len=0;outcome_vl=0;delivery_len=0;delivery_active=0;
+            message_start=0;stall_run=0;stall_max=0;m_seen=0;
             read_pending0=0;read_pending1=0;bus_pending=0;ready_check=0;
             user_shadow=0;low_run=0;
             for(k=0;k<27;k=k+1)expected_count[k]=0;
@@ -296,6 +300,12 @@ module sys_endpoint #(
                 end
             end
 
+            // R119 起点：消息首字节第一次出现 valid 的拍；反压连拍只用于报告。
+            if(m_valid && !m_seen)begin message_start=cycle;stall_run=0;stall_max=0;end
+            if(m_valid && !m_ready)begin
+                stall_run=stall_run+1;if(stall_run>stall_max)stall_max=stall_run;
+            end else stall_run=0;
+            m_seen=m_valid;
             if(m_valid && m_ready)begin
                 quiet_since=cycle;
                 if(message_len==0)begin
@@ -308,7 +318,7 @@ module sys_endpoint #(
                     check(!outstanding && cycle>last_outcome,"one result before next message end");
                     if(CAPTURE_CORE)$fwrite(tf,"M %0d %0d %0d %0d %04x %04x ",cycle,message_vl,message_len,message_pen,message_sp[15:0],message_dp[15:0]);
                     for(k=0;k<message_len && k<8192;k=k+1)if(CAPTURE_CORE)$fwrite(tf,"%02x",message_bytes[k]);
-                    if(CAPTURE_CORE)$fwrite(tf,"\n");
+                    if(CAPTURE_CORE)$fwrite(tf," %0d %0d\n",message_start,stall_max);
                     outcome_vl=message_vl;
                     message_len=0;outstanding=1;last_message=cycle;
                 end
@@ -436,6 +446,36 @@ module sys_endpoint #(
                         check(0,"host application timeout");m_valid=0;m_last=0;disable send_operation;
                     end
                 end
+            end
+            m_valid=0;m_last=0;
+        end
+    endtask
+
+    // 应用激励入口：按绝对拍注入，首字节 valid 在 due 拍为高；相同时刻按调用顺序串行排队。
+    task send_at;
+        input integer due,vl,n,offset;
+        integer j,deadline;
+        reg accepted;
+        begin:send_at_operation
+            deadline=cycle+10000000;
+            while(outstanding)begin
+                @(posedge clk);#2;
+                if(cycle>deadline)begin check(0,"host prior outcome timeout");disable send_at_operation;end
+            end
+            while(cycle<due-1)begin
+                @(posedge clk);#2;
+                if(cycle>deadline)begin check(0,"host schedule timeout");disable send_at_operation;end
+            end
+            @(negedge clk);
+            m_valid=1;m_vl=vl;m_port_en=0;m_sport=0;m_dport=0;
+            m_data=stimulus[offset];m_last=(n==1);
+            for(j=0;j<n;j=j+1)begin
+                accepted=0;
+                while(!accepted)begin
+                    @(posedge clk);accepted=m_ready && !reset;#2;
+                    if(cycle>deadline)begin check(0,"host application timeout");m_valid=0;m_last=0;disable send_at_operation;end
+                end
+                if(j<n-1)begin @(negedge clk);m_data=stimulus[offset+j+1];m_last=(j+2==n);end
             end
             m_valid=0;m_last=0;
         end
