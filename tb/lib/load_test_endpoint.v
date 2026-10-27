@@ -87,6 +87,7 @@ module load_test_endpoint #(parameter ES=1,ALLOW_A_IC=0)(
         input integer length,sport,dport;integer n;
         begin write_cfg(18'h1005,(sport<<16)|dport);m_vl=0;m_sp=sport;m_dp=dport;
             for(n=0;n<length;n=n+1)send_byte(send_bytes[n],n+1==length);
-            m_valid=0;m_last=0;end
+            m_valid=0;m_last=0;
+            wait(tva || tvb);wait(!tva && !tvb);repeat(12)@(negedge clk);end
     endtask
 endmodule
