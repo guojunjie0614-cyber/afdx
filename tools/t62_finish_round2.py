@@ -95,6 +95,7 @@ def protected_checks(manifest):
         changed=[key for key in old.keys()&after.keys() if old[key]!=after[key]]
         protected[name]=dict(passed=not(missing or added or changed),count=len(old),missing=missing,added=added,changed=changed)
     tools={name:sha(name)==digest for name,digest in manifest['tool_hashes'].items()}
+    libraries={name:sha(name)==digest for name,digest in load(OUT/'manifest_v10_libraries.json')['simulation_libraries'].items()}
     evidence={name:sha(name)==digest for name,digest in manifest['protected_evidence_hashes'].items()}
     canonical=Path(manifest['canonical_r5a_synthesis'])/'project/AFDX_EndSystem.runs/synth_1'
     frozen={name:sha(canonical/name)==digest for name,digest in manifest['canonical_synth_files'].items()}
@@ -112,7 +113,7 @@ def protected_checks(manifest):
             if stat.st_size!=old['bytes'] or stat.st_mtime_ns!=old['mtime_ns'] or ('sha256' in old and sha(current)!=old['sha256']):
                 mismatches.append(dict(path=str(current),changed=True))
         manual[name]=dict(passed=not mismatches,mismatches=mismatches,count=len(entries))
-    return dict(protected_metadata=protected,tool_hashes=tools,protected_evidence_hashes=evidence,
+    return dict(protected_metadata=protected,tool_hashes=tools,simulation_libraries=libraries,protected_evidence_hashes=evidence,
         canonical_synth_files=frozen,excluded_manual_probes=manual,
         immutable_manifest=sha(OUT/'manifest.json')==load(OUT/'manifest_v5_complete.json')['immutable_original_manifest_sha256'],
         archived_report_attempt1=sha(OUT/'report_F1_attempt1.md')==load(OUT/'manifest_v5_complete.json')['report_sha256'])
@@ -137,6 +138,7 @@ def main():
         failures.append(dict(job_id=identity,candidate=job['candidate'],mode=job['mode'],status=job['status'],
             reason_code=record.get('reason_code',job.get('reason_code')),error=record.get('error'),result=job.get('result'),log=job['log']))
     result['failures_and_blocked_jobs']=failures
+    result['items']['C4']['retained_native_probe_record']=load(ROOT.parent/'c3_t62_c4/out/t62/C4/result.json')
     if not args.final:
         rt.save(OUT/'results.json',result)
         rt.save(R2/'tool_metrics_partial.json',resources)
@@ -178,6 +180,7 @@ def main():
         original_manifest_preserved=protection['immutable_manifest'],old_report_preserved=protection['archived_report_attempt1'],
         protected_paths_unchanged=all(row['passed'] for row in protection['protected_metadata'].values()),
         native_tools_unchanged=all(protection['tool_hashes'].values()),T61_evidence_unchanged=all(protection['protected_evidence_hashes'].values()),
+        simulation_libraries_unchanged=all(protection['simulation_libraries'].values()),
         canonical_synthesis_unchanged=all(protection['canonical_synth_files'].values()),
         excluded_manual_probes_preserved=all(row['passed'] for row in protection['excluded_manual_probes'].values()),
         frozen_job_inputs_or_explicit_verified_test_repair=all(row['passed'] for row in input_checks.values()))
