@@ -14,10 +14,11 @@ import subprocess
 import sys
 
 import eda
+import psutil
 import t62_evaluate as evaluate
 import t62_physical_summary as physical_summary
 import t62_runtime as rt
-from t62_finish import files,process_state,max_overlap
+from t62_finish import files,max_overlap
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'out/t62'
@@ -33,6 +34,22 @@ def sha(path):return eda.sha(Path(path))
 
 
 def git(root,*args):return subprocess.check_output(['git','-C',str(root),*args],text=True,encoding='utf-8').strip()
+
+
+def process_state(identity):
+    try:
+        process=psutil.Process(identity['pid'])
+        created=process.create_time()
+        # PID reuse already proves that the recorded task process exited.
+        # Do not require access to an unrelated replacement process's command.
+        if created!=identity['created']:
+            return dict(identity=identity,exited=True,state='pid_reused',current_created=created)
+        same=rt.capture(process)==identity
+        return dict(identity=identity,exited=not same,state='still_owned' if same else 'identity_changed')
+    except psutil.NoSuchProcess:
+        return dict(identity=identity,exited=True,state='exited')
+    except psutil.AccessDenied:
+        return dict(identity=identity,exited=None,state='identity_inaccessible')
 
 
 def refresh_evaluation():
