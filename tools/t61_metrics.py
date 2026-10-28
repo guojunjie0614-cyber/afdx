@@ -100,7 +100,7 @@ def timing_statistics(database):
             worst_three_native_paths=top,
             worst_three_distinct_endpoints=sorted(setup.values(), key=_rank)[:3],
             nearcritical_endpoints=sorted(nearcritical, key=_rank),
-            timing_closed=all(row['setup_worst_slack'] >= 0 and row['hold_worst_slack'] >= 0 for row in clocks))
+            timing_closed=all(row['setup_worst_slack'] > 0 and row['hold_worst_slack'] >= 0 for row in clocks))
     finally:
         connection.close()
 
