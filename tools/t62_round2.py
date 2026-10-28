@@ -115,7 +115,8 @@ class Queue:
 
     def add(self,candidate,key,mode,**options):
         item=self.value['items'][candidate]
-        identity='r2_'+candidate+'_'+key
+        revision='_'+item['verification_revision'] if item.get('verification_revision') else ''
+        identity='r2_'+candidate+revision+'_'+key
         if identity in self.value['jobs']:return identity
         base=OUT/candidate/('P'+str(options['pres']) if 'pres' in options else 'round_02_'+key)
         number=1
@@ -180,6 +181,24 @@ class Queue:
             if job['status']=='pending':job.update(status='blocked',reason_code=reason_code,not_launched=True)
         rt.save(OUT/candidate/'result.json',item)
 
+    def reuse_directed(self,identity,spec,root):
+        job=self.value['jobs'][identity]
+        if job['status']!='completed':return None
+        config=load(job['config']);result=self.result(identity)
+        if config['mode']!='directed' or config['directed']!=spec:return None
+        inputs=result.get('directed',{}).get('inputs',[])
+        if not inputs or not all(sha(row['path'])==row['sha256'] for row in inputs):return None
+        # The original job conservatively froze every TB. An unrelated TB may
+        # change; all actually compiled inputs plus the shared helpers, RTL and
+        # constraints must remain byte-identical for a valid reuse.
+        unchanged={name:digest for name,digest in config['frozen_files'].items()
+            if name.startswith(('tools/','rtl/','elinx/'))}
+        if not all(sha(root/name)==digest for name,digest in unchanged.items()):return None
+        if not all(sha(name)==digest for name,digest in load(OUT/'manifest.json')['tool_hashes'].items()):return None
+        return dict(job=identity,result=job['result'],result_sha256=sha(job['result']),
+            actual_input_hashes=inputs,common_and_design_hashes=unchanged,
+            note='Only another, uncompiled TB changed; all actual test inputs, design and helpers remain identical')
+
     def advance(self):
         gatejob=self.value['jobs']['r2_C0_gate']
         c0=self.value['items']['C0']
@@ -211,6 +230,25 @@ class Queue:
             request=load(path);candidate=request['candidate'];item=self.value['items'][candidate]
             revision=eda.sha(path)
             if item.get('request_sha256')==revision:continue
+            previous_directed=[]
+            if item['phase']=='terminal' and item['status']=='failed' and request.get('restart_after_test_fix'):
+                if request.get('supersedes_request_sha256')!=item.get('request_sha256'):
+                    raise RuntimeError('Test repair does not identify the exact previous request')
+                if any(self.value['jobs'][key]['status']=='running' for key in item['jobs']):
+                    raise RuntimeError('Test repair attempted while a candidate worker is active')
+                if any(self.value['jobs'][key]['mode'] in ['synth','route'] for key in item['jobs']):
+                    raise RuntimeError('This repair path never repeats native synthesis or implementation')
+                root=worktree(candidate)
+                changed=subprocess.check_output(['git','-C',str(root),'diff','--name-only',item['head'],request['head']],text=True).splitlines()
+                if not changed or not all(name.startswith('tb/') for name in changed):
+                    raise RuntimeError('Verification repair may change only the candidate testbench')
+                previous_directed=list(item.get('directed_jobs',[]))
+                item.setdefault('verification_history',[]).append({key:item.get(key) for key in
+                    ['head','request','request_sha256','status','reason_code','directed_jobs','finished']})
+                item.update(phase='awaiting_preparation',status='pending',reason_code=None,
+                    verification_revision=request['verification_revision'],run_completed=False,functional_passed=None)
+                self.event('verification_only_repair',candidate=candidate,changed=changed,
+                    previous_directed=previous_directed,native_retry=False)
             if item['phase'] not in ['awaiting_C0','awaiting_preparation']:continue
             if candidate=='C5' and not self.value['items']['C1'].get('source'):continue
             if candidate=='C6' and not all(self.value['items'][key]['status'] in TERMINAL for key in RTL_ITEMS if key!='C6'):continue
@@ -230,7 +268,12 @@ class Queue:
                 self.add(candidate,'P1.55','route',pres='1.55',source=item['source'])
                 continue
             for index,spec in enumerate(request.get('directed',[])):
-                item['directed_jobs'].append(self.add(candidate,'directed'+str(index),'directed',directed=spec))
+                reused=next((proof for identity in previous_directed
+                    if (proof:=self.reuse_directed(identity,spec,root)) is not None),None)
+                if reused:
+                    item.setdefault('directed_reuse',[]).append(reused)
+                    item['directed_jobs'].append(reused['job'])
+                else:item['directed_jobs'].append(self.add(candidate,'directed'+str(index),'directed',directed=spec))
             if not item['directed_jobs']:raise RuntimeError('RTL candidate has no directed cycle comparison: '+candidate)
         for candidate in ITEMS:
             item=self.value['items'][candidate]
