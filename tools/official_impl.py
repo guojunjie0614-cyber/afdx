@@ -73,6 +73,7 @@ def main():
     t62_runtime.install()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--deadline')
+    parser.add_argument('--synthesis',type=Path,default=ROOT/'out/latest_AFDX_top.json')
     args = parser.parse_args()
     flow = eda.Flow('implementation', 'AFDX_top_route', args.deadline)
     started = time.monotonic()
@@ -82,7 +83,7 @@ def main():
         native = binary / 'run_route.tcl'
         if not native.is_file():
             raise RuntimeError('Missing official implementation script')
-        synthesis = json.loads((ROOT / 'out/latest_AFDX_top.json').read_text(encoding='utf-8'))
+        synthesis = json.loads(args.synthesis.read_text(encoding='utf-8'))
         if not synthesis.get('completed'):
             raise RuntimeError('Run synth.ps1 successfully before impl.ps1')
         check_inputs(synthesis)

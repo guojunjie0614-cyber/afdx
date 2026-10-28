@@ -25,8 +25,35 @@ COORD = ROOT.parent / 'c3_t62' / 'out/t62'
 GIB = 1024 ** 3
 BUDGETS = dict(analysis=3600, export=300, pack=1200, timing=1200,
                route=7200, report=1800, c4_probe=1200)
-NATIVE = {'implementation.exe', 'quartus_map.exe', 'quartus_cdb.exe', 'elinx_synthesis.exe'}
+NATIVE = {'implementation.exe', 'quartus_map.exe', 'quartus_cdb.exe'}
 MODELSIM = {'vsim.exe', 'vlog.exe', 'vlib.exe', 'vopt.exe'}
+
+
+class EnvironmentChanged(RuntimeError):
+    pass
+
+
+def environment_guard():
+    policy=json.loads((ROOT/'elinx/t62_environment.json').read_text(encoding='utf-8-sig'))
+    path=Path(policy['quartus_ini'])
+    actual=eda.sha(path)
+    if actual!=policy['quartus_ini_sha256']:
+        record=dict(time=now(),reason_code='environment_changed',path=str(path),
+            expected=policy['quartus_ini_sha256'],actual=actual,new_jobs_forbidden=True)
+        save(COORD/'round_02/stop_request.json',record)
+        raise EnvironmentChanged('quartus2.ini hash changed; all new jobs blocked')
+    return dict(path=str(path),sha256=actual,checked=now(),gui_forbidden=True)
+
+
+def command_guard(command):
+    executable=Path(command[0]).name.lower()
+    allowed=NATIVE|MODELSIM|{'python.exe','python3.exe','cmd.exe'}
+    if executable not in allowed:
+        raise ValueError('T62 executable is not an approved command-line tool: '+executable)
+    if executable=='implementation.exe' and '-f' not in command:
+        raise ValueError('Implementation must use an explicit batch Tcl file')
+    if executable=='vsim.exe' and '-batch' not in command:
+        raise ValueError('ModelSim must use -batch')
 
 
 def now():
@@ -112,6 +139,7 @@ def admission(command, folder, units=1):
     token = uuid.uuid4().hex
     queued = time.monotonic()
     while True:
+        environment=environment_guard()
         with locked_registry() as registry:
             running = observed(group) if group != 'helper' else []
             # Leases cover the small interval before a native process appears.
@@ -126,7 +154,8 @@ def admission(command, folder, units=1):
                 item = dict(token=token, owner=capture(psutil.Process()), group=group,units=units,
                             folder=str(folder), command=command, admitted=now(),
                             queue_seconds=time.monotonic()-queued,
-                            observed_tools=running, memory_free_bytes=memory, disk_free_bytes=disk)
+                            observed_tools=running, memory_free_bytes=memory, disk_free_bytes=disk,
+                            environment=environment)
                 registry['leases'].append(item)
                 registry['events'].append(dict(event='admitted', **item))
                 break
@@ -167,9 +196,12 @@ class Flow(eda.Flow):
 
     def job(self, name, command, budget=900, cwd=None):
         command = list(map(str, command))
+        command_guard(command)
+        environment_guard()
         budget = BUDGETS.get(name, budget)
         # run_app.do owns one outer ModelSim plus one compiler/simulator child.
         with admission(command, self.folder,units=2 if name=='app_small' else 1) as lease:
+            environment_guard()
             # Resource waiting is excluded from the stage budget. An explicit
             # caller deadline remains an intentional additional upper bound.
             if self.deadline is not None:
@@ -251,8 +283,11 @@ def install():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('entry', choices=['synth', 'impl', 'report', 'sim'])
+    parser.add_argument('entry', choices=['synth', 'impl', 'report', 'sim', 'check-env'])
     args, rest = parser.parse_known_args()
+    if args.entry=='check-env':
+        print(json.dumps(environment_guard(),ensure_ascii=False))
+        return 0
     install()
     script = dict(synth='official_synth.py', impl='official_impl.py',
                   report='report_routed_timing.py', sim='eda.py')[args.entry]
