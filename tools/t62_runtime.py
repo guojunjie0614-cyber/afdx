@@ -21,7 +21,7 @@ import psutil
 import eda
 
 ROOT = Path(__file__).resolve().parents[1]
-COORD = ROOT.parent / 'c3_t62' / 'out/t62'
+COORD = Path(os.environ.get('AFDX_T62_COORD',str(ROOT.parent / 'c3_t62' / 'out/t62'))).resolve()
 GIB = 1024 ** 3
 BUDGETS = dict(analysis=3600, export=300, pack=1200, timing=1200,
                route=7200, report=1800, c4_probe=1200)
@@ -200,7 +200,8 @@ class Flow(eda.Flow):
         environment_guard()
         budget = BUDGETS.get(name, budget)
         # run_app.do owns one outer ModelSim plus one compiler/simulator child.
-        with admission(command, self.folder,units=2 if name=='app_small' else 1) as lease:
+        nested=name in ['app_small','app_default'] or name.startswith('judge_')
+        with admission(command, self.folder,units=2 if nested else 1) as lease:
             environment_guard()
             # Resource waiting is excluded from the stage budget. An explicit
             # caller deadline remains an intentional additional upper bound.
@@ -235,9 +236,9 @@ class Flow(eda.Flow):
                         try:
                             owned[child.pid] = capture(child)
                             rss += child.memory_info().rss
-                            if name=='app_small' and child.pid!=process.pid:
+                            if nested and child.pid!=process.pid:
                                 executable=Path(owned[child.pid]['command'][0]).name.lower()
-                                child_budget={'vlog.exe':120,'vsim.exe':900}.get(executable)
+                                child_budget={'vlog.exe':120,'vsim.exe':self.result.get('child_simulation_budget_seconds',900)}.get(executable)
                                 if child_budget and time.time()-child.create_time()>child_budget:
                                     reason='timeout_'+executable
                         except (psutil.NoSuchProcess, psutil.AccessDenied):
