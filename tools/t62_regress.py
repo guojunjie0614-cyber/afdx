@@ -41,6 +41,7 @@ def main():
     parser.add_argument('--root',type=Path,default=ROOT)
     parser.add_argument('--plan-only',action='store_true')
     parser.add_argument('--smoke',action='store_true')
+    parser.add_argument('--case-index',type=int,action='append',help='Run only selected original list indices; preserve all other evidence')
     args=parser.parse_args()
     root=args.root.resolve()
     if root.parent!=ROOT.parent or not root.name.startswith('c3_t62'):
@@ -64,7 +65,12 @@ def main():
         if previous and runtime.alive(previous):
             raise RuntimeError('The unique eight-worker regression coordinator is already running')
         registry['regression_owner']=owner
-    selected=rows[:8] if args.smoke else rows
+    selected=list(enumerate(rows[:8] if args.smoke else rows))
+    if args.case_index:
+        if any(index<0 or index>=len(rows) for index in args.case_index):
+            raise ValueError('Case index outside frozen list')
+        selected=[(index,rows[index]) for index in args.case_index]
+    runtime.save(folder/'selection.json',dict(selected_indices=[index for index,row in selected],targeted=bool(args.case_index)))
     results=[]
     try:
         def run(index,row):
@@ -85,13 +91,15 @@ def main():
                 passed=code==0 and summary.get('passed') is True,
                 folder=summary.get('folder'),diagnostics=summary.get('simulation_diagnostics'))
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
-            futures=[pool.submit(run,index,row) for index,row in enumerate(selected)]
+            futures=[pool.submit(run,index,row) for index,row in selected]
             for future in concurrent.futures.as_completed(futures):
                 results.append(future.result())
                 runtime.save(folder/'status.json',dict(owner=owner,results=sorted(results,key=lambda r:r['index'])))
         passed=len(results)==len(selected) and all(row['passed'] for row in results)
         runtime.save(folder/'result.json',dict(**plan,results=sorted(results,key=lambda r:r['index']),
-            entry_smoke_passed=passed if args.smoke else None,full_case_set_passed=passed if not args.smoke else None,
+            entry_smoke_passed=passed if args.smoke and not args.case_index else None,
+            targeted_passed=passed if args.case_index else None,
+            full_case_set_passed=passed if not args.smoke and not args.case_index else None,
             candidate_regression_passed=None,remaining_acceptance=plan['mandatory_after_cases']))
         print(str(folder/'result.json'))
         return 0 if passed else 1
