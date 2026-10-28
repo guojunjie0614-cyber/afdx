@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 import re
+import sys
+from official_synth import tcl
 
 import eda
 import t62_runtime as runtime
@@ -15,7 +17,16 @@ def main():
     inputs+=sorted((ROOT/'rtl').glob('*.v'))+sorted((ROOT/'tb/lib').glob('*'))+[ROOT/'tb/tb_app_entry.v']
     frozen={str(path):eda.sha(path) for path in inputs if path.is_file()}
     name='t62_small_'+flow.folder.name
-    command='do sim/run_app.do sim/vectors/app/small_stimulus.txt sim/vectors/app/vl_config.txt '+name
+    # The reference entry stays read-only. Add only environment checks to its
+    # two external-tool stages in this attempt's private execution copy.
+    source=(ROOT/'sim/run_app.do').read_text(encoding='utf-8-sig')
+    prefix='proc t62_ini_guard {} {exec '+tcl(sys.executable)+' -B '+tcl(ROOT/'tools/t62_runtime.py')+' check-env}\n'
+    for marker in ['proc app_entry::compile {folder} {','proc app_entry::simulate {folder} {']:
+        if source.count(marker)!=1:raise ValueError('App stage marker changed')
+        source=source.replace(marker,marker+'\n    t62_ini_guard',1)
+    script=flow.folder/'run_app_guarded.do'
+    script.write_text(prefix+source,encoding='utf-8')
+    command='do '+tcl(script)+' sim/vectors/app/small_stimulus.txt sim/vectors/app/vl_config.txt '+name
     try:
         # Outer vsim is a Tcl coordinator. Child compile/simulation retain
         # independent 120/900s guards, with time for the entry's analysis work.
