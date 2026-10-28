@@ -37,6 +37,9 @@ CANONICAL=ROOT.parent/'c3_t60_r5a_p155/out/synth/AFDX_top/20261027_085802_489925
 def load(path):return json.loads(Path(path).read_text(encoding='utf-8-sig'))
 
 
+def sha(path):return eda.sha(Path(path))
+
+
 def tree_size(path):
     """Do not follow synthesis junctions into shared frozen sources."""
     total=0
@@ -141,9 +144,9 @@ class Queue:
             path=Path(job['config']).parent/'result.json'
             result=load(path) if path.exists() else dict(status='failed',reason_code='tool_error',
                 error='Frozen worker exited without result; no automatic retry',run_completed=False,
-                config_sha256=eda.sha(job['config']),reported_by='coordinator, no measurement',metrics=None)
+                config_sha256=sha(job['config']),reported_by='coordinator, no measurement',metrics=None)
             if not path.exists():rt.save(path,result)
-            if path.exists() and result.get('config_sha256')!=eda.sha(job['config']):
+            if path.exists() and result.get('config_sha256')!=sha(job['config']):
                 raise RuntimeError('Result/config identity mismatch: '+identity)
             job.update(status=result['status'],finished=rt.now(),result=str(path),reason_code=result.get('reason_code'))
             self.event('job_terminal',job=identity,status=job['status'],reason=job.get('reason_code'))
@@ -155,12 +158,12 @@ class Queue:
                 import hashlib
                 full_inputs=freeze(worktree(job['candidate']))
                 tool_hashes=load(OUT/'manifest.json')['tool_hashes']
-                validation_identity=dict(vqm=eda.sha(netlist),inputs=full_inputs,tools=tool_hashes,CE_DIV=2,
+                validation_identity=dict(vqm=sha(netlist),inputs=full_inputs,tools=tool_hashes,CE_DIV=2,
                     cases=cases(worktree(job['candidate'])),default_and_small_app=True,judge_cases=8)
                 key=hashlib.sha256(json.dumps(validation_identity,sort_keys=True).encode()).hexdigest().upper()
                 if key not in self.value['validation']:
                     record=dict(status='pending',phase='freeze_and_submit',candidate=job['candidate'],
-                        first_closed_job=job['id'],source=source,netlist=netlist,vqm_sha256=eda.sha(netlist),identity=validation_identity,
+                        first_closed_job=job['id'],source=source,netlist=netlist,vqm_sha256=sha(netlist),identity=validation_identity,
                         frozen_files=load(job['config'])['frozen_files'],created=rt.now(),
                         dedup_requires=['RTL','VQM','test code','parameters','tool/library versions'])
                     self.value['validation'][key]=record
