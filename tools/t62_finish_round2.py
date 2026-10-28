@@ -15,6 +15,7 @@ import sys
 
 import eda
 import t62_evaluate as evaluate
+import t62_physical_summary as physical_summary
 import t62_runtime as rt
 from t62_finish import files,process_state,max_overlap
 
@@ -149,6 +150,8 @@ def main():
     if not terminal or not validated or not queue.get('coordinator_terminal') or not resources['all_recorded_processes_exited']:
         raise RuntimeError('D10 cannot close while an item, started validation or recorded process remains active/unverified')
     manifest=load(OUT/'manifest.json');protection=protected_checks(manifest)
+    physical=physical_summary.collect(queue)
+    rt.save(OUT/'physical_comparison.json',physical)
     workspaces={};heads={};input_checks={}
     for key,root in [('t62',ROOT)]+[('t62-'+key.lower(),ROOT.parent/('c3_t62_'+key.lower())) for key in ITEMS]:
         heads[key]=git(root,'rev-parse','HEAD')
@@ -182,13 +185,15 @@ def main():
         native_tools_unchanged=all(protection['tool_hashes'].values()),T61_evidence_unchanged=all(protection['protected_evidence_hashes'].values()),
         simulation_libraries_unchanged=all(protection['simulation_libraries'].values()),
         canonical_synthesis_unchanged=all(protection['canonical_synth_files'].values()),
+        actual_placements_and_frozen_synthesis_sources=physical['passed'],
         excluded_manual_probes_preserved=all(row['passed'] for row in protection['excluded_manual_probes'].values()),
         frozen_job_inputs_or_explicit_verified_test_repair=all(row['passed'] for row in input_checks.values()))
     checks=dict(passed=all(conditions.values()),timestamp=rt.now(),conditions=conditions,branch_heads=heads,
         workspaces=workspaces,environment=environment,job_input_checks=input_checks,**protection)
     rt.save(OUT/'final_checks.json',checks)
     if not checks['passed']:raise RuntimeError('Final protection checks failed; see final_checks.json')
-    result.update(final=True,final_checks=str(OUT/'final_checks.json'),branch_heads=heads)
+    result.update(final=True,final_checks=str(OUT/'final_checks.json'),branch_heads=heads,
+        physical_comparison=str(OUT/'physical_comparison.json'))
     for key,item in result['items'].items():
         rt.save(OUT/key/'result.json',dict(item,queue_summary=queue['items'][key]))
     rt.save(OUT/'results.json',result);rt.save(OUT/'tool_metrics_final.json',resources)
