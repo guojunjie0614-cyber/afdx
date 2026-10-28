@@ -199,7 +199,7 @@ def sim(options):
         f.result["parameters"]=options.param
         # 加载后卸载使五功能场景达到约70万拍；网表预算8小时，仍受Deadline截断。
         sim_budget=28800 if "AFDX_top" in replaced and options.test=="tb_net_services" else 5400 if "AFDX_top" in replaced else 1800 if netlists else 900
-        if options.test in ("tb_sys_perf", "tb_sys_perf_var") and not netlists:sim_budget=max(sim_budget,5400)
+        if options.test in ("tb_sys_perf", "tb_sys_perf_var", "tb_sys_load") and not netlists:sim_budget=max(sim_budget,5400)
         if options.test=="tb_sys_perf_var" and not netlists:sim_budget=max(sim_budget,14400)
         if options.coverage:sim_budget=max(sim_budget,9000 if options.test=="tb_sys_perf" else 3600)
         log=f.job("simulation",[MS/"vsim.exe","-batch",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
