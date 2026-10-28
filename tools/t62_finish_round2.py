@@ -104,6 +104,29 @@ def tool_records(queue,summaries):
     return result
 
 
+def manual_inventory_check(name,inventory):
+    path=Path(name)
+    wrapped_file=(set(inventory)=={path.name} and isinstance(inventory[path.name],dict)
+        and 'bytes' in inventory[path.name])
+    is_file='bytes' in inventory or wrapped_file
+    entries={'':inventory[path.name] if wrapped_file else inventory} if is_file else inventory
+    mismatches=[];hashes_verified=0;metadata_only=[]
+    actual={''} if is_file and path.is_file() else {str(p.relative_to(path)) for p in files(path)} if not is_file and path.is_dir() else set()
+    if actual!=set(entries):mismatches.append(dict(file_set_difference=sorted(actual^set(entries))))
+    for relative,old in entries.items():
+        current=path if is_file else path/relative
+        if not current.is_file():mismatches.append(dict(path=str(current),missing=True));continue
+        stat=current.stat();metadata_ok=stat.st_size==old['bytes'] and stat.st_mtime_ns==old['mtime_ns']
+        expected_hash=old.get('sha256')
+        hash_ok=expected_hash is None or sha(current)==expected_hash
+        if expected_hash is not None and hash_ok:hashes_verified+=1
+        elif expected_hash is None and metadata_ok:metadata_only.append(relative or path.name)
+        if not metadata_ok or not hash_ok:mismatches.append(dict(path=str(current),changed=True))
+    return dict(passed=not mismatches,mismatches=mismatches,count=len(entries),
+        sha256_verified_count=hashes_verified,metadata_only_count=len(metadata_only),metadata_only_files=metadata_only,
+        verification_scope='File set, size and write time; content SHA only where the initial inventory supplied a non-null digest')
+
+
 def protected_checks(manifest):
     before=load(OUT/'preparation/protected_before.json');protected={}
     for name,old in before.items():
@@ -119,18 +142,7 @@ def protected_checks(manifest):
     frozen={name:sha(canonical/name)==digest for name,digest in manifest['canonical_synth_files'].items()}
     manual={}
     for name,inventory in load(R2/'excluded_manual_probes.json')['inventory'].items():
-        path=Path(name);is_file='bytes' in inventory
-        entries={'':inventory} if is_file else inventory
-        mismatches=[]
-        actual={''} if is_file and path.is_file() else {str(p.relative_to(path)) for p in files(path)} if path.is_dir() else set()
-        if actual!=set(entries):mismatches.append(dict(file_set_difference=sorted(actual^set(entries))))
-        for relative,old in entries.items():
-            current=path if is_file else path/relative
-            if not current.exists():mismatches.append(dict(path=str(current),missing=True));continue
-            stat=current.stat()
-            if stat.st_size!=old['bytes'] or stat.st_mtime_ns!=old['mtime_ns'] or ('sha256' in old and sha(current)!=old['sha256']):
-                mismatches.append(dict(path=str(current),changed=True))
-        manual[name]=dict(passed=not mismatches,mismatches=mismatches,count=len(entries))
+        manual[name]=manual_inventory_check(name,inventory)
     return dict(protected_metadata=protected,tool_hashes=tools,simulation_libraries=libraries,protected_evidence_hashes=evidence,
         canonical_synth_files=frozen,excluded_manual_probes=manual,
         immutable_manifest=sha(OUT/'manifest.json')==load(OUT/'manifest_v5_complete.json')['immutable_original_manifest_sha256'],
