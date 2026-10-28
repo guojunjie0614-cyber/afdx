@@ -8,6 +8,7 @@ import struct
 import eda
 from official_synth import installation, tcl
 import check_multicycle
+from official_impl import timing_closed
 
 ROOT=Path(__file__).resolve().parents[1]
 # eLinx 3.0.7 GUI report configuration for the single clk clock.
@@ -15,6 +16,8 @@ ROOT=Path(__file__).resolve().parents[1]
 REPORT_CONFIG=bytes.fromhex('00000000640000000a00000003000000caf249710103000000000000000000000000000000')
 
 def report(route_path,deadline):
+    import t62_runtime
+    t62_runtime.install()
     route=json.loads(route_path.read_text(encoding='utf-8'))
     if not route.get('completed'):raise RuntimeError('Official implementation has not completed')
     for name,digest in {**route['source_hashes'],**route['setting_hashes']}.items():
@@ -57,12 +60,16 @@ def report(route_path,deadline):
         netlist=Path(synthesis['netlist'])
         if eda.sha(netlist)!=synthesis['netlist_sha256']:raise RuntimeError('Mapped netlist changed')
         audit_path=flow.folder/'audit'
-        proof=check_multicycle.audit(netlist,ROOT/'elinx/constraints.edc',audit_path)
+        constraint=Path(route.get('constraint_file',ROOT/'elinx/constraints.edc'))
+        if route.get('constraint_sha256') and eda.sha(constraint)!=route['constraint_sha256']:
+            raise RuntimeError('Routed constraint snapshot changed')
+        proof=check_multicycle.audit(netlist,constraint,audit_path)
         measured=check_multicycle.timing(database,proof['patterns'],audit_path)
         if not proof['passed'] or not measured['passed']:raise RuntimeError('Multicycle scope/timing audit failed')
         clock=next((row for row in measured['clocks'] if row['name']=='clk'),measured['clocks'][0])
         setup_worst_ns=clock['setup_worst_slack']/1000.0
-        flow.result.update(completed=True,timing_database=str(database),audit=str(audit_path),
+        flow.result.update(completed=True,timing_closed=timing_closed(measured['clocks']),
+                           timing_database=str(database),audit=str(audit_path),
                            setup_uncertainty_ns=proof['setup_uncertainty_ns'],
                            setup_slack_at_period_ns=round(setup_worst_ns+proof['setup_uncertainty_ns'],6),
                            constrained_registers=proof['constrained_registers'],

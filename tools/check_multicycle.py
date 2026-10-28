@@ -22,7 +22,7 @@ def signals(value):
     value=re.sub(r"\b\d+'[sS]?[bBoOdDhH][0-9a-fA-FxXzZ_]+",'',value)
     return tuple(re.findall(r'\\[^\s{},]+|\b[A-Za-z_$][\w$]*(?:\[\d+\])?',value))
 
-def constraints(path):
+def _timing_constraints(path):
     source=path.read_text(encoding='utf-8-sig')
     source='\n'.join(line for line in source.splitlines() if not line.lstrip().startswith('#'))
     collections_by_name={}
@@ -68,6 +68,21 @@ def constraints(path):
     if not pairs or any(set(v)!={'setup','hold'} for v in pairs.values()):raise ValueError('Every MCP needs setup and hold')
     if set(collections_by_name)!={n for pair in pairs for n in pair}:raise ValueError('Unused register collection')
     return [(tuple(collections_by_name[a]),tuple(collections_by_name[b])) for a,b in pairs],uncertainty
+
+def constraints(path):
+    # T62 checks the complete physical membership before extracting pure SDC.
+    # Existing T61 guard imports this function only in T61 checkouts, where the
+    # T62 policy does not exist; their frozen behavior is unchanged.
+    policy=Path(__file__).resolve().parents[1]/'elinx/constraints_t62.json'
+    if policy.is_file():
+        from t62_constraints import split
+        timing=split(path.read_text(encoding='utf-8-sig'))['timing']
+        class TimingText:
+            def read_text(self,encoding='utf-8-sig'):return timing
+        result=_timing_constraints(TimingText())
+        if result[1]!=0.30:raise ValueError('T62 requires exactly 0.30 ns setup uncertainty')
+        return result
+    return _timing_constraints(path)
 
 @functools.lru_cache(None)
 def matcher(patterns):

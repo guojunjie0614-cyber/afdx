@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 import eda
 import official_synth
+import t62_constraints
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,6 +22,27 @@ def check_inputs(synthesis):
     netlist = Path(synthesis['netlist'])
     if eda.sha(netlist) != synthesis['netlist_sha256']:
         raise RuntimeError('Synthesis netlist changed; run synth.ps1 again')
+    constraint = ROOT / 'elinx/constraints.edc'
+    parts = t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    directory = Path(synthesis['folder']) / 'project'
+    if (directory / 'constraints.edc').read_text(encoding='utf-8-sig') != parts['full']:
+        raise RuntimeError('Run-copy EDC differs from the approved program')
+    if (directory / 'timing_only.sdc').read_text(encoding='utf-8-sig') != parts['timing']:
+        raise RuntimeError('Run-copy SDC differs from the approved timing program')
+    expected = 'source ' + official_synth.tcl(directory/'constraints.edc') + '\nread_sdc ' \
+        + official_synth.tcl(directory/'timing_only.sdc') + '\n' \
+        + 'set_global_assignment -name TARGET_CONSTRAINT_FILE ' \
+        + official_synth.tcl(directory/'constraints.edc') + '\n'
+    name = Path(synthesis['project']).stem
+    psf = directory/(name+'.runs/synth_1')/(name+'.run.psf')
+    if psf.read_text(encoding='utf-8-sig') != expected:
+        raise RuntimeError('Run-copy PSF differs from the approved EDC/SDC read chain')
+
+
+def timing_closed(clocks):
+    return bool(clocks) and all(row['setup_worst_slack'] > 0
+        and row['hold_worst_slack'] >= 0 and row['setup_fail_ends'] == 0
+        and row['hold_fail_ends'] == 0 for row in clocks)
 
 
 def reports(output, name):
@@ -47,6 +69,8 @@ def reports(output, name):
 
 
 def main():
+    import t62_runtime
+    t62_runtime.install()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--deadline')
     args = parser.parse_args()
@@ -120,7 +144,7 @@ def main():
             raise RuntimeError('Official route reported an error')
         resources, timing, resource_file, database = reports(output, name)
         check_inputs(synthesis)
-        closed = all(row['setup_worst_slack'] >= 0 and row['hold_worst_slack'] >= 0 for row in timing['clocks'])
+        closed = timing_closed(timing['clocks'])
         flow.result.update(completed=True, timing_closed=closed, resources=resources, timing=timing,
                            resources_report=str(resource_file), timing_database=str(database),
                            elapsed_seconds=round(time.monotonic() - started, 3))
