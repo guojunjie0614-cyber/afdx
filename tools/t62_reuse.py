@@ -1,16 +1,17 @@
 """One PRES run from a read-only synthesis record; no synthesis/packing copy.
 
 The native run_route.tcl uses synthName only for load_pb_ver (line 61) and
-udm_load_checkpoint (line 67). A relative synthName directs those reads to the
-same frozen source; every implementation and full report has its own output.
+udm_load_checkpoint (line 67). A task-local directory junction gives those reads
+a short path to the same frozen source; every run has its own output. Long
+relative concatenations failed version loading in the recorded C4 preparation.
 """
 import argparse
 import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import time
-import xml.etree.ElementTree as ET
 
 import eda
 import official_impl
@@ -21,6 +22,32 @@ import t62_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 NAME = 'AFDX_EndSystem'
+
+
+def link_synthesis(synth, runs, evidence):
+    """Create only an owned junction; never change the target or its attributes."""
+    runs=Path(runs)
+    runs.resolve().relative_to((ROOT/'out').resolve())
+    target=runs/'synth_1'
+    if target.exists():
+        raise ValueError('Synthesis input junction already exists')
+    for name in [NAME+'.ver.pb',NAME+'_eHiChip6.ecp']:
+        if len(str(target/name))>=248:
+            raise ValueError('Native input path is too long even with a local junction')
+    command=['cmd.exe','/d','/c','mklink','/J',str(target),str(Path(synth).resolve())]
+    result=subprocess.run(command,cwd=ROOT,capture_output=True,check=True,
+                          creationflags=subprocess.CREATE_NO_WINDOW)
+    if not target.is_junction() or target.resolve()!=Path(synth).resolve():
+        raise ValueError('Junction does not identify the frozen synthesis source')
+    checks={name:eda.sha(target/name)==eda.sha(Path(synth)/name)
+            for name in [NAME+'.ver.pb',NAME+'_eHiChip6.ecp']}
+    if not all(checks.values()):
+        raise ValueError('Native input files differ through junction')
+    t62_runtime.save(Path(evidence)/'synthesis_read_chain.json',dict(
+        command=command,stdout=result.stdout.decode('mbcs',errors='replace'),junction=str(target),read_only_source=str(Path(synth).resolve()),
+        input_checks=checks,native_read_only_uses=['run_route.tcl:61 load_pb_ver','run_route.tcl:67 udm_load_checkpoint'],
+        actual_native_load_verified=None))
+    return 'synth_1'
 
 
 def run(source, pres):
@@ -59,7 +86,7 @@ def run(source, pres):
         uses = [line for line in native_source.splitlines() if '$synthName' in line]
         if len(uses) != 2 or not uses[0].startswith('load_pb_ver ') or 'udm_load_checkpoint' not in uses[1]:
             raise ValueError('Native synthesis read chain changed')
-        synth_name = os.path.relpath(synth, output.parent).replace('\\', '/')
+        synth_name = link_synthesis(synth,output.parent,flow.folder)
         arguments = [project,NAME,synthesis['top'],synthesis['series'],synthesis['device'],
                      synthesis['package'],synth_name,'imple_1']
         script = flow.folder/'route.tcl'

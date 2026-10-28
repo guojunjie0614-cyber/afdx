@@ -106,7 +106,7 @@ class ResourceBlocked(RuntimeError):
 
 
 @contextmanager
-def admission(command, folder):
+def admission(command, folder, units=1):
     executable = Path(command[0]).name.lower()
     group = 'elinx' if executable in NATIVE else 'modelsim' if executable in MODELSIM else 'helper'
     token = uuid.uuid4().hex
@@ -116,15 +116,14 @@ def admission(command, folder):
             running = observed(group) if group != 'helper' else []
             # Leases cover the small interval before a native process appears.
             leases = [row for row in registry['leases'] if row['group'] == group]
-            lease_owners = {row['owner']['pid'] for row in leases}
-            counted = len(running) + sum(not any(_descendant(row['pid'], owner) for row in running)
-                                         for owner in lease_owners)
+            counted = len(running) + sum(max(0,row.get('units',1)
+                -sum(_descendant(item['pid'],row['owner']['pid']) for item in running)) for row in leases)
             memory = psutil.virtual_memory().available
             disk = shutil.disk_usage(ROOT).free
             resource_ok = memory >= 3 * GIB and disk >= 8 * GIB
-            capacity = group == 'helper' or counted < (6 if group == 'elinx' else 10)
+            capacity = group == 'helper' or counted+units <= (6 if group == 'elinx' else 10)
             if resource_ok and capacity:
-                item = dict(token=token, owner=capture(psutil.Process()), group=group,
+                item = dict(token=token, owner=capture(psutil.Process()), group=group,units=units,
                             folder=str(folder), command=command, admitted=now(),
                             queue_seconds=time.monotonic()-queued,
                             observed_tools=running, memory_free_bytes=memory, disk_free_bytes=disk)
@@ -154,16 +153,23 @@ def _descendant(pid, owner):
 
 class Flow(eda.Flow):
     def __init__(self, kind, name, deadline):
-        super().__init__(kind, name, deadline)
+        # Windows wall-clock resolution can give concurrent parameterizations
+        # the same microsecond timestamp. A UUID keeps both attempts immutable.
+        stamp=datetime.now().strftime('%Y%m%d_%H%M%S_%f')+'_'+uuid.uuid4().hex[:12]
+        self.folder=ROOT/'out'/kind/name/stamp
+        self.folder.mkdir(parents=True,exist_ok=False)
+        self.jobs=[]
         self.deadline = datetime.fromisoformat(deadline).timestamp() if deadline else None
-        self.result.update(scope='T62 bounded diagnostics; no delivery acceptance',
+        self.result=dict(name=name,started=now(),folder=str(self.folder),
+            scope='T62 bounded diagnostics; no delivery acceptance',memory_limit_gib=None,
             memory_floor_gib=3, disk_floor_gib=8, overall_deadline=self.deadline,
             native_tool_budgets_seconds=BUDGETS)
 
     def job(self, name, command, budget=900, cwd=None):
         command = list(map(str, command))
         budget = BUDGETS.get(name, budget)
-        with admission(command, self.folder) as lease:
+        # run_app.do owns one outer ModelSim plus one compiler/simulator child.
+        with admission(command, self.folder,units=2 if name=='app_small' else 1) as lease:
             # Resource waiting is excluded from the stage budget. An explicit
             # caller deadline remains an intentional additional upper bound.
             if self.deadline is not None:
@@ -197,6 +203,11 @@ class Flow(eda.Flow):
                         try:
                             owned[child.pid] = capture(child)
                             rss += child.memory_info().rss
+                            if name=='app_small' and child.pid!=process.pid:
+                                executable=Path(owned[child.pid]['command'][0]).name.lower()
+                                child_budget={'vlog.exe':120,'vsim.exe':900}.get(executable)
+                                if child_budget and time.time()-child.create_time()>child_budget:
+                                    reason='timeout_'+executable
                         except (psutil.NoSuchProcess, psutil.AccessDenied):
                             continue
                     peak = max(peak, rss)
