@@ -5,6 +5,7 @@ its complete frozen source/test/helper identity matches the immutable snapshot.
 """
 import argparse
 from datetime import datetime
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -25,6 +26,13 @@ def load(path):return json.loads(Path(path).read_text(encoding='utf-8-sig'))
 
 
 def sha(path):return eda.sha(Path(path))
+
+
+def libraries():
+    frozen=load(OUT/'manifest_v10_libraries.json')['simulation_libraries']
+    if not all(sha(name)==digest for name,digest in frozen.items()):
+        raise RuntimeError('Frozen simulation library changed; no D11 job may be submitted/reused')
+    return frozen
 
 
 def submit(key,queue):
@@ -69,7 +77,10 @@ def submit(key,queue):
     if not all(tool_checks.values()):raise RuntimeError('D11 native tool or library changed')
     # Absolute hashes protect shared installed tools/libraries without copying
     # or changing the installation. Environment is checked again per job.
-    frozen=dict(files,**tool_hashes)
+    library_hashes=libraries()
+    frozen=dict(files,**tool_hashes,**library_hashes)
+    effective_identity=dict(record['identity'],simulation_libraries=library_hashes)
+    effective_key=hashlib.sha256(json.dumps(effective_identity,sort_keys=True).encode()).hexdigest().upper()
     reuse=item.get('functional_passed') is True and all(
         name in files and files[name]==digest for name,digest in item.get('frozen_files',{}).items())
     reuse_ids=item.get('directed_jobs',[])+item.get('regression_jobs',[]) if reuse else []
@@ -92,6 +103,8 @@ def submit(key,queue):
         add('judge_'+case,'judge',judge_case=case)
     manifest=dict(validation_id=key,candidate=candidate,created=rt.now(),snapshot=str(snapshot),
         source=str(source),source_synthesis=record['source'],source_identity=record['identity'],
+        effective_dedup_identity=effective_identity,effective_dedup_key=effective_key,
+        fixed_library_identity=str(OUT/'manifest_v10_libraries.json'),simulation_libraries=library_hashes,
         snapshot_hashes=files,tool_hashes=tool_hashes,tool_checks=tool_checks,environment=rt.environment_guard(),
         vqm_sha256=record['vqm_sha256'],candidate_regression_reused=reuse,
         reused_jobs=[dict(job_id=identity,result=queue['jobs'][identity]['result'],
@@ -108,6 +121,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--check-only',action='store_true')
     args=parser.parse_args();rt.environment_guard()
     if args.check_only:
+        assert libraries()
         assert len(cases(ROOT))==40
         assert (ROOT/'sim/vectors/app/stimulus.txt').is_file()
         assert 'AFDX_JUDGE_CASE' in (ROOT/'sim/run_judge.do').read_text()
