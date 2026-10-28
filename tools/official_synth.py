@@ -9,6 +9,7 @@ import time
 import xml.etree.ElementTree as ET
 
 import eda
+import t62_constraints
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -48,16 +49,29 @@ def project_settings(flow, requested_top):
     constraint_set = document.find("./FileSets/FileSet[@Name='" + run.attrib['ConstrsSet'] + "']")
     constraints = [(project.parent / item.attrib['Path'].lstrip('/')).resolve()
                    for item in constraint_set.findall('File')]
-    if len(constraints) != 1:
-        raise RuntimeError('This entry requires one project constraint file')
     for path in sources + constraints:
         if not path.is_file():
             raise RuntimeError('Missing project input: ' + path.name)
+    t62_constraints.check_project_files(constraints)
+    # The full EDC is generated from the same approved source as a GUI pair.
+    constraint = ROOT / 'elinx/constraints.edc'
+    t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    closure = set()
+    def include(path):
+        if path in closure:
+            return
+        path.relative_to(ROOT)
+        closure.add(path)
+        for item in re.findall(r'(?m)^\s*`include\s+"([^"]+)"', path.read_text(encoding='utf-8-sig')):
+            include((path.parent / item).resolve())
+    for path in sources:
+        include(path)
     flow.result.update(project=project.relative_to(ROOT).as_posix(), top=top,
                        series=options['Series'], device=options['Device'], package=options['Package'],
                        engine='eLinx Run Synthesis', source_hashes={
-                           path.relative_to(ROOT).as_posix(): eda.sha(path) for path in sources})
-    return project, run, options, sources, constraints[0]
+                           path.relative_to(ROOT).as_posix(): eda.sha(path) for path in sorted(closure)},
+                       constraint_project_files=[p.relative_to(ROOT).as_posix() for p in constraints])
+    return project, run, options, sources, constraint
 
 
 def prepare_project(folder, project, run, options, sources, constraint):
@@ -69,7 +83,10 @@ def prepare_project(folder, project, run, options, sources, constraint):
     defaults = project.with_name(name + '_assignment_defaults.qdf')
     shutil.copy2(defaults, directory / defaults.name)
     constraint_copy = directory / constraint.name
-    shutil.copy2(constraint, constraint_copy)
+    split = t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    constraint_copy.write_text(split['full'], encoding='utf-8')
+    timing_copy = directory / 'timing_only.sdc'
+    timing_copy.write_text(split['timing'], encoding='utf-8')
     qsf = project.with_suffix('.qsf')
     by_name = {path.name: path for path in sources}
     if len(by_name) != len(sources):
@@ -129,7 +146,7 @@ def prepare_project(folder, project, run, options, sources, constraint):
     (directory / (name + '.qpf')).write_text(
         'QUARTUS_VERSION = "13.0"\nPROJECT_REVISION = "' + name + '"\n', encoding='ascii')
     (output / (name + '.run.psf')).write_text(
-        'source ' + tcl(constraint_copy) + '\nread_sdc ' + tcl(constraint_copy) + '\n'
+        'source ' + tcl(constraint_copy) + '\nread_sdc ' + tcl(timing_copy) + '\n'
         'set_global_assignment -name TARGET_CONSTRAINT_FILE ' + tcl(constraint_copy) + '\n',
         encoding='utf-8')
     (directory / 'log4cpp.property').write_text(
@@ -188,6 +205,8 @@ def reports(output, name):
 
 
 def main():
+    import t62_runtime
+    t62_runtime.install()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--top', help='兼容参数，必须与工程综合顶层相同')
     parser.add_argument('--deadline')
@@ -198,7 +217,9 @@ def main():
         home = installation()
         project, run, options, sources, constraint = project_settings(flow, args.top)
         directory, output = prepare_project(flow.folder, project, run, options, sources, constraint)
-        settings = [project, constraint, project.with_name(project.stem + '_assignment_defaults.qdf')]
+        settings = [project, constraint, t62_constraints.SPEC,
+                    project.with_name(project.stem + '_assignment_defaults.qdf')]
+        settings += [ROOT / p for p in flow.result['constraint_project_files'] if ROOT / p not in settings]
         if project.with_suffix('.qsf').is_file():
             settings.append(project.with_suffix('.qsf'))
         flow.result['setting_hashes'] = {path.relative_to(ROOT).as_posix(): eda.sha(path) for path in settings}
