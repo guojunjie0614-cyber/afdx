@@ -20,17 +20,27 @@ OUT=ROOT/'out/t62'
 
 def main():
     manifest=json.loads((OUT/'manifest.json').read_text(encoding='utf-8'))
-    attempt=OUT/'C0/P1.55/attempt_01'
+    base=OUT/'C0/P1.55'
+    number=1
+    while (base/f'attempt_{number:02d}').exists():
+        number+=1
+    attempt=base/f'attempt_{number:02d}'
     attempt.mkdir(parents=True,exist_ok=False)
     identity=runtime.capture(psutil.Process())
+    # manifest v1 also captured a newly authored coordinator-only GUI helper.
+    # It is not a candidate input. Explicitly separate that known driver; no
+    # missing synthesis, implementation, audit or runtime input is tolerated.
+    coordinator_only={'tools/t62_c0.py','tools/t62_gui_prepare.py'}
     frozen={**{k:v['sha256'] for k,v in manifest['source_closure'].items()},
-            **manifest['setting_hashes'],**manifest['scripts']}
+            **manifest['setting_hashes'],
+            **{k:v for k,v in manifest['scripts'].items() if k not in coordinator_only}}
     for name,digest in frozen.items():
         if eda.sha(CANDIDATE/name)!=digest:
             raise ValueError('C0 frozen input differs: '+name)
     config=dict(candidate=str(CANDIDATE),worker=identity,started=runtime.now(),frozen_files=frozen,
         manifest_sha256=eda.sha(OUT/'manifest.json'),license_policy='No environment override or retry on license failure',
-        allowed_stages=['source synthesis','P1.55 implementation','full timing report'])
+        allowed_stages=['source synthesis','P1.55 implementation','full timing report'],
+        coordinator_only_files=sorted(coordinator_only),native_synthesis_attempt=1)
     runtime.save(attempt/'config.json',config)
     state=json.loads((OUT/'status.json').read_text())
     state['items']['C0']=dict(status='running',phase='source_synthesis_license_check',worker=identity,
