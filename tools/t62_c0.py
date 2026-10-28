@@ -97,13 +97,15 @@ def main():
         checks={key:metrics[key]==value for key,value in expected.items()}
         checks.update(edge8=metrics['edge_classes']['8ns']['endpoints']==51424,
             edge16=metrics['edge_classes']['16ns']['endpoints']==2458,pins=physical,
+            clock=len(metrics['clocks'])==1 and metrics['clocks'][0]['name']=='clk'
+                  and metrics['clocks'][0]['period']==8000,
             resources=all(route['resources'][key]==value for key,value in dict(lut=39895,ff=20885,memory=404,pins=172).items()),
             mcp=report['invalid_registers']==0 and report['uncovered_internal_arcs']==0,
             uncertainty=report['setup_uncertainty_ns']==0.30)
         # Checkpoint differences are evidence, never silently treated as C4's paired control.
         synthdir=Path(summary['netlist']).parent
         identity_checks={name:eda.sha(synthdir/name)==digest for name,digest in manifest['canonical_synth_files'].items()
-                         if name.endswith(('.vqm','.ecp','.cluster')) and (synthdir/name).is_file()}
+                         if name.endswith(('.vqm','.ecp','_cluster.xml')) and (synthdir/name).is_file()}
         runtime.save(attempt/'gate.json',dict(passed=all(checks.values()),checks=checks,expected=expected,
             raw_metrics=metrics,physical=pin_checks,canonical_file_matches=identity_checks))
         result.update(status='completed',reason_code=None,run_completed=True,
