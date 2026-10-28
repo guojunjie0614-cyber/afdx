@@ -176,9 +176,12 @@ def run(source, pres, settings, tag, extra=(), place_only=False):
         official_synth.project_settings(flow, None)
         settings_files = [ROOT / 'elinx/constraints_t62.json', ROOT / 'elinx/constraints.edc',
                           ROOT / 'elinx/AFDX_EndSystem.epr', ROOT / 'elinx/AFDX_EndSystem_assignment_defaults.qdf']
+        # 完整报告的多周期复核读 constraint_file；时序部分与批准程序逐字相同，交给批准程序复核，
+        # 实际布线用的约束另记 routed_constraint_file。
         flow.result.update(synthesis=str(source), output=str(output), pres=pres, settings=settings,
             source_synth_name=synth_name, source_read_only_files=frozen,
-            constraint_file=str(constraint), constraint_sha256=eda.sha(constraint),
+            constraint_file=str(approved), constraint_sha256=eda.sha(approved),
+            routed_constraint_file=str(constraint), routed_constraint_sha256=eda.sha(constraint),
             native_script_sha256=eda.sha(native),
             setting_hashes={p.relative_to(ROOT).as_posix(): eda.sha(p) for p in settings_files})
         audit = __import__('check_multicycle').audit(netlist, approved, flow.folder / 'multicycle_audit')
