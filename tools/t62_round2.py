@@ -250,7 +250,10 @@ class Queue:
                 self.event('verification_only_repair',candidate=candidate,changed=changed,
                     previous_directed=previous_directed,native_retry=False)
             if item['phase'] not in ['awaiting_C0','awaiting_preparation']:continue
-            if candidate=='C5' and not self.value['items']['C1'].get('source'):continue
+            if candidate=='C5' and not self.value['items']['C1'].get('source'):
+                # A failed C1 cannot produce a checkpoint. Accept its dependent
+                # terminal request once C1 is terminal; never launch a C5 job.
+                if request.get('status') not in TERMINAL or self.value['items']['C1']['status'] not in TERMINAL:continue
             if candidate=='C6' and not all(self.value['items'][key]['status'] in TERMINAL for key in RTL_ITEMS if key!='C6'):continue
             if request.get('status') in TERMINAL:
                 self.terminate_item(candidate,request['status'],request.get('reason_code'),request=request)
