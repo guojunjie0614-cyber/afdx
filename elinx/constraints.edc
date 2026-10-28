@@ -3173,7 +3173,6 @@ set from_snmp_version [get_cells {
 set to_snmp_version [get_cells {*snmp|*half_rate.engine|version*~I}]
 set_multicycle_path -setup 2 -from $from_snmp_version -to $to_snmp_version
 set_multicycle_path -hold 0 -from $from_snmp_version -to $to_snmp_version
-
 set_global_assignment -name PRES_FAC_MULT 1.55
 set_location_assignment PIN_B6 -to {cfg_addr[0]}
 set_location_assignment PIN_C6 -to {cfg_addr[10]}

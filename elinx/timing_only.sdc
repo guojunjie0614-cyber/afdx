@@ -3173,4 +3173,3 @@ set from_snmp_version [get_cells {
 set to_snmp_version [get_cells {*snmp|*half_rate.engine|version*~I}]
 set_multicycle_path -setup 2 -from $from_snmp_version -to $to_snmp_version
 set_multicycle_path -hold 0 -from $from_snmp_version -to $to_snmp_version
-
