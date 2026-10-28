@@ -118,6 +118,31 @@ def directed(config,prefix,result):
         flow.finish()
 
 
+def judge(config,result):
+    from official_synth import tcl
+    budgets=dict(services=900,capacity=900,snmp=900,burst77=900,burst81=900,rtc=900,performance=5400,perf_var=14400)
+    case=config['judge_case'];budget=budgets[case]
+    flow=runtime.Flow('validation','judge_'+case,None)
+    source=(ROOT/'sim/run_judge.do').read_text(encoding='utf-8-sig')
+    marker='proc judge_run {log command} {'
+    if source.count(marker)!=1:raise RuntimeError('Judge external-tool entry changed')
+    prefix='proc t62_ini_guard {} {exec '+tcl(sys.executable)+' -B '+tcl(ROOT/'tools/t62_runtime.py')+' check-env}\n'
+    script=flow.folder/'judge_guarded.do'
+    script.write_text(prefix+source.replace(marker,marker+'\n    t62_ini_guard',1),encoding='utf-8')
+    os.environ['AFDX_JUDGE_CASE']=case
+    try:
+        flow.result.update(judge_case=case,child_compile_budget_seconds=120,child_simulation_budget_seconds=budget,
+            reserved_modelsim_slots=2,reference_script_sha256=eda.sha(ROOT/'sim/run_judge.do'))
+        log=flow.job('judge_'+case,[eda.modelsim_dir()/'vsim.exe','-batch','-do','do '+tcl(script)],budget+300,cwd=ROOT)
+        passed=bool(re.search(r'JUDGE ENTRY PASS cases=1 warnings=0\b',log)) and 'JUDGE ENTRY FAIL' not in log
+        if not passed:raise RuntimeError('Judge case failed or reported diagnostics')
+        flow.result['passed']=True
+        result.update(status='completed',run_completed=True,functional_passed=True,judge=flow.result)
+    finally:
+        os.environ.pop('AFDX_JUDGE_CASE',None)
+        flow.finish()
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--config',type=Path,required=True)
     args=parser.parse_args();config=load(args.config);attempt=Path(config['attempt'])
@@ -155,10 +180,19 @@ def main():
             if code or not summary.get('passed'):raise RuntimeError(summary.get('error','Simulation failed'))
             result.update(status='completed',run_completed=True,functional_passed=True)
         elif mode=='directed':directed(config,prefix,result)
-        elif mode=='app':
+        elif mode=='judge':judge(config,result)
+        elif mode=='wrapper':
+            flow=runtime.Flow('preparation','check_wrapper',None)
+            try:
+                log=flow.job('wrapper',[sys.executable,'-B',ROOT/'tools/check_wrapper.py'],120,cwd=ROOT)
+                if 'RESULT check_wrapper PASS checks=5 errors=0' not in log:raise RuntimeError('Wrapper check failed')
+                result.update(status='completed',run_completed=True,functional_passed=True,wrapper=log)
+            finally:flow.finish()
+        elif mode in ['app','app_default']:
             import t62_app_smoke
-            if t62_app_smoke.main():raise RuntimeError('Application small stimulus failed')
-            result.update(status='completed',run_completed=True,functional_passed=True,application=pointer(prefix,'app_small'))
+            default=mode=='app_default'
+            if t62_app_smoke.main(default):raise RuntimeError('Application entry failed')
+            result.update(status='completed',run_completed=True,functional_passed=True,application=pointer(prefix,'app_default' if default else 'app_small'))
         else:raise ValueError('Unknown frozen job mode')
         verify(config)
     except Exception as error:
@@ -167,7 +201,7 @@ def main():
             logs='\n'.join(path.read_text(encoding='utf-8-sig',errors='replace')
                 for path in Path(result['synthesis']['folder']).glob('*.log'))
             if re.search(r'Error\s*\(292026\)|Specified license file does not exist',logs,re.I):reason='license'
-        if config['mode'] in ['sim','directed','app'] and reason=='tool_error':reason='regression_failed'
+        if config['mode'] in ['sim','directed','app','app_default','wrapper','judge'] and reason=='tool_error':reason='regression_failed'
         result.update(status='blocked' if reason in ['environment_changed','resource_budget','license'] else 'failed',reason_code=reason,error=text,traceback=traceback.format_exc())
     finally:
         result['finished']=runtime.now()
