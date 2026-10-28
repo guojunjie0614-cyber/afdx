@@ -5,6 +5,7 @@ registers. Every reported setup path into those sinks is considered; no source
 filter hides a replacement critical path. Missing measurements remain null.
 """
 import argparse
+import copy
 from collections import Counter
 import json
 from pathlib import Path
@@ -104,6 +105,39 @@ def compare(candidate,control,target):
     return result
 
 
+def apply_single_candidate_reuse(queue,results):
+    """Expose existing measurements with their provenance; never create a run."""
+    item=queue['items']['C6'];request=item.get('request')
+    if not isinstance(request,dict) or not request.get('reuse_of'):return
+    reference=request['reuse_of']
+    if item['status']!='completed' or reference not in TARGETS or item['jobs']:
+        raise RuntimeError('Invalid single-candidate C6 reuse state')
+    original=queue['items'][reference];measured=results[reference]
+    if (original['status']!='completed' or not measured['complete_seven_slots']
+        or measured['eligible_for_combination'] is not True
+        or request['source_candidate_head']!=original['head']
+        or request['source']!=original['source'] or request['reuse_slots']!=original['slots']):
+        raise RuntimeError('C6 reuse does not identify the complete eligible source')
+    decision=load(request['decision'])
+    if (sha256:=eda.sha(Path(request['decision'])))!=request['decision_sha256']:
+        raise RuntimeError('C6 decision identity changed')
+    frozen=OUT/'round_02/D9_evaluation_frozen.json'
+    if (decision['eligible_union']!=[reference] or decision['combination_count']!=1
+        or decision['rules_sha256']!=eda.sha(OUT/'manifest_v8_evaluation.json')
+        or eda.sha(frozen)!=decision['evaluation_sha256']):
+        raise RuntimeError('C6 reuse differs from the frozen D9 decision')
+    reused=copy.deepcopy(measured)
+    reused.update(candidate='C6',status=item['status'],reason_code=item.get('reason_code'),
+        source_result=str(OUT/'C6/result.json'),reuse_of=reference,
+        source_candidate_head=original['head'],source_synthesis=original['source'],
+        reused_source_result=str(OUT/reference/'result.json'),
+        reuse_decision=request['decision'],reuse_decision_sha256=sha256,
+        measurement_provenance='All seven measurements and functional results reused from '+reference,
+        new_native_runs=0,new_validation_jobs=0)
+    for row in reused['pres_runs']:row['measurement_provenance']='reused from '+reference
+    results['C6']=reused
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--freeze-spec',action='store_true')
     args=parser.parse_args()
@@ -166,6 +200,7 @@ def main():
             measured_pres=sorted(evaluated[key]),complete_seven_slots=full,seven_slot_median_ps=median,
             measured_closed_slot_count=closed if measured else None,complete_candidate_adopted=adopted,pres_runs=slots,
             source_result=str(OUT/key/'result.json'),functional_boundary=item.get('functional_boundary'))
+    apply_single_candidate_reuse(queue,results)
     destination=OUT/'round_02/evaluation.json';rt.save(destination,dict(updated=rt.now(),rules=str(OUT/'manifest_v8_evaluation.json'),items=results,
         eligible_union=[key for key in TARGETS if results[key]['eligible_for_combination'] is True]))
     print(json.dumps(dict(evaluation=str(destination),eligible_union=[key for key in TARGETS if results[key]['eligible_for_combination'] is True],
