@@ -1086,5 +1086,14 @@
     "sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
     "source_commit": "67d2e618",
     "historical": false
+  },
+  {
+    "file": "t63_f1_gui_compare.json",
+    "source": "out/t63/gui_compare",
+    "operation": "F1 GUI rerun artifact comparison against CLI baseline",
+    "bytes": 6870,
+    "sha256": "5F2664CB57E89C16CF4AF297C3CBBFD87B18A3A5690FDE188134978A3BB54608",
+    "source_commit": "f1f45a73",
+    "historical": false
   }
 ]
