@@ -50,7 +50,7 @@ def read_physical(path):
 
 def program(pres, settings, extra=()):
     spec = t62_constraints.load_spec()
-    pins = t62_constraints.physical(spec, '1.55').splitlines()[1:]
+    pins = t62_constraints.physical(spec, '1.55').splitlines()[1:1 + len(spec['pins'])]
     lines = ['set_global_assignment -name PRES_FAC_MULT ' + pres]
     lines += ['set_global_assignment -name %s %s' % item for item in settings.items()]
     physical = '\n'.join(lines + pins + list(extra)) + '\n'
