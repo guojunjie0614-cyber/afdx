@@ -839,12 +839,12 @@
   },
   {
     "file": "../../sim/reference/netlist.json",
-    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
-    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
-    "bytes": 9743,
-    "sha256": "E83183A4B5028DD408CE0188D77603A3A76681CE5E213BC6127F77C059B7D44F"
+    "source": "docs/evidence/t63_f1b_sys_net_pass.json",
+    "source_sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
+    "source_commit": "67d2e618",
+    "operation": "Retain seven unaffected F1 results and replace tb_sys_net with F1b passing replay",
+    "bytes": 9811,
+    "sha256": "611B40DB43C7992678570CBFD35E28E1DEF47BC167A2616FA204C52249DEA59E"
   },
   {
     "file": "../../sim/reference/app_result.json",
@@ -1034,7 +1034,9 @@
     "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
     "operation": "F1 terminal assessment and portable timing comparison baseline; V1 rejected, V2 passed, GUI pending",
     "bytes": 58384,
-    "sha256": "BB439572DBBF0382D488927B7FF22913D5320A6136407EE61F0CAF62964B424E"
+    "sha256": "BB439572DBBF0382D488927B7FF22913D5320A6136407EE61F0CAF62964B424E",
+    "historical": true,
+    "note": "Original F1 terminal state retained byte-for-byte; current functional status supplemented by t63_f1b_sys_net_pass.json"
   },
   {
     "file": "history/version_match_pre_f1.json",
@@ -1057,5 +1059,32 @@
     "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42",
     "historical": true,
     "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+  },
+  {
+    "file": "history/netlist_pre_f1b.json",
+    "source": "sim/reference/netlist.json at 67d2e618",
+    "operation": "Preserve prior reference bytes",
+    "bytes": 9743,
+    "sha256": "E83183A4B5028DD408CE0188D77603A3A76681CE5E213BC6127F77C059B7D44F",
+    "source_commit": "67d2e618",
+    "historical": true
+  },
+  {
+    "file": "t63_f1b_preprocess.json",
+    "source": "out/t63/F1b",
+    "operation": "F1b macro-only observation repair and replay evidence",
+    "bytes": 983,
+    "sha256": "1CB248B5EFE733766DB21C36CE2059C1BB3F252872A32D93FBC48353D7144C57",
+    "source_commit": "67d2e618",
+    "historical": false
+  },
+  {
+    "file": "t63_f1b_sys_net_pass.json",
+    "source": "out/t63/F1b",
+    "operation": "F1b macro-only observation repair and replay evidence",
+    "bytes": 8326,
+    "sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
+    "source_commit": "67d2e618",
+    "historical": false
   }
 ]
