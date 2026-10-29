@@ -32,6 +32,26 @@ def vqm_signature(path):
                 wire_declarations=len(wires), nonwire_lines=len(body))
 
 
+def vqm_structure(path):
+    """忽略注释（含导出日期、版权头），wire 与 assign 按集合比较，其余语句保持逐行顺序。
+
+    界面版与 CLI 版 VQM 的版权头不同（eHiWay / Altera），且 wire、assign 的排列不同。"""
+    wires, assigns, body = [], [], []
+    for line in Path(path).read_text(encoding='utf-8-sig', errors='replace').splitlines():
+        line = line.rstrip()
+        if re.match(r'^\s*//', line):
+            continue
+        if re.match(r'^\s*(wire|assign)\s+', line):
+            if not line.endswith(';'):
+                raise ValueError('VQM contains a multiline wire/assign statement; structural comparison needs review')
+            (wires if line.lstrip().startswith('wire') else assigns).append(line)
+        else:
+            body.append(line)
+    text = '\n'.join(body) + '\n---WIRE---\n' + '\n'.join(sorted(wires)) + '\n---ASSIGN---\n' + '\n'.join(sorted(assigns)) + '\n'
+    return dict(sha256=hashlib.sha256(text.encode('utf-8')).hexdigest().upper(),
+                wires=len(wires), assigns=len(assigns), ordered_lines=len(body))
+
+
 def read_place(path):
     clusters, pins = {}, {}
     for line in Path(path).read_text(encoding='utf-8-sig').splitlines():
@@ -80,12 +100,20 @@ def check_psf(path, timing, physical, full, project=None):
         match = re.fullmatch(r'\s*set_global_assignment\s+-name\s+TARGET_CONSTRAINT_FILE\s+(.+?)\s*', line)
         if match:
             targets.append(literal_path(match[1], path.parent, project))
-    accepted = len(reads) == 1 and reads[0][1] == timing and len(sources) == 1 and sources[0][1] in (physical, full)
+    # eLinx 界面对登记的每个约束文件都生成 read_sdc，.edc 另加 source；
+    # 因此允许被 source 的同一物理 EDC 额外出现一次 read_sdc，单独记录，其他多余读取仍不通过。
+    timing_reads = [x for x in reads if x[1] == timing]
+    extra_reads = [x for x in reads if x[1] != timing]
+    physical_also_read_sdc = (len(sources) == 1 and len(extra_reads) == 1
+                              and extra_reads[0][0] == sources[0][0] and extra_reads[0][1] == physical)
+    accepted = len(timing_reads) == 1 and (not extra_reads or physical_also_read_sdc)
+    accepted = accepted and len(sources) == 1 and sources[0][1] in (physical, full)
     accepted = accepted and len(targets) == 1 and targets[0] == sources[0][0]
     return dict(passed=accepted, file=str(path), sha256=digest(path),
                 source=[str(x[0]) for x in sources], read_sdc=[str(x[0]) for x in reads],
-                target=[str(x) for x in targets],
-                meaning='One approved physical/full EDC via Tcl; pure timing SDC only via read_sdc')
+                target=[str(x) for x in targets], physical_also_read_sdc=physical_also_read_sdc,
+                meaning='One approved physical/full EDC via Tcl; pure timing SDC via read_sdc; '
+                        'GUI may also read_sdc the same physical EDC (SDC parser rejects those commands, Tcl already applied them)')
 
 
 def compare(baseline_path, runs_dir, extra_logs=()):
@@ -118,8 +146,12 @@ def compare(baseline_path, runs_dir, extra_logs=()):
     checks['fresh_artifacts'] = all(p.stat().st_mtime >= cutoff for p in required)
     detail['psf'] = [check_psf(p, timing, physical, full, runs_dir.parent) for p in required[3:5]]
     checks['psf_read_chain'] = all(x['passed'] for x in detail['psf'])
-    detail['vqm_signature'] = vqm_signature(required[0])
-    checks['mapped_circuit'] = detail['vqm_signature'] == baseline['vqm_signature']
+    cli_vqm = Path(json.loads((ROOT / baseline['cli']['synthesis']).read_text(encoding='utf-8-sig'))['netlist'])
+    cli_vqm = cli_vqm if cli_vqm.is_absolute() else ROOT / cli_vqm
+    checks['cli_vqm_identity'] = cli_vqm.is_file() and digest(cli_vqm) == baseline['vqm_sha256']
+    detail['vqm_structure'] = dict(gui=vqm_structure(required[0]),
+                                   cli=vqm_structure(cli_vqm) if checks['cli_vqm_identity'] else None, cli_source=str(cli_vqm))
+    checks['mapped_circuit'] = detail['vqm_structure']['gui'] == detail['vqm_structure']['cli']
     clusters, pins = read_place(required[1])
     pin_errors = [r['port'] for r in spec['pins'] if pins.get(r['port']) != dict(pin=r['pin'], xyz=r['xyz'])]
     tile_errors = [r['cluster'] for r in spec['tiles'] if clusters.get(r['cluster']) != [r['x'], r['y'], 0]]
@@ -147,7 +179,11 @@ def compare(baseline_path, runs_dir, extra_logs=()):
     logs = sorted({*synth.glob('*.edi'), *route.glob('*.edi'), *synth.glob('*.log'), *route.glob('*.log'), *map(Path, extra_logs)})
     log_text = '\n'.join(p.read_text(encoding='utf-8-sig', errors='replace') for p in logs)
     errors = re.findall(r'(?im)^.*(?:\[(?:ERROR|CRIT)\]|\*\* (?:Error|Fatal)|^Error\s*\([0-9]+\)|invalid[- ]command|We don.t support the command|Found [1-9][0-9]* error\(s\) total).*$' , log_text)
-    detail['logs'] = dict(files=[str(p) for p in logs], errors=errors,
+    # 界面 read_sdc 物理 EDC 时，SDC 解析器对每条物理语句报 invalid command；只豁免这一种，单独计数。
+    expected_sdc = re.compile(r'physical_only\.edc,\s*\d+:\s*invalid command "(?:set_location_assignment|set_global_assignment)"')
+    sdc_rejections = [e for e in errors if expected_sdc.search(e)]
+    errors = [e for e in errors if not expected_sdc.search(e)]
+    detail['logs'] = dict(files=[str(p) for p in logs], errors=errors, expected_physical_sdc_rejections=len(sdc_rejections),
                          clock_uncertainty_trace=bool(re.search(r'Argument uncertainty\s*=\s*0\.30\b', log_text)),
                          multicycle_trace=bool(re.search(r'Command:\s*set_multicycle_path', log_text)),
                          pres_trace=bool(re.search(r'PRES_FAC_MULT\s*[= ]\s*1\.30?\b', log_text)))
