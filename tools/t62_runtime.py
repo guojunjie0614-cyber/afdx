@@ -21,7 +21,7 @@ import psutil
 import eda
 
 ROOT = Path(__file__).resolve().parents[1]
-COORD = Path(os.environ.get('AFDX_T62_COORD',str(ROOT.parent / 'c3_t62' / 'out/t62'))).resolve()
+COORD = Path(os.environ.get('AFDX_T62_COORD',str(ROOT / 'out/coord'))).resolve()
 GIB = 1024 ** 3
 BUDGETS = dict(analysis=3600, export=300, pack=1200, timing=1200,
                route=7200, report=1800, c4_probe=1200)
@@ -34,8 +34,11 @@ class EnvironmentChanged(RuntimeError):
 
 
 def environment_guard():
+    # 本机批量作业用的配置守护；只在设置 AFDX_ENV_GUARD=1 时启用，其他机器直接跳过。
+    if os.environ.get('AFDX_ENV_GUARD')!='1':
+        return dict(skipped=True,reason='AFDX_ENV_GUARD not set',checked=now())
     policy=json.loads((ROOT/'elinx/t62_environment.json').read_text(encoding='utf-8-sig'))
-    path=Path(policy['quartus_ini'])
+    path=Path(os.path.expandvars(policy['quartus_ini']))
     actual=eda.sha(path)
     if actual!=policy['quartus_ini_sha256']:
         record=dict(time=now(),reason_code='environment_changed',path=str(path),
