@@ -1,2 +1,0 @@
-create_pblock P_svc -from X41_Y53 -to X53_Y68
-add_insts_to_pblock P_svc -to {\afdx_es:es|afdx_svc:service_channel}

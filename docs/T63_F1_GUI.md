@@ -2,7 +2,7 @@
 
 在 eLinx 3.0.7 中按以下步骤复跑。V1 功能终验（含 F1b 补验）与 V2 时序复核均已通过。2026-10-29 已按本页完成界面复跑，产物比对 PASS，记录见 [界面比对](evidence/t63_f1_gui_compare.json)。
 
-1. 在 `E:/2026_Embedded_FPGA/worktrees/active/c3_t63` 打开 `elinx/AFDX_EndSystem.epr`。顶层 `AFDX_top`，器件 `EQ6HL130/CSG484_H`，源文件只登记 `afdx_all.v`。约束集为 `physical_only.edc`、`timing_only.sdc`，目标约束为前者。
+1. 在本仓库根目录下打开 `elinx/AFDX_EndSystem.epr`。顶层 `AFDX_top`，器件 `EQ6HL130/CSG484_H`，源文件只登记 `afdx_all.v`。约束集为 `physical_only.edc`、`timing_only.sdc`，目标约束为前者。
 2. 执行 **Run Synthesis**，成功后执行 **Run Implementation**，保留 `elinx/AFDX_EndSystem.runs/synth_1/`、`imple_1/` 全部产物。遇到许可或工具错误就保留日志、停止该项，不改系统设置。
 3. 查看两目录新生成的 `AFDX_EndSystem.run.psf`：`source` 读取物理 EDC，目标约束指向该 EDC；`read_sdc` 读取 `timing_only.sdc`。界面还会对同一个 `physical_only.edc` 再生成一行 `read_sdc`（界面对每个登记的约束文件都这样做），这是预期行为；除此之外不得有其他 `read_sdc`。双文件拼接与完整 `constraints.edc` 一致。CLI 副本可 `source` 完整 EDC，再 `read_sdc` 纯 SDC。
 4. 核对日志：`clk` 为 125 MHz / 8.000 ns，setup uncertainty 0.30 ns，多周期 `-setup 2 / -hold 0`（本工具的同沿保持检查），PRES 1.30；除 `physical_only.edc` 中 PRES、管脚和簇位置语句被 SDC 解析器逐条报的 `invalid command`（约 5,700 行，预期现象，语句已由 `source` 生效）外，无其他 `invalid command`、SDC 解析错误、`[ERROR]` / `[CRIT]`。控制台未落盘时，保存到 `out/t63/gui_console.log`；比对报告的 trace 字段只记录日志中实际找到的标记，不能代替此步。
