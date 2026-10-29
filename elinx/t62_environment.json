@@ -1,6 +1,6 @@
 {
   "round_id": "round_02",
-  "quartus_ini": "C:/Users/lalala/quartus2.ini",
+  "quartus_ini": "${USERPROFILE}/quartus2.ini",
   "quartus_ini_sha256": "7E422BFDEFF00251F622B24EE3B1A2E9C1B54CBD52E4BD3CEE31E9B74783C5AD",
   "expected_license_file": "E:/2026_Embedded_FPGA/setup_pack/bin/Passkey/bin/license.dat",
   "gui_forbidden": true,
