@@ -14,9 +14,10 @@
             <File Path="/afdx_all.v"/>
         </FileSet>
         <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
-            <File Path="/constraints.edc"/>
+            <File Path="/physical_only.edc"/>
+            <File Path="/timing_only.sdc"/>
             <Config>
-                <Option Name="TargetConstrsFile" Val="/constraints.edc"/>
+                <Option Name="TargetConstrsFile" Val="/physical_only.edc"/>
             </Config>
         </FileSet>
         <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
