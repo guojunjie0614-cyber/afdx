@@ -1,0 +1,4 @@
+create_pblock P_svc -from X120_Y10 -to X130_Y20
+add_insts_to_pblock P_svc -to {\afdx_es:es|afdx_svc:service_channel}
+create_pblock P_tb -from X140_Y80 -to X150_Y90
+add_insts_to_pblock P_tb -to {\afdx_es:es|afdx_timebase:timebase}
