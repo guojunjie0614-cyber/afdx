@@ -153,22 +153,24 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 修改后运行 `python tools/check_wrapper.py`，确认 epr 只列总文件、包含关系不多不漏且总文件没有其它语句。
 
 代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
-用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。参考数字、原始报告和合并数据库在 `sim/reference/coverage/`，统计口径见该目录 README。
+用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。当前 F1 数字与原始文本报告在 `docs/evidence/t64_f1_coverage/`；合并数据库的本机位置及摘要见该目录 `collection.json`，大型 UCDB 不随提交包分发。
 
-以下为 T57 的历史覆盖率记录：CE2 39 项用例、24 个 RTL 文件、39 个 UCDB，按 `sbceft` 插桩，测试平台不计入。F1 本轮未重跑覆盖率，不能将该表作为当前 29 个 RTL 文件的覆盖率结果。各统计类别的口径和原始报告保持原记录。
+当前 F1 覆盖率来自 T64：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](docs/T64_F1_COVERAGE.md)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
-| 语句 | 6973 / 7076 | 98.54% |
-| 分支 | 3850 / 3987 | 96.56% |
-| 条件 | 618 / 725 | 85.24% |
-| 表达式 | 1708 / 1940 | 88.04% |
-| 状态机，含状态和转换 | 248 / 418 | 59.33% |
-| 状态 | 110 / 110 | 100.00% |
-| 转换 | 138 / 308 | 44.80% |
-| 翻转 | 41408 / 53786 | 76.98% |
+| 语句 | 7754 / 7864 | 98.60% |
+| 分支 | 4344 / 4491 | 96.72% |
+| 条件 | 882 / 1001 | 88.11% |
+| 表达式 | 1767 / 2027 | 87.17% |
+| 状态机，含状态和转换 | 282 / 465 | 60.64% |
+| 已识别状态 | 127 / 127 | 100.00% |
+| 已识别转换 | 155 / 338 | 45.85% |
+| 翻转 | 44903 / 57890 | 77.56% |
 
-逐模块数字和原始报告见 `sim/reference/coverage/`；未覆盖项保持原统计范围，不沿用旧版源码行号或未重新核对的原因说明。
+百分比按各设计单元已覆盖项数／总项数汇总并截断到两位。状态 100% 仅限工具识别集合，两个服务引擎的主 `state` 未被识别，不能据此宣称全部状态机控制路径已验证。完整未覆盖索引包含 13,806 个 bin，其中 10,578 个尚不能判断原因或可达性；未增加排除项。原始报告、逐模块统计和缺口分析见 [T64 证据](docs/evidence/t64_f1_coverage/coverage.json)及 [未覆盖项分析](docs/evidence/t64_f1_coverage/gap_analysis.md)。
+
+本次串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -264,7 +266,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-CE2 完整回归 40/40、评委 8/8、默认及小激励、wrapper、官方 VQM 五功能通过，这些入口的 Error/FAIL/RAMCOLL 均为 0；F1b 补验后模块及整顶层网表 8/8 PASS。覆盖率仍保留 T57 的历史记录，本轮没有覆盖率终验。
+CE2 完整回归 40/40、评委 8/8、默认及小激励、wrapper、官方 VQM 五功能通过，这些入口的 Error/FAIL/RAMCOLL 均为 0；F1b 补验后模块及整顶层网表 8/8 PASS。T64 已补齐当前 F1 的 40 项覆盖率终验，T57 旧记录仅作为历史保留。
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
