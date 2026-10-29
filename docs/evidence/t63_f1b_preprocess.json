@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "method": "ModelSim vlog -E on all 57 tb Verilog units plus their included header and unchanged RTL definitions; discard only compiler line directives and whitespace-only lines before exact byte comparison; no nonblank HDL line is altered",
+  "raw_output_identical": false,
+  "raw_difference": "Added macro branches change source coordinates and inactive-branch blank lines",
+  "runs": [
+    {
+      "mode": "CE1",
+      "tb_files": 58,
+      "equal": true,
+      "bytes": 681603,
+      "baseline_sha256": "aaaec04fd8f9d6988b20fcf7ea3069041f333b7e166c34cb45c3f87197028f02",
+      "current_sha256": "aaaec04fd8f9d6988b20fcf7ea3069041f333b7e166c34cb45c3f87197028f02"
+    },
+    {
+      "mode": "CE2",
+      "tb_files": 58,
+      "equal": true,
+      "bytes": 681603,
+      "baseline_sha256": "a88c844135f18bc97aa29a37372beddab4c6b5f5f46666a47db0d7c346d79b76",
+      "current_sha256": "a88c844135f18bc97aa29a37372beddab4c6b5f5f46666a47db0d7c346d79b76"
+    }
+  ]
+}

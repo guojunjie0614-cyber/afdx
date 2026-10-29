@@ -1,0 +1,185 @@
+{
+  "schema": "T63-F1b-v1",
+  "task_execution_complete": true,
+  "functional_acceptance_passed": true,
+  "passed_cli": true,
+  "timing_acceptance_passed": true,
+  "gui_deliverable": false,
+  "base_commit": "67d2e618305678d38c514020fadd907d31f13be6",
+  "completed_utc8": "2026-10-29T20:43:03.233052+08:00",
+  "vqm": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\synth\\AFDX_top\\20261028_225508_388830_ced792b57972\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+  "vqm_sha256": "D38876EB78082AB5D4C858D7053010BB650A12D114E83F0ADD9558A9FB77D26B",
+  "prior_timing_evidence": "t63_f1_timing.json",
+  "prior_failure_preserved": {
+    "source": "docs/evidence/t63_f1_sys_net_failure.json",
+    "sha256": "0145AB1349078951E774BC8D92E67DADA2BE20C6E8DC779E8D9CBA64AAB79854"
+  },
+  "preprocessing": {
+    "passed": true,
+    "method": "ModelSim vlog -E on all 57 tb Verilog units plus their included header and unchanged RTL definitions; discard only compiler line directives and whitespace-only lines before exact byte comparison; no nonblank HDL line is altered",
+    "raw_output_identical": false,
+    "raw_difference": "Added macro branches change source coordinates and inactive-branch blank lines",
+    "runs": [
+      {
+        "mode": "CE1",
+        "tb_files": 58,
+        "equal": true,
+        "bytes": 681603,
+        "baseline_sha256": "aaaec04fd8f9d6988b20fcf7ea3069041f333b7e166c34cb45c3f87197028f02",
+        "current_sha256": "aaaec04fd8f9d6988b20fcf7ea3069041f333b7e166c34cb45c3f87197028f02"
+      },
+      {
+        "mode": "CE2",
+        "tb_files": 58,
+        "equal": true,
+        "bytes": 681603,
+        "baseline_sha256": "a88c844135f18bc97aa29a37372beddab4c6b5f5f46666a47db0d7c346d79b76",
+        "current_sha256": "a88c844135f18bc97aa29a37372beddab4c6b5f5f46666a47db0d7c346d79b76"
+      }
+    ]
+  },
+  "runs": {
+    "rtl_macro": {
+      "passed": true,
+      "checks": 2792645,
+      "errors": 0,
+      "independent_items": 88,
+      "independent_errors": 0,
+      "fixed_external_checks": 16,
+      "additional_frame_checks": 72,
+      "seconds": 10.016,
+      "simulation_seconds": 7.655999999959022,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "FAIL": 0,
+        "RAMCOLL": 0
+      },
+      "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_sys_net\\20261028_231333_173127_dd4d840b70a6",
+      "records": {
+        "result": {
+          "source": "out/t63/F1b/attempt4/rtl_macro.json",
+          "sha256": "C9F607E7DFD5DB4C3F538C47C35F14293F3C4D146D4926397CB4B5E598E08E93"
+        },
+        "summary": {
+          "source": "out/sim/tb_sys_net/20261029_035612_581741_247f3e17e076/summary.json",
+          "sha256": "113A611B4DDCB7A2E124C977F5210C437068406FA12EB2FC06D71A298062D79A"
+        },
+        "simulation": {
+          "source": "out/sim/tb_sys_net/20261029_035612_581741_247f3e17e076/simulation.log",
+          "sha256": "7892088E897994F1EA0F29964EB0761BF0DCB2F3234A54F82F41EB2B8F4B4D42"
+        },
+        "independent": {
+          "source": "out/sim/tb_sys_net/20261029_035612_581741_247f3e17e076/check_summary.json",
+          "sha256": "3D7878F0D59E2889A42FAEA6A3CA428B17C173F6D0E85A9EBAE8C2E1D4BD7862"
+        }
+      }
+    },
+    "netlist": {
+      "passed": true,
+      "checks": 2792645,
+      "errors": 0,
+      "independent_items": 88,
+      "independent_errors": 0,
+      "fixed_external_checks": 16,
+      "additional_frame_checks": 72,
+      "seconds": 6393.703,
+      "simulation_seconds": 6380.545999999973,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "FAIL": 0,
+        "RAMCOLL": 0
+      },
+      "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_sys_net\\20261028_231333_173127_dd4d840b70a6",
+      "records": {
+        "result": {
+          "source": "out/t63/F1b/attempt4/netlist.json",
+          "sha256": "F44BFF034789D253E9DF49AAED9831F8D85833C7F3F7ABCF09DF5298F2069AA5"
+        },
+        "summary": {
+          "source": "out/net/tb_sys_net/20261029_035622_602132_ef8bb88a74d1/summary.json",
+          "sha256": "69F39F8E6CD01C9F8911C4CE22FEFCA514A84CAE21BA0C159B26948E3949BCD9"
+        },
+        "simulation": {
+          "source": "out/net/tb_sys_net/20261029_035622_602132_ef8bb88a74d1/simulation.log",
+          "sha256": "7EE3F8C2DD79272A59332BFC531DCF5B5183F6090C388AA12A73E4D225AA70DB"
+        },
+        "independent": {
+          "source": "out/net/tb_sys_net/20261029_035622_602132_ef8bb88a74d1/check_summary.json",
+          "sha256": "3D7878F0D59E2889A42FAEA6A3CA428B17C173F6D0E85A9EBAE8C2E1D4BD7862"
+        }
+      }
+    }
+  },
+  "changed_tb_hashes": {
+    "tb/lib/top_stream_endpoint.v": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+    "tb/lib/sys_endpoint.v": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+  },
+  "retained_checks": [
+    "public submission payload capacity and VLID minimum-index selection",
+    "outcome queue capacity, exclusive event, correspondence and chronological order",
+    "pending transmit counts, counter readback and configuration drain",
+    "unchanged host/drain deadlines, GMII monitors and exact independent public-output comparison"
+  ],
+  "skipped_in_macro": [
+    {
+      "check": "transmit outcome deadline: cycle-outcome_end<=96",
+      "reason": "The 96-cycle origin is the last private core valid/ready/last handshake. Public submission can precede a variable queue and payload transfer. Retain outstanding>0 and chronological order; do not invent an expanded threshold."
+    },
+    {
+      "check": "missing transmit outcome: cycle-last_message<=96",
+      "reason": "The same private-core origin is not observable. Keep the original host/drain deadlines and exact external parity; no threshold changed."
+    }
+  ],
+  "existing_macro_omissions": "Existing slow-core capture omissions and L5 external checker remain unchanged; no independent checker edited.",
+  "receive_metadata_scope": "For tb_sys_net redundant copies share VLID and sequence. Decode GMII headers and sequence, use public per-network good events and first-good copy (A on a tie); this is observed provenance, not a newly exposed private DUT port. Broader skew-expiry, repeated-sequence or filtered first-copy scenarios were not part of this replay.",
+  "background": {
+    "source": "out/t63/F1b/attempt4/background.launch.json",
+    "sha256": "BE6DBD5DCD9CA364838D88392F5E41FDFE22D90E35DD54DB8883D75639366541"
+  },
+  "runtime_inputs": {
+    "source": "out/t63/F1b/attempt4/inputs.json",
+    "sha256": "932A7F6A0439AD8E09FADD16804E9BC173232E1D984453E94D39ACAA21FD1CEE"
+  },
+  "terminal": {
+    "source": "out/t63/F1b/attempt4/terminal.json",
+    "sha256": "01E3A904F2F6D79063C961A5FB502B5C8B5010CE0873F68C3C6417EA4A633106"
+  },
+  "scripts": {
+    "run_v4.py": {
+      "source": "out/t63/F1b/run_v4.py",
+      "sha256": "A62761585F728A3B44E8752D8E6EB2E6BF52460E62DF5F58902CC0193A2C1915"
+    },
+    "preprocess.py": {
+      "source": "out/t63/F1b/preprocess.py",
+      "sha256": "A79855DA6A70F5CD692DDED059C5772CF5AEE1BE064A5C54F7B2410974FCFB56"
+    }
+  },
+  "affected_cases": [
+    "tb_sys_net"
+  ],
+  "reuse": "All other seven tests in sim/tests_netlist.txt do not instantiate the changed endpoints. No-macro effective HDL matches 67d2e618 for CE1/CE2, allowing reuse of CE2, judge, app and wrapper results. RTL, constraints and official VQM unchanged.",
+  "remaining": [
+    "Real GUI rerun remains pending.",
+    "The two private-core 96-cycle checks are explicitly omitted only under SYS_TOP_NETLIST.",
+    "Raw ModelSim preprocessor output differs in compiler source coordinates and inactive blank lines; exact comparison is on effective HDL after removing only those records."
+  ],
+  "earlier_attempts": [
+    {
+      "record": "out/t63/F1b/rtl_macro.json",
+      "sha256": "59DEE5CF710E25925BE6FE85AA90958824D28C1D8A964A09EA28E7606F4C0B38"
+    },
+    {
+      "record": "out/t63/F1b/attempt2/rtl_macro.json",
+      "sha256": "C1012F9CD68E80A472A196A94FE2DB65215EF536E469A072A1E70F7D0CB6C5A2"
+    },
+    {
+      "record": "out/t63/F1b/attempt3/rtl_macro.json",
+      "sha256": "B286220986F895054CC0B76B5B4535587F23EB36D5D39E48CFD22F562AE75118"
+    }
+  ],
+  "source_snapshot_unchanged_during_runs": true
+}

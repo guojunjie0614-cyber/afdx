@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异，V1 功能终验与 V2 官方源重建统一在 `t63@92ab7d7e` 上执行。**V1 未通过**：模块及整顶层网表清单为 7/8 PASS，`tb_sys_net` FAIL；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
 
@@ -244,7 +244,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 ## 综合与布线结果
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异，V1 功能终验与 V2 官方源重建统一在 `t63@92ab7d7e` 上执行。**V1 未通过**：模块及整顶层网表清单为 7/8 PASS，`tb_sys_net` FAIL；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 | 项目 | 当前官方结果 |
 |---|---:|
@@ -264,9 +264,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-CE2 完整回归 40/40、评委 8/8、默认及小激励、wrapper、官方 VQM 五功能通过，这些入口的 Error/FAIL/RAMCOLL 均为 0；模块网表 7/8 PASS，整顶层 `tb_sys_net` FAIL。覆盖率仍保留 T57 的历史记录，本轮没有覆盖率终验。
+CE2 完整回归 40/40、评委 8/8、默认及小激励、wrapper、官方 VQM 五功能通过，这些入口的 Error/FAIL/RAMCOLL 均为 0；F1b 补验后模块及整顶层网表 8/8 PASS。覆盖率仍保留 T57 的历史记录，本轮没有覆盖率终验。
 
-`tb_sys_net` 网表仿真的原始结果为 1,901,442 项检查、103 个断言错误，独立核对 16 项、11 个错误；ModelSim 引擎 Error/Fatal/Warning/RAMCOLL 均为 0，测试结果 FAIL=1。`SYS_TOP_NETLIST` 分支将 `core_valid/core_ready/core_last` 固定为 0，测试台仍据此维护发送结果队列，在第 86042 周期首条公开 accept 事件处失败。未映射 RTL 加同一宏复现了相同首个失败和最终计数，支持测试台观察逻辑不兼容的判断；尚不能证明映射电路的该系统场景正确。本轮未改断言或独立检查器；必须修正观察逻辑并重跑受影响整批后，V1 才能通过。原始失败、超时、控制脚本错误和工具会话中断均保留，见 [整顶层网表失败证据](docs/evidence/t63_f1_sys_net_failure.json)。
+F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
 F1 的真实界面复跑仍待用户完成，操作步骤及自动比对见 [F1 界面复跑](docs/T63_F1_GUI.md)。CLI 复核通过不代表 GUI 已通过。
 

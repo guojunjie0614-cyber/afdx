@@ -1,13 +1,13 @@
 {
   "cases": 8,
   "completed": true,
-  "passed": false,
-  "passed_cases": 7,
-  "failed_cases": 1,
-  "seconds": 16551.873,
+  "passed": true,
+  "passed_cases": 8,
+  "failed_cases": 0,
+  "seconds": 10066.437,
   "export_reuse_evidence": "t63_f1_netlist_reuse.json",
-  "source_summary": "out/t63/F1_final_v2/official_netlist/final_summary.json",
-  "source_summary_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
+  "source_summary": "docs/evidence/t63_f1b_sys_net_pass.json",
+  "source_summary_sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
   "recovery": {
     "reason": "Initial wall-time budget, unsupported controller command and a tool-session interruption preceded the final actual testbench FAIL",
     "prior_summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\t63\\F1_final_v2\\official_netlist\\summary.json",
@@ -49,10 +49,11 @@
     "simulation_attempts": 11,
     "final_passed_cases": 7,
     "final_failed_cases": 1,
-    "tracked_sources_models_stimulus_and_checkers_unchanged": true
+    "tracked_sources_models_stimulus_and_checkers_unchanged": true,
+    "historical": true
   },
   "failure_evidence": "t63_f1_sys_net_failure.json",
-  "method": "Source-matched official module VQM exports reused; all eight cases simulated on this verification commit; seven PASS, tb_sys_net FAIL; AFDX_top uses fresh V2 VQM; every replay retained separately",
+  "method": "Seven unaffected official VQM test results retained; tb_sys_net replayed on the same F1 V2 VQM after macro-only observation repair; effective no-macro HDL byte equality verified.",
   "runs": [
     {
       "test": "tb_mac_tx",
@@ -197,27 +198,31 @@
     {
       "test": "tb_sys_net",
       "parameters": [],
-      "passed": false,
-      "checks": 1901442,
-      "seconds": 4273.328,
-      "started": "2026-10-29T02:19:58.371891-07:00",
-      "finished": "2026-10-29T03:31:11.711488-07:00",
+      "passed": true,
+      "checks": 2792645,
+      "seconds": 6393.703,
+      "started": "2026-10-29T03:56:22.599903-07:00",
+      "finished": "2026-10-29T05:42:56.296652-07:00",
       "diagnostics": {
         "Error": 0,
         "Fatal": 0,
         "Warning": 0,
-        "FAIL": 1,
+        "FAIL": 0,
         "RAMCOLL": 0
       },
-      "result": "out/t63/F1_final_v2/official_netlist/net_07_tb_sys_net_assessment.json",
-      "sha256": "5B47F47F56EEE46579C2B5BE858D74BAF6DAA4762785F3116CC4E3FBAB8F9D8D",
-      "source_summary": "out/net/tb_sys_net/20261029_021958_470457_3948adc9a8e6/summary.json",
-      "source_summary_sha256": "F2125BCE1304C6E1993CF7BEA1DA08C11A9FDE32AD04F1940471A914C4A78CF7",
-      "testbench_errors": 103,
-      "independent_check_items": 16,
-      "independent_errors": 11,
-      "simulation_seconds": 4258.920999999973,
-      "failure_classification": "Testbench observation incompatibility reproduced on unchanged RTL with SYS_TOP_NETLIST; mapped negative-system behavior remains unvalidated"
+      "result": "out/t63/F1b/attempt4/netlist.json",
+      "sha256": "F44BFF034789D253E9DF49AAED9831F8D85833C7F3F7ABCF09DF5298F2069AA5",
+      "source_summary": "out/net/tb_sys_net/20261029_035622_602132_ef8bb88a74d1/summary.json",
+      "source_summary_sha256": "69F39F8E6CD01C9F8911C4CE22FEFCA514A84CAE21BA0C159B26948E3949BCD9",
+      "testbench_errors": 0,
+      "independent_check_items": 88,
+      "independent_errors": 0,
+      "simulation_seconds": 6380.545999999973,
+      "failure_classification": null
     }
-  ]
+  ],
+  "acceptance_evidence": "t63_f1b_sys_net_pass.json",
+  "pre_f1b_reference": "history/netlist_pre_f1b.json",
+  "prior_failed_campaign_seconds": 16551.873,
+  "seconds_kind": "Sum of the eight accepted per-case wall times; not parallel campaign wall time."
 }

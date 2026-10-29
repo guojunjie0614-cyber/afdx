@@ -1,6 +1,6 @@
 # AFDX 端系统事实清单
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异，V1 功能终验与 V2 官方源重建统一在 `t63@92ab7d7e` 上执行。**V1 未通过**：模块及整顶层网表清单为 7/8 PASS，`tb_sys_net` FAIL；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 补充的逐项测试、资源、时延、参数和异常覆盖见 [补充数据](FACTS_DETAIL.md)。
 本页分别记录当前性能实测与带日期的历史终验；RTL 源码共 29 个文件，标准回归清单 40 项，评委入口 8 用例。当前完成状态以第三、四节的本轮实测为准；带日期的历史专项实验保留原记录。功能覆盖以实际测试范围为准，不等于完整协议认证。
@@ -89,7 +89,7 @@ var_cycle 的发送间隔偏差为 12.336 µs；gbe77、var_fixed、var_high、v
 
 ## 三、综合资源与时序
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异，V1 功能终验与 V2 官方源重建统一在 `t63@92ab7d7e` 上执行。**V1 未通过**：模块及整顶层网表清单为 7/8 PASS，`tb_sys_net` FAIL；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过，真实 GUI 待用户复跑。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 `elinx/constraints.edc` 包含 PRES 1.30、172 条 P0 管脚语句和 5,540 条簇位置语句；固定布局来自 C0 布局加局部手工微调。**改 RTL 会使布局失效**，必须重新生成并验证位置约束。界面工程登记 `physical_only.edc` 与 `timing_only.sdc`，两者拼接与完整 EDC 一致；物理语句经 Tcl `source`，纯时序部分经 `read_sdc`，0.30 ns uncertainty 与已批准多周期约束保持不变。
 
@@ -116,7 +116,7 @@ F1 的真实界面复跑仍待用户完成，操作步骤及自动比对见 [F1 
 
 ### 综合警告说明
 
-本轮官方综合保留 8 条警告，原始编号和完整消息见 [F1 综合警告](evidence/t63_f1_synthesis_warnings.json)。各仿真诊断单独记录；已通过入口的 0 Error/FAIL/RAMCOLL 不替代综合诊断，也不覆盖 tb_sys_net 的失败。
+本轮官方综合保留 8 条警告，原始编号和完整消息见 [F1 综合警告](evidence/t63_f1_synthesis_warnings.json)。各仿真诊断单独记录；已通过入口的 0 Error/FAIL/RAMCOLL 不替代综合诊断，仿真通过状态见 F1b 补验。
 
 | 编号 | 数量 | 原始消息 |
 |---|---:|---|
@@ -133,12 +133,12 @@ F1 的真实界面复跑仍待用户完成，操作步骤及自动比对见 [F1 
 | 评委入口 | 8/8 PASS；Error/FAIL/RAMCOLL=0 | `参考/judge_result.txt` |
 | 应用默认与小激励 | 2/2 APP ENTRY PASS | `参考/app_result.json` |
 | check_wrapper | 5/5 PASS | `证据/t63_f1_functional.json:wrapper` |
-| 模块及整顶层网表清单 | 7/8 PASS；tb_sys_net FAIL；官方 Quartus CLI VQM | `参考/netlist.json` |
+| 模块及整顶层网表清单 | 8/8 PASS；tb_sys_net 经 F1b 补验通过；官方 Quartus CLI VQM | `参考/netlist.json` |
 | 官方 VQM 五功能 | 1122 项自检 PASS；七份记录与同激励 RTL 一致 | `证据/t63_f1_services_summary.json` |
 
-以上均来自同一验证提交。除 tb_sys_net 外各入口 Error/FAIL/RAMCOLL 均为 0。模块网表的旧 `eLinx_synthesis.exe` 入口在 ABC 阶段崩溃（0xC0000409）；本轮保留失败日志，全部八项改用官方 Quartus 分析、VQM 导出及原厂模型执行，未修改安装目录或系统配置。
+原始验证来自 `92ab7d7e`；F1b 仅补验宏内观测受影响的 `tb_sys_net`，其余入口按有效预处理逐字节一致及依赖关系复用。各入口 Error/FAIL/RAMCOLL 均为 0。模块网表的旧 `eLinx_synthesis.exe` 入口在 ABC 阶段崩溃（0xC0000409）；本轮保留失败日志，全部八项改用官方 Quartus 分析、VQM 导出及原厂模型执行，未修改安装目录或系统配置。
 
-`tb_sys_net` 网表仿真的原始结果为 1,901,442 项检查、103 个断言错误，独立核对 16 项、11 个错误；ModelSim 引擎 Error/Fatal/Warning/RAMCOLL 均为 0，测试结果 FAIL=1。`SYS_TOP_NETLIST` 分支将 `core_valid/core_ready/core_last` 固定为 0，测试台仍据此维护发送结果队列，在第 86042 周期首条公开 accept 事件处失败。未映射 RTL 加同一宏复现了相同首个失败和最终计数，支持测试台观察逻辑不兼容的判断；尚不能证明映射电路的该系统场景正确。本轮未改断言或独立检查器；必须修正观察逻辑并重跑受影响整批后，V1 才能通过。原始失败、超时、控制脚本错误和工具会话中断均保留，见 [整顶层网表失败证据](evidence/t63_f1_sys_net_failure.json)。
+F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](evidence/t63_f1b_sys_net_pass.json)。
 
 评委数值基线对应批准的 r5 A RTL：其 VLID 比较比旧 `21c11f8` 基线多两级流水，主时延和首字节时延各增加 16 ns。四个时延常数由两次独立 RTL 记录及同批 Tcl/Python 1,784 个字段核对更新，吞吐、时延和抖动需求门限未改；诊断见 `证据/t63_f1_judge_baseline.json`。
 

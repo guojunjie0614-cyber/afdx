@@ -86,7 +86,81 @@ module top_stream_endpoint #(
         assign core_dsp=top.es.app_rx_sport;assign core_ddp=top.es.app_rx_port;assign core_dnet=top.es.app_rx_net;
 `else
         assign initialized=stream_ready;
-        assign core_valid=0;assign core_ready=0;assign core_last=0;assign core_data=0;assign core_vl=0;
+        // Netlist observation is a public input submission, not a private core handshake.
+        // Delay one byte so valid falling marks the final payload byte without guessing length.
+        reg public_previous=0;
+        reg [7:0] public_data=0;
+        reg [15:0] public_id=0;
+        reg [15:0] public_ids[0:127];
+        reg [127:0] public_configured=0;
+        integer public_count=0,public_index;
+        reg [6:0] public_vl;
+        always @* begin
+            public_vl=0;
+            // The application contract selects the lowest configured matching VLID.
+            for(public_index=127;public_index>=0;public_index=public_index-1)
+                if(public_configured[public_index] && public_ids[public_index]==public_id)
+                    public_vl=public_index;
+        end
+        always @(posedge clk)begin
+            if(reset)begin public_previous<=0;public_count<=0;public_configured<=0;public_id<=0;public_data<=0;end
+            else begin
+                if(cfg_wr && cfg_ready && cfg_addr[17:10]==8'b00000100 && cfg_addr[2:0]==2)begin
+                    public_configured[cfg_addr[9:3]]<=1;public_ids[cfg_addr[9:3]]<=cfg_wdata[15:0];
+                end
+                public_previous<=stream_tv;public_data<=stream_tx;
+                if(stream_tv)begin
+                    public_count<=public_previous ? public_count+1 : 1;
+                    if(!public_previous)public_id[15:8]<=stream_tx;
+                    else if(public_count==1)public_id[7:0]<=stream_tx;
+                end else public_count<=0;
+            end
+        end
+        assign core_valid=public_previous && public_count>=3;
+        assign core_ready=1;
+        assign core_last=core_valid && !stream_tv;
+        assign core_data=public_data;assign core_vl=public_vl;
+        // Recover receive metadata from public GMII frames and per-network good events.
+        // A repeated VLID/sequence is the same redundant message; keep its first good network.
+        integer public_rx_pos_a=0,public_rx_pos_b=0,public_rx_reset;
+        reg [15:0] public_rx_id_a,public_rx_id_b;
+        reg [31:0] public_rx_ports_a,public_rx_ports_b;
+        reg [39:0] public_rx_tail_a,public_rx_tail_b;
+        reg [7:0] public_rx_sn[0:65535];
+        reg public_rx_known[0:65535],public_rx_nets[0:65535];
+        reg [31:0] public_rx_ports[0:65535];
+        always @(posedge clk)begin
+            if(reset)begin
+                public_rx_pos_a=0;public_rx_pos_b=0;
+                for(public_rx_reset=0;public_rx_reset<65536;public_rx_reset=public_rx_reset+1)
+                    public_rx_known[public_rx_reset]=0;
+            end else begin
+                if(rx_valid)begin
+                    case(public_rx_pos_a)
+                        12:public_rx_id_a[15:8]=rx_data;13:public_rx_id_a[7:0]=rx_data;
+                        42:public_rx_ports_a[31:24]=rx_data;43:public_rx_ports_a[23:16]=rx_data;
+                        44:public_rx_ports_a[15:8]=rx_data;45:public_rx_ports_a[7:0]=rx_data;
+                    endcase
+                    public_rx_tail_a={public_rx_tail_a[31:0],rx_data};public_rx_pos_a=public_rx_pos_a+1;
+                end else public_rx_pos_a=0;
+                if(rx_valid_b)begin
+                    case(public_rx_pos_b)
+                        12:public_rx_id_b[15:8]=rx_data_b;13:public_rx_id_b[7:0]=rx_data_b;
+                        42:public_rx_ports_b[31:24]=rx_data_b;43:public_rx_ports_b[23:16]=rx_data_b;
+                        44:public_rx_ports_b[15:8]=rx_data_b;45:public_rx_ports_b[7:0]=rx_data_b;
+                    endcase
+                    public_rx_tail_b={public_rx_tail_b[31:0],rx_data_b};public_rx_pos_b=public_rx_pos_b+1;
+                end else public_rx_pos_b=0;
+                if(ev_a[0] && (!public_rx_known[public_rx_id_a] || public_rx_sn[public_rx_id_a]!=public_rx_tail_a[39:32]))begin
+                    public_rx_known[public_rx_id_a]=1;public_rx_sn[public_rx_id_a]=public_rx_tail_a[39:32];
+                    public_rx_nets[public_rx_id_a]=0;public_rx_ports[public_rx_id_a]=public_rx_ports_a;
+                end
+                if(ev_b[0] && (!public_rx_known[public_rx_id_b] || public_rx_sn[public_rx_id_b]!=public_rx_tail_b[39:32]))begin
+                    public_rx_known[public_rx_id_b]=1;public_rx_sn[public_rx_id_b]=public_rx_tail_b[39:32];
+                    public_rx_nets[public_rx_id_b]=1;public_rx_ports[public_rx_id_b]=public_rx_ports_b;
+                end
+            end
+        end
         assign core_dvalid=0;assign core_dlast=0;assign core_ddata=0;assign core_dvl=0;
         assign core_dsp=0;assign core_ddp=0;assign core_dnet=0;
 `endif
@@ -172,7 +246,7 @@ module top_stream_endpoint #(
                     if(rx_pos==1)begin
                         receive_id[7:0]=stream_rx;d_index<=indices[receive_id];
 `ifdef SYS_TOP_NETLIST
-                        {d_sp,d_dp}<=wire_ports[receive_id];d_net<=0;
+                        {d_sp,d_dp}<=public_rx_ports[receive_id];d_net<=public_rx_nets[receive_id];
 `endif
                     end
                     rx_pos=rx_pos+1;receive_last=cycle;
