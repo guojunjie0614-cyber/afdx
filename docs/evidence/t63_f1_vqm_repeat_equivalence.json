@@ -1,0 +1,19 @@
+{
+  "verification_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+  "old_reference": "out\\synth\\AFDX_top\\20261028_203420_810504_09ede94b04a9\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+  "old_sha256": "53BE9DCA6231E46B57A29F47D3C2B58F9C10B14E3EE238D51890B43304DB1DE6",
+  "old_signature": {
+    "sha256": "45CCB71FD97C58C2E9096B7D41E605125139172603691D671F1A0A809AD056AA",
+    "wire_declarations": 46216,
+    "nonwire_lines": 580626
+  },
+  "current": "out\\synth\\AFDX_top\\20261028_225508_388830_ced792b57972\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+  "current_sha256": "D38876EB78082AB5D4C858D7053010BB650A12D114E83F0ADD9558A9FB77D26B",
+  "current_signature": {
+    "sha256": "45CCB71FD97C58C2E9096B7D41E605125139172603691D671F1A0A809AD056AA",
+    "wire_declarations": 46216,
+    "nonwire_lines": 580626
+  },
+  "same_named_mapped_circuit": true,
+  "normalization": "Ignore DATE comment and independent wire declaration ordering only; all other lines and wire declarations retained"
+}

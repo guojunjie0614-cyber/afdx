@@ -1,9 +1,5 @@
-Reading pref.tcl
-
-# 2020.4
-
-# vsim -c tb_judge_snmp -wlf simulation.wlf -do "do run.do" 
-# Start time: 10:09:54 on Oct 14,2026
+# vsim -batch tb_judge_snmp -wlf simulation.wlf -do "do run.do" 
+# Start time: 22:56:53 on Oct 28,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # //  ModelSim SE-64 2020.4 Oct 13 2020
 # //
@@ -19,14 +15,15 @@ Reading pref.tcl
 # //  18 U.S.C. Section 1905.
 # //
 # Loading work.tb_judge_snmp(fast)
-# Loading work.AFDX_top(fast)
+# Loading work.top_stream_endpoint(fast)
+# 
 # do run.do
 # [SNMP_RESPONSE] request_id=1001 error=0 returned=9029 cfg=9029
 # [SNMP_RESPONSE] request_id=1002 error=0 returned=9029 cfg=9029
 # [SNMP_RESPONSE] request_id=1003 error=0 returned=13398 cfg=13398
 # [SNMP_SUMMARY] Get=1 GetNext=1 Set=1 Trap=1 request_id=PASS error_status=0 register_values=PASS
 # [RESULT] tb_judge_snmp PASS checks=699 errors=0
-# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_submit/tb/tb_judge_snmp.v(205)
-#    Time: 11213057 ns  Iteration: 0  Instance: /tb_judge_snmp
-# End time: 10:10:00 on Oct 14,2026, Elapsed time: 0:00:06
+# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_t63/tb/tb_judge_snmp.v(205)
+#    Time: 11212697 ns  Iteration: 0  Instance: /tb_judge_snmp
+# End time: 22:57:41 on Oct 28,2026, Elapsed time: 0:00:48
 # Errors: 0, Warnings: 0

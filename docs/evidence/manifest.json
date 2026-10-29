@@ -5,25 +5,36 @@
     "bytes": 88723,
     "sha256": "8d8b28919b7b0c77eb56a081af5ca643dfc08c9f2d600a1f5920f1e14f59604b",
     "operation": "Copy the T59 tb_sys_perf independent check summary",
-    "source_commit": "286fa1b6"
+    "source_commit": "286fa1b6",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "rtc.json",
-    "source": "out/sim/tb_sys_rtc/20261014_100737_897544/check_summary.json",
-    "bytes": 2650,
-    "sha256": "201139ca51bc693b6b1979edae976097ce3b8a7022526b13b773aa9db3b6e9fc"
+    "source": "out/sim/tb_sys_rtc/20261028_225507_719296_aded6cb476de/check_summary.json",
+    "source_sha256": "3508D510B7C1113DBC8B2D8BD8764223C52314EE53B505D29D0EED2811B65936",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 2641,
+    "sha256": "3508D510B7C1113DBC8B2D8BD8764223C52314EE53B505D29D0EED2811B65936"
   },
   {
     "file": "capacity.log",
-    "source": "out/sim/tb_judge_capacity/20261014_100948_279583/simulation.log",
-    "bytes": 8678,
-    "sha256": "a4b4e682b92dc9df7e01e3e729b5538eb1ba7c4fdfce6d9be23ed66971368995"
+    "source": "out/sim/tb_judge_capacity/20261028_231836_469909_20ebfc0a53fd/simulation.log",
+    "source_sha256": "187CB38DA729FA2FC681EF21BABAC5EFAD7C32A3EBE02A2FEC110B999224BE75",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 8662,
+    "sha256": "187CB38DA729FA2FC681EF21BABAC5EFAD7C32A3EBE02A2FEC110B999224BE75"
   },
   {
     "file": "snmp.log",
-    "source": "out/sim/tb_judge_snmp/20261014_100953_013238/simulation.log",
-    "bytes": 1452,
-    "sha256": "c22faab5c7896bb74d61e0b18e127b3fc647845c21de5aaa765ad420fb8d52ea"
+    "source": "out/sim/tb_judge_snmp/20261028_225507_689265_bdd84b28db10/simulation.log",
+    "source_sha256": "18D25049986D5C55D1648CACBD27D839BFDC9451760C14A1CB7AACA3AE56CAA0",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 1436,
+    "sha256": "18D25049986D5C55D1648CACBD27D839BFDC9451760C14A1CB7AACA3AE56CAA0"
   },
   {
     "file": "gui_behavior.log",
@@ -40,7 +51,9 @@
     "bytes": 239,
     "sha256": "c67099e0d288ba0b72ff40aa4b713396de151e820bd06bfc1ffee25245b025a6",
     "source_commit": "f1393d44",
-    "source_sha256": "c67099e0d288ba0b72ff40aa4b713396de151e820bd06bfc1ffee25245b025a6"
+    "source_sha256": "c67099e0d288ba0b72ff40aa4b713396de151e820bd06bfc1ffee25245b025a6",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "gui_elinx.log",
@@ -66,13 +79,16 @@
     "sha256": "3f31568041b6de32bc802d1fc9b36549313cbfa6330025d679e9d50ca45bc870",
     "source_commit": "f1393d44",
     "source_sha256": "3f31568041b6de32bc802d1fc9b36549313cbfa6330025d679e9d50ca45bc870",
-    "note": "T57 official CLI VQM tested with the common GUI-netlist simulation entrypoint."
+    "note": "T57 official CLI VQM tested with the common GUI-netlist simulation entrypoint.",
+    "historical": true
   },
   {
     "file": "contention.json",
     "source": "out/t17/jitter_summary.json",
     "bytes": 78031,
-    "sha256": "0b16098b6ff6074a16d7b372e55190ee02037a38106069d34695ec880aaf69a7"
+    "sha256": "0b16098b6ff6074a16d7b372e55190ee02037a38106069d34695ec880aaf69a7",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "route_default.json",
@@ -81,67 +97,89 @@
     "bytes": 4317,
     "sha256": "731bd58a223b57e02b239c59f3a9c88aa5c2bbe9acd867b9858c1b237335ef98",
     "source_commit": "f1393d44",
-    "source_sha256": "731bd58a223b57e02b239c59f3a9c88aa5c2bbe9acd867b9858c1b237335ef98"
+    "source_sha256": "731bd58a223b57e02b239c59f3a9c88aa5c2bbe9acd867b9858c1b237335ef98",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "vo_functional.json",
     "source": "out/latest_functional.json",
     "bytes": 9738,
-    "sha256": "f027e5ca7664945aedb0b06cc3c5b6f9cb76d3da8b7a22e984585e7519044946"
+    "sha256": "f027e5ca7664945aedb0b06cc3c5b6f9cb76d3da8b7a22e984585e7519044946",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "vo_ram.json",
     "source": "out/t22/ram_summary.json",
     "bytes": 19214,
-    "sha256": "f7af1f6238d3ab51de9b32e9d3bfae54549468731b5be47d58e04253b4e8b797"
+    "sha256": "f7af1f6238d3ab51de9b32e9d3bfae54549468731b5be47d58e04253b4e8b797",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "vo_ram_bits.json",
     "source": "out/t22/ram_bit_map.json",
     "bytes": 2912,
-    "sha256": "b2ef764b19772cd818930cae90d4cb62db185ae97f7cec44d9f527173dce8163"
+    "sha256": "b2ef764b19772cd818930cae90d4cb62db185ae97f7cec44d9f527173dce8163",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_results.json",
     "source": "out/t22/b/results.json",
     "bytes": 12226,
-    "sha256": "83e5d49e3fb7b3fe1e0806fc991f3be1a85807d1bbdc3a8b7d80edb21594bae9"
+    "sha256": "83e5d49e3fb7b3fe1e0806fc991f3be1a85807d1bbdc3a8b7d80edb21594bae9",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_official_resources.json",
     "source": "out/t22/b/result_resources_official.json",
     "bytes": 2416,
-    "sha256": "46c8acfc232e11e4698348ffe80b72f9936acf6edf74ad9a6fcbd0e226dd0cb9"
+    "sha256": "46c8acfc232e11e4698348ffe80b72f9936acf6edf74ad9a6fcbd0e226dd0cb9",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_self_resources.json",
     "source": "out/t22/b/result_resources_self.json",
     "bytes": 3919,
-    "sha256": "e3a115d8826ce9a7f9aa8bdb6e33719c89ec8e40d6d5d7fe5d030a43ec9374a4"
+    "sha256": "e3a115d8826ce9a7f9aa8bdb6e33719c89ec8e40d6d5d7fe5d030a43ec9374a4",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_official_stress.json",
     "source": "out/t22/b/result_stress_crc_n4.json",
     "bytes": 86344,
-    "sha256": "c2e0ac68815d43d0b234b821b9d63af146a54a8a21136a16cfe949e4b97fa002"
+    "sha256": "c2e0ac68815d43d0b234b821b9d63af146a54a8a21136a16cfe949e4b97fa002",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_self_rtl.json",
     "source": "out/t22/b/result_self_rtl_n4.json",
     "bytes": 85208,
-    "sha256": "52642e9025be71878b7f7ab7f278a3973076a14b9aa7a850ade170441d258e16"
+    "sha256": "52642e9025be71878b7f7ab7f278a3973076a14b9aa7a850ade170441d258e16",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_self_net.json",
     "source": "out/t22/b/result_self_netlist_n4.json",
     "bytes": 85833,
-    "sha256": "e7f1d30ec59fa458d41aca1bf55eec9ad19a60c8a544e0d4d36bc08972958165"
+    "sha256": "e7f1d30ec59fa458d41aca1bf55eec9ad19a60c8a544e0d4d36bc08972958165",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "mac_bad_crc.json",
     "source": "out/t22/b/result_bad_crc.json",
     "bytes": 7345,
-    "sha256": "3f9b57053d2d902becf875c39b3597e8d208f9b30c74fd413cd4719abad59393"
+    "sha256": "3f9b57053d2d902becf875c39b3597e8d208f9b30c74fd413cd4719abad59393",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "gui_timing.json",
@@ -150,7 +188,9 @@
     "bytes": 8918,
     "sha256": "94585ffaef8839cbc93bdaeccfa8acbb7c36ab99adfdea113980672fa5924cff",
     "source_commit": "f1393d44",
-    "source_sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121"
+    "source_sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "route_timing.json",
@@ -159,7 +199,9 @@
     "bytes": 7318,
     "sha256": "d6438ad29f46ea16f6583cfad21cc0d6a512822ab5926a54f28f6053331b5cbc",
     "source_commit": "f1393d44",
-    "source_sha256": "75bb7763a867d27c46af5d5a08167076bf5fce488d35a95fd1780dc1e35db185"
+    "source_sha256": "75bb7763a867d27c46af5d5a08167076bf5fce488d35a95fd1780dc1e35db185",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "gui_hierarchy.rpt",
@@ -168,7 +210,9 @@
     "bytes": 2591980,
     "sha256": "c6b7bc0460d6cbed625a0cc477373a60055e30474b392eb7f3704b00178b7f2d",
     "source_commit": "f1393d44",
-    "source_sha256": "c6b7bc0460d6cbed625a0cc477373a60055e30474b392eb7f3704b00178b7f2d"
+    "source_sha256": "c6b7bc0460d6cbed625a0cc477373a60055e30474b392eb7f3704b00178b7f2d",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "device_capacity.rpt",
@@ -188,87 +232,113 @@
     "sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121",
     "source_commit": "f1393d44",
     "source_sha256": "7b613d44aed8675aadd835e82af0c9e57c478cf446a155dae87dafac4b000121",
-    "note": "GUI synthesis timing database absent; copied same-source official CLI synthesis database, not a GUI capture."
+    "note": "GUI synthesis timing database absent; copied same-source official CLI synthesis database, not a GUI capture.",
+    "historical": true
   },
   {
     "file": "fault_checks.json",
     "source": "out/sim/tb_sys_fault/20261014_095600_827331/check_summary.json",
     "bytes": 19372,
-    "sha256": "78a0129bd000866cb8448c99b3143a7be24d7dedc660090786c8ab433b5839f2"
+    "sha256": "78a0129bd000866cb8448c99b3143a7be24d7dedc660090786c8ab433b5839f2",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "fault_events.txt",
     "source": "out/sim/tb_sys_fault/20261014_095600_827331/sys_events.txt",
     "bytes": 129289,
-    "sha256": "8fbacdc06f49bce3e3dace54806435707de6d9ea8ce900187ed33e4bf79bf3d5"
+    "sha256": "8fbacdc06f49bce3e3dace54806435707de6d9ea8ce900187ed33e4bf79bf3d5",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "fault_rx_events.txt",
     "source": "out/sim/tb_sys_fault/20261014_095600_827331/es1_rx/events.txt",
     "bytes": 4260,
-    "sha256": "91d3cab19312cac7ef574358af247504df4742ffc3e8e321fb6430e5da147215"
+    "sha256": "91d3cab19312cac7ef574358af247504df4742ffc3e8e321fb6430e5da147215",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "load_checks.json",
     "source": "out/sim/tb_sys_load/20261014_095630_072950/check_summary.json",
     "bytes": 10049,
-    "sha256": "98fbd73091ebb58a8c002034a51c92d00000911bab60d8cbee7d9bfd5198d5fd"
+    "sha256": "98fbd73091ebb58a8c002034a51c92d00000911bab60d8cbee7d9bfd5198d5fd",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "load_events.txt",
     "source": "out/sim/tb_sys_load/20261014_095630_072950/sys_events.txt",
     "bytes": 251509,
-    "sha256": "ba3a2542a26c5fa68ddfa101641ab4363ef28881dec1e32a79c65fb22dda37db"
+    "sha256": "ba3a2542a26c5fa68ddfa101641ab4363ef28881dec1e32a79c65fb22dda37db",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "load_tx_events.txt",
     "source": "out/sim/tb_sys_load/20261014_095630_072950/es1_tx/events.txt",
     "bytes": 550754,
-    "sha256": "20e7695e665a5eff2d4f0bcf1f7be0f025e10625c9a0037a94061e5e02437516"
+    "sha256": "20e7695e665a5eff2d4f0bcf1f7be0f025e10625c9a0037a94061e5e02437516",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "load_commands.txt",
     "source": "out/sim/tb_sys_load/20261014_095630_072950/vectors/sys_commands.txt",
     "bytes": 159900,
-    "sha256": "f063a2952b7ccf1b89fa123946fe230cf39cafa27915f9db3c4406133f92abf0"
+    "sha256": "f063a2952b7ccf1b89fa123946fe230cf39cafa27915f9db3c4406133f92abf0",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "overflow_checks.json",
     "source": "out/sim/tb_sys_ovf/20261014_095813_300615/check_summary.json",
     "bytes": 5563,
-    "sha256": "4ee7902565d8ccdcd2d880841996a14d5d101075a284455cb4dc9119e70ae712"
+    "sha256": "4ee7902565d8ccdcd2d880841996a14d5d101075a284455cb4dc9119e70ae712",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "overflow_events.txt",
     "source": "out/sim/tb_sys_ovf/20261014_095813_300615/sys_events.txt",
     "bytes": 6442,
-    "sha256": "747a24eefe24fa85c4d86cc75dbcb4ec755f3a5372d57e8f939cc0a071a0bb1b"
+    "sha256": "747a24eefe24fa85c4d86cc75dbcb4ec755f3a5372d57e8f939cc0a071a0bb1b",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "overflow_tx_events.txt",
     "source": "out/sim/tb_sys_ovf/20261014_095813_300615/es1_tx/events.txt",
     "bytes": 6727,
-    "sha256": "01e230c5d260cf9947456bb8d8b8b84229f735f52a07501ff87301a75e85af34"
+    "sha256": "01e230c5d260cf9947456bb8d8b8b84229f735f52a07501ff87301a75e85af34",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "queue_overflow_checks.json",
     "source": "out/sim/tb_rx_ovf_dq/20261014_095545_014768/check_summary.json",
     "bytes": 465,
-    "sha256": "be186b75ded69861490a9c2d3d34b4ad428edae153746397ee605569d4d9a0ac"
+    "sha256": "be186b75ded69861490a9c2d3d34b4ad428edae153746397ee605569d4d9a0ac",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "queue_overflow_events.txt",
     "source": "out/sim/tb_rx_ovf_dq/20261014_095545_014768/events.txt",
     "bytes": 3486,
-    "sha256": "a1035bf95511092e7ddb4da5906b6c905d24b0589b2657fabf00a16564bcb519"
+    "sha256": "a1035bf95511092e7ddb4da5906b6c905d24b0589b2657fabf00a16564bcb519",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "perf_r97.json",
-    "source": "out/t59/make_evidence.py over out/sim/tb_sys_perf, out/sim/tb_sys_perf_var and out/app",
-    "operation": "Build R119/R120 latency, jitter and injection evidence from the T59 runs; Tcl and Python fields compared",
-    "bytes": 66492,
-    "sha256": "0873672d00d098fd680e90dc292a60cca08d6e541b1816f205a5093c1670a400",
-    "source_commit": "286fa1b6"
+    "source": "out/t63/F1_final_v2/jobs/judge/result.json",
+    "source_sha256": "F13071CC0F40BECA608830220D1EAD0C6024638177EB957F57C8D31B0DA6D5C2",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Recompute Python against fresh same-folder Tcl results; all current performance windows",
+    "bytes": 71530,
+    "sha256": "8DE6987E6FDCB1815F467D3A8E7A39D640ACA46495AE1B1770C161F3C9767380"
   },
   {
     "file": "t43_timing.json",
@@ -359,21 +429,21 @@
   },
   {
     "file": "../../sim/reference/regression.json",
-    "source": "out/t59/regress_final.json",
-    "source_sha256": "173c6a7a17b06d5c4bd148d0060a0819991c52971166e8b45dd98b81b58062ef",
-    "source_commit": "286fa1b6",
-    "operation": "Convert the T59 parallel CE2 batch into the Runs schema",
-    "bytes": 8759,
-    "sha256": "3ae7f192702e80c9fbca79ed74918c0bf37d6bbfb0fe7be7fd4a6d9160159956"
+    "source": "out/t63/F1_final_v2/summary.json",
+    "source_sha256": "90A05E9FBA3D5B42CBA2C33C3A7C310EE9EF04FFB6355FC8237267ECEC32D48A",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Collect all 40 same-commit CE2 runs in original list order",
+    "bytes": 9384,
+    "sha256": "A0D88EC64CAB1D1BCB32E069D5ADCDC4C2ACF055036286078BF225AAE7A117F9"
   },
   {
     "file": "../../sim/reference/judge_result.txt",
-    "source": "out/modelsim/judge_20261026_220821_4004/result.txt",
-    "source_sha256": "ebb60a848cbebdd5c771462bf865b7406496bf922591f27d9c491c0e1b1b56fa",
-    "source_commit": "286fa1b6",
-    "operation": "Copy the T59 batch-mode judge result",
-    "bytes": 17264,
-    "sha256": "ebb60a848cbebdd5c771462bf865b7406496bf922591f27d9c491c0e1b1b56fa"
+    "source": "out/modelsim/judge_20261028_225509_8540/result.txt",
+    "source_sha256": "9F0A8558811D8A83CEC0804CFB7E816041ACD8E6CFBC34707F982C6CEBEA6589",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 18878,
+    "sha256": "9F0A8558811D8A83CEC0804CFB7E816041ACD8E6CFBC34707F982C6CEBEA6589"
   },
   {
     "file": "../../sim/reference/coverage/merged.ucdb",
@@ -540,7 +610,9 @@
         "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_perf_var\\20261026_112151_133459\\coverage.ucdb",
         "sha256": "f865119abc555d05fc0aab442fe42782e002a154a63daea9282b97c2429e2b11"
       }
-    ]
+    ],
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "../../sim/reference/coverage/vcover_report.txt",
@@ -549,7 +621,9 @@
     "source_commit": "f1393d44",
     "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
     "bytes": 20142,
-    "sha256": "c3b399396d98e75e219c454f023429d49a0d2f16c55cc557b35d441ac35abfbb"
+    "sha256": "c3b399396d98e75e219c454f023429d49a0d2f16c55cc557b35d441ac35abfbb",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "../../sim/reference/coverage/modules.csv",
@@ -558,7 +632,9 @@
     "source_commit": "f1393d44",
     "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
     "bytes": 2928,
-    "sha256": "070400d36337d5cd92f2371aba511c6b50f2c84e850bc847da265475b7d09578"
+    "sha256": "070400d36337d5cd92f2371aba511c6b50f2c84e850bc847da265475b7d09578",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "../../sim/reference/coverage/totals.json",
@@ -567,7 +643,9 @@
     "source_commit": "f1393d44",
     "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
     "bytes": 2776,
-    "sha256": "17fc81d9fe9d6f03773e1923b674e8a0f74479f38370c781f82d7f16522321ff"
+    "sha256": "17fc81d9fe9d6f03773e1923b674e8a0f74479f38370c781f82d7f16522321ff",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "../../sim/reference/coverage/coverage_numbers.json",
@@ -576,7 +654,9 @@
     "source_commit": "f1393d44",
     "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
     "bytes": 14749,
-    "sha256": "d1ea0796af89060de65b0b714baca1a38258411bddb0ea1423c95526a228efeb"
+    "sha256": "d1ea0796af89060de65b0b714baca1a38258411bddb0ea1423c95526a228efeb",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "../../sim/reference/coverage/README.md",
@@ -585,7 +665,9 @@
     "source_commit": "f1393d44",
     "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
     "bytes": 1284,
-    "sha256": "2d9aa9224e9183f369d85838a0930327fa2be14c0f7553c94832ced0985bad90"
+    "sha256": "2d9aa9224e9183f369d85838a0930327fa2be14c0f7553c94832ced0985bad90",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "history/route_timing_20261010.json",
@@ -627,7 +709,9 @@
     "bytes": 1960,
     "sha256": "ff2a0cdc12c7fac41291b02143c58b5c52e053755ac7d89809b547d47d2cfa50",
     "source_commit": "f1393d44",
-    "source_sha256": "ff2a0cdc12c7fac41291b02143c58b5c52e053755ac7d89809b547d47d2cfa50"
+    "source_sha256": "ff2a0cdc12c7fac41291b02143c58b5c52e053755ac7d89809b547d47d2cfa50",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "t57_timing.json",
@@ -709,24 +793,269 @@
         "checks": 5
       }
     },
-    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42"
+    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   },
   {
     "file": "version_match.json",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\final_summary.json",
-    "operation": "Bind delivery source hashes and existing validation inputs",
-    "bytes": 13140,
-    "sha256": "5cc584d3c056a2a72ba12a3b5244d4a9095c26345fab513d49b6923bafba46d8",
-    "source_commit": "f1393d44",
-    "source_sha256": "adca19642dcaf99451d9252fe9883ef79d6f334be1683d1afc5a773736ff38cc"
+    "source": "out/t63/F1_final_v2/inputs.json",
+    "source_sha256": "AF157A09E784C1E141A5335635E4D8F27A3F5DA9468DDC6E2E23264248F018A7",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 20457,
+    "sha256": "02C0824C1A8251D8E25569DA88781195FF663E7AFA4178BAED7C9D497B12F685"
   },
   {
     "file": "post_route_timing_campaign.md",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_result.json",
-    "operation": "Summarize current delivery; replace obsolete open-ended campaign state",
-    "bytes": 1981,
-    "sha256": "e0940f267d704883240429514f66c363121c43cd244b7fbc8dbe73c55ac5e8cb",
+    "source": "out/t63/F1_final_v2/jobs/v2/result.json",
+    "source_sha256": "8FD7A3566B1D937E662E62E31CAF1A780F92E28BE6BE3DE0796D056789967507",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Record current fixed-layout delivery state and pending GUI gate",
+    "bytes": 915,
+    "sha256": "EF722D43FE48FEB8A68E4A2ABCDF7700404719BCA66FA3BC406B05AD4EA01A79"
+  },
+  {
+    "file": "history/sim_reference_regression_pre_f1.json",
+    "source": "out/t59/regress_final.json",
+    "source_sha256": "173c6a7a17b06d5c4bd148d0060a0819991c52971166e8b45dd98b81b58062ef",
+    "source_commit": "286fa1b6",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh",
+    "bytes": 8759,
+    "sha256": "3AE7F192702E80C9FBCA79ED74918C0BF37D6BBFB0FE7BE7FD4A6D9160159956",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+  },
+  {
+    "file": "history/sim_reference_judge_result_pre_f1.txt",
+    "source": "out/modelsim/judge_20261026_220821_4004/result.txt",
+    "source_sha256": "ebb60a848cbebdd5c771462bf865b7406496bf922591f27d9c491c0e1b1b56fa",
+    "source_commit": "286fa1b6",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh",
+    "bytes": 17264,
+    "sha256": "EBB60A848CBEBDD5C771462BF865B7406496BF922591F27D9C491C0E1B1B56FA",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+  },
+  {
+    "file": "../../sim/reference/netlist.json",
+    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
+    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 9743,
+    "sha256": "E83183A4B5028DD408CE0188D77603A3A76681CE5E213BC6127F77C059B7D44F"
+  },
+  {
+    "file": "../../sim/reference/app_result.json",
+    "source": "out/t63/F1_final_v2/jobs/app_default/result.json",
+    "source_sha256": "E740C0EC7DD1AB8F6229F0B35F6726AD722EF318973D1B1B2361B8595BF25C14",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 2410,
+    "sha256": "6168B2AB13DAFD8C185269991E155522454E215CD76DA8EC043D694751B94C9D"
+  },
+  {
+    "file": "t63_f1_functional.json",
+    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
+    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Bind all terminal F1 functional verdicts and immutable summary hashes; V1 acceptance is false",
+    "bytes": 47379,
+    "sha256": "A6D0C78F12269C0BE89364322CB096C3A06A1D8ADDFB67FAFA5321C054BB53B4"
+  },
+  {
+    "file": "t63_f1_sys_net_failure.json",
+    "source": "out/net/tb_sys_net/20261029_021958_470457_3948adc9a8e6/summary.json",
+    "source_sha256": "F2125BCE1304C6E1993CF7BEA1DA08C11A9FDE32AD04F1940471A914C4A78CF7",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Record actual mapped FAIL and same-macro RTL reproduction; retain failure as an acceptance blocker",
+    "bytes": 6146,
+    "sha256": "0145AB1349078951E774BC8D92E67DADA2BE20C6E8DC779E8D9CBA64AAB79854"
+  },
+  {
+    "file": "t63_f1_netlist_reuse.json",
+    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
+    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Record exact source hashes and module VQM reuse; every simulation rerun on the final verification commit",
+    "bytes": 11136,
+    "sha256": "F285BE7547D5D8267A80B5DAF4384F04C5C8183D82D39A1ED46A8E263C90DF73"
+  },
+  {
+    "file": "t63_f1_services_summary.json",
+    "source": "out/gui_netlist/tb_net_services_gui/20261028_231517_511202_cd1a3b0d424d/summary.json",
+    "source_sha256": "CD30D1F2A71D39AE8D833A9514CB84486FCC346349D4279B9776F86098A7A6D7",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Extract verdict, adaptation, source bindings and independent checks; raw job records remain in out",
+    "bytes": 27422,
+    "sha256": "0A5D7E724436CDABF7E2C10FE53BB2DACD3ED9886282B1777CE4267C8EB1F8DC"
+  },
+  {
+    "file": "t63_f1_services_rtl_summary.json",
+    "source": "out/gui_netlist/tb_net_services_rtl/20261028_225507_723196_53da30dd2321/summary.json",
+    "source_sha256": "C73593633BB80F42D43A8A0C32328BCC3A0FD9261E1DD6134B7E1E28C77C81B6",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Extract same-stimulus RTL reference verdict and independent checks; raw records remain in out",
+    "bytes": 14236,
+    "sha256": "68C27AE5B15FF7E3E80B7EB9DB085599FDD42A6297FB2BDE737120166EA37A97"
+  },
+  {
+    "file": "t63_f1_vqm_repeat_equivalence.json",
+    "source": "out/t63/F1_final_v2/vqm_repeat_equivalence.json",
+    "source_sha256": "7573BF17B0E37C20D09562DC1CBF7CBC8354DC9C2B11F8AB7316D89E56E6CD4A",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 1049,
+    "sha256": "7573BF17B0E37C20D09562DC1CBF7CBC8354DC9C2B11F8AB7316D89E56E6CD4A"
+  },
+  {
+    "file": "t63_f1_judge_baseline.json",
+    "source": "out/modelsim/judge_20261028_225509_8540/performance/r97_tcl.tsv",
+    "source_sha256": "CD393A8698E22524CE862A028DC48EACD522546C4CA844F6378434C7CDB29DB3",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Combine fresh final-commit measurements with explicit earlier mismatch diagnosis; requirement thresholds unchanged",
+    "bytes": 3414,
+    "sha256": "C00A4F0C8D424900588CBAE0BD14F8D2ACCF8E2FC3DEB56BDFA8F128947E680D"
+  },
+  {
+    "file": "t63_f1_gui_preparation.json",
+    "source": "out/t63/F1_final_v2/gui_verifier_fixture_v2/self_test.json",
+    "source_sha256": "7489BB35CBD516969FB3EA5D1380E7AA0EDAAEE5F796197D135895FF0FF66CBF",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 6504,
+    "sha256": "C881A91C110E6F6E80710A453F8C1B67667D912B5189D5611E4FD00B477A1D9F"
+  },
+  {
+    "file": "t63_f1_synthesis_resources.rpt",
+    "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem_utilization_synth.rpt",
+    "source_sha256": "9D88B139587B49F5CF65381EF1349C43D675E215C083F22B790290E319A6E6CB",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 239,
+    "sha256": "9D88B139587B49F5CF65381EF1349C43D675E215C083F22B790290E319A6E6CB"
+  },
+  {
+    "file": "t63_f1_placement_resources.rpt",
+    "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/project/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem_utilization_placed.rpt",
+    "source_sha256": "FD49B997A767CC281279755CACACFD4E6F3BD99209F03AE9AD345A8B89124BA7",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 347,
+    "sha256": "FD49B997A767CC281279755CACACFD4E6F3BD99209F03AE9AD345A8B89124BA7"
+  },
+  {
+    "file": "t63_f1.place",
+    "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/project/AFDX_EndSystem.runs/imple_1/AFDX_EndSystem.place",
+    "source_sha256": "DAE976D76ADA30C7359A1BE939A390DACC8185F53ECE3EC2C264FB0EA7BC2B12",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 178615,
+    "sha256": "DAE976D76ADA30C7359A1BE939A390DACC8185F53ECE3EC2C264FB0EA7BC2B12"
+  },
+  {
+    "file": "t63_f1_synthesis_hierarchy.rpt",
+    "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.map.rpt",
+    "source_sha256": "A3D322E6B51B2C47CD924864FCD111583D0FFB56F791120079716DF72E841CFE",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 2957979,
+    "sha256": "A3D322E6B51B2C47CD924864FCD111583D0FFB56F791120079716DF72E841CFE"
+  },
+  {
+    "file": "t63_f1_timing.json",
+    "source": "out/t63/F1_final_v2/jobs/v2/result.json",
+    "source_sha256": "8FD7A3566B1D937E662E62E31CAF1A780F92E28BE6BE3DE0796D056789967507",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Read-only native full routed SQLite query and official summaries",
+    "bytes": 10454,
+    "sha256": "A29596C0720EF673D2346DFE5E44082BD9534B3ECA0794B569EBC3F95A8819F8"
+  },
+  {
+    "file": "t63_f1_synthesis_warnings.json",
+    "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/analysis.log",
+    "source_sha256": "EE6D8352C711E856FB3098B93953343FBAD10FEC91BF1218517E4F3B00B3E5FF",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 2204,
+    "sha256": "A9F850E3923E54F2B511075E1E497712B6CD73628E06ADC8A5B409BE838E6001"
+  },
+  {
+    "file": "history/capacity_pre_f1.log",
+    "source": "out/sim/tb_judge_capacity/20261014_100948_279583/simulation.log",
+    "bytes": 8678,
+    "sha256": "A4B4E682B92DC9DF7E01E3E729B5538EB1BA7C4FDFCE6D9BE23ED66971368995",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh"
+  },
+  {
+    "file": "history/snmp_pre_f1.log",
+    "source": "out/sim/tb_judge_snmp/20261014_100953_013238/simulation.log",
+    "bytes": 1452,
+    "sha256": "C22FAAB5C7896BB74D61E0B18E127B3FC647845C21DE5AAA765AD420FB8D52EA",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh"
+  },
+  {
+    "file": "history/rtc_pre_f1.json",
+    "source": "out/sim/tb_sys_rtc/20261014_100737_897544/check_summary.json",
+    "bytes": 2650,
+    "sha256": "201139CA51BC693B6B1979EDAE976097CE3B8A7022526B13B773AA9DB3B6E9FC",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh"
+  },
+  {
+    "file": "t63_f1_initialization.json",
+    "source": "out/sim/tb_sys_fault/20261028_225507_743320_3e4a3ca22571/es1_rx/events.txt",
+    "source_sha256": "0EB9EC44435B17B02E435312785F71556E0B831F80660F9DBC6352735ADF720E",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "Copy current T63-F1 evidence",
+    "bytes": 659,
+    "sha256": "989F2BA7E0FEEB743D3087E2F9224C4D9CA4A540CBE4146E9710F795403C5C90"
+  },
+  {
+    "file": "history/perf_r97_pre_f1.json",
+    "source": "out/t59/make_evidence.py over out/sim/tb_sys_perf, out/sim/tb_sys_perf_var and out/app",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh",
+    "bytes": 66492,
+    "sha256": "199C04CE16149F5B2E43A5A96A873577DC8FEB520CCB614883B3E4BDA2CB1315",
+    "source_commit": "286fa1b6",
+    "historical": true,
+    "note": "Retained prior tracked bytes; the original manifest target hash did not match. This archive hash was measured directly."
+  },
+  {
+    "file": "t63_f1_final.json",
+    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
+    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
+    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "operation": "F1 terminal assessment and portable timing comparison baseline; V1 rejected, V2 passed, GUI pending",
+    "bytes": 58384,
+    "sha256": "BB439572DBBF0382D488927B7FF22913D5320A6136407EE61F0CAF62964B424E"
+  },
+  {
+    "file": "history/version_match_pre_f1.json",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\final_summary.json",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh",
+    "bytes": 13140,
+    "sha256": "5CC584D3C056A2A72BA12A3B5244D4A9095C26345FAB513D49B6923BAFBA46D8",
     "source_commit": "f1393d44",
-    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42"
+    "source_sha256": "adca19642dcaf99451d9252fe9883ef79d6f334be1683d1afc5a773736ff38cc",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+  },
+  {
+    "file": "history/post_route_timing_campaign_pre_f1.md",
+    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\official_repeat_compat\\official_repeat_compat_result.json",
+    "operation": "Preserve earlier bytes before authorized F1 reference refresh",
+    "bytes": 1981,
+    "sha256": "E0940F267D704883240429514F66C363121C43CD244B7FBC8DBE73C55AC5E8CB",
+    "source_commit": "f1393d44",
+    "source_sha256": "8f238d255f752c6179f90b3f18df117bffbbd6bd6a7c025df7220bd91255fc42",
+    "historical": true,
+    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
   }
 ]

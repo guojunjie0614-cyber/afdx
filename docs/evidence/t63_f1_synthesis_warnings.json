@@ -1,0 +1,46 @@
+{
+  "verification_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+  "count": 8,
+  "by_code": {
+    "10230": 1,
+    "276020": 4,
+    "276026": 2,
+    "21074": 1
+  },
+  "warnings": [
+    {
+      "code": "10230",
+      "message": "Verilog HDL assignment warning at afdx_615a_engine.v(2179): truncated value with size 32 to match size of target (11)"
+    },
+    {
+      "code": "276020",
+      "message": "Inferred RAM node \"afdx_app_tx:application_tx|afdx_app_read:reader|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    },
+    {
+      "code": "276020",
+      "message": "Inferred RAM node \"afdx_app_rx:application_rx|afdx_app_read:reader|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    },
+    {
+      "code": "276026",
+      "message": "Inferred RAM node \"afdx_es:es|afdx_615a:loader|afdx_ram_sdp:load_ram|memory_rtl_0\" from synchronous design logic.  The RAM node maps into an M-RAM that powers up into an unknown state"
+    },
+    {
+      "code": "276026",
+      "message": "Inferred RAM node \"afdx_es:es|afdx_tx_core:tx_core|afdx_ram_sdp:tx_payload|memory_rtl_0\" from synchronous design logic.  The RAM node maps into an M-RAM that powers up into an unknown state"
+    },
+    {
+      "code": "276020",
+      "message": "Inferred RAM node \"afdx_es:es|afdx_snmp:snmp|afdx_mgmt_tx:sender|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    },
+    {
+      "code": "276020",
+      "message": "Inferred RAM node \"afdx_es:es|afdx_615a:loader|afdx_mgmt_tx:sender|bytes_rtl_0\" from synchronous design logic.  Pass-through logic has been added to match the read-during-write behavior of the original design."
+    },
+    {
+      "code": "21074",
+      "message": "Design contains 1 input pin(s) that do not drive logic"
+    }
+  ],
+  "source": "out/synth/AFDX_top/20261028_225508_388830_ced792b57972/analysis.log",
+  "source_sha256": "EE6D8352C711E856FB3098B93953343FBAD10FEC91BF1218517E4F3B00B3E5FF"
+}
