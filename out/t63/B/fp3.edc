@@ -1,7 +1,0 @@
-# t63_floorplan quantile=0.05 margin=2 utilization=0.8
-# rtc: clb 773/2279 mem 0/215
-create_pblock P_rtc -from X27_Y51 -to X90_Y93
-add_insts_to_pblock P_rtc -to {\afdx_es:es|afdx_rtc:rtc}
-# snmp: clb 601/1517 mem 3/164
-create_pblock P_snmp -from X46_Y48 -to X91_Y88
-add_insts_to_pblock P_snmp -to {\afdx_es:es|afdx_snmp:snmp}

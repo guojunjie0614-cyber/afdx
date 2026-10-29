@@ -1,2 +1,0 @@
-set_location_assignment CLB_X125_Y50_N0 -to {stratix_clb0}
-set_location_assignment CLB_X125_Y80_N0 -to {stratix_clb27}
