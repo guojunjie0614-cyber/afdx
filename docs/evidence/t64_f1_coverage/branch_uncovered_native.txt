@@ -1,0 +1,3528 @@
+Code Coverage Scope - 
+Name            : work.afdx_ram_sdp::address_width/branch#16#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_ram_sdp.v line = 16 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 16
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_ram_sdp.v line = 16 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 16
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_ram_sdp::address_width/branch#16#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_ram_sdp.v line = 16 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 16
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_ram_sdp.v line = 16 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 16
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_ram_sdp::branch#47#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_ram_sdp.v line = 47 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 506031500
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 47
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_ram_sdp.v line = 47 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 47
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::branch#115#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_mac_tx.v line = 115 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 50787446
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 115
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_mac_tx.v line = 211 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 211
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::branch#154#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_mac_tx.v line = 154 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 154
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_mac_tx.v line = 154 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 154
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::branch#155#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_mac_tx.v line = 155 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 155
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_mac_tx.v line = 155 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 155
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::branch#175#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_mac_tx.v line = 175 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 175
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_mac_tx.v line = 175 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 175
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::branch#176#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_mac_tx.v line = 176 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 176
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_mac_tx.v line = 176 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 176
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_free::branch#132#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_free.v line = 132 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 899813
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 132
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_free.v line = 161 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 161
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_buf::branch#164#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_buf.v line = 164 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 112505
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 164
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_buf.v line = 171 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 171
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_buf::branch#185#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_buf.v line = 185 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 48275063
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 185
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_buf.v line = 323 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 323
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_buf::branch#290#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_buf.v line = 290 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 2251
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 290
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_buf.v line = 297 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 297
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_buf::branch#312#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_buf.v line = 312 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 50064
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 312
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_buf.v line = 318 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 318
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_engine::branch#191#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_engine.v line = 191 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 50530476
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 191
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_engine.v line = 197 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 197
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_engine::branch#352#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_engine.v line = 352 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 318585463
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 352
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_engine.v line = 551 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 551
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_builder::branch#361#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_builder.v line = 361 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 478200
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 361
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_builder.v line = 381 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 381
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_builder::branch#422#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_builder.v line = 422 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 318585463
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 422
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_builder.v line = 422 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 422
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_builder::branch#429#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_builder.v line = 429 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 49455034
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 429
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_builder.v line = 429 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 429
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_tx_builder::branch#477#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_tx_builder.v line = 477 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 47368573
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 477
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_tx_builder.v line = 477 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 477
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rx_core::branch#109#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rx_core.v line = 109 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 3407924
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 109
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rx_core.v line = 109 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 109
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rx_engine::branch#405#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rx_engine.v line = 405 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 3765170
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 405
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rx_engine.v line = 593 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 593
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rx_engine::branch#547#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rx_engine.v line = 547 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 157437
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 547
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rx_engine.v line = 558 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 558
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rx_engine::branch#556#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rx_engine.v line = 556 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 1
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 556
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rx_engine.v line = 557 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 557
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rx_deliver::branch#88#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rx_deliver.v line = 88 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 47348852
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 88
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rx_deliver.v line = 102 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 102
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1462#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1462 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1462
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1462 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1462
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1507#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1507 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 250
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1507
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1515 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1515
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1507#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1507 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 250
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1507
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1516 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1516
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1543#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1543 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1543
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1548 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1548
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1543#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1543 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1543
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1553 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1553
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1560#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1560 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 432
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1560
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1571 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1571
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1588#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1588 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 216
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1588
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1588 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1588
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1601#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1601 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 36
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1601
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1643 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1643
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1671#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1671 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 22450
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1671
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1671 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1671
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1700#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1700 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 22450
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1700
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1700 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1700
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1761#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1761 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 13129
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1761
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1798 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1798
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1764#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1764 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 240
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1764
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1764 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1764
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1769#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1769 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 195
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1769
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1769 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1769
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1774#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1774 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 55
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1774
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1774 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1774
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1779#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1779 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1280
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1779
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1779 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1779
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1910#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1910 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 468
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1910
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1910 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1910
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1920#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1920 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 816
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1920
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1920 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1920
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1930#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1930 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 11048
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1930
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1930 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1930
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1974#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1974 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 15
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1974
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1974 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1974
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1982#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1982 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 14
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1982
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1982 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1982
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1986#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1986 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 14
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1986
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1986 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1986
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#1994#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1994 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1994
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1994 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1994
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2029#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2029 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 6
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2029
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2029 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2029
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2110#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2110 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2110
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2110 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2110
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2114#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2114 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2114
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2114 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2114
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2140#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2140 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2140
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2140 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2140
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2161#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2161 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2161
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2161 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2161
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2165#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2165 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2165
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2165 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2165
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2169#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2169 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2169
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2169 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2169
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2177#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2177 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2177
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2177 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2177
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2187#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2187 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 8
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2187
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2187 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2187
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2216#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2216 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 7
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2216
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2216 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 2216
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#2235#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 2235 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 5
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 2235
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 2235 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 2235
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::branch#757#4#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 757 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 4
+Attribute: name = #BCOUNT# int = 1064
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 757
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 757 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 4
+Attribute: name = #SLINENO# int = 757
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1138#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1138 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1138
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1138 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1138
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1139#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1139 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1139
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1139 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1139
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1140#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1140 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1140
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1140 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1140
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1141#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1141 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1141 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1142#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1142 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1142
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1142 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1142
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1143#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1143 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1143
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1143 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1143
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_615a_engine::denial_byte/branch#1144#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_615a_engine.v line = 1144 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1144
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_615a_engine.v line = 1144 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1144
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#233#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 233 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46601138
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 233
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 233 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 233
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#238#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 238 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46601138
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 238
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 238 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 238
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#252#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 252 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 142
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 252
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 252 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 252
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#259#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 259 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 6147
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 259
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 259 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 259
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#265#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 265 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 6147
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 265
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 265 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 265
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#338#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 338 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 351055
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 338
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 338 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 338
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp::branch#357#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp.v line = 357 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 3
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 357
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp.v line = 357 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 357
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1006#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1006 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 136
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1006
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1011 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1011
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1013#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1013 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 136
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1013
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1020 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1020
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1022#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1022 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 136
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1022
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1029 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1029
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1037#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1037 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 142
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1037
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1043 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1043
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1089#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1089 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 23428
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1089
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1105 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1105
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1090#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1090 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 4438
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1090
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1090 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1090
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1098#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1098 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 36
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1098
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1098 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 3
+Attribute: name = #SLINENO# int = 1098
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1103#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1103 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 1
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1103
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1103 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 3
+Attribute: name = #SLINENO# int = 1103
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1128#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1128 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 131
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1128
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1140 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1140
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1141#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1141 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1141 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1141#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1141 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1141 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1141
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1181#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1181 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 3
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1181
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1181 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1181
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1182#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1182 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1182
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1182 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1182
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1182#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1182 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1182
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1182 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 1182
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1232#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1232 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 127
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1232
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1236 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1236
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1288#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1288 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 6354
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 1288
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1466 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1466
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1510#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1510 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 18
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1510
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1513 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1513
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1510#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1510 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 18
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1510
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1514 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1514
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1510#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1510 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 18
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1510
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1510 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1510
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1521#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1521 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 18
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1521
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1521 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1521
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1532#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1532 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 75
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1532
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1532 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1532
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#1543#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 1543 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 75
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 1543
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1543 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1543
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#802#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 802 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 2498605
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 802
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1567 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1567
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#835#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 835 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28999
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 835
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 835 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 835
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#840#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 840 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28999
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 840
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 840 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 840
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#852#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 852 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28999
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 852
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 852 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 852
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#905#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 905 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1515
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 905
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 914 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 914
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#958#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 958 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1515
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 958
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 958 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 958
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#959#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 959 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 1515
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 959
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1031 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1031
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#961#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 961 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 142
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 961
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 966 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 966
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#968#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 968 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 142
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 968
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 969 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 969
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#971#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 971 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 142
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 971
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 977 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 977
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#979#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 979 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 979
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 979 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 979
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#979#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 979 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 979
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 979 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 979
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#993#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 993 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 408
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 993
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 997 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 997
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::branch#999#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 999 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 136
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 999
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 1004 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 1004
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_snmp_engine::mib_oid_byte/branch#606#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_snmp_engine.v line = 606 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 1390
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 606
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_snmp_engine.v line = 617 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 617
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#417#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 417 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 86740
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 417
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 420 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 420
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#417#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 417 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 86740
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 417
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 421 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 421
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#417#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 417 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 86740
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 417
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 430 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 430
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#417#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 417 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 86740
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 417
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 431 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 431
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#417#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 417 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 86740
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 417
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 432 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 432
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#424#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 424 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 424
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 424 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 424
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#425#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 425 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 425
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 425 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 425
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#426#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 426 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 426
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 426 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 426
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#427#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 427 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 28
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 427
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 427 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 427
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#458#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 458 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 458
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 458 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 458
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#534#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 534 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 534
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 534 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 534
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#535#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 535 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 535
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 535 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 535
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#785#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 785 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 785
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 785 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 785
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#786#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 786 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 786
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 786 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 786
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#801#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 801 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 81
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 801
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 807 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 807
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#852#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 852 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 284285385
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 852
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 852 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 852
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#876#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 876 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 7968
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 876
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 876 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 876
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#890#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 890 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 7968
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 890
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 890 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 890
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_rtc::branch#905#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_rtc.v line = 905 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 7968
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 905
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_rtc.v line = 905 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 905
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_ntp_fraction::branch#48#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_ntp_fraction.v line = 48 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 37844
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 48
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_ntp_fraction.v line = 85 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 85
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[0]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 354446
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[1]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 257029
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[2]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 182493
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[3]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 220948
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[4]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 267360
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[5]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 267345
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[6]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 267243
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_cfg::result_bank[7]/branch#630#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_cfg.v line = 630 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 255780
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_cfg.v line = 630 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 630
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#134#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 134 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 777878
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 134
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 173 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 173
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#79#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 79 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46675989
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 79
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 79 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 79
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#82#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 82 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46675989
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 82
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 82 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 82
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#86#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 86 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 44352
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 86
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 89 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 89
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#86#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 86 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 44352
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 86
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 86 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 86
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#87#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 87 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 44352
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 87
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 87 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 87
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#90#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 90 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 90
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : if_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 90 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 90
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_tx::branch#90#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_tx.v line = 90 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 0
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 90
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : else_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_tx.v line = 90 
+	 Count      : 0
+	 Flags      : 0x00010002
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #SLINENO# int = 90
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_rx::branch#71#1#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_rx.v line = 71 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #BCOUNT# int = 46751366
+Attribute: name = #BTYPE# int = 1
+Attribute: name = #BHASELSE# int = 1
+Attribute: name = #SLINENO# int = 71
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : true_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_rx.v line = 81 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 81
+Attribute: name = #STOKNO# int = 0
+
+Code Coverage Scope - 
+Name            : work.afdx_app_rx::branch#76#2#
+Type            : UCDB_BRANCH
+Source type     : VERILOG
+File info       : name = rtl/afdx_app_rx.v line = 76 
+Weight          : 1
+Flags           : 0x00000100
+Attribute: name = #SINDEX# int = 2
+Attribute: name = #BCOUNT# int = 46448710
+Attribute: name = #BTYPE# int = 0
+Attribute: name = #BHASELSE# int = 0
+Attribute: name = #SLINENO# int = 76
+Attribute: name = #STOKNO# int = 0
+
+Cover item - 
+	 Name       : all_false_branch
+	 Type       : UCDB_BRANCHBIN
+	 File info  : name = rtl/afdx_app_rx.v line = 76 
+	 Count      : 0
+	 Flags      : 0x00000002
+Attribute: name = #SINDEX# int = 1
+Attribute: name = #SLINENO# int = 76
+Attribute: name = #STOKNO# int = 0
+

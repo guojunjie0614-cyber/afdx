@@ -1,0 +1,290 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_615a
+=================================================================================
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      31        23         8    74.19%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_615a --
+
+  File rtl/afdx_615a.v
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       212 Item    1  (rx_valid && (receiving || (rx_claim && ~packet_pending)))
+Condition totals: 3 of 4 input terms covered = 75.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  packet_pending         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         40  rx_valid_0            -                             
+  Row   2:          1  rx_valid_1            (receiving || (rx_claim && ~packet_pending))
+  Row   3:         37  receiving_0           (rx_valid && ~(rx_claim && ~packet_pending))
+  Row   4:          1  receiving_1           rx_valid                      
+  Row   5:         37  rx_claim_0            (rx_valid && ~receiving)      
+  Row   6:          1  rx_claim_1            (rx_valid && ~receiving && ~packet_pending)
+  Row   7:          1  packet_pending_0      (rx_valid && ~receiving && rx_claim)
+  Row   8:    ***0***  packet_pending_1      (rx_valid && ~receiving && rx_claim)
+
+----------------Focused Condition View-------------------
+Line       270 Item    1  (cfg_write_sel[0] && (status != 1))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+     (status != 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         40  cfg_write_sel[0]_0    -                             
+  Row   2:          1  cfg_write_sel[0]_1    (status != 1)                 
+  Row   3:    ***0***  (status != 1)_0       cfg_write_sel[0]              
+  Row   4:          1  (status != 1)_1       cfg_write_sel[0]              
+
+----------------Focused Condition View-------------------
+Line       271 Item    1  (cfg_write_sel[1] && (status != 1))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+     (status != 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         40  cfg_write_sel[1]_0    -                             
+  Row   2:          1  cfg_write_sel[1]_1    (status != 1)                 
+  Row   3:    ***0***  (status != 1)_0       cfg_write_sel[1]              
+  Row   4:          1  (status != 1)_1       cfg_write_sel[1]              
+
+----------------Focused Condition View-------------------
+Line       273 Item    1  ((cfg_write_sel[3] && (status != 1)) && (cfg_wdata[15:0] != 0))
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+              Input Term   Covered  Reason for no coverage   Hint
+             -----------  --------  -----------------------  --------------
+           (status != 1)         N  '_0' not hit             Hit '_0'
+  (cfg_wdata[15:0] != 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                Non-masking condition(s)      
+ ---------  ---------  --------------------      -------------------------     
+  Row   1:         40  cfg_write_sel[3]_0        -                             
+  Row   2:          1  cfg_write_sel[3]_1        ((cfg_wdata[15:0] != 0) && (status != 1))
+  Row   3:    ***0***  (status != 1)_0           cfg_write_sel[3]              
+  Row   4:          1  (status != 1)_1           ((cfg_wdata[15:0] != 0) && cfg_write_sel[3])
+  Row   5:    ***0***  (cfg_wdata[15:0] != 0)_0  (cfg_write_sel[3] && (status != 1))
+  Row   6:          1  (cfg_wdata[15:0] != 0)_1  (cfg_write_sel[3] && (status != 1))
+
+----------------Focused Condition View-------------------
+Line       274 Item    1  ((cfg_write_sel[4] && (status != 1)) && (cfg_wdata != 0))
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+     (status != 1)         N  '_0' not hit             Hit '_0'
+  (cfg_wdata != 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         40  cfg_write_sel[4]_0    -                             
+  Row   2:          1  cfg_write_sel[4]_1    ((cfg_wdata != 0) && (status != 1))
+  Row   3:    ***0***  (status != 1)_0       cfg_write_sel[4]              
+  Row   4:          1  (status != 1)_1       ((cfg_wdata != 0) && cfg_write_sel[4])
+  Row   5:    ***0***  (cfg_wdata != 0)_0    (cfg_write_sel[4] && (status != 1))
+  Row   6:          1  (cfg_wdata != 0)_1    (cfg_write_sel[4] && (status != 1))
+
+----------------Focused Condition View-------------------
+Line       275 Item    1  (cfg_write_sel[5] && (status != 1))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+     (status != 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         40  cfg_write_sel[5]_0    -                             
+  Row   2:          1  cfg_write_sel[5]_1    (status != 1)                 
+  Row   3:    ***0***  (status != 1)_0       cfg_write_sel[5]              
+  Row   4:          1  (status != 1)_1       cfg_write_sel[5]              
+
+
+
+
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                       3230      1910      1320    59.13%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_615a
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                 cfg_extra_data[6]           0           0        0.00 
+                                cfg_extra_data[11]           0           0        0.00 
+                             cfg_extra_data[19-20]           0           0        0.00 
+                                cfg_extra_data[24]           0           0        0.00 
+                             cfg_extra_data[28-31]           0           0        0.00 
+                                  cfg_rdata[11-31]           0           0        0.00 
+                                    cmd_deny_wd[7]           0           0        0.00 
+                                  cmd_hdr_ra[7-10]           0           0        0.00 
+                                  cmd_hdr_wa[7-10]           0           0        0.00 
+                                cmd_load_ra[11-12]           0           0        0.00 
+                                cmd_load_wa[11-12]           0           0        0.00 
+                                   cmd_lur_ra[6-8]           0           0        0.00 
+                                   cmd_lur_wa[6-8]           0           0        0.00 
+                                     cmd_lur_wd[7]           0           0        0.00 
+                                        configured           0           1       50.00 
+                                  configured_vl[0]           0           0        0.00 
+                                  configured_vl[1]           0           1       50.00 
+                                configured_vl[2-6]           0           0        0.00 
+                                         deny_q[7]           0           0        0.00 
+                                     deny_tid[2-3]           0           1       50.00 
+                                     deny_tid[4-7]           0           0        0.00 
+                                       deny_tid[8]           0           1       50.00 
+                                    deny_tid[9-12]           0           0        0.00 
+                                      deny_tid[13]           1           0       50.00 
+                                   deny_tid[14-15]           0           0        0.00 
+                                        deny_wd[7]           0           0        0.00 
+                              engine_deny_tid[2-3]           0           1       50.00 
+                              engine_deny_tid[4-7]           0           0        0.00 
+                                engine_deny_tid[8]           0           1       50.00 
+                             engine_deny_tid[9-12]           0           0        0.00 
+                               engine_deny_tid[13]           1           0       50.00 
+                            engine_deny_tid[14-15]           0           0        0.00 
+                              engine_loaded[11-13]           0           0        0.00 
+                          engine_lus_counter[3-15]           0           0        0.00 
+                                engine_main_tid[6]           0           1       50.00 
+                                engine_main_tid[7]           0           0        0.00 
+                                engine_main_tid[8]           0           1       50.00 
+                             engine_main_tid[9-15]           0           0        0.00 
+                                engine_reason[3-7]           0           0        0.00 
+                             engine_retry_total[2]           0           1       50.00 
+                          engine_retry_total[3-31]           0           0        0.00 
+                              engine_status_tid[6]           0           1       50.00 
+                              engine_status_tid[7]           0           0        0.00 
+                              engine_status_tid[8]           0           1       50.00 
+                           engine_status_tid[9-11]           0           0        0.00 
+                             engine_status_tid[12]           1           0       50.00 
+                          engine_status_tid[13-15]           0           0        0.00 
+                                engine_tx_sport[6]           0           1       50.00 
+                                engine_tx_sport[7]           0           0        0.00 
+                             engine_tx_sport[9-14]           0           0        0.00 
+                                      hdr_ra[7-10]           0           0        0.00 
+                                      hdr_wa[7-10]           0           0        0.00 
+                                    load_ra[11-12]           0           0        0.00 
+                                    load_wa[11-12]           0           0        0.00 
+                                     loaded[11-13]           0           0        0.00 
+                                          lur_q[7]           0           0        0.00 
+                                       lur_ra[6-8]           0           0        0.00 
+                                       lur_wa[6-8]           0           0        0.00 
+                                         lur_wd[7]           0           0        0.00 
+                                 lus_counter[3-15]           0           0        0.00 
+                                       main_tid[6]           0           1       50.00 
+                                       main_tid[7]           0           0        0.00 
+                                       main_tid[8]           0           1       50.00 
+                                    main_tid[9-15]           0           0        0.00 
+                                memory_addr[11-12]           0           0        0.00 
+                                    ram_deny_wd[7]           0           0        0.00 
+                                  ram_hdr_ra[7-10]           0           0        0.00 
+                                  ram_hdr_wa[7-10]           0           0        0.00 
+                                ram_load_ra[11-12]           0           0        0.00 
+                                ram_load_wa[11-12]           0           0        0.00 
+                                   ram_lur_ra[6-8]           0           0        0.00 
+                                   ram_lur_wa[6-8]           0           0        0.00 
+                                     ram_lur_wd[7]           0           0        0.00 
+                                       reason[3-7]           0           0        0.00 
+                                 request_port[0-2]           0           0        0.00 
+                                 request_port[5-9]           0           0        0.00 
+                               request_port[11-15]           0           0        0.00 
+                                    retry_limit[0]           1           0       50.00 
+                                    retry_limit[1]           0           1       50.00 
+                                  retry_limit[2-7]           0           0        0.00 
+                                    retry_total[2]           0           1       50.00 
+                                 retry_total[3-31]           0           0        0.00 
+                                     rx_block[3-5]           0           0        0.00 
+                                     rx_block[7-9]           0           0        0.00 
+                                   rx_block[11-13]           0           0        0.00 
+                                      rx_block[15]           0           0        0.00 
+                                        rx_op[3-7]           0           0        0.00 
+                                   send_length[10]           0           0        0.00 
+                                     status_tid[6]           0           1       50.00 
+                                     status_tid[7]           0           0        0.00 
+                                     status_tid[8]           0           1       50.00 
+                                  status_tid[9-11]           0           0        0.00 
+                                    status_tid[12]           1           0       50.00 
+                                 status_tid[13-15]           0           0        0.00 
+                               timeout_cycles[0-3]           0           0        0.00 
+                                 timeout_cycles[4]           0           1       50.00 
+                               timeout_cycles[5-8]           0           0        0.00 
+                                 timeout_cycles[9]           1           0       50.00 
+                             timeout_cycles[10-12]           0           0        0.00 
+                                timeout_cycles[13]           1           0       50.00 
+                                timeout_cycles[14]           0           1       50.00 
+                                timeout_cycles[15]           0           0        0.00 
+                                timeout_cycles[16]           0           1       50.00 
+                                timeout_cycles[17]           0           0        0.00 
+                                timeout_cycles[18]           1           0       50.00 
+                             timeout_cycles[19-20]           0           0        0.00 
+                             timeout_cycles[21-23]           1           0       50.00 
+                                timeout_cycles[24]           0           0        0.00 
+                             timeout_cycles[25-27]           1           0       50.00 
+                             timeout_cycles[28-31]           0           0        0.00 
+                        word_cfg_extra_data_0[0-2]           0           0        0.00 
+                        word_cfg_extra_data_0[5-9]           0           0        0.00 
+                      word_cfg_extra_data_0[11-31]           0           0        0.00 
+                        word_cfg_extra_data_1[0-3]           0           0        0.00 
+                          word_cfg_extra_data_1[4]           0           1       50.00 
+                        word_cfg_extra_data_1[5-8]           0           0        0.00 
+                          word_cfg_extra_data_1[9]           1           0       50.00 
+                      word_cfg_extra_data_1[10-12]           0           0        0.00 
+                         word_cfg_extra_data_1[13]           1           0       50.00 
+                         word_cfg_extra_data_1[14]           0           1       50.00 
+                         word_cfg_extra_data_1[15]           0           0        0.00 
+                         word_cfg_extra_data_1[16]           0           1       50.00 
+                         word_cfg_extra_data_1[17]           0           0        0.00 
+                         word_cfg_extra_data_1[18]           1           0       50.00 
+                      word_cfg_extra_data_1[19-20]           0           0        0.00 
+                      word_cfg_extra_data_1[21-23]           1           0       50.00 
+                         word_cfg_extra_data_1[24]           0           0        0.00 
+                      word_cfg_extra_data_1[25-27]           1           0       50.00 
+                      word_cfg_extra_data_1[28-31]           0           0        0.00 
+                          word_cfg_extra_data_2[0]           1           0       50.00 
+                          word_cfg_extra_data_2[1]           0           1       50.00 
+                       word_cfg_extra_data_2[2-31]           0           0        0.00 
+                       word_cfg_extra_data_3[3-31]           0           0        0.00 
+                               word_cfg_rdata_0[0]           0           1       50.00 
+                            word_cfg_rdata_0[1-31]           0           0        0.00 
+                               word_cfg_rdata_1[0]           0           0        0.00 
+                               word_cfg_rdata_1[1]           0           1       50.00 
+                            word_cfg_rdata_1[2-31]           0           0        0.00 
+                             word_cfg_rdata_2[2-7]           0           0        0.00 
+                           word_cfg_rdata_2[11-31]           0           0        0.00 
+                           word_cfg_rdata_3[11-31]           0           0        0.00 
+                           word_cfg_rdata_4[11-31]           0           0        0.00 
+                            word_cfg_rdata_5[8-31]           0           0        0.00 
+                            word_cfg_rdata_6[3-31]           0           0        0.00 
+                               word_cfg_rdata_7[2]           0           1       50.00 
+                            word_cfg_rdata_7[3-31]           0           0        0.00 
+
+Total Node Count     =       1615 
+Toggled Node Count   =        928 
+Untoggled Node Count =        687 
+
+Toggle Coverage      =      59.13% (1910 of 3230 bins)
+
+
+Total Coverage By Design Unit (filtered view): 66.66%
+

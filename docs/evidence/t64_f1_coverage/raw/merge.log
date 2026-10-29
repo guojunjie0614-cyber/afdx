@@ -1,0 +1,96 @@
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+
+Start time: 14:32:08 on Oct 29,2026
+
+vcover merge -checkinputs -ucdbchecks E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\t64\20261029_093324_002975\merged.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_ram_sdp\20261029_093329_506675\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_tx\20261029_093334_402611\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_rx\20261029_093338_870089\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_loop\20261029_093343_026787\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_basic\20261029_093349_626114\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_basic\20261029_093355_915501\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_bag\20261029_093402_206479\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_multi\20261029_093431_424041\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_drop\20261029_093515_319546\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_net\20261029_093619_056465\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_basic\20261029_093624_070084\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_fault\20261029_093704_040245\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_icrm\20261029_093710_052542\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_load\20261029_093723_944126\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_ovf_ring\20261029_093743_167747\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_ovf_dq\20261029_093748_686351\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_net\20261029_093754_210504\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_basic\20261029_093759_742704\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_fault\20261029_093836_349509\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_delay\20261029_094310_074845\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_load\20261029_094445_559274\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_cfg\20261029_100541_843479\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_reset\20261029_100758_758329\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_ovf\20261029_100907_844108\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_net\20261029_101011_951363\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_perf\20261029_101036_907718\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_rtc\20261029_113454_556850\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_snmp\20261029_114710_718037\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_snmp_settrap\20261029_115029_523314\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_615a\20261029_115317_958256\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_gbe_burst\20261029_115855_532946\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_gbe_burst\20261029_115927_573295\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rm_phase\20261029_120000_355513\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rtc_recovery\20261029_120036_967931\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rtc_originate\20261029_120041_121933\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_judge_capacity\20261029_120045_839826\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_judge_snmp\20261029_120119_584884\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_elinx\20261029_120333_947600\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_perf_var\20261029_120411_706175\coverage.ucdb E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_top_wrap\20261029_143125_235638\coverage.ucdb 
+
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_ram_sdp\20261029_093329_506675\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_tx\20261029_093334_402611\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_rx\20261029_093338_870089\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_mac_loop\20261029_093343_026787\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_basic\20261029_093349_626114\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_basic\20261029_093355_915501\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_bag\20261029_093402_206479\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_multi\20261029_093431_424041\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_drop\20261029_093515_319546\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_tx_net\20261029_093619_056465\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_basic\20261029_093624_070084\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_fault\20261029_093704_040245\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_icrm\20261029_093710_052542\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_load\20261029_093723_944126\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_ovf_ring\20261029_093743_167747\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_ovf_dq\20261029_093748_686351\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_net\20261029_093754_210504\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_basic\20261029_093759_742704\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_fault\20261029_093836_349509\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_delay\20261029_094310_074845\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_load\20261029_094445_559274\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_cfg\20261029_100541_843479\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_reset\20261029_100758_758329\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_ovf\20261029_100907_844108\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_net\20261029_101011_951363\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_perf\20261029_101036_907718\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_rtc\20261029_113454_556850\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_snmp\20261029_114710_718037\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_snmp_settrap\20261029_115029_523314\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_615a\20261029_115317_958256\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_gbe_burst\20261029_115855_532946\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_gbe_burst\20261029_115927_573295\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rm_phase\20261029_120000_355513\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rtc_recovery\20261029_120036_967931\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rtc_originate\20261029_120041_121933\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_judge_capacity\20261029_120045_839826\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_judge_snmp\20261029_120119_584884\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_elinx\20261029_120333_947600\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_sys_perf_var\20261029_120411_706175\coverage.ucdb
+
+Merging file E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_top_wrap\20261029_143125_235638\coverage.ucdb
+
+Writing merged result to E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\t64\20261029_093324_002975\merged.ucdb
+
+All input files merged successfully.
+
+End time: 14:32:11 on Oct 29,2026, Elapsed time: 0:00:03
+
+Errors: 0, Warnings: 0
+

@@ -1,0 +1,426 @@
+{
+  "passed": true,
+  "by_module": {
+    "afdx_615a": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 8,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 1320
+    },
+    "afdx_615a_engine": {
+      "Statements": 37,
+      "Branches": 41,
+      "Conditions": 20,
+      "Expressions": 44,
+      "FSM States": 0,
+      "FSM Transitions": 38,
+      "Toggles": 2049
+    },
+    "afdx_app_map": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 7
+    },
+    "afdx_app_read": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 2
+    },
+    "afdx_app_rx": {
+      "Statements": 1,
+      "Branches": 2,
+      "Conditions": 0,
+      "Expressions": 8,
+      "FSM States": 0,
+      "FSM Transitions": 4,
+      "Toggles": 56
+    },
+    "afdx_app_tx": {
+      "Statements": 6,
+      "Branches": 8,
+      "Conditions": 12,
+      "Expressions": 15,
+      "FSM States": 0,
+      "FSM Transitions": 9,
+      "Toggles": 393
+    },
+    "afdx_cfg": {
+      "Statements": 0,
+      "Branches": 8,
+      "Conditions": 20,
+      "Expressions": 84,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 1787
+    },
+    "afdx_crc32_d8": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 64
+    },
+    "afdx_es": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 9,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 527
+    },
+    "afdx_mac_rx": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 1
+    },
+    "afdx_mac_tx": {
+      "Statements": 1,
+      "Branches": 5,
+      "Conditions": 2,
+      "Expressions": 3,
+      "FSM States": 0,
+      "FSM Transitions": 1,
+      "Toggles": 39
+    },
+    "afdx_mgmt_tx": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 1,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 91
+    },
+    "afdx_ntp_fraction": {
+      "Statements": 1,
+      "Branches": 1,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 1,
+      "Toggles": 3
+    },
+    "afdx_ram_sdp": {
+      "Statements": 5,
+      "Branches": 3,
+      "Conditions": 4,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 1
+    },
+    "afdx_rtc": {
+      "Statements": 18,
+      "Branches": 19,
+      "Conditions": 11,
+      "Expressions": 34,
+      "FSM States": 0,
+      "FSM Transitions": 30,
+      "Toggles": 1641
+    },
+    "afdx_rx_core": {
+      "Statements": 0,
+      "Branches": 1,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 117
+    },
+    "afdx_rx_deliver": {
+      "Statements": 1,
+      "Branches": 1,
+      "Conditions": 1,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 1,
+      "Toggles": 0
+    },
+    "afdx_rx_engine": {
+      "Statements": 2,
+      "Branches": 3,
+      "Conditions": 1,
+      "Expressions": 3,
+      "FSM States": 0,
+      "FSM Transitions": 2,
+      "Toggles": 619
+    },
+    "afdx_rx_parse": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 1,
+      "Expressions": 1,
+      "FSM States": 0,
+      "FSM Transitions": 2,
+      "Toggles": 88
+    },
+    "afdx_snmp": {
+      "Statements": 3,
+      "Branches": 7,
+      "Conditions": 9,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 1,
+      "Toggles": 1639
+    },
+    "afdx_snmp_engine": {
+      "Statements": 28,
+      "Branches": 37,
+      "Conditions": 16,
+      "Expressions": 28,
+      "FSM States": 0,
+      "FSM Transitions": 81,
+      "Toggles": 2062
+    },
+    "afdx_svc": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 21,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 10
+    },
+    "afdx_timebase": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 14
+    },
+    "AFDX_top": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 0,
+      "Expressions": 3,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 10
+    },
+    "afdx_tx_buf": {
+      "Statements": 2,
+      "Branches": 4,
+      "Conditions": 3,
+      "Expressions": 1,
+      "FSM States": 0,
+      "FSM Transitions": 7,
+      "Toggles": 0
+    },
+    "afdx_tx_builder": {
+      "Statements": 2,
+      "Branches": 4,
+      "Conditions": 6,
+      "Expressions": 1,
+      "FSM States": 0,
+      "FSM Transitions": 1,
+      "Toggles": 126
+    },
+    "afdx_tx_core": {
+      "Statements": 0,
+      "Branches": 0,
+      "Conditions": 2,
+      "Expressions": 0,
+      "FSM States": 0,
+      "FSM Transitions": 0,
+      "Toggles": 147
+    },
+    "afdx_tx_engine": {
+      "Statements": 2,
+      "Branches": 2,
+      "Conditions": 2,
+      "Expressions": 2,
+      "FSM States": 0,
+      "FSM Transitions": 3,
+      "Toggles": 172
+    },
+    "afdx_tx_free": {
+      "Statements": 1,
+      "Branches": 1,
+      "Conditions": 1,
+      "Expressions": 2,
+      "FSM States": 0,
+      "FSM Transitions": 2,
+      "Toggles": 2
+    }
+  },
+  "categories": {
+    "A": {
+      "rows": 275,
+      "bins": 2240
+    },
+    "B": {
+      "rows": 36,
+      "bins": 862
+    },
+    "C": {
+      "rows": 63,
+      "bins": 126
+    },
+    "U": {
+      "rows": 2337,
+      "bins": 10578
+    }
+  },
+  "groups": {
+    "A01": {
+      "rows": 26,
+      "bins": 26
+    },
+    "A02": {
+      "rows": 2,
+      "bins": 2
+    },
+    "A03": {
+      "rows": 16,
+      "bins": 16
+    },
+    "A04": {
+      "rows": 45,
+      "bins": 45
+    },
+    "A05": {
+      "rows": 11,
+      "bins": 11
+    },
+    "A06": {
+      "rows": 4,
+      "bins": 14
+    },
+    "A07": {
+      "rows": 18,
+      "bins": 18
+    },
+    "A08": {
+      "rows": 5,
+      "bins": 5
+    },
+    "A09": {
+      "rows": 71,
+      "bins": 2026
+    },
+    "B01": {
+      "rows": 8,
+      "bins": 8
+    },
+    "B02": {
+      "rows": 8,
+      "bins": 8
+    },
+    "B04": {
+      "rows": 2,
+      "bins": 4
+    },
+    "B05": {
+      "rows": 18,
+      "bins": 842
+    },
+    "C01": {
+      "rows": 7,
+      "bins": 7
+    },
+    "C02": {
+      "rows": 1,
+      "bins": 64
+    },
+    "C03": {
+      "rows": 1,
+      "bins": 1
+    },
+    "F01": {
+      "rows": 54,
+      "bins": 54
+    },
+    "F02": {
+      "rows": 35,
+      "bins": 35
+    },
+    "F03": {
+      "rows": 14,
+      "bins": 14
+    },
+    "F04": {
+      "rows": 3,
+      "bins": 3
+    },
+    "R01": {
+      "rows": 61,
+      "bins": 61
+    },
+    "R02": {
+      "rows": 16,
+      "bins": 16
+    },
+    "U00": {
+      "rows": 2282,
+      "bins": 10523
+    },
+    "U01": {
+      "rows": 3,
+      "bins": 3
+    }
+  },
+  "full_source_locations": true,
+  "merged_test_names": [
+    "tb_elinx_20261029_120333_947600",
+    "tb_gbe_burst_20261029_115855_532946",
+    "tb_gbe_burst_20261029_115927_573295",
+    "tb_judge_capacity_20261029_120045_839826",
+    "tb_judge_snmp_20261029_120119_584884",
+    "tb_mac_loop_20261029_093343_026787",
+    "tb_mac_rx_20261029_093338_870089",
+    "tb_mac_tx_20261029_093334_402611",
+    "tb_ram_sdp_20261029_093329_506675",
+    "tb_rm_phase_20261029_120000_355513",
+    "tb_rtc_originate_20261029_120041_121933",
+    "tb_rtc_recovery_20261029_120036_967931",
+    "tb_rx_basic_20261029_093624_070084",
+    "tb_rx_fault_20261029_093704_040245",
+    "tb_rx_icrm_20261029_093710_052542",
+    "tb_rx_load_20261029_093723_944126",
+    "tb_rx_net_20261029_093754_210504",
+    "tb_rx_ovf_dq_20261029_093748_686351",
+    "tb_rx_ovf_ring_20261029_093743_167747",
+    "tb_sys_615a_20261029_115317_958256",
+    "tb_sys_basic_20261029_093759_742704",
+    "tb_sys_cfg_20261029_100541_843479",
+    "tb_sys_delay_20261029_094310_074845",
+    "tb_sys_fault_20261029_093836_349509",
+    "tb_sys_load_20261029_094445_559274",
+    "tb_sys_net_20261029_101011_951363",
+    "tb_sys_ovf_20261029_100907_844108",
+    "tb_sys_perf_20261029_101036_907718",
+    "tb_sys_perf_var_20261029_120411_706175",
+    "tb_sys_reset_20261029_100758_758329",
+    "tb_sys_rtc_20261029_113454_556850",
+    "tb_sys_snmp_20261029_114710_718037",
+    "tb_sys_snmp_settrap_20261029_115029_523314",
+    "tb_top_wrap_20261029_143125_235638",
+    "tb_tx_bag_20261029_093402_206479",
+    "tb_tx_basic_20261029_093349_626114",
+    "tb_tx_basic_20261029_093355_915501",
+    "tb_tx_drop_20261029_093515_319546",
+    "tb_tx_multi_20261029_093431_424041",
+    "tb_tx_net_20261029_093619_056465"
+  ],
+  "original_files_unchanged": true
+}
