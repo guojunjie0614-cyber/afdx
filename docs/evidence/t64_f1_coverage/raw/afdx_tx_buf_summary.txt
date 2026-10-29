@@ -1,0 +1,18 @@
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_tx_buf
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        79        75         4    94.93%
+    Conditions                      16        13         3    81.25%
+    Expressions                     11        10         1    90.90%
+    FSM States                      10        10         0   100.00%
+    FSM Transitions                 24        17         7    70.83%
+    Statements                     145       143         2    98.62%
+    Toggles                        602       602         0   100.00%
+
+
+Total Coverage By Design Unit (filtered view): 90.93%
+

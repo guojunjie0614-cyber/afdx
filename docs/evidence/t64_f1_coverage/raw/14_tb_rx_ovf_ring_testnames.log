@@ -1,0 +1,14 @@
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+
+Start time: 14:31:50 on Oct 29,2026
+
+vcover testnames E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_rx_ovf_ring\20261029_093743_167747\coverage.ucdb 
+
+tb_rx_ovf_ring_20261029_093743_167747
+
+
+
+End time: 14:31:50 on Oct 29,2026, Elapsed time: 0:00:00
+
+Errors: 0, Warnings: 0
+

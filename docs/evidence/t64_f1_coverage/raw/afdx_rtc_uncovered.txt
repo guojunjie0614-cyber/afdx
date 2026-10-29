@@ -1,0 +1,929 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_rtc
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       324       305        19    94.13%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_rtc
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_rtc.v
+------------------------------------CASE Branch------------------------------------
+    420             1                    ***0***     
+    421             1                    ***0***     
+    430             1                    ***0***     
+    431             1                    ***0***     
+    432             1                    ***0***     
+Branch totals: 4 hits of 9 branches = 44.44%
+
+------------------------------------IF Branch------------------------------------
+    424                                       28     Count coming in to IF
+    424             1                    ***0***     
+                                              28     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    425                                       28     Count coming in to IF
+    425             1                    ***0***     
+                                              28     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    426                                       28     Count coming in to IF
+    426             1                    ***0***     
+                                              28     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    427                                       28     Count coming in to IF
+    427             1                    ***0***     
+                                              28     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    458                                       81     Count coming in to IF
+    458             1                    ***0***     
+    466             1                         81     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    534                                       81     Count coming in to IF
+    534             1                    ***0***     
+    534             2                         81     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    535                                       81     Count coming in to IF
+    535             1                    ***0***     
+    535             2                         81     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    785                                       81     Count coming in to IF
+    785             1                    ***0***     
+    785             2                         81     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    786                                       81     Count coming in to IF
+    786             1                    ***0***     
+    786             2                         81     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    801                                       81     Count coming in to IF
+    801             1                          7     
+    807             1                    ***0***     
+                                              74     All False Count
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 5 hits of 6 branches = 83.33%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 8 hits of 9 branches = 88.88%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.00%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      32        21        11    65.62%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_rtc --
+
+  File rtl/afdx_rtc.v
+----------------Focused Condition View-------------------
+Line       285 Item    1  (enable && rx_byte)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      enable         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  enable_0              -                             
+  Row   2:          3  enable_1              rx_byte                       
+  Row   3:          4  rx_byte_0             enable                        
+  Row   4:          3  rx_byte_1             enable                        
+
+----------------Focused Condition View-------------------
+Line       291 Item    1  ((~active || reset) || load_pending)
+Condition totals: 3 of 4 input terms covered = 75.00%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  load_pending         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         43  active_0              -                             
+  Row   2:          6  active_1              (~load_pending && ~reset)     
+  Row   3:          6  reset_0               (~load_pending && active)     
+  Row   4:          3  reset_1               active                        
+  Row   5:          2  load_pending_0        ~(~active || reset)           
+  Row   6:          3  load_pending_1        ~(~active || reset)           
+  Row   7:          3  load_pending_0        ~((reset || ~active) || ~enable)
+  Row   8:    ***0***  load_pending_1        ~((reset || ~active) || ~enable)
+
+
+----------------Focused Condition View-------------------
+Line       641 Item    1  (apply_seconds && ~abort_protocol)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  apply_seconds_0       -                             
+  Row   2:          4  apply_seconds_1       ~abort_protocol               
+  Row   3:          4  abort_protocol_0      apply_seconds                 
+  Row   4:    ***0***  abort_protocol_1      apply_seconds                 
+
+----------------Focused Condition View-------------------
+Line       642 Item    1  (apply_nanoseconds && ~abort_protocol)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+     abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  apply_nanoseconds_0   -                             
+  Row   2:          4  apply_nanoseconds_1   ~abort_protocol               
+  Row   3:          4  abort_protocol_0      apply_nanoseconds             
+  Row   4:    ***0***  abort_protocol_1      apply_nanoseconds             
+
+----------------Focused Condition View-------------------
+Line       643 Item    1  (apply_count && ~abort_protocol)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  apply_count_0         -                             
+  Row   2:          4  apply_count_1         ~abort_protocol               
+  Row   3:          4  abort_protocol_0      apply_count                   
+  Row   4:    ***0***  abort_protocol_1      apply_count                   
+
+----------------Focused Condition View-------------------
+Line       715 Item    1  (rx_last && (rx_index == 47))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (rx_index == 47)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          5  rx_last_0             -                             
+  Row   2:          5  rx_last_1             (rx_index == 47)              
+  Row   3:    ***0***  (rx_index == 47)_0    rx_last                       
+  Row   4:          5  (rx_index == 47)_1    rx_last                       
+
+----------------Focused Condition View-------------------
+Line       719 Item    1  (packet_done && (rx_packet[381:379] == 4))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+                 Input Term   Covered  Reason for no coverage   Hint
+                -----------  --------  -----------------------  --------------
+  (rx_packet[381:379] == 4)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                   Non-masking condition(s)      
+ ---------  ---------  --------------------         -------------------------     
+  Row   1:         44  packet_done_0                -                             
+  Row   2:          5  packet_done_1                (rx_packet[381:379] == 4)     
+  Row   3:    ***0***  (rx_packet[381:379] == 4)_0  packet_done                   
+  Row   4:          5  (rx_packet[381:379] == 4)_1  packet_done                   
+
+----------------Focused Condition View-------------------
+Line       720 Item    1  (master && (rx_packet[378:376] == 3))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+                 Input Term   Covered  Reason for no coverage   Hint
+                -----------  --------  -----------------------  --------------
+  (rx_packet[378:376] == 3)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                   Non-masking condition(s)      
+ ---------  ---------  --------------------         -------------------------     
+  Row   1:          4  master_0                     -                             
+  Row   2:          3  master_1                     (rx_packet[378:376] == 3)     
+  Row   3:    ***0***  (rx_packet[378:376] == 3)_0  master                        
+  Row   4:          3  (rx_packet[378:376] == 3)_1  master                        
+
+----------------Focused Condition View-------------------
+Line       727 Item    1  ((((~master && waiting) && (tx_state == 0)) && (rx_packet[378:376] == 4)) && reply_match)
+Condition totals: 2 of 5 input terms covered = 40.00%
+
+                 Input Term   Covered  Reason for no coverage   Hint
+                -----------  --------  -----------------------  --------------
+                     master         N  '_1' not hit             Hit '_1'
+                    waiting         N  '_0' not hit             Hit '_0'
+  (rx_packet[378:376] == 4)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                   Non-masking condition(s)      
+ ---------  ---------  --------------------         -------------------------     
+  Row   1:          4  master_0                     (reply_match && (rx_packet[378:376] == 4) && (tx_state == 0) && waiting)
+  Row   2:    ***0***  master_1                     -                             
+  Row   3:    ***0***  waiting_0                    ~master                       
+  Row   4:          4  waiting_1                    (reply_match && (rx_packet[378:376] == 4) && (tx_state == 0) && ~master)
+  Row   5:          1  (tx_state == 0)_0            (~master && waiting)          
+  Row   6:          4  (tx_state == 0)_1            (reply_match && (rx_packet[378:376] == 4) && (~master && waiting))
+  Row   7:    ***0***  (rx_packet[378:376] == 4)_0  ((~master && waiting) && (tx_state == 0))
+  Row   8:          4  (rx_packet[378:376] == 4)_1  (reply_match && ((~master && waiting) && (tx_state == 0)))
+  Row   9:          1  reply_match_0                (((~master && waiting) && (tx_state == 0)) && (rx_packet[378:376] == 4))
+ Row   10:          4  reply_match_1                (((~master && waiting) && (tx_state == 0)) && (rx_packet[378:376] == 4))
+
+
+
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                     86        52        34    60.46%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.afdx_rtc --
+
+  File rtl/afdx_rtc.v
+
+-----------Focused Expression View (Bimodal)------------
+Line       143 Item    1  (cfg_write_sel[3]? (rx_port_stage == cfg_wdata[15:0]): (rx_port_stage == port_number))
+Expression totals: 2 of 3 input terms covered = 66.66%
+
+                            Input Term   Covered  Reason for no coverage                  Hint
+                           -----------  --------  --------------------------------------  --------------
+    (rx_port_stage == cfg_wdata[15:0])         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->1
+
+    Rows:   Hits(->0)   Hits(->1)  FEC Target                              Non-masking condition(s)           
+
+---------  ----------  ----------  --------------------                    -------------------------          
+ Row   1:          44           6  cfg_write_sel[3]_0                      -                                  
+ Row   2:           2           0  cfg_write_sel[3]_1                      -                                  
+ Row   3:           2           0  (rx_port_stage == cfg_wdata[15:0])_0    cfg_write_sel[3]                   
+ Row   4:           0           0  (rx_port_stage == cfg_wdata[15:0])_1    cfg_write_sel[3]                   
+ Row   5:          44           0  (rx_port_stage == port_number)_0        ~cfg_write_sel[3]                  
+ Row   6:           0           6  (rx_port_stage == port_number)_1        ~cfg_write_sel[3]                  
+
+
+
+
+
+
+
+
+
+
+----------------Focused Expression View-----------------
+Line       327 Item    1  ((first_rx && master) && ~load_pending)
+Expression totals: 2 of 3 input terms covered = 66.66%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  load_pending         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  first_rx_0            -                             
+  Row   2:          3  first_rx_1            (~load_pending && master)     
+  Row   3:          4  master_0              first_rx                      
+  Row   4:          3  master_1              (~load_pending && first_rx)   
+  Row   5:          3  load_pending_0        (first_rx && master)          
+  Row   6:    ***0***  load_pending_1        (first_rx && master)          
+
+
+----------------Focused Expression View-----------------
+Line       506 Item    1  (((((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) || (previous_time_mode[3] && tick_dn)) || (previous_time_mode[4] && tick_an))
+Expression totals: 2 of 10 input terms covered = 20.00%
+
+             Input Term   Covered  Reason for no coverage   Hint
+            -----------  --------  -----------------------  --------------
+  previous_time_mode[1]         N  '_1' not hit             Hit '_1'
+                tick_wn         N  '_1' not hit             Hit '_1'
+  previous_time_mode[2]         N  '_1' not hit             Hit '_1'
+                tick_ln         N  '_1' not hit             Hit '_1'
+  previous_time_mode[3]         N  '_1' not hit             Hit '_1'
+                tick_dn         N  '_1' not hit             Hit '_1'
+  previous_time_mode[4]         N  '_1' not hit             Hit '_1'
+                tick_an         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target               Non-masking condition(s)      
+ ---------  ---------  --------------------     -------------------------     
+  Row   1:          7  previous_time_mode[0]_0  (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~(previous_time_mode[2] && tick_ln) && ~(previous_time_mode[1] && tick_wn))
+  Row   2:          2  previous_time_mode[0]_1  tick_nn                       
+  Row   3:         44  tick_nn_0                (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~(previous_time_mode[2] && tick_ln) && ~(previous_time_mode[1] && tick_wn) && previous_time_mode[0])
+  Row   4:          2  tick_nn_1                previous_time_mode[0]         
+  Row   5:         44  previous_time_mode[1]_0  (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~(previous_time_mode[2] && tick_ln) && ~(previous_time_mode[0] && tick_nn))
+  Row   6:    ***0***  previous_time_mode[1]_1  (~(previous_time_mode[0] && tick_nn) && tick_wn)
+  Row   7:          2  tick_wn_0                (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~(previous_time_mode[2] && tick_ln) && ~(previous_time_mode[0] && tick_nn) && previous_time_mode[1])
+  Row   8:    ***0***  tick_wn_1                (~(previous_time_mode[0] && tick_nn) && previous_time_mode[1])
+  Row   9:         44  previous_time_mode[2]_0  (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)))
+ Row   10:    ***0***  previous_time_mode[2]_1  (~((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) && tick_ln)
+ Row   11:          7  tick_ln_0                (~(previous_time_mode[4] && tick_an) && ~(previous_time_mode[3] && tick_dn) && ~((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) && previous_time_mode[2])
+ Row   12:    ***0***  tick_ln_1                (~((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) && previous_time_mode[2])
+ Row   13:         44  previous_time_mode[3]_0  (~(previous_time_mode[4] && tick_an) && ~(((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)))
+ Row   14:    ***0***  previous_time_mode[3]_1  (~(((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) && tick_dn)
+ Row   15:          4  tick_dn_0                (~(previous_time_mode[4] && tick_an) && ~(((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) && previous_time_mode[3])
+ Row   16:    ***0***  tick_dn_1                (~(((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) && previous_time_mode[3])
+ Row   17:         44  previous_time_mode[4]_0  ~((((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) || (previous_time_mode[3] && tick_dn))
+ Row   18:    ***0***  previous_time_mode[4]_1  (~((((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) || (previous_time_mode[3] && tick_dn)) && tick_an)
+ Row   19:    ***0***  tick_an_0                (~((((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) || (previous_time_mode[3] && tick_dn)) && previous_time_mode[4])
+ Row   20:    ***0***  tick_an_1                (~((((previous_time_mode[0] && tick_nn) || (previous_time_mode[1] && tick_wn)) || (previous_time_mode[2] && tick_ln)) || (previous_time_mode[3] && tick_dn)) && previous_time_mode[4])
+
+----------------Focused Expression View-----------------
+Line       510 Item    1  ((((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) || (previous_time_mode[3] && tick_dw)) || (previous_time_mode[4] && tick_aw))
+Expression totals: 0 of 8 input terms covered = 0.00%
+
+             Input Term   Covered  Reason for no coverage   Hint
+            -----------  --------  -----------------------  --------------
+  previous_time_mode[1]         N  '_1' not hit             Hit '_1'
+                tick_ww         N  '_1' not hit             Hit '_1'
+  previous_time_mode[2]         N  '_1' not hit             Hit '_1'
+                tick_lw         N  '_1' not hit             Hit '_1'
+  previous_time_mode[3]         N  '_1' not hit             Hit '_1'
+                tick_dw         N  '_1' not hit             Hit '_1'
+  previous_time_mode[4]         N  '_1' not hit             Hit '_1'
+                tick_aw         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target               Non-masking condition(s)      
+ ---------  ---------  --------------------     -------------------------     
+  Row   1:         44  previous_time_mode[1]_0  (~(previous_time_mode[4] && tick_aw) && ~(previous_time_mode[3] && tick_dw) && ~(previous_time_mode[2] && tick_lw))
+  Row   2:    ***0***  previous_time_mode[1]_1  tick_ww                       
+  Row   3:          2  tick_ww_0                (~(previous_time_mode[4] && tick_aw) && ~(previous_time_mode[3] && tick_dw) && ~(previous_time_mode[2] && tick_lw) && previous_time_mode[1])
+  Row   4:    ***0***  tick_ww_1                previous_time_mode[1]         
+  Row   5:         44  previous_time_mode[2]_0  (~(previous_time_mode[4] && tick_aw) && ~(previous_time_mode[3] && tick_dw) && ~(previous_time_mode[1] && tick_ww))
+  Row   6:    ***0***  previous_time_mode[2]_1  (~(previous_time_mode[1] && tick_ww) && tick_lw)
+  Row   7:          7  tick_lw_0                (~(previous_time_mode[4] && tick_aw) && ~(previous_time_mode[3] && tick_dw) && ~(previous_time_mode[1] && tick_ww) && previous_time_mode[2])
+  Row   8:    ***0***  tick_lw_1                (~(previous_time_mode[1] && tick_ww) && previous_time_mode[2])
+  Row   9:         44  previous_time_mode[3]_0  (~(previous_time_mode[4] && tick_aw) && ~((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)))
+ Row   10:    ***0***  previous_time_mode[3]_1  (~((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) && tick_dw)
+ Row   11:          4  tick_dw_0                (~(previous_time_mode[4] && tick_aw) && ~((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) && previous_time_mode[3])
+ Row   12:    ***0***  tick_dw_1                (~((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) && previous_time_mode[3])
+ Row   13:         44  previous_time_mode[4]_0  ~(((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) || (previous_time_mode[3] && tick_dw))
+ Row   14:    ***0***  previous_time_mode[4]_1  (~(((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) || (previous_time_mode[3] && tick_dw)) && tick_aw)
+ Row   15:    ***0***  tick_aw_0                (~(((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) || (previous_time_mode[3] && tick_dw)) && previous_time_mode[4])
+ Row   16:    ***0***  tick_aw_1                (~(((previous_time_mode[1] && tick_ww) || (previous_time_mode[2] && tick_lw)) || (previous_time_mode[3] && tick_dw)) && previous_time_mode[4])
+
+-----------Focused Expression View (Bimodal)------------
+Line       534 Item    1  (final_overflow? final_tick_wrapped: final_tick_direct)
+Expression totals: 0 of 3 input terms covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage                  Hint
+           -----------  --------  --------------------------------------  --------------
+        final_overflow         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->1
+    final_tick_wrapped         N  No hits                                Hit '_0' and '_1' for different outputs
+     final_tick_direct         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->1
+
+    Rows:   Hits(->0)   Hits(->1)  FEC Target              Non-masking condition(s)           
+
+---------  ----------  ----------  --------------------    -------------------------          
+ Row   1:           4           0  final_overflow_0        -                                  
+ Row   2:           0           0  final_overflow_1        -                                  
+ Row   3:           0           0  final_tick_wrapped_0    final_overflow                     
+ Row   4:           0           0  final_tick_wrapped_1    final_overflow                     
+ Row   5:           4           0  final_tick_direct_0     ~final_overflow                    
+ Row   6:           0           0  final_tick_direct_1     ~final_overflow                    
+
+-----------Focused Expression View (Bimodal)------------
+Line       538 Item    1  (tick_overflow? predicted_wrap: predicted_normal)
+Expression totals: 2 of 3 input terms covered = 66.66%
+
+          Input Term   Covered  Reason for no coverage                  Hint
+         -----------  --------  --------------------------------------  --------------
+      predicted_wrap         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->1
+
+    Rows:   Hits(->0)   Hits(->1)  FEC Target            Non-masking condition(s)           
+
+---------  ----------  ----------  --------------------  -------------------------          
+ Row   1:          44           2  tick_overflow_0       -                                  
+ Row   2:           2           0  tick_overflow_1       -                                  
+ Row   3:           2           0  predicted_wrap_0      tick_overflow                      
+ Row   4:           0           0  predicted_wrap_1      tick_overflow                      
+ Row   5:          44           0  predicted_normal_0    ~tick_overflow                     
+ Row   6:           0           2  predicted_normal_1    ~tick_overflow                     
+
+
+----------------Focused Expression View-----------------
+Line       575 Item    1  (~active || load_pending)
+Expression totals: 2 of 3 input terms covered = 66.66%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  load_pending         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  active_0              -                             
+  Row   2:          5  active_1              ~load_pending                 
+  Row   3:          2  load_pending_0        active                        
+  Row   4:          3  load_pending_1        active                        
+  Row   5:          3  load_pending_0        ~(active ~& enable)           
+  Row   6:    ***0***  load_pending_1        ~(active ~& enable)           
+
+
+
+
+
+
+
+----------------Focused Expression View-----------------
+Line       638 Item    1  ((calc_state == 8) && ~abort_protocol)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+     abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  (calc_state == 8)_0   -                             
+  Row   2:          4  (calc_state == 8)_1   ~abort_protocol               
+  Row   3:          4  abort_protocol_0      (calc_state == 8)             
+  Row   4:    ***0***  abort_protocol_1      (calc_state == 8)             
+
+----------------Focused Expression View-----------------
+Line       639 Item    1  ((calc_state == 8) && ~abort_protocol)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+     abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  (calc_state == 8)_0   -                             
+  Row   2:          4  (calc_state == 8)_1   ~abort_protocol               
+  Row   3:          4  abort_protocol_0      (calc_state == 8)             
+  Row   4:    ***0***  abort_protocol_1      (calc_state == 8)             
+
+----------------Focused Expression View-----------------
+Line       640 Item    1  ((calc_state == 8) && ~abort_protocol)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+     abort_protocol         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  (calc_state == 8)_0   -                             
+  Row   2:          4  (calc_state == 8)_1   ~abort_protocol               
+  Row   3:          4  abort_protocol_0      (calc_state == 8)             
+  Row   4:    ***0***  abort_protocol_1      (calc_state == 8)             
+
+
+
+----------------Focused Expression View-----------------
+Line       792 Item    1  (correction_ns >= 1000000000)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                     Input Term   Covered  Reason for no coverage   Hint
+                    -----------  --------  -----------------------  --------------
+  (correction_ns >= 1000000000)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                       Non-masking condition(s)      
+ ---------  ---------  --------------------             -------------------------     
+  Row   1:          4  (correction_ns >= 1000000000)_0  -                             
+  Row   2:    ***0***  (correction_ns >= 1000000000)_1  -                             
+
+----------------Focused Expression View-----------------
+Line       833 Item    1  (ge32(adjusted_ns,999999960) && ~ge32(adjusted_ns,4294967256))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+                    Input Term   Covered  Reason for no coverage   Hint
+                   -----------  --------  -----------------------  --------------
+   ge32(adjusted_ns,999999960)         N  '_1' not hit             Hit '_1'
+  ge32(adjusted_ns,4294967256)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                      Non-masking condition(s)      
+ ---------  ---------  --------------------            -------------------------     
+  Row   1:          4  ge32(adjusted_ns,999999960)_0   -                             
+  Row   2:    ***0***  ge32(adjusted_ns,999999960)_1   ~ge32(adjusted_ns,4294967256) 
+  Row   3:    ***0***  ge32(adjusted_ns,4294967256)_0  ge32(adjusted_ns,999999960)   
+  Row   4:    ***0***  ge32(adjusted_ns,4294967256)_1  ge32(adjusted_ns,999999960)   
+
+----------------Focused Expression View-----------------
+Line       835 Item    1  (ge32(adjusted_ns,999999952) && ~ge32(adjusted_ns,4294967256))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+                    Input Term   Covered  Reason for no coverage   Hint
+                   -----------  --------  -----------------------  --------------
+   ge32(adjusted_ns,999999952)         N  '_1' not hit             Hit '_1'
+  ge32(adjusted_ns,4294967256)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                      Non-masking condition(s)      
+ ---------  ---------  --------------------            -------------------------     
+  Row   1:          4  ge32(adjusted_ns,999999952)_0   -                             
+  Row   2:    ***0***  ge32(adjusted_ns,999999952)_1   ~ge32(adjusted_ns,4294967256) 
+  Row   3:    ***0***  ge32(adjusted_ns,4294967256)_0  ge32(adjusted_ns,999999952)   
+  Row   4:    ***0***  ge32(adjusted_ns,4294967256)_1  ge32(adjusted_ns,999999952)   
+
+----------------Focused Expression View-----------------
+Line       837 Item    1  (ge32(adjusted_ns,1999999952) && ~ge32(adjusted_ns,4294967256))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+                    Input Term   Covered  Reason for no coverage   Hint
+                   -----------  --------  -----------------------  --------------
+  ge32(adjusted_ns,1999999952)         N  '_1' not hit             Hit '_1'
+  ge32(adjusted_ns,4294967256)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                      Non-masking condition(s)      
+ ---------  ---------  --------------------            -------------------------     
+  Row   1:          4  ge32(adjusted_ns,1999999952)_0  -                             
+  Row   2:    ***0***  ge32(adjusted_ns,1999999952)_1  ~ge32(adjusted_ns,4294967256) 
+  Row   3:    ***0***  ge32(adjusted_ns,4294967256)_0  ge32(adjusted_ns,1999999952)  
+  Row   4:    ***0***  ge32(adjusted_ns,4294967256)_1  ge32(adjusted_ns,1999999952)  
+
+----------------Focused Expression View-----------------
+Line       869 Item    1  (period == 0)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  (period == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         44  (period == 0)_0       -                             
+  Row   2:    ***0***  (period == 0)_1       -                             
+
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                 53        23        30    43.39%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_rtc --
+
+FSM_ID: calc_state
+    Current State Object : calc_state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+ 739       CALC_START_T2                  10
+ 745        CALC_WAIT_T2                  11
+ 750       CALC_START_T3                  12
+ 756        CALC_WAIT_T3                  13
+ 761    CALC_DIFFERENCES                  14
+ 769            CALC_SUM                   2
+ 775           CALC_HALF                   3
+ 784    CALC_HALF_SECOND                   4
+ 790CALC_OFFSET_CANDIDATES                  15
+ 800CALC_NORMALIZE_OFFSET                   5
+ 816     CALC_ADD_OFFSET                   6
+ 820CALC_TIME_CANDIDATES                  16
+ 827 CALC_NORMALIZE_TIME                   7
+ 831        CALC_LATENCY                   8
+ 845          CALC_APPLY                   9
+ 731           CALC_IDLE                   0
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+ 940                   1          CALC_START_T2 -> CALC_IDLE
+ 940                   3          CALC_WAIT_T2 -> CALC_IDLE
+ 731                   4          CALC_WAIT_T2 -> CALC_START_T2
+ 940                   6          CALC_START_T3 -> CALC_IDLE
+ 731                   7          CALC_START_T3 -> CALC_START_T2
+ 940                   9          CALC_WAIT_T3 -> CALC_IDLE
+ 731                  10          CALC_WAIT_T3 -> CALC_START_T2
+ 940                  12          CALC_DIFFERENCES -> CALC_IDLE
+ 731                  13          CALC_DIFFERENCES -> CALC_START_T2
+ 940                  15          CALC_SUM -> CALC_IDLE
+ 731                  16          CALC_SUM -> CALC_START_T2
+ 940                  18          CALC_HALF -> CALC_IDLE
+ 731                  19          CALC_HALF -> CALC_START_T2
+ 940                  21          CALC_HALF_SECOND -> CALC_IDLE
+ 731                  22          CALC_HALF_SECOND -> CALC_START_T2
+ 940                  24          CALC_OFFSET_CANDIDATES -> CALC_IDLE
+ 731                  25          CALC_OFFSET_CANDIDATES -> CALC_START_T2
+ 940                  27          CALC_NORMALIZE_OFFSET -> CALC_IDLE
+ 731                  28          CALC_NORMALIZE_OFFSET -> CALC_START_T2
+ 940                  30          CALC_ADD_OFFSET -> CALC_IDLE
+ 731                  31          CALC_ADD_OFFSET -> CALC_START_T2
+ 940                  33          CALC_TIME_CANDIDATES -> CALC_IDLE
+ 731                  34          CALC_TIME_CANDIDATES -> CALC_START_T2
+ 940                  36          CALC_NORMALIZE_TIME -> CALC_IDLE
+ 731                  37          CALC_NORMALIZE_TIME -> CALC_START_T2
+ 940                  39          CALC_LATENCY -> CALC_IDLE
+ 731                  40          CALC_LATENCY -> CALC_START_T2
+ 731                  42          CALC_APPLY -> CALC_START_T2
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions             44        16        28    36.36%
+FSM_ID: tx_state
+    Current State Object : tx_state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+ 854             TX_IDLE                   0
+ 874           TX_GROUPS                   1
+ 899             TX_WORD                   2
+ 904             TX_BYTE                   3
+ 917        TX_HANDSHAKE                   4
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+ 932                   4          TX_WORD -> TX_IDLE  
+ 932                   6          TX_BYTE -> TX_IDLE  
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions              9         7         2    77.77%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                     538       520        18    96.65%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_rtc --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_rtc.v
+    420             1     
+    421             1     
+    424             1     
+    425             1     
+    426             1     
+    427             1     
+    430             1     
+    431             1     
+    432             1     
+    459             1     
+    460             1     
+    461             1     
+    463             1     
+    464             1     
+    808             1     
+    809             1     
+    810             1     
+    811             1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                       5420      3779      1641    69.72%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_rtc
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                  adjusted_ns[0-1]           0           0        0.00 
+                                   adjusted_ns[26]           0           0        0.00 
+                                adjusted_ns[30-31]           0           0        0.00 
+                                   adjusted_sec[3]           0           2       50.00 
+                                 adjusted_sec[5-9]           0           2       50.00 
+                               adjusted_sec[10-31]           0           0        0.00 
+                                       cfg_addr[1]           0           0        0.00 
+                                       cfg_addr[3]           0           0        0.00 
+                                            cfg_re           0           0        0.00 
+                                    cfg_wdata[5-6]           0           0        0.00 
+                                  cfg_wdata[10-11]           0           0        0.00 
+                                  cfg_wdata[13-31]           0           0        0.00 
+                                correction_ns[0-1]           0           0        0.00 
+                           correction_ns_calc[0-1]           0           0        0.00 
+                                 correction_sec[2]           0           0        0.00 
+                            correction_sec_calc[2]           0           0        0.00 
+                                  countdown[16-31]           0           0        0.00 
+                                decode_result[0-2]           0           0        0.00 
+                                 decode_result[26]           0           0        0.00 
+                              decode_result[30-31]           0           0        0.00 
+                                     diff_ns1[0-2]           0           0        0.00 
+                                     diff_ns2[0-2]           0           0        0.00 
+                                      diff_sec1[2]           0           0        0.00 
+                                      diff_sec2[2]           0           0        0.00 
+                                     echo_frac[26]           0           1       50.00 
+                                     echo_frac[27]           0           0        0.00 
+                                     echo_frac[30]           0           0        0.00 
+                                       echo_sec[0]           0           2       50.00 
+                                     echo_sec[6-8]           0           2       50.00 
+                                      echo_sec[10]           0           2       50.00 
+                                   echo_sec[11-13]           0           0        0.00 
+                                      echo_sec[19]           0           0        0.00 
+                                   echo_sec[21-25]           0           0        0.00 
+                                      echo_sec[30]           0           0        0.00 
+                                            enable           0           0        0.00 
+                              encode_rx_value[0-2]           0           0        0.00 
+                               encode_rx_value[26]           0           0        0.00 
+                            encode_rx_value[30-31]           0           0        0.00 
+                              encode_tx_value[0-2]           0           0        0.00 
+                               encode_tx_value[26]           0           0        0.00 
+                            encode_tx_value[30-31]           0           0        0.00 
+                             final_ns_wrapped[0-1]           0           0        0.00 
+                                    final_overflow           0           0        0.00 
+                            final_sec_increment[3]           0           2       50.00 
+                          final_sec_increment[5-9]           0           2       50.00 
+                        final_sec_increment[10-31]           0           0        0.00 
+                                final_sec_twice[3]           0           2       50.00 
+                              final_sec_twice[5-9]           0           2       50.00 
+                            final_sec_twice[10-31]           0           0        0.00 
+                                 final_tick_direct           0           0        0.00 
+                                final_tick_wrapped           0           0        0.00 
+                                      load_ns[0-2]           0           0        0.00 
+                                        load_ns[9]           0           2       50.00 
+                                       load_ns[18]           0           0        0.00 
+                                       load_ns[19]           0           2       50.00 
+                                    load_ns[23-24]           0           2       50.00 
+                                       load_ns[26]           0           0        0.00 
+                                       load_ns[27]           0           2       50.00 
+                                    load_ns[30-31]           0           0        0.00 
+                                     load_overflow           0           0        0.00 
+                                       load_sec[6]           0           3       50.00 
+                                     load_sec[7-9]           0           2       50.00 
+                                   load_sec[10-31]           0           0        0.00 
+                                  nanoseconds[0-1]           0           0        0.00 
+                                nanoseconds[30-31]           0           0        0.00 
+                             nanoseconds_calc[0-1]           0           0        0.00 
+                           nanoseconds_calc[30-31]           0           0        0.00 
+                                    offset_ns[0-1]           0           0        0.00 
+                                  offset_ns[30-31]           0           0        0.00 
+                              offset_ns_minus[0-1]           0           0        0.00 
+                               offset_ns_minus[19]           0           0        0.00 
+                            offset_ns_minus[23-24]           0           0        0.00 
+                               offset_ns_minus[27]           0           0        0.00 
+                               offset_ns_plus[0-1]           0           0        0.00 
+                                offset_ns_plus[31]           0           0        0.00 
+                                   offset_overflow           0           0        0.00 
+                                   offset_sec[1-2]           0           0        0.00 
+                                offset_sec_plus[2]           0           0        0.00 
+                                       period[0-1]           0           0        0.00 
+                                         period[2]           0           2       50.00 
+                                         period[3]           2           0       50.00 
+                                         period[4]           0           0        0.00 
+                                         period[5]           0           2       50.00 
+                                        period[10]           0           2       50.00 
+                                     period[17-31]           0           0        0.00 
+                                 port_number[0-15]           0           0        0.00 
+                                    predicted_wrap           0           0        0.00 
+                             previous_time_mode[4]           0           0        0.00 
+                                  received_ns[0-2]           0           0        0.00 
+                                   received_ns[26]           0           0        0.00 
+                                received_ns[30-31]           0           0        0.00 
+                                 received_sec[6-9]           0           2       50.00 
+                               received_sec[10-31]           0           0        0.00 
+                               reference_frac[4-5]           0           2       50.00 
+                                 reference_frac[7]           0           0        0.00 
+                             reference_frac[12-13]           0           2       50.00 
+                                reference_frac[17]           0           2       50.00 
+                             reference_frac[20-21]           0           2       50.00 
+                             reference_frac[24-25]           0           2       50.00 
+                             reference_frac[28-29]           0           2       50.00 
+                      reference_nanoseconds_q[0-2]           0           0        0.00 
+                        reference_nanoseconds_q[9]           0           2       50.00 
+                       reference_nanoseconds_q[18]           0           0        0.00 
+                       reference_nanoseconds_q[19]           0           2       50.00 
+                    reference_nanoseconds_q[23-24]           0           2       50.00 
+                       reference_nanoseconds_q[26]           0           0        0.00 
+                       reference_nanoseconds_q[27]           0           2       50.00 
+                    reference_nanoseconds_q[30-31]           0           0        0.00 
+                                  reference_sec[6]           0           3       50.00 
+                                reference_sec[7-8]           0           2       50.00 
+                                 reference_sec[10]           0           2       50.00 
+                              reference_sec[11-13]           0           0        0.00 
+                                 reference_sec[19]           0           0        0.00 
+                              reference_sec[21-25]           0           0        0.00 
+                                 reference_sec[30]           0           0        0.00 
+                                       req_ns[0-2]           0           0        0.00 
+                                        req_ns[26]           0           0        0.00 
+                                        req_ns[28]           0           0        0.00 
+                                     req_ns[30-31]           0           0        0.00 
+                                        req_sec[0]           0           2       50.00 
+                                      req_sec[6-9]           0           2       50.00 
+                                    req_sec[10-31]           0           0        0.00 
+                                     rx_port[0-15]           0           0        0.00 
+                                        second_odd           0           0        0.00 
+                                        seconds[6]           0           3       50.00 
+                                      seconds[7-9]           0           2       50.00 
+                                    seconds[10-31]           0           0        0.00 
+                                   seconds_calc[6]           0           3       50.00 
+                                 seconds_calc[7-9]           0           2       50.00 
+                               seconds_calc[10-31]           0           0        0.00 
+                            seconds_increment[5-6]           0           3       50.00 
+                            seconds_increment[7-9]           0           2       50.00 
+                          seconds_increment[10-31]           0           0        0.00 
+                            server_receive_ns[0-2]           0           0        0.00 
+                             server_receive_ns[26]           0           0        0.00 
+                          server_receive_ns[30-31]           0           0        0.00 
+                             server_receive_sec[1]           0           0        0.00 
+                             server_receive_sec[3]           0           2       50.00 
+                           server_receive_sec[5-9]           0           2       50.00 
+                         server_receive_sec[10-31]           0           0        0.00 
+                           server_transmit_ns[0-2]           0           0        0.00 
+                            server_transmit_ns[26]           0           0        0.00 
+                         server_transmit_ns[30-31]           0           0        0.00 
+                            server_transmit_sec[1]           0           0        0.00 
+                            server_transmit_sec[3]           0           2       50.00 
+                          server_transmit_sec[5-9]           0           2       50.00 
+                        server_transmit_sec[10-31]           0           0        0.00 
+                                  snapshot_ns[0-2]           0           0        0.00 
+                                   snapshot_ns[26]           0           0        0.00 
+                                snapshot_ns[30-31]           0           0        0.00 
+                                   stamp_rx_sec[1]           0           0        0.00 
+                                   stamp_rx_sec[3]           0           2       50.00 
+                                 stamp_rx_sec[5-8]           0           2       50.00 
+                                  stamp_rx_sec[10]           0           2       50.00 
+                               stamp_rx_sec[11-13]           0           0        0.00 
+                                  stamp_rx_sec[19]           0           0        0.00 
+                               stamp_rx_sec[21-25]           0           0        0.00 
+                                  stamp_rx_sec[30]           0           0        0.00 
+                                 stamp_tx_sec[6-8]           0           2       50.00 
+                                  stamp_tx_sec[10]           0           2       50.00 
+                               stamp_tx_sec[11-13]           0           0        0.00 
+                                  stamp_tx_sec[19]           0           0        0.00 
+                               stamp_tx_sec[21-25]           0           0        0.00 
+                                  stamp_tx_sec[30]           0           0        0.00 
+                                       sum_ns[0-2]           0           0        0.00 
+                                        sum_sec[0]           0           0        0.00 
+                                        sum_sec[3]           0           0        0.00 
+                                     sync_count[6]           0           1       50.00 
+                                  sync_count[7-31]           0           0        0.00 
+                                           tick_dw           0           0        0.00 
+                                           tick_ln           0           0        0.00 
+                                           tick_lw           0           0        0.00 
+                                           tick_wn           0           0        0.00 
+                                           tick_ww           0           0        0.00 
+                                time_ns_minus[0-1]           0           0        0.00 
+                                 time_ns_minus[26]           0           2       50.00 
+                              time_ns_minus[30-31]           0           2       50.00 
+                                  time_sec_plus[3]           0           2       50.00 
+                                time_sec_plus[5-9]           0           2       50.00 
+                              time_sec_plus[10-31]           0           0        0.00 
+                        timestamp_nanoseconds[0-1]           0           0        0.00 
+                      timestamp_nanoseconds[30-31]           0           0        0.00 
+                              timestamp_seconds[6]           0           3       50.00 
+                            timestamp_seconds[7-9]           0           2       50.00 
+                          timestamp_seconds[10-31]           0           0        0.00 
+                                     tx_port[0-15]           0           0        0.00 
+                                          tx_ready           0           0        0.00 
+                                        tx_vl[0-6]           0           0        0.00 
+                                           vl[0-6]           0           0        0.00 
+                            word_cfg_rdata_0[2-31]           0           0        0.00 
+                             word_cfg_rdata_1[0-1]           0           0        0.00 
+                               word_cfg_rdata_1[2]           0           2       50.00 
+                               word_cfg_rdata_1[3]           2           0       50.00 
+                               word_cfg_rdata_1[4]           0           0        0.00 
+                               word_cfg_rdata_1[5]           0           2       50.00 
+                              word_cfg_rdata_1[10]           0           2       50.00 
+                           word_cfg_rdata_1[17-31]           0           0        0.00 
+                            word_cfg_rdata_2[0-31]           0           0        0.00 
+                            word_cfg_rdata_3[0-31]           0           0        0.00 
+                               word_cfg_rdata_4[6]           0           3       50.00 
+                             word_cfg_rdata_4[7-9]           0           2       50.00 
+                           word_cfg_rdata_4[10-31]           0           0        0.00 
+                             word_cfg_rdata_5[0-2]           0           0        0.00 
+                              word_cfg_rdata_5[26]           0           0        0.00 
+                           word_cfg_rdata_5[30-31]           0           0        0.00 
+                             word_cfg_rdata_6[1-2]           0           0        0.00 
+                             word_cfg_rdata_7[0-1]           0           0        0.00 
+                           word_cfg_rdata_7[30-31]           0           0        0.00 
+
+Total Node Count     =       2710 
+Toggled Node Count   =       1828 
+Untoggled Node Count =        882 
+
+Toggle Coverage      =      69.72% (3779 of 5420 bins)
+
+
+Total Coverage By Design Unit (filtered view): 77.32%
+

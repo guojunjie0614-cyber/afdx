@@ -1,0 +1,1559 @@
+{
+  "source_commit": "e5cd815020448820c2de7c587f288554defb74bc",
+  "ce_div": 2,
+  "seed": 20261007,
+  "rtl_files": 29,
+  "rtl_design_units": 29,
+  "units": {
+    "afdx_615a": "rtl/afdx_615a.v",
+    "afdx_615a_engine": "rtl/afdx_615a_engine.v",
+    "afdx_app_map": "rtl/afdx_app_map.v",
+    "afdx_app_read": "rtl/afdx_app_read.v",
+    "afdx_app_rx": "rtl/afdx_app_rx.v",
+    "afdx_app_tx": "rtl/afdx_app_tx.v",
+    "afdx_cfg": "rtl/afdx_cfg.v",
+    "afdx_crc32_d8": "rtl/afdx_crc32_d8.v",
+    "afdx_es": "rtl/afdx_es.v",
+    "afdx_mac_rx": "rtl/afdx_mac_rx.v",
+    "afdx_mac_tx": "rtl/afdx_mac_tx.v",
+    "afdx_mgmt_tx": "rtl/afdx_mgmt_tx.v",
+    "afdx_ntp_fraction": "rtl/afdx_ntp_fraction.v",
+    "afdx_ram_sdp": "rtl/afdx_ram_sdp.v",
+    "afdx_rtc": "rtl/afdx_rtc.v",
+    "afdx_rx_core": "rtl/afdx_rx_core.v",
+    "afdx_rx_deliver": "rtl/afdx_rx_deliver.v",
+    "afdx_rx_engine": "rtl/afdx_rx_engine.v",
+    "afdx_rx_parse": "rtl/afdx_rx_parse.v",
+    "afdx_snmp": "rtl/afdx_snmp.v",
+    "afdx_snmp_engine": "rtl/afdx_snmp_engine.v",
+    "afdx_svc": "rtl/afdx_svc.v",
+    "afdx_timebase": "rtl/afdx_timebase.v",
+    "AFDX_top": "rtl/AFDX_top.v",
+    "afdx_tx_buf": "rtl/afdx_tx_buf.v",
+    "afdx_tx_builder": "rtl/afdx_tx_builder.v",
+    "afdx_tx_core": "rtl/afdx_tx_core.v",
+    "afdx_tx_engine": "rtl/afdx_tx_engine.v",
+    "afdx_tx_free": "rtl/afdx_tx_free.v"
+  },
+  "metrics": {
+    "Statements": {
+      "covered": 7754,
+      "total": 7864,
+      "missed": 110,
+      "percent": 98.6
+    },
+    "Branches": {
+      "covered": 4344,
+      "total": 4491,
+      "missed": 147,
+      "percent": 96.72
+    },
+    "Conditions": {
+      "covered": 882,
+      "total": 1001,
+      "missed": 119,
+      "percent": 88.11
+    },
+    "Expressions": {
+      "covered": 1767,
+      "total": 2027,
+      "missed": 260,
+      "percent": 87.17
+    },
+    "FSM States": {
+      "covered": 127,
+      "total": 127,
+      "missed": 0,
+      "percent": 100.0
+    },
+    "FSM Transitions": {
+      "covered": 155,
+      "total": 338,
+      "missed": 183,
+      "percent": 45.85
+    },
+    "Toggles": {
+      "covered": 44903,
+      "total": 57890,
+      "missed": 12987,
+      "percent": 77.56
+    },
+    "FSM": {
+      "covered": 282,
+      "total": 465,
+      "missed": 183,
+      "percent": 60.64
+    }
+  },
+  "modules": {
+    "afdx_615a": {
+      "Branches": {
+        "covered": 74,
+        "total": 74,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 23,
+        "total": 31,
+        "missed": 8,
+        "percent": 74.19
+      },
+      "Expressions": {
+        "covered": 34,
+        "total": 34,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 260,
+        "total": 260,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 1910,
+        "total": 3230,
+        "missed": 1320,
+        "percent": 59.13
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_615a_engine": {
+      "Branches": {
+        "covered": 680,
+        "total": 721,
+        "missed": 41,
+        "percent": 94.31
+      },
+      "Conditions": {
+        "covered": 64,
+        "total": 84,
+        "missed": 20,
+        "percent": 76.19
+      },
+      "Expressions": {
+        "covered": 195,
+        "total": 239,
+        "missed": 44,
+        "percent": 81.58
+      },
+      "FSM States": {
+        "covered": 11,
+        "total": 11,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 16,
+        "total": 54,
+        "missed": 38,
+        "percent": 29.62
+      },
+      "Statements": {
+        "covered": 1257,
+        "total": 1294,
+        "missed": 37,
+        "percent": 97.14
+      },
+      "Toggles": {
+        "covered": 4119,
+        "total": 6168,
+        "missed": 2049,
+        "percent": 66.78
+      },
+      "FSM": {
+        "covered": 27,
+        "total": 65,
+        "missed": 38,
+        "percent": 41.53
+      }
+    },
+    "afdx_app_map": {
+      "Branches": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Expressions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 25,
+        "total": 32,
+        "missed": 7,
+        "percent": 78.12
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_app_read": {
+      "Branches": {
+        "covered": 16,
+        "total": 16,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 7,
+        "total": 7,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 24,
+        "total": 24,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 80,
+        "total": 82,
+        "missed": 2,
+        "percent": 97.56
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_app_rx": {
+      "Branches": {
+        "covered": 29,
+        "total": 31,
+        "missed": 2,
+        "percent": 93.54
+      },
+      "Conditions": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 10,
+        "total": 18,
+        "missed": 8,
+        "percent": 55.55
+      },
+      "FSM States": {
+        "covered": 6,
+        "total": 6,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 6,
+        "total": 10,
+        "missed": 4,
+        "percent": 60.0
+      },
+      "Statements": {
+        "covered": 48,
+        "total": 49,
+        "missed": 1,
+        "percent": 97.95
+      },
+      "Toggles": {
+        "covered": 292,
+        "total": 348,
+        "missed": 56,
+        "percent": 83.9
+      },
+      "FSM": {
+        "covered": 12,
+        "total": 16,
+        "missed": 4,
+        "percent": 75.0
+      }
+    },
+    "afdx_app_tx": {
+      "Branches": {
+        "covered": 443,
+        "total": 451,
+        "missed": 8,
+        "percent": 98.22
+      },
+      "Conditions": {
+        "covered": 260,
+        "total": 272,
+        "missed": 12,
+        "percent": 95.58
+      },
+      "Expressions": {
+        "covered": 39,
+        "total": 54,
+        "missed": 15,
+        "percent": 72.22
+      },
+      "FSM States": {
+        "covered": 11,
+        "total": 11,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 11,
+        "total": 20,
+        "missed": 9,
+        "percent": 55.0
+      },
+      "Statements": {
+        "covered": 683,
+        "total": 689,
+        "missed": 6,
+        "percent": 99.12
+      },
+      "Toggles": {
+        "covered": 2673,
+        "total": 3066,
+        "missed": 393,
+        "percent": 87.18
+      },
+      "FSM": {
+        "covered": 22,
+        "total": 31,
+        "missed": 9,
+        "percent": 70.96
+      }
+    },
+    "afdx_cfg": {
+      "Branches": {
+        "covered": 876,
+        "total": 884,
+        "missed": 8,
+        "percent": 99.09
+      },
+      "Conditions": {
+        "covered": 62,
+        "total": 82,
+        "missed": 20,
+        "percent": 75.6
+      },
+      "Expressions": {
+        "covered": 550,
+        "total": 634,
+        "missed": 84,
+        "percent": 86.75
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 1300,
+        "total": 1300,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 3315,
+        "total": 5102,
+        "missed": 1787,
+        "percent": 64.97
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_crc32_d8": {
+      "Branches": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Expressions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 6,
+        "total": 6,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 64,
+        "total": 128,
+        "missed": 64,
+        "percent": 50.0
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_es": {
+      "Branches": {
+        "covered": 12,
+        "total": 12,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 28,
+        "total": 37,
+        "missed": 9,
+        "percent": 75.67
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 39,
+        "total": 39,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 1813,
+        "total": 2340,
+        "missed": 527,
+        "percent": 77.47
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_mac_rx": {
+      "Branches": {
+        "covered": 26,
+        "total": 26,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 14,
+        "total": 14,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 1,
+        "total": 1,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 8,
+        "total": 8,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Statements": {
+        "covered": 45,
+        "total": 45,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 307,
+        "total": 308,
+        "missed": 1,
+        "percent": 99.67
+      },
+      "FSM": {
+        "covered": 12,
+        "total": 12,
+        "missed": 0,
+        "percent": 100.0
+      }
+    },
+    "afdx_mac_tx": {
+      "Branches": {
+        "covered": 68,
+        "total": 73,
+        "missed": 5,
+        "percent": 93.15
+      },
+      "Conditions": {
+        "covered": 11,
+        "total": 13,
+        "missed": 2,
+        "percent": 84.61
+      },
+      "Expressions": {
+        "covered": 10,
+        "total": 13,
+        "missed": 3,
+        "percent": 76.92
+      },
+      "FSM States": {
+        "covered": 5,
+        "total": 5,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 8,
+        "total": 9,
+        "missed": 1,
+        "percent": 88.88
+      },
+      "Statements": {
+        "covered": 93,
+        "total": 94,
+        "missed": 1,
+        "percent": 98.93
+      },
+      "Toggles": {
+        "covered": 475,
+        "total": 514,
+        "missed": 39,
+        "percent": 92.41
+      },
+      "FSM": {
+        "covered": 13,
+        "total": 14,
+        "missed": 1,
+        "percent": 92.85
+      }
+    },
+    "afdx_mgmt_tx": {
+      "Branches": {
+        "covered": 22,
+        "total": 22,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 7,
+        "total": 7,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 9,
+        "total": 10,
+        "missed": 1,
+        "percent": 90.0
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 86,
+        "total": 86,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 349,
+        "total": 440,
+        "missed": 91,
+        "percent": 79.31
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_ntp_fraction": {
+      "Branches": {
+        "covered": 23,
+        "total": 24,
+        "missed": 1,
+        "percent": 95.83
+      },
+      "Conditions": {
+        "covered": 1,
+        "total": 1,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM States": {
+        "covered": 3,
+        "total": 3,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 4,
+        "total": 5,
+        "missed": 1,
+        "percent": 80.0
+      },
+      "Statements": {
+        "covered": 27,
+        "total": 28,
+        "missed": 1,
+        "percent": 96.42
+      },
+      "Toggles": {
+        "covered": 341,
+        "total": 344,
+        "missed": 3,
+        "percent": 99.12
+      },
+      "FSM": {
+        "covered": 7,
+        "total": 8,
+        "missed": 1,
+        "percent": 87.5
+      }
+    },
+    "afdx_ram_sdp": {
+      "Branches": {
+        "covered": 5,
+        "total": 8,
+        "missed": 3,
+        "percent": 62.5
+      },
+      "Conditions": {
+        "covered": 0,
+        "total": 4,
+        "missed": 4,
+        "percent": 0.0
+      },
+      "Expressions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 5,
+        "total": 10,
+        "missed": 5,
+        "percent": 50.0
+      },
+      "Toggles": {
+        "covered": 277,
+        "total": 278,
+        "missed": 1,
+        "percent": 99.64
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_rtc": {
+      "Branches": {
+        "covered": 305,
+        "total": 324,
+        "missed": 19,
+        "percent": 94.13
+      },
+      "Conditions": {
+        "covered": 21,
+        "total": 32,
+        "missed": 11,
+        "percent": 65.62
+      },
+      "Expressions": {
+        "covered": 52,
+        "total": 86,
+        "missed": 34,
+        "percent": 60.46
+      },
+      "FSM States": {
+        "covered": 21,
+        "total": 21,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 23,
+        "total": 53,
+        "missed": 30,
+        "percent": 43.39
+      },
+      "Statements": {
+        "covered": 520,
+        "total": 538,
+        "missed": 18,
+        "percent": 96.65
+      },
+      "Toggles": {
+        "covered": 3779,
+        "total": 5420,
+        "missed": 1641,
+        "percent": 69.72
+      },
+      "FSM": {
+        "covered": 44,
+        "total": 74,
+        "missed": 30,
+        "percent": 59.45
+      }
+    },
+    "afdx_rx_core": {
+      "Branches": {
+        "covered": 370,
+        "total": 371,
+        "missed": 1,
+        "percent": 99.73
+      },
+      "Conditions": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 292,
+        "total": 292,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 815,
+        "total": 815,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 9783,
+        "total": 9900,
+        "missed": 117,
+        "percent": 98.81
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_rx_deliver": {
+      "Branches": {
+        "covered": 24,
+        "total": 25,
+        "missed": 1,
+        "percent": 96.0
+      },
+      "Conditions": {
+        "covered": 6,
+        "total": 7,
+        "missed": 1,
+        "percent": 85.71
+      },
+      "Expressions": {
+        "covered": 5,
+        "total": 5,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 3,
+        "total": 3,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 3,
+        "total": 4,
+        "missed": 1,
+        "percent": 75.0
+      },
+      "Statements": {
+        "covered": 68,
+        "total": 69,
+        "missed": 1,
+        "percent": 98.55
+      },
+      "Toggles": {
+        "covered": 438,
+        "total": 438,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM": {
+        "covered": 6,
+        "total": 7,
+        "missed": 1,
+        "percent": 85.71
+      }
+    },
+    "afdx_rx_engine": {
+      "Branches": {
+        "covered": 161,
+        "total": 164,
+        "missed": 3,
+        "percent": 98.17
+      },
+      "Conditions": {
+        "covered": 29,
+        "total": 30,
+        "missed": 1,
+        "percent": 96.66
+      },
+      "Expressions": {
+        "covered": 200,
+        "total": 203,
+        "missed": 3,
+        "percent": 98.52
+      },
+      "FSM States": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 6,
+        "total": 8,
+        "missed": 2,
+        "percent": 75.0
+      },
+      "Statements": {
+        "covered": 264,
+        "total": 266,
+        "missed": 2,
+        "percent": 99.24
+      },
+      "Toggles": {
+        "covered": 1463,
+        "total": 2082,
+        "missed": 619,
+        "percent": 70.26
+      },
+      "FSM": {
+        "covered": 10,
+        "total": 12,
+        "missed": 2,
+        "percent": 83.33
+      }
+    },
+    "afdx_rx_parse": {
+      "Branches": {
+        "covered": 97,
+        "total": 97,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 38,
+        "total": 39,
+        "missed": 1,
+        "percent": 97.43
+      },
+      "Expressions": {
+        "covered": 29,
+        "total": 30,
+        "missed": 1,
+        "percent": 96.66
+      },
+      "FSM States": {
+        "covered": 3,
+        "total": 3,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 3,
+        "total": 5,
+        "missed": 2,
+        "percent": 60.0
+      },
+      "Statements": {
+        "covered": 172,
+        "total": 172,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 1220,
+        "total": 1308,
+        "missed": 88,
+        "percent": 93.27
+      },
+      "FSM": {
+        "covered": 6,
+        "total": 8,
+        "missed": 2,
+        "percent": 75.0
+      }
+    },
+    "afdx_snmp": {
+      "Branches": {
+        "covered": 94,
+        "total": 101,
+        "missed": 7,
+        "percent": 93.06
+      },
+      "Conditions": {
+        "covered": 12,
+        "total": 21,
+        "missed": 9,
+        "percent": 57.14
+      },
+      "Expressions": {
+        "covered": 12,
+        "total": 12,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 5,
+        "total": 6,
+        "missed": 1,
+        "percent": 83.33
+      },
+      "Statements": {
+        "covered": 220,
+        "total": 223,
+        "missed": 3,
+        "percent": 98.65
+      },
+      "Toggles": {
+        "covered": 1443,
+        "total": 3082,
+        "missed": 1639,
+        "percent": 46.82
+      },
+      "FSM": {
+        "covered": 9,
+        "total": 10,
+        "missed": 1,
+        "percent": 90.0
+      }
+    },
+    "afdx_snmp_engine": {
+      "Branches": {
+        "covered": 554,
+        "total": 591,
+        "missed": 37,
+        "percent": 93.73
+      },
+      "Conditions": {
+        "covered": 95,
+        "total": 111,
+        "missed": 16,
+        "percent": 85.58
+      },
+      "Expressions": {
+        "covered": 151,
+        "total": 179,
+        "missed": 28,
+        "percent": 84.35
+      },
+      "FSM States": {
+        "covered": 29,
+        "total": 29,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 29,
+        "total": 110,
+        "missed": 81,
+        "percent": 26.36
+      },
+      "Statements": {
+        "covered": 914,
+        "total": 942,
+        "missed": 28,
+        "percent": 97.02
+      },
+      "Toggles": {
+        "covered": 3548,
+        "total": 5610,
+        "missed": 2062,
+        "percent": 63.24
+      },
+      "FSM": {
+        "covered": 58,
+        "total": 139,
+        "missed": 81,
+        "percent": 41.72
+      }
+    },
+    "afdx_svc": {
+      "Branches": {
+        "covered": 24,
+        "total": 24,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 5,
+        "total": 5,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Expressions": {
+        "covered": 44,
+        "total": 65,
+        "missed": 21,
+        "percent": 67.69
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 48,
+        "total": 48,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 174,
+        "total": 184,
+        "missed": 10,
+        "percent": 94.56
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_timebase": {
+      "Branches": {
+        "covered": 2,
+        "total": 2,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Expressions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 6,
+        "total": 6,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 88,
+        "total": 102,
+        "missed": 14,
+        "percent": 86.27
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "AFDX_top": {
+      "Branches": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Expressions": {
+        "covered": 5,
+        "total": 8,
+        "missed": 3,
+        "percent": 62.5
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 22,
+        "total": 22,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 566,
+        "total": 576,
+        "missed": 10,
+        "percent": 98.26
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_tx_buf": {
+      "Branches": {
+        "covered": 75,
+        "total": 79,
+        "missed": 4,
+        "percent": 94.93
+      },
+      "Conditions": {
+        "covered": 13,
+        "total": 16,
+        "missed": 3,
+        "percent": 81.25
+      },
+      "Expressions": {
+        "covered": 10,
+        "total": 11,
+        "missed": 1,
+        "percent": 90.9
+      },
+      "FSM States": {
+        "covered": 10,
+        "total": 10,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 17,
+        "total": 24,
+        "missed": 7,
+        "percent": 70.83
+      },
+      "Statements": {
+        "covered": 143,
+        "total": 145,
+        "missed": 2,
+        "percent": 98.62
+      },
+      "Toggles": {
+        "covered": 602,
+        "total": 602,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM": {
+        "covered": 27,
+        "total": 34,
+        "missed": 7,
+        "percent": 79.41
+      }
+    },
+    "afdx_tx_builder": {
+      "Branches": {
+        "covered": 204,
+        "total": 208,
+        "missed": 4,
+        "percent": 98.07
+      },
+      "Conditions": {
+        "covered": 192,
+        "total": 198,
+        "missed": 6,
+        "percent": 96.96
+      },
+      "Expressions": {
+        "covered": 19,
+        "total": 20,
+        "missed": 1,
+        "percent": 95.0
+      },
+      "FSM States": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 4,
+        "total": 5,
+        "missed": 1,
+        "percent": 80.0
+      },
+      "Statements": {
+        "covered": 329,
+        "total": 331,
+        "missed": 2,
+        "percent": 99.39
+      },
+      "Toggles": {
+        "covered": 1436,
+        "total": 1562,
+        "missed": 126,
+        "percent": 91.93
+      },
+      "FSM": {
+        "covered": 8,
+        "total": 9,
+        "missed": 1,
+        "percent": 88.88
+      }
+    },
+    "afdx_tx_core": {
+      "Branches": {
+        "covered": 18,
+        "total": 18,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Conditions": {
+        "covered": 2,
+        "total": 4,
+        "missed": 2,
+        "percent": 50.0
+      },
+      "Expressions": {
+        "covered": 8,
+        "total": 8,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM States": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "FSM Transitions": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "Statements": {
+        "covered": 35,
+        "total": 35,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "Toggles": {
+        "covered": 1907,
+        "total": 2054,
+        "missed": 147,
+        "percent": 92.84
+      },
+      "FSM": {
+        "covered": 0,
+        "total": 0,
+        "missed": 0,
+        "percent": null
+      }
+    },
+    "afdx_tx_engine": {
+      "Branches": {
+        "covered": 105,
+        "total": 107,
+        "missed": 2,
+        "percent": 98.13
+      },
+      "Conditions": {
+        "covered": 14,
+        "total": 16,
+        "missed": 2,
+        "percent": 87.5
+      },
+      "Expressions": {
+        "covered": 47,
+        "total": 49,
+        "missed": 2,
+        "percent": 95.91
+      },
+      "FSM States": {
+        "covered": 5,
+        "total": 5,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 8,
+        "total": 11,
+        "missed": 3,
+        "percent": 72.72
+      },
+      "Statements": {
+        "covered": 260,
+        "total": 262,
+        "missed": 2,
+        "percent": 99.23
+      },
+      "Toggles": {
+        "covered": 2198,
+        "total": 2370,
+        "missed": 172,
+        "percent": 92.74
+      },
+      "FSM": {
+        "covered": 13,
+        "total": 16,
+        "missed": 3,
+        "percent": 81.25
+      }
+    },
+    "afdx_tx_free": {
+      "Branches": {
+        "covered": 29,
+        "total": 30,
+        "missed": 1,
+        "percent": 96.66
+      },
+      "Conditions": {
+        "covered": 5,
+        "total": 6,
+        "missed": 1,
+        "percent": 83.33
+      },
+      "Expressions": {
+        "covered": 10,
+        "total": 12,
+        "missed": 2,
+        "percent": 83.33
+      },
+      "FSM States": {
+        "covered": 4,
+        "total": 4,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "FSM Transitions": {
+        "covered": 4,
+        "total": 6,
+        "missed": 2,
+        "percent": 66.66
+      },
+      "Statements": {
+        "covered": 61,
+        "total": 62,
+        "missed": 1,
+        "percent": 98.38
+      },
+      "Toggles": {
+        "covered": 218,
+        "total": 220,
+        "missed": 2,
+        "percent": 99.09
+      },
+      "FSM": {
+        "covered": 8,
+        "total": 10,
+        "missed": 2,
+        "percent": 80.0
+      }
+    }
+  },
+  "aggregation": "Sum each source design unit once; numerator=covered bins, denominator=all bins; no instance averaging, no exclusions; FSM=states+transitions",
+  "rounding": "Truncate to two decimal places using integer arithmetic; zero denominator is N/A",
+  "index_reconciled": true,
+  "index_rows": 2711,
+  "index_missed_bins": {
+    "Statements": 110,
+    "Branches": 147,
+    "Conditions": 119,
+    "Expressions": 260,
+    "FSM States": 0,
+    "FSM Transitions": 183,
+    "Toggles": 12987
+  },
+  "category_bins": {
+    "A": 2240,
+    "B": 862,
+    "C": 126,
+    "U": 10578
+  }
+}

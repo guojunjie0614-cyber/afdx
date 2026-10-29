@@ -1,0 +1,192 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_app_rx
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        31        29         2    93.54%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_app_rx
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_app_rx.v
+------------------------------------CASE Branch------------------------------------
+    81              1                    ***0***     
+Branch totals: 6 hits of 7 branches = 85.71%
+
+------------------------------------IF Branch------------------------------------
+    76                                  46448710     Count coming in to IF
+    76              2                   46448710     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                     18        10         8    55.55%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.afdx_app_rx --
+
+  File rtl/afdx_app_rx.v
+
+----------------Focused Expression View-----------------
+Line       26 Item    1  ((used > 2624) || (descriptors >= 30))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+           Input Term   Covered  Reason for no coverage   Hint
+          -----------  --------  -----------------------  --------------
+        (used > 2624)         N  '_1' not hit             Hit '_1'
+  (descriptors >= 30)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target             Non-masking condition(s)      
+ ---------  ---------  --------------------   -------------------------     
+  Row   1:         38  (used > 2624)_0        ~(descriptors >= 30)          
+  Row   2:    ***0***  (used > 2624)_1        -                             
+  Row   3:         38  (descriptors >= 30)_0  ~(used > 2624)                
+  Row   4:    ***0***  (descriptors >= 30)_1  ~(used > 2624)                
+
+-----------Focused Expression View (Bimodal)------------
+Line       28 Item    1  (app_valid && (active? ~discard: ~reject))
+Expression totals: 1 of 4 input terms covered = 25.00%
+
+   Input Term   Covered  Reason for no coverage                  Hint
+  -----------  --------  --------------------------------------  --------------
+       active         N  Both rows hit for same output ->1      Hit either row for output ->0
+      discard         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->0
+       reject         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->0
+
+    Rows:   Hits(->0)   Hits(->1)  FEC Target            Non-masking condition(s)           
+
+---------  ----------  ----------  --------------------  -------------------------          
+ Row   1:          38           0  app_valid_0           -                                  
+ Row   2:           0          34  app_valid_1           (active? ~discard: ~reject)        
+ Row   3:           0          34  active_0              app_valid                          
+ Row   4:           0          34  active_1              app_valid                          
+ Row   5:           0          34  discard_0             (app_valid && active)              
+ Row   6:           0           0  discard_1             (app_valid && active)              
+ Row   7:           0          34  reject_0              (app_valid && ~active)             
+ Row   8:           0           0  reject_1              (app_valid && ~active)             
+
+
+
+----------------Focused Expression View-----------------
+Line       54 Item    1  (first && reject)
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+       first         N  '_1' not hit             Hit '_1'
+      reject         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         38  first_0               -                             
+  Row   2:    ***0***  first_1               reject                        
+  Row   3:         34  reject_0              first                         
+  Row   4:    ***0***  reject_1              first                         
+
+----------------Focused Expression View-----------------
+Line       55 Item    1  (first && ~reject)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      reject         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         38  first_0               -                             
+  Row   2:         34  first_1               ~reject                       
+  Row   3:         34  reject_0              first                         
+  Row   4:    ***0***  reject_1              first                         
+
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                 10         6         4    60.00%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_app_rx --
+
+FSM_ID: state
+    Current State Object : state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  72                 st0                   0
+  73                 st1                   5
+  74                 st2                   1
+  75                 st3                   2
+  76                 st4                   3
+  80                 st5                   4
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  68                   2          st1 -> st0          
+  68                   4          st2 -> st0          
+  68                   6          st3 -> st0          
+  68                   8          st4 -> st0          
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions             10         6         4    60.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      49        48         1    97.95%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_app_rx --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_app_rx.v
+    81              1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        348       292        56    83.90%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_app_rx
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                 descriptor_id[12]           1           0       50.00 
+                              descriptor_id[13-15]           0           0        0.00 
+                                  descriptors[2-5]           0           0        0.00 
+                                           discard           0           0        0.00 
+                                              drop           0           0        0.00 
+                                         id[13-14]           0           1       50.00 
+                                            id[15]           0           0        0.00 
+                                         map_q[12]           1           0       50.00 
+                                      map_q[13-15]           0           0        0.00 
+                               map_write_value[15]           0           0        0.00 
+                                        used[1-12]           0           0        0.00 
+
+Total Node Count     =        174 
+Toggled Node Count   =        144 
+Untoggled Node Count =         30 
+
+Toggle Coverage      =      83.90% (292 of 348 bins)
+
+
+Total Coverage By Design Unit (filtered view): 82.74%
+

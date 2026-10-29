@@ -1,0 +1,217 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_mac_tx
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        73        68         5    93.15%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_mac_tx
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_mac_tx.v
+------------------------------------CASE Branch------------------------------------
+    211             1                    ***0***     
+Branch totals: 4 hits of 5 branches = 80.00%
+
+------------------------------------IF Branch------------------------------------
+    154                                        1     Count coming in to IF
+    154             1                          1     
+    154             2                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    155                                        1     Count coming in to IF
+    155             1                          1     
+    155             2                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    175                                        2     Count coming in to IF
+    175             1                          2     
+    175             2                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    176                                        2     Count coming in to IF
+    176             1                          2     
+    176             2                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      13        11         2    84.61%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_mac_tx --
+
+  File rtl/afdx_mac_tx.v
+
+
+----------------Focused Condition View-------------------
+Line       109 Item    1  ((byte_en && s_valid) && s_last)
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+     byte_en         N  '_0' not hit             Hit '_0'
+     s_valid         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  byte_en_0             -                             
+  Row   2:          1  byte_en_1             (s_last && s_valid)           
+  Row   3:    ***0***  s_valid_0             byte_en                       
+  Row   4:          1  s_valid_1             (s_last && byte_en)           
+  Row   5:          1  s_last_0              (byte_en && s_valid)          
+  Row   6:          1  s_last_1              (byte_en && s_valid)          
+
+
+
+
+
+
+
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                     13        10         3    76.92%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.afdx_mac_tx --
+
+  File rtl/afdx_mac_tx.v
+----------------Focused Expression View-----------------
+Line       64 Item    1  (byte_en & ready_window)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+       byte_en         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  byte_en_0             ready_window                  
+  Row   2:         45  byte_en_1             ready_window                  
+  Row   3:         48  ready_window_0        byte_en                       
+  Row   4:         45  ready_window_1        byte_en                       
+
+-----------Focused Expression View (Bimodal)------------
+Line       70 Item    1  ((pre_index < 7)? (pre_index == 6): (s_valid && ~s_last))
+Expression totals: 3 of 4 input terms covered = 75.00%
+
+          Input Term   Covered  Reason for no coverage                  Hint
+         -----------  --------  --------------------------------------  --------------
+              s_last         N  '_0' hit but '_1' is not hit           Hit '_1' for output ->0
+
+    Rows:   Hits(->0)   Hits(->1)  FEC Target            Non-masking condition(s)           
+
+---------  ----------  ----------  --------------------  -------------------------          
+ Row   1:           0          45  (pre_index < 7)_0     -                                  
+ Row   2:          45          45  (pre_index < 7)_1     -                                  
+ Row   3:          45           0  (pre_index == 6)_0    (pre_index < 7)                    
+ Row   4:           0          45  (pre_index == 6)_1    (pre_index < 7)                    
+ Row   5:           1           0  s_valid_0             ~(pre_index < 7)                   
+ Row   6:           0          45  s_valid_1             (~(pre_index < 7) && ~s_last)      
+ Row   7:           0          45  s_last_0              (~(pre_index < 7) && s_valid)      
+ Row   8:           0           0  s_last_1              (~(pre_index < 7) && s_valid)      
+
+
+
+----------------Focused Expression View-----------------
+Line       73 Item    1  (s_valid ~& s_last)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+     s_valid         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  s_valid_0             s_last                        
+  Row   2:          1  s_valid_1             s_last                        
+  Row   3:          1  s_last_0              s_valid                       
+  Row   4:          1  s_last_1              s_valid                       
+
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                  9         8         1    88.88%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_mac_tx --
+
+FSM_ID: state
+    Current State Object : state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+ 118                 GAP                   0
+ 135            PREAMBLE                   1
+ 191                 FCS                   3
+ 162                DATA                   2
+ 211               DRAIN                   4
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  81                   3          PREAMBLE -> GAP     
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions              9         8         1    88.88%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      94        93         1    98.93%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_mac_tx --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_mac_tx.v
+    211             1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        514       475        39    92.41%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_mac_tx
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                           byte_en           0           1       50.00 
+                                      fcs_a[24-31]           0           0        0.00 
+                                      fcs_b[24-31]           0           0        0.00 
+                                     gap_left[4-6]           0           0        0.00 
+
+Total Node Count     =        257 
+Toggled Node Count   =        237 
+Untoggled Node Count =         20 
+
+Toggle Coverage      =      92.41% (475 of 514 bins)
+
+
+Total Coverage By Design Unit (filtered view): 89.20%
+

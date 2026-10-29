@@ -1,0 +1,73 @@
+{
+  "status": "reports_ready",
+  "owner": {
+    "pid": 9536,
+    "created": 1793291604.006128,
+    "command": [
+      "E:\\anaconda3\\python.exe",
+      "-B",
+      "-u",
+      "-X",
+      "utf8",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tools\\t64_coverage.py",
+      "run",
+      "--folder",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\t64\\20261029_093324_002975"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63"
+  },
+  "folder": "out/t64/20261029_093324_002975",
+  "started": "2026-10-29T09:33:24.189113-07:00",
+  "command": [
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\sim\\regress.ps1",
+    "-Coverage",
+    "-Seed",
+    "20261007",
+    "-Deadline",
+    "2026-10-29T17:33:28.858985-07:00"
+  ],
+  "worker": {
+    "pid": 13912,
+    "created": 1793291608.8613086,
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-NonInteractive",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\sim\\regress.ps1",
+      "-Coverage",
+      "-Seed",
+      "20261007",
+      "-Deadline",
+      "2026-10-29T17:33:28.858985-07:00"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63"
+  },
+  "deadline": "2026-10-29T17:33:28.858985-07:00",
+  "latest_prefix": "",
+  "updated": "2026-10-29T14:31:32.589325-07:00",
+  "elapsed_seconds": 17888.407000000007,
+  "minimum_memory_bytes": 13856956416,
+  "minimum_disk_bytes": 115844096000,
+  "exit_code": 0,
+  "stop_reason": null,
+  "regression_finished": "2026-10-29T14:31:45.755969-07:00",
+  "batch_summary": "out/regress/coverage_20261029_093329_1383247/summary.json",
+  "completed": true,
+  "finished": "2026-10-29T14:34:57.815540-07:00",
+  "finished_utc8": "2026-10-30T05:34:57.815540+08:00",
+  "seconds": 18093.625,
+  "owned_process_identity_count": 369,
+  "all_owned_processes_finished": true,
+  "original_source": "out/t64/20261029_093324_002975/state.json",
+  "original_sha256": "2BE67B7C4EB48320376BC6C03664215F39EC1A879414EDA430FCEF0C6B9984AF",
+  "publication_note": "Native child command lines may contain local user temporary-directory names; full identities remain only in the original local output. This published state omits those child commands."
+}
