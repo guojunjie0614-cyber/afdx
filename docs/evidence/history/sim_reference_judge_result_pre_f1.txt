@@ -1,0 +1,88 @@
+JUDGE CASE PASS services checks=1124 errors=0 warnings=0 elapsed_s=6.577
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=8.289
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=39.574
+JUDGE CASE PASS burst77 checks=643552 errors=0 warnings=0 elapsed_s=3.084
+JUDGE METRIC burst_vls=77 queue_clear_us=959.288 app_last_to_delivery_last_us=959.376
+JUDGE CASE PASS burst81 checks=673500 errors=0 warnings=0 elapsed_s=3.193
+JUDGE METRIC burst_vls=81 queue_clear_us=1008.504 app_last_to_delivery_last_us=1464.592
+JUDGE CASE PASS rtc checks=10675857 errors=0 warnings=0 elapsed_s=259.870
+JUDGE METRIC rtc_idle_max_ns=0 rtc_loaded_max_ns=10788 rtc_77vl_max_ns=10788
+JUDGE CASE PASS performance checks=756655316 errors=0 warnings=0 elapsed_s=2173.962
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es1_to_es2 inject_mbps=906.136 max_e2e_us=36.336 max_e2e_first_us=24.576 jitter_r119_us=0.008 jitter_vl=29 jitter_len=1471 stall_cycles=29106 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es1_to_es2 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1963.664 jitter_margin_us=49.992 lag_max_cycles=1
+JUDGE BASELINE PASS stage=gbe77_d0 direction=es1_to_es2 expected_inject_mbps=906.136 expected_max_e2e_us=36.336 expected_jitter_r119_us=0.008
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es2_to_es1 inject_mbps=906.136 max_e2e_us=36.336 max_e2e_first_us=24.576 jitter_r119_us=0.008 jitter_vl=43 jitter_len=1471 stall_cycles=29106 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es2_to_es1 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1963.664 jitter_margin_us=49.992 lag_max_cycles=1
+JUDGE BASELINE PASS stage=gbe77_d0 direction=es2_to_es1 expected_inject_mbps=906.136 expected_max_e2e_us=36.336 expected_jitter_r119_us=0.008
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es1_to_es2 inject_mbps=906.136 max_e2e_us=38.392 max_e2e_first_us=26.632 jitter_r119_us=0.008 jitter_vl=1 jitter_len=1471 stall_cycles=29106 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es1_to_es2 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1961.608 jitter_margin_us=49.992 lag_max_cycles=1
+JUDGE BASELINE PASS stage=gbe77_d257 direction=es1_to_es2 expected_inject_mbps=906.136 expected_max_e2e_us=38.392 expected_jitter_r119_us=0.008
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es2_to_es1 inject_mbps=906.136 max_e2e_us=38.392 max_e2e_first_us=26.632 jitter_r119_us=0.008 jitter_vl=5 jitter_len=1471 stall_cycles=29106 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es2_to_es1 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1961.608 jitter_margin_us=49.992 lag_max_cycles=1
+JUDGE BASELINE PASS stage=gbe77_d257 direction=es2_to_es1 expected_inject_mbps=906.136 expected_max_e2e_us=38.392 expected_jitter_r119_us=0.008
+JUDGE CASE PASS perf_var checks=1402134376 errors=0 warnings=0 elapsed_s=3287.622
+JUDGE METRIC tb_sys_perf_var stage=var_burst_d0 direction=es1_to_es2 inject_mbps=57.794 max_e2e_us=44.688 max_e2e_first_us=32.928 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=17495 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=0.000 l_tx_max_us=21.040 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=32.736 l_app_last_max_us=32.784 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=172.408 l_release_app_last_max_us=172.536 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_burst_d0 direction=es2_to_es1 inject_mbps=57.794 max_e2e_us=44.792 max_e2e_first_us=33.032 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=17497 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=0.000 l_tx_max_us=21.128 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=32.824 l_app_last_max_us=32.888 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=172.512 l_release_app_last_max_us=172.640 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_burst_d257 direction=es1_to_es2 inject_mbps=57.794 max_e2e_us=46.744 max_e2e_first_us=34.984 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=17495 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=2.056 l_tx_max_us=21.040 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=34.792 l_app_last_max_us=34.840 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=174.464 l_release_app_last_max_us=174.592 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_burst_d257 direction=es2_to_es1 inject_mbps=57.794 max_e2e_us=46.744 max_e2e_first_us=34.984 jitter_r119_us=0.008 jitter_vl=3 jitter_len=1024 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=17495 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=2.056 l_tx_max_us=21.040 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=34.792 l_app_last_max_us=34.840 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=174.464 l_release_app_last_max_us=174.592 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_cycle_d0 direction=es1_to_es2 inject_mbps=70.403 max_e2e_us=36.328 max_e2e_first_us=24.568 jitter_r119_us=9.816 jitter_vl=25 jitter_len=256 stall_cycles=8400 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=70.403 l_gmii_max_us=0.000 l_tx_max_us=12.216 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=12.936 l_app_last_max_us=24.424 jitter_r97_us=9.992 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.576 l_release_app_last_max_us=36.336 jitter_r97_release_us=19.536 tx_interval_jitter_us=6.192
+JUDGE METRIC tb_sys_perf_var stage=var_cycle_d0 direction=es2_to_es1 inject_mbps=70.403 max_e2e_us=36.328 max_e2e_first_us=24.568 jitter_r119_us=9.816 jitter_vl=25 jitter_len=256 stall_cycles=8400 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=70.403 l_gmii_max_us=0.000 l_tx_max_us=12.216 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=12.936 l_app_last_max_us=24.424 jitter_r97_us=9.992 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.576 l_release_app_last_max_us=36.336 jitter_r97_release_us=19.536 tx_interval_jitter_us=6.192
+JUDGE METRIC tb_sys_perf_var stage=var_cycle_d257 direction=es1_to_es2 inject_mbps=70.403 max_e2e_us=38.384 max_e2e_first_us=26.624 jitter_r119_us=9.816 jitter_vl=25 jitter_len=256 stall_cycles=8400 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=70.403 l_gmii_max_us=2.056 l_tx_max_us=12.216 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=14.992 l_app_last_max_us=26.480 jitter_r97_us=9.992 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.632 l_release_app_last_max_us=38.392 jitter_r97_release_us=19.536 tx_interval_jitter_us=6.192
+JUDGE METRIC tb_sys_perf_var stage=var_cycle_d257 direction=es2_to_es1 inject_mbps=70.403 max_e2e_us=38.384 max_e2e_first_us=26.624 jitter_r119_us=9.816 jitter_vl=25 jitter_len=256 stall_cycles=8400 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=70.403 l_gmii_max_us=2.056 l_tx_max_us=12.216 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=14.992 l_app_last_max_us=26.480 jitter_r97_us=9.992 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.632 l_release_app_last_max_us=38.392 jitter_r97_release_us=19.536 tx_interval_jitter_us=6.192
+JUDGE METRIC tb_sys_perf_var stage=var_fixed_d0 direction=es1_to_es2 inject_mbps=57.794 max_e2e_us=36.328 max_e2e_first_us=24.568 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=0.000 l_tx_max_us=0.360 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=12.664 l_app_last_max_us=24.424 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.576 l_release_app_last_max_us=36.336 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_fixed_d0 direction=es2_to_es1 inject_mbps=57.794 max_e2e_us=36.336 max_e2e_first_us=24.576 jitter_r119_us=0.008 jitter_vl=24 jitter_len=1471 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=0.000 l_tx_max_us=0.360 l_rx_max_us=12.360 l_rx_last_max_us=24.120 l_app_max_us=12.672 l_app_last_max_us=24.432 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.584 l_release_app_last_max_us=36.344 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_fixed_d257 direction=es1_to_es2 inject_mbps=57.794 max_e2e_us=38.384 max_e2e_first_us=26.624 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=2.056 l_tx_max_us=0.360 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=14.720 l_app_last_max_us=26.480 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.632 l_release_app_last_max_us=38.392 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_fixed_d257 direction=es2_to_es1 inject_mbps=57.794 max_e2e_us=38.384 max_e2e_first_us=26.624 jitter_r119_us=0.008 jitter_vl=3 jitter_len=1024 stall_cycles=7344 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=57.794 l_gmii_max_us=2.056 l_tx_max_us=0.360 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=14.720 l_app_last_max_us=26.480 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.632 l_release_app_last_max_us=38.392 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_high_d0 direction=es1_to_es2 inject_mbps=904.752 max_e2e_us=36.336 max_e2e_first_us=24.576 jitter_r119_us=0.008 jitter_vl=50 jitter_len=1471 stall_cycles=27840 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=904.752 l_gmii_max_us=0.000 l_tx_max_us=12.016 l_rx_max_us=12.360 l_rx_last_max_us=24.120 l_app_max_us=23.872 l_app_last_max_us=24.432 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.584 l_release_app_last_max_us=36.344 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_high_d0 direction=es2_to_es1 inject_mbps=904.752 max_e2e_us=36.328 max_e2e_first_us=24.568 jitter_r119_us=0.000 jitter_vl=0 jitter_len=1 stall_cycles=27840 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=904.752 l_gmii_max_us=0.000 l_tx_max_us=12.016 l_rx_max_us=12.352 l_rx_last_max_us=24.112 l_app_max_us=23.872 l_app_last_max_us=24.424 jitter_r97_us=0.000 jitter_r97_gmii_us=0.000 l_release_app_max_us=24.576 l_release_app_last_max_us=36.336 jitter_r97_release_us=0.000 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_high_d257 direction=es1_to_es2 inject_mbps=904.752 max_e2e_us=38.392 max_e2e_first_us=26.632 jitter_r119_us=0.008 jitter_vl=15 jitter_len=1471 stall_cycles=27840 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=904.752 l_gmii_max_us=2.056 l_tx_max_us=12.016 l_rx_max_us=12.360 l_rx_last_max_us=24.120 l_app_max_us=25.928 l_app_last_max_us=26.488 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.640 l_release_app_last_max_us=38.400 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE METRIC tb_sys_perf_var stage=var_high_d257 direction=es2_to_es1 inject_mbps=904.752 max_e2e_us=38.392 max_e2e_first_us=26.632 jitter_r119_us=0.008 jitter_vl=45 jitter_len=1471 stall_cycles=27840 stall_maxrun=6 lag_max_cycles=1 dropped=0 duplicate=0 overflow=0 delivered_mbps=904.752 l_gmii_max_us=2.056 l_tx_max_us=12.016 l_rx_max_us=12.360 l_rx_last_max_us=24.120 l_app_max_us=25.928 l_app_last_max_us=26.488 jitter_r97_us=0.008 jitter_r97_gmii_us=0.000 l_release_app_max_us=26.640 l_release_app_last_max_us=38.400 jitter_r97_release_us=0.008 tx_interval_jitter_us=0.000
+JUDGE REQUIREMENT PASS stage=var_burst_d0 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_burst_d0 direction=es1_to_es2 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_burst_d0 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_burst_d0 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_burst_d0 direction=es2_to_es1 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_burst_d0 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_burst_d257 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_burst_d257 direction=es1_to_es2 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_burst_d257 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_burst_d257 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_burst_d257 direction=es2_to_es1 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_burst_d257 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_cycle_d0 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_cycle_d0 direction=es1_to_es2 inject_mbps=70.403 delivered_mbps=70.403
+JUDGE JITTER REPORT stage=var_cycle_d0 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_cycle_d0 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_cycle_d0 direction=es2_to_es1 inject_mbps=70.403 delivered_mbps=70.403
+JUDGE JITTER REPORT stage=var_cycle_d0 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_cycle_d257 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_cycle_d257 direction=es1_to_es2 inject_mbps=70.403 delivered_mbps=70.403
+JUDGE JITTER REPORT stage=var_cycle_d257 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_cycle_d257 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_cycle_d257 direction=es2_to_es1 inject_mbps=70.403 delivered_mbps=70.403
+JUDGE JITTER REPORT stage=var_cycle_d257 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_fixed_d0 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_fixed_d0 direction=es1_to_es2 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_fixed_d0 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_fixed_d0 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_fixed_d0 direction=es2_to_es1 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_fixed_d0 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_fixed_d257 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_fixed_d257 direction=es1_to_es2 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_fixed_d257 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_fixed_d257 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT REPORT stage=var_fixed_d257 direction=es2_to_es1 inject_mbps=57.794 delivered_mbps=57.794
+JUDGE JITTER REPORT stage=var_fixed_d257 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_high_d0 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT PASS stage=var_high_d0 direction=es1_to_es2 inject_mbps=904.752 delivered_mbps=904.752
+JUDGE JITTER REPORT stage=var_high_d0 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_high_d0 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT PASS stage=var_high_d0 direction=es2_to_es1 inject_mbps=904.752 delivered_mbps=904.752
+JUDGE JITTER REPORT stage=var_high_d0 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_high_d257 direction=es1_to_es2 max_e2e_us=2000
+JUDGE THROUGHPUT PASS stage=var_high_d257 direction=es1_to_es2 inject_mbps=904.752 delivered_mbps=904.752
+JUDGE JITTER REPORT stage=var_high_d257 direction=es1_to_es2 policy=no_failure_threshold
+JUDGE REQUIREMENT PASS stage=var_high_d257 direction=es2_to_es1 max_e2e_us=2000
+JUDGE THROUGHPUT PASS stage=var_high_d257 direction=es2_to_es1 inject_mbps=904.752 delivered_mbps=904.752
+JUDGE JITTER REPORT stage=var_high_d257 direction=es2_to_es1 policy=no_failure_threshold
+JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=5801.362 output_mib=1017.7

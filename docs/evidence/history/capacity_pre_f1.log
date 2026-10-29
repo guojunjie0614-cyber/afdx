@@ -1,0 +1,157 @@
+Reading pref.tcl
+
+# 2020.4
+
+# vsim -c tb_judge_capacity -wlf simulation.wlf -do "do run.do" 
+# Start time: 10:09:50 on Oct 14,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_judge_capacity(fast)
+# Loading work.AFDX_top(fast)
+# do run.do
+# [CAPACITY] tx_vl=0 rx_index=0 both_directions=PASS
+# [CAPACITY] tx_vl=1 rx_index=32 both_directions=PASS
+# [CAPACITY] tx_vl=2 rx_index=64 both_directions=PASS
+# [CAPACITY] tx_vl=3 rx_index=96 both_directions=PASS
+# [CAPACITY] tx_vl=4 rx_index=128 both_directions=PASS
+# [CAPACITY] tx_vl=5 rx_index=160 both_directions=PASS
+# [CAPACITY] tx_vl=6 rx_index=192 both_directions=PASS
+# [CAPACITY] tx_vl=7 rx_index=224 both_directions=PASS
+# [CAPACITY] tx_vl=8 rx_index=256 both_directions=PASS
+# [CAPACITY] tx_vl=9 rx_index=288 both_directions=PASS
+# [CAPACITY] tx_vl=10 rx_index=320 both_directions=PASS
+# [CAPACITY] tx_vl=11 rx_index=352 both_directions=PASS
+# [CAPACITY] tx_vl=12 rx_index=384 both_directions=PASS
+# [CAPACITY] tx_vl=13 rx_index=416 both_directions=PASS
+# [CAPACITY] tx_vl=14 rx_index=448 both_directions=PASS
+# [CAPACITY] tx_vl=15 rx_index=480 both_directions=PASS
+# [CAPACITY] tx_vl=16 rx_index=512 both_directions=PASS
+# [CAPACITY] tx_vl=17 rx_index=544 both_directions=PASS
+# [CAPACITY] tx_vl=18 rx_index=576 both_directions=PASS
+# [CAPACITY] tx_vl=19 rx_index=608 both_directions=PASS
+# [CAPACITY] tx_vl=20 rx_index=640 both_directions=PASS
+# [CAPACITY] tx_vl=21 rx_index=672 both_directions=PASS
+# [CAPACITY] tx_vl=22 rx_index=704 both_directions=PASS
+# [CAPACITY] tx_vl=23 rx_index=736 both_directions=PASS
+# [CAPACITY] tx_vl=24 rx_index=768 both_directions=PASS
+# [CAPACITY] tx_vl=25 rx_index=800 both_directions=PASS
+# [CAPACITY] tx_vl=26 rx_index=832 both_directions=PASS
+# [CAPACITY] tx_vl=27 rx_index=864 both_directions=PASS
+# [CAPACITY] tx_vl=28 rx_index=896 both_directions=PASS
+# [CAPACITY] tx_vl=29 rx_index=928 both_directions=PASS
+# [CAPACITY] tx_vl=30 rx_index=960 both_directions=PASS
+# [CAPACITY] tx_vl=31 rx_index=992 both_directions=PASS
+# [CAPACITY] tx_vl=32 rx_index=1024 both_directions=PASS
+# [CAPACITY] tx_vl=33 rx_index=1056 both_directions=PASS
+# [CAPACITY] tx_vl=34 rx_index=1088 both_directions=PASS
+# [CAPACITY] tx_vl=35 rx_index=1120 both_directions=PASS
+# [CAPACITY] tx_vl=36 rx_index=1152 both_directions=PASS
+# [CAPACITY] tx_vl=37 rx_index=1184 both_directions=PASS
+# [CAPACITY] tx_vl=38 rx_index=1216 both_directions=PASS
+# [CAPACITY] tx_vl=39 rx_index=1248 both_directions=PASS
+# [CAPACITY] tx_vl=40 rx_index=1280 both_directions=PASS
+# [CAPACITY] tx_vl=41 rx_index=1312 both_directions=PASS
+# [CAPACITY] tx_vl=42 rx_index=1344 both_directions=PASS
+# [CAPACITY] tx_vl=43 rx_index=1376 both_directions=PASS
+# [CAPACITY] tx_vl=44 rx_index=1408 both_directions=PASS
+# [CAPACITY] tx_vl=45 rx_index=1440 both_directions=PASS
+# [CAPACITY] tx_vl=46 rx_index=1472 both_directions=PASS
+# [CAPACITY] tx_vl=47 rx_index=1504 both_directions=PASS
+# [CAPACITY] tx_vl=48 rx_index=1536 both_directions=PASS
+# [CAPACITY] tx_vl=49 rx_index=1568 both_directions=PASS
+# [CAPACITY] tx_vl=50 rx_index=1600 both_directions=PASS
+# [CAPACITY] tx_vl=51 rx_index=1632 both_directions=PASS
+# [CAPACITY] tx_vl=52 rx_index=1664 both_directions=PASS
+# [CAPACITY] tx_vl=53 rx_index=1696 both_directions=PASS
+# [CAPACITY] tx_vl=54 rx_index=1728 both_directions=PASS
+# [CAPACITY] tx_vl=55 rx_index=1760 both_directions=PASS
+# [CAPACITY] tx_vl=56 rx_index=1792 both_directions=PASS
+# [CAPACITY] tx_vl=57 rx_index=1824 both_directions=PASS
+# [CAPACITY] tx_vl=58 rx_index=1856 both_directions=PASS
+# [CAPACITY] tx_vl=59 rx_index=1888 both_directions=PASS
+# [CAPACITY] tx_vl=60 rx_index=1920 both_directions=PASS
+# [CAPACITY] tx_vl=61 rx_index=1952 both_directions=PASS
+# [CAPACITY] tx_vl=62 rx_index=1984 both_directions=PASS
+# [CAPACITY] tx_vl=63 rx_index=2016 both_directions=PASS
+# [CAPACITY] tx_vl=64 rx_index=2048 both_directions=PASS
+# [CAPACITY] tx_vl=65 rx_index=2080 both_directions=PASS
+# [CAPACITY] tx_vl=66 rx_index=2112 both_directions=PASS
+# [CAPACITY] tx_vl=67 rx_index=2144 both_directions=PASS
+# [CAPACITY] tx_vl=68 rx_index=2176 both_directions=PASS
+# [CAPACITY] tx_vl=69 rx_index=2208 both_directions=PASS
+# [CAPACITY] tx_vl=70 rx_index=2240 both_directions=PASS
+# [CAPACITY] tx_vl=71 rx_index=2272 both_directions=PASS
+# [CAPACITY] tx_vl=72 rx_index=2304 both_directions=PASS
+# [CAPACITY] tx_vl=73 rx_index=2336 both_directions=PASS
+# [CAPACITY] tx_vl=74 rx_index=2368 both_directions=PASS
+# [CAPACITY] tx_vl=75 rx_index=2400 both_directions=PASS
+# [CAPACITY] tx_vl=76 rx_index=2432 both_directions=PASS
+# [CAPACITY] tx_vl=77 rx_index=2464 both_directions=PASS
+# [CAPACITY] tx_vl=78 rx_index=2496 both_directions=PASS
+# [CAPACITY] tx_vl=79 rx_index=2528 both_directions=PASS
+# [CAPACITY] tx_vl=80 rx_index=2560 both_directions=PASS
+# [CAPACITY] tx_vl=81 rx_index=2592 both_directions=PASS
+# [CAPACITY] tx_vl=82 rx_index=2624 both_directions=PASS
+# [CAPACITY] tx_vl=83 rx_index=2656 both_directions=PASS
+# [CAPACITY] tx_vl=84 rx_index=2688 both_directions=PASS
+# [CAPACITY] tx_vl=85 rx_index=2720 both_directions=PASS
+# [CAPACITY] tx_vl=86 rx_index=2752 both_directions=PASS
+# [CAPACITY] tx_vl=87 rx_index=2784 both_directions=PASS
+# [CAPACITY] tx_vl=88 rx_index=2816 both_directions=PASS
+# [CAPACITY] tx_vl=89 rx_index=2848 both_directions=PASS
+# [CAPACITY] tx_vl=90 rx_index=2880 both_directions=PASS
+# [CAPACITY] tx_vl=91 rx_index=2912 both_directions=PASS
+# [CAPACITY] tx_vl=92 rx_index=2944 both_directions=PASS
+# [CAPACITY] tx_vl=93 rx_index=2976 both_directions=PASS
+# [CAPACITY] tx_vl=94 rx_index=3008 both_directions=PASS
+# [CAPACITY] tx_vl=95 rx_index=3040 both_directions=PASS
+# [CAPACITY] tx_vl=96 rx_index=3072 both_directions=PASS
+# [CAPACITY] tx_vl=97 rx_index=3104 both_directions=PASS
+# [CAPACITY] tx_vl=98 rx_index=3136 both_directions=PASS
+# [CAPACITY] tx_vl=99 rx_index=3168 both_directions=PASS
+# [CAPACITY] tx_vl=100 rx_index=3200 both_directions=PASS
+# [CAPACITY] tx_vl=101 rx_index=3232 both_directions=PASS
+# [CAPACITY] tx_vl=102 rx_index=3264 both_directions=PASS
+# [CAPACITY] tx_vl=103 rx_index=3296 both_directions=PASS
+# [CAPACITY] tx_vl=104 rx_index=3328 both_directions=PASS
+# [CAPACITY] tx_vl=105 rx_index=3360 both_directions=PASS
+# [CAPACITY] tx_vl=106 rx_index=3392 both_directions=PASS
+# [CAPACITY] tx_vl=107 rx_index=3424 both_directions=PASS
+# [CAPACITY] tx_vl=108 rx_index=3456 both_directions=PASS
+# [CAPACITY] tx_vl=109 rx_index=3488 both_directions=PASS
+# [CAPACITY] tx_vl=110 rx_index=3520 both_directions=PASS
+# [CAPACITY] tx_vl=111 rx_index=3552 both_directions=PASS
+# [CAPACITY] tx_vl=112 rx_index=3584 both_directions=PASS
+# [CAPACITY] tx_vl=113 rx_index=3616 both_directions=PASS
+# [CAPACITY] tx_vl=114 rx_index=3648 both_directions=PASS
+# [CAPACITY] tx_vl=115 rx_index=3680 both_directions=PASS
+# [CAPACITY] tx_vl=116 rx_index=3712 both_directions=PASS
+# [CAPACITY] tx_vl=117 rx_index=3744 both_directions=PASS
+# [CAPACITY] tx_vl=118 rx_index=3776 both_directions=PASS
+# [CAPACITY] tx_vl=119 rx_index=3808 both_directions=PASS
+# [CAPACITY] tx_vl=120 rx_index=3840 both_directions=PASS
+# [CAPACITY] tx_vl=121 rx_index=3872 both_directions=PASS
+# [CAPACITY] tx_vl=122 rx_index=3904 both_directions=PASS
+# [CAPACITY] tx_vl=123 rx_index=3936 both_directions=PASS
+# [CAPACITY] tx_vl=124 rx_index=3968 both_directions=PASS
+# [CAPACITY] tx_vl=125 rx_index=4000 both_directions=PASS
+# [CAPACITY] tx_vl=126 rx_index=4032 both_directions=PASS
+# [CAPACITY] tx_vl=127 rx_index=4095 both_directions=PASS
+# [CAPACITY_SUMMARY] tx_vls_each=128 rx_configured_each=4096 rx_sampled_each=128 first=0 last=4095
+# [RESULT] tb_judge_capacity PASS checks=49924 errors=0
+# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_submit/tb/tb_judge_capacity.v(65)
+#    Time: 1133465 ns  Iteration: 0  Instance: /tb_judge_capacity
+# End time: 10:09:52 on Oct 14,2026, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 0

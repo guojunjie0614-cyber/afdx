@@ -1,0 +1,217 @@
+{
+  "status": "prepared_awaiting_user_gui",
+  "static": {
+    "task": "T63-F1 round2",
+    "verification_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+    "static_dual_file_equivalence": true,
+    "constraint_project_files": [
+      "elinx/physical_only.edc",
+      "elinx/timing_only.sdc"
+    ],
+    "pres": "1.30",
+    "pins": 172,
+    "clusters": 5540,
+    "timing_sha256": "2407B35FF877A5FA35EEA81BD0C43D187BE46F9E2789A7924DCD328123625D31",
+    "constraint_self_check": {
+      "passed": true,
+      "tests": [
+        {
+          "case": "approved_P1.30",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.40",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.45",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.50",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.55",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.60",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "approved_P1.70",
+          "accepted": true,
+          "expected": true,
+          "passed": true,
+          "detail": "exact approved program; pure SDC contains no physical commands"
+        },
+        {
+          "case": "period_changed",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "uncertainty_changed",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "multicycle_changed",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "unknown_exception",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "missing_pin",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "misspelled_port",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "unapproved_region",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "unapproved_tile",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "tile_missing",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "tile_moved",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        },
+        {
+          "case": "tile_duplicated",
+          "accepted": false,
+          "expected": false,
+          "passed": true,
+          "detail": "Constraint program differs from exact approved timing/PRES/P0 set"
+        }
+      ],
+      "pins": 172,
+      "tiles": 5540,
+      "region_tile_policy": "regions not admitted; tiles exactly the frozen T63 lock"
+    },
+    "actual_gui_generated_psf_verified": null,
+    "actual_gui_log_verified": null,
+    "actual_gui_placement_verified": null,
+    "gui_status": "awaiting_user_gui"
+  },
+  "environment_ini_sha256": "7E422BFDEFF00251F622B24EE3B1A2E9C1B54CBD52E4BD3CEE31E9B74783C5AD",
+  "comparator_self_test": {
+    "passed": true,
+    "tests": [
+      {
+        "case": "matching_cli_fixture",
+        "passed": true,
+        "failed_checks": []
+      },
+      {
+        "case": "setup_changed",
+        "passed": true
+      },
+      {
+        "case": "hold_changed",
+        "passed": true
+      },
+      {
+        "case": "endpoint_count_changed",
+        "passed": true
+      },
+      {
+        "case": "placement_changed",
+        "passed": true
+      },
+      {
+        "case": "cluster_missing",
+        "passed": true
+      },
+      {
+        "case": "pin_missing",
+        "passed": true
+      },
+      {
+        "case": "circuit_changed",
+        "passed": true
+      },
+      {
+        "case": "constraint_changed",
+        "passed": true
+      },
+      {
+        "case": "stale_artifacts",
+        "passed": true
+      },
+      {
+        "case": "missing_artifacts",
+        "passed": true
+      },
+      {
+        "case": "physical_commands_read_as_sdc",
+        "passed": true
+      }
+    ],
+    "fixture": "CLI outputs only; no GUI started or validated"
+  },
+  "comparator_script": "tools/t63_verify_gui.py",
+  "comparator_script_sha256": "5F161E487E18A80319BF2AE0534DA94A02430B53DF8EF17AEB34C9B0DC3A3DEC",
+  "steps": "docs/T63_F1_GUI.md",
+  "steps_sha256": "B7E92A969CD5853795A7C7375B4158F443208824CE9A4D2045EAD452DAB5B3BF",
+  "actual_gui_generated_psf_verified": null,
+  "actual_gui_log_verified": null,
+  "actual_gui_placement_verified": null
+}

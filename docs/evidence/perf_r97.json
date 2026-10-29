@@ -1,12 +1,14 @@
 {
-  "measurement_date": "2026-10-27",
-  "source_commit": "b5658983",
-  "executed_head": "b5658983",
+  "measurement_date": "2026-10-28",
+  "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+  "executed_head": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
   "environment": {
-    "simulator": "ModelSim SE-64 2020.4",
-    "mode": "vsim -batch",
+    "modelsim": "SE-64 2020.4; native compile logs retained",
+    "elinx": "3.0.7",
+    "python": "3.12.7",
     "clock_ns": 8,
-    "ce_div": 2
+    "CE_DIV": 2,
+    "mapping": "Official Quartus II analysis/export; original VQM and adapter audit retained"
   },
   "units": {
     "time": "us = cycles * 0.008",
@@ -18,14 +20,14 @@
     "latency_first": "first app_tx valid cycle -> first delivered byte (L_entry_first)",
     "jitter": "R119-2: max-min of L_entry_last inside one (VL, identical frame length) group, maximum over groups",
     "injection": "R120-1: payload bytes handshaken at the application transmit port inside the window / window duration",
-    "injection_judgement": "inject >= 100 Mbps, dropped = overflow = duplicate = 0, first-valid lag behind the planned release <= 1471 cycles (one maximum message)",
+    "injection_judgement": "inject >=100 Mbps where gated, dropped=overflow=duplicate=0, first-valid lag <=1471 cycles; var_burst uses max(planned release, previous message final input byte +1), all other stages use planned release; raw planned-release lag is retained separately",
     "legacy_superseded": "L_gmii (GMII SFD to SFD) and L_app/L_app_last (application last-byte submission) are kept as supplements; the R97-1 GMII definition was replaced by R119",
     "window": "gbe77/var_* use the F begin/end window of each stage; the application entry default uses 1000..4000 us"
   },
   "policy": {
     "approved_by_user": true,
     "latency": "L_entry_last <= 2000 us for every measured frame, including warmup and drain",
-    "jitter": "report only in var_* stages; the 50 us line is the project's historical reference, not an official limit",
+    "jitter": "Each var_* value is reported and checked against the project checker line of 50 us; this is not an official upper limit",
     "throughput": "R120-1 gates at 100 Mbps at the application transmit port; var_high and the app entry must pass, other var_* stages report the offered load",
     "resources": "R122: resource usage is not scored"
   },
@@ -36,33 +38,27 @@
       "throughput_mbps": 906.136,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 906.136,
-      "stall_cycles": 29106,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1617,
-        "min": 36.328,
-        "max": 36.336,
+        "min": 48.28,
+        "max": 48.288,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_entry_first": {
         "samples": 1617,
-        "min": 24.568,
-        "max": 24.576,
+        "min": 36.504,
+        "max": 36.512,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "29",
-        "length": "1471",
-        "min_frame": "1184",
-        "max_frame": "1954"
       },
       "L_gmii": {
         "samples": 1617,
@@ -75,8 +71,8 @@
       },
       "L_tx": {
         "samples": 1617,
-        "min": 0.312,
-        "max": 0.312,
+        "min": 12.312,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "1155",
@@ -84,57 +80,64 @@
       },
       "L_rx": {
         "samples": 1617,
-        "min": 12.352,
-        "max": 12.36,
+        "min": 12.432,
+        "max": 12.44,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_rx_last": {
         "samples": 1617,
-        "min": 24.112,
-        "max": 24.12,
+        "min": 24.192,
+        "max": 24.2,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_app": {
         "samples": 1617,
-        "min": 12.664,
-        "max": 12.672,
+        "min": 24.744,
+        "max": 24.752,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_app_last": {
         "samples": 1617,
-        "min": 24.424,
-        "max": 24.432,
+        "min": 36.504,
+        "max": 36.512,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_release_app": {
         "samples": 1617,
-        "min": 24.576,
-        "max": 24.584,
+        "min": 36.536,
+        "max": 36.544,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
       },
       "L_release_app_last": {
         "samples": 1617,
-        "min": 36.336,
-        "max": 36.344,
+        "min": 48.296,
+        "max": 48.304,
         "jitter": 0.008,
-        "vl": "29",
-        "min_frame": "1184",
-        "max_frame": "1954"
+        "vl": "5",
+        "min_frame": "1160",
+        "max_frame": "2392"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "5",
+        "length": "1471",
+        "min_frame": "1160",
+        "max_frame": "2392"
       }
     },
     {
@@ -143,33 +146,27 @@
       "throughput_mbps": 906.136,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 906.136,
-      "stall_cycles": 29106,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1617,
-        "min": 36.328,
-        "max": 36.336,
+        "min": 48.28,
+        "max": 48.288,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_entry_first": {
         "samples": 1617,
-        "min": 24.568,
-        "max": 24.576,
+        "min": 36.504,
+        "max": 36.512,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "43",
-        "length": "1471",
-        "min_frame": "738",
-        "max_frame": "1277"
       },
       "L_gmii": {
         "samples": 1617,
@@ -182,8 +179,8 @@
       },
       "L_tx": {
         "samples": 1617,
-        "min": 0.312,
-        "max": 0.312,
+        "min": 12.312,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "695",
@@ -191,57 +188,64 @@
       },
       "L_rx": {
         "samples": 1617,
-        "min": 12.352,
-        "max": 12.36,
+        "min": 12.432,
+        "max": 12.44,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_rx_last": {
         "samples": 1617,
-        "min": 24.112,
-        "max": 24.12,
+        "min": 24.192,
+        "max": 24.2,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_app": {
         "samples": 1617,
-        "min": 12.664,
-        "max": 12.672,
+        "min": 24.744,
+        "max": 24.752,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_app_last": {
         "samples": 1617,
-        "min": 24.424,
-        "max": 24.432,
+        "min": 36.504,
+        "max": 36.512,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_release_app": {
         "samples": 1617,
-        "min": 24.576,
-        "max": 24.584,
+        "min": 36.536,
+        "max": 36.544,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
       },
       "L_release_app_last": {
         "samples": 1617,
-        "min": 36.336,
-        "max": 36.344,
+        "min": 48.296,
+        "max": 48.304,
         "jitter": 0.008,
-        "vl": "43",
-        "min_frame": "738",
-        "max_frame": "1277"
+        "vl": "3",
+        "min_frame": "698",
+        "max_frame": "1006"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "3",
+        "length": "1471",
+        "min_frame": "698",
+        "max_frame": "1006"
       }
     },
     {
@@ -250,33 +254,27 @@
       "throughput_mbps": 906.136,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 906.136,
-      "stall_cycles": 29106,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1617,
-        "min": 38.384,
-        "max": 38.392,
+        "min": 50.336,
+        "max": 50.344,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_entry_first": {
         "samples": 1617,
-        "min": 26.624,
-        "max": 26.632,
+        "min": 38.56,
+        "max": 38.568,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "1",
-        "length": "1471",
-        "min_frame": "2927",
-        "max_frame": "4467"
       },
       "L_gmii": {
         "samples": 1617,
@@ -289,8 +287,8 @@
       },
       "L_tx": {
         "samples": 1617,
-        "min": 0.312,
-        "max": 0.312,
+        "min": 12.312,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "2926",
@@ -298,57 +296,64 @@
       },
       "L_rx": {
         "samples": 1617,
-        "min": 12.352,
-        "max": 12.36,
+        "min": 12.432,
+        "max": 12.44,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_rx_last": {
         "samples": 1617,
-        "min": 24.112,
-        "max": 24.12,
+        "min": 24.192,
+        "max": 24.2,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_app": {
         "samples": 1617,
-        "min": 14.72,
-        "max": 14.728,
+        "min": 26.8,
+        "max": 26.808,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_app_last": {
         "samples": 1617,
-        "min": 26.48,
-        "max": 26.488,
+        "min": 38.56,
+        "max": 38.568,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_release_app": {
         "samples": 1617,
-        "min": 26.632,
-        "max": 26.64,
+        "min": 38.592,
+        "max": 38.6,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
       },
       "L_release_app_last": {
         "samples": 1617,
-        "min": 38.392,
-        "max": 38.4,
+        "min": 50.352,
+        "max": 50.36,
         "jitter": 0.008,
-        "vl": "1",
-        "min_frame": "2927",
-        "max_frame": "4467"
+        "vl": "51",
+        "min_frame": "2977",
+        "max_frame": "4132"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "51",
+        "length": "1471",
+        "min_frame": "2977",
+        "max_frame": "4132"
       }
     },
     {
@@ -357,33 +362,27 @@
       "throughput_mbps": 906.136,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 906.136,
-      "stall_cycles": 29106,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1617,
-        "min": 38.384,
-        "max": 38.392,
+        "min": 50.336,
+        "max": 50.344,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_entry_first": {
         "samples": 1617,
-        "min": 26.624,
-        "max": 26.632,
+        "min": 38.56,
+        "max": 38.568,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "5",
-        "length": "1471",
-        "min_frame": "2471",
-        "max_frame": "3626"
       },
       "L_gmii": {
         "samples": 1617,
@@ -396,8 +395,8 @@
       },
       "L_tx": {
         "samples": 1617,
-        "min": 0.312,
-        "max": 0.312,
+        "min": 12.312,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "2466",
@@ -405,413 +404,309 @@
       },
       "L_rx": {
         "samples": 1617,
-        "min": 12.352,
-        "max": 12.36,
+        "min": 12.432,
+        "max": 12.44,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_rx_last": {
         "samples": 1617,
-        "min": 24.112,
-        "max": 24.12,
+        "min": 24.192,
+        "max": 24.2,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_app": {
         "samples": 1617,
-        "min": 14.72,
-        "max": 14.728,
+        "min": 26.8,
+        "max": 26.808,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_app_last": {
         "samples": 1617,
-        "min": 26.48,
-        "max": 26.488,
+        "min": 38.56,
+        "max": 38.568,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_release_app": {
         "samples": 1617,
-        "min": 26.632,
-        "max": 26.64,
+        "min": 38.592,
+        "max": 38.6,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "L_release_app_last": {
         "samples": 1617,
-        "min": 38.392,
-        "max": 38.4,
+        "min": 50.352,
+        "max": 50.36,
         "jitter": 0.008,
-        "vl": "5",
-        "min_frame": "2471",
-        "max_frame": "3626"
-      }
-    },
-    {
-      "stage": "var_burst_d0",
-      "direction": "es1_to_es2",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "17495",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 44.688,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 32.928,
-        "jitter": 0.0
-      },
-      "jitter_r119": {
-        "max": 0.0,
-        "vl": "0",
-        "length": "1",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_gmii": {
-        "samples": 960,
-        "min": 0.0,
-        "max": 0.0,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_tx": {
-        "samples": 960,
-        "min": 0.312,
-        "max": 21.04,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_rx": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_rx_last": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_app": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 32.736,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_app_last": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 32.784,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_release_app": {
-        "samples": 960,
-        "min": 1.088,
-        "max": 172.408,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_release_app_last": {
-        "samples": 960,
-        "min": 1.088,
-        "max": 172.536,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      }
-    },
-    {
-      "stage": "var_burst_d0",
-      "direction": "es2_to_es1",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "17497",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 44.792,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 33.032,
-        "jitter": 0.0
-      },
-      "jitter_r119": {
-        "max": 0.0,
-        "vl": "0",
-        "length": "1",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_gmii": {
-        "samples": 960,
-        "min": 0.0,
-        "max": 0.0,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_tx": {
-        "samples": 960,
-        "min": 0.312,
-        "max": 21.128,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_rx": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_rx_last": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_app": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 32.824,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_app_last": {
-        "samples": 960,
-        "min": 1.08,
-        "max": 32.888,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_release_app": {
-        "samples": 960,
-        "min": 1.088,
-        "max": 172.512,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      },
-      "L_release_app_last": {
-        "samples": 960,
-        "min": 1.088,
-        "max": 172.64,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "8561",
-        "max_frame": "8561"
-      }
-    },
-    {
-      "stage": "var_burst_d257",
-      "direction": "es1_to_es2",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "17495",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 46.744,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 34.984,
-        "jitter": 0.0
-      },
-      "jitter_r119": {
-        "max": 0.0,
-        "vl": "0",
-        "length": "1",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_gmii": {
-        "samples": 960,
-        "min": 2.056,
-        "max": 2.056,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_tx": {
-        "samples": 960,
-        "min": 0.312,
-        "max": 21.04,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_rx": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_rx_last": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_app": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 34.792,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_app_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 34.84,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_release_app": {
-        "samples": 960,
-        "min": 3.144,
-        "max": 174.464,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      },
-      "L_release_app_last": {
-        "samples": 960,
-        "min": 3.144,
-        "max": 174.592,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "9761",
-        "max_frame": "9761"
-      }
-    },
-    {
-      "stage": "var_burst_d257",
-      "direction": "es2_to_es1",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "17495",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 46.744,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 34.984,
-        "jitter": 0.008
+        "vl": "49",
+        "min_frame": "2515",
+        "max_frame": "2746"
       },
       "jitter_r119": {
         "max": 0.008,
-        "vl": "3",
-        "length": "1024",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "vl": "49",
+        "length": "1471",
+        "min_frame": "2515",
+        "max_frame": "2746"
+      }
+    },
+    {
+      "stage": "var_burst_d0",
+      "direction": "es1_to_es2",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "16741",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 1.272,
+        "max": 61.52,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.76,
+        "jitter": 0.0
+      },
+      "L_gmii": {
+        "samples": 960,
+        "min": 0.0,
+        "max": 0.0,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_tx": {
+        "samples": 960,
+        "min": 0.456,
+        "max": 38.32,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_rx": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_rx_last": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_app": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.752,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_app_last": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.76,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_release_app": {
+        "samples": 960,
+        "min": 1.288,
+        "max": 183.704,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_release_app_last": {
+        "samples": 960,
+        "min": 1.288,
+        "max": 183.832,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "jitter_r119": {
+        "max": 0.0,
+        "vl": "0",
+        "length": "1",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      }
+    },
+    {
+      "stage": "var_burst_d0",
+      "direction": "es2_to_es1",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "16741",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 1.272,
+        "max": 61.52,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.76,
+        "jitter": 0.008
+      },
+      "L_gmii": {
+        "samples": 960,
+        "min": 0.0,
+        "max": 0.0,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_tx": {
+        "samples": 960,
+        "min": 0.456,
+        "max": 38.32,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "8561"
+      },
+      "L_rx": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_rx_last": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_app": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.752,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_app_last": {
+        "samples": 960,
+        "min": 1.256,
+        "max": 49.76,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_release_app": {
+        "samples": 960,
+        "min": 1.288,
+        "max": 183.704,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "L_release_app_last": {
+        "samples": 960,
+        "min": 1.288,
+        "max": 183.832,
+        "jitter": 0.008,
+        "vl": "0",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "0",
+        "length": "1",
+        "min_frame": "8561",
+        "max_frame": "9161"
+      }
+    },
+    {
+      "stage": "var_burst_d257",
+      "direction": "es1_to_es2",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "16741",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 3.328,
+        "max": 63.576,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 51.816,
+        "jitter": 0.0
       },
       "L_gmii": {
         "samples": 960,
@@ -824,8 +719,8 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 21.04,
+        "min": 0.456,
+        "max": 38.32,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "9761",
@@ -833,92 +728,201 @@
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
       },
       "L_app": {
         "samples": 960,
-        "min": 3.136,
-        "max": 34.792,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 3.312,
+        "max": 51.808,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 3.136,
-        "max": 34.84,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 3.312,
+        "max": 51.816,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 3.144,
-        "max": 174.464,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 3.344,
+        "max": 185.76,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 3.144,
-        "max": 174.592,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "9764",
-        "max_frame": "10604"
+        "min": 3.344,
+        "max": 185.888,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "jitter_r119": {
+        "max": 0.0,
+        "vl": "0",
+        "length": "1",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      }
+    },
+    {
+      "stage": "var_burst_d257",
+      "direction": "es2_to_es1",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "16741",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 3.328,
+        "max": 63.576,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 51.816,
+        "jitter": 0.0
+      },
+      "L_gmii": {
+        "samples": 960,
+        "min": 2.056,
+        "max": 2.056,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_tx": {
+        "samples": 960,
+        "min": 0.456,
+        "max": 38.32,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_rx": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_rx_last": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_app": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 51.808,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_app_last": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 51.816,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_release_app": {
+        "samples": 960,
+        "min": 3.344,
+        "max": 185.76,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "L_release_app_last": {
+        "samples": 960,
+        "min": 3.344,
+        "max": 185.888,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "9761",
+        "max_frame": "9761"
+      },
+      "jitter_r119": {
+        "max": 0.0,
+        "vl": "0",
+        "length": "1",
+        "min_frame": "9761",
+        "max_frame": "9761"
       }
     },
     {
       "stage": "var_cycle_d0",
       "direction": "es1_to_es2",
       "throughput_mbps": 70.403,
-      "tx_interval_deviation_us": 6.192,
+      "tx_interval_deviation_us": 12.336,
       "inject_mbps": 70.403,
-      "stall_cycles": 8400,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 7.072,
-        "max": 36.328,
-        "jitter": 29.256,
+        "min": 9.304,
+        "max": 48.28,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 5.032,
-        "max": 24.568,
-        "jitter": 19.536
-      },
-      "jitter_r119": {
-        "max": 9.816,
-        "vl": "25",
-        "length": "256",
-        "min_frame": "2666",
-        "max_frame": "3266"
+        "min": 7.248,
+        "max": 36.504,
+        "jitter": 29.256
       },
       "L_gmii": {
         "samples": 960,
@@ -931,17 +935,17 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 12.216,
-        "jitter": 11.904,
-        "vl": "0",
-        "min_frame": "2697",
-        "max_frame": "2705"
+        "min": 2.496,
+        "max": 24.072,
+        "jitter": 21.576,
+        "vl": "25",
+        "min_frame": "2666",
+        "max_frame": "3026"
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 11.632,
         "vl": "0",
         "min_frame": "2641",
@@ -949,8 +953,8 @@
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 23.392,
         "vl": "0",
         "min_frame": "2705",
@@ -958,74 +962,75 @@
       },
       "L_app": {
         "samples": 960,
-        "min": 2.944,
-        "max": 12.936,
-        "jitter": 9.992,
+        "min": 5.208,
+        "max": 24.872,
+        "jitter": 19.664,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "3026"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 4.984,
-        "max": 24.424,
-        "jitter": 19.44,
+        "min": 7.248,
+        "max": 36.504,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 5.04,
-        "max": 24.576,
-        "jitter": 19.536,
+        "min": 7.28,
+        "max": 36.536,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 7.08,
-        "max": 36.336,
-        "jitter": 29.256,
+        "min": 9.32,
+        "max": 48.296,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
+      },
+      "jitter_r119": {
+        "max": 19.536,
+        "vl": "25",
+        "length": "256",
+        "min_frame": "2666",
+        "max_frame": "3266"
       }
     },
     {
       "stage": "var_cycle_d0",
       "direction": "es2_to_es1",
       "throughput_mbps": 70.403,
-      "tx_interval_deviation_us": 6.192,
+      "tx_interval_deviation_us": 12.336,
       "inject_mbps": 70.403,
-      "stall_cycles": 8400,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 7.072,
-        "max": 36.328,
-        "jitter": 29.256,
+        "min": 9.304,
+        "max": 48.28,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 5.032,
-        "max": 24.568,
-        "jitter": 19.536
-      },
-      "jitter_r119": {
-        "max": 9.816,
-        "vl": "25",
-        "length": "256",
-        "min_frame": "2666",
-        "max_frame": "3266"
+        "min": 7.248,
+        "max": 36.504,
+        "jitter": 29.256
       },
       "L_gmii": {
         "samples": 960,
@@ -1038,17 +1043,17 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 12.216,
-        "jitter": 11.904,
-        "vl": "0",
-        "min_frame": "2697",
-        "max_frame": "2705"
+        "min": 2.496,
+        "max": 24.072,
+        "jitter": 21.576,
+        "vl": "25",
+        "min_frame": "2666",
+        "max_frame": "3026"
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 11.632,
         "vl": "0",
         "min_frame": "2641",
@@ -1056,8 +1061,8 @@
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 23.392,
         "vl": "0",
         "min_frame": "2705",
@@ -1065,74 +1070,75 @@
       },
       "L_app": {
         "samples": 960,
-        "min": 2.944,
-        "max": 12.936,
-        "jitter": 9.992,
+        "min": 5.208,
+        "max": 24.872,
+        "jitter": 19.664,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "3026"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 4.984,
-        "max": 24.424,
-        "jitter": 19.44,
+        "min": 7.248,
+        "max": 36.504,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 5.04,
-        "max": 24.576,
-        "jitter": 19.536,
+        "min": 7.28,
+        "max": 36.536,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 7.08,
-        "max": 36.336,
-        "jitter": 29.256,
+        "min": 9.32,
+        "max": 48.296,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "2666",
         "max_frame": "2906"
+      },
+      "jitter_r119": {
+        "max": 19.536,
+        "vl": "25",
+        "length": "256",
+        "min_frame": "2666",
+        "max_frame": "3266"
       }
     },
     {
       "stage": "var_cycle_d257",
       "direction": "es1_to_es2",
       "throughput_mbps": 70.403,
-      "tx_interval_deviation_us": 6.192,
+      "tx_interval_deviation_us": 12.336,
       "inject_mbps": 70.403,
-      "stall_cycles": 8400,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 9.128,
-        "max": 38.384,
-        "jitter": 29.256,
+        "min": 11.36,
+        "max": 50.336,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 7.088,
-        "max": 26.624,
-        "jitter": 19.536
-      },
-      "jitter_r119": {
-        "max": 9.816,
-        "vl": "25",
-        "length": "256",
-        "min_frame": "3866",
-        "max_frame": "4466"
+        "min": 9.304,
+        "max": 38.56,
+        "jitter": 29.256
       },
       "L_gmii": {
         "samples": 960,
@@ -1145,17 +1151,17 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 12.216,
-        "jitter": 11.904,
-        "vl": "0",
-        "min_frame": "3897",
-        "max_frame": "3905"
+        "min": 2.496,
+        "max": 24.072,
+        "jitter": 21.576,
+        "vl": "25",
+        "min_frame": "3866",
+        "max_frame": "4226"
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 11.632,
         "vl": "0",
         "min_frame": "3841",
@@ -1163,8 +1169,8 @@
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 23.392,
         "vl": "0",
         "min_frame": "3905",
@@ -1172,74 +1178,75 @@
       },
       "L_app": {
         "samples": 960,
-        "min": 5.0,
-        "max": 14.992,
-        "jitter": 9.992,
+        "min": 7.264,
+        "max": 26.928,
+        "jitter": 19.664,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4226"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 7.04,
-        "max": 26.48,
-        "jitter": 19.44,
+        "min": 9.304,
+        "max": 38.56,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 7.096,
-        "max": 26.632,
-        "jitter": 19.536,
+        "min": 9.336,
+        "max": 38.592,
+        "jitter": 29.256,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 9.136,
-        "max": 38.392,
-        "jitter": 29.256,
+        "min": 11.376,
+        "max": 50.352,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
+      },
+      "jitter_r119": {
+        "max": 19.536,
+        "vl": "25",
+        "length": "256",
+        "min_frame": "3866",
+        "max_frame": "4466"
       }
     },
     {
       "stage": "var_cycle_d257",
       "direction": "es2_to_es1",
       "throughput_mbps": 70.403,
-      "tx_interval_deviation_us": 6.192,
+      "tx_interval_deviation_us": 12.336,
       "inject_mbps": 70.403,
-      "stall_cycles": 8400,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 9.128,
-        "max": 38.384,
-        "jitter": 29.256,
+        "min": 11.36,
+        "max": 50.336,
+        "jitter": 38.976,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 7.088,
-        "max": 26.624,
-        "jitter": 19.536
-      },
-      "jitter_r119": {
-        "max": 9.816,
-        "vl": "25",
-        "length": "256",
-        "min_frame": "3866",
-        "max_frame": "4466"
+        "min": 9.304,
+        "max": 38.56,
+        "jitter": 29.256
       },
       "L_gmii": {
         "samples": 960,
@@ -1252,17 +1259,17 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 12.216,
-        "jitter": 11.904,
-        "vl": "0",
-        "min_frame": "3897",
-        "max_frame": "3905"
+        "min": 2.496,
+        "max": 24.072,
+        "jitter": 21.576,
+        "vl": "25",
+        "min_frame": "3866",
+        "max_frame": "4226"
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 11.632,
         "vl": "0",
         "min_frame": "3841",
@@ -1270,8 +1277,8 @@
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 23.392,
         "vl": "0",
         "min_frame": "3905",
@@ -1279,39 +1286,46 @@
       },
       "L_app": {
         "samples": 960,
-        "min": 5.0,
-        "max": 14.992,
-        "jitter": 9.992,
+        "min": 7.264,
+        "max": 26.928,
+        "jitter": 19.664,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4226"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 7.04,
-        "max": 26.48,
-        "jitter": 19.44,
-        "vl": "25",
-        "min_frame": "3866",
-        "max_frame": "4106"
-      },
-      "L_release_app": {
-        "samples": 960,
-        "min": 7.096,
-        "max": 26.632,
-        "jitter": 19.536,
-        "vl": "25",
-        "min_frame": "3866",
-        "max_frame": "4106"
-      },
-      "L_release_app_last": {
-        "samples": 960,
-        "min": 9.136,
-        "max": 38.392,
+        "min": 9.304,
+        "max": 38.56,
         "jitter": 29.256,
         "vl": "25",
         "min_frame": "3866",
         "max_frame": "4106"
+      },
+      "L_release_app": {
+        "samples": 960,
+        "min": 9.336,
+        "max": 38.592,
+        "jitter": 29.256,
+        "vl": "25",
+        "min_frame": "3866",
+        "max_frame": "4106"
+      },
+      "L_release_app_last": {
+        "samples": 960,
+        "min": 11.376,
+        "max": 50.352,
+        "jitter": 38.976,
+        "vl": "25",
+        "min_frame": "3866",
+        "max_frame": "4106"
+      },
+      "jitter_r119": {
+        "max": 19.536,
+        "vl": "25",
+        "length": "256",
+        "min_frame": "3866",
+        "max_frame": "4466"
       }
     },
     {
@@ -1320,16 +1334,17 @@
       "throughput_mbps": 57.794,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 1.08,
-        "max": 36.328,
+        "min": 1.272,
+        "max": 48.28,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1337,16 +1352,9 @@
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 1.08,
-        "max": 24.568,
+        "min": 1.256,
+        "max": 36.504,
         "jitter": 0.0
-      },
-      "jitter_r119": {
-        "max": 0.0,
-        "vl": "0",
-        "length": "1",
-        "min_frame": "241",
-        "max_frame": "241"
       },
       "L_gmii": {
         "samples": 960,
@@ -1359,8 +1367,8 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 0.36,
+        "min": 0.456,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1368,8 +1376,8 @@
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1377,8 +1385,8 @@
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1386,8 +1394,8 @@
       },
       "L_app": {
         "samples": 960,
-        "min": 1.032,
-        "max": 12.664,
+        "min": 1.256,
+        "max": 24.744,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1395,8 +1403,8 @@
       },
       "L_app_last": {
         "samples": 960,
-        "min": 1.08,
-        "max": 24.424,
+        "min": 1.256,
+        "max": 36.504,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1404,8 +1412,8 @@
       },
       "L_release_app": {
         "samples": 960,
-        "min": 1.088,
-        "max": 24.576,
+        "min": 1.288,
+        "max": 36.536,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1413,10 +1421,17 @@
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 1.088,
-        "max": 36.336,
+        "min": 1.288,
+        "max": 48.296,
         "jitter": 0.0,
         "vl": "0",
+        "min_frame": "241",
+        "max_frame": "241"
+      },
+      "jitter_r119": {
+        "max": 0.0,
+        "vl": "0",
+        "length": "1",
         "min_frame": "241",
         "max_frame": "241"
       }
@@ -1427,33 +1442,27 @@
       "throughput_mbps": 57.794,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 960,
-        "min": 1.08,
-        "max": 36.336,
+        "min": 1.272,
+        "max": 48.28,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_entry_first": {
         "samples": 960,
-        "min": 1.08,
-        "max": 24.576,
+        "min": 1.256,
+        "max": 36.504,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "24",
-        "length": "1471",
-        "min_frame": "265",
-        "max_frame": "745"
       },
       "L_gmii": {
         "samples": 960,
@@ -1466,8 +1475,8 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 0.36,
+        "min": 0.456,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "241",
@@ -1475,199 +1484,93 @@
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.36,
+        "min": 0.8,
+        "max": 12.432,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.12,
+        "min": 0.8,
+        "max": 24.192,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_app": {
         "samples": 960,
-        "min": 1.032,
-        "max": 12.672,
+        "min": 1.256,
+        "max": 24.744,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 1.08,
-        "max": 24.432,
+        "min": 1.256,
+        "max": 36.504,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 1.088,
-        "max": 24.584,
+        "min": 1.288,
+        "max": 36.536,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 1.088,
-        "max": 36.344,
+        "min": 1.288,
+        "max": 48.296,
         "jitter": 0.008,
-        "vl": "24",
-        "min_frame": "265",
-        "max_frame": "745"
-      }
-    },
-    {
-      "stage": "var_fixed_d257",
-      "direction": "es1_to_es2",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 38.384,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 26.624,
-        "jitter": 0.0
-      },
-      "jitter_r119": {
-        "max": 0.0,
-        "vl": "0",
-        "length": "1",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_gmii": {
-        "samples": 960,
-        "min": 2.056,
-        "max": 2.056,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_tx": {
-        "samples": 960,
-        "min": 0.312,
-        "max": 0.36,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_rx": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_rx_last": {
-        "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_app": {
-        "samples": 960,
-        "min": 3.088,
-        "max": 14.72,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_app_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 26.48,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_release_app": {
-        "samples": 960,
-        "min": 3.144,
-        "max": 26.632,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      },
-      "L_release_app_last": {
-        "samples": 960,
-        "min": 3.144,
-        "max": 38.392,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "1441",
-        "max_frame": "1441"
-      }
-    },
-    {
-      "stage": "var_fixed_d257",
-      "direction": "es2_to_es1",
-      "throughput_mbps": 57.794,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 57.794,
-      "stall_cycles": 7344,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 38.384,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
-      },
-      "L_entry_first": {
-        "samples": 960,
-        "min": 3.136,
-        "max": 26.624,
-        "jitter": 0.008
+        "vl": "13",
+        "min_frame": "254",
+        "max_frame": "1134"
       },
       "jitter_r119": {
         "max": 0.008,
-        "vl": "3",
+        "vl": "13",
         "length": "1024",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min_frame": "254",
+        "max_frame": "1134"
+      }
+    },
+    {
+      "stage": "var_fixed_d257",
+      "direction": "es1_to_es2",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 3.328,
+        "max": 50.336,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 38.56,
+        "jitter": 0.0
       },
       "L_gmii": {
         "samples": 960,
@@ -1680,8 +1583,8 @@
       },
       "L_tx": {
         "samples": 960,
-        "min": 0.312,
-        "max": 0.36,
+        "min": 0.456,
+        "max": 12.312,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "1441",
@@ -1689,199 +1592,201 @@
       },
       "L_rx": {
         "samples": 960,
-        "min": 0.72,
-        "max": 12.352,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "L_rx_last": {
         "samples": 960,
-        "min": 0.72,
-        "max": 24.112,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "L_app": {
         "samples": 960,
-        "min": 3.088,
-        "max": 14.72,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min": 3.312,
+        "max": 26.8,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "L_app_last": {
         "samples": 960,
-        "min": 3.136,
-        "max": 26.48,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min": 3.312,
+        "max": 38.56,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "L_release_app": {
         "samples": 960,
-        "min": 3.144,
-        "max": 26.632,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
+        "min": 3.344,
+        "max": 38.592,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "L_release_app_last": {
         "samples": 960,
-        "min": 3.144,
-        "max": 38.392,
-        "jitter": 0.008,
-        "vl": "3",
-        "min_frame": "1444",
-        "max_frame": "1836"
-      }
-    },
-    {
-      "stage": "var_high_d0",
-      "direction": "es1_to_es2",
-      "throughput_mbps": 904.752,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 904.752,
-      "stall_cycles": 27840,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 1600,
-        "min": 7.072,
-        "max": 36.336,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_entry_first": {
-        "samples": 1600,
-        "min": 5.032,
-        "max": 24.576,
-        "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "50",
-        "length": "1471",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_gmii": {
-        "samples": 1600,
-        "min": 0.0,
-        "max": 0.0,
+        "min": 3.344,
+        "max": 50.352,
         "jitter": 0.0,
         "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
-      },
-      "L_tx": {
-        "samples": 1600,
-        "min": 0.312,
-        "max": 12.016,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
-      },
-      "L_rx": {
-        "samples": 1600,
-        "min": 2.632,
-        "max": 12.36,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_rx_last": {
-        "samples": 1600,
-        "min": 4.672,
-        "max": 24.12,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_app": {
-        "samples": 1600,
-        "min": 2.944,
-        "max": 23.872,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_app_last": {
-        "samples": 1600,
-        "min": 4.984,
-        "max": 24.432,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_release_app": {
-        "samples": 1600,
-        "min": 5.04,
-        "max": 24.584,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      },
-      "L_release_app_last": {
-        "samples": 1600,
-        "min": 7.08,
-        "max": 36.344,
-        "jitter": 0.008,
-        "vl": "50",
-        "min_frame": "5011",
-        "max_frame": "5891"
-      }
-    },
-    {
-      "stage": "var_high_d0",
-      "direction": "es2_to_es1",
-      "throughput_mbps": 904.752,
-      "tx_interval_deviation_us": 0.0,
-      "inject_mbps": 904.752,
-      "stall_cycles": 27840,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
-      "dropped": 0,
-      "duplicate": 0,
-      "overflow": 0,
-      "L_entry_last": {
-        "samples": 1600,
-        "min": 7.072,
-        "max": 36.328,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
-      },
-      "L_entry_first": {
-        "samples": 1600,
-        "min": 5.032,
-        "max": 24.568,
-        "jitter": 0.0
+        "min_frame": "1441",
+        "max_frame": "1441"
       },
       "jitter_r119": {
         "max": 0.0,
         "vl": "0",
         "length": "1",
-        "min_frame": "4961",
-        "max_frame": "4961"
+        "min_frame": "1441",
+        "max_frame": "1441"
+      }
+    },
+    {
+      "stage": "var_fixed_d257",
+      "direction": "es2_to_es1",
+      "throughput_mbps": 57.794,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 57.794,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 960,
+        "min": 3.328,
+        "max": 50.336,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_entry_first": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 38.56,
+        "jitter": 0.008
+      },
+      "L_gmii": {
+        "samples": 960,
+        "min": 2.056,
+        "max": 2.056,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
+      },
+      "L_tx": {
+        "samples": 960,
+        "min": 0.456,
+        "max": 12.312,
+        "jitter": 0.0,
+        "vl": "0",
+        "min_frame": "1441",
+        "max_frame": "1441"
+      },
+      "L_rx": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 12.432,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_rx_last": {
+        "samples": 960,
+        "min": 0.8,
+        "max": 24.192,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_app": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 26.8,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_app_last": {
+        "samples": 960,
+        "min": 3.312,
+        "max": 38.56,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_release_app": {
+        "samples": 960,
+        "min": 3.344,
+        "max": 38.592,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "L_release_app_last": {
+        "samples": 960,
+        "min": 3.344,
+        "max": 50.352,
+        "jitter": 0.008,
+        "vl": "28",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "28",
+        "length": "1024",
+        "min_frame": "1469",
+        "max_frame": "2189"
+      }
+    },
+    {
+      "stage": "var_high_d0",
+      "direction": "es1_to_es2",
+      "throughput_mbps": 904.752,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 904.752,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 1600,
+        "min": 13.088,
+        "max": 48.288,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "L_entry_first": {
+        "samples": 1600,
+        "min": 11.032,
+        "max": 36.512,
+        "jitter": 0.008
       },
       "L_gmii": {
         "samples": 1600,
@@ -1894,8 +1799,8 @@
       },
       "L_tx": {
         "samples": 1600,
-        "min": 0.312,
-        "max": 12.016,
+        "min": 2.496,
+        "max": 23.872,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "4961",
@@ -1903,57 +1808,172 @@
       },
       "L_rx": {
         "samples": 1600,
-        "min": 2.632,
-        "max": 12.352,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
+        "min": 6.496,
+        "max": 12.44,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
       },
       "L_rx_last": {
         "samples": 1600,
-        "min": 4.672,
-        "max": 24.112,
+        "min": 8.536,
+        "max": 24.2,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "L_app": {
+        "samples": 1600,
+        "min": 8.992,
+        "max": 35.808,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "L_app_last": {
+        "samples": 1600,
+        "min": 11.032,
+        "max": 36.512,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "L_release_app": {
+        "samples": 1600,
+        "min": 11.064,
+        "max": 36.544,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "L_release_app_last": {
+        "samples": 1600,
+        "min": 13.104,
+        "max": 48.304,
+        "jitter": 0.008,
+        "vl": "41",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "41",
+        "length": "1471",
+        "min_frame": "5002",
+        "max_frame": "6202"
+      }
+    },
+    {
+      "stage": "var_high_d0",
+      "direction": "es2_to_es1",
+      "throughput_mbps": 904.752,
+      "tx_interval_deviation_us": 0.0,
+      "inject_mbps": 904.752,
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
+      "dropped": 0,
+      "duplicate": 0,
+      "overflow": 0,
+      "L_entry_last": {
+        "samples": 1600,
+        "min": 13.088,
+        "max": 48.288,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
+      },
+      "L_entry_first": {
+        "samples": 1600,
+        "min": 11.032,
+        "max": 36.512,
+        "jitter": 0.008
+      },
+      "L_gmii": {
+        "samples": 1600,
+        "min": 0.0,
+        "max": 0.0,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "4961",
         "max_frame": "4961"
       },
-      "L_app": {
+      "L_tx": {
         "samples": 1600,
-        "min": 2.944,
+        "min": 2.496,
         "max": 23.872,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "4961",
         "max_frame": "4961"
       },
+      "L_rx": {
+        "samples": 1600,
+        "min": 6.496,
+        "max": 12.44,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
+      },
+      "L_rx_last": {
+        "samples": 1600,
+        "min": 8.536,
+        "max": 24.2,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
+      },
+      "L_app": {
+        "samples": 1600,
+        "min": 8.992,
+        "max": 35.808,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
+      },
       "L_app_last": {
         "samples": 1600,
-        "min": 4.984,
-        "max": 24.424,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
+        "min": 11.032,
+        "max": 36.512,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
       },
       "L_release_app": {
         "samples": 1600,
-        "min": 5.04,
-        "max": 24.576,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
+        "min": 11.064,
+        "max": 36.544,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
       },
       "L_release_app_last": {
         "samples": 1600,
-        "min": 7.08,
-        "max": 36.336,
-        "jitter": 0.0,
-        "vl": "0",
-        "min_frame": "4961",
-        "max_frame": "4961"
+        "min": 13.104,
+        "max": 48.304,
+        "jitter": 0.008,
+        "vl": "71",
+        "min_frame": "5032",
+        "max_frame": "6472"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "71",
+        "length": "1471",
+        "min_frame": "5032",
+        "max_frame": "6472"
       }
     },
     {
@@ -1962,33 +1982,27 @@
       "throughput_mbps": 904.752,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 904.752,
-      "stall_cycles": 27840,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1600,
-        "min": 9.128,
-        "max": 38.392,
+        "min": 15.144,
+        "max": 50.344,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_entry_first": {
         "samples": 1600,
-        "min": 7.088,
-        "max": 26.632,
+        "min": 13.088,
+        "max": 38.568,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "15",
-        "length": "1471",
-        "min_frame": "6736",
-        "max_frame": "7936"
       },
       "L_gmii": {
         "samples": 1600,
@@ -2001,8 +2015,8 @@
       },
       "L_tx": {
         "samples": 1600,
-        "min": 0.312,
-        "max": 12.016,
+        "min": 2.496,
+        "max": 23.872,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "6721",
@@ -2010,57 +2024,64 @@
       },
       "L_rx": {
         "samples": 1600,
-        "min": 2.632,
-        "max": 12.36,
+        "min": 6.496,
+        "max": 12.44,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_rx_last": {
         "samples": 1600,
-        "min": 4.672,
-        "max": 24.12,
+        "min": 8.536,
+        "max": 24.2,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_app": {
         "samples": 1600,
-        "min": 5.0,
-        "max": 25.928,
+        "min": 11.048,
+        "max": 37.864,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_app_last": {
         "samples": 1600,
-        "min": 7.04,
-        "max": 26.488,
+        "min": 13.088,
+        "max": 38.568,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_release_app": {
         "samples": 1600,
-        "min": 7.096,
-        "max": 26.64,
+        "min": 13.12,
+        "max": 38.6,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
       },
       "L_release_app_last": {
         "samples": 1600,
-        "min": 9.136,
-        "max": 38.4,
+        "min": 15.16,
+        "max": 50.36,
         "jitter": 0.008,
         "vl": "15",
         "min_frame": "6736",
-        "max_frame": "7936"
+        "max_frame": "6896"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "15",
+        "length": "1471",
+        "min_frame": "6736",
+        "max_frame": "6896"
       }
     },
     {
@@ -2069,33 +2090,27 @@
       "throughput_mbps": 904.752,
       "tx_interval_deviation_us": 0.0,
       "inject_mbps": 904.752,
-      "stall_cycles": 27840,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": "2",
+      "raw_lag_max_cycles": "2",
       "dropped": 0,
       "duplicate": 0,
       "overflow": 0,
       "L_entry_last": {
         "samples": 1600,
-        "min": 9.128,
-        "max": 38.392,
+        "min": 15.144,
+        "max": 50.344,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_entry_first": {
         "samples": 1600,
-        "min": 7.088,
-        "max": 26.632,
+        "min": 13.088,
+        "max": 38.568,
         "jitter": 0.008
-      },
-      "jitter_r119": {
-        "max": 0.008,
-        "vl": "45",
-        "length": "1471",
-        "min_frame": "6766",
-        "max_frame": "8206"
       },
       "L_gmii": {
         "samples": 1600,
@@ -2108,8 +2123,8 @@
       },
       "L_tx": {
         "samples": 1600,
-        "min": 0.312,
-        "max": 12.016,
+        "min": 2.496,
+        "max": 23.872,
         "jitter": 0.0,
         "vl": "0",
         "min_frame": "6721",
@@ -2117,57 +2132,64 @@
       },
       "L_rx": {
         "samples": 1600,
-        "min": 2.632,
-        "max": 12.36,
+        "min": 6.496,
+        "max": 12.44,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_rx_last": {
         "samples": 1600,
-        "min": 4.672,
-        "max": 24.12,
+        "min": 8.536,
+        "max": 24.2,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_app": {
         "samples": 1600,
-        "min": 5.0,
-        "max": 25.928,
+        "min": 11.048,
+        "max": 37.864,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_app_last": {
         "samples": 1600,
-        "min": 7.04,
-        "max": 26.488,
+        "min": 13.088,
+        "max": 38.568,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_release_app": {
         "samples": 1600,
-        "min": 7.096,
-        "max": 26.64,
+        "min": 13.12,
+        "max": 38.6,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
       },
       "L_release_app_last": {
         "samples": 1600,
-        "min": 9.136,
-        "max": 38.4,
+        "min": 15.16,
+        "max": 50.36,
         "jitter": 0.008,
         "vl": "45",
         "min_frame": "6766",
-        "max_frame": "8206"
+        "max_frame": "7166"
+      },
+      "jitter_r119": {
+        "max": 0.008,
+        "vl": "45",
+        "length": "1471",
+        "min_frame": "6766",
+        "max_frame": "7166"
       }
     }
   ],
@@ -2180,514 +2202,514 @@
   "grouped_metrics": {
     "gbe77_d0/es1_to_es2/accepted/1471": {
       "samples": 1617,
-      "min": 36.328,
-      "max": 36.336,
+      "min": 48.28,
+      "max": 48.288,
       "jitter": 0.008
     },
     "gbe77_d0/es2_to_es1/accepted/1471": {
       "samples": 1617,
-      "min": 36.328,
-      "max": 36.336,
+      "min": 48.28,
+      "max": 48.288,
       "jitter": 0.008
     },
     "gbe77_d257/es1_to_es2/accepted/1471": {
       "samples": 1617,
-      "min": 38.384,
-      "max": 38.392,
+      "min": 50.336,
+      "max": 50.344,
       "jitter": 0.008
     },
     "gbe77_d257/es2_to_es1/accepted/1471": {
       "samples": 1617,
-      "min": 38.384,
-      "max": 38.392,
+      "min": 50.336,
+      "max": 50.344,
       "jitter": 0.008
     },
     "var_burst_d0/es1_to_es2/accepted/1": {
       "samples": 224,
-      "min": 1.08,
-      "max": 32.736,
-      "jitter": 0.0
-    },
-    "var_burst_d0/es1_to_es2/accepted/17": {
-      "samples": 208,
-      "min": 1.736,
-      "max": 32.576,
-      "jitter": 0.0
-    },
-    "var_burst_d0/es1_to_es2/accepted/256": {
-      "samples": 200,
-      "min": 7.072,
-      "max": 32.6,
+      "min": 1.272,
+      "max": 49.768,
       "jitter": 0.0
     },
     "var_burst_d0/es1_to_es2/accepted/1024": {
       "samples": 168,
-      "min": 25.552,
-      "max": 38.648,
+      "min": 33.928,
+      "max": 55.328,
       "jitter": 0.0
     },
     "var_burst_d0/es1_to_es2/accepted/1471": {
       "samples": 160,
-      "min": 36.328,
-      "max": 44.688,
+      "min": 48.28,
+      "max": 61.52,
+      "jitter": 0.0
+    },
+    "var_burst_d0/es1_to_es2/accepted/17": {
+      "samples": 208,
+      "min": 2.032,
+      "max": 49.904,
+      "jitter": 0.0
+    },
+    "var_burst_d0/es1_to_es2/accepted/256": {
+      "samples": 200,
+      "min": 9.304,
+      "max": 49.176,
       "jitter": 0.0
     },
     "var_burst_d0/es2_to_es1/accepted/1": {
       "samples": 224,
-      "min": 1.08,
-      "max": 32.824,
-      "jitter": 0.0
-    },
-    "var_burst_d0/es2_to_es1/accepted/17": {
-      "samples": 208,
-      "min": 1.736,
-      "max": 32.664,
-      "jitter": 0.0
-    },
-    "var_burst_d0/es2_to_es1/accepted/256": {
-      "samples": 200,
-      "min": 7.072,
-      "max": 32.704,
-      "jitter": 0.0
+      "min": 1.272,
+      "max": 49.768,
+      "jitter": 0.008
     },
     "var_burst_d0/es2_to_es1/accepted/1024": {
       "samples": 168,
-      "min": 25.552,
-      "max": 38.752,
+      "min": 33.928,
+      "max": 55.328,
       "jitter": 0.0
     },
     "var_burst_d0/es2_to_es1/accepted/1471": {
       "samples": 160,
-      "min": 36.328,
-      "max": 44.792,
+      "min": 48.28,
+      "max": 61.52,
+      "jitter": 0.0
+    },
+    "var_burst_d0/es2_to_es1/accepted/17": {
+      "samples": 208,
+      "min": 2.032,
+      "max": 49.904,
+      "jitter": 0.0
+    },
+    "var_burst_d0/es2_to_es1/accepted/256": {
+      "samples": 200,
+      "min": 9.304,
+      "max": 49.176,
       "jitter": 0.0
     },
     "var_burst_d257/es1_to_es2/accepted/1": {
       "samples": 224,
-      "min": 3.136,
-      "max": 34.792,
-      "jitter": 0.0
-    },
-    "var_burst_d257/es1_to_es2/accepted/17": {
-      "samples": 208,
-      "min": 3.792,
-      "max": 34.632,
-      "jitter": 0.0
-    },
-    "var_burst_d257/es1_to_es2/accepted/256": {
-      "samples": 200,
-      "min": 9.128,
-      "max": 34.656,
+      "min": 3.328,
+      "max": 51.824,
       "jitter": 0.0
     },
     "var_burst_d257/es1_to_es2/accepted/1024": {
       "samples": 168,
-      "min": 27.608,
-      "max": 40.704,
+      "min": 35.984,
+      "max": 57.384,
       "jitter": 0.0
     },
     "var_burst_d257/es1_to_es2/accepted/1471": {
       "samples": 160,
-      "min": 38.384,
-      "max": 46.744,
+      "min": 50.336,
+      "max": 63.576,
+      "jitter": 0.0
+    },
+    "var_burst_d257/es1_to_es2/accepted/17": {
+      "samples": 208,
+      "min": 4.088,
+      "max": 51.96,
+      "jitter": 0.0
+    },
+    "var_burst_d257/es1_to_es2/accepted/256": {
+      "samples": 200,
+      "min": 11.36,
+      "max": 51.232,
       "jitter": 0.0
     },
     "var_burst_d257/es2_to_es1/accepted/1": {
       "samples": 224,
-      "min": 3.136,
-      "max": 34.792,
-      "jitter": 0.0
-    },
-    "var_burst_d257/es2_to_es1/accepted/17": {
-      "samples": 208,
-      "min": 3.792,
-      "max": 34.632,
-      "jitter": 0.0
-    },
-    "var_burst_d257/es2_to_es1/accepted/256": {
-      "samples": 200,
-      "min": 9.128,
-      "max": 34.656,
+      "min": 3.328,
+      "max": 51.824,
       "jitter": 0.0
     },
     "var_burst_d257/es2_to_es1/accepted/1024": {
       "samples": 168,
-      "min": 27.608,
-      "max": 40.704,
-      "jitter": 0.008
+      "min": 35.984,
+      "max": 57.384,
+      "jitter": 0.0
     },
     "var_burst_d257/es2_to_es1/accepted/1471": {
       "samples": 160,
-      "min": 38.384,
-      "max": 46.744,
+      "min": 50.336,
+      "max": 63.576,
+      "jitter": 0.0
+    },
+    "var_burst_d257/es2_to_es1/accepted/17": {
+      "samples": 208,
+      "min": 4.088,
+      "max": 51.96,
+      "jitter": 0.0
+    },
+    "var_burst_d257/es2_to_es1/accepted/256": {
+      "samples": 200,
+      "min": 11.36,
+      "max": 51.232,
       "jitter": 0.0
     },
     "var_cycle_d0/es1_to_es2/accepted/1": {
       "samples": 176,
-      "min": 12.936,
-      "max": 12.936,
+      "min": 24.888,
+      "max": 24.888,
+      "jitter": 0.0
+    },
+    "var_cycle_d0/es1_to_es2/accepted/1024": {
+      "samples": 200,
+      "min": 33.928,
+      "max": 41.128,
+      "jitter": 7.2
+    },
+    "var_cycle_d0/es1_to_es2/accepted/1471": {
+      "samples": 208,
+      "min": 48.28,
+      "max": 48.28,
       "jitter": 0.0
     },
     "var_cycle_d0/es1_to_es2/accepted/17": {
       "samples": 184,
-      "min": 13.064,
-      "max": 13.064,
+      "min": 25.016,
+      "max": 25.016,
       "jitter": 0.0
     },
     "var_cycle_d0/es1_to_es2/accepted/256": {
       "samples": 192,
-      "min": 7.072,
-      "max": 16.888,
-      "jitter": 9.816
-    },
-    "var_cycle_d0/es1_to_es2/accepted/1024": {
-      "samples": 200,
-      "min": 25.552,
-      "max": 29.176,
-      "jitter": 3.624
-    },
-    "var_cycle_d0/es1_to_es2/accepted/1471": {
-      "samples": 208,
-      "min": 36.328,
-      "max": 36.328,
-      "jitter": 0.0
+      "min": 9.304,
+      "max": 28.84,
+      "jitter": 19.536
     },
     "var_cycle_d0/es2_to_es1/accepted/1": {
       "samples": 176,
-      "min": 12.936,
-      "max": 12.936,
+      "min": 24.888,
+      "max": 24.888,
+      "jitter": 0.0
+    },
+    "var_cycle_d0/es2_to_es1/accepted/1024": {
+      "samples": 200,
+      "min": 33.928,
+      "max": 41.128,
+      "jitter": 7.2
+    },
+    "var_cycle_d0/es2_to_es1/accepted/1471": {
+      "samples": 208,
+      "min": 48.28,
+      "max": 48.28,
       "jitter": 0.0
     },
     "var_cycle_d0/es2_to_es1/accepted/17": {
       "samples": 184,
-      "min": 13.064,
-      "max": 13.064,
+      "min": 25.016,
+      "max": 25.016,
       "jitter": 0.0
     },
     "var_cycle_d0/es2_to_es1/accepted/256": {
       "samples": 192,
-      "min": 7.072,
-      "max": 16.896,
-      "jitter": 9.816
-    },
-    "var_cycle_d0/es2_to_es1/accepted/1024": {
-      "samples": 200,
-      "min": 25.552,
-      "max": 29.176,
-      "jitter": 3.624
-    },
-    "var_cycle_d0/es2_to_es1/accepted/1471": {
-      "samples": 208,
-      "min": 36.328,
-      "max": 36.328,
-      "jitter": 0.0
+      "min": 9.304,
+      "max": 28.848,
+      "jitter": 19.536
     },
     "var_cycle_d257/es1_to_es2/accepted/1": {
       "samples": 176,
-      "min": 14.992,
-      "max": 14.992,
+      "min": 26.944,
+      "max": 26.944,
+      "jitter": 0.0
+    },
+    "var_cycle_d257/es1_to_es2/accepted/1024": {
+      "samples": 200,
+      "min": 35.984,
+      "max": 43.184,
+      "jitter": 7.2
+    },
+    "var_cycle_d257/es1_to_es2/accepted/1471": {
+      "samples": 208,
+      "min": 50.336,
+      "max": 50.336,
       "jitter": 0.0
     },
     "var_cycle_d257/es1_to_es2/accepted/17": {
       "samples": 184,
-      "min": 15.12,
-      "max": 15.12,
+      "min": 27.072,
+      "max": 27.072,
       "jitter": 0.0
     },
     "var_cycle_d257/es1_to_es2/accepted/256": {
       "samples": 192,
-      "min": 9.128,
-      "max": 18.944,
-      "jitter": 9.816
-    },
-    "var_cycle_d257/es1_to_es2/accepted/1024": {
-      "samples": 200,
-      "min": 27.608,
-      "max": 31.232,
-      "jitter": 3.624
-    },
-    "var_cycle_d257/es1_to_es2/accepted/1471": {
-      "samples": 208,
-      "min": 38.384,
-      "max": 38.384,
-      "jitter": 0.0
+      "min": 11.36,
+      "max": 30.896,
+      "jitter": 19.536
     },
     "var_cycle_d257/es2_to_es1/accepted/1": {
       "samples": 176,
-      "min": 14.992,
-      "max": 14.992,
+      "min": 26.944,
+      "max": 26.944,
+      "jitter": 0.0
+    },
+    "var_cycle_d257/es2_to_es1/accepted/1024": {
+      "samples": 200,
+      "min": 35.984,
+      "max": 43.184,
+      "jitter": 7.2
+    },
+    "var_cycle_d257/es2_to_es1/accepted/1471": {
+      "samples": 208,
+      "min": 50.336,
+      "max": 50.336,
       "jitter": 0.0
     },
     "var_cycle_d257/es2_to_es1/accepted/17": {
       "samples": 184,
-      "min": 15.12,
-      "max": 15.12,
+      "min": 27.072,
+      "max": 27.072,
       "jitter": 0.0
     },
     "var_cycle_d257/es2_to_es1/accepted/256": {
       "samples": 192,
-      "min": 9.128,
-      "max": 18.944,
-      "jitter": 9.816
-    },
-    "var_cycle_d257/es2_to_es1/accepted/1024": {
-      "samples": 200,
-      "min": 27.608,
-      "max": 31.232,
-      "jitter": 3.624
-    },
-    "var_cycle_d257/es2_to_es1/accepted/1471": {
-      "samples": 208,
-      "min": 38.384,
-      "max": 38.384,
-      "jitter": 0.0
+      "min": 11.36,
+      "max": 30.904,
+      "jitter": 19.536
     },
     "var_fixed_d0/es1_to_es2/accepted/1": {
       "samples": 224,
-      "min": 1.08,
-      "max": 5.128,
-      "jitter": 0.0
-    },
-    "var_fixed_d0/es1_to_es2/accepted/17": {
-      "samples": 208,
-      "min": 1.336,
-      "max": 1.336,
-      "jitter": 0.0
-    },
-    "var_fixed_d0/es1_to_es2/accepted/256": {
-      "samples": 200,
-      "min": 7.072,
-      "max": 7.072,
+      "min": 1.272,
+      "max": 17.08,
       "jitter": 0.0
     },
     "var_fixed_d0/es1_to_es2/accepted/1024": {
       "samples": 168,
-      "min": 25.552,
-      "max": 25.552,
+      "min": 33.928,
+      "max": 33.928,
       "jitter": 0.0
     },
     "var_fixed_d0/es1_to_es2/accepted/1471": {
       "samples": 160,
-      "min": 36.328,
-      "max": 36.328,
+      "min": 48.28,
+      "max": 48.28,
+      "jitter": 0.0
+    },
+    "var_fixed_d0/es1_to_es2/accepted/17": {
+      "samples": 208,
+      "min": 1.656,
+      "max": 1.656,
+      "jitter": 0.0
+    },
+    "var_fixed_d0/es1_to_es2/accepted/256": {
+      "samples": 200,
+      "min": 9.304,
+      "max": 9.304,
       "jitter": 0.0
     },
     "var_fixed_d0/es2_to_es1/accepted/1": {
       "samples": 224,
-      "min": 1.08,
-      "max": 5.136,
-      "jitter": 0.008
-    },
-    "var_fixed_d0/es2_to_es1/accepted/17": {
-      "samples": 208,
-      "min": 1.336,
-      "max": 1.336,
-      "jitter": 0.0
-    },
-    "var_fixed_d0/es2_to_es1/accepted/256": {
-      "samples": 200,
-      "min": 7.072,
-      "max": 7.072,
+      "min": 1.272,
+      "max": 17.08,
       "jitter": 0.0
     },
     "var_fixed_d0/es2_to_es1/accepted/1024": {
       "samples": 168,
-      "min": 25.552,
-      "max": 25.552,
-      "jitter": 0.0
+      "min": 33.928,
+      "max": 33.936,
+      "jitter": 0.008
     },
     "var_fixed_d0/es2_to_es1/accepted/1471": {
       "samples": 160,
-      "min": 36.328,
-      "max": 36.336,
+      "min": 48.28,
+      "max": 48.28,
+      "jitter": 0.0
+    },
+    "var_fixed_d0/es2_to_es1/accepted/17": {
+      "samples": 208,
+      "min": 1.656,
+      "max": 1.656,
+      "jitter": 0.0
+    },
+    "var_fixed_d0/es2_to_es1/accepted/256": {
+      "samples": 200,
+      "min": 9.304,
+      "max": 9.312,
       "jitter": 0.008
     },
     "var_fixed_d257/es1_to_es2/accepted/1": {
       "samples": 224,
-      "min": 3.136,
-      "max": 7.184,
-      "jitter": 0.0
-    },
-    "var_fixed_d257/es1_to_es2/accepted/17": {
-      "samples": 208,
-      "min": 3.392,
-      "max": 3.392,
-      "jitter": 0.0
-    },
-    "var_fixed_d257/es1_to_es2/accepted/256": {
-      "samples": 200,
-      "min": 9.128,
-      "max": 9.128,
+      "min": 3.328,
+      "max": 19.136,
       "jitter": 0.0
     },
     "var_fixed_d257/es1_to_es2/accepted/1024": {
       "samples": 168,
-      "min": 27.608,
-      "max": 27.608,
+      "min": 35.984,
+      "max": 35.984,
       "jitter": 0.0
     },
     "var_fixed_d257/es1_to_es2/accepted/1471": {
       "samples": 160,
-      "min": 38.384,
-      "max": 38.384,
+      "min": 50.336,
+      "max": 50.336,
+      "jitter": 0.0
+    },
+    "var_fixed_d257/es1_to_es2/accepted/17": {
+      "samples": 208,
+      "min": 3.712,
+      "max": 3.712,
+      "jitter": 0.0
+    },
+    "var_fixed_d257/es1_to_es2/accepted/256": {
+      "samples": 200,
+      "min": 11.36,
+      "max": 11.36,
       "jitter": 0.0
     },
     "var_fixed_d257/es2_to_es1/accepted/1": {
       "samples": 224,
-      "min": 3.136,
-      "max": 7.184,
-      "jitter": 0.0
-    },
-    "var_fixed_d257/es2_to_es1/accepted/17": {
-      "samples": 208,
-      "min": 3.392,
-      "max": 3.392,
-      "jitter": 0.0
-    },
-    "var_fixed_d257/es2_to_es1/accepted/256": {
-      "samples": 200,
-      "min": 9.128,
-      "max": 9.128,
+      "min": 3.328,
+      "max": 19.136,
       "jitter": 0.0
     },
     "var_fixed_d257/es2_to_es1/accepted/1024": {
       "samples": 168,
-      "min": 27.608,
-      "max": 27.616,
+      "min": 35.984,
+      "max": 35.992,
       "jitter": 0.008
     },
     "var_fixed_d257/es2_to_es1/accepted/1471": {
       "samples": 160,
-      "min": 38.384,
-      "max": 38.384,
+      "min": 50.336,
+      "max": 50.336,
+      "jitter": 0.0
+    },
+    "var_fixed_d257/es2_to_es1/accepted/17": {
+      "samples": 208,
+      "min": 3.712,
+      "max": 3.712,
+      "jitter": 0.0
+    },
+    "var_fixed_d257/es2_to_es1/accepted/256": {
+      "samples": 200,
+      "min": 11.36,
+      "max": 11.36,
       "jitter": 0.0
     },
     "var_high_d0/es1_to_es2/accepted/1": {
       "samples": 20,
-      "min": 23.872,
-      "max": 23.872,
-      "jitter": 0.0
-    },
-    "var_high_d0/es1_to_es2/accepted/17": {
-      "samples": 20,
-      "min": 11.552,
-      "max": 11.552,
-      "jitter": 0.0
-    },
-    "var_high_d0/es1_to_es2/accepted/256": {
-      "samples": 20,
-      "min": 7.072,
-      "max": 7.072,
+      "min": 35.824,
+      "max": 35.824,
       "jitter": 0.0
     },
     "var_high_d0/es1_to_es2/accepted/1024": {
       "samples": 20,
-      "min": 25.552,
-      "max": 25.552,
+      "min": 33.928,
+      "max": 33.928,
       "jitter": 0.0
     },
     "var_high_d0/es1_to_es2/accepted/1471": {
       "samples": 1520,
-      "min": 36.328,
-      "max": 36.336,
+      "min": 48.28,
+      "max": 48.288,
       "jitter": 0.008
+    },
+    "var_high_d0/es1_to_es2/accepted/17": {
+      "samples": 20,
+      "min": 23.504,
+      "max": 23.504,
+      "jitter": 0.0
+    },
+    "var_high_d0/es1_to_es2/accepted/256": {
+      "samples": 20,
+      "min": 13.088,
+      "max": 13.088,
+      "jitter": 0.0
     },
     "var_high_d0/es2_to_es1/accepted/1": {
       "samples": 20,
-      "min": 23.872,
-      "max": 23.872,
-      "jitter": 0.0
-    },
-    "var_high_d0/es2_to_es1/accepted/17": {
-      "samples": 20,
-      "min": 11.552,
-      "max": 11.552,
-      "jitter": 0.0
-    },
-    "var_high_d0/es2_to_es1/accepted/256": {
-      "samples": 20,
-      "min": 7.072,
-      "max": 7.072,
+      "min": 35.824,
+      "max": 35.824,
       "jitter": 0.0
     },
     "var_high_d0/es2_to_es1/accepted/1024": {
       "samples": 20,
-      "min": 25.552,
-      "max": 25.552,
+      "min": 33.928,
+      "max": 33.928,
       "jitter": 0.0
     },
     "var_high_d0/es2_to_es1/accepted/1471": {
       "samples": 1520,
-      "min": 36.328,
-      "max": 36.328,
+      "min": 48.28,
+      "max": 48.288,
+      "jitter": 0.008
+    },
+    "var_high_d0/es2_to_es1/accepted/17": {
+      "samples": 20,
+      "min": 23.504,
+      "max": 23.504,
+      "jitter": 0.0
+    },
+    "var_high_d0/es2_to_es1/accepted/256": {
+      "samples": 20,
+      "min": 13.088,
+      "max": 13.088,
       "jitter": 0.0
     },
     "var_high_d257/es1_to_es2/accepted/1": {
       "samples": 20,
-      "min": 25.928,
-      "max": 25.928,
-      "jitter": 0.0
-    },
-    "var_high_d257/es1_to_es2/accepted/17": {
-      "samples": 20,
-      "min": 13.608,
-      "max": 13.608,
-      "jitter": 0.0
-    },
-    "var_high_d257/es1_to_es2/accepted/256": {
-      "samples": 20,
-      "min": 9.128,
-      "max": 9.128,
+      "min": 37.88,
+      "max": 37.88,
       "jitter": 0.0
     },
     "var_high_d257/es1_to_es2/accepted/1024": {
       "samples": 20,
-      "min": 27.608,
-      "max": 27.608,
+      "min": 35.984,
+      "max": 35.984,
       "jitter": 0.0
     },
     "var_high_d257/es1_to_es2/accepted/1471": {
       "samples": 1520,
-      "min": 38.384,
-      "max": 38.392,
+      "min": 50.336,
+      "max": 50.344,
       "jitter": 0.008
+    },
+    "var_high_d257/es1_to_es2/accepted/17": {
+      "samples": 20,
+      "min": 25.56,
+      "max": 25.56,
+      "jitter": 0.0
+    },
+    "var_high_d257/es1_to_es2/accepted/256": {
+      "samples": 20,
+      "min": 15.144,
+      "max": 15.144,
+      "jitter": 0.0
     },
     "var_high_d257/es2_to_es1/accepted/1": {
       "samples": 20,
-      "min": 25.928,
-      "max": 25.928,
-      "jitter": 0.0
-    },
-    "var_high_d257/es2_to_es1/accepted/17": {
-      "samples": 20,
-      "min": 13.608,
-      "max": 13.608,
-      "jitter": 0.0
-    },
-    "var_high_d257/es2_to_es1/accepted/256": {
-      "samples": 20,
-      "min": 9.128,
-      "max": 9.128,
+      "min": 37.88,
+      "max": 37.88,
       "jitter": 0.0
     },
     "var_high_d257/es2_to_es1/accepted/1024": {
       "samples": 20,
-      "min": 27.608,
-      "max": 27.608,
+      "min": 35.984,
+      "max": 35.984,
       "jitter": 0.0
     },
     "var_high_d257/es2_to_es1/accepted/1471": {
       "samples": 1520,
-      "min": 38.384,
-      "max": 38.392,
+      "min": 50.336,
+      "max": 50.344,
       "jitter": 0.008
+    },
+    "var_high_d257/es2_to_es1/accepted/17": {
+      "samples": 20,
+      "min": 25.56,
+      "max": 25.56,
+      "jitter": 0.0
+    },
+    "var_high_d257/es2_to_es1/accepted/256": {
+      "samples": 20,
+      "min": 15.144,
+      "max": 15.144,
+      "jitter": 0.0
     }
   },
   "jitter_r119_top": [
     {
       "stage": "var_cycle_d0",
       "direction": "es1_to_es2",
-      "jitter_us": 9.816,
+      "jitter_us": 19.536,
       "vl": "25",
       "length": "256",
       "min_frame": "2666",
@@ -2696,7 +2718,7 @@
     {
       "stage": "var_cycle_d0",
       "direction": "es2_to_es1",
-      "jitter_us": 9.816,
+      "jitter_us": 19.536,
       "vl": "25",
       "length": "256",
       "min_frame": "2666",
@@ -2705,7 +2727,7 @@
     {
       "stage": "var_cycle_d257",
       "direction": "es1_to_es2",
-      "jitter_us": 9.816,
+      "jitter_us": 19.536,
       "vl": "25",
       "length": "256",
       "min_frame": "3866",
@@ -2714,7 +2736,7 @@
     {
       "stage": "var_cycle_d257",
       "direction": "es2_to_es1",
-      "jitter_us": 9.816,
+      "jitter_us": 19.536,
       "vl": "25",
       "length": "256",
       "min_frame": "3866",
@@ -2724,44 +2746,179 @@
       "stage": "gbe77_d0",
       "direction": "es1_to_es2",
       "jitter_us": 0.008,
-      "vl": "29",
+      "vl": "5",
       "length": "1471",
-      "min_frame": "1184",
-      "max_frame": "1954"
+      "min_frame": "1160",
+      "max_frame": "2392"
+    },
+    {
+      "stage": "gbe77_d0",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "3",
+      "length": "1471",
+      "min_frame": "698",
+      "max_frame": "1006"
+    },
+    {
+      "stage": "gbe77_d257",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.008,
+      "vl": "51",
+      "length": "1471",
+      "min_frame": "2977",
+      "max_frame": "4132"
+    },
+    {
+      "stage": "gbe77_d257",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "49",
+      "length": "1471",
+      "min_frame": "2515",
+      "max_frame": "2746"
+    },
+    {
+      "stage": "var_burst_d0",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "8561",
+      "max_frame": "9161"
+    },
+    {
+      "stage": "var_fixed_d0",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "13",
+      "length": "1024",
+      "min_frame": "254",
+      "max_frame": "1134"
+    },
+    {
+      "stage": "var_fixed_d257",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "28",
+      "length": "1024",
+      "min_frame": "1469",
+      "max_frame": "2189"
+    },
+    {
+      "stage": "var_high_d0",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.008,
+      "vl": "41",
+      "length": "1471",
+      "min_frame": "5002",
+      "max_frame": "6202"
+    },
+    {
+      "stage": "var_high_d0",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "71",
+      "length": "1471",
+      "min_frame": "5032",
+      "max_frame": "6472"
+    },
+    {
+      "stage": "var_high_d257",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.008,
+      "vl": "15",
+      "length": "1471",
+      "min_frame": "6736",
+      "max_frame": "6896"
+    },
+    {
+      "stage": "var_high_d257",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.008,
+      "vl": "45",
+      "length": "1471",
+      "min_frame": "6766",
+      "max_frame": "7166"
+    },
+    {
+      "stage": "var_burst_d0",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.0,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "8561",
+      "max_frame": "8561"
+    },
+    {
+      "stage": "var_burst_d257",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.0,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "9761",
+      "max_frame": "9761"
+    },
+    {
+      "stage": "var_burst_d257",
+      "direction": "es2_to_es1",
+      "jitter_us": 0.0,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "9761",
+      "max_frame": "9761"
+    },
+    {
+      "stage": "var_fixed_d0",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.0,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "241",
+      "max_frame": "241"
+    },
+    {
+      "stage": "var_fixed_d257",
+      "direction": "es1_to_es2",
+      "jitter_us": 0.0,
+      "vl": "0",
+      "length": "1",
+      "min_frame": "1441",
+      "max_frame": "1441"
     }
   ],
   "burst_release_analysis": [
     {
       "stage": "var_burst_d0",
       "direction": "es1_to_es2",
-      "release_first_us": 172.408,
-      "release_last_us": 172.536,
-      "applied_last_us": 32.784,
+      "release_first_us": 183.704,
+      "release_last_us": 183.832,
+      "applied_last_us": 49.76,
       "release_jitter_us": 0.0
     },
     {
       "stage": "var_burst_d0",
       "direction": "es2_to_es1",
-      "release_first_us": 172.512,
-      "release_last_us": 172.64,
-      "applied_last_us": 32.888,
-      "release_jitter_us": 0.0
+      "release_first_us": 183.704,
+      "release_last_us": 183.832,
+      "applied_last_us": 49.76,
+      "release_jitter_us": 0.008
     },
     {
       "stage": "var_burst_d257",
       "direction": "es1_to_es2",
-      "release_first_us": 174.464,
-      "release_last_us": 174.592,
-      "applied_last_us": 34.84,
+      "release_first_us": 185.76,
+      "release_last_us": 185.888,
+      "applied_last_us": 51.816,
       "release_jitter_us": 0.0
     },
     {
       "stage": "var_burst_d257",
       "direction": "es2_to_es1",
-      "release_first_us": 174.464,
-      "release_last_us": 174.592,
-      "applied_last_us": 34.84,
-      "release_jitter_us": 0.008
+      "release_first_us": 185.76,
+      "release_last_us": 185.888,
+      "applied_last_us": 51.816,
+      "release_jitter_us": 0.0
     }
   ],
   "application_entry": {
@@ -2770,33 +2927,34 @@
     "samples": 63,
     "L_entry_last": {
       "samples": 63,
-      "min": 36.328,
-      "max": 552.0,
-      "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "min": 23.368,
+      "max": 60.584,
+      "jitter": 15.2,
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "L_entry_first": {
       "samples": 63,
-      "min": 24.568,
-      "max": 540.24,
-      "jitter": 26.0
+      "min": 21.312,
+      "max": 48.808,
+      "jitter": 15.2
     },
     "jitter_r119": {
-      "max": 26.0,
-      "vl": "0",
-      "length": "1471",
-      "min_frame": "64",
-      "max_frame": "22"
+      "max": 15.2,
+      "vl": "18",
+      "length": "256",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "injection": {
       "mbps": 210.44,
       "payload_bytes": 78915,
       "window_cycles": 375000,
-      "stall_cycles": 990,
-      "stall_maxrun": 6,
-      "lag_max_cycles": "1375",
+      "stall_cycles": 0,
+      "stall_maxrun": 0,
+      "lag_max_cycles": 1351,
+      "raw_lag_max_cycles": 1351,
       "lag_samples": 63
     },
     "integrity": {
@@ -2818,101 +2976,113 @@
     },
     "L_tx": {
       "samples": 63,
-      "min": 0.312,
-      "max": 515.984,
-      "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "min": 7.336,
+      "max": 36.248,
+      "jitter": 15.2,
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "L_rx": {
       "samples": 63,
-      "min": 11.36,
-      "max": 12.352,
-      "jitter": 0.0,
-      "vl": "0",
-      "min_frame": "22",
-      "max_frame": "22"
+      "min": 0.8,
+      "max": 12.432,
+      "jitter": 11.136,
+      "vl": "16",
+      "min_frame": "51",
+      "max_frame": "31"
     },
     "L_rx_last": {
       "samples": 63,
-      "min": 11.856,
-      "max": 24.112,
-      "jitter": 0.0,
-      "vl": "0",
-      "min_frame": "22",
-      "max_frame": "22"
+      "min": 0.8,
+      "max": 24.192,
+      "jitter": 11.136,
+      "vl": "16",
+      "min_frame": "51",
+      "max_frame": "31"
     },
     "L_app": {
       "samples": 63,
-      "min": 12.664,
-      "max": 528.336,
-      "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "min": 19.272,
+      "max": 37.048,
+      "jitter": 15.2,
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "L_app_last": {
       "samples": 63,
-      "min": 24.424,
-      "max": 540.096,
-      "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "min": 21.312,
+      "max": 48.808,
+      "jitter": 15.2,
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "L_release_app": {
       "samples": 63,
-      "min": 24.568,
-      "max": 540.24,
+      "min": 21.336,
+      "max": 48.832,
       "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     },
     "L_release_app_last": {
       "samples": 63,
-      "min": 36.328,
-      "max": 552.0,
+      "min": 23.376,
+      "max": 60.592,
       "jitter": 26.0,
-      "vl": "0",
-      "min_frame": "64",
-      "max_frame": "22"
+      "vl": "18",
+      "min_frame": "34",
+      "max_frame": "76"
     }
   },
   "equivalence": {
     "tb_sys_perf": {
-      "fields_tcl": 1780,
-      "fields_python": 1780,
+      "fields_tcl": 1784,
+      "fields_python": 1784,
       "only_tcl": [],
       "only_python": [],
       "differences": 0,
-      "detail": []
+      "detail": [],
+      "folder": "out/modelsim/judge_20261028_225509_8540/performance",
+      "tcl_sha256": "CD393A8698E22524CE862A028DC48EACD522546C4CA844F6378434C7CDB29DB3",
+      "python_sha256": "E3579D121362D4F8E774C4ABB4A6873434E3FA863A8801ED29F4D55ABF6EE2EB"
     },
     "tb_sys_perf_var": {
-      "fields_tcl": 20560,
-      "fields_python": 20560,
+      "fields_tcl": 20576,
+      "fields_python": 20576,
       "only_tcl": [],
       "only_python": [],
       "differences": 0,
-      "detail": []
+      "detail": [],
+      "folder": "out/modelsim/judge_20261028_225509_8540/perf_var",
+      "tcl_sha256": "0E1934C87834F5748936943B6C7FD33A4CA770797FE52BA4B78DD921E943AD8D",
+      "python_sha256": "EB9E7CA55AC26258D641F95CD8023D48916A6B0EE6FBD31D63D9982996EAAF10"
     },
     "app_entry": {
-      "fields_tcl": 2570,
-      "fields_python": 2570,
+      "fields_tcl": 2572,
+      "fields_python": 2572,
       "only_tcl": [],
       "only_python": [],
       "differences": 0,
-      "detail": []
+      "detail": [],
+      "folder": "out/app/t63_f1_app_default_20261028_225507_726837_1ad7bba07fcb",
+      "tcl_sha256": "DC9702849D5BA8CEDEE21B15612A7910B4D8D4A5EBB6DE0B404E0AE2CF3D8E7C",
+      "python_sha256": "DC9702849D5BA8CEDEE21B15612A7910B4D8D4A5EBB6DE0B404E0AE2CF3D8E7C"
     }
   },
   "validation": {
-    "tb_sys_perf_checks": {
-      "items": 1228832,
-      "errors": 0
-    },
-    "tb_sys_perf_folder": "out\\sim\\tb_sys_perf\\20261026_221027_627481",
-    "tb_sys_perf_var_folder": "out\\sim\\tb_sys_perf_var\\20261026_221027_607203",
-    "app_folder": "out\\app\\20261027_000437"
-  }
+    "ce2_all_passed": true,
+    "judge_all_passed": true,
+    "source_unchanged": true,
+    "tb_sys_perf_folder": "out/modelsim/judge_20261028_225509_8540/performance",
+    "tb_sys_perf_var_folder": "out/modelsim/judge_20261028_225509_8540/perf_var",
+    "app_folder": "out/app/t63_f1_app_default_20261028_225507_726837_1ad7bba07fcb",
+    "source_summary": "out/t63/F1_final_v2/summary.json",
+    "source_summary_sha256": "90A05E9FBA3D5B42CBA2C33C3A7C310EE9EF04FFB6355FC8237267ECEC32D48A"
+  },
+  "measurement_started": "2026-10-28T22:55:06.955489-07:00",
+  "measurement_finished": "2026-10-29T01:34:13.162777-07:00"
 }

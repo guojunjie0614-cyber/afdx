@@ -1,0 +1,40 @@
+{
+  "app_default": {
+    "passed": true,
+    "checks": 10308637,
+    "seconds": 102.093,
+    "started": "2026-10-28T22:55:07.473468-07:00",
+    "finished": "2026-10-28T22:56:49.569022-07:00",
+    "diagnostics": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 0,
+      "FAIL": 0,
+      "RAMCOLL": 0
+    },
+    "result": "out/t63/F1_final_v2/jobs/app_default/result.json",
+    "sha256": "E740C0EC7DD1AB8F6229F0B35F6726AD722EF318973D1B1B2361B8595BF25C14",
+    "source_summary": "out/validation/t63_f1_app_default/20261028_225507_726837_1ad7bba07fcb/summary.json",
+    "source_summary_sha256": "9D183A913748A4441DB9F3929F7FCA5ED10F69945A76CB5633DE07C466DD7E66",
+    "summary": "APP SUMMARY run=t63_f1_app_default_20261028_225507_726837_1ad7bba07fcb messages=84 vls=21 window_begin=191562 window_end=566562\nAPP METRIC inject_mbps=210.440 max_e2e_us=60.584 max_e2e_first_us=48.808 jitter_r119_us=15.200 jitter_vl=18 jitter_len=256 stall_cycles=0 stall_maxrun=0 lag_max_cycles=1351 dropped=0 duplicate=0 overflow=0 delivered=84 redundancy_rejections=84 good_frames=168\nAPP REQUIREMENT PASS min_mbps=100 max_e2e_us=2000 max_jitter_us=50\nAPP CHECK PASS messages=84 delivered=84 payload=match redundancy=once\n"
+  },
+  "app_small": {
+    "passed": true,
+    "checks": 4915655,
+    "seconds": 20.109,
+    "started": "2026-10-28T22:55:07.419396-07:00",
+    "finished": "2026-10-28T22:55:27.531893-07:00",
+    "diagnostics": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 0,
+      "FAIL": 0,
+      "RAMCOLL": 0
+    },
+    "result": "out/t63/F1_final_v2/jobs/app_small/result.json",
+    "sha256": "B788ED9DF0856965B67A43C1A1A0001D18D7F07A82914A4386A47A2E0CB83156",
+    "source_summary": "out/validation/t63_f1_app_small/20261028_225507_734214_232853c6aa4d/summary.json",
+    "source_summary_sha256": "37C778D8EE777F8A6ECF88D0469CA18B433204FAAA06889016C0988EF692BABD",
+    "summary": "APP SUMMARY run=t63_f1_app_small_20261028_225507_734214_232853c6aa4d messages=5 vls=21 window_begin=66562 window_end=66562\nAPP METRIC inject_mbps=1.475 max_e2e_us=501.464 max_e2e_first_us=501.296 jitter_r119_us=0.000 jitter_vl=0 jitter_len=2 stall_cycles=0 stall_maxrun=0 lag_max_cycles=7 dropped=0 duplicate=0 overflow=0 delivered=5 redundancy_rejections=5 good_frames=10\nAPP REQUIREMENT REPORT min_mbps=100 max_e2e_us=2000 max_jitter_us=50\nAPP CHECK PASS messages=5 delivered=5 payload=match redundancy=once\n"
+  }
+}

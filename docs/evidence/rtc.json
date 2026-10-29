@@ -2,27 +2,27 @@
   "items": 1811,
   "errors": 0,
   "idle_max_ns": 0,
-  "loaded_max_ns": 10788,
+  "loaded_max_ns": 0,
   "idle_syncs": 20,
   "loaded_syncs": 8,
   "gbe_syncs": 40,
-  "gbe_max_ns": 10788,
+  "gbe_max_ns": 0,
   "gbe_mbps": {
     "es1": 906.136,
     "es2": 906.136
   },
   "gbe_window": [
-    2922245,
-    5547245
+    2922596,
+    5547596
   ],
   "source_timing": {
     "es1": {
       "max_lateness_cycles": 0,
-      "max_message_cycles": 1568
+      "max_message_cycles": 1475
     },
     "es2": {
-      "max_lateness_cycles": 16,
-      "max_message_cycles": 1639
+      "max_lateness_cycles": 0,
+      "max_message_cycles": 1475
     }
   },
   "fraction_vectors": 72,
@@ -93,18 +93,18 @@
         "utc": "2000-01-01T00:16:47.200000048Z"
       },
       "receive": {
-        "raw": "bc17c5e8fffee05f",
+        "raw": "bc17c5e8fffee0c6",
         "seconds": 3155674600,
-        "fraction": 4294893663,
-        "nanoseconds": 999982856,
-        "utc": "2000-01-01T00:16:40.999982856Z"
+        "fraction": 4294893766,
+        "nanoseconds": 999982880,
+        "utc": "2000-01-01T00:16:40.999982880Z"
       },
       "transmit": {
-        "raw": "bc17c5e8fffee77c",
+        "raw": "bc17c5e8fffee827",
         "seconds": 3155674600,
-        "fraction": 4294895484,
-        "nanoseconds": 999983280,
-        "utc": "2000-01-01T00:16:40.999983280Z"
+        "fraction": 4294895655,
+        "nanoseconds": 999983320,
+        "utc": "2000-01-01T00:16:40.999983320Z"
       }
     }
   ],

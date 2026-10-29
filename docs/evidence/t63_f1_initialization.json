@@ -1,0 +1,13 @@
+{
+  "verification_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
+  "reset_marker_cycle": 5,
+  "ready_marker_cycle": 65545,
+  "delta_cycles": 65540,
+  "clock_ns": 8,
+  "delta_us": 524.32,
+  "rx_event_source": "out/sim/tb_sys_fault/20261028_225507_743320_3e4a3ca22571/es1_rx/events.txt",
+  "rx_event_sha256": "0EB9EC44435B17B02E435312785F71556E0B831F80660F9DBC6352735ADF720E",
+  "system_event_source": "out/sim/tb_sys_fault/20261028_225507_743320_3e4a3ca22571/sys_events.txt",
+  "system_event_sha256": "82B6A9745AEEBA129FA5433F0A65C8DA3621C09217F1460ADD718E6F77A77996",
+  "meaning": "Observed R-to-I log marker interval in the current tb_sys_fault run"
+}

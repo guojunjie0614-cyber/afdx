@@ -1,11 +1,11 @@
 # F1 界面复跑步骤
 
-在 eLinx 3.0.7 中按以下步骤复跑。当前完成的是 CLI 验证与界面入口静态核对，真实 GUI 仍待用户验证。
+在 eLinx 3.0.7 中按以下步骤复跑。V2 的 CLI 时序复核通过，界面入口已静态核对，真实 GUI 仍待用户验证。V1 仍有 `tb_sys_net` 网表失败；本页产物比对通过也不解除该功能终验阻塞，详见 [功能终验记录](evidence/t63_f1_functional.json)。
 
 1. 在 `E:/2026_Embedded_FPGA/worktrees/active/c3_t63` 打开 `elinx/AFDX_EndSystem.epr`。顶层 `AFDX_top`，器件 `EQ6HL130/CSG484_H`，源文件只登记 `afdx_all.v`。约束集为 `physical_only.edc`、`timing_only.sdc`，目标约束为前者。
 2. 执行 **Run Synthesis**，成功后执行 **Run Implementation**，保留 `elinx/AFDX_EndSystem.runs/synth_1/`、`imple_1/` 全部产物。遇到许可或工具错误就保留日志、停止该项，不改系统设置。
 3. 查看两目录新生成的 `AFDX_EndSystem.run.psf`：`source` 读取物理 EDC，目标约束指向该 EDC；`read_sdc` 只读取 `timing_only.sdc`。双文件拼接与完整 `constraints.edc` 一致；PRES、管脚和簇位置不得送入 SDC 解析器。CLI 副本可 `source` 完整 EDC，再 `read_sdc` 纯 SDC。
-4. 核对日志：`clk` 为 125 MHz / 8.000 ns，setup uncertainty 0.30 ns，多周期 setup 2 / hold 1，PRES 1.30；无 `invalid-command`、SDC 解析错误、`[ERROR]` / `[CRIT]`。控制台未落盘时，保存到 `out/t63/gui_console.log`；比对报告的 trace 字段只记录日志中实际找到的标记，不能代替此步。
+4. 核对日志：`clk` 为 125 MHz / 8.000 ns，setup uncertainty 0.30 ns，多周期 `-setup 2 / -hold 0`（本工具的同沿保持检查），PRES 1.30；无 `invalid-command`、SDC 解析错误、`[ERROR]` / `[CRIT]`。控制台未落盘时，保存到 `out/t63/gui_console.log`；比对报告的 trace 字段只记录日志中实际找到的标记，不能代替此步。
 5. 在工作区根目录的 PowerShell 执行只读比对，脚本只新建 JSON 报告：
 
    ```powershell
