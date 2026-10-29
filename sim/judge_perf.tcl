@@ -81,12 +81,13 @@ proc judge_perf::vectors {folder} {
 proc judge_perf::require {condition message} {if {!$condition} {error "Performance check: $message"}}
 proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)-max($start,$begin))}}
 
-# R119/R120 baseline measured by T60 21c11f8 on 2026-10-27.
-# Record: c3_t60_smoke06/out/sim/tb_sys_perf/20261027_021719_349103; Tcl/Python 1780 fields equal.
+# R119/R120 baseline for the accepted r5 A RTL 18d1606c, measured on 2026-10-28.
+# Two RTL runs at fd1013a agree; Tcl/Python 1784 fields match with zero differences.
+# Record: out/t63/F1_final/judge_baseline_diagnosis.json; the later VLID pipeline adds two cycles.
 # fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles
 proc judge_perf::baseline {stage} {
-    if {[string match gbe77_d0 $stage]} {return {906.136 48.272 36.496 0.008 0 2}}
-    if {[string match gbe77_d257 $stage]} {return {906.136 50.328 38.552 0.008 0 2}}
+    if {[string match gbe77_d0 $stage]} {return {906.136 48.288 36.512 0.008 0 2}}
+    if {[string match gbe77_d257 $stage]} {return {906.136 50.344 38.568 0.008 0 2}}
     return {}
 }
 
