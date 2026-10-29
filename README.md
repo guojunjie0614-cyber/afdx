@@ -221,7 +221,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
 3. 点击 Flow → Run Behavioral Simulation。ModelSim 会运行两个端系统经双网互发 1、64、1471 字节消息的自检；预期依次看到三条 `[ELINX_MESSAGE] ... both_directions=PASS`，最后是 `[RESULT] tb_elinx PASS checks=9238 errors=0`。测试不需要 Python、输入文件或额外的 include 路径和宏。
 
-该图形入口的历史版本曾于 2026-10-12 通过，仿真时间约 2.56 ms；F1 的真实图形入口仍待用户复跑，界面截图见 `sim/wave/png/tb_elinx.png`。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
+F1 版本已于 2026-10-29 在界面复跑通过：`[RESULT] tb_elinx PASS checks=9238 errors=0`，仿真时间 2,557,473 ns；界面截图见 `sim/wave/png/tb_elinx.png`（截图为 2026-10-12 历史版本）。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
 
 ## 综合后网表仿真
 
