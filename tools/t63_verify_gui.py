@@ -51,13 +51,17 @@ def read_place(path):
     return clusters, pins
 
 
-def literal_path(value, origin):
+def literal_path(value, origin, project=None):
     value = value.strip()
     if value[:1] in ('"', '{'):
         closing = '"' if value[0] == '"' else '}'
         if not value.endswith(closing):
             raise ValueError('Nonliteral PSF path: ' + value)
         value = value[1:-1]
+    # eLinx 界面生成的 psf 用 $vecdir 表示工程目录；只展开这一个前缀，其他变量仍要人工复核。
+    vecdir = re.match(r'\$(?:vecdir|\{vecdir\})(?=/|$)', value)
+    if project is not None and vecdir:
+        value = project.as_posix() + value[vecdir.end():]
     if '$' in value or ';' in value or '\n' in value:
         raise ValueError('PSF variable or script substitution requires manual review: ' + value)
     value = re.sub(r'\\([\[\]"$])', r'\1', value).replace('\\', '/')
@@ -65,17 +69,17 @@ def literal_path(value, origin):
     return path if path.is_absolute() else (origin / path).resolve()
 
 
-def check_psf(path, timing, physical, full):
+def check_psf(path, timing, physical, full, project=None):
     reads, sources, targets = [], [], []
     for line in path.read_text(encoding='utf-8-sig').splitlines():
         match = re.fullmatch(r'\s*(source|read_sdc)\s+(.+?)\s*', line)
         if match:
-            linked = literal_path(match[2], path.parent)
+            linked = literal_path(match[2], path.parent, project)
             text = linked.read_text(encoding='utf-8-sig')
             (sources if match[1] == 'source' else reads).append((linked, text))
         match = re.fullmatch(r'\s*set_global_assignment\s+-name\s+TARGET_CONSTRAINT_FILE\s+(.+?)\s*', line)
         if match:
-            targets.append(literal_path(match[1], path.parent))
+            targets.append(literal_path(match[1], path.parent, project))
     accepted = len(reads) == 1 and reads[0][1] == timing and len(sources) == 1 and sources[0][1] in (physical, full)
     accepted = accepted and len(targets) == 1 and targets[0] == sources[0][0]
     return dict(passed=accepted, file=str(path), sha256=digest(path),
@@ -112,7 +116,7 @@ def compare(baseline_path, runs_dir, extra_logs=()):
         return dict(passed=False, checks=checks, missing=missing)
     cutoff = datetime.fromisoformat(baseline['verification_started']).timestamp()
     checks['fresh_artifacts'] = all(p.stat().st_mtime >= cutoff for p in required)
-    detail['psf'] = [check_psf(p, timing, physical, full) for p in required[3:5]]
+    detail['psf'] = [check_psf(p, timing, physical, full, runs_dir.parent) for p in required[3:5]]
     checks['psf_read_chain'] = all(x['passed'] for x in detail['psf'])
     detail['vqm_signature'] = vqm_signature(required[0])
     checks['mapped_circuit'] = detail['vqm_signature'] == baseline['vqm_signature']
