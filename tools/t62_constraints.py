@@ -37,9 +37,25 @@ def physical(spec, pres):
         if not re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*(?:\[[0-9]+\])?', row['port']):
             raise ValueError('Invalid approved port')
         lines.append('set_location_assignment PIN_' + row['pin'] + ' -to {' + row['port'] + '}')
-    # R/Tile are deliberately not admitted by the P0-only version.
-    if spec.get('regions') or spec.get('tiles'):
-        raise ValueError('R/Tile require a new native-validated policy version')
+    # Regions stay unadmitted. Tiles come only from the frozen, natively verified
+    # T63 lock (every cluster placed exactly, trace code 0, .place identical).
+    if spec.get('regions'):
+        raise ValueError('Regions require a new native-validated policy version')
+    tiles = spec.get('tiles') or []
+    if tiles:
+        if len({row['cluster'] for row in tiles}) != len(tiles):
+            raise ValueError('Duplicate tile cluster')
+        if len({(row['site'], row['x'], row['y']) for row in tiles}) != len(tiles):
+            raise ValueError('Tile site collision')
+        for row in tiles:
+            kind = {'CLB': 'clb', 'M4K': 'mem'}.get(row['site'])
+            if kind is None or not re.fullmatch(r'stratix_' + kind + r'[0-9]+', row['cluster']):
+                raise ValueError('Invalid approved tile')
+            lines.append('set_location_assignment %s_X%d_Y%d_N0 -to {%s}'
+                         % (row['site'], row['x'], row['y'], row['cluster']))
+        digest = hashlib.sha256(('\n'.join(lines[1 + len(spec['pins']):]) + '\n').encode()).hexdigest()
+        if digest.upper() != spec['tiles_sha256']:
+            raise ValueError('Approved tile lock hash differs')
     return '\n'.join(lines) + '\n'
 
 
@@ -97,8 +113,18 @@ def self_check():
         'missing_pin': (source.replace(physical(load_spec(), '1.55').splitlines()[1] + '\n', '', 1), False),
         'misspelled_port': (source.replace('-to {clk}', '-to {missing_clk}', 1), False),
         'unapproved_region': (source + 'create_pblock R -from X22_Y60 -to X41_Y75\n', False),
-        'unapproved_tile': (source + 'set_location_assignment CLB_X25_Y62_N0 -to {stratix_clb2470}\n', False),
+        'unapproved_tile': (source + 'set_location_assignment CLB_X25_Y62_N0 -to {stratix_clb99999}\n', False),
     })
+    tiles = load_spec().get('tiles') or []
+    if tiles:
+        first = 'set_location_assignment %s_X%d_Y%d_N0 -to {%s}\n' % (
+            tiles[0]['site'], tiles[0]['x'], tiles[0]['y'], tiles[0]['cluster'])
+        cases.update({
+            'tile_missing': (source.replace(first, '', 1), False),
+            'tile_moved': (source.replace(first, first.replace('_Y%d_' % tiles[0]['y'],
+                                                               '_Y%d_' % (tiles[0]['y'] + 1)), 1), False),
+            'tile_duplicated': (source + first, False),
+        })
     results = []
     for name, (program, expect) in cases.items():
         if not expect and program == source:
@@ -116,8 +142,8 @@ def self_check():
                             passed=accepted == expect, detail=detail))
     if not all(row['passed'] for row in results):
         raise ValueError(str(results))
-    return dict(passed=True, tests=results, pins=172,
-                region_tile_policy='not admitted before native proof and separate commit')
+    return dict(passed=True, tests=results, pins=172, tiles=len(tiles),
+                region_tile_policy='regions not admitted; tiles exactly the frozen T63 lock')
 
 
 def main():
