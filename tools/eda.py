@@ -152,6 +152,8 @@ def sim(options):
         if options.test=="tb_net_services":
             f.job("vectors",[sys.executable,ROOT/"tools/net_services_ref.py","vectors","--dir",f.folder],30)
             sources.extend(ROOT/"tools"/name for name in ("net_services_ref.py","load_ref.py","download_ref.py","snmp_ref.py","afdx_ref.py"))
+        if options.test.startswith("tb_t65_"):
+            sources.append(ROOT/"tools/t65_check.py")
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
         snapshot=f.folder/"sources";snapshot.mkdir()
         for i,p in enumerate(sources):(snapshot/(str(i)+"_"+p.name)).write_bytes(p.read_bytes())
@@ -248,6 +250,13 @@ def sim(options):
             if "AFDX_top" in replaced:command.extend(["--rtl-reference",f.result["rtl_reference"]])
             report=f.job("check",command,60)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
+            good=good and f.result["check"]["errors"]==0
+            print(report.strip(),flush=True)
+        if options.test.startswith("tb_t65_"):
+            mutant=next((int(value.split("=",1)[1]) for value in reversed(options.param) if value.startswith("T65_MUTANT=")),0)
+            command="import sys,json;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from t65_check import check;r=check(sys.argv[2],sys.argv[3],int(sys.argv[4]));s=json.dumps(r,ensure_ascii=False,indent=2);Path(sys.argv[2],'check_summary.json').write_text(s+'\\n',encoding='utf-8');print(s)"
+            report=f.job("check",[sys.executable,"-c",command,ROOT/"tools",f.folder,options.test,str(mutant)],60)
+            f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
         if good and options.test=="tb_mac_loop":

@@ -1,0 +1,20 @@
+{
+  "stage": "regression",
+  "pid": 34256,
+  "created": 1793325378.5965445,
+  "command": [
+    "powershell.exe",
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\sim\\regress.ps1",
+    "-Deadline",
+    "2026-10-30T14:56:18.594498+08:00"
+  ],
+  "started": "2026-10-30T09:56:18.594498+08:00",
+  "deadline": "2026-10-30T14:56:18.594498+08:00",
+  "finished": "2026-10-30T11:36:57.207609+08:00",
+  "exit_code": 0,
+  "batch": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\regress\\rtl_20261029_185618_8856005"
+}
