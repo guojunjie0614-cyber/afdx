@@ -16,6 +16,8 @@ import psutil
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT/'out/t65b'
 EVID = ROOT/'docs/evidence/t65b_regress'
+MS = Path(os.environ.get('MODELSIM_HOME') or Path(shutil.which('vsim.exe') or 'vsim.exe').parent)
+PYTHON = Path(os.environ.get('AFDX_PYTHON') or sys.executable)
 TZ = timezone(timedelta(hours=8))
 
 def now(): return datetime.now(TZ).isoformat()
@@ -80,7 +82,7 @@ def negative():
 def run():
     s=load(BASE/'state.json')
     assert datetime.now(TZ)<datetime.fromisoformat(s['hard_deadline'])
-    env=os.environ.copy();env.update(AFDX_PYTHON='E:/anaconda3/python.exe',MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',AFDX_CE_DIV='2',PYTHONDONTWRITEBYTECODE='1')
+    env=os.environ.copy();env.update(AFDX_PYTHON=str(PYTHON),MODELSIM_HOME=str(MS),AFDX_CE_DIV='2',PYTHONDONTWRITEBYTECODE='1')
     assert float(env.get('AFDX_MEM_FLOOR_GB','5'))>=5
     assert not env.get('AFDX_LATEST_PREFIX')
     for key in ('AFDX_MEM_LIMIT_GB','AFDX_MEM_FLOOR_GB'): assert key not in env, 'Use default memory guards'
