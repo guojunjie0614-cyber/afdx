@@ -1,0 +1,31 @@
+{
+  "work_delivered": true,
+  "all_functional_passed": true,
+  "confirmed_rtl_defects": 0,
+  "incomplete": 0,
+  "positive_tests": 16,
+  "native_counterexamples": 32,
+  "independent_counterexamples": 32,
+  "coverage_comparable": false,
+  "coverage_delta_reported": false,
+  "requires_parent_denominator_decision": true,
+  "source_checks": {
+    "original_files_unchanged": true,
+    "rtl_equal_frozen": true,
+    "rtl_byte_hashes_equal_t64_before_and_after": true,
+    "tb_lib_unchanged": true
+  },
+  "original_file_count": 657,
+  "start": "2026-10-30T08:49:56+08:00",
+  "acceptance_time": "2026-10-30T09:39:04.142443+08:00",
+  "simulation_deadline": "2026-10-30T18:49:56+08:00",
+  "hard_deadline": "2026-10-30T20:49:56+08:00",
+  "resources": {
+    "available_memory": 14760189952,
+    "disk_free": 112988712960,
+    "native_processes": []
+  },
+  "no_active_native_processes": true,
+  "no_heartbeat_or_scheduler": true,
+  "local_commit_evidence": "Git history and final handoff; this snapshot is generated before commit"
+}

@@ -1,0 +1,27 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_app_read
+=================================================================================
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         82        80         2    97.56%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_app_read
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                         queued[3]           0           0        0.00 
+
+Total Node Count     =         41 
+Toggled Node Count   =         40 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      97.56% (80 of 82 bins)
+
+
+Total Coverage By Design Unit (filtered view): 97.56%
+

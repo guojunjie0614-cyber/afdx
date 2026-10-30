@@ -1,0 +1,112 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_ram_sdp
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         8         5         3    62.50%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_ram_sdp
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_ram_sdp.v
+------------------------------------IF Branch------------------------------------
+    16                                   ***0***     Count coming in to IF
+    16              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    47                                 510729294     Count coming in to IF
+    47              1                    ***0***     
+                                       510729294     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         0         4     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_ram_sdp --
+
+  File rtl/afdx_ram_sdp.v
+----------------Focused Condition View-------------------
+Line       16 Item    1  (depth > (1 << bit_index))
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                  Input Term   Covered  Reason for no coverage   Hint
+                 -----------  --------  -----------------------  --------------
+  (depth > (1 << bit_index))         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                    Non-masking condition(s)      
+ ---------  ---------  --------------------          -------------------------     
+  Row   1:    ***0***  (depth > (1 << bit_index))_0  -                             
+  Row   2:    ***0***  (depth > (1 << bit_index))_1  -                             
+
+----------------Focused Condition View-------------------
+Line       47 Item    1  ((write_enable && read_enable) && (write_address == read_address))
+Condition totals: 0 of 3 input terms covered = 0.00%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+                     write_enable         N  '_1' not hit             Hit '_1'
+                      read_enable         N  '_1' not hit             Hit '_1'
+  (write_address == read_address)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:       3401  write_enable_0                     -                             
+  Row   2:    ***0***  write_enable_1                     ((write_address == read_address) && read_enable)
+  Row   3:       2813  read_enable_0                      write_enable                  
+  Row   4:    ***0***  read_enable_1                      ((write_address == read_address) && write_enable)
+  Row   5:         77  (write_address == read_address)_0  (write_enable && read_enable) 
+  Row   6:    ***0***  (write_address == read_address)_1  (write_enable && read_enable) 
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      10         5         5    50.00%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_ram_sdp --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_ram_sdp.v
+    14              1     
+    15              1     
+    15              2     
+    16              1     
+    48              1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        278       277         1    99.64%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_ram_sdp
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                      write_enable           4           0       50.00 
+
+Total Node Count     =        139 
+Toggled Node Count   =        138 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      99.64% (277 of 278 bins)
+
+
+Total Coverage By Design Unit (filtered view): 53.03%
+

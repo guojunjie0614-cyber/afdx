@@ -1,0 +1,1529 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_615a_engine
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       721       680        41    94.31%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_615a_engine
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_615a_engine.v
+------------------------------------IF Branch------------------------------------
+    757                                     1064     Count coming in to IF
+    757             4                    ***0***     
+    757             5                       1064     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1138                                       2     Count coming in to IF
+    1138            2                    ***0***     
+    1138            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1139                                       2     Count coming in to IF
+    1139            2                    ***0***     
+    1139            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1140                                       2     Count coming in to IF
+    1140            2                    ***0***     
+    1140            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1141                                       2     Count coming in to IF
+    1141            2                    ***0***     
+    1141            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1142                                       2     Count coming in to IF
+    1142            2                    ***0***     
+    1142            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1143                                       2     Count coming in to IF
+    1143            2                    ***0***     
+    1143            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1144                                       2     Count coming in to IF
+    1144            2                    ***0***     
+    1144            3                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1462                                       2     Count coming in to IF
+    1462            1                    ***0***     
+    1467            1                          2     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------CASE Branch------------------------------------
+    1515            1                    ***0***     
+    1516            1                    ***0***     
+Branch totals: 7 hits of 9 branches = 77.77%
+
+------------------------------------IF Branch------------------------------------
+    1543                                      46     Count coming in to IF
+    1543            1                         46     
+    1548            1                    ***0***     
+    1553            1                    ***0***     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    1560                                     432     Count coming in to IF
+    1560            2                         36     
+    1566            1                          2     
+    1571            1                    ***0***     
+    1575            1                         36     
+    1579            1                        358     
+Branch totals: 4 hits of 5 branches = 80.00%
+
+------------------------------------IF Branch------------------------------------
+    1588                                     216     Count coming in to IF
+    1588            2                    ***0***     
+    1593            1                         36     
+    1594            1                        180     
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    1601                                      36     Count coming in to IF
+    1601            1                          6     
+    1614            1                         15     
+    1625            1                         15     
+    1643            1                    ***0***     
+Branch totals: 3 hits of 4 branches = 75.00%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.00%
+
+------------------------------------CASE Branch------------------------------------
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.00%
+
+------------------------------------CASE Branch------------------------------------
+    1798            1                    ***0***     
+Branch totals: 7 hits of 8 branches = 87.50%
+
+------------------------------------IF Branch------------------------------------
+    1764                                     240     Count coming in to IF
+    1764            1                    ***0***     
+                                             240     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1769                                     195     Count coming in to IF
+    1769            1                    ***0***     
+                                             195     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1774                                      55     Count coming in to IF
+    1774            1                    ***0***     
+                                              55     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1779                                    1280     Count coming in to IF
+    1779            1                    ***0***     
+                                            1280     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1910                                     468     Count coming in to IF
+    1910            1                    ***0***     
+    1911            1                        468     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1920                                     816     Count coming in to IF
+    1920            1                    ***0***     
+    1921            1                        816     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1930                                   11048     Count coming in to IF
+    1930            1                    ***0***     
+    1931            1                      11048     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1974                                      15     Count coming in to IF
+    1974            2                    ***0***     
+    1975            1                         15     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1982                                      14     Count coming in to IF
+    1982            2                    ***0***     
+    1983            1                         14     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1986                                      14     Count coming in to IF
+    1986            2                    ***0***     
+    1987            1                         14     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    1994                                       8     Count coming in to IF
+    1994            2                    ***0***     
+    1995            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2029                                       6     Count coming in to IF
+    2029            2                    ***0***     
+    2031            1                          6     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2110                                       8     Count coming in to IF
+    2110            2                    ***0***     
+    2111            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2114                                       8     Count coming in to IF
+    2114            2                    ***0***     
+    2115            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2140                                       8     Count coming in to IF
+    2140            2                    ***0***     
+    2141            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2161                                       8     Count coming in to IF
+    2161            2                    ***0***     
+    2162            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2165                                       8     Count coming in to IF
+    2165            2                    ***0***     
+    2166            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2169                                       8     Count coming in to IF
+    2169            2                    ***0***     
+    2170            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2177                                       8     Count coming in to IF
+    2177            2                    ***0***     
+    2178            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2187                                       8     Count coming in to IF
+    2187            2                    ***0***     
+    2188            1                          8     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    2216                                       7     Count coming in to IF
+    2216            2                    ***0***     
+    2217            1                          1     
+    2218            1                          6     
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    2235                                       5     Count coming in to IF
+    2235            1                    ***0***     
+    2235            2                          5     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      84        64        20    76.19%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_615a_engine --
+
+  File rtl/afdx_615a_engine.v
+
+----------------Focused Condition View-------------------
+Line       757 Item    2  (reason == 4)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  (reason == 4)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (reason == 4)_0       -                             
+  Row   2:    ***0***  (reason == 4)_1       -                             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       909 Item    1  ((download_mode && (build_position[4] >= 33)) && (build_position[4] >= lus_tail_pos))
+Condition totals: 2 of 3 input terms covered = 66.66%
+
+                           Input Term   Covered  Reason for no coverage   Hint
+                          -----------  --------  -----------------------  --------------
+  (build_position[4] >= lus_tail_pos)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                             Non-masking condition(s)      
+ ---------  ---------  --------------------                   -------------------------     
+  Row   1:          1  download_mode_0                        -                             
+  Row   2:          1  download_mode_1                        ((build_position[4] >= lus_tail_pos) && (build_position[4] >= 33))
+  Row   3:          1  (build_position[4] >= 33)_0            download_mode                 
+  Row   4:          1  (build_position[4] >= 33)_1            ((build_position[4] >= lus_tail_pos) && download_mode)
+  Row   5:    ***0***  (build_position[4] >= lus_tail_pos)_0  (download_mode && (build_position[4] >= 33))
+  Row   6:          1  (build_position[4] >= lus_tail_pos)_1  (download_mode && (build_position[4] >= 33))
+
+
+
+----------------Focused Condition View-------------------
+Line       917 Item    1  ((build_position[4] >= 33) && (build_position[4] >= lus_tail_pos))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+                           Input Term   Covered  Reason for no coverage   Hint
+                          -----------  --------  -----------------------  --------------
+  (build_position[4] >= lus_tail_pos)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                             Non-masking condition(s)      
+ ---------  ---------  --------------------                   -------------------------     
+  Row   1:          1  (build_position[4] >= 33)_0            -                             
+  Row   2:          1  (build_position[4] >= 33)_1            (build_position[4] >= lus_tail_pos)
+  Row   3:    ***0***  (build_position[4] >= lus_tail_pos)_0  (build_position[4] >= 33)     
+  Row   4:          1  (build_position[4] >= lus_tail_pos)_1  (build_position[4] >= 33)     
+
+
+
+
+----------------Focused Condition View-------------------
+Line       1429 Item    1  ((packet_pending && enable) && configured)
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+          enable         N  '_0' not hit             Hit '_0'
+      configured         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         56  packet_pending_0      -                             
+  Row   2:          1  packet_pending_1      (configured && enable)        
+  Row   3:    ***0***  enable_0              packet_pending                
+  Row   4:          1  enable_1              (configured && packet_pending)
+  Row   5:    ***0***  configured_0          (packet_pending && enable)    
+  Row   6:          1  configured_1          (packet_pending && enable)    
+
+
+
+----------------Focused Condition View-------------------
+Line       1462 Item    1  ((wait_kind == 3) || (wait_kind == 4))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (wait_kind == 3)         N  '_1' not hit             Hit '_1'
+  (wait_kind == 4)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (wait_kind == 3)_0    ~(wait_kind == 4)             
+  Row   2:    ***0***  (wait_kind == 3)_1    -                             
+  Row   3:          1  (wait_kind == 4)_0    ~(wait_kind == 3)             
+  Row   4:    ***0***  (wait_kind == 4)_1    ~(wait_kind == 3)             
+
+
+
+----------------Focused Condition View-------------------
+Line       1614 Item    1  ((request_write && (status == 1)) && (wait_kind == 1))
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+     (status == 1)         N  '_0' not hit             Hit '_0'
+  (wait_kind == 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  request_write_0       -                             
+  Row   2:          1  request_write_1       ((wait_kind == 1) && (status == 1))
+  Row   3:    ***0***  (status == 1)_0       request_write                 
+  Row   4:          1  (status == 1)_1       ((wait_kind == 1) && request_write)
+  Row   5:    ***0***  (wait_kind == 1)_0    (request_write && (status == 1))
+  Row   6:          1  (wait_kind == 1)_1    (request_write && (status == 1))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       1910 Item    1  (metadata_size >= 512)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+              Input Term   Covered  Reason for no coverage   Hint
+             -----------  --------  -----------------------  --------------
+  (metadata_size >= 512)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                Non-masking condition(s)      
+ ---------  ---------  --------------------      -------------------------     
+  Row   1:          1  (metadata_size >= 512)_0  -                             
+  Row   2:    ***0***  (metadata_size >= 512)_1  -                             
+
+
+----------------Focused Condition View-------------------
+Line       1920 Item    1  (metadata_size >= 2048)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+               Input Term   Covered  Reason for no coverage   Hint
+              -----------  --------  -----------------------  --------------
+  (metadata_size >= 2048)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                 Non-masking condition(s)      
+ ---------  ---------  --------------------       -------------------------     
+  Row   1:          1  (metadata_size >= 2048)_0  -                             
+  Row   2:    ***0***  (metadata_size >= 2048)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       1930 Item    1  (loaded >= 8192)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (loaded >= 8192)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (loaded >= 8192)_0    -                             
+  Row   2:    ***0***  (loaded >= 8192)_1    -                             
+
+
+
+
+----------------Focused Condition View-------------------
+Line       1960 Item    1  ((file_kind == 2) && (block_number == 1))
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+           Input Term   Covered  Reason for no coverage   Hint
+          -----------  --------  -----------------------  --------------
+     (file_kind == 2)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target             Non-masking condition(s)      
+ ---------  ---------  --------------------   -------------------------     
+  Row   1:    ***0***  (file_kind == 2)_0     -                             
+  Row   2:          1  (file_kind == 2)_1     (block_number == 1)           
+  Row   3:          1  (block_number == 1)_0  (file_kind == 2)              
+  Row   4:          1  (block_number == 1)_1  (file_kind == 2)              
+
+----------------Focused Condition View-------------------
+Line       1986 Item    1  ((byte_value < 2) || (byte_value > 64))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+   (byte_value < 2)         N  '_1' not hit             Hit '_1'
+  (byte_value > 64)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (byte_value < 2)_0    ~(byte_value > 64)            
+  Row   2:    ***0***  (byte_value < 2)_1    -                             
+  Row   3:          1  (byte_value > 64)_0   ~(byte_value < 2)             
+  Row   4:    ***0***  (byte_value > 64)_1   ~(byte_value < 2)             
+
+----------------Focused Condition View-------------------
+Line       1994 Item    1  ((byte_value < 2) || (byte_value > 64))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+   (byte_value < 2)         N  '_1' not hit             Hit '_1'
+  (byte_value > 64)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (byte_value < 2)_0    ~(byte_value > 64)            
+  Row   2:    ***0***  (byte_value < 2)_1    -                             
+  Row   3:          1  (byte_value > 64)_0   ~(byte_value < 2)             
+  Row   4:    ***0***  (byte_value > 64)_1   ~(byte_value < 2)             
+
+----------------Focused Condition View-------------------
+Line       2029 Item    1  ((metadata_size != lnr_expected_length) || ~lnr_name_ok)
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+                              Input Term   Covered  Reason for no coverage   Hint
+                             -----------  --------  -----------------------  --------------
+  (metadata_size != lnr_expected_length)         N  '_1' not hit             Hit '_1'
+                             lnr_name_ok         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                Non-masking condition(s)      
+ ---------  ---------  --------------------                      -------------------------     
+  Row   1:          1  (metadata_size != lnr_expected_length)_0  lnr_name_ok                   
+  Row   2:    ***0***  (metadata_size != lnr_expected_length)_1  -                             
+  Row   3:    ***0***  lnr_name_ok_0                             ~(metadata_size != lnr_expected_length)
+  Row   4:          1  lnr_name_ok_1                             ~(metadata_size != lnr_expected_length)
+
+
+
+
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       2235 Item    1  (main_peer == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (main_peer == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (main_peer == 0)_0    -                             
+  Row   2:    ***0***  (main_peer == 0)_1    -                             
+
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                    239       195        44    81.58%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.afdx_615a_engine --
+
+  File rtl/afdx_615a_engine.v
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------Focused Expression View-----------------
+Line       1479 Item    1  ((command_dport == request_port) && ((command_op == 1) || (command_op == 2)))
+Expression totals: 1 of 3 input terms covered = 33.33%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+                (command_op == 1)         N  '_0' not hit             Hit '_0'
+                (command_op == 2)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:          1  (command_dport == request_port)_0  -                             
+  Row   2:          1  (command_dport == request_port)_1  ((command_op == 1) || (command_op == 2))
+  Row   3:    ***0***  (command_op == 1)_0                ((command_dport == request_port) && ~(command_op == 2))
+  Row   4:          1  (command_op == 1)_1                (command_dport == request_port)
+  Row   5:    ***0***  (command_op == 2)_0                ((command_dport == request_port) && ~(command_op == 1))
+  Row   6:          1  (command_op == 2)_1                ((command_dport == request_port) && ~(command_op == 1))
+
+----------------Focused Expression View-----------------
+Line       1481 Item    1  ((command_op == 5) && (command_dport == main_tid))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+                   Input Term   Covered  Reason for no coverage   Hint
+                  -----------  --------  -----------------------  --------------
+            (command_op == 5)         N  '_1' not hit             Hit '_1'
+  (command_dport == main_tid)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                     Non-masking condition(s)      
+ ---------  ---------  --------------------           -------------------------     
+  Row   1:          1  (command_op == 5)_0            -                             
+  Row   2:    ***0***  (command_op == 5)_1            (command_dport == main_tid)   
+  Row   3:    ***0***  (command_dport == main_tid)_0  (command_op == 5)             
+  Row   4:    ***0***  (command_dport == main_tid)_1  (command_op == 5)             
+
+----------------Focused Expression View-----------------
+Line       1482 Item    1  ((command_op == 5) && (command_dport == status_tid))
+Expression totals: 0 of 2 input terms covered = 0.00%
+
+                     Input Term   Covered  Reason for no coverage   Hint
+                    -----------  --------  -----------------------  --------------
+              (command_op == 5)         N  '_1' not hit             Hit '_1'
+  (command_dport == status_tid)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                       Non-masking condition(s)      
+ ---------  ---------  --------------------             -------------------------     
+  Row   1:          1  (command_op == 5)_0              -                             
+  Row   2:    ***0***  (command_op == 5)_1              (command_dport == status_tid) 
+  Row   3:    ***0***  (command_dport == status_tid)_0  (command_op == 5)             
+  Row   4:    ***0***  (command_dport == status_tid)_1  (command_op == 5)             
+
+----------------Focused Expression View-----------------
+Line       1483 Item    1  (((((wait_kind == 0) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == 1))
+Expression totals: 2 of 5 input terms covered = 40.00%
+
+                    Input Term   Covered  Reason for no coverage   Hint
+                   -----------  --------  -----------------------  --------------
+  (command_sport == main_peer)         N  '_0' not hit             Hit '_0'
+             (command_op == 4)         N  '_0' not hit             Hit '_0'
+          (command_block == 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                      Non-masking condition(s)      
+ ---------  ---------  --------------------            -------------------------     
+  Row   1:          1  (wait_kind == 0)_0              -                             
+  Row   2:          1  (wait_kind == 0)_1              ((command_block == 1) && (command_op == 4) && (command_sport == main_peer) && (command_dport == main_tid))
+  Row   3:          1  (command_dport == main_tid)_0   (wait_kind == 0)              
+  Row   4:          1  (command_dport == main_tid)_1   ((command_block == 1) && (command_op == 4) && (command_sport == main_peer) && (wait_kind == 0))
+  Row   5:    ***0***  (command_sport == main_peer)_0  ((wait_kind == 0) && (command_dport == main_tid))
+  Row   6:          1  (command_sport == main_peer)_1  ((command_block == 1) && (command_op == 4) && ((wait_kind == 0) && (command_dport == main_tid)))
+  Row   7:    ***0***  (command_op == 4)_0             (((wait_kind == 0) && (command_dport == main_tid)) && (command_sport == main_peer))
+  Row   8:          1  (command_op == 4)_1             ((command_block == 1) && (((wait_kind == 0) && (command_dport == main_tid)) && (command_sport == main_peer)))
+  Row   9:    ***0***  (command_block == 1)_0          ((((wait_kind == 0) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4))
+ Row   10:          1  (command_block == 1)_1          ((((wait_kind == 0) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4))
+
+----------------Focused Expression View-----------------
+Line       1486 Item    1  ((((wait_kind == 3) && (command_dport == status_tid)) && (command_op == 4)) && (command_block == 0))
+Expression totals: 1 of 4 input terms covered = 25.00%
+
+                     Input Term   Covered  Reason for no coverage   Hint
+                    -----------  --------  -----------------------  --------------
+  (command_dport == status_tid)         N  '_0' not hit             Hit '_0'
+              (command_op == 4)         N  '_0' not hit             Hit '_0'
+           (command_block == 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                       Non-masking condition(s)      
+ ---------  ---------  --------------------             -------------------------     
+  Row   1:          1  (wait_kind == 3)_0               -                             
+  Row   2:          1  (wait_kind == 3)_1               ((command_block == 0) && (command_op == 4) && (command_dport == status_tid))
+  Row   3:    ***0***  (command_dport == status_tid)_0  (wait_kind == 3)              
+  Row   4:          1  (command_dport == status_tid)_1  ((command_block == 0) && (command_op == 4) && (wait_kind == 3))
+  Row   5:    ***0***  (command_op == 4)_0              ((wait_kind == 3) && (command_dport == status_tid))
+  Row   6:          1  (command_op == 4)_1              ((command_block == 0) && ((wait_kind == 3) && (command_dport == status_tid)))
+  Row   7:    ***0***  (command_block == 0)_0           (((wait_kind == 3) && (command_dport == status_tid)) && (command_op == 4))
+  Row   8:          1  (command_block == 0)_1           (((wait_kind == 3) && (command_dport == status_tid)) && (command_op == 4))
+
+----------------Focused Expression View-----------------
+Line       1488 Item    1  (((((wait_kind == 4) && (command_dport == status_tid)) && (command_sport == status_peer)) && (command_op == 4)) && (command_block == 1))
+Expression totals: 1 of 5 input terms covered = 20.00%
+
+                      Input Term   Covered  Reason for no coverage   Hint
+                     -----------  --------  -----------------------  --------------
+   (command_dport == status_tid)         N  '_0' not hit             Hit '_0'
+  (command_sport == status_peer)         N  '_0' not hit             Hit '_0'
+               (command_op == 4)         N  '_0' not hit             Hit '_0'
+            (command_block == 1)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                        Non-masking condition(s)      
+ ---------  ---------  --------------------              -------------------------     
+  Row   1:          1  (wait_kind == 4)_0                -                             
+  Row   2:          1  (wait_kind == 4)_1                ((command_block == 1) && (command_op == 4) && (command_sport == status_peer) && (command_dport == status_tid))
+  Row   3:    ***0***  (command_dport == status_tid)_0   (wait_kind == 4)              
+  Row   4:          1  (command_dport == status_tid)_1   ((command_block == 1) && (command_op == 4) && (command_sport == status_peer) && (wait_kind == 4))
+  Row   5:    ***0***  (command_sport == status_peer)_0  ((wait_kind == 4) && (command_dport == status_tid))
+  Row   6:          1  (command_sport == status_peer)_1  ((command_block == 1) && (command_op == 4) && ((wait_kind == 4) && (command_dport == status_tid)))
+  Row   7:    ***0***  (command_op == 4)_0               (((wait_kind == 4) && (command_dport == status_tid)) && (command_sport == status_peer))
+  Row   8:          1  (command_op == 4)_1               ((command_block == 1) && (((wait_kind == 4) && (command_dport == status_tid)) && (command_sport == status_peer)))
+  Row   9:    ***0***  (command_block == 1)_0            ((((wait_kind == 4) && (command_dport == status_tid)) && (command_sport == status_peer)) && (command_op == 4))
+ Row   10:          1  (command_block == 1)_1            ((((wait_kind == 4) && (command_dport == status_tid)) && (command_sport == status_peer)) && (command_op == 4))
+
+----------------Focused Expression View-----------------
+Line       1491 Item    1  ((((wait_kind == 5) && (command_dport == main_tid)) && (command_op == 4)) && (command_block == 0))
+Expression totals: 1 of 4 input terms covered = 25.00%
+
+                   Input Term   Covered  Reason for no coverage   Hint
+                  -----------  --------  -----------------------  --------------
+  (command_dport == main_tid)         N  '_0' not hit             Hit '_0'
+            (command_op == 4)         N  '_0' not hit             Hit '_0'
+         (command_block == 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                     Non-masking condition(s)      
+ ---------  ---------  --------------------           -------------------------     
+  Row   1:          1  (wait_kind == 5)_0             -                             
+  Row   2:          1  (wait_kind == 5)_1             ((command_block == 0) && (command_op == 4) && (command_dport == main_tid))
+  Row   3:    ***0***  (command_dport == main_tid)_0  (wait_kind == 5)              
+  Row   4:          1  (command_dport == main_tid)_1  ((command_block == 0) && (command_op == 4) && (wait_kind == 5))
+  Row   5:    ***0***  (command_op == 4)_0            ((wait_kind == 5) && (command_dport == main_tid))
+  Row   6:          1  (command_op == 4)_1            ((command_block == 0) && ((wait_kind == 5) && (command_dport == main_tid)))
+  Row   7:    ***0***  (command_block == 0)_0         (((wait_kind == 5) && (command_dport == main_tid)) && (command_op == 4))
+  Row   8:          1  (command_block == 0)_1         (((wait_kind == 5) && (command_dport == main_tid)) && (command_op == 4))
+
+----------------Focused Expression View-----------------
+Line       1493 Item    1  ((((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) || ((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ((main_peer == 0) || (command_sport == main_peer))))
+Expression totals: 2 of 8 input terms covered = 25.00%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+      (command_dport == main_tid)         N  '_0' not hit             Hit '_0'
+     (command_sport == main_peer)         N  '_0' not hit             Hit '_0'
+                (command_op == 4)         N  '_0' not hit             Hit '_0'
+  (command_block == block_number)         N  '_0' not hit             Hit '_0'
+                (command_op == 3)         N  '_0' not hit             Hit '_0'
+                 (main_peer == 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:          1  (wait_kind == 6)_0                 ~((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ((main_peer == 0) || (command_sport == main_peer)))
+  Row   2:          1  (wait_kind == 6)_1                 ((command_block == block_number) && (command_op == 4) && (command_sport == main_peer) && (command_dport == main_tid))
+  Row   3:    ***0***  (command_dport == main_tid)_0      (wait_kind == 6), (wait_kind == 2)
+  Row   4:          1  (command_dport == main_tid)_1      ((command_block == block_number) && (command_op == 4) && (command_sport == main_peer) && (wait_kind == 6)), (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && ((main_peer == 0) || (command_sport == main_peer)) && (command_op == 3) && (wait_kind == 2))
+  Row   5:    ***0***  (command_sport == main_peer)_0     (~((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ((main_peer == 0) || (command_sport == main_peer))) && ((wait_kind == 6) && (command_dport == main_tid))), ((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ~(main_peer == 0))
+  Row   6:          1  (command_sport == main_peer)_1     ((command_block == block_number) && (command_op == 4) && ((wait_kind == 6) && (command_dport == main_tid))), (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && (((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ~(main_peer == 0))
+  Row   7:    ***0***  (command_op == 4)_0                (~((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ((main_peer == 0) || (command_sport == main_peer))) && (((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)))
+  Row   8:          1  (command_op == 4)_1                ((command_block == block_number) && (((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)))
+  Row   9:    ***0***  (command_block == block_number)_0  (~((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ((main_peer == 0) || (command_sport == main_peer))) && ((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)))
+ Row   10:          1  (command_block == block_number)_1  ((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4))
+ Row   11:          1  (wait_kind == 2)_0                 ~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number))
+ Row   12:          1  (wait_kind == 2)_1                 (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && ((main_peer == 0) || (command_sport == main_peer)) && (command_op == 3) && (command_dport == main_tid))
+ Row   13:    ***0***  (command_op == 3)_0                (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && ((wait_kind == 2) && (command_dport == main_tid)))
+ Row   14:          1  (command_op == 3)_1                (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && ((main_peer == 0) || (command_sport == main_peer)) && ((wait_kind == 2) && (command_dport == main_tid)))
+ Row   15:    ***0***  (main_peer == 0)_0                 ((((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)) && ~(command_sport == main_peer))
+ Row   16:          1  (main_peer == 0)_1                 (~(((((wait_kind == 6) && (command_dport == main_tid)) && (command_sport == main_peer)) && (command_op == 4)) && (command_block == block_number)) && (((wait_kind == 2) && (command_dport == main_tid)) && (command_op == 3)))
+
+----------------Focused Expression View-----------------
+Line       1498 Item    1  (((command_block == block_number) && (command_length >= 4)) && (command_length <= 516))
+Expression totals: 1 of 3 input terms covered = 33.33%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+            (command_length >= 4)         N  '_0' not hit             Hit '_0'
+          (command_length <= 516)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:          1  (command_block == block_number)_0  -                             
+  Row   2:          1  (command_block == block_number)_1  ((command_length <= 516) && (command_length >= 4))
+  Row   3:    ***0***  (command_length >= 4)_0            (command_block == block_number)
+  Row   4:          1  (command_length >= 4)_1            ((command_length <= 516) && (command_block == block_number))
+  Row   5:    ***0***  (command_length <= 516)_0          ((command_block == block_number) && (command_length >= 4))
+  Row   6:          1  (command_length <= 516)_1          ((command_block == block_number) && (command_length >= 4))
+
+
+
+
+
+
+----------------Focused Expression View-----------------
+Line       2119 Item    1  (number >= 13)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  (number >= 13)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (number >= 13)_0      -                             
+  Row   2:          1  (number >= 13)_1      -                             
+
+----------------Focused Expression View-----------------
+Line       2120 Item    1  (pointer_bytes[7:0] < header_limit[7:0])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                Input Term   Covered  Reason for no coverage   Hint
+                               -----------  --------  -----------------------  --------------
+  (pointer_bytes[7:0] < header_limit[7:0])         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                  Non-masking condition(s)      
+ ---------  ---------  --------------------                        -------------------------     
+  Row   1:    ***0***  (pointer_bytes[7:0] < header_limit[7:0])_0  -                             
+  Row   2:          1  (pointer_bytes[7:0] < header_limit[7:0])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2121 Item    1  (pointer_bytes[7:0] == header_limit[7:0])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                 Input Term   Covered  Reason for no coverage   Hint
+                                -----------  --------  -----------------------  --------------
+  (pointer_bytes[7:0] == header_limit[7:0])         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                   Non-masking condition(s)      
+ ---------  ---------  --------------------                         -------------------------     
+  Row   1:          1  (pointer_bytes[7:0] == header_limit[7:0])_0  -                             
+  Row   2:    ***0***  (pointer_bytes[7:0] == header_limit[7:0])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2122 Item    1  (pointer_bytes[15:8] < header_limit[15:8])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                  Input Term   Covered  Reason for no coverage   Hint
+                                 -----------  --------  -----------------------  --------------
+  (pointer_bytes[15:8] < header_limit[15:8])         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                    Non-masking condition(s)      
+ ---------  ---------  --------------------                          -------------------------     
+  Row   1:          1  (pointer_bytes[15:8] < header_limit[15:8])_0  -                             
+  Row   2:    ***0***  (pointer_bytes[15:8] < header_limit[15:8])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2123 Item    1  (pointer_bytes[15:8] == header_limit[15:8])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                   Input Term   Covered  Reason for no coverage   Hint
+                                  -----------  --------  -----------------------  --------------
+  (pointer_bytes[15:8] == header_limit[15:8])         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                     Non-masking condition(s)      
+ ---------  ---------  --------------------                           -------------------------     
+  Row   1:    ***0***  (pointer_bytes[15:8] == header_limit[15:8])_0  -                             
+  Row   2:          1  (pointer_bytes[15:8] == header_limit[15:8])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2124 Item    1  (pointer_bytes[23:16] < header_limit[23:16])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                    Input Term   Covered  Reason for no coverage   Hint
+                                   -----------  --------  -----------------------  --------------
+  (pointer_bytes[23:16] < header_limit[23:16])         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                      Non-masking condition(s)      
+ ---------  ---------  --------------------                            -------------------------     
+  Row   1:          1  (pointer_bytes[23:16] < header_limit[23:16])_0  -                             
+  Row   2:    ***0***  (pointer_bytes[23:16] < header_limit[23:16])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2125 Item    1  (pointer_bytes[23:16] == header_limit[23:16])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                     Input Term   Covered  Reason for no coverage   Hint
+                                    -----------  --------  -----------------------  --------------
+  (pointer_bytes[23:16] == header_limit[23:16])         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                       Non-masking condition(s)      
+ ---------  ---------  --------------------                             -------------------------     
+  Row   1:    ***0***  (pointer_bytes[23:16] == header_limit[23:16])_0  -                             
+  Row   2:          1  (pointer_bytes[23:16] == header_limit[23:16])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2126 Item    1  (pointer_bytes[31:24] < header_limit[31:24])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                    Input Term   Covered  Reason for no coverage   Hint
+                                   -----------  --------  -----------------------  --------------
+  (pointer_bytes[31:24] < header_limit[31:24])         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                      Non-masking condition(s)      
+ ---------  ---------  --------------------                            -------------------------     
+  Row   1:          1  (pointer_bytes[31:24] < header_limit[31:24])_0  -                             
+  Row   2:    ***0***  (pointer_bytes[31:24] < header_limit[31:24])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2127 Item    1  (pointer_bytes[31:24] == header_limit[31:24])
+Expression totals: 0 of 1 input term covered = 0.00%
+
+                                     Input Term   Covered  Reason for no coverage   Hint
+                                    -----------  --------  -----------------------  --------------
+  (pointer_bytes[31:24] == header_limit[31:24])         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                       Non-masking condition(s)      
+ ---------  ---------  --------------------                             -------------------------     
+  Row   1:    ***0***  (pointer_bytes[31:24] == header_limit[31:24])_0  -                             
+  Row   2:          1  (pointer_bytes[31:24] == header_limit[31:24])_1  -                             
+
+----------------Focused Expression View-----------------
+Line       2132 Item    1  (pointer_minimum && (((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) || (((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]) && pointer_less[0])))
+Expression totals: 0 of 8 input terms covered = 0.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+   pointer_minimum         N  '_0' not hit             Hit '_0'
+   pointer_less[3]         N  No hits                  Hit '_0' and '_1'
+  pointer_equal[3]         N  '_0' not hit             Hit '_0'
+   pointer_less[2]         N  No hits                  Hit '_0' and '_1'
+  pointer_equal[2]         N  '_0' not hit             Hit '_0'
+   pointer_less[1]         N  No hits                  Hit '_0' and '_1'
+  pointer_equal[1]         N  '_0' not hit             Hit '_0'
+   pointer_less[0]         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  pointer_minimum_0     -                             
+  Row   2:          1  pointer_minimum_1     (((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) || (((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]) && pointer_less[0]))
+  Row   3:    ***0***  pointer_less[3]_0     (pointer_minimum && ~(((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]) && pointer_less[0]) && ~((pointer_equal[3] && pointer_equal[2]) && pointer_less[1]) && ~(pointer_equal[3] && pointer_less[2]))
+  Row   4:    ***0***  pointer_less[3]_1     pointer_minimum               
+  Row   5:    ***0***  pointer_equal[3]_0    (pointer_minimum && ~pointer_less[3]), (pointer_minimum && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2]))), (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])))
+  Row   6:          1  pointer_equal[3]_1    (pointer_minimum && ~pointer_less[3] && pointer_less[2]), (pointer_minimum && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2])) && pointer_less[1] && pointer_equal[2]), (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && pointer_less[0] && pointer_equal[1] && pointer_equal[2])
+  Row   7:    ***0***  pointer_less[2]_0     (pointer_minimum && ~(((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]) && pointer_less[0]) && ~((pointer_equal[3] && pointer_equal[2]) && pointer_less[1]) && ~pointer_less[3] && pointer_equal[3])
+  Row   8:    ***0***  pointer_less[2]_1     (pointer_minimum && ~pointer_less[3] && pointer_equal[3])
+  Row   9:    ***0***  pointer_equal[2]_0    (pointer_minimum && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2])) && pointer_equal[3]), (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && pointer_equal[3])
+ Row   10:          1  pointer_equal[2]_1    (pointer_minimum && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2])) && pointer_less[1] && pointer_equal[3]), (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && pointer_less[0] && pointer_equal[1] && pointer_equal[3])
+ Row   11:    ***0***  pointer_less[1]_0     (pointer_minimum && ~(((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]) && pointer_less[0]) && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2])) && (pointer_equal[3] && pointer_equal[2]))
+ Row   12:    ***0***  pointer_less[1]_1     (pointer_minimum && ~(pointer_less[3] || (pointer_equal[3] && pointer_less[2])) && (pointer_equal[3] && pointer_equal[2]))
+ Row   13:    ***0***  pointer_equal[1]_0    (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && (pointer_equal[3] && pointer_equal[2]))
+ Row   14:          1  pointer_equal[1]_1    (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && pointer_less[0] && (pointer_equal[3] && pointer_equal[2]))
+ Row   15:    ***0***  pointer_less[0]_0     (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && ((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]))
+ Row   16:          1  pointer_less[0]_1     (pointer_minimum && ~((pointer_less[3] || (pointer_equal[3] && pointer_less[2])) || ((pointer_equal[3] && pointer_equal[2]) && pointer_less[1])) && ((pointer_equal[3] && pointer_equal[2]) && pointer_equal[1]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                 54        16        38    29.62%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_615a_engine --
+
+FSM_ID: wait_kind
+    Current State Object : wait_kind
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+1614                 st0                   1
+1640                 st1                   2
+2249                 st2                   0
+1640                 st3                   6
+1640                 st4                   5
+1640                 st5                   4
+1640                 st6                   3
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+2069                   2          st0 -> st3          
+2056                   3          st0 -> st4          
+1883                   4          st0 -> st5          
+1877                   5          st0 -> st6          
+1640                   6          st1 -> st2          
+2249                   7          st1 -> st0          
+2069                   8          st1 -> st3          
+2056                   9          st1 -> st4          
+1883                  10          st1 -> st5          
+2249                  12          st2 -> st0          
+2210                  13          st2 -> st1          
+2069                  14          st2 -> st3          
+2056                  15          st2 -> st4          
+1883                  16          st2 -> st5          
+1640                  18          st3 -> st2          
+2249                  19          st3 -> st0          
+2210                  20          st3 -> st1          
+2056                  21          st3 -> st4          
+1883                  22          st3 -> st5          
+1640                  24          st4 -> st2          
+2249                  25          st4 -> st0          
+2210                  26          st4 -> st1          
+1883                  28          st4 -> st5          
+1877                  29          st4 -> st6          
+1640                  30          st5 -> st2          
+1877                  35          st5 -> st6          
+1640                  36          st6 -> st2          
+2249                  37          st6 -> st0          
+2210                  38          st6 -> st1          
+2069                  39          st6 -> st3          
+2056                  40          st6 -> st4          
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions             42        11        31    26.19%
+FSM_ID: status
+    Current State Object : status
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+2265             ST_BUSY                   1
+1626             ST_IDLE                   0
+1626           ST_FAILED                   3
+1626          ST_SUCCESS                   2
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+2265                   0          ST_BUSY -> ST_IDLE  
+2247                   4          ST_IDLE -> ST_FAILED
+2247                   5          ST_IDLE -> ST_SUCCESS
+2265                   7          ST_FAILED -> ST_IDLE
+2247                   8          ST_FAILED -> ST_SUCCESS
+2265                  10          ST_SUCCESS -> ST_IDLE
+2247                  11          ST_SUCCESS -> ST_FAILED
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions             12         5         7    41.66%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                    1294      1257        37    97.14%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_615a_engine --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_615a_engine.v
+    1463            1     
+    1464            1     
+    1465            1     
+    1515            1     
+    1517            1     
+    1518            1     
+    1519            1     
+    1550            1     
+    1551            1     
+    1553            1     
+    1572            1     
+    1573            1     
+    1589            1     
+    1590            1     
+    1644            1     
+    1645            1     
+    1765            1     
+    1770            1     
+    1775            1     
+    1780            1     
+    1910            1     
+    1920            1     
+    1930            1     
+    1974            1     
+    1982            1     
+    1986            1     
+    1994            1     
+    2030            1     
+    2110            1     
+    2114            1     
+    2140            1     
+    2161            1     
+    2165            1     
+    2169            1     
+    2177            1     
+    2187            1     
+    2216            1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                       6168      4119      2049    66.78%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_615a_engine
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                  ack_number[3-15]           0           0        0.00 
+                                   ack_return[1-2]           0           0        0.00 
+                                   ack_return[6-7]           0           0        0.00 
+                                       after_tx[2]           0           0        0.00 
+                                     after_tx[6-7]           0           0        0.00 
+                               available_size[0-1]           0           0        0.00 
+                                 available_size[5]           0           0        0.00 
+                             available_size[11-13]           0           0        0.00 
+                                block_number[3-15]           0           0        0.00 
+                               candidate_read[0-1]           0           0        0.00 
+                                 candidate_read[3]           0           0        0.00 
+                                 candidate_read[5]           0           0        0.00 
+                                command_block[3-5]           0           0        0.00 
+                                command_block[7-9]           0           0        0.00 
+                              command_block[11-13]           0           0        0.00 
+                                 command_block[15]           0           0        0.00 
+                                  command_dport[7]           0           0        0.00 
+                                  command_dport[9]           0           0        0.00 
+                              command_dport[11-14]           0           0        0.00 
+                                  command_op[3-15]           0           0        0.00 
+                                 command_sport[15]           0           1       50.00 
+                                        configured           0           1       50.00 
+                                      copy_len[10]           0           0        0.00 
+                                      copy_pos[10]           0           0        0.00 
+                               data_name_addr[0-1]           0           0        0.00 
+                               data_name_addr[2-5]           0           1       50.00 
+                              data_name_addr[6-11]           0           0        0.00 
+                                data_name_len[0-1]           0           1       50.00 
+                                  data_name_len[2]           0           0        0.00 
+                                  data_name_len[3]           0           1       50.00 
+                                data_name_len[4-6]           0           0        0.00 
+                                     deny_tid[2-3]           0           1       50.00 
+                                     deny_tid[4-7]           0           0        0.00 
+                                       deny_tid[8]           0           1       50.00 
+                                    deny_tid[9-12]           0           0        0.00 
+                                      deny_tid[13]           1           0       50.00 
+                                   deny_tid[14-15]           0           0        0.00 
+                                        deny_wd[7]           0           0        0.00 
+                              dispatch_action[1-2]           0           0        0.00 
+                              dispatch_choice[1-2]           0           0        0.00 
+                               dispatch_match[1-2]           0           0        0.00 
+                                     dl_acked[0-1]           0           0        0.00 
+                                       dl_acked[5]           0           0        0.00 
+                                   dl_acked[11-13]           0           0        0.00 
+                                 dl_remaining[0-1]           0           0        0.00 
+                                   dl_remaining[5]           0           0        0.00 
+                               dl_remaining[11-13]           0           0        0.00 
+                                 expected_crc[0-2]           0           1       50.00 
+                                   expected_crc[5]           0           1       50.00 
+                                expected_crc[6-10]           0           0        0.00 
+                                  expected_crc[12]           0           0        0.00 
+                                  expected_crc[13]           0           1       50.00 
+                             expected_mode_byte[7]           0           0        0.00 
+                             expected_name_byte[7]           0           0        0.00 
+                                 fetch_addr[11-12]           0           0        0.00 
+                                    file_size[0-1]           0           0        0.00 
+                                      file_size[5]           0           0        0.00 
+                                  file_size[11-13]           0           0        0.00 
+                                      hdr_ra[7-10]           0           0        0.00 
+                                      hdr_wa[7-10]           0           0        0.00 
+                               header_name_addr[0]           0           1       50.00 
+                             header_name_addr[1-2]           0           0        0.00 
+                               header_name_addr[3]           0           1       50.00 
+                            header_name_addr[4-11]           0           0        0.00 
+                                header_name_len[3]           0           1       50.00 
+                              header_name_len[4-6]           0           0        0.00 
+                                 header_pointer[0]           0           0        0.00 
+                               header_pointer[1-2]           0           1       50.00 
+                                 header_pointer[3]           0           0        0.00 
+                               header_pointer[4-5]           0           1       50.00 
+                              header_pointer[6-11]           0           0        0.00 
+                                 header_pointer_ok           0           1       50.00 
+                                    load_ra[11-12]           0           0        0.00 
+                                    load_wa[11-12]           0           0        0.00 
+                                     loaded[11-13]           0           0        0.00 
+                                          lur_q[7]           0           0        0.00 
+                                       lur_ra[6-8]           0           0        0.00 
+                                       lur_wa[6-8]           0           0        0.00 
+                                         lur_wd[7]           0           0        0.00 
+                                 lus_counter[3-15]           0           0        0.00 
+                                 lus_packet_len[2]           0           1       50.00 
+                               lus_packet_len[7-9]           0           0        0.00 
+                                   lus_part_pos[0]           0           0        0.00 
+                                 lus_part_pos[1-3]           0           1       50.00 
+                                   lus_part_pos[4]           0           0        0.00 
+                                   lus_part_pos[5]           0           1       50.00 
+                                 lus_part_pos[6-9]           0           0        0.00 
+                                lus_partlen_pos[1]           0           0        0.00 
+                              lus_partlen_pos[2-3]           0           1       50.00 
+                                lus_partlen_pos[4]           0           0        0.00 
+                                lus_partlen_pos[5]           0           1       50.00 
+                              lus_partlen_pos[6-9]           0           0        0.00 
+                                     lus_return[7]           0           0        0.00 
+                                  lus_status[2-11]           0           0        0.00 
+                                 lus_status[13-15]           0           0        0.00 
+                                   lus_tail_pos[0]           0           0        0.00 
+                                 lus_tail_pos[2-3]           0           1       50.00 
+                                   lus_tail_pos[5]           0           1       50.00 
+                                 lus_tail_pos[6-9]           0           0        0.00 
+                                       main_tid[6]           0           1       50.00 
+                                       main_tid[7]           0           0        0.00 
+                                       main_tid[8]           0           1       50.00 
+                                    main_tid[9-15]           0           0        0.00 
+                               metadata_size[7-11]           0           0        0.00 
+                                       name_pos[4]           0           0        0.00 
+                             next_ack_number[3-15]           0           0        0.00 
+                              next_ack_return[1-2]           0           0        0.00 
+                              next_ack_return[6-7]           0           0        0.00 
+                                  next_after_tx[2]           0           0        0.00 
+                                next_after_tx[6-7]           0           0        0.00 
+                          next_available_size[0-1]           0           0        0.00 
+                            next_available_size[5]           0           0        0.00 
+                        next_available_size[11-13]           0           0        0.00 
+                           next_block_number[3-15]           0           0        0.00 
+                           next_command_block[3-5]           0           0        0.00 
+                           next_command_block[7-9]           0           0        0.00 
+                         next_command_block[11-13]           0           0        0.00 
+                            next_command_block[15]           0           0        0.00 
+                             next_command_dport[7]           0           0        0.00 
+                             next_command_dport[9]           0           0        0.00 
+                         next_command_dport[11-14]           0           0        0.00 
+                             next_command_op[3-15]           0           0        0.00 
+                            next_command_sport[15]           0           1       50.00 
+                                   next_configured           0           1       50.00 
+                                 next_copy_len[10]           0           0        0.00 
+                                 next_copy_pos[10]           0           0        0.00 
+                          next_data_name_addr[0-1]           0           0        0.00 
+                          next_data_name_addr[2-5]           0           1       50.00 
+                         next_data_name_addr[6-11]           0           0        0.00 
+                           next_data_name_len[0-1]           0           1       50.00 
+                             next_data_name_len[2]           0           0        0.00 
+                             next_data_name_len[3]           0           1       50.00 
+                           next_data_name_len[4-6]           0           0        0.00 
+                                next_deny_tid[2-3]           0           1       50.00 
+                                next_deny_tid[4-7]           0           0        0.00 
+                                  next_deny_tid[8]           0           1       50.00 
+                               next_deny_tid[9-12]           0           0        0.00 
+                                 next_deny_tid[13]           1           0       50.00 
+                              next_deny_tid[14-15]           0           0        0.00 
+                                   next_deny_wd[7]           0           0        0.00 
+                         next_dispatch_action[1-2]           0           0        0.00 
+                          next_dispatch_match[1-2]           0           0        0.00 
+                                next_dl_acked[0-1]           0           0        0.00 
+                                  next_dl_acked[5]           0           0        0.00 
+                              next_dl_acked[11-13]           0           0        0.00 
+                            next_dl_remaining[0-1]           0           0        0.00 
+                              next_dl_remaining[5]           0           0        0.00 
+                          next_dl_remaining[11-13]           0           0        0.00 
+                            next_expected_crc[0-2]           0           1       50.00 
+                              next_expected_crc[5]           0           1       50.00 
+                           next_expected_crc[6-10]           0           0        0.00 
+                             next_expected_crc[12]           0           0        0.00 
+                             next_expected_crc[13]           0           1       50.00 
+                            next_fetch_addr[11-12]           0           0        0.00 
+                               next_file_size[0-1]           0           0        0.00 
+                                 next_file_size[5]           0           0        0.00 
+                             next_file_size[11-13]           0           0        0.00 
+                                 next_hdr_ra[7-10]           0           0        0.00 
+                                 next_hdr_wa[7-10]           0           0        0.00 
+                          next_header_name_addr[0]           0           1       50.00 
+                        next_header_name_addr[1-2]           0           0        0.00 
+                          next_header_name_addr[3]           0           1       50.00 
+                       next_header_name_addr[4-11]           0           0        0.00 
+                           next_header_name_len[3]           0           1       50.00 
+                         next_header_name_len[4-6]           0           0        0.00 
+                            next_header_pointer[0]           0           0        0.00 
+                          next_header_pointer[1-2]           0           1       50.00 
+                            next_header_pointer[3]           0           0        0.00 
+                          next_header_pointer[4-5]           0           1       50.00 
+                         next_header_pointer[6-11]           0           0        0.00 
+                            next_header_pointer_ok           0           1       50.00 
+                               next_load_ra[11-12]           0           0        0.00 
+                               next_load_wa[11-12]           0           0        0.00 
+                                next_loaded[11-13]           0           0        0.00 
+                                     next_lur_q[7]           0           0        0.00 
+                                  next_lur_ra[6-8]           0           0        0.00 
+                                  next_lur_wa[6-8]           0           0        0.00 
+                                    next_lur_wd[7]           0           0        0.00 
+                            next_lus_counter[3-15]           0           0        0.00 
+                            next_lus_packet_len[2]           0           1       50.00 
+                          next_lus_packet_len[7-9]           0           0        0.00 
+                              next_lus_part_pos[0]           0           0        0.00 
+                            next_lus_part_pos[1-3]           0           1       50.00 
+                              next_lus_part_pos[4]           0           0        0.00 
+                              next_lus_part_pos[5]           0           1       50.00 
+                            next_lus_part_pos[6-9]           0           0        0.00 
+                           next_lus_partlen_pos[1]           0           0        0.00 
+                         next_lus_partlen_pos[2-3]           0           1       50.00 
+                           next_lus_partlen_pos[4]           0           0        0.00 
+                           next_lus_partlen_pos[5]           0           1       50.00 
+                         next_lus_partlen_pos[6-9]           0           0        0.00 
+                                next_lus_return[7]           0           0        0.00 
+                             next_lus_status[2-11]           0           0        0.00 
+                            next_lus_status[13-15]           0           0        0.00 
+                              next_lus_tail_pos[0]           0           0        0.00 
+                            next_lus_tail_pos[2-3]           0           1       50.00 
+                              next_lus_tail_pos[5]           0           1       50.00 
+                            next_lus_tail_pos[6-9]           0           0        0.00 
+                                  next_main_tid[6]           0           1       50.00 
+                                  next_main_tid[7]           0           0        0.00 
+                                  next_main_tid[8]           0           1       50.00 
+                               next_main_tid[9-15]           0           0        0.00 
+                          next_metadata_size[7-11]           0           0        0.00 
+                                  next_name_pos[4]           0           0        0.00 
+                                next_num_return[5]           0           1       50.00 
+                              next_num_return[6-7]           0           0        0.00 
+                                   next_number[10]           0           0        0.00 
+                                next_number[16-31]           0           0        0.00 
+                                 next_part_addr[0]           0           0        0.00 
+                               next_part_addr[1-2]           0           1       50.00 
+                                 next_part_addr[3]           0           0        0.00 
+                                 next_part_addr[4]           0           1       50.00 
+                               next_part_addr[5-9]           0           0        0.00 
+                                next_part_len[0-3]           0           0        0.00 
+                                  next_part_len[4]           0           1       50.00 
+                                next_part_len[5-6]           0           0        0.00 
+                             next_pending_after[2]           0           0        0.00 
+                           next_pending_after[6-7]           0           0        0.00 
+                             next_pending_sport[6]           0           1       50.00 
+                             next_pending_sport[7]           0           0        0.00 
+                             next_pending_sport[8]           0           1       50.00 
+                          next_pending_sport[9-14]           0           0        0.00 
+                            next_pending_sport[15]           0           1       50.00 
+                             next_pointer_equal[0]           0           0        0.00 
+                           next_pointer_equal[1-3]           0           1       50.00 
+                              next_pointer_less[0]           0           1       50.00 
+                            next_pointer_less[1-3]           0           0        0.00 
+                              next_pointer_minimum           0           1       50.00 
+                                 next_ratio_h[1-3]           0           0        0.00 
+                                   next_ratio_h[5]           0           1       50.00 
+                                 next_ratio_h[6-7]           0           0        0.00 
+                                   next_ratio_t[2]           0           0        0.00 
+                                   next_ratio_t[5]           0           1       50.00 
+                                 next_ratio_t[6-7]           0           0        0.00 
+                                 next_ratio_u[4-5]           0           1       50.00 
+                                 next_ratio_u[6-7]           0           0        0.00 
+                                  next_reason[3-7]           0           0        0.00 
+                            next_request_port[0-2]           0           0        0.00 
+                            next_request_port[5-9]           0           0        0.00 
+                          next_request_port[11-15]           0           0        0.00 
+                          next_request_resume[1-7]           0           0        0.00 
+                                 next_retries[2-7]           0           0        0.00 
+                               next_retry_limit[0]           1           0       50.00 
+                               next_retry_limit[1]           0           1       50.00 
+                             next_retry_limit[2-7]           0           0        0.00 
+                               next_retry_total[2]           0           1       50.00 
+                            next_retry_total[3-31]           0           0        0.00 
+                              next_return_state[7]           0           0        0.00 
+                         next_rrq_data_read[11-12]           0           0        0.00 
+                       next_rrq_header_read[11-12]           0           0        0.00 
+                                next_rx_block[3-5]           0           0        0.00 
+                                next_rx_block[7-9]           0           0        0.00 
+                              next_rx_block[11-13]           0           0        0.00 
+                                 next_rx_block[15]           0           0        0.00 
+                                   next_rx_op[3-7]           0           0        0.00 
+                             next_saved_dport[0-5]           0           0        0.00 
+                             next_saved_dport[7-9]           0           1       50.00 
+                           next_saved_dport[11-13]           0           1       50.00 
+                              next_saved_dport[14]           0           0        0.00 
+                              next_saved_dport[15]           0           1       50.00 
+                               next_saved_sport[0]           0           0        0.00 
+                             next_saved_sport[1-3]           0           1       50.00 
+                             next_saved_sport[4-7]           0           0        0.00 
+                               next_saved_sport[8]           0           1       50.00 
+                            next_saved_sport[9-14]           0           0        0.00 
+                              next_saved_sport[15]           0           1       50.00 
+                                  next_scaled[0-1]           0           0        0.00 
+                                next_scaled[18-19]           0           0        0.00 
+                               next_scan_pos[7-10]           0           0        0.00 
+                              next_send_length[10]           0           0        0.00 
+                           next_status_peer[11-12]           0           0        0.00 
+                              next_status_peer[15]           0           1       50.00 
+                                next_status_tid[6]           0           1       50.00 
+                                next_status_tid[7]           0           0        0.00 
+                                next_status_tid[8]           0           1       50.00 
+                             next_status_tid[9-11]           0           0        0.00 
+                               next_status_tid[12]           1           0       50.00 
+                            next_status_tid[13-15]           0           0        0.00 
+                              next_tid_sequence[6]           0           1       50.00 
+                           next_tid_sequence[7-15]           0           0        0.00 
+                          next_timeout_cycles[0-3]           0           0        0.00 
+                            next_timeout_cycles[4]           0           1       50.00 
+                          next_timeout_cycles[5-8]           0           0        0.00 
+                            next_timeout_cycles[9]           1           0       50.00 
+                        next_timeout_cycles[10-12]           0           0        0.00 
+                           next_timeout_cycles[13]           1           0       50.00 
+                           next_timeout_cycles[14]           0           1       50.00 
+                           next_timeout_cycles[15]           0           0        0.00 
+                           next_timeout_cycles[16]           0           1       50.00 
+                           next_timeout_cycles[17]           0           0        0.00 
+                           next_timeout_cycles[18]           1           0       50.00 
+                        next_timeout_cycles[19-20]           0           0        0.00 
+                        next_timeout_cycles[21-23]           1           0       50.00 
+                           next_timeout_cycles[24]           0           0        0.00 
+                        next_timeout_cycles[25-27]           1           0       50.00 
+                        next_timeout_cycles[28-31]           0           0        0.00 
+                                     next_timer[0]           0           0        0.00 
+                                 next_timer[18-31]           0           0        0.00 
+                                  next_tx_sport[6]           0           1       50.00 
+                                  next_tx_sport[7]           0           0        0.00 
+                               next_tx_sport[9-14]           0           0        0.00 
+                                     num_return[5]           0           1       50.00 
+                                   num_return[6-7]           0           0        0.00 
+                                        number[10]           0           0        0.00 
+                                     number[16-31]           0           0        0.00 
+                                      part_addr[0]           0           0        0.00 
+                                    part_addr[1-2]           0           1       50.00 
+                                      part_addr[3]           0           0        0.00 
+                                      part_addr[4]           0           1       50.00 
+                                    part_addr[5-9]           0           0        0.00 
+                                     part_len[0-3]           0           0        0.00 
+                                       part_len[4]           0           1       50.00 
+                                     part_len[5-6]           0           0        0.00 
+                                  pending_after[2]           0           0        0.00 
+                                pending_after[6-7]           0           0        0.00 
+                                  pending_sport[6]           0           1       50.00 
+                                  pending_sport[7]           0           0        0.00 
+                                  pending_sport[8]           0           1       50.00 
+                               pending_sport[9-14]           0           0        0.00 
+                                 pending_sport[15]           0           1       50.00 
+                                  pointer_bytes[0]           0           0        0.00 
+                                 pointer_bytes[11]           0           0        0.00 
+                              pointer_bytes[17-31]           0           0        0.00 
+                                  pointer_equal[0]           0           0        0.00 
+                                pointer_equal[1-3]           0           1       50.00 
+                                   pointer_less[0]           0           1       50.00 
+                                 pointer_less[1-3]           0           0        0.00 
+                                   pointer_minimum           0           1       50.00 
+                              previous_block[3-15]           1           0       50.00 
+                                      ratio_h[1-3]           0           0        0.00 
+                                        ratio_h[5]           0           1       50.00 
+                                      ratio_h[6-7]           0           0        0.00 
+                              ratio_remainder[0-1]           0           0        0.00 
+                                        ratio_t[2]           0           0        0.00 
+                                        ratio_t[5]           0           1       50.00 
+                                      ratio_t[6-7]           0           0        0.00 
+                                      ratio_u[4-5]           0           1       50.00 
+                                      ratio_u[6-7]           0           0        0.00 
+                                       reason[3-7]           0           0        0.00 
+                                   request_port[2]           0           0        0.00 
+                                 request_port[6-9]           0           0        0.00 
+                               request_port[11-15]           0           0        0.00 
+                               request_resume[1-7]           0           0        0.00 
+                                      retries[2-7]           0           0        0.00 
+                                    retry_limit[1]           0           1       50.00 
+                                  retry_limit[2-7]           0           0        0.00 
+                                    retry_total[2]           0           1       50.00 
+                                 retry_total[3-31]           0           0        0.00 
+                                   return_state[7]           0           0        0.00 
+                              rrq_data_read[11-12]           0           0        0.00 
+                            rrq_header_read[11-12]           0           0        0.00 
+                                     rx_block[3-5]           0           0        0.00 
+                                     rx_block[7-9]           0           0        0.00 
+                                   rx_block[11-13]           0           0        0.00 
+                                      rx_block[15]           0           0        0.00 
+                                        rx_op[3-7]           0           0        0.00 
+                                  saved_dport[0-5]           0           0        0.00 
+                                  saved_dport[7-9]           0           1       50.00 
+                                saved_dport[11-13]           0           1       50.00 
+                                   saved_dport[14]           0           0        0.00 
+                                   saved_dport[15]           0           1       50.00 
+                                    saved_sport[0]           0           0        0.00 
+                                  saved_sport[1-3]           0           1       50.00 
+                                  saved_sport[4-7]           0           0        0.00 
+                                    saved_sport[8]           0           1       50.00 
+                                 saved_sport[9-14]           0           0        0.00 
+                                   saved_sport[15]           0           1       50.00 
+                                       scaled[0-1]           0           0        0.00 
+                                     scaled[18-19]           0           0        0.00 
+                                    scan_pos[7-10]           0           0        0.00 
+                                   send_length[10]           0           0        0.00 
+                                status_peer[11-12]           0           0        0.00 
+                                   status_peer[15]           0           1       50.00 
+                                     status_tid[6]           0           1       50.00 
+                                     status_tid[7]           0           0        0.00 
+                                     status_tid[8]           0           1       50.00 
+                                  status_tid[9-11]           0           0        0.00 
+                                    status_tid[12]           1           0       50.00 
+                                 status_tid[13-15]           0           0        0.00 
+                                   tid_sequence[6]           0           1       50.00 
+                                tid_sequence[7-15]           0           0        0.00 
+                               timeout_cycles[0-3]           0           0        0.00 
+                                 timeout_cycles[4]           0           1       50.00 
+                               timeout_cycles[5-6]           0           0        0.00 
+                                 timeout_cycles[8]           0           0        0.00 
+                             timeout_cycles[10-11]           0           0        0.00 
+                                timeout_cycles[14]           0           1       50.00 
+                                timeout_cycles[16]           0           1       50.00 
+                             timeout_cycles[19-20]           0           0        0.00 
+                                timeout_cycles[24]           0           0        0.00 
+                             timeout_cycles[28-31]           0           0        0.00 
+                                          timer[0]           0           0        0.00 
+                                      timer[18-31]           0           0        0.00 
+                                       tx_sport[6]           0           1       50.00 
+                                       tx_sport[7]           0           0        0.00 
+                                    tx_sport[9-14]           0           0        0.00 
+
+Total Node Count     =       3084 
+Toggled Node Count   =       1969 
+Untoggled Node Count =       1115 
+
+Toggle Coverage      =      66.78% (4119 of 6168 bins)
+
+
+Total Coverage By Design Unit (filtered view): 83.20%
+

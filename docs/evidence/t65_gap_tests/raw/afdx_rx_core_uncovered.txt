@@ -1,0 +1,85 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_rx_core
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       371       370         1    99.73%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_rx_core
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_rx_core.v
+------------------------------------IF Branch------------------------------------
+    109                                  4718664     Count coming in to IF
+    109             1                    4718592     
+    114             1                         72     
+                                         ***0***     All False Count
+Branch totals: 2 hits of 3 branches = 66.66%
+
+
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                       9900      9785       115    98.83%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_rx_core
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                      cfg_q[28-31]           0           0        0.00 
+                                     cfg_wd[28-31]           0           0        0.00 
+                                     cfg_wdata[23]           0           0        0.00 
+                                     cfg_wdata[26]           0           0        0.00 
+                                  cfg_wdata[28-31]           0           0        0.00 
+                                       dq_count[5]           0           0        0.00 
+                                  engine_ev_a[0-3]           0           0        0.00 
+                                  engine_ev_b[0-3]           0           0        0.00 
+                              map_bank[2]/data[12]           0           0        0.00 
+                              map_bank[3]/data[12]           0           0        0.00 
+                              map_bank[4]/data[12]           0           0        0.00 
+                              map_bank[5]/data[12]           0           0        0.00 
+                              map_bank[6]/data[12]           0           0        0.00 
+                              map_bank[7]/data[12]           0           0        0.00 
+                              map_bank[8]/data[12]           0           0        0.00 
+                              map_bank[9]/data[12]           0           0        0.00 
+                             map_bank[10]/data[12]           0           0        0.00 
+                             map_bank[11]/data[12]           0           0        0.00 
+                             map_bank[12]/data[12]           0           0        0.00 
+                             map_bank[13]/data[12]           0           0        0.00 
+                             map_bank[14]/data[12]           0           0        0.00 
+                             map_bank[15]/data[12]           0           1       50.00 
+                             map_bank[16]/data[12]           0           0        0.00 
+                             map_bank[17]/data[12]           0           0        0.00 
+                             map_bank[18]/data[12]           0           0        0.00 
+                             map_bank[19]/data[12]           0           0        0.00 
+                             map_bank[21]/data[12]           0           0        0.00 
+                             map_bank[22]/data[12]           0           0        0.00 
+                             map_bank[23]/data[12]           0           0        0.00 
+                             map_bank[24]/data[12]           0           0        0.00 
+                             map_bank[25]/data[12]           0           0        0.00 
+                             map_bank[26]/data[12]           0           0        0.00 
+                             map_bank[27]/data[12]           0           0        0.00 
+                             map_bank[28]/data[12]           0           0        0.00 
+                             map_bank[29]/data[12]           0           0        0.00 
+                             map_bank[30]/data[12]           0           0        0.00 
+                             map_bank[31]/data[12]           0           0        0.00 
+                                   parse_ev_a[4-6]           0           0        0.00 
+                                   parse_ev_b[4-6]           0           0        0.00 
+
+Total Node Count     =       4950 
+Toggled Node Count   =       4892 
+Untoggled Node Count =         58 
+
+Toggle Coverage      =      98.83% (9785 of 9900 bins)
+
+
+Total Coverage By Design Unit (filtered view): 99.28%
+

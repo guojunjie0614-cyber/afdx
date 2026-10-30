@@ -1,0 +1,287 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_tx_builder
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       208       204         4    98.07%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_tx_builder
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_tx_builder.v
+------------------------------------CASE Branch------------------------------------
+    381             1                    ***0***     
+Branch totals: 10 hits of 11 branches = 90.90%
+
+------------------------------------IF Branch------------------------------------
+    422                                320533597     Count coming in to IF
+    422             1                    ***0***     
+                                       320533597     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    429                                 49467398     Count coming in to IF
+    429             1                      47985     
+    434             1                    1967469     
+    440             1                   47323296     
+    447             1                      47985     
+    461             1                      80663     
+                                         ***0***     All False Count
+Branch totals: 5 hits of 6 branches = 83.33%
+
+------------------------------------IF Branch------------------------------------
+    477                                 47371576     Count coming in to IF
+    477             1                    ***0***     
+                                        47371576     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                     198       192         6    96.96%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.afdx_tx_builder --
+
+  File rtl/afdx_tx_builder.v
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       330 Item    1  (grant_valid && grant_ready)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  grant_ready         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         62  grant_valid_0         -                             
+  Row   2:         59  grant_valid_1         grant_ready                   
+  Row   3:    ***0***  grant_ready_0         grant_valid                   
+  Row   4:         59  grant_ready_1         grant_valid                   
+
+
+
+----------------Focused Condition View-------------------
+Line       423 Item    1  ((tx_eof && ~bad) && ~tx_underrun)
+Condition totals: 1 of 3 input terms covered = 33.33%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+          bad         N  '_1' not hit             Hit '_1'
+  tx_underrun         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:         62  tx_eof_0              -                             
+  Row   2:         59  tx_eof_1              (~tx_underrun && ~bad)        
+  Row   3:         59  bad_0                 (~tx_underrun && tx_eof)      
+  Row   4:    ***0***  bad_1                 tx_eof                        
+  Row   5:         59  tx_underrun_0         (tx_eof && ~bad)              
+  Row   6:    ***0***  tx_underrun_1         (tx_eof && ~bad)              
+
+
+
+
+
+
+
+----------------Focused Condition View-------------------
+Line       461 Item    1  (part == 2)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (part == 2)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (part == 2)_0         -                             
+  Row   2:         25  (part == 2)_1         -                             
+
+
+----------------Focused Condition View-------------------
+Line       477 Item    1  (~reset && (payload_more !== (payload_index < active_len)))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+                                       Input Term   Covered  Reason for no coverage   Hint
+                                      -----------  --------  -----------------------  --------------
+                                            reset         N  '_0' not hit             Hit '_0'
+  (payload_more !== (payload_index < active_len))         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                         Non-masking condition(s)      
+ ---------  ---------  --------------------                               -------------------------     
+  Row   1:    ***0***  reset_0                                            (payload_more !== (payload_index < active_len))
+  Row   2:         62  reset_1                                            -                             
+  Row   3:         62  (payload_more !== (payload_index < active_len))_0  ~reset                        
+  Row   4:    ***0***  (payload_more !== (payload_index < active_len))_1  ~reset                        
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                     20        19         1    95.00%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.afdx_tx_builder --
+
+  File rtl/afdx_tx_builder.v
+
+
+
+
+
+
+----------------Focused Expression View-----------------
+Line       401 Item    1  (p_len != 0)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  (p_len != 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (p_len != 0)_0        -                             
+  Row   2:         59  (p_len != 0)_1        -                             
+
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                  5         4         1    80.00%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_tx_builder --
+
+FSM_ID: part
+    Current State Object : part
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+ 440         PART_HEADER                   0
+ 397        PART_PAYLOAD                   1
+ 461        PART_PADDING                   2
+ 397             PART_SN                   3
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+ 397                   3          PART_PADDING -> PART_HEADER
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions              5         4         1    80.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                     331       329         2    99.39%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_tx_builder --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_tx_builder.v
+    422             1     
+    478             1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                       1562      1436       126    91.93%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_tx_builder
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                               bad           0           0        0.00 
+                                         ident[13]           0           3       50.00 
+                                      ident[14-15]           0           0        0.00 
+                                  ip_length[11-15]           0           0        0.00 
+                                         p_dst[13]           0           1       50.00 
+                                      p_dst[14-20]           0           0        0.00 
+                                         p_dst[24]           0           0        0.00 
+                                         p_dst[26]           0           0        0.00 
+                                         p_dst[28]           0           0        0.00 
+                                       p_ident[13]           0           3       50.00 
+                                    p_ident[14-15]           0           0        0.00 
+                                      p_src[10-24]           0           0        0.00 
+                                         p_src[26]           0           0        0.00 
+                                      p_src[28-31]           0           0        0.00 
+                                        p_time[26]           0           2       50.00 
+                                     p_time[27-31]           0           0        0.00 
+                                        p_user[14]           0           0        0.00 
+                                 return_count[1-2]           0           0        0.00 
+                                        sum[15-19]           0           0        0.00 
+                                     sum_high[1-3]           0           0        0.00 
+                                 udp_length[11-15]           0           0        0.00 
+
+Total Node Count     =        781 
+Toggled Node Count   =        716 
+Untoggled Node Count =         65 
+
+Toggle Coverage      =      91.93% (1436 of 1562 bins)
+
+
+Total Coverage By Design Unit (filtered view): 96.27%
+

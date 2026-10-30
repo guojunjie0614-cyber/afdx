@@ -1,0 +1,17 @@
+{
+  "pid": 10088,
+  "created": 1793323065.501693,
+  "command": [
+    "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vcover.exe",
+    "dump",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_reset_app\\20261029_180213_308849\\coverage.ucdb",
+    "-canonical"
+  ],
+  "source_sha256": "3E547FC4CE0C4C90999C92DE7065DAD96DCED6B4A8706B65E4A4B8A64F02A71C",
+  "sha256": "FFACC60C22E5E1692FDDD5C894DC85CACCEF8941A8157734CE30D5FDA5018479",
+  "boundary": true,
+  "reason": "all_DU_written_before_first_instance",
+  "exit_code": 15,
+  "identity_verified": true,
+  "seconds": 3.75
+}

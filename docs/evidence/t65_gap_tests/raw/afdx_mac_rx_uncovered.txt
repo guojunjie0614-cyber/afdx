@@ -1,0 +1,27 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_mac_rx
+=================================================================================
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        308       307         1    99.67%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_mac_rx
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                             reset           3           0       50.00 
+
+Total Node Count     =        154 
+Toggled Node Count   =        153 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      99.67% (307 of 308 bins)
+
+
+Total Coverage By Design Unit (filtered view): 99.67%
+
