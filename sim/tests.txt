@@ -40,3 +40,19 @@ tb_elinx
 tb_sys_perf_var
 
 tb_top_wrap
+tb_t65_queue_a
+tb_t65_reset_app
+tb_t65_reset_mac
+tb_t65_reset_rx
+tb_t65_rx_data
+tb_t65_rx_desc
+tb_t65_tx_desc
+tb_t65_tx_hint
+tb_t65_tx_init
+tb_t65_tx_ready
+tb_t65_tx_short_full
+tb_t65_tx_short_init
+tb_t65_tx_short_normal
+tb_t65_tx_space
+tb_t65_tx_space_edge
+tb_t65_tx_unmapped
