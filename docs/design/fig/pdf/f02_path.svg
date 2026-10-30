@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1038 404" width="1038" height="404">
+        <style>
+rect[class^="c-"], path[class^="c-"] { fill: none; stroke: #000; stroke-width: 1; }
+text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
+.t-dim { fill: #000; font-weight: 600; }
+.c-lane { fill: #f4f4f4; stroke: #000; stroke-width: 0.8; }
+.c-lane-exception { fill: #fff; stroke: #000; stroke-width: 0.8; stroke-dasharray: 6 3; }
+.t-muted { fill: #333; }
+.c-mask { fill: #fff !important; stroke: none !important; }
+.c-backend, .c-frontend, .c-cloud, .c-security { fill: #fff; stroke: #000; stroke-width: 1.3; }
+.c-database, .c-messagebus { fill: #e6e6e6; stroke: #000; stroke-width: 1.3; }
+.c-external { fill: #fff; stroke: #000; stroke-width: 1.3; stroke-dasharray: 5 3; }
+.c-region { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 8 4; }
+.c-sgroup, .c-security-group { fill: none; stroke: #555; stroke-width: 1; stroke-dasharray: 3 3; }
+.a-default, .a-security { fill: none; stroke: #000; stroke-width: 1.2; }
+.a-emphasis { fill: none; stroke: #000; stroke-width: 2.2; }
+.a-dashed { fill: none; stroke: #000; stroke-width: 1.2; stroke-dasharray: 5 3; }
+.m-default, .m-emphasis, .m-security, .m-dashed { fill: #000; stroke: none; }
+</style><defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-default" />
+          </marker>
+          <marker id="arrowhead-emphasis" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-emphasis" />
+          </marker>
+          <marker id="arrowhead-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-security" />
+          </marker>
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-dashed" />
+          </marker>
+          </defs>
+
+        
+        <rect x="40" y="52" width="962" height="104" rx="0" class="c-lane" stroke-width="1" />
+        <text x="54" y="74" class="t-dim" font-size="14.0" font-weight="600">01 / Sending end system (afdx_tx_core)</text>
+
+        <rect x="40" y="176" width="962" height="104" rx="0" class="c-lane" stroke-width="1" />
+        <text x="54" y="198" class="t-dim" font-size="14.0" font-weight="600">02 / Receiving end system (afdx_rx_core)</text>
+
+        
+
+
+        
+
+
+        
+        <path d="M 168 119 L 196 119" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 367.6 243 L 316 243" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 316 119 L 367.6 119" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 487.6 119 L 529.6 119" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 649.6 119 L 715.6 119" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 835.6 119 L 873.6 119" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 993.6 119 L 1019.6 119 L 1019.6 243 L 993.6 243" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 873.6 243 L 835.6 243" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 715.6 243 L 649.6 243" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+        <path d="M 529.6 243 L 487.6 243" class="a-emphasis" marker-end="url(#arrowhead-emphasis)" />
+
+        
+        <g>
+          <rect x="48" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="48" y="93" width="120" height="52" rx="0" class="c-external" />
+          <text x="108" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">Application</text>
+          <text x="108" y="131" class="t-muted" font-size="11.2" text-anchor="middle">m_* message</text>
+        </g>
+
+        <g>
+          <rect x="196" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="196" y="93" width="120" height="52" rx="0" class="c-backend" />
+          <text x="256" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">tx_buf</text>
+          <text x="256" y="131" class="t-muted" font-size="11.2" text-anchor="middle">page store</text>
+        </g>
+
+        <g>
+          <rect x="367.6" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="367.6" y="93" width="120" height="52" rx="0" class="c-backend" />
+          <text x="427.6" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">tx_engine</text>
+          <text x="427.6" y="131" class="t-muted" font-size="11.2" text-anchor="middle">BAG schedule</text>
+        </g>
+
+        <g>
+          <rect x="529.6" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="529.6" y="93" width="120" height="52" rx="0" class="c-backend" />
+          <text x="589.6" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">tx_builder</text>
+          <text x="589.6" y="131" class="t-muted" font-size="11.2" text-anchor="middle">header + SN</text>
+        </g>
+
+        <g>
+          <rect x="715.6" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="715.6" y="93" width="120" height="52" rx="0" class="c-backend" />
+          <text x="775.6" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">mac_tx</text>
+          <text x="775.6" y="131" class="t-muted" font-size="11.2" text-anchor="middle">preamble + FCS</text>
+        </g>
+
+        <g>
+          <rect x="873.6" y="93" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="873.6" y="93" width="120" height="52" rx="0" class="c-external" />
+          <text x="933.6" y="114" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">Network</text>
+          <text x="933.6" y="131" class="t-muted" font-size="11.2" text-anchor="middle">A + B copies</text>
+        </g>
+
+        <g>
+          <rect x="196" y="217" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="196" y="217" width="120" height="52" rx="0" class="c-external" />
+          <text x="256" y="238" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">Application</text>
+          <text x="256" y="255" class="t-muted" font-size="11.2" text-anchor="middle">d_* message</text>
+        </g>
+
+        <g>
+          <rect x="367.6" y="217" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="367.6" y="217" width="120" height="52" rx="0" class="c-backend" />
+          <text x="427.6" y="238" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">rx_deliver</text>
+          <text x="427.6" y="255" class="t-muted" font-size="11.2" text-anchor="middle">1 byte / cycle</text>
+        </g>
+
+        <g>
+          <rect x="529.6" y="217" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="529.6" y="217" width="120" height="52" rx="0" class="c-backend" />
+          <text x="589.6" y="238" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">rx_engine</text>
+          <text x="589.6" y="255" class="t-muted" font-size="11.2" text-anchor="middle">IC + RM</text>
+        </g>
+
+        <g>
+          <rect x="715.6" y="217" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="715.6" y="217" width="120" height="52" rx="0" class="c-backend" />
+          <text x="775.6" y="238" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">rx_parse x2</text>
+          <text x="775.6" y="255" class="t-muted" font-size="11.2" text-anchor="middle">header check</text>
+        </g>
+
+        <g>
+          <rect x="873.6" y="217" width="120" height="52" rx="0" class="c-mask" />
+          <rect x="873.6" y="217" width="120" height="52" rx="0" class="c-backend" />
+          <text x="933.6" y="238" class="t-primary" font-size="15.4" font-weight="600" text-anchor="middle">mac_rx x2</text>
+          <text x="933.6" y="255" class="t-muted" font-size="11.2" text-anchor="middle">strip FCS</text>
+        </g>
+
+        
+
+
+        <g>
+          <rect x="311.3" y="96.2" width="61.0" height="19.6" rx="0" class="c-mask" />
+          <text x="341.8" y="109" class="t-backend" font-size="11.2" text-anchor="middle">enqueue</text>
+        </g>
+        <g>
+          <rect x="484.8" y="96.2" width="47.6" height="19.6" rx="0" class="c-mask" />
+          <text x="508.6" y="109" class="t-backend" font-size="11.2" text-anchor="middle">grant</text>
+        </g>
+
+        <g>
+          <rect x="833.6" y="96.2" width="42.0" height="19.6" rx="0" class="c-mask" />
+          <text x="854.6" y="109" class="t-backend" font-size="11.2" text-anchor="middle">GMII</text>
+        </g>
+        <g>
+          <rect x="985.6" y="96.2" width="42.0" height="19.6" rx="0" class="c-mask" />
+          <text x="1006.6" y="109" class="t-backend" font-size="11.2" text-anchor="middle">GMII</text>
+        </g>
+
+        <g>
+          <rect x="642.0" y="220.2" width="81.2" height="19.6" rx="0" class="c-mask" />
+          <text x="682.6" y="233" class="t-backend" font-size="11.2" text-anchor="middle">descriptor</text>
+        </g>
+        <g>
+          <rect x="484.8" y="220.2" width="47.6" height="19.6" rx="0" class="c-mask" />
+          <text x="508.6" y="233" class="t-backend" font-size="11.2" text-anchor="middle">rx_dq</text>
+        </g>
+
+        
+
+      </svg>

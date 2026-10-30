@@ -1,0 +1,56 @@
+\chapter{测试概述}\label{ch:overview}
+
+\section{测试结论}
+
+本文档以顶层模块 \code{AFDX_top} 及其核心子模块为被测对象，系统验证赛题要求的 5 项核心功能、4 项关键技术指标及综合后门级网表行为。测试结果表明，全部 46 个需求测试点均已覆盖并通过验证，各项功能与性能指标均满足或优于赛题规范，汇总结论见表~\ref{tab:summary}，测试层次与规模见表~\ref{tab:summary-scale}。
+
+\begin{table}[!htbp]\centering
+\caption{赛题要求与测试结论}\label{tab:summary}
+\renewcommand{\arraystretch}{1.16}
+\begin{tabularx}{\linewidth}{@{}>{\hsize=.75\hsize}L>{\hsize=.72\hsize}L>{\hsize=1.53\hsize}Lc@{}}
+\toprule
+\thead{赛题条目} & \thead{要求} & \thead{测试结果} & \thead{结论} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 功能} \\
+ARINC 664 通信 & 支持 P7 规定的通信功能 & UDP/IP 封装、VL 配置、BAG 调度与双网收发交付全部正确（\ref{sec:f-comm}~节） & 符合 \\
+高完整性通信 & 必须支持 & 收发 14 类异常均准确识别、分类和计数；冗余窗口内双网副本严格单次交付（\ref{sec:f-ic}~节） & 符合 \\
+SNMP 网络管理 & 支持 & v1/v2c 的 Get、GetNext、Set 与 v2 Trap 编解码正确，MIB 读回值与硬件寄存器一致（\ref{sec:f-snmp}~节） & 符合 \\
+615A 数据加卸载 & 支持 & 单文件上传后片内 RAM 数据与介质定义卸载回传文件均逐字节一致；差错与丢包按协议重传或终止（\ref{sec:f-615a}~节） & 符合 \\
+RTC 时钟同步 & 支持 & 空载/满载同步误差分别为 \RtcIdle{}/\RtcLoad{}~ns；响应丢失后自动重发恢复，非法或过期响应不误校时（\ref{sec:f-rtc}~节） & 符合 \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 技术指标} \\
+传输速率 & 100~Mbps & 125~MHz 八位 GMII 下，77/81 条 VL 满载每方向有效载荷吞吐达 \Thru{}/\ThruEightyOne{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
+帧格式 & 载荷 $\le$1471 字节，帧长 $\le$1518 字节，含 VLID 和 1--255 序号 & 1--1471 字节载荷、64--1518 字节帧长逐字节核对正确；VLID 映射、复位首帧 SN$=0$ 及 1--255 循环回绕正确（\ref{sec:p-frame}~节） & 符合 \\
+时延与抖动 & 端到端 $<$1--2~ms（最坏情况），抖动不超过几十微秒 & 稳态最大时延 \Lat{}~µs、抖动 \Jit{}~µs；叠加三项服务报文时发送间隔最大增加约 2.5~µs；多 VL 同拍突发最坏上界 1.15~ms，81 条最长帧突发实测 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
+VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表配置并逐条完成双网去重交付（\ref{sec:p-vl}~节） & 符合 \\
+\midrule
+综合后仿真 & 综合后仿真 & eLinx 导出的 VQM 综合网表通过双向通信与五项功能联合验证，7 份端口记录与 RTL 逐字节完全一致（第~\ref{ch:netlist}~章） & 符合 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]\centering
+\caption{测试规模}\label{tab:summary-scale}
+\begin{tabularx}{\linewidth}{@{}lLc@{}}
+\toprule
+\thead{测试} & \thead{规模} & \thead{结果} \\
+\midrule
+RTL 回归 & \RegCount{} 项用例，全面覆盖模块级、系统级、服务级、异常注入与资源边界 & 全部通过 \\
+ModelSim 批量测试 & 7 项核心用例（含 6 项代表性回归场景与五项功能联合测试 SVC-08） & 全部通过 \\
+eLinx 行为仿真 & 双向多帧长双网通信测试 SYS-09（\code{tb_elinx}） & 通过 \\
+综合后仿真 & 2 项门级网表测试（NET-01、NET-02），复用 SYS-09 与 SVC-08 激励 & 全部通过 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{被测对象与测试依据}
+
+被测对象为 \code{AFDX_top} 顶层及其全部 21 个 RTL 子模块，目标器件为中科亿海微 EQ6HL130（CSG484\_H 封装），工作于单一 125~MHz 时钟，通过 A、B 两路八位 GMII 接口收发以太网帧。验证工作涵盖 RTL 功能与性能仿真、eLinx 逻辑综合与静态时序分析，以及基于 VQM 门级网表的综合后功能仿真（归档测试证据见附录~\ref{app:evidence}）。测试依据包括：
+\begin{itemize}
+  \item 竞赛选题指南（中科亿海微）及官方问题汇总：5 项核心功能、4 项技术指标及综合后仿真要求；
+  \item 协议与标准规范：ARINC 664 Part 7、ARINC 615A-2 / 665-1、RFC 1157 / 3416 / 3418（SNMP）、RFC 4330（SNTPv4）及 RFC 1350（TFTP）。
+\end{itemize}
+
+\section{报告结构}
+
+第~\ref{ch:env}~章介绍测试环境、双端双网测试平台、独立参考模型与通过判据；第~\ref{ch:strategy}~章给出测试层次、46 个需求测试点的追踪矩阵、用例清单及代码覆盖率分析；第~\ref{ch:func}~章分项阐述五项核心功能及联合测试的激励设计与验证结果；第~\ref{ch:perf}~章给出吞吐率、帧格式、稳态与最坏情况时延、发送抖动及 VL 容量的定量测量结果；第~\ref{ch:netlist}~章给出 eLinx 综合资源、时序分析与门级网表仿真结果；第~\ref{ch:conclusion}~章总结测试结论。附录 A 至 D 依次提供完整回归明细、一键复现命令、测试证据索引及 ModelSim 原始波形截图。

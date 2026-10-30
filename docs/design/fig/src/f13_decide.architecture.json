@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Receive decision per frame descriptor",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    },
+    "viewBox": [
+      1100,
+      440
+    ]
+  },
+  "components": [
+    {
+      "id": "desc",
+      "type": "external",
+      "label": "Good frame",
+      "sublabel": "rx_parse A / B",
+      "pos": [
+        30,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "map",
+      "type": "backend",
+      "label": "rx_map[VLID]",
+      "sublabel": "valid entry?",
+      "pos": [
+        230,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "cfg",
+      "type": "backend",
+      "label": "rx_cfg[idx]",
+      "sublabel": "en, net, length",
+      "pos": [
+        400,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "ic",
+      "type": "backend",
+      "label": "Integrity",
+      "sublabel": "SN vs PSN",
+      "pos": [
+        570,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "rm",
+      "type": "backend",
+      "label": "Redundancy",
+      "sublabel": "first valid wins",
+      "pos": [
+        740,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "dq",
+      "type": "database",
+      "label": "Commit + rx_dq",
+      "sublabel": "deliver once",
+      "pos": [
+        910,
+        110
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "unk",
+      "type": "security",
+      "label": "Unknown VL",
+      "sublabel": "a/b_unk",
+      "pos": [
+        230,
+        300
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "rej",
+      "type": "security",
+      "label": "Config reject",
+      "sublabel": "a/b_cfg",
+      "pos": [
+        400,
+        300
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "icd",
+      "type": "security",
+      "label": "IC drop",
+      "sublabel": "a/b_ic",
+      "pos": [
+        570,
+        300
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "rmd",
+      "type": "security",
+      "label": "RM drop",
+      "sublabel": "rm_drop",
+      "pos": [
+        740,
+        300
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "ovf",
+      "type": "security",
+      "label": "Queue full",
+      "sublabel": "a/b_ovf",
+      "pos": [
+        910,
+        300
+      ],
+      "size": [
+        140,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "afdx_rx_engine: one descriptor at a time",
+      "wraps": [
+        "map",
+        "cfg",
+        "ic",
+        "rm",
+        "dq"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "Rollback ring write + count",
+      "wraps": [
+        "unk",
+        "rej",
+        "icd",
+        "rmd",
+        "ovf"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "e1",
+      "from": "desc",
+      "to": "map",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e2",
+      "from": "map",
+      "to": "cfg",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e3",
+      "from": "cfg",
+      "to": "ic",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e4",
+      "from": "ic",
+      "to": "rm",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e5",
+      "from": "rm",
+      "to": "dq",
+      "variant": "emphasis"
+    },
+    {
+      "id": "d1",
+      "from": "map",
+      "to": "unk",
+      "label": "miss",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        300,
+        238
+      ]
+    },
+    {
+      "id": "d2",
+      "from": "cfg",
+      "to": "rej",
+      "label": "deny",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        470,
+        238
+      ]
+    },
+    {
+      "id": "d3",
+      "from": "ic",
+      "to": "icd",
+      "label": "fail",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        640,
+        238
+      ]
+    },
+    {
+      "id": "d4",
+      "from": "rm",
+      "to": "rmd",
+      "label": "dup",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        810,
+        238
+      ]
+    },
+    {
+      "id": "d5",
+      "from": "dq",
+      "to": "ovf",
+      "label": "full",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        980,
+        238
+      ]
+    }
+  ]
+}

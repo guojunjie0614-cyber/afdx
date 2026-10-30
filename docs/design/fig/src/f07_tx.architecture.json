@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Transmit core",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    },
+    "viewBox": [
+      1240,
+      600
+    ]
+  },
+  "components": [
+    {
+      "id": "in",
+      "type": "external",
+      "label": "Message port",
+      "sublabel": "m_* from afdx_svc",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "buf",
+      "type": "backend",
+      "label": "afdx_tx_buf",
+      "sublabel": "page alloc + write",
+      "pos": [
+        250,
+        250
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "free",
+      "type": "database",
+      "label": "afdx_tx_free",
+      "sublabel": "256-page FIFO",
+      "pos": [
+        250,
+        440
+      ],
+      "size": [
+        160,
+        60
+      ]
+    },
+    {
+      "id": "pay",
+      "type": "database",
+      "label": "Payload RAM",
+      "sublabel": "tx_payload + tx_pnext",
+      "pos": [
+        490,
+        440
+      ],
+      "size": [
+        190,
+        60
+      ]
+    },
+    {
+      "id": "eng",
+      "type": "backend",
+      "label": "afdx_tx_engine",
+      "sublabel": "scan + LOOKAHEAD",
+      "pos": [
+        490,
+        250
+      ],
+      "size": [
+        190,
+        64
+      ]
+    },
+    {
+      "id": "tbl",
+      "type": "database",
+      "label": "tx_cfg / tx_state",
+      "sublabel": "tx_desc / tx_mnext",
+      "pos": [
+        490,
+        70
+      ],
+      "size": [
+        190,
+        60
+      ]
+    },
+    {
+      "id": "cfg",
+      "type": "external",
+      "label": "Config bus",
+      "sublabel": "afdx_cfg",
+      "pos": [
+        790,
+        70
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "bld",
+      "type": "backend",
+      "label": "afdx_tx_builder",
+      "sublabel": "header + prefetch",
+      "pos": [
+        760,
+        250
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "mac",
+      "type": "backend",
+      "label": "afdx_mac_tx",
+      "sublabel": "dual CRC32",
+      "pos": [
+        1010,
+        250
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "gmii",
+      "type": "external",
+      "label": "GMII A / B",
+      "sublabel": "tx_data / tx_valid",
+      "pos": [
+        1010,
+        440
+      ],
+      "size": [
+        170,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "in",
+      "to": "buf",
+      "label": "bytes",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c2",
+      "from": "buf",
+      "to": "eng",
+      "label": "enqueue",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c3",
+      "from": "eng",
+      "to": "bld",
+      "label": "grant",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c4",
+      "from": "bld",
+      "to": "mac",
+      "label": "s_*",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c5",
+      "from": "mac",
+      "to": "gmii",
+      "label": "frames",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        1095,
+        377
+      ]
+    },
+    {
+      "id": "c6",
+      "from": "free",
+      "to": "buf",
+      "label": "page",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c7",
+      "from": "buf",
+      "to": "pay",
+      "label": "write"
+    },
+    {
+      "id": "c8",
+      "from": "pay",
+      "to": "bld",
+      "label": "prefetch",
+      "fromSide": "right",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c9",
+      "from": "eng",
+      "to": "tbl",
+      "label": "R/W",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c10",
+      "from": "cfg",
+      "to": "tbl",
+      "label": "tx_cfg",
+      "variant": "dashed"
+    }
+  ]
+}

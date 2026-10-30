@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/mac_max/Desktop/afdx/docs/design/fig/src/f14_rtc.sequence.json",
+  "output": "/Users/mac_max/Desktop/afdx/docs/design/fig/html/f14_rtc.html",
+  "specification": {
+    "sha256": "234f10cf40e59a126280c5d5019524991b8befdf3d9ada8249a3c510111c4cb0",
+    "bytes": 1580
+  },
+  "artifact": {
+    "sha256": "04145c765ab012ee815da71db71ec7b589ed8398865e2f78210637503376d545",
+    "bytes": 704066
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

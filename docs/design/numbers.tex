@@ -1,0 +1,52 @@
+% 全文引用的实测数字。最终版本重跑回归和综合后只改这里。
+% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/。
+% 性能（tb_sys_perf，77 条 VL，1471 字节，BAG = 1 ms，双向，稳定测量 21 ms）
+\newcommand{\Thru}{906.136}
+\newcommand{\ThruEightyOne}{953.208}
+\newcommand{\ThruTen}{117.680}
+\newcommand{\Lat}{24.408}
+\newcommand{\Jit}{0}
+\newcommand{\Ttx}{0.248}
+\newcommand{\Trx}{11.952}
+% 突发（tb_gbe_burst）
+\newcommand{\BurstSevSeven}{959.272}
+\newcommand{\BurstEightOne}{1008.488}
+% RTC（tb_sys_rtc）
+\newcommand{\RtcIdle}{0}
+\newcommand{\RtcLoad}{10788}
+% 综合（eLinx 官方综合，EQ6HL130 / CSG484\_H，未布线估算，界面与命令行共用）
+\newcommand{\Lut}{32847}
+\newcommand{\FF}{13869}
+\newcommand{\Clb}{4620}
+\newcommand{\Mem}{340}
+\newcommand{\Pins}{259}
+\newcommand{\LutPct}{24.12}
+\newcommand{\FFPct}{10.19}
+\newcommand{\ClbPct}{33.93}
+\newcommand{\MemPct}{28.33}
+\newcommand{\PinPct}{76.40}
+\newcommand{\Setup}{2.522}
+\newcommand{\Fmax}{182.548}
+\newcommand{\Hold}{0.068}
+% 命令行官方综合（耗时 233.062 s，资源与时序与界面相同）
+\newcommand{\CliSynthSec}{233.062}
+% 验证
+\newcommand{\RegCount}{38}
+\newcommand{\RegChecks}{1183249131}
+\newcommand{\RegIndep}{2305780}
+\newcommand{\SvcChecks}{1123}
+\newcommand{\CapChecks}{49924}
+\newcommand{\SnmpChecks}{699}
+\newcommand{\ElinxChecks}{9238}
+% 覆盖率（ModelSim SE-64 2020.4，38 项完整回归，21 个 RTL 模块 sbceft 插桩）
+\newcommand{\CovStmt}{97.00}
+\newcommand{\CovBranch}{92.84}
+\newcommand{\CovCond}{72.58}
+\newcommand{\CovFsm}{58.75}
+\newcommand{\CovFsmState}{100.00}
+\newcommand{\CovFsmTrans}{44.25}
+\newcommand{\CovToggle}{79.42}
+% 网表仿真耗时（秒）
+\newcommand{\NetCliTime}{3555.438}
+\newcommand{\NetGuiTime}{3121.109}
+\newcommand{\NetElinxTime}{7826.703}

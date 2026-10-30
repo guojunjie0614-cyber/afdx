@@ -6,24 +6,24 @@
   "ce_div": 2,
   "metrics": {
     "Statements": {
-      "covered": 14314,
-      "total": 15877,
-      "percent": 90.15
+      "covered": 6981,
+      "total": 7083,
+      "percent": 98.55
     },
     "Branches": {
-      "covered": 8188,
-      "total": 9642,
-      "percent": 84.92
+      "covered": 3844,
+      "total": 3985,
+      "percent": 96.46
     },
     "Conditions": {
-      "covered": 1029,
-      "total": 1511,
-      "percent": 68.1
+      "covered": 610,
+      "total": 717,
+      "percent": 85.07
     },
     "Expressions": {
-      "covered": 3264,
-      "total": 4325,
-      "percent": 75.46
+      "covered": 1760,
+      "total": 1991,
+      "percent": 88.39
     },
     "FSM States": {
       "covered": 110,
@@ -36,9 +36,9 @@
       "percent": 44.8
     },
     "Toggles": {
-      "covered": 47317,
-      "total": 59698,
-      "percent": 79.26
+      "covered": 41314,
+      "total": 53632,
+      "percent": 77.03
     },
     "FSM": {
       "covered": 248,
@@ -74,37 +74,37 @@
     {
       "Test": "tb_tx_basic",
       "Param": "",
-      "Checks": 662057,
+      "Checks": 662156,
       "CheckItems": 7605
     },
     {
       "Test": "tb_tx_basic",
       "Param": "TX_PAGE_AW=5,TX_OFF_AW=11",
-      "Checks": 661637,
+      "Checks": 661736,
       "CheckItems": 7605
     },
     {
       "Test": "tb_tx_bag",
       "Param": "",
-      "Checks": 14054172,
+      "Checks": 14054199,
       "CheckItems": 14591
     },
     {
       "Test": "tb_tx_multi",
       "Param": "",
-      "Checks": 14438577,
-      "CheckItems": 56211
+      "Checks": 14438572,
+      "CheckItems": 56223
     },
     {
       "Test": "tb_tx_drop",
       "Param": "",
-      "Checks": 30267258,
+      "Checks": 30267272,
       "CheckItems": 4642
     },
     {
       "Test": "tb_tx_net",
       "Param": "",
-      "Checks": 219315,
+      "Checks": 219323,
       "CheckItems": 229
     },
     {
@@ -152,55 +152,55 @@
     {
       "Test": "tb_sys_basic",
       "Param": "",
-      "Checks": 5156252,
+      "Checks": 5156190,
       "CheckItems": 2896
     },
     {
       "Test": "tb_sys_fault",
       "Param": "",
-      "Checks": 47120962,
+      "Checks": 47121898,
       "CheckItems": 8726
     },
     {
       "Test": "tb_sys_delay",
       "Param": "",
-      "Checks": 15482118,
+      "Checks": 15482172,
       "CheckItems": 3763
     },
     {
       "Test": "tb_sys_load",
       "Param": "",
-      "Checks": 216848087,
+      "Checks": 216848182,
       "CheckItems": 116677
     },
     {
       "Test": "tb_sys_cfg",
       "Param": "",
-      "Checks": 21170537,
+      "Checks": 21170726,
       "CheckItems": 714342
     },
     {
       "Test": "tb_sys_reset",
       "Param": "",
-      "Checks": 10992598,
+      "Checks": 10992796,
       "CheckItems": 3682
     },
     {
       "Test": "tb_sys_ovf",
       "Param": "RX_RING_AW=9",
-      "Checks": 9681664,
+      "Checks": 9681880,
       "CheckItems": 1488
     },
     {
       "Test": "tb_sys_net",
       "Param": "",
-      "Checks": 2944308,
+      "Checks": 2944324,
       "CheckItems": 1265
     },
     {
       "Test": "tb_sys_perf",
       "Param": "",
-      "Checks": 756655064,
+      "Checks": 756655316,
       "CheckItems": 1212916
     },
     {
@@ -278,7 +278,7 @@
     {
       "Test": "tb_sys_perf_var",
       "Param": "",
-      "Checks": 1402134183,
+      "Checks": 1402134376,
       "CheckItems": 1573773
     }
   ]

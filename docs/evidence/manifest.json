@@ -247,6 +247,291 @@
     "source": "out/t45/first_acceptance_evidence.json",
     "operation": "Completed real S2d measurements matching the integrated source",
     "bytes": 4921,
-    "sha256": "c1877cd696815a581f59e388120d2e6c0c39b6a9d7a67cd67ebd6e97a0c69cb1"
+    "sha256": "c1877cd696815a581f59e388120d2e6c0c39b6a9d7a67cd67ebd6e97a0c69cb1",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90",
+    "terminal_results": {
+      "netlist": {
+        "source": "out/t45/terminal/s4_s2d_pres150/netlist/out/t45/terminal_result.json",
+        "sha256": "b6a143a98054920c47c21a311f54860dc6bdd9bf8b2eb34274bcdcc61817e427",
+        "passed": true,
+        "finished": "2026-10-24T10:37:55.810919+08:00",
+        "checks": 1124,
+        "errors": 0,
+        "independent_items": 65,
+        "exact_external_records": {
+          "net_services.txt": true,
+          "es1_a.txt": true,
+          "es1_b.txt": true,
+          "es2_a.txt": true,
+          "es2_b.txt": true,
+          "es2_rx_a.txt": true,
+          "download_results.txt": true
+        }
+      },
+      "ce1": {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce1/out/t45/terminal_result.json",
+        "sha256": "72d384d2bb23215ab8292e4166e9c5a0191143d3d6f474001d8039f10abba858",
+        "passed": true,
+        "finished": "2026-10-24T09:17:21.833854+08:00",
+        "tests": 39,
+        "coverage": false
+      },
+      "ce2": {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/t45/terminal_result.json",
+        "sha256": "f3db0fd563aca4b97e02ddba0ebaea2b1691536e93e75ec7bf2ea1cba71c3767",
+        "passed": true,
+        "finished": "2026-10-24T13:23:26.603453+08:00",
+        "tests": 39,
+        "coverage": true
+      },
+      "judge_ce1": {
+        "source": "out/t45/terminal/s4_s2d_pres150/judge_ce1/out/t45/terminal_result.json",
+        "sha256": "0019b38f97105de5e1d05222be4a0b955b337be80371453afe07ce60a44ad195",
+        "passed": true,
+        "finished": "2026-10-24T08:03:35.474567+08:00",
+        "cases": 8
+      },
+      "judge_ce2": {
+        "source": "out/t45/terminal/s4_s2d_pres150/judge_ce2/out/t45/terminal_result.json",
+        "sha256": "800cfdf16486a488c6cbb73a24e006530002d2e86784505483b3062a8999f1c3",
+        "passed": true,
+        "finished": "2026-10-24T09:29:43.093861+08:00",
+        "cases": 8
+      }
+    },
+    "terminal_all_passed": true,
+    "frozen_manifest": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t45az\\out\\t45\\s2d_functional\\bb_terminal_prepare\\frozen_manifest.json",
+    "reference_refresh": {
+      "original_manifest_files": 149,
+      "refreshed_reference_outputs": 8,
+      "unchanged_protected_files": 141
+    }
+  },
+  {
+    "file": "../../sim/reference/regression.json",
+    "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/regress/coverage_20261024_081649_9775403/summary.json",
+    "source_sha256": "ca35a83a103f369f32f55b5894c6ea6ab1500b4f992de1592dc8a2f355be853b",
+    "operation": "Normalize Folder/Ucdb prefixes only",
+    "bytes": 11450,
+    "sha256": "4744ddd37180622ab0133bf235189c5dfc7e4f3734217a8c57af3d962d5ed6aa",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
+  },
+  {
+    "file": "../../sim/reference/judge_result.txt",
+    "source": "out/t45/terminal/s4_s2d_pres150/judge_ce2/out/modelsim/judge_20261024_070313_36552/result.txt",
+    "source_sha256": "43fe0c53ae6a2035f836dcc61fead7dfe0ed9df0db670298a4509ee2769a4470",
+    "operation": "Copy official CE2 judge result; preserve CRLF reference format",
+    "bytes": 13598,
+    "sha256": "43fe0c53ae6a2035f836dcc61fead7dfe0ed9df0db670298a4509ee2769a4470",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
+  },
+  {
+    "file": "../../sim/reference/coverage/merged.ucdb",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 2931612,
+    "sha256": "150efcbbb873df835b3dde43734ec78de0c26ee3031d15941e5e21c16901f058",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90",
+    "inputs": [
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_ram_sdp/20261024_081653_256808/coverage.ucdb",
+        "sha256": "02290ec904685e5d4f6177dcdebbf250b65566117ccbe1e4d7cffd443c313c1e"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_mac_tx/20261024_081706_707721/coverage.ucdb",
+        "sha256": "92495855776098810b9375edc047dc1292121c7751cabff4789fbaa28a8d0284"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_mac_rx/20261024_081720_001906/coverage.ucdb",
+        "sha256": "ac8265e493340caa073ac9e5b403dd534b7ea18f32a380c99482cc1e40d0ef58"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_mac_loop/20261024_081732_060177/coverage.ucdb",
+        "sha256": "8b1e4b9de67a653ec184b0d063e6238eaed6d79abb5961a3efea7c579e280ba3"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_basic/20261024_081748_809266/coverage.ucdb",
+        "sha256": "40258432e6ba8abd18a2364ebf68050914cd8b016adbf61a13b70aa948d225da"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_basic/20261024_081806_202734/coverage.ucdb",
+        "sha256": "70e114967a99bab694f5ed4beab7bb2ac3cf61758e9573a6b8182fa1ad38e447"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_bag/20261024_081823_100939/coverage.ucdb",
+        "sha256": "078c24222a8d648fed6231e4f58039047cea1226cb3ebe5ebe175ff76a58b6ed"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_multi/20261024_081922_964182/coverage.ucdb",
+        "sha256": "d889031d4d63b05e55baa0ebf3021307842830d446ff7a958f46c8000659b68c"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_drop/20261024_082042_621705/coverage.ucdb",
+        "sha256": "525c5e296f4941ee7ec287a37cc642714fbe0918a0356069253cf9a5262ff03d"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_tx_net/20261024_082227_121988/coverage.ucdb",
+        "sha256": "ec9e0e3c97571f2b3a71b6fa00f88db7475d881706a83125443bbb16e8a1a2d3"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_basic/20261024_082239_602724/coverage.ucdb",
+        "sha256": "8255d3e89e1aca0349228f55e427210b7a86673094ac9af7472c1136917b9b3c"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_fault/20261024_082349_660315/coverage.ucdb",
+        "sha256": "789bb77dfbb13a0587497774964c67990d725c0d665ab4874b3cc3982fac76af"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_icrm/20261024_082404_356666/coverage.ucdb",
+        "sha256": "3fd6a238b4057d3fb86763d10f3a08e2490d70fca45626851849bad5adb2f53b"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_load/20261024_082431_404391/coverage.ucdb",
+        "sha256": "b303d28b99f1d71925f8df7d086a5133ed09f943c4d691abd36657e752f4e2ed"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_ovf_ring/20261024_082507_851903/coverage.ucdb",
+        "sha256": "bc92bc467ed14fc4268be07fb8d533295d367308b4e57bd59f3ade0e1ac00869"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_ovf_dq/20261024_082519_930079/coverage.ucdb",
+        "sha256": "d739722fba142f72edb4bb6392e40b782d1600109a7ff12f82799e0f410b7121"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rx_net/20261024_082532_344983/coverage.ucdb",
+        "sha256": "376bbf8d22b0520f5f575c1ed06d857ea386ec7c005a3713b8b373ec770729c7"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_basic/20261024_082545_452129/coverage.ucdb",
+        "sha256": "5489c4a7a706ce3cff851d87d14df766068c35825f51dcfc26ee5174350bb2d6"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_fault/20261024_082658_569376/coverage.ucdb",
+        "sha256": "d98b094c26f6353853f4d94e871b0d3b23c8c70001b9b18d4477889b637cd149"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_delay/20261024_083444_834667/coverage.ucdb",
+        "sha256": "3b93d555b42203a3e7e1ba43571e25da98c47018ac9e911e0d91742fd6c4f878"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_load/20261024_083748_794940/coverage.ucdb",
+        "sha256": "c45306434bf4a18c9d3c6808feb292ea4258de1f2a8dc27b970a7e59e5850418"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_cfg/20261024_091058_820846/coverage.ucdb",
+        "sha256": "134f62bb9a36d0da7eb17de477e405c62c51f27b16b4fb5565a7db05ecf5cd84"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_reset/20261024_091332_527541/coverage.ucdb",
+        "sha256": "759cd22b714b9780892a9262b59629560b0ec9cfe7b6acfd270abd9ab2373fe4"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_ovf/20261024_091504_306199/coverage.ucdb",
+        "sha256": "cdfd0c7e3ec6363fc180ada59020d2634e436b14e4dbad1a7785734224dc1bf9"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_net/20261024_091622_690051/coverage.ucdb",
+        "sha256": "44bdd7a880fc481e238fc532bc0b5e2eb180838904a2c93b4fda944a8a7ee477"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_perf/20261024_091653_922276/coverage.ucdb",
+        "sha256": "9927d11d33033af84c351fbb8df696d1a925c33cda0487afdb202c40e4642d8d"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_rtc/20261024_110000_234943/coverage.ucdb",
+        "sha256": "8ef26f1a406a95ff521e5df5a49990da28f4a49812accd1b339454dc8d8e1857"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_snmp/20261024_111002_922256/coverage.ucdb",
+        "sha256": "21bca9383f87a3402f735662675c627329b6dc0d2db942d1e9a49cd315e7ee9f"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_snmp_settrap/20261024_111255_878089/coverage.ucdb",
+        "sha256": "c553683137ee7b9a3541a013b96566880f0ff339023fdb27bfe48c44f14aa522"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_615a/20261024_111523_027318/coverage.ucdb",
+        "sha256": "842ccb272b6f5b643d672749daaf4e526358bf4ab10158dae38aef559e4aebea"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_gbe_burst/20261024_112014_472497/coverage.ucdb",
+        "sha256": "d84d9d8928961e9255f84513e514cd52e7407599ba4128b7c21df2451a634cb0"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_gbe_burst/20261024_112022_669616/coverage.ucdb",
+        "sha256": "b9f9fca31e6b51fde1f7a7db1a9aad7d9ecafef01f68408ec96f30649db7c702"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rm_phase/20261024_112031_407864/coverage.ucdb",
+        "sha256": "01911223c4a0ae6a41ccbc0f71a12b680acf318bf751a6ff0500e9119a91af46"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rtc_recovery/20261024_112103_615488/coverage.ucdb",
+        "sha256": "929824fa6c69839e3b6440a4c589d95dc217da9a13f86e85c16b27ddff2a02f9"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_rtc_originate/20261024_112108_383136/coverage.ucdb",
+        "sha256": "ae86793d524d130791df08acccf9a1e2b64f16ff2a2b14a6342a6d303f4f856b"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_judge_capacity/20261024_112113_441706/coverage.ucdb",
+        "sha256": "f23c527ebbddee0c4febea0beb7262c363cfbd9569990b907aabb44017b194cb"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_judge_snmp/20261024_112138_217122/coverage.ucdb",
+        "sha256": "4fc6fcedaa1c645b11cf20e9c1edf2b08d03f3b49b727ec1fd6aae0972f4f0c5"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_elinx/20261024_112332_411930/coverage.ucdb",
+        "sha256": "e1fd2f506874a737402a4ab48b4e29211d1f90a8f50f6b81b8fbea52d0e6caaa"
+      },
+      {
+        "source": "out/t45/terminal/s4_s2d_pres150/ce2/out/sim/tb_sys_perf_var/20261024_112405_373361/coverage.ucdb",
+        "sha256": "97c0fa034dc3c39ab43c5a57f00c623bf69da8eb67dd2d6f09e5df3d6b1f34a9"
+      }
+    ]
+  },
+  {
+    "file": "../../sim/reference/coverage/vcover_report.txt",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 20119,
+    "sha256": "af141dd53b0b53aad3d6436b013ec67dd862a7c0a5c119497e943454699b02e2",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
+  },
+  {
+    "file": "../../sim/reference/coverage/modules.csv",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 2925,
+    "sha256": "ef88e88a0fc669ba40f083e3cd853b0516a00b6b3986420b57d88cd659827a4f",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
+  },
+  {
+    "file": "../../sim/reference/coverage/totals.json",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 2849,
+    "sha256": "3b71829c4e9dd6747142f9ad9a952964f706b868a4ff62d412ce41790660ef38",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90",
+    "coverage_off_source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t45az\\out\\t45\\s2d_functional\\regression_infrastructure_repair\\repaired_summary.json",
+    "coverage_off_source_sha256": "8957df987111ea39a7d8f01c4f8453b29e97598000721516df3f96967382515b",
+    "reference_counts_match": true
+  },
+  {
+    "file": "../../sim/reference/coverage/coverage_numbers.json",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 5278,
+    "sha256": "89f784917ff035f73f0b2f0f107a3c7addd18a681bc8517777494e265ab5976b",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
+  },
+  {
+    "file": "../../sim/reference/coverage/README.md",
+    "source": "out/t47/coverage_reports",
+    "operation": "Frozen CE2 39-UCDB vcover merge/report; 24 RTL design units; sbceft; no simulation",
+    "bytes": 1031,
+    "sha256": "30bf2df1df66469bd3d267c46b1ea57ed4882acd7cf434e8f8cc254ac36a26c7",
+    "frozen_commit": "83e5d5e852ecd61a5a1b5760ee366e9c76536f90"
   }
 ]

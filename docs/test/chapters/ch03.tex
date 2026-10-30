@@ -1,0 +1,202 @@
+\chapter{测试设计}\label{ch:strategy}
+
+\section{测试层次}
+
+验证体系按由底向上的顺序划分为五个层次，各层均通过被测模块的外部接口直接注入激励、采集响应并执行自动比对：
+\begin{enumerate}
+  \item \textbf{模块级：}分别针对同步双口 RAM、千兆以太网 MAC、发送核心和接收核心开展独立验证，覆盖边界帧长、畸形帧过滤和存储资源耗尽场景；
+  \item \textbf{系统级：}将两个完整端系统经双网交叉互连，验证端到端双向传输、链路故障注入、双网到达时延差、配置总线读写与运行中复位恢复行为；
+  \item \textbf{服务级：}验证 SNMP、615A 和 RTC 经由 AFDX 双网通路完成完整协议交互与差错恢复的过程；
+  \item \textbf{指标级：}定量测量有效载荷吞吐率、端到端时延与发送抖动，并检验多 VL 同拍突发排队行为及满额 VL 容量；
+  \item \textbf{网表级：}复用与 RTL 完全相同的测试激励对综合后门级网表进行仿真，并与 RTL 端口记录逐字节对照。
+\end{enumerate}
+各层测试用例全面覆盖正常传输、畸形与异常输入、存储资源满溢、异步时机复位以及跨计时刻度扰动五类场景。
+
+\section{测试点分解}\label{sec:points}
+
+围绕 5 项功能、4 项技术指标及综合后仿真，设置 46 个测试点（表~\ref{tab:points}）。每个测试点至少由一个用例覆盖，用例定义见表~\ref{tab:cases}。
+
+\begingroup\setlength{\tabcolsep}{5pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.35cm}>{\raggedright\arraybackslash}p{7.0cm}>{\raggedright\arraybackslash}p{5.55cm}>{\raggedright\arraybackslash}p{1.0cm}@{}}
+\caption{测试点分解与用例对应}\label{tab:points}\\
+\longtablehead{4}{\thead{编号} & \thead{测试点} & \thead{覆盖用例} & \thead{节}}
+\multicolumn{4}{@{}l}{\heiti 功能 1：ARINC 664 Part 7 通信} \\*
+F1-01 & 以太网组帧：前导码、SFD、填充、FCS、帧间隔 & MAC-01，MAC-03 & \ref{sec:f-comm} \\
+F1-02 & 以太网接收：帧边界、去 FCS、错误分类 & MAC-02，MAC-03 & \ref{sec:f-comm} \\
+F1-03 & 载荷存储器的写入、同步读和读使能 & BAS-01 & \ref{sec:f-comm} \\
+F1-04 & UDP/IP 封装：IP 头、校验和、UDP 头、端口 & TX-01，TX-02 & \ref{sec:f-comm} \\
+F1-05 & VL 寻址：目的地址中的 VLID、源地址中的网络标识 & TX-01，RX-01 & \ref{sec:f-comm} \\
+F1-06 & 发送缓存分页、跨页与页回收 & TX-01，TX-02，TX-05 & \ref{sec:f-comm} \\
+F1-07 & BAG 调度：最小间隔、到期时刻、计数回绕 & TX-03，PERF-01 & \ref{sec:f-comm} \\
+F1-08 & 多 VL 排队与轮询 & TX-04，SYS-04 & \ref{sec:f-comm} \\
+F1-09 & 双网发送与按 VL 选网 & MAC-01，TX-04，SYS-01 & \ref{sec:f-comm} \\
+F1-10 & 接收 VL 映射与 UDP 端口分发 & RX-01，SYS-01 & \ref{sec:f-comm} \\
+F1-11 & 发送拒绝：VL 禁用、队列满、消息超长、无空闲页 & TX-05，SYS-04 & \ref{sec:f-comm} \\
+F1-12 & 配置口：写握手、读延迟、计数采样时刻、运行中改配置 & SYS-05 & \ref{sec:f-comm} \\
+F1-13 & 传输途中复位后的恢复 & SYS-06 & \ref{sec:f-comm} \\
+F1-14 & 双端双网端到端交付 & SYS-01，SYS-09，SVC-08 & \ref{sec:f-comm} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 功能 2：高完整性通信} \\*
+F2-01 & 帧错误检测：FCS、帧长、IP 头、UDP 头 & RX-02，SYS-02 & \ref{sec:f-ic} \\
+F2-02 & 拒绝未知 VL 的帧及配置不允许在该网络接收的帧 & RX-02，SYS-02 & \ref{sec:f-ic} \\
+F2-03 & 完整性检查：序号递增、允许丢一帧、重复、跳号、复位首帧、回绕 & RX-03，SYS-02 & \ref{sec:f-ic} \\
+F2-04 & 冗余管理：先到副本交付，后到副本丢弃 & RX-03，SYS-03，SYS-04 & \ref{sec:f-ic} \\
+F2-05 & 冗余窗口的计时边界与记录过期处理 & RX-08，SYS-03 & \ref{sec:f-ic} \\
+F2-06 & 多条 VL 的序号状态相互独立 & RX-04 & \ref{sec:f-ic} \\
+F2-07 & 接收环形缓冲溢出与交付队列满后的恢复 & RX-05，RX-06，SYS-07 & \ref{sec:f-ic} \\
+F2-08 & 各类错误的计数结果与配置口读回值一致 & SYS-02，SYS-07 & \ref{sec:f-ic} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 功能 3：SNMP 网络管理} \\*
+F3-01 & Get、GetNext 及逐对象遍历 & SVC-01，SVC-03 & \ref{sec:f-snmp} \\
+F3-02 & Set 及读回 & SVC-02，SVC-03 & \ref{sec:f-snmp} \\
+F3-03 & 非法请求拒绝：只读对象、错误类型、错误团体名（\code{community}） & SVC-01，SVC-02 & \ref{sec:f-snmp} \\
+F3-04 & Trap：启动通知、认证失败通知 & SVC-02，SVC-03 & \ref{sec:f-snmp} \\
+F3-05 & v1/v2c 及 BER 编码边界 & SVC-01 & \ref{sec:f-snmp} \\
+F3-06 & 管理报文与用户数据共存 & SVC-01，SVC-02，SVC-08 & \ref{sec:f-snmp} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 功能 4：615A 数据加卸载} \\*
+F4-01 & 加载流程：LUI、LUR、头文件、数据文件、LUS & SVC-04，SVC-08 & \ref{sec:f-615a} \\
+F4-02 & 卸载流程：LND、LNR、LNS，\code{MEMORY.BIN} 回传 & SVC-04，SVC-08 & \ref{sec:f-615a} \\
+F4-03 & TFTP 整块边界与结束空块 & SVC-04 & \ref{sec:f-615a} \\
+F4-04 & 校验错误、丢数据块、丢确认的重试与终止 & SVC-04 & \ref{sec:f-615a} \\
+F4-05 & 片内 RAM 内容与源文件一致 & SVC-04，SVC-08 & \ref{sec:f-615a} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 功能 5：RTC 时钟同步} \\*
+F5-01 & SNTP 请求与响应的字段及时间戳编码 & SVC-05，SVC-08 & \ref{sec:f-rtc} \\
+F5-02 & 空载与带载同步误差 & SVC-05 & \ref{sec:f-rtc} \\
+F5-03 & 秒边界进位，停止同步后时钟继续运行 & SVC-05 & \ref{sec:f-rtc} \\
+F5-04 & 纳秒与 NTP 小数的双向换算 & SVC-05 & \ref{sec:f-rtc} \\
+F5-05 & 响应丢失后重发恢复 & SVC-06 & \ref{sec:f-rtc} \\
+F5-06 & 回送时间戳错误或过期的响应不校时 & SVC-07 & \ref{sec:f-rtc} \\
+\midrule
+\multicolumn{4}{@{}l}{\heiti 技术指标} \\*
+P-01 & 传输速率不低于 100~Mbps & PERF-01 & \ref{sec:p-rate} \\
+P-02 & 帧格式：载荷 1--1471 字节，帧长不超过 1518 字节，VLID，序号 1--255 & MAC-01，TX-01，RX-01，RX-03，SYS-09 & \ref{sec:p-frame} \\
+P-03 & 端到端时延：稳态与最坏情况 & PERF-01--03 & \ref{sec:p-lat} \\
+P-04 & 发送抖动 & PERF-01，TX-03 & \ref{sec:p-lat} \\
+P-05 & 128 条发送 VL & CAP-01，TX-04，SYS-04 & \ref{sec:p-vl} \\
+P-06 & 4096 条接收 VL & CAP-01，RX-01 & \ref{sec:p-vl} \\
+\midrule
+N-01 & 综合后网表的功能与 RTL 一致 & NET-01、NET-02 & 6.1--6.3 \\
+\end{longtable}
+\endgroup
+
+\section{用例清单}
+
+用例按测试层次编号，见表~\ref{tab:cases}。正文和附录~\ref{app:regress} 均使用这些编号引用用例；同一测试平台采用不同参数运行时，分别编为不同用例。
+
+\begingroup\setlength{\tabcolsep}{5pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.55cm}>{\raggedright\arraybackslash}p{4.95cm}>{\raggedright\arraybackslash}p{8.75cm}@{}}
+\caption{用例清单}\label{tab:cases}\\
+\longtablehead{3}{\thead{编号} & \thead{测试平台} & \thead{测试内容}}
+BAS-01 & \code{tb_ram_sdp} & 四种宽度和深度的存储器：写入、同步读延迟、读使能为低时输出保持 \\
+\midrule
+MAC-01 & \code{tb_mac_tx} & 组帧、网络选择、帧间隔、上游字节输入中断 \\
+MAC-02 & \code{tb_mac_rx} & 正常帧接收、错误分类、去 FCS、帧边界 \\
+MAC-03 & \code{tb_mac_loop} & 收发环回，不同帧长与双网闭环 \\
+\midrule
+TX-01 & \code{tb_tx_basic} & 不同消息长度的分页存储、协议头和双网发送 \\
+TX-02 & \code{tb_tx_basic}（32 页 × 2048 字节） & 同 TX-01，改变页数与页尺寸 \\
+TX-03 & \code{tb_tx_bag} & BAG 间隔、到期时刻和计数回绕 \\
+TX-04 & \code{tb_tx_multi} & 128 条 VL 的排队、轮询与网络选择 \\
+TX-05 & \code{tb_tx_drop} & 禁用、队列满、超长、无空闲页及页回收 \\
+TX-06 & \code{tb_tx_net} & 记录固定输入下的发送结果，供网表对照 \\
+\midrule
+RX-01 & \code{tb_rx_basic} & 映射、消息长度、端口；4096 条接收 VL 逐条交付 \\
+RX-02 & \code{tb_rx_fault} & FCS、长度、协议头和配置错误的拒绝原因 \\
+RX-03 & \code{tb_rx_icrm} & 序号规则、回绕、两网时间差边界 \\
+RX-04 & \code{tb_rx_load} & 多 VL 同时接收时的序号隔离与去重 \\
+RX-05 & \code{tb_rx_ovf_ring}（缓存 512 字节） & 缓存溢出、释放本帧预写入占用的空间与恢复 \\
+RX-06 & \code{tb_rx_ovf_dq}（队列 2 项） & 交付队列满、丢弃与恢复 \\
+RX-07 & \code{tb_rx_net} & 记录固定输入下的接收结果，供网表对照 \\
+RX-08 & \code{tb_rm_phase} & 跨计时边界及处理次序变化下的去重与记录过期 \\
+\midrule
+SYS-01 & \code{tb_sys_basic} & 两端双向互发时的消息交付与事件输出 \\
+SYS-02 & \code{tb_sys_fault} & 线路丢帧、重放与字节改写，检测、计数与恢复 \\
+SYS-03 & \code{tb_sys_delay} & 两网延迟变化下的交付与去重 \\
+SYS-04 & \code{tb_sys_load} & 128 条发送 VL 的传输与发送拒绝 \\
+SYS-05 & \code{tb_sys_cfg} & 配置写握手、读延迟、计数采样时刻 \\
+SYS-06 & \code{tb_sys_reset} & 传输途中复位后，残帧不进入复位后的消息交付 \\
+SYS-07 & \code{tb_sys_ovf}（缓存 512 字节） & 整机接收溢出的丢弃、计数与恢复 \\
+SYS-08 & \code{tb_sys_net} & 记录顶层在固定输入下的结果，供网表对照 \\
+SYS-09 & \code{tb_elinx} & 在 eLinx 中运行：双端双网互发与去重 \\
+\midrule
+SVC-01 & \code{tb_sys_snmp} & SNMP 查询、遍历、团体名（\code{community}）与编码边界 \\
+SVC-02 & \code{tb_sys_snmp_settrap} & SNMP 设置、非法写入拒绝、Trap 通知 \\
+SVC-03 & \code{tb_judge_snmp} & SNMP 四类报文交互的字段解码与读回 \\
+SVC-04 & \code{tb_sys_615a} & 615A 加载、卸载、校验错误与丢包重试 \\
+SVC-05 & \code{tb_sys_rtc} & RTC 空载与带载同步、秒边界 \\
+SVC-06 & \code{tb_rtc_recovery} & RTC 响应丢失后的重发恢复 \\
+SVC-07 & \code{tb_rtc_originate} & 错误或过期响应不校时 \\
+SVC-08 & \code{tb_net_services} & 五项功能联合测试 \\
+\midrule
+PERF-01 & \code{tb_sys_perf} & 吞吐、时延和抖动 \\
+PERF-02 & \code{tb_gbe_burst}（77 条） & 77 条 VL 同时到期的排队与交付 \\
+PERF-03 & \code{tb_gbe_burst}（81 条） & 81 条 VL 同时到期的排队与交付 \\
+CAP-01 & \code{tb_judge_capacity} & 128 条发送、4096 条接收 VL 全部配置 \\
+\midrule
+NET-01 & 界面综合，\code{tb_elinx} & SYS-09 的网表仿真 \\
+NET-02 & 界面综合，\code{tb_net_services} & SVC-08 的网表仿真，与 RTL 记录对照 \\
+\end{longtable}
+\endgroup
+
+ModelSim 批量测试包含 SVC-08、CAP-01、SVC-03、PERF-02、PERF-03、SVC-05 和 PERF-01，共 7 项；其中 6 项选自 38 项 RTL 回归用例，SVC-08 为额外联合测试。NET-01、NET-02 分别复用 SYS-09、SVC-08 的激励。
+
+\section{检查数的统计口径}
+
+结果表中的检查数分两类：
+\begin{itemize}
+  \item \textbf{自检次数：}仿真中对载荷、握手和配置读回等进行比较的执行次数；负载测试的自检次数随运行时长增长。完整回归合计 \countsep{\RegChecks} 次。
+  \item \textbf{独立核对数：}参考检查器对帧编码、消息交付和计数器等项目进行判定的次数。完整回归合计 \countsep{\RegIndep} 项。
+\end{itemize}
+
+\section{参数缩放与边界构造}\label{sec:param-scale}
+
+由于收发核心的控制状态机与流水线逻辑同缓存地址位宽参数完全正交，测试中对部分用例调整顶层容量参数，以在合理仿真时长内高密度触发资源满溢、指针回退与恢复边界：
+\begin{itemize}
+  \item \textbf{分页粒度缩放（TX-02）：}将发送缓存由默认 $256\text{ 页}\times 512\text{ B}$ 调整为 $32\text{ 页}\times 2048\text{ B}$，验证分页链表与组帧预读逻辑在不同页长配置下的通用性；
+  \item \textbf{接收缓存与队列深度缩减（RX-05、SYS-07、RX-06）：}将单网接收环形缓冲缩减为 512~B（使 $>512\text{ B}$ 的长帧必然触发空间不足），或将交付描述队列缩减为 2 项（使长帧交付期间到达的后续短帧必然触发队列满），从而确定性地验证预写入指针回退、溢出计数与空间释放后的自动恢复；
+  \item \textbf{满载同拍突发（PERF-02、PERF-03）：}令 77 条或 81 条 VL 的 1471~B 最长消息在同一拍集中到期释放，直接检验调度器与线路串行发送的最坏排队时延上界。
+\end{itemize}
+
+\section{代码覆盖率}\label{sec:coverage}
+
+在 ModelSim SE-64 2020.4 的完整 38 项 RTL 回归中，对全部 21 个 RTL 模块启用 \code{sbceft}（语句、分支、条件、表达式、状态机、翻转）覆盖率插桩，统计结果见表~\ref{tab:coverage}（原始报告见附录~\ref{app:evidence}）。
+
+\begin{table}[!htbp]\centering
+\caption{主要模块的代码覆盖率（\%）}\label{tab:coverage}
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.8cm}*{7}{C}@{}}
+\toprule
+\multirow{2}{*}{\thead{模块}} & \multirow{2}{*}{\thead{语句}} & \multirow{2}{*}{\thead{分支}} & \multirow{2}{*}{\thead{条件}} & \multicolumn{3}{c}{\thead{状态机}} & \multirow{2}{*}{\thead{翻转}} \\
+\cmidrule(lr){5-7}
+ & & & & \thead{状态} & \thead{转换} & \thead{合并} & \\
+\midrule
+\code{AFDX_top}、\code{afdx_cfg}、\code{afdx_timebase} & 98.86 & 96.53 & 90.91 & --- & --- & --- & 53.65 \\
+\code{afdx_mac_tx}、\code{afdx_mac_rx} & 99.24 & 94.38 & 92.59 & 100.00 & 94.12 & 96.15 & 95.12 \\
+\code{afdx_tx_core} 及子模块 & 99.20 & 95.87 & 81.71 & 100.00 & 71.74 & 81.16 & 92.85 \\
+\code{afdx_rx_core} 及子模块 & 99.42 & 97.63 & 98.59 & 100.00 & 70.59 & 81.48 & 92.54 \\
+\code{afdx_svc} & 94.02 & 90.69 & 100.00 & --- & --- & --- & 100.00 \\
+\code{afdx_snmp} & 94.62 & 89.00 & 60.57 & 100.00 & 26.36 & 41.72 & 58.92 \\
+\code{afdx_615a} & 94.89 & 90.19 & 51.74 & 100.00 & 29.62 & 41.53 & 62.11 \\
+\code{afdx_rtc}、\code{afdx_ntp_fraction} & 97.60 & 93.71 & 69.44 & 100.00 & 48.08 & 63.51 & 74.17 \\
+\midrule
+全设计（21 个 RTL 模块） & \textbf{\CovStmt} & \textbf{\CovBranch} & \textbf{\CovCond} & \textbf{\CovFsmState} & \textbf{\CovFsmTrans} & \textbf{\CovFsm} & \textbf{\CovToggle} \\
+\bottomrule
+\end{tabularx}
+\par\vspace{6pt}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+\thead{全设计状态覆盖} & \thead{全设计转换覆盖} & \thead{全设计表达式覆盖} \\
+\midrule
+104 / 104（\CovFsmState\%） & 131 / 296（\CovFsmTrans\%） & 164 / 177 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+状态与转换按 ModelSim 识别并纳入统计的有限状态机计算，全设计 104 个状态达到 100.00\% 覆盖；状态与转换合并覆盖率为 235 / 400（\CovFsm{}\%）。未达 100\% 的分项原因如下：
+\begin{itemize}
+  \item \textbf{条件覆盖（\CovCond{}\%）：}测试激励遵循主机配置规范，未主动触发 615A 忙时改写控制寄存器、UDP 零端口及极端异常超时保护等防御性分支；此外，统计分母还包含了同步 RAM 模型的编译期辅助函数及仿真专用的同址读写碰撞断言逻辑。
+  \item \textbf{状态机转换（\CovFsmTrans{}\%）：}ModelSim 将受外层主状态约束的子状态机理论笛卡尔积转移一并计入分母，其中协议语义上不会发生的跨分支跳转保留为未命中。
+  \item \textbf{翻转覆盖（\CovToggle{}\%）：}\code{afdx_cfg} 中 32 位统计计数器的高比特位在回归测试的事件数量级下保持为 0，未发生 $0\leftrightarrow 1$ 翻转。
+\end{itemize}

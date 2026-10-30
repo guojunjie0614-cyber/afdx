@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/mac_max/Desktop/afdx/docs/design/fig/src/f17_download.sequence.json",
+  "output": "/Users/mac_max/Desktop/afdx/docs/design/fig/html/f17_download.html",
+  "specification": {
+    "sha256": "1810f9ca145173a63fa3822c3d8df4a41344955ff6805637e19bb838ec9631fd",
+    "bytes": 2026
+  },
+  "artifact": {
+    "sha256": "b0464758556d7b27d42f0e9e3afe3f27936438f82ae65e177ca4acca316a2762",
+    "bytes": 705186
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

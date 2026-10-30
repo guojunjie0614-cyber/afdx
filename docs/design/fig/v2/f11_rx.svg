@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450pt" height="124pt" viewBox="0 0 450 124">
+<style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+<rect x="28.00" y="40.00" width="62.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="59.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">mac_rx ×2</text>
+<text x="59.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">SFD, CRC32,</text>
+<text x="59.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">strip FCS</text>
+<rect x="120.00" y="40.00" width="66.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="153.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_parse ×2</text>
+<text x="153.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">header check,</text>
+<text x="153.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">trial write</text>
+<rect x="216.00" y="40.00" width="92.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="262.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">afdx_rx_engine</text>
+<text x="262.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">map, IC, RM,</text>
+<text x="262.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">expiry</text>
+<rect x="338.00" y="40.00" width="66.00" height="40.00" rx="0" fill="#2F9688" stroke="#000" stroke-width="1.0"/>
+<text x="371.00" y="54.81" font-size="8.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">rx_deliver</text>
+<text x="371.00" y="63.63" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">1 B / cycle,</text>
+<text x="371.00" y="72.03" font-size="7.0" text-anchor="middle" fill="#FFFFFF" font-weight="bold">no backpressure</text>
+<path d="M 0.00 56.00 L 28.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="28.00,56.00 23.00,58.10 23.00,53.90" fill="#000"/>
+<text x="14.00" y="53.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">GMII</text>
+<text x="14.00" y="67.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">A / B</text>
+<path d="M 90.00 56.00 L 120.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="120.00,56.00 115.00,58.10 115.00,53.90" fill="#000"/>
+<text x="105.00" y="53.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">m_*</text>
+<path d="M 186.00 56.00 L 216.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="216.00,56.00 211.00,58.10 211.00,53.90" fill="#000"/>
+<text x="201.00" y="53.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">desc</text>
+<path d="M 308.00 56.00 L 338.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="338.00,56.00 333.00,58.10 333.00,53.90" fill="#000"/>
+<text x="323.00" y="53.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">rx_dq</text>
+<path d="M 404.00 56.00 L 450.00 56.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="450.00,56.00 445.00,58.10 445.00,53.90" fill="#000"/>
+<text x="428.00" y="53.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">d_*</text>
+<path d="M 262.00 80.00 L 262.00 89.00 L 170.00 89.00 L 170.00 80.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="170.00,80.00 172.10,85.00 167.90,85.00" fill="#000"/>
+<text x="216.00" y="86.00" font-size="7.0" text-anchor="middle" fill="#000" font-weight="bold">commit / rollback</text>
+<rect x="124.00" y="0.00" width="66.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="157.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">rx_map</text>
+<text x="157.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">65536 × 13</text>
+<rect x="232.00" y="0.00" width="60.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="262.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">rx_cfg</text>
+<text x="262.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">4096 × 32</text>
+<rect x="298.00" y="0.00" width="60.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="328.00" y="11.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">rx_state</text>
+<text x="328.00" y="19.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">4096 × 44</text>
+<path d="M 190.00 12.00 L 222.00 12.00 L 222.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="222.00,40.00 219.90,35.00 224.10,35.00" fill="#000"/>
+<path d="M 250.00 24.00 L 250.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="250.00,40.00 247.90,35.00 252.10,35.00" fill="#000"/>
+<path d="M 302.00 24.00 L 302.00 40.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="302.00,40.00 299.90,35.00 304.10,35.00" fill="#000"/>
+<polygon points="302.00,24.00 304.10,29.00 299.90,29.00" fill="#000"/>
+<path d="M 70.00 12.00 L 124.00 12.00" fill="none" stroke="#000" stroke-width="1.0" stroke-dasharray="3 2"/>
+<polygon points="124.00,12.00 119.00,14.10 119.00,9.90" fill="#000"/>
+<text x="66.00" y="14.50" font-size="7.0" text-anchor="end" fill="#000" font-weight="bold">cfg bus</text>
+<rect x="120.00" y="98.00" width="284.00" height="24.00" rx="0" fill="#F2D488" stroke="#000" stroke-width="1.0"/>
+<text x="262.00" y="109.01" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">rx_ring_a / rx_ring_b</text>
+<text x="262.00" y="117.83" font-size="7.0" text-anchor="middle" fill="#000000" font-weight="bold">2 × 4 KiB · trial write, commit on accept</text>
+<path d="M 140.00 80.00 L 140.00 98.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="140.00,98.00 137.90,93.00 142.10,93.00" fill="#000"/>
+<text x="143.00" y="94.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">wr</text>
+<path d="M 370.00 98.00 L 370.00 80.00" fill="none" stroke="#000" stroke-width="1.0"/>
+<polygon points="370.00,80.00 372.10,85.00 367.90,85.00" fill="#000"/>
+<text x="373.00" y="94.00" font-size="7.0" text-anchor="start" fill="#000" font-weight="bold">rd</text>
+</svg>
