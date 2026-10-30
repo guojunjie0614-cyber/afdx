@@ -1,0 +1,110 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.afdx_app_rx
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        31        29         2    93.54%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.afdx_app_rx
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_app_rx.v
+------------------------------------CASE Branch------------------------------------
+    81              1                    ***0***     
+Branch totals: 6 hits of 7 branches = 85.71%
+
+------------------------------------IF Branch------------------------------------
+    76                                  47229588     Count coming in to IF
+    76              2                   47229588     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM Transitions                 10         6         4    60.00%
+
+================================FSM Details================================
+
+FSM Coverage for Design Unit work.afdx_app_rx --
+
+FSM_ID: state
+    Current State Object : state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  72                 st0                   0
+  73                 st1                   5
+  74                 st2                   1
+  75                 st3                   2
+  76                 st4                   3
+  80                 st5                   4
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+  68                   2          st1 -> st0          
+  68                   4          st2 -> st0          
+  68                   6          st3 -> st0          
+  68                   8          st4 -> st0          
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM Transitions             10         6         4    60.00%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      49        48         1    97.95%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.afdx_app_rx --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File rtl/afdx_app_rx.v
+    81              1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        454       351       103    77.31%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.afdx_app_rx
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                   app_index[0-11]           0           0        0.00 
+                                   cfg_index[0-11]           0           0        0.00 
+                                    cfg_vlid[0-15]           0           0        0.00 
+                                 descriptor_id[12]           1           0       50.00 
+                              descriptor_id[13-15]           0           0        0.00 
+                                            id[13]           0           1       50.00 
+                                            id[14]           0           9       50.00 
+                                            id[15]           0           0        0.00 
+                                         map_q[12]           1           0       50.00 
+                                      map_q[13-15]           0           0        0.00 
+                               map_write_value[15]           0           0        0.00 
+                                             reset           2           0       50.00 
+                                          used[12]           0           0        0.00 
+
+Total Node Count     =        227 
+Toggled Node Count   =        173 
+Untoggled Node Count =         54 
+
+Toggle Coverage      =      77.31% (351 of 454 bins)
+
+
+Total Coverage By Design Unit (filtered view): 89.60%
+

@@ -1,0 +1,35 @@
+{
+  "afdx_cfg_additions": [
+    {
+      "key": "work.afdx_cfg/#stmt#509#1#",
+      "line": 509,
+      "count": 0
+    },
+    {
+      "key": "work.afdx_cfg/#stmt#510#1#",
+      "line": 510,
+      "count": 0
+    },
+    {
+      "key": "work.afdx_cfg::branch#509#1#/all_false_branch",
+      "line": 509,
+      "count": 149
+    },
+    {
+      "key": "work.afdx_cfg::branch#509#1#/if_branch",
+      "line": 509,
+      "count": 0
+    },
+    {
+      "key": "work.afdx_cfg::branch#510#1#/all_false_branch",
+      "line": 510,
+      "count": 149
+    },
+    {
+      "key": "work.afdx_cfg::branch#510#1#/if_branch",
+      "line": 510,
+      "count": 0
+    }
+  ],
+  "target_branch_fsm_keys_preserved": true
+}

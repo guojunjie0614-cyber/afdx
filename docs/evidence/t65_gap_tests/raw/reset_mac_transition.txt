@@ -1,0 +1,16 @@
+Code Coverage Scope - 
+Name            : work.afdx_mac_tx::state/trans
+Type            : UCDB_FSM_TRANS
+Source type     : VERILOG
+File info       : name = E:/2026_Embedded_FPGA/worktrees/active/c3_t63/rtl/afdx_mac_tx.v line = 118 
+Weight          : 1
+Flags           : 0x00000100
+
+Cover item - 
+	 Name       : PREAMBLE -> GAP
+	 Type       : UCDB_FSMBIN
+	 File info  : name = E:/2026_Embedded_FPGA/worktrees/active/c3_t63/rtl/afdx_mac_tx.v line = 81 
+	 Count      : 1
+	 Flags      : 0x00020002
+Attribute: name = #FSMCOND# string = "(null)"
+

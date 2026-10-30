@@ -1,0 +1,33 @@
+id,analysis_group,unit,metric,source_line,item,hit,count,reason
+T64-0023,A02,afdx_rx_engine,Branches,557,work.afdx_rx_engine::branch#556#2#/else_branch,True,8,UCDB 已命中
+T64-0139,A01,afdx_app_tx,Branches,79,work.afdx_app_tx::branch#79#1#/all_false_branch,True,811,UCDB 已命中
+T64-0140,A01,afdx_app_tx,Branches,82,work.afdx_app_tx::branch#82#1#/if_branch,True,4905,UCDB 已命中
+T64-0141,A01,afdx_app_tx,Branches,89,work.afdx_app_tx::branch#86#1#/true_branch,True,4,UCDB 已命中
+T64-0142,A01,afdx_app_tx,Branches,86,work.afdx_app_tx::branch#86#1#/all_false_branch,True,2,UCDB 已命中
+T64-0143,A01,afdx_app_tx,Branches,87,work.afdx_app_tx::branch#87#1#/if_branch,True,4,UCDB 已命中
+T64-0144,A01,afdx_app_tx,Branches,90,work.afdx_app_tx::branch#90#1#/if_branch,True,2,UCDB 已命中
+T64-0145,A01,afdx_app_tx,Branches,90,work.afdx_app_tx::branch#90#1#/else_branch,True,2,UCDB 已命中
+T64-0852,A01,afdx_app_rx,Expressions,54,first | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0853,A01,afdx_app_rx,Expressions,54,reject | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0854,A01,afdx_app_rx,Expressions,55,reject | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0871,A01,afdx_app_tx,Conditions,79,(count < 8191) | '_0' not hit             Hit '_0',True,,UCDB 已命中
+T64-0872,A01,afdx_app_tx,Conditions,82,(count >= 2) | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0873,A01,afdx_app_tx,Conditions,82,(used >= 4096) | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0874,A01,afdx_app_tx,Conditions,86,active | '_0' not hit             Hit '_0',True,,UCDB 已命中
+T64-0875,A01,afdx_app_tx,Conditions,86,(count >= 2) | '_0' not hit             Hit '_0',True,,UCDB 已命中
+T64-0876,A01,afdx_app_tx,Conditions,87,bad | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0877,A01,afdx_app_tx,Conditions,87,(used >= 4096) | '_1' not hit             Hit '_1',True,,UCDB 已命中
+T64-0878,A01,afdx_app_tx,Conditions,89,bad | No hits                  Hit '_0' and '_1',True,,UCDB 已命中
+T64-0879,A01,afdx_app_tx,Conditions,89,active | No hits                  Hit '_0' and '_1',True,,UCDB 已命中
+T64-0880,A01,afdx_app_tx,Conditions,89,initialized | No hits                  Hit '_0' and '_1',True,,UCDB 已命中
+T64-0881,A01,afdx_app_tx,Conditions,89,(descriptors == 32) | No hits                  Hit '_0' and '_1',True,,UCDB 已命中
+T64-0898,R01,afdx_app_tx,FSM Transitions,126,state: st1 -> st0 [Trans_ID=2],True,1,UCDB 已命中
+T64-0906,R01,afdx_app_tx,FSM Transitions,126,state: st9 -> st0 [Trans_ID=18],False,0,本卡登记选择 st1=6；st9=4 未注入复位
+T64-0907,A01,afdx_app_tx,Statements,82,item 1,True,4905,UCDB 已命中
+T64-0908,A01,afdx_app_tx,Statements,87,item 1,True,4,UCDB 已命中
+T64-0909,A01,afdx_app_tx,Statements,87,item 2,True,4,UCDB 已命中
+T64-0910,A01,afdx_app_tx,Statements,90,item 1,True,4,UCDB 已命中
+T64-0911,A01,afdx_app_tx,Statements,90,item 2,True,4,UCDB 已命中
+T64-1225,R01,afdx_mac_tx,FSM Transitions,81,state: PREAMBLE -> GAP [Trans_ID=3],True,1,UCDB 已命中
+T64-1619,R01,afdx_rx_engine,FSM Transitions,338,op: FRAME -> INIT [Trans_ID=5],True,1,UCDB 已命中
+T64-1621,A02,afdx_rx_engine,Statements,557,item 1,True,8,UCDB 已命中

@@ -1,0 +1,314 @@
+{
+  "name": "tb_t65_tx_init",
+  "started": "2026-10-29T18:21:47.763096-07:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 10.0,
+  "replaced_modules": [],
+  "inputs": [
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_615a.v",
+      "sha256": "6348A5F5D030E460B2EA5DD9F41BECEE367ED6B765C99FAF6DE245C5EF7C009D"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_615a_engine.v",
+      "sha256": "D66E4E478C5DC13CE2D74610F7A9299442991F7F8465F6FCD68A901B14F33152"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_map.v",
+      "sha256": "D7C24D1B8C1A2ED949390F7AF66C7E24C796522AD25236436BDFB93B77A9398C"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_read.v",
+      "sha256": "F6D1AF3753DF1CB13E9C3A5E4DEA6AB226C014663F993CAB199C4AB6FDF2346A"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_rx.v",
+      "sha256": "9B0E270489424779C9FD5B390330BB7B5B8F316DC01863195B15CA3DB95A6FDD"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_tx.v",
+      "sha256": "CF2A9D84A8A79C247BCFF9EBB0D6F535141D6AED1CF565B7A3AA33DDFF07899D"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_cfg.v",
+      "sha256": "6FEACFAFED07EFF5DDC225672B75063DAE616098186A4A605C008E411F7E9CC7"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_crc32_d8.v",
+      "sha256": "2487ACEDF68DF5AE8E96E90C0C6EB924869F286D2402DF21BC089DA09897E614"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_es.v",
+      "sha256": "2AAB7F8D36B40F329C4ADA793BCAD5FFD45A7508F64F910EAF838D139CFE6637"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mac_rx.v",
+      "sha256": "EE01466B3A4876AD902AFE15DD75CD2B6D64B7819548763A57B44B521FD58300"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mac_tx.v",
+      "sha256": "5D31F7E088C187BD997AF9F86C554A36A6393039272E166FB7F4162464AE1878"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mgmt_tx.v",
+      "sha256": "38023F70D6080DCB63F1958B832CA8638AD8AAF5931E0DADABB54750FFF94553"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_ntp_fraction.v",
+      "sha256": "CF90997E5CBA9AF3501D0D86E0D4A8500423814485F89CFD3CEC1EA1F889E7F0"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_ram_sdp.v",
+      "sha256": "4CE8310A18E7BAA42B27AD02B049E78C5C1C9934F221BD61C50D949131A6D7A4"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rtc.v",
+      "sha256": "EDD3382DB62D1D76E57484BB58866D75CA377E1EF74C56FB9A8AFEF82F1484A5"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_core.v",
+      "sha256": "DE4210446D05DEEE5CFF78F2EF823ABED8947CE13A570135F06674652ED977A7"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_deliver.v",
+      "sha256": "F998EA0B92F9C07C138D2428046F36FC1B894F3FCE6F9A171E3AC8B94AD4446F"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_engine.v",
+      "sha256": "9112EF7480640D18E744E6119BEFD5F274DEFF1AC8545F696991FE9AA06CE112"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_parse.v",
+      "sha256": "C4A4324D1D254FD3AC25838AF0A787AA84467A5C58437B24556019C78C2CA07F"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_snmp.v",
+      "sha256": "CB07E1B4846C55D376BBE48DFBFDF8058040AFB8ECFA57406837B0A6ADD8D0F9"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_snmp_engine.v",
+      "sha256": "950F6C6DA51505C1ACC2BC7256A683F5841A763C3600E96DA9F320CBBB31A9FD"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_svc.v",
+      "sha256": "9B8FA581885BBC3A90A88EC1CFF6310175D2D860D6C4143257AFCDEC2A538A2D"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_timebase.v",
+      "sha256": "72F29EAD5CA2A81155702CE2DACF48AC2EA5C0C92BCA11C0175A474147AF697A"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\AFDX_top.v",
+      "sha256": "ABC16D2010E0AE1A1D1E09A1B45820957132446417F464A5249B9B2E3C7235CB"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_buf.v",
+      "sha256": "AF025B086B2477EAB2889DBCEE1B87E9A71EB416E84E5BF6D7B892376FD0994C"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_builder.v",
+      "sha256": "F2AD3F8516B3C3CDFA4F82D6E903086DF1D6D97E9BF79649279F1A23DC42F7FE"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_core.v",
+      "sha256": "56316BCCBE831F313CFCA40FC3FECCFB3F50A5F77D8C557C6FB7646BC22B4365"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_engine.v",
+      "sha256": "B6037630DDCA2A20743F43A4313CFB6755D8789A1C057FF18CED7814DD4E85E8"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_free.v",
+      "sha256": "4BE82B6C73F6F164A61E051ED074B20C7CEC4E88F803362B1F1027D3FDED78AC"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\gmii_monitor.v",
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\judge_endpoint.v",
+      "sha256": "798368A46CEF96996FC8BB4B9793B4073BE7B1A02694BC126FFE743922BF78A6"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\line_driver.v",
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\line_monitor.v",
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\link_model.v",
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\load_test_endpoint.v",
+      "sha256": "6FB976AA6EAB6FCBDAB972664F514E3EA2866F75EBD49E6FAECC4A349963BED8"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\mac_tx_suite.v",
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rm_age_probe.v",
+      "sha256": "E5A8D8FDA7B4C0DD6F74EB83CA0B99EC22E27467092216BDE5FB2E2D661CD0BE"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rtc_retry_suite.v",
+      "sha256": "7C884C7C403244455500881A3FCD22F4E6E116A603F25B8F98A6E35A98BB95A1"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rx_core_suite.v",
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\snmp_test_endpoint.v",
+      "sha256": "E1AE99629C28B879A66E2657E8A9117715D204D26E99BF3E2718630CE270324E"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\sys_endpoint.v",
+      "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\sys_suite.v",
+      "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\top_stream_endpoint.v",
+      "sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\tx_core_suite.v",
+      "sha256": "B9F5E6BD4EFDE1337C1297EB65BAB82097D8AD5CDA6DE5655A02760C707D9011"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\tb_t65_tx_init.v",
+      "sha256": "84853B74F59DEF0CB70C4E1AC676A2BC61987E09D1A3740CDA5F54D8B6E7C0C6"
+    },
+    {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\download_test_tasks.vh",
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+    }
+  ],
+  "ce_div": 2,
+  "parameters": [
+    "T65_MUTANT=1"
+  ],
+  "simulation_diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0,
+    "RAMCOLL": 0
+  },
+  "passed": false,
+  "checks": 198820,
+  "errors": 1,
+  "result": "FAIL",
+  "coverage": [],
+  "finished": "2026-10-29T18:21:52.294965-07:00",
+  "jobs": [
+    {
+      "name": "vlib",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097",
+      "pid": 40396,
+      "created": 1793323307.8021193,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.265,
+      "peak_tree_bytes": 8192000,
+      "budget_seconds": 30,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097\\vlib.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib",
+        "+define+AFDX_CE_DIV=2",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_615a.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_615a_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_map.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_read.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_rx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_app_tx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_cfg.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_crc32_d8.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_es.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mac_rx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mac_tx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_mgmt_tx.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_ntp_fraction.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_ram_sdp.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rtc.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_core.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_deliver.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_rx_parse.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_snmp.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_snmp_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_svc.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_timebase.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\AFDX_top.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_buf.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_builder.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_core.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_engine.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\rtl\\afdx_tx_free.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\gmii_monitor.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\judge_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\line_driver.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\line_monitor.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\link_model.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\load_test_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\mac_tx_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rm_age_probe.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rtc_retry_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\rx_core_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\snmp_test_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\sys_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\sys_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\top_stream_endpoint.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\lib\\tx_core_suite.v",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\tb\\tb_t65_tx_init.v"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097",
+      "pid": 4508,
+      "created": 1793323308.0718205,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.282,
+      "peak_tree_bytes": 7913472,
+      "budget_seconds": 120,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "tb_t65_tx_init",
+        "-gT65_MUTANT=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097",
+      "pid": 42348,
+      "created": 1793323308.3498044,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 3.937,
+      "peak_tree_bytes": 227356672,
+      "budget_seconds": 900,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t63\\out\\sim\\tb_t65_tx_init\\20261029_182147_761097\\simulation.log"
+    }
+  ]
+}

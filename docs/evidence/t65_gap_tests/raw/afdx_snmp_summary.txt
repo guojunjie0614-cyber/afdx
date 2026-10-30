@@ -1,0 +1,18 @@
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_snmp
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       101        94         7    93.06%
+    Conditions                      21        12         9    57.14%
+    Expressions                     12        12         0   100.00%
+    FSM States                       4         4         0   100.00%
+    FSM Transitions                  6         5         1    83.33%
+    Statements                     223       220         3    98.65%
+    Toggles                       3604      1719      1885    47.69%
+
+
+Total Coverage By Design Unit (filtered view): 82.84%
+
