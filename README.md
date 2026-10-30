@@ -24,7 +24,7 @@
 ## 软件准备
 
 基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含下面列出的八个用例，不依赖 Python。
-完整 40 项回归、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
+完整 56 项回归（原有 40 项 + T65 新增 16 项）、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随工程分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
@@ -123,17 +123,17 @@ JUDGE CASE PASS perf_var checks=1254269621 errors=0 warnings=0 elapsed_s=3674.09
 JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=6335.395 output_mib=1099.5
 ```
 
-[评委入口参考输出](sim/reference/judge_result.txt) 和 [完整回归参考汇总](sim/reference/regression.json) 对应本次 F1 终验，验证提交为 `92ab7d7e`。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
+[评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json) 对应 F1 终验，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
-3. 运行全部 40 项测试，参考检查器会另行核对报文和周期记录。
+3. 运行全部 56 项测试（原有 40 项 + T65 新增 16 项），参考检查器会另行核对报文和周期记录；新增项由 `tools/t65_check.py` 独立核对。
 
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
    ```
 
-   预期：末尾表格中的 40 项都为 `PASS`（耗时见本轮实际记录）；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。
+   预期：末尾表格中的 56 项都为 `PASS`；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。T65b 在 CE_DIV=2 下实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0，耗时 6038.613 秒（1 小时 40 分 39 秒）；原 40 项检查数与 F1/T64 一致，新增 16 项与 T65 一致。本次未运行 56 项 CE1 回归。
 
 管理协议引擎使用同一个 125 MHz 时钟，通过时钟使能（Clock Enable，CE）每两拍更新；接收捕获、发送输出、配置口、RAM 端口和 RTC 计时保持全速。顶层参数 `CE_DIV` 可取 1 或 2，默认 2。两种配置的完整回归和评委入口可分别运行：
 
@@ -153,9 +153,31 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 修改后运行 `python tools/check_wrapper.py`，确认 epr 只列总文件、包含关系不多不漏且总文件没有其它语句。
 
 代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
-用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。当前 F1 数字与原始文本报告在 `docs/evidence/t64_f1_coverage/`；合并数据库的本机位置及摘要见该目录 `collection.json`，大型 UCDB 不随提交包分发。
+用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。T64 冻结基线与原始报告在 `docs/evidence/t64_f1_coverage/`；T65 合并统计与原始报告在 `docs/evidence/t65_gap_tests/`，输入清单和数据库摘要见其中 `ucdb_inputs.json`、`coverage.json`。大型 UCDB 不随提交包分发。
 
-当前 F1 覆盖率来自 T64：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](docs/T64_F1_COVERAGE.md)。
+### T65 合并覆盖率与定向补测
+
+T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见 [T65 补测报告](docs/T65_GAP_TESTS.md)与[目标命中记录](docs/evidence/t65_gap_tests/target_hits.json)。
+
+当前合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](docs/evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
+
+| 覆盖类别 | 已覆盖 / 总数 | 百分比 |
+|---|---|---|
+| 语句 | 7760 / 7866 | 98.65% |
+| 分支 | 4354 / 4495 | 96.86% |
+| 条件 | 893 / 1001 | 89.21% |
+| 表达式 | 1788 / 2059 | 86.83% |
+| 已识别状态 | 127 / 127 | 100.00% |
+| 已识别转换 | 159 / 338 | 47.04% |
+| 翻转 | 46008 / 59950 | 76.74% |
+
+**合并统计与 T64 有 9 组设计单元/指标的分母不同，根因尚未证明；接受该结果作为当前集合的统计，不计算同口径增幅，也不据百分比下降判定功能退化。** 原始分母保留，未增加排除项，差异见 [分母核对](docs/evidence/t65_gap_tests/denominators.json)。状态 100% 仅限工具识别集合；接收封装压力为模块级，复位只覆盖登记的三个精确状态，1 字节输入仅观察，不代表全部资源组合或复位边均已覆盖。
+
+新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](docs/T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，当前 56 项清单会触发其预期集合校验失败；保留该工具及历史证据，不把此失败计为功能失败。
+
+### T64 冻结覆盖率基线
+
+T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](docs/T64_F1_COVERAGE.md)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
@@ -170,7 +192,7 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 
 百分比按各设计单元已覆盖项数／总项数汇总并截断到两位。状态 100% 仅限工具识别集合，两个服务引擎的主 `state` 未被识别，不能据此宣称全部状态机控制路径已验证。完整未覆盖索引包含 13,806 个 bin，其中 10,578 个尚不能判断原因或可达性；未增加排除项。原始报告、逐模块统计和缺口分析见 [T64 证据](docs/evidence/t64_f1_coverage/coverage.json)及 [未覆盖项分析](docs/evidence/t64_f1_coverage/gap_analysis.md)。
 
-本次串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
+T64 串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -266,7 +288,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-CE2 完整回归 40/40、评委 8/8、默认及小激励、wrapper、官方 VQM 五功能通过，这些入口的 Error/FAIL/RAMCOLL 均为 0；F1b 补验后模块及整顶层网表 8/8 PASS。T64 已补齐当前 F1 的 40 项覆盖率终验，T57 旧记录仅作为历史保留。
+当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 未改 RTL 或约束，也未重跑这些入口。T64 的 40 项覆盖率基线与 T65 新增 16 项的合并统计分别保留，T57 旧记录仅作为历史保留。
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 

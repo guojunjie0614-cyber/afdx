@@ -6,7 +6,7 @@
 
 ## 逐项回归与评委入口
 
-下表为本次 F1 的 CE2 完整回归，按 `sim/tests.txt` 的原始顺序列出，计数与 `sim/reference/regression.json` 一致。独立项为“—”表示汇总没有单独项数；当前 F1 覆盖率见下文 T64 结果，T57 历史记录仍单独保留。
+下表为 T65b 的 CE2 标准回归 56 项，按当前 `sim/tests.txt` 顺序列出。原 40 项的自检及独立项数与 F1 的 `sim/reference/regression.json` 和 T64 记录逐项一致，新增 16 项与 T65 正向证据逐项一致。独立项为“—”表示没有单独项数；原 40 项取摘要的 `check.items`，新增 16 项取 `check.checks`。本次 56 项配置为 CE_DIV=2，未补跑 CE1。来源见 [T65b 验收](T65b_REGRESS.md)及[逐项证据](evidence/t65b_regress/acceptance.txt)，当前覆盖率见下文 T64 + T65 合并结果。
 
 | 测试名及非默认参数 | 测什么 | 自检项数 | 独立核对项数 | 结果 |
 |---|---|---:|---:|---|
@@ -50,8 +50,24 @@
 | [tb_elinx](../tb/tb_elinx.v) | 由界面入口运行双端双网互发，核对字节、端口和去重。 | 9238 | — | PASS |
 | [tb_sys_perf_var](../tb/tb_sys_perf_var.v) | 变长帧、多虚拟链路并发、注入吞吐与 R119 时延检查。 | 1254269621 | 1680167 | PASS |
 | [tb_top_wrap](../tb/tb_top_wrap.v) | 核对应用字节流封装、VLID 查找与整条消息交付。 | 12284 | — | PASS |
+| [tb_t65_queue_a](../tb/tb_t65_queue_a.v) | A 网交付队列满时整帧拒收、事件计数及释放后恢复。 | 3088 | 10 | PASS |
+| [tb_t65_reset_app](../tb/tb_t65_reset_app.v) | 应用 TX 查找状态复位，核对旧消息作废与双向恢复。 | 204 | 42 | PASS |
+| [tb_t65_reset_mac](../tb/tb_t65_reset_mac.v) | MAC TX 前导状态复位，核对对端截断事件与恢复。 | 204 | 45 | PASS |
+| [tb_t65_reset_rx](../tb/tb_t65_reset_rx.v) | RX 引擎 FRAME 状态复位，核对未交付旧帧作废与恢复。 | 204 | 44 | PASS |
+| [tb_t65_rx_data](../tb/tb_t65_rx_data.v) | 模块级接收封装字节预留阈值、拒收及恢复。 | 1553737 | 1066 | PASS |
+| [tb_t65_rx_desc](../tb/tb_t65_rx_desc.v) | 模块级接收封装描述符预留阈值、拒收及恢复。 | 676 | 217 | PASS |
+| [tb_t65_tx_desc](../tb/tb_t65_tx_desc.v) | 发送封装描述符耗尽、整条回滚及资源释放。 | 217027 | 244 | PASS |
+| [tb_t65_tx_hint](../tb/tb_t65_tx_hint.v) | ready 撤销但资源尚足时记录额外输入行为，并核对恢复。 | 213272 | 229 | PASS |
+| [tb_t65_tx_init](../tb/tb_t65_tx_init.v) | 初始化期间输入的事件、资源回收与后续恢复。 | 198820 | 14 | PASS |
+| [tb_t65_tx_ready](../tb/tb_t65_tx_ready.v) | 合法最大消息的 ready 准入提示与完整交付。 | 216106 | 233 | PASS |
+| [tb_t65_tx_short_full](../tb/tb_t65_tx_short_full.v) | 满队列时观察 1 字节输入，核对 2 字节空消息及恢复。 | 504753 | 18 | PASS |
+| [tb_t65_tx_short_init](../tb/tb_t65_tx_short_init.v) | 初始化时观察 1 字节输入，核对 2 字节空消息及恢复。 | 498820 | 17 | PASS |
+| [tb_t65_tx_short_normal](../tb/tb_t65_tx_short_normal.v) | 正常状态观察 1 字节输入，核对 2 字节空消息及恢复。 | 499027 | 17 | PASS |
+| [tb_t65_tx_space](../tb/tb_t65_tx_space.v) | 发送字节空间不足时整条回滚、事件及恢复。 | 246279 | 22 | PASS |
+| [tb_t65_tx_space_edge](../tb/tb_t65_tx_space_edge.v) | 发送字节空间边界下的接纳、拒收与恢复。 | 211187 | 14 | PASS |
+| [tb_t65_tx_unmapped](../tb/tb_t65_tx_unmapped.v) | 未命中 VLID 的整条拒收、事件及后续合法消息恢复。 | 199781 | 14 | PASS |
 
-本次 CE2 40/40、评委 8/8 通过，原始输出见 [judge_result.txt](../sim/reference/judge_result.txt)。
+T65b 的 CE2 标准回归为 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0，耗时 6038.613 秒；[本批汇总](evidence/t65b_regress/regression_summary.txt)保留实际输出目录和计数。下表评委入口继续沿用 F1 的 8/8 通过记录，本次未重跑，原始输出见 [judge_result.txt](../sim/reference/judge_result.txt)。
 
 | 入口用例 | 自检项数 | 结果 |
 |---|---:|---|
@@ -66,9 +82,31 @@
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](evidence/t63_f1b_sys_net_pass.json)。
 
-### 当前代码覆盖率（T64 F1）
+### 当前代码覆盖率（T64 + T65）
 
-当前 F1 覆盖率来自 T64：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](T64_F1_COVERAGE.md)。
+#### T65 合并覆盖率与定向补测
+
+T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见 [T65 补测报告](T65_GAP_TESTS.md)与[目标命中记录](evidence/t65_gap_tests/target_hits.json)。
+
+当前合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
+
+| 覆盖类别 | 已覆盖 / 总数 | 百分比 |
+|---|---|---|
+| 语句 | 7760 / 7866 | 98.65% |
+| 分支 | 4354 / 4495 | 96.86% |
+| 条件 | 893 / 1001 | 89.21% |
+| 表达式 | 1788 / 2059 | 86.83% |
+| 已识别状态 | 127 / 127 | 100.00% |
+| 已识别转换 | 159 / 338 | 47.04% |
+| 翻转 | 46008 / 59950 | 76.74% |
+
+**合并统计与 T64 有 9 组设计单元/指标的分母不同，根因尚未证明；接受该结果作为当前集合的统计，不计算同口径增幅，也不据百分比下降判定功能退化。** 原始分母保留，未增加排除项，差异见 [分母核对](evidence/t65_gap_tests/denominators.json)。状态 100% 仅限工具识别集合；接收封装压力为模块级，复位只覆盖登记的三个精确状态，1 字节输入仅观察，不代表全部资源组合或复位边均已覆盖。
+
+新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，当前 56 项清单会触发其预期集合校验失败；保留该工具及历史证据，不把此失败计为功能失败。
+
+#### T64 冻结覆盖率基线
+
+T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](T64_F1_COVERAGE.md)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
@@ -83,7 +121,7 @@ F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来
 
 百分比按各设计单元已覆盖项数／总项数汇总并截断到两位。状态 100% 仅限工具识别集合，两个服务引擎的主 `state` 未被识别，不能据此宣称全部状态机控制路径已验证。完整未覆盖索引包含 13,806 个 bin，其中 10,578 个尚不能判断原因或可达性；未增加排除项。原始报告、逐模块统计和缺口分析见 [T64 证据](evidence/t64_f1_coverage/coverage.json)及 [未覆盖项分析](evidence/t64_f1_coverage/gap_analysis.md)。
 
-本次串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
+T64 串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
 
 ## 综合资源占比与模块分工
 
