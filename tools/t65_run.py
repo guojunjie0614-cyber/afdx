@@ -16,7 +16,8 @@ import psutil
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'out/t65'
 EVID = ROOT / 'docs/evidence/t65_gap_tests'
-MS = Path('E:/Verilog/ModelSim/setup_pack/win64')
+MS = Path(os.environ.get('MODELSIM_HOME') or Path(shutil.which('vsim.exe') or 'vsim.exe').parent)
+PYTHON = Path(os.environ.get('AFDX_PYTHON') or sys.executable)
 TZ = timezone(timedelta(hours=8))
 FROZEN = 'e5cd815020448820c2de7c587f288554defb74bc'
 
@@ -116,7 +117,7 @@ def run(tests, mutant):
             res=resources()
             original_check()
             env=os.environ.copy()
-            env.update(AFDX_PYTHON='E:/anaconda3/python.exe',MODELSIM_HOME=str(MS),AFDX_CE_DIV='2',PYTHONDONTWRITEBYTECODE='1')
+            env.update(AFDX_PYTHON=str(PYTHON),MODELSIM_HOME=str(MS),AFDX_CE_DIV='2',PYTHONDONTWRITEBYTECODE='1')
             env['AFDX_LATEST_PREFIX']='t65_mut_' if mutant else ''
             # Leave the runner's existing memory guard unchanged.
             assert float(env.get('AFDX_MEM_FLOOR_GB','5'))>=5

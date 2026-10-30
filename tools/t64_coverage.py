@@ -26,8 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'out/t64'
 EVIDENCE = ROOT / 'docs/evidence/t64_f1_coverage'
 FROZEN = 'e5cd815020448820c2de7c587f288554defb74bc'
-MS = Path('E:/Verilog/ModelSim/setup_pack/win64')
-PYTHON = Path('E:/anaconda3/python.exe')
+MS = Path(os.environ.get('MODELSIM_HOME') or Path(shutil.which('vsim.exe') or 'vsim.exe').parent)
+PYTHON = Path(os.environ.get('AFDX_PYTHON') or sys.executable)
 TZ8 = timezone(timedelta(hours=8))
 GIB = 1024 ** 3
 NATIVE = {'vsim.exe', 'vsimk.exe', 'vish.exe', 'vlog.exe', 'vlib.exe', 'vopt.exe', 'vcover.exe'}
