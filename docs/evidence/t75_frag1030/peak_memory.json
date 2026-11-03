@@ -1,0 +1,28 @@
+{
+  "Updated": "2026-11-04T06:18:32.950539+08:00",
+  "Official": [
+    {
+      "Test": "tb_elinx",
+      "Status": "PASS",
+      "PeakTreeBytes": 4378238976,
+      "Summary": "out/par_baseline_run_56_latest_tb_elinx_gui.json"
+    },
+    {
+      "Test": "tb_net_services",
+      "Status": "PASS",
+      "PeakTreeBytes": 4375875584,
+      "Summary": "out/t75/candidate1_source/out/par_baseline_run_117_latest_tb_net_services_gui.json"
+    },
+    {
+      "Test": "tb_frag1030_net",
+      "Status": "PASS-PREFIX",
+      "PeakTreeBytes": 4405579776,
+      "Summary": "out/t75/candidate1_source/out/par_baseline_run_135_latest_tb_frag1030_net_gui.json"
+    }
+  ],
+  "LiveObservedPeak": {
+    "netlist_concurrency_limit": 1,
+    "observed_class_a_tree_bytes": 4387491840
+  },
+  "Sampling": "Flow process-tree RSS sampled every 0.25 seconds; final values require finished simulation metrics."
+}

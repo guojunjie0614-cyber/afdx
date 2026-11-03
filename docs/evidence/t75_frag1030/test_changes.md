@@ -28,6 +28,7 @@
 | T65 RX data / desc | 4 KiB 预留门槛 used>2624；原始 av 配合延后一拍的 active 重复记首帧；压力量和排空时间仅适合旧缓存 | 门槛 used>24575、描述符仍 >=30；独立寄存输入与元数据对齐 E1，保留原字节期望；扩大 data 压力上界/记账数组和排空时间以实际触及 32 KiB 数据门槛；HDL watchdog 有界增至 20000000 拍 | hardware_contract.app_storage.payload_write_latency / depth_bytes / rollback；输入 E0、本地接纳 E1，容量变化必须重新形成真实压力 |
 | RM 忙时覆盖统计 | 旧数值状态 FRAME=2、IDLE=1 | 使用 dut.FRAME / dut.engine.IDLE 符号比较，仍要求忙时改变粗时钟和验证老化 | 新状态为独热编码；原覆盖条件含义不变 |
 | 并发准入 | 用 max(全机原生进程数, 自有 worker 数) 合并计数，存在外部作业与自有编译/排队阶段时可能少算预留 | 逐 PID 识别自有原生子进程；槽位为对应自有 worker 数加外部内核/待启动器或 eLinx/GUI 进程数；已有内核的 launcher 不重复计数 | T75 第三节全机最多 10 个 ModelSim、6 个 eLinx；tools/t75_resource_check.py 的 13 个进程清单/槽位边界用例通过，见 resource_slot_checks.json |
+| GUI 默认截止 | 冻结运行副本在不传 --deadline 时仍默认五小时 | 交付工具的默认截止跟随 AFDX_GUI_SIM_TIMEOUT_SECONDS 并采用 +08:00；不设变量仍为五小时 | T75 可配置预算要求；本轮所有 A 类均显式传入原 24 小时截止，此默认路径不参与本轮结果；精确单行差异见 out/t75/tool_delta_after_freeze.patch |
 | tb_frag1030_net 官方 VQM | 完整版 897329 拍按实测速率超出 24 小时 | 按 11-03 21:30 获批调整，仅比较截至 199578 拍的 A/B 各 6 帧、RX 4 条、发送记录 8 行和事件前缀；只标 PASS-PREFIX；8192 和故障恢复 VQM 留待 T76 | 已提供的答疑 157-2；plan_adjustment.md；原仿真保持不变，文件比较器 12 项正反例通过，不代替真实 VQM 比对 |
 
 未放宽：FCS/IP/UDP 校验、字节值、网络副本、SN、ID、BAG、IFG 下界、容量、RAM 冲突、断言和复位检查。
