@@ -239,7 +239,23 @@ def decode(wire):
     info['category']='hdr';b=body[:-4]
     length=int.from_bytes(b[38:40],'big');n=length-8
     if b[:4]!=b'\x03\0\0\0' or b[12:15]!=b'\x08\x00\x45' or b[23]!=17:return info
-    if int.from_bytes(b[20:22],'big')&0x3fff or ip_checksum(b[14:34])!=0:return info
+    if ip_checksum(b[14:34])!=0:return info
+    flags=int.from_bytes(b[20:22],'big')
+    if flags&0x3fff:
+        # These legacy fault vectors contain isolated fragments, not complete
+        # datagrams. Valid IPv4 framing reaches IC/RM before reassembly rejects
+        # an absent first fragment or an MF/UDP-total contradiction (R138-6).
+        from fragment_ref import decode as decode_fragment
+        try:fragment=decode_fragment(body)
+        except ValueError:return info
+        if len(body)!=max(14+int.from_bytes(b[16:18],'big'),59)+5:return info
+        udp_total=int.from_bytes(fragment['data'][4:6],'big') if fragment['offset']==0 else None
+        if fragment['offset']==0 and not (fragment['mf'] and len(fragment['data'])>=udp_total):
+            raise ValueError('Complete fragmented datagrams require the fragmentation checker')
+        info.update(category='good',n=n,vlid=fragment['vlid'],sn=fragment['sn'],
+                    sport=int.from_bytes(b[34:36],'big'),dport=int.from_bytes(b[36:38],'big'),
+                    payload=b[42:42+n],fragment_reject=True,fragment_ident=fragment['ident'])
+        return info
     if not 1<=n<=1471 or int.from_bytes(b[16:18],'big')!=n+28 or len(body)!=47+max(n,17):return info
     if b[40:42]!=b'\0\0' and checksum_udp(b)!=0:return info
     info.update(category='good',n=n,vlid=int.from_bytes(b[4:6],'big'),sn=b[42+max(n,17)],sport=int.from_bytes(b[34:36],'big'),dport=int.from_bytes(b[36:38],'big'),payload=b[42:42+n])
@@ -377,6 +393,10 @@ def check(test,folder):
                     else:icok=True
                     state=(psna,psnb,last,lasttime,lastcycle)
                     if not icok:choices.append((prefix+'ic',state));continue
+                    if f.get('fragment_reject'):
+                        # IC is per valid frame. Reassembly rejection does not
+                        # commit RM, and never publishes partial application data.
+                        choices.append((prefix+'ovf',state));continue
                     aged=lastcycle is not None and ticks_between(lastcycle,e)>32768
                     accept=not(control&16) or last is None or aged or ((arrival-lasttime)&65535)>((control>>5)&4095)
                     if not accept:

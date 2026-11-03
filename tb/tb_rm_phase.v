@@ -76,7 +76,7 @@ module tb_rm_phase;
         if(ea[0])good=good+1;if(eb[0])good=good+1;
         if(|ea[7:1] || |eb[7:1])check(0,"no frame, integrity, configuration or overflow error");
         if((dut.da_valid&&!old_da)||(dut.db_valid&&!old_db))
-            if(dut.engine.op!=1)busy_arrivals=busy_arrivals+1;
+            if(dut.engine.op!=dut.engine.IDLE)busy_arrivals=busy_arrivals+1;
         old_da=dut.da_valid;old_db=dut.db_valid;
         if(dut.fa_end)begin arrived_a=coarse;seen_a=1;end
         if(dut.fb_end)begin arrived_b=coarse;seen_b=1;end

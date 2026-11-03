@@ -136,7 +136,7 @@ def main():
     parser.add_argument('--netlist', type=Path, default=ROOT / 'elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm')
     parser.add_argument('--deadline', help='任务截止时间，默认从启动起五小时')
     args = parser.parse_args()
-    deadline = args.deadline or (datetime.now().astimezone() + timedelta(hours=5)).isoformat()
+    deadline = args.deadline or (datetime.now(eda.REPORT_TZ) + timedelta(seconds=eda.timeout_seconds('AFDX_GUI_SIM_TIMEOUT_SECONDS',5*3600))).isoformat()
     try:
         if not args.netlist.is_file():
             raise RuntimeError('找不到界面综合网表，请先在 eLinx 中运行 Run Synthesis')

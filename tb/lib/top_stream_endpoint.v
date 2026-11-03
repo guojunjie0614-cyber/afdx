@@ -59,7 +59,7 @@ module top_stream_endpoint #(
             .app_rx_valid(app_rx_valid),.app_rx_data(app_rx_data),.app_rx_last(app_rx_last),.app_rx_vl(app_rx_vl),
             .app_rx_sport(app_rx_sport),.app_rx_port(app_rx_port),.app_rx_net(app_rx_net),
             .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
-            .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver));
+            .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver),.app_cfg_ready());
         assign initialized=tx_ready;
         assign last_input_stalls=0;assign last_input_maxstall=0;
         assign current_source_first=cycle;assign current_source_last=cycle;assign current_stalls=0;assign current_maxstall=0;assign input_empty=1;

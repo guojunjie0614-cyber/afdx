@@ -63,7 +63,7 @@ def check(folder,test,mutant=0):
             expect(events.get('overflow')==drops,'TX one overflow event per resource reject')
             expect(events.get('miss')==misses,'TX lookup/empty drop ledger')
         if test.endswith('_space'):
-            expect(events.get('max_used')==4096 and events.get('max_count')==8191,'TX exhaustion and count saturation')
+            expect(events.get('max_used')==8192 and events.get('max_count')==8194,'TX maximum-message rollback and oversized count saturation')
         if test.endswith(('_desc','_short_full')):
             expect(any(x[5]==32 for x in inputs),'TX input actually starts with 32 descriptors')
         if test.endswith('_ready'):
@@ -71,7 +71,7 @@ def check(folder,test,mutant=0):
             expect(bool(withdrawal),'TX legal burst observed ready withdrawal')
             expect(all(x[7]==1 for x in inputs),'TX legal inputs obey ready')
         if test.endswith('_hint'):
-            expect(any(x[7]==0 and x[5]<32 and x[6]<4096 and x[8]==2 for x in inputs),'TX hint-only input starts ready-low with resources')
+            expect(any(x[7]==0 and x[5]<32 and x[6]<32768 and x[8]==2 for x in inputs),'TX hint-only input starts ready-low with resources')
         if 'short_' in test:
             short=[x for x in inputs if x[1]<3]
             expect({x[1] for x in short}=={1,2},'TX 1-byte and VLID-only inputs captured')
@@ -87,10 +87,10 @@ def check(folder,test,mutant=0):
         inputs=[list(map(int,r[1:])) for r in rows if r[0]=='J']
         expected=[];rejected=0;desc_reject=0;data_reject=0
         for cycle,n,tag,serial,reject,prev_used,prev_desc,used in inputs:
-            bad=prev_used>2624 or prev_desc>=30
+            bad=prev_used>24575 or prev_desc>=30
             expect(bad==bool(reject),'RX independently evaluate registered admission at '+str(cycle))
             if bad:
-                rejected+=1;desc_reject+=prev_desc>=30;data_reject+=prev_used>2624
+                rejected+=1;desc_reject+=prev_desc>=30;data_reject+=prev_used>24575
             else:expected.append(b'\x40\0'+pattern(tag,n))
         expect(messages('rx')==expected,'RX accepted messages exact, rejected messages wholly absent, recovery included')
         expect(expected and expected[-1]==b'\x40\0'+pattern(0x90,64),'RX recovery input accepted')

@@ -58,7 +58,10 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
             for index,(bad,good) in enumerate(zip(fs[::2],fs[1::2])):
                 want='len' if name=='preamble' else name
                 if name=='hdr' and bad.get('length')==63:want='len'
-                expect(bad.get('observed_category')==want and good.get('result')=='deliver',name+' bad/repair')
+                if bad.get('fragment_reject'):
+                    expect(bad.get('observed_category')=='good' and bad.get('result')=='a_ovf' and good.get('result')=='a_ic',name+' isolated fragment reject and same-SN IC')
+                else:
+                    expect(bad.get('observed_category')==want and good.get('result')=='deliver',name+' bad/repair')
                 expect(bad['net']==good['net'],'fault repair network')
                 # Except length/header corruption, repair must retain the original SN and data.
                 if name=='fcs' and index<8:
@@ -68,7 +71,8 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
         # 把双错帧的FCS单独修好后应仍是hdr；有效载荷、SN和其他头字段保留修复关联。
         for i,(bad,good) in enumerate(zip(stages['fcs'][16::2],stages['fcs'][17::2])):
             body=bad['wire'][8:-4];original=good['wire'][8:-4]
-            expect(decode(bad['wire'][:-4]+fcs(body))['category']=='hdr','FCS outranks header')
+            repaired=decode(bad['wire'][:-4]+fcs(body))
+            expect(repaired['category']=='hdr' if i<2 else repaired.get('fragment_reject') is True,'FCS outranks header/reassembly')
             expect(bad['wire'][-4:]!=fcs(body) and body[42:]==original[42:],'dual error FCS and repair payload/SN')
             changed={j for j,(a,b) in enumerate(zip(body,original)) if a!=b}
             allowed=({0},{24,25},{20,24,25})[i]
@@ -77,7 +81,7 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
         for i,bad in enumerate(stages['len'][20::2]):
             body=bad['wire'][8:];expect(len(body)==(63,1519,63)[i] and body[-4:]!=fcs(body[:-4]),'length outranks FCS')
         outcomes('fcs',{'fcs':11,'deliver':11});outcomes('len',{'len':13,'deliver':13})
-        outcomes('preamble',{'len':6,'deliver':6});outcomes('hdr',{'hdr':28,'len':2,'deliver':30})
+        outcomes('preamble',{'len':6,'deliver':6});outcomes('hdr',{'hdr':26,'len':2,'a_ovf':2,'a_ic':2,'deliver':28})
         expect(delivered(stages['ok']) and sum(f['net']=='B' for f in stages['ok'])>=2,'ok controls')
         expect(len(stages['ok'])==13,'ok added padding cases')
         for f,(net,n,udp) in zip(stages['ok'][-3:],(('A',1,True),('A',16,True),('B',1,False))):
@@ -176,7 +180,7 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
         outcomes('net',{'deliver':7,'rm_drop':5,'fcs':1,'hdr':1,'a_ic':1,'b_cfg':1,'a_unk':1})
         groups=pairs(stages['net'][:10]);expect({pair[0]['n'] for pair in groups.values()}=={1,17,18,300,1471},'net pair lengths')
     totals={
-        'tb_rx_fault':(124,28,(70,9,17,28,1,0,1,0),(16,4,5,3,0,0,0,0),1,83,83),
+        'tb_rx_fault':(124,28,(72,9,17,26,1,0,3,2),(16,4,5,3,0,0,0,0),1,81,81),
         'tb_rx_icrm':(110,84,(108,0,0,0,1,2,9,0),(84,0,0,0,0,3,3,0),48,126,125),
         'tb_rx_ovf_ring':(13,2,(9,0,0,0,0,0,0,4),(2,0,0,0,0,0,0,0),0,11,11),
         'tb_rx_ovf_dq':(4,4,(4,0,0,0,0,0,0,0),(4,0,0,0,0,0,0,1),2,5,5)}

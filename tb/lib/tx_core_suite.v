@@ -25,7 +25,7 @@ module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOO
     line_monitor #(.NET("A"),.FILE_NAME("dump_a.txt")) mon_a(clk,reset,tx_data_a,tx_valid_a,err_a,frames_a);
     line_monitor #(.NET("B"),.FILE_NAME("dump_b.txt")) mon_b(clk,reset,tx_data_b,tx_valid_b,err_b,frames_b);
     reg [7:0] stimulus[0:3999999];
-    reg [7:0] message_bytes[0:4095];
+    reg [7:0] message_bytes[0:8193];
     reg [31:0] cfg_shadow[0:1023];
     integer cycle=0,checks=0,errors=0,ef,fd,rc,i,j,k,low_run=0,release_cycle=0;
     integer message_len=0,message_vl=0,message_port=0,message_sport=0,message_dport=0;
@@ -33,9 +33,24 @@ module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOO
     integer want_a=0,want_b=0,got_a=0,got_b=0,last_start=-20001,anchor=-1;
     integer op_vl,op_n,op_pen,op_sp,op_dp,op_pause,op_mutate,op_cut,op_offset,wait_count,limit;
     integer pulses,old_errors,accepts=0,discards=0;
+    integer message_frames=1;
+    integer outcome_limit=96;
     reg [31:0] arg_hex,arg_data;
     reg [8*32-1:0] command,stage;
     reg previous_reset=0,previous_line=0,record_now=0;
+    function integer fragment_count;
+        input integer bytes,lmax;
+        integer left,capacity,part,total;
+        begin
+            left=bytes+8;capacity=lmax+8;if(capacity>1479)capacity=1479;total=0;
+            if(bytes<=1471)total=1;
+            else while(left>0)begin
+                part=left<=capacity ? left : (capacity/8)*8;
+                left=left-part;total=total+1;
+            end
+            fragment_count=total;
+        end
+    endfunction
     task check;
         input condition;input [8*100-1:0] label;
         begin checks=checks+1;if(condition!==1'b1)begin errors=errors+1;if(errors<30)$display("[FAIL] cycle=%0d %0s",cycle,label);end end
@@ -58,6 +73,12 @@ module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOO
             if(message_len==0)begin message_vl=m_vl;message_port=m_port_en;message_sport=m_sport;message_dport=m_dport;end
             message_bytes[message_len]=m_data;message_len=message_len+1;
             if(m_last)begin
+                message_frames=fragment_count(message_len,cfg_shadow[message_vl*8][19:9]);
+                // A rejected oversize stream may return all sixteen pages.
+                // RETURN is six clocks/page at CE2 plus three closing clocks.
+                outcome_limit=96;
+                if(message_len>8192 && 6*((8192+(1<<TX_OFF_AW)-1)/(1<<TX_OFF_AW))+3>96)
+                    outcome_limit=6*((8192+(1<<TX_OFF_AW)-1)/(1<<TX_OFF_AW))+3;
                 check(outstanding==0,"one outcome before next message end");check(cycle>last_outcome,"outcome strictly before next end");
                 $fwrite(ef,"M %0d %0d %0d %0d %04x %04x ",cycle,message_vl,message_len,message_port,message_sport[15:0],message_dport[15:0]);
                 for(k=0;k<message_len;k=k+1)$fwrite(ef,"%02x",message_bytes[k]);$fwrite(ef,"\n");
@@ -71,17 +92,17 @@ module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOO
             if(!reset)check(cycle-release_cycle<2048,"initialization deadline");
         end else begin
             if(m_ready)low_run=0;else low_run=low_run+1;
-            check(low_run<=96,"ready low run <=96");
+            check(low_run<=outcome_limit,"ready low run within message/rollback bound");
         end
         pulses=(ev_accept?1:0)+(ev_drop_dis?1:0)+(ev_drop_full?1:0)+(ev_drop_long?1:0)+(ev_drop_nopage?1:0);
         check(pulses<=1,"exclusive outcome pulses");
         if(pulses!=0)begin
-            check(outstanding==1 && cycle>last_message && cycle-last_message<=96,"outcome bound and order");
+            check(outstanding==1 && cycle>last_message && cycle-last_message<=outcome_limit,"outcome bound and order");
             outstanding=0;outcomes=outcomes+1;last_outcome=cycle;
             if(ev_accept)begin
                 $fwrite(ef,"E %0d accept\n",cycle);accepts=accepts+1;
-                if(cfg_shadow[message_vl*8][1])want_a=want_a+1;
-                if(cfg_shadow[message_vl*8][2])want_b=want_b+1;
+                if(cfg_shadow[message_vl*8][1])want_a=want_a+message_frames;
+                if(cfg_shadow[message_vl*8][2])want_b=want_b+message_frames;
             end else begin
                 discards=discards+1;
                 if(ev_drop_dis)$fwrite(ef,"E %0d drop_dis\n",cycle);
@@ -90,7 +111,7 @@ module tx_core_suite #(parameter NAME="tb_tx_basic",TX_PAGE_AW=8,TX_OFF_AW=9,LOO
                 if(ev_drop_nopage)$fwrite(ef,"E %0d drop_nopage\n",cycle);
             end
         end
-        if(outstanding)check(cycle-last_message<=96,"missing outcome deadline");
+        if(outstanding)check(cycle-last_message<=outcome_limit,"missing outcome deadline");
         if(ev_tx_a)begin $fwrite(ef,"E %0d tx_a\n",cycle);got_a=got_a+1;end
         if(ev_tx_b)begin $fwrite(ef,"E %0d tx_b\n",cycle);got_b=got_b+1;end
         if((tx_valid_a || tx_valid_b) && !previous_line)begin last_start=cycle;if(anchor<0)anchor=cycle;end

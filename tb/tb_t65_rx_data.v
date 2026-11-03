@@ -19,7 +19,7 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
     endtask
     always @(posedge clk)begin
         cycle=cycle+1;
-        if(cycle>2000000)begin check(0,"bounded test timeout");finish_test;end
+        if(cycle>20000000)begin check(0,"bounded test timeout");finish_test;end
     end
     initial fd=$fopen("t65_trace.txt","w");
 
@@ -28,20 +28,30 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
     afdx_app_rx dut(.clk(clk),.reset(reset),.cfg_write(cw),.cfg_index(12'd0),.cfg_vlid(16'h4000),
         .app_valid(av),.app_data(ad),.app_last(al),.app_index(12'd0),.valid(ov),.data(od),.drop(drop));
     integer current_n=0,current_tag=0,sent=0,expected=0,got=0,pos=0,drop_count=0,rejected=0;
-    integer ns[0:2047],tags[0:2047];integer i,k,start_cycle=0;
+    integer ns[0:16383],tags[0:16383];integer i,k,start_cycle=0;
     integer prev_used=0,prev_desc=0,max_used=0,max_desc=0,desc_reject=0,data_reject=0;
+    reg ref_valid=0,ref_last=0,ref_active=0;
+    integer ref_n=0,ref_tag=0,ref_sent=0;
+    always @(posedge clk)begin
+        if(reset)begin ref_valid<=0;ref_active<=0;end
+        else begin
+            ref_valid<=av;ref_last<=al;
+            ref_n<=current_n;ref_tag<=current_tag;ref_sent<=sent;
+            if(ref_valid)ref_active<=!ref_last;
+        end
+    end
     reg predicted_reject,was_valid=0;reg [7:0] captured[0:2047],expected_byte;
     always @(posedge clk)begin
         if(!reset)begin
-            predicted_reject=prev_used>2624 || prev_desc>=30;
-            if(av && !dut.active)begin
+            predicted_reject=prev_used>24575 || prev_desc>=30;
+            if(ref_valid && !ref_active)begin
                 check(dut.reject==predicted_reject,"RX registered admission threshold");
-                $fwrite(fd,"J %0d %0d %0d %0d %0d %0d %0d %0d\n",cycle,current_n,current_tag,sent,
+                $fwrite(fd,"J %0d %0d %0d %0d %0d %0d %0d %0d\n",cycle,ref_n,ref_tag,ref_sent,
                     dut.reject,prev_used,prev_desc,dut.used);
-                if(!predicted_reject)begin ns[expected]=current_n;tags[expected]=current_tag;expected=expected+1;end
+                if(!predicted_reject)begin ns[expected]=ref_n;tags[expected]=ref_tag;expected=expected+1;end
                 else begin
                     rejected=rejected+1;
-                    if(prev_used>2624)data_reject=data_reject+1;
+                    if(prev_used>24575)data_reject=data_reject+1;
                     if(prev_desc>=30)desc_reject=desc_reject+1;
                 end
             end
@@ -81,7 +91,7 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
     task drain;
         begin
             @(negedge clk);av=0;al=0;ad=0;
-            repeat(8000)@(negedge clk);
+            repeat(33768)@(negedge clk);
             check(got==expected && pos==0,"RX complete accepted sequence drains");
             check(dut.descriptors==0 && dut.write_ptr==dut.read_ptr,"RX storage and descriptors reclaimed");
             $fwrite(fd,"Q rx %0d %0d %0d\n",dut.write_ptr,dut.read_ptr,dut.descriptors);
@@ -92,7 +102,7 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
         @(negedge clk);cw=0;repeat(5)@(negedge clk);
 
         i=0;
-        while(data_reject==0 && i<1000)begin send(1471,i);i=i+1;end
+        while(data_reject==0 && i<10000)begin send(1471,i);i=i+1;end
         check(data_reject>0 && desc_reject==0,"data pressure isolated from descriptor pressure");
 
         drain;send(64,8'h90);drain;

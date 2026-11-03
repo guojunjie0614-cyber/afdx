@@ -8,11 +8,21 @@ module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,
     wire init,take,resolve,commit,mre,cre,sre,swe,dwe,rm,deliver,ok;
     wire [15:0] ma;wire [11:0] ca,sa,wa;wire [42:0] wd;
     reg [12:0] mq=0;reg [31:0] cq=0;reg [42:0] sq=0,states[0:4095];
-    wire [4:0] dwa;wire [67:0] dwd;wire [5:0] count;wire [7:0] ea,eb;
+    wire [4:0] dwa;wire [72:0] dwd;wire [5:0] count;wire [7:0] ea,eb;
     integer cycle=0,origin=0,sent=0,delivered=0,limit,before_d;reg running=0;
-    afdx_rx_engine dut(clk,reset,1'b1,now_c,init,valid,1'b0,desc,95'b0,
-        take,,resolve,,commit,,mre,ma,mq,cre,ca,cq,sre,swe,sa,wa,wd,sq,
-        dwe,dwe,dwa,dwd,count,ea,eb,rm,deliver,ok);
+    // Low 95 descriptor bits retain the original unfragmented fixture.
+    // New metadata bits are zero; reassembly is inactive for these frames.
+    afdx_rx_engine dut(.clk(clk),.reset(reset),.enable(1'b1),.now_c(now_c),.initialized(init),
+        .desc_a_valid(valid),.desc_b_valid(1'b0),.desc_a({126'b0,desc}),.desc_b(221'b0),
+        .take_a(take),.take_b(),.resolve_a(resolve),.resolve_b(),.commit_a(commit),.commit_b(),
+        .map_re(mre),.map_ra(ma),.map_q(mq),.cfg_re(cre),.cfg_ra(ca),.cfg_q(cq),
+        .state_re(sre),.state_we(swe),.state_ra(sa),.state_wa(wa),.state_wd(wd),.state_q(sq),
+        .dq_pop(dwe),.dq_we(dwe),.dq_wa(dwa),.dq_wd(dwd),.dq_count(count),
+        .reassembly_result_valid(1'b0),.reassembly_ok(1'b0),.reassembly_slot(4'b0),
+        .reassembly_query(),.reassembly_cancel(),.reassembly_reserve(),
+        .reassembly_query_bank(),.reassembly_cancel_bank(),.reassembly_reserve_bank(),
+        .reassembly_meta(),.reassembly_vl(),.reassembly_length(),.reassembly_sport(),.reassembly_dport(),.reassembly_net(),
+        .ev_a(ea),.ev_b(eb),.ev_rm_drop(rm),.ev_deliver(deliver),.cfg_ok(ok),.core_enable_next(1'b0));
     always @(posedge clk)begin
         cycle=cycle+1;
         if(mre)mq<={1'b1,ma[11:0]};
@@ -36,7 +46,7 @@ module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,
             // 描述先开始；第8拍切粗时钟，原实现每次都会错过老化触发。
             @(negedge clk);desc={16'd1,8'd1,16'd3001,16'd4001,11'd17,12'd0,now_c};valid=1;
             while(!take)@(negedge clk);valid=0;
-            repeat(6)@(negedge clk);check(dut.op==2,"coarse change is under engine load");
+            repeat(6)@(negedge clk);check(dut.op==dut.FRAME,"coarse change is under engine load");
             now_c=now_c+1'b1;sent=sent+1;limit=origin+sent*128;
             while(cycle<limit)@(negedge clk);
             if(now_c==16'h5002)check(!states[0][24],"old record aged before signed half-wrap");
