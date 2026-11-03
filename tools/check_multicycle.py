@@ -93,6 +93,12 @@ def matches(name,patterns):
     prefix,stems=matcher(patterns);name=name.lstrip('\\')
     return name.startswith(prefix) and name.endswith('~I') and name[len(prefix):].startswith(stems)
 
+def _single_cycle_engine_endpoint(name):
+    # These new command outputs deliberately retain the unmodified 8 ns SDC.
+    # Do not infer a multicycle exception merely from their engine hierarchy.
+    return re.fullmatch(r'loader\|half_rate\.engine\|deny_format\[[0-2]\]~I', name) is not None
+
+
 def enable_behavior(cells, registers, phases, source):
     """Conservatively prove CE-low hold and each phase bit's reset/toggle truth table."""
     from itertools import product
@@ -148,9 +154,13 @@ def enable_behavior(cells, registers, phases, source):
     return stalls,phase_failures
 
 
-def audit(vqm,sdc,destination):
+def audit(vqm,sdc,destination,*,fingerprint=True,pure_sdc=False):
     data=vqm.read_text(encoding='utf-8').replace('\r\n','\n')
-    pairs,uncertainty=constraints(sdc)
+    # New builds validate physical pins independently and provide pure timing.
+    # Preserve the frozen placement policy for all existing callers.
+    pairs,uncertainty=_timing_constraints(sdc) if pure_sdc else constraints(sdc)
+    if pure_sdc and uncertainty != 0.30:
+        raise ValueError('Exactly 0.30 ns setup uncertainty is required')
     cells=[];drivers={};registers={};ram=[]
     for m in CELL.finditer(data):
         kind,name=m['kind'],m['name']
@@ -186,14 +196,31 @@ def audit(vqm,sdc,destination):
     stalls,phase_failures=enable_behavior(cells,registers,phase,data)
     phase_loads=collections.Counter()
     rows=[];invalid=[];by_module=collections.Counter();uncovered=[];nonregisters=[]
+    single_cycle=[];single_cycle_nets=set();invalid_single_cycle=[]
     for cell in cells:
         selected=any(matches(cell['native'],a) or matches(cell['native'],b) for a,b in pairs)
         if selected and not cell['ports'].get('regout'):nonregisters.append(cell['native'])
     for net,cell in registers.items():
         start='\\'+cell['native'];end=start
         selected=[pair for pair in pairs if matches(start,pair[0]) or matches(end,pair[1])]
+        if selected and _single_cycle_engine_endpoint(cell['native']):
+            raise ValueError('Explicit single-cycle command register entered an MCP collection: '+cell['native'])
         if not selected:
-            if '|half_rate.engine|' in cell['native']:uncovered.append(cell['native'])
+            if '|half_rate.engine|' in cell['native']:
+                if _single_cycle_engine_endpoint(cell['native']):
+                    module=cell['native'].split('|')[0]
+                    cone=frozenset().union(*(leaves(n) for n in signals(cell['ports'].get('ena',"1'b1"))))
+                    phase_hits=phase.get(module,set()) & cone
+                    wrong_phase=set().union(*(v for k,v in phase.items() if k!=module)) & cone
+                    valid=(len(phase_hits)==1 and not wrong_phase
+                           and cell['ports'].get('clk')=='clk' and stalls[net])
+                    entry=dict(register=cell['native'],setup_requirement_ns=8.0,
+                               ce=';'.join(sorted(phase_hits)),valid=valid,
+                               reason='Explicit command endpoint retains single-cycle timing; no SDC exception')
+                    single_cycle.append(entry)
+                    if valid:single_cycle_nets.add(net)
+                    else:invalid_single_cycle.append(entry)
+                else:uncovered.append(cell['native'])
             continue
         name=cell['native'];module=name.split('|')[0]
         good_scope=module in phase and name.startswith(module+'|half_rate.engine|')
@@ -213,8 +240,10 @@ def audit(vqm,sdc,destination):
     allowed=collections.defaultdict(set)
     for from_patterns,to_patterns in pairs:
         starts={net for net,c in registers.items() if matches(c['native'],from_patterns)}
-        for net,c in registers.items():
-            if matches(c['native'],to_patterns):allowed[net].update(starts)
+        ends={net for net,c in registers.items() if matches(c['native'],to_patterns)}
+        if not starts or not ends:
+            raise ValueError('Empty mapped MCP collection: '+str((from_patterns,to_patterns)))
+        for net in ends:allowed[net].update(starts)
     missing_arcs=[];arc_count=0
     for net,cell in registers.items():
         if '|half_rate.engine|' not in cell['native']:continue
@@ -224,18 +253,24 @@ def audit(vqm,sdc,destination):
         cone=frozenset().union(*(leaves(n) for n in inputs))
         internal={n for n in cone if n in registers and registers[n]['native'].startswith(module+'|half_rate.engine|')}
         arc_count+=len(internal)
-        missing_arcs.extend((registers[n]['native'],cell['native']) for n in internal-allowed[net])
-    result=dict(netlist_sha256=hashlib.sha256(vqm.read_bytes()).hexdigest(),
-                constraints_sha256=hashlib.sha256(sdc.read_bytes()).hexdigest(),
-                setup_uncertainty_ns=uncertainty,
+        if net not in single_cycle_nets:
+            missing_arcs.extend((registers[n]['native'],cell['native']) for n in internal-allowed[net])
+    # Consolidated local builds already snapshot their inputs; hashing is optional.
+    result=dict(setup_uncertainty_ns=uncertainty,
                 constrained_registers=len(rows),by_module=dict(by_module),invalid_registers=len(invalid),
                 ram_cells_in_engine=illegal_ram,all_registers=len(registers),ram_cells=len(ram),
                 selected_non_register_cells=nonregisters,uncovered_engine_registers=uncovered,
                 internal_register_arcs=arc_count,uncovered_internal_arcs=len(missing_arcs),
                 patterns=pairs,phase_registers={k:sorted(v) for k,v in phase.items()},
+                single_cycle_engine_registers=single_cycle,invalid_single_cycle_registers=invalid_single_cycle,
                 phase_reset_toggle_failures=phase_failures,ce_bank_register_loads=dict(phase_loads),
                 max_ce_bank_register_load=max(phase_loads.values(),default=0),
-                passed=not phase_failures and not invalid and not illegal_ram and not nonregisters and not uncovered and not missing_arcs)
+                passed=not phase_failures and not invalid and not invalid_single_cycle and not illegal_ram and not nonregisters and not uncovered and not missing_arcs)
+    if fingerprint:
+        result.update(netlist_sha256=hashlib.sha256(vqm.read_bytes()).hexdigest(),
+                      constraints_sha256=hashlib.sha256(sdc.read_bytes()).hexdigest())
+    else:
+        result['fingerprinting'] = 'omitted: caller uses an isolated input snapshot'
     destination.mkdir(parents=True,exist_ok=True)
     with (destination/'registers.csv').open('w',newline='',encoding='utf-8-sig') as f:
         writer=csv.DictWriter(f,list(rows[0]));writer.writeheader();writer.writerows(rows)
@@ -254,10 +289,11 @@ def timing(database,pairs,destination):
         for r in connection.execute(query):
             start=native_name(re.sub(r'\|ff/[QD]$','',r['from_cell_name']))
             end=native_name(re.sub(r'\|ff/[QD]$','',r['to_cell_name']))
-            # Independently require every same-engine register path to have 16 ns,
-            # even if an erroneous generated collection omitted that pair.
-            applies=any(start.startswith(m+'|half_rate.engine|') and end.startswith(m+'|half_rate.engine|')
-                        for m in ('loader','snmp'))
+            # Existing engine paths require their proven 16 ns exception.
+            # Explicit single-cycle command endpoints keep the stricter 8 ns.
+            applies=(not _single_cycle_engine_endpoint(end) and
+                     any(start.startswith(m+'|half_rate.engine|') and end.startswith(m+'|half_rate.engine|')
+                         for m in ('loader','snmp')))
             group='multicycle' if applies else 'single_cycle'
             requirement=r['capture_edge']-r['launch_edge']
             wanted=(16000 if applies else 8000) if kind=='setup' else 0

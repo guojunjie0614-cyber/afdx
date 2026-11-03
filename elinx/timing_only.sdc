@@ -366,17 +366,9 @@ set to_loader_deny_wa [get_cells {*loader|*half_rate.engine|deny_wa*~I}]
 set_multicycle_path -setup 2 -from $from_loader_deny_wa -to $to_loader_deny_wa
 set_multicycle_path -hold 0 -from $from_loader_deny_wa -to $to_loader_deny_wa
 
-set from_loader_deny_wd [get_cells {
-    *loader|*half_rate.engine|deny_empty*~I
-    *loader|*half_rate.engine|deny_pos*~I
-    *loader|*half_rate.engine|deny_unsupported*~I
-    *loader|*half_rate.engine|deny_wd*~I
-    *loader|*half_rate.engine|protocol_a4*~I
-    *loader|*half_rate.engine|state*~I
-}]
-set to_loader_deny_wd [get_cells {*loader|*half_rate.engine|deny_wd*~I}]
-set_multicycle_path -setup 2 -from $from_loader_deny_wd -to $to_loader_deny_wd
-set_multicycle_path -hold 0 -from $from_loader_deny_wd -to $to_loader_deny_wd
+# Integrated deny bytes decode at the RAM command boundary. The legacy deny_wd
+# output has no mapped registers, so its empty MCP collection is removed.
+# New deny_format command FFs retain ordinary 8 ns single-cycle timing.
 
 set from_loader_deny_we [get_cells {
     *loader|*half_rate.engine|state*~I
