@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-03 23:54:15",
+  "timestamp": "2026-11-04 00:00:20",
   "terminal": false,
   "accepted": false,
   "step0": "TRIAL_FAIL; RTL baseline restored after failed route trial",
@@ -90,6 +90,22 @@
       "internal_50us_failures": 0
     },
     {
+      "index": 5,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_070029_744614",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
       "index": 14,
       "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\t76_sim\\tb_t76_load\\20261103_062645_586079",
       "independent_equal": true,
@@ -123,24 +139,6 @@
     }
   ],
   "primary_active": [
-    {
-      "test": "tb_t76_load",
-      "kind": "RTL76",
-      "params": "GROUP_LENGTH=1024",
-      "priority": 9000,
-      "after": [
-        0,
-        1
-      ],
-      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source",
-      "id": 5,
-      "prefix": "par_t76_fallback_parallel_5_",
-      "Process": {
-        "pid": 42168,
-        "created": 1793718029.491642,
-        "deadline": "2026-11-04T23:00:29.490269+08:00"
-      }
-    },
     {
       "test": "tb_t76_load",
       "kind": "RTL76",
