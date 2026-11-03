@@ -67,6 +67,7 @@ module tb_cfg_local_ready;
         .cfg_ready_m(cfg_ready_m_new),
         .app_cfg_ready(app_cfg_ready_new),
         .service_ready_next(service_ready_next),
+        .service_ready_rx_term(),.service_ready_base(),
         .snmp_wr_sel(snmp_wr_sel_new),
         .loader_wr_sel(loader_wr_sel_new),
         .rtc_wr_sel(rtc_wr_sel_new),
@@ -200,7 +201,7 @@ module tb_cfg_local_ready;
                 $display("FAIL cycle=%0d read latency actual=%b expected=%b", cycle, cfg_rvalid_old, reset ? 1'b0 : prev_read);
                 errors=errors+1;
             end
-            if (errors != 0) begin $display("[RESULT] tb_cfg_local_ready FAIL errors=%0d", errors); $finish_and_return(1); end
+            if (errors != 0) begin $display("[RESULT] tb_cfg_local_ready FAIL errors=%0d", errors); $finish; end
         end
         if (!reset) begin prev_read = cfg_rd; if (cfg_rd) reads = reads + 1; end
     end
@@ -234,7 +235,7 @@ module tb_cfg_local_ready;
         idle_cycles(6);
         write_once(18'h2,32'h00001234);
         if (user_id_old !== 16'h1234) begin
-            $display("[RESULT] FAIL accepted host user write got %h", user_id_old); $finish_and_return(1);
+            $display("[RESULT] FAIL accepted host user write got %h", user_id_old); $finish;
         end
         // Held request while TX pending; then acknowledge and allow rearm.
         write_once(18'h01003,32'h12345678);
@@ -247,12 +248,12 @@ module tb_cfg_local_ready;
         idle_cycles(5); rx_cfg_ok=16'hffff; idle_cycles(5); rx_cfg_ok=0;
         @(negedge clk); mib_user_wr=1; mib_user_wdata=16'h3344; idle_cycles(2);
         if (user_id_old !== 16'h3344) begin
-            $display("[RESULT] FAIL MIB user write got %h", user_id_old); $finish_and_return(1);
+            $display("[RESULT] FAIL MIB user write got %h", user_id_old); $finish;
         end
         cfg_wr=1; cfg_write_addr=18'h2; cfg_wdata=32'h5678; mib_user_wdata=16'hcafe;
         idle_cycles(2);
         if (user_id_old !== 16'h5678) begin
-            $display("[RESULT] FAIL host/MIB priority got %h", user_id_old); $finish_and_return(1);
+            $display("[RESULT] FAIL host/MIB priority got %h", user_id_old); $finish;
         end
         cfg_wr=0; mib_user_wr=0;
         // Host and MIB reads including a user ID snapshot and adjacent reads.
@@ -293,7 +294,7 @@ module tb_cfg_local_ready;
         @(negedge clk); cfg_wr=0; cfg_rd=0; mib_user_wr=0;
         idle_cycles(5);
         if (user_beats==0 || tx_beats==0 || rx_beats==0 || map_beats==0 || mib_beats==0 || conflicts==0 || reads<100) begin
-            $display("[RESULT] tb_cfg_local_ready FAIL insufficient coverage"); $finish_and_return(1);
+            $display("[RESULT] tb_cfg_local_ready FAIL insufficient coverage"); $finish;
         end
         $display("[RESULT] tb_cfg_local_ready PASS checks=%0d errors=%0d cycles=%0d user=%0d tx=%0d rx=%0d map=%0d mib=%0d conflicts=%0d reads=%0d reset_cycles=%0d",cycle,errors,cycle,user_beats,tx_beats,rx_beats,map_beats,mib_beats,conflicts,reads,resets);
         $finish;

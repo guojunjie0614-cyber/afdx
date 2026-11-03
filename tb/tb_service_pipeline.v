@@ -45,7 +45,9 @@ module tb_service_pipeline;
         .svc_rx_claim({2'b00,port_match}),.svc_rx_valid(svc_rx_valid),.svc_rx_data(svc_rx_data),.svc_rx_last(svc_rx_last),
         .svc_rx_vl(svc_rx_vl),.svc_rx_sport(svc_rx_sport),.svc_rx_dport(svc_rx_dport),.svc_rx_net(svc_rx_net),
         .app_rx_valid(app_rx_valid),.app_rx_data(app_rx_data),.app_rx_last(app_rx_last),.app_rx_vl(app_rx_vl),
-        .app_rx_sport(app_rx_sport),.app_rx_dport(app_rx_dport),.app_rx_net(app_rx_net));
+        .app_rx_sport(app_rx_sport),.app_rx_dport(app_rx_dport),.app_rx_net(app_rx_net),
+        .snmp_rx_valid(),.snmp_rx_data(),.snmp_rx_last(),.snmp_rx_sport(),.snmp_rx_dport(),
+        .load_rx_valid(),.load_rx_data(),.load_rx_last(),.load_rx_sport(),.load_rx_dport());
     always @* begin
         for(j=0;j<3;j=j+1) begin
             svc_tx_valid[j]=sent[j+1]<4;
@@ -121,7 +123,7 @@ module tb_service_pipeline;
         check(tx_messages==4 && rx_messages==2 && app_bytes==4,"all messages completed");
         for(k=0;k<4;k=k+1) check(sent[k]==4 && received[k]==4,"all source bytes accepted once");
         $display("[RESULT] tb_service_pipeline %0s checks=%0d errors=%0d",errors==0 ? "PASS" : "FAIL",checks,errors);
-        if(errors) $finish_and_return(1);
+        if(errors) $finish;
         $finish;
     end
 endmodule

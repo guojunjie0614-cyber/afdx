@@ -44,11 +44,11 @@ module tb_app_payload_pipeline;
     wire p_re,p_valid;wire [14:0] p_ra;wire [8:0] p_q,p_data;
     afdx_app_payload #(.SPLIT_RETURN(1)) p_ram(
         .clk(clk),.reset(p_reset),.write_enable(p_write),.write_address(p_address),.write_data(p_wdata),
-        .read_enable(p_re),.read_address(p_ra),.read_data(p_q));
+        .read_enable(p_re),.read_address(p_ra),.read_data(p_q),.raw_write_data());
     // E0 local read command, E1 RAM, E2 result, E3 mux; consume at E4.
     afdx_app_read #(.AW(15),.READ_LATENCY(4)) p_reader(
         .clk(clk),.reset(p_reader_reset),.limit(p_limit),.pointer(p_pointer),
-        .read_enable(p_re),.read_address(p_ra),.read_data(p_q),.valid(p_valid),.ready(p_ready),.data(p_data));
+        .read_enable(p_re),.read_address(p_ra),.read_data(p_q),.valid(p_valid),.ready(p_ready),.data(p_data),.next_limit());
     integer p_seen=0,p_target=0,p_continuous=0;
     reg p_hold=0;reg [8:0] p_held;
     reg p_check_rate=0,p_started=0;

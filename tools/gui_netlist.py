@@ -16,6 +16,8 @@ from adapt_gui_vqm import adapt
 
 RECORDS = ('net_services.txt', 'es1_a.txt', 'es1_b.txt', 'es2_a.txt',
            'es2_b.txt', 'es2_rx_a.txt', 'download_results.txt')
+FRAGMENT_TESTS = ('tb_fragmentation', 'tb_frag1030_net')
+FRAGMENT_RECORDS = ('tx_a.txt', 'tx_b.txt', 'rx.txt', 'tx_messages.txt', 'events.txt', 'summary.txt')
 MODELS = ('220model.v', 'altera_mf.v', 'altera_primitives.v',
           'stratix_atoms.v', 'stratixiv_atoms.v')
 
@@ -46,32 +48,45 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
         else:
             for path in sorted((ROOT / 'rtl').glob('*.v')):
                 sources.append(copy(path, 'rtl/' + path.name))
+            if os.environ.get('AFDX_MODELSIM_DECL_ORDER', '1') == '1':
+                from modelsim_sources import prepare
+                portable, changes = prepare([flow.folder / path for path in sources], flow.folder)
+                sources = [str(path) for path in portable]
+                flow.result['modelsim_declaration_order'] = changes
+                originals[str(ROOT / 'tools/modelsim_sources.py')] = eda.sha(ROOT / 'tools/modelsim_sources.py')
         for path in sorted((ROOT / 'tb/lib').iterdir()):
             if path.suffix in ('.v', '.vh'):
                 name = copy(path, 'lib/' + path.name)
                 if path.suffix == '.v':
                     sources.append(name)
         sources.append(copy(ROOT / 'tb' / (test + '.v'), test + '.v'))
+        if test == 'tb_frag1030_net':
+            sources.append(copy(ROOT / 'tb/tb_fragmentation.v', 'tb_fragmentation.v'))
         checker = ROOT / 'tools/net_services_ref.py'
         if test == 'tb_net_services':
             for name in ('net_services_ref.py', 'load_ref.py', 'download_ref.py', 'snmp_ref.py', 'afdx_ref.py'):
                 originals[str(ROOT / 'tools' / name)] = eda.sha(ROOT / 'tools' / name)
             flow.job('vectors', [sys.executable, '-B', '-X', 'utf8', checker, 'vectors', '--dir', flow.folder], 60)
+        if test in FRAGMENT_TESTS:
+            for name in ('fragment_integration.py','fragment_ref.py','t75_fragment_check.py'):
+                originals[str(ROOT / 'tools' / name)] = eda.sha(ROOT / 'tools' / name)
+            checker = ROOT / 'tools/t75_fragment_check.py'
+            flow.job('vectors', [sys.executable,'-B','-X','utf8',ROOT/'tools/fragment_integration.py','prepare',flow.folder], 60)
         (flow.folder / 'run.do').write_text(
             'onerror {quit -code 1}\nonbreak {quit -code 1}\nrun -all\nquit -code 0\n', encoding='ascii')
         sim = eda.modelsim_dir()
         flow.job('library', [sim / 'vlib.exe', 'work'], 60)
-        compile_log = flow.job('compile', [sim / 'vlog.exe', '-vlog01compat', '+incdir+lib', *(['+define+SYS_TOP_NETLIST'] if netlist else []), *sources], 600)
+        compile_log = flow.job('compile', [sim / 'vlog.exe', '-vlog01compat', '+incdir+lib', '+define+AFDX_CE_DIV=' + os.environ.get('AFDX_CE_DIV', '2'), *(['+define+SYS_TOP_NETLIST'] if netlist else []), *sources], eda.timeout_seconds('AFDX_GUI_COMPILE_TIMEOUT_SECONDS', 600))
         if re.search(r'\*\* (Error|Fatal)', compile_log):
             raise RuntimeError('编译出错，见 compile.log')
         print('GUI NETLIST START ' + test + ' mode=' + mode + ' output=' + str(flow.folder), flush=True)
         log = flow.job('simulation', [sim / 'vsim.exe', '-batch', '-t', '1ps', 'work.' + test,
-                                    '-wlf', 'simulation.wlf', '-do', 'do run.do'], 5 * 3600)
+                                    '-wlf', 'simulation.wlf', '-do', 'do run.do'], eda.timeout_seconds('AFDX_GUI_SIM_TIMEOUT_SECONDS', 5 * 3600))
         rows = re.findall(r'\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)', log)
         diagnostics = {kind: len(re.findall(r'\*\* ' + kind + ':', log)) for kind in ('Error', 'Fatal', 'Warning')}
         # 轮询读次数会随RTL延迟变化；网表必须与同次RTL参考的检查数完全一致。
         expected = '9238'
-        if test == 'tb_net_services':
+        if test == 'tb_net_services' or test in FRAGMENT_TESTS:
             if reference:
                 expected = json.loads((reference / 'summary.json').read_text(encoding='utf-8'))['results'][0][2]
             else:
@@ -93,6 +108,14 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
                 flow.result['rtl_reference'] = str(reference)
                 if not all(comparisons.values()):
                     raise RuntimeError('网表与 RTL 的外部记录不一致')
+        if test in FRAGMENT_TESTS:
+            flow.job('check', [sys.executable,'-B','-X','utf8',checker,'--dir',flow.folder],120)
+            flow.result['check'] = json.loads((flow.folder/'check_summary.json').read_text(encoding='utf-8'))
+            if reference:
+                comparisons = {name: (flow.folder/name).read_bytes()==(reference/name).read_bytes() for name in FRAGMENT_RECORDS}
+                flow.result.update(exact_external_records=comparisons,rtl_reference=str(reference))
+                if not all(comparisons.values()):
+                    raise RuntimeError('Fragmentation VQM and paired RTL records differ')
         if any(eda.sha(Path(path)) != value for path, value in originals.items()):
             raise RuntimeError('运行期间原始输入发生变化')
         flow.result.update(passed=True, inputs=originals)
@@ -109,7 +132,7 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--test', choices=('tb_elinx', 'tb_net_services'), default='tb_elinx')
+    parser.add_argument('--test', choices=('tb_elinx', 'tb_net_services', *FRAGMENT_TESTS), default='tb_elinx')
     parser.add_argument('--netlist', type=Path, default=ROOT / 'elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm')
     parser.add_argument('--deadline', help='任务截止时间，默认从启动起五小时')
     args = parser.parse_args()
@@ -118,7 +141,7 @@ def main():
         if not args.netlist.is_file():
             raise RuntimeError('找不到界面综合网表，请先在 eLinx 中运行 Run Synthesis')
         model_dir = eda.elinx_bin().parents[2] / 'Simulation/elinx_lib'
-        reference = run_case(args.test, deadline) if args.test == 'tb_net_services' else None
+        reference = run_case(args.test, deadline) if args.test == 'tb_net_services' or args.test in FRAGMENT_TESTS else None
         run_case(args.test, deadline, args.netlist.resolve(), model_dir, reference)
         return 0
     except Exception as error:
