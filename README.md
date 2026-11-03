@@ -1,5 +1,7 @@
 # AFDX 端系统 FPGA 工程
 
+> 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在不放宽约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
+
 当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
@@ -74,7 +76,7 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 ```
 
 - `sim/vectors/app/vl_config.txt`：每行一条发送 VL，`<VLID> <BAG µs> <Lmax 字节> <源端口> <目的端口>`，默认 21 条，VLID 为四位十六进制。测试平台读取该文件，经 `cfg_*` 写两端配置；激励中的 VLID 两字节直接送入新顶层，不在测试平台换算成发送序号。
-- `sim/vectors/app/stimulus.txt`：每行一条消息，`<发送时刻 µs> <VLID 四位十六进制> <载荷十六进制>`，`#` 开头为注释；时刻可以相同，相同时刻按文件顺序排队注入；载荷 1–1471 字节。VLID 不在配置中的行直接报错停止。
+- `sim/vectors/app/stimulus.txt`：每行一条消息，`<发送时刻 µs> <VLID 四位十六进制> <载荷十六进制>`，`#` 开头为注释；时刻可以相同，相同时刻按文件顺序排队注入；载荷 1–8192 字节；超过 1471 字节时使用分片测试入口。VLID 不在配置中的行直接报错停止。
 - 默认激励同时覆盖 1、17、256、1024、1471 字节，21 条 VL 并发，并在 1–4 ms 的窗口内以约 210 Mbps 注入有效载荷；`tools/gen_app_vectors.py` 可重新生成这两份默认文件。
 
 运行结果在 `out/app/<运行名>/`：`rx.txt` 每行 `<交付首字节拍> <交付末字节拍> <VLID> <载荷十六进制>`；`summary.txt` 给出第 2 节定义的三项指标和判定；`es1_tx/`、`es2_rx/`、`es1_gmii_*/` 等目录保存原始记录。入口自检每条消息恰好交付一次、逐字节一致、A/B 冗余副本不重复交付，成功打印 `APP ENTRY PASS`，失败打印 `APP ENTRY FAIL`。默认第 3 个参数可给运行名，便于固定输出目录。
