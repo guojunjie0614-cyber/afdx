@@ -1,0 +1,8 @@
+[
+  {"test":"tb_t76_load","kind":"RTL76","label":"official_do_rtl_reference","params":"VL_COUNT=1,GROUP_LENGTH=17,DURATION=1,DUPLEX=0,SMOKE=1","priority":100000},
+  {"test":"tb_t76_load","kind":"VQM76","label":"official_do_vqm_smoke","reference_index":0,"params":"VL_COUNT=1,GROUP_LENGTH=17,DURATION=1,DUPLEX=0,SMOKE=1","priority":100000},
+  {"test":"tb_t76_load","kind":"RTL76","label":"load_tx_rtl_reference","params":"GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0","priority":90000},
+  {"test":"tb_t76_load","kind":"VQM76","label":"load_tx_vqm_window","reference_index":2,"params":"GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0","priority":90000},
+  {"test":"tb_t76_load","kind":"RTL76","label":"load_rx_rtl_reference","params":"GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0,SWAP=1","priority":90000},
+  {"test":"tb_t76_load","kind":"VQM76","label":"load_rx_vqm_window","reference_index":4,"params":"GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0,SWAP=1","priority":90000}
+]

@@ -1,0 +1,31 @@
+{
+  "pid": 32496,
+  "created": 1793714499.2243354,
+  "started": "2026-11-03 22:01:39",
+  "command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\tools\\par_regress.py",
+    "--output",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel",
+    "--jobs",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\sim\\t76_net_jobs_frozen.json",
+    "--max-sims",
+    "6",
+    "--max-owned-sims",
+    "3",
+    "--max-netlists",
+    "3",
+    "--max-synth",
+    "1",
+    "--rtl-hours",
+    "24"
+  ],
+  "frozen_root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source",
+  "scope": "paired RTL references then three official VQM windows; global foreign netlist seats reserved",
+  "netlist_sha256": "3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e",
+  "initialization": "Normal full initialization retained; no RTL/MAC bypass or undefined RAM preload",
+  "no_retries": true
+}

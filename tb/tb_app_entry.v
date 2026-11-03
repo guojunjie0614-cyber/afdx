@@ -1,12 +1,12 @@
 // 本测试按“VLID + 应用数据”激励文件驱动两个端系统，只使用公开端口。
-// 本文件读取原始 VL 配置并经 cfg 写入；调度以两端配置完成后的时刻为零点。
+// 配置由 tb/lib/afdx_sys_config.v 完成；调度以配置完成后的时刻为零点。
 // 交付、时延和抖动由外层脚本从记录计算；本文件只统计自身检查项和错误数。
 `timescale 1ns/1ps
 module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
     RX_RING_AW=12,RX_DQ_AW=5,LINK_FRAMES=20000,MAX_MESSAGES=4096,MAX_CYCLES=20000000);
     reg clk=0;always #4 clk=~clk;
     reg reset1=1,reset2=1;
-    integer sf,cf,pf,rc,cycle=0,checks=0,errors=0,quiet=0;
+    integer sf,pf,rc,cycle=0,checks=0,errors=0,quiet=0;
     wire [7:0] t1a,t1b,t2a,t2b,r1a,r1b,r2a,r2b;
     wire v1a,v1b,v2a,v2b,i1a,i1b,i2a,i2b,ready1,ready2;
     wire [31:0] c1,c2,e1,e2,l0e,l1e,l2e,l3e;
@@ -21,10 +21,12 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
     integer due[0:MAX_MESSAGES-1],wl[0:MAX_MESSAGES-1];
     integer blen[0:MAX_MESSAGES-1],boff[0:MAX_MESSAGES-1];
     integer messages=0,win_begin=0,win_end=0;
-    integer i,es,addr,value,cfg_count=0,epoch=0,vlid,bag,lmax,sport,dport,vi=0;
+    wire cfg_done;
+    wire [31:0] cfg_count;
+    afdx_sys_config config_stimulus(clk,reset1,reset2,ready1,ready2,cfg_done,cfg_count);
+    integer i,epoch=0;
     integer wire_fd,wire_n=0,wire_start=0,wire_last=0,wj;
     reg wire_previous=0;reg [7:0] wire_bytes[0:1472];
-    reg [8*40-1:0] command;
     task tick;begin @(posedge clk);#2;end endtask
     task check;input ok;input [8*100-1:0] label;
     begin checks=checks+1;if(ok!==1'b1)begin errors=errors+1;
@@ -57,8 +59,6 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
         sf=$fopen("sys_events.txt","w");
         if(!sf)begin $display("[APP_FAIL] cannot open sys_events.txt");$finish;end
         wire_fd=$fopen("rx.txt","w");
-        cf=$fopen("vectors/vl_config.txt","r");
-        if(!cf)begin $display("[APP_FAIL] cannot open app_config.txt");$finish;end
         pf=$fopen("vectors/app_schedule.txt","r");
         if(!pf)begin $display("[APP_FAIL] cannot open app_schedule.txt");$finish;end
         rc=$fscanf(pf,"%d",messages);
@@ -80,31 +80,7 @@ module tb_app_entry #(parameter TX_PAGE_AW=8,TX_OFF_AW=9,LOOKAHEAD=512,
         l0.set_delay(0);l1.set_delay(0);l2.set_delay(0);l3.set_delay(0);
         repeat(4)tick;@(negedge clk);reset1=0;
         repeat(13)tick;@(negedge clk);reset2=0;
-        while(!ready1||!ready2)tick;repeat(64)tick;
-        es1.stage("app");es2.stage("app");
-        while(!$feof(cf))begin
-            rc=$fscanf(cf,"%h %d %d %d %d",vlid,bag,lmax,sport,dport);
-            if(rc==5)begin
-                es1.write_cfg(18'h1000+vi*8,lmax*512+63*8+7,0);
-                es1.write_cfg(18'h1001+vi*8,bag*125,0);
-                es1.write_cfg(18'h1002+vi*8,vlid,0);
-                es1.write_cfg(18'h1003+vi*8,32'h0a000101+vi,0);
-                es1.write_cfg(18'h1004+vi*8,32'he0e00000|vlid,0);
-                es1.write_cfg(18'h1005+vi*8,(sport<<16)|dport,0);
-                es2.write_cfg(18'h10000+vlid,4096+vi,0);
-                es2.write_cfg(18'h20000+vi,lmax*131072+20*32+31,0);
-                es2.write_cfg(18'h1000+vi*8,lmax*512+63*8+7,0);
-                es2.write_cfg(18'h1001+vi*8,bag*125,0);
-                es2.write_cfg(18'h1002+vi*8,vlid,0);
-                es2.write_cfg(18'h1003+vi*8,32'h0a000201+vi,0);
-                es2.write_cfg(18'h1004+vi*8,32'he0e00000|vlid,0);
-                es2.write_cfg(18'h1005+vi*8,(sport<<16)|dport,0);
-                es1.write_cfg(18'h10000+vlid,4096+vi,0);
-                es1.write_cfg(18'h20000+vi,lmax*131072+20*32+31,0);
-                vi=vi+1;cfg_count=cfg_count+16;
-            end else rc=$fgets(command,cf);
-        end
-        $fclose(cf);
+        wait(cfg_done);
         check(cfg_count>0,"configuration rows present");
         epoch=cycle+16;win_begin=win_begin+epoch;win_end=win_end+epoch;
         $fwrite(sf,"G %0d OFFER_VLID 1\nG %0d STIMULUS_EPOCH %0d\n",cycle,cycle,epoch);

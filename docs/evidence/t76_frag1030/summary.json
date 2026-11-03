@@ -1,0 +1,217 @@
+{
+  "timestamp": "2026-11-03 23:54:15",
+  "terminal": false,
+  "accepted": false,
+  "step0": "TRIAL_FAIL; RTL baseline restored after failed route trial",
+  "line1": "CONFIRMED",
+  "line2": true,
+  "line3_line4": false,
+  "line5": false,
+  "class_b": "NOT_RUN: section-4 prerequisite RTL commit was not made",
+  "statistics": [
+    {
+      "index": 0,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_054633_707838",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
+      "index": 1,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_054634_869671",
+      "independent_equal": true,
+      "partial": true,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 1,
+      "window_ms": 100.0,
+      "status": "FAIL",
+      "groups": 164,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 150
+    },
+    {
+      "index": 2,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_061703_896445",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
+      "index": 3,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_061705_106406",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
+      "index": 4,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_062700_522137",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
+      "index": 14,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\t76_sim\\tb_t76_load\\20261103_062645_586079",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 1,
+      "vls": 81,
+      "mixed": 0,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 162,
+      "issues": [],
+      "formula_invalid_groups": 120,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    },
+    {
+      "index": "mixed_profile",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\search_source\\out\\t76_sim\\tb_t76_load\\20261103_070501_935849",
+      "independent_equal": true,
+      "partial": false,
+      "bag_burst": 0,
+      "vls": 63,
+      "mixed": 1,
+      "window_ms": 100.0,
+      "status": "PASS",
+      "groups": 132,
+      "issues": [],
+      "formula_invalid_groups": 0,
+      "jitter_100us_failures": 0,
+      "internal_50us_failures": 0
+    }
+  ],
+  "primary_active": [
+    {
+      "test": "tb_t76_load",
+      "kind": "RTL76",
+      "params": "GROUP_LENGTH=1024",
+      "priority": 9000,
+      "after": [
+        0,
+        1
+      ],
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source",
+      "id": 5,
+      "prefix": "par_t76_fallback_parallel_5_",
+      "Process": {
+        "pid": 42168,
+        "created": 1793718029.491642,
+        "deadline": "2026-11-04T23:00:29.490269+08:00"
+      }
+    },
+    {
+      "test": "tb_t76_load",
+      "kind": "RTL76",
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag2_source",
+      "params": "GROUP_LENGTH=1471,BAG_BURST=2",
+      "priority": 99500,
+      "id": 16,
+      "prefix": "par_t76_fallback_parallel_16_",
+      "Process": {
+        "pid": 9940,
+        "created": 1793721154.1024892,
+        "deadline": "2026-11-04T23:52:34.100389+08:00"
+      }
+    }
+  ],
+  "primary_pending": [],
+  "netlist_active": [
+    {
+      "test": "tb_t76_load",
+      "kind": "VQM76",
+      "label": "load_tx_vqm_window",
+      "reference_index": 2,
+      "params": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0",
+      "priority": 1000000,
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source",
+      "netlist": "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+      "id": 3,
+      "prefix": "par_t76_vqm_parallel_3_",
+      "Process": {
+        "pid": 32848,
+        "created": 1793718121.7620716,
+        "deadline": "2026-11-04T23:02:01.759646+08:00"
+      }
+    },
+    {
+      "test": "tb_t76_load",
+      "kind": "VQM76",
+      "label": "load_rx_vqm_window",
+      "reference_index": 4,
+      "params": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0,SWAP=1",
+      "priority": 999999,
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source",
+      "netlist": "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+      "id": 5,
+      "prefix": "par_t76_vqm_parallel_5_",
+      "wait_until_any_exit": [
+        {
+          "pid": 42016,
+          "created": 1793691255.5790815
+        },
+        {
+          "pid": 17492,
+          "created": 1793693254.1008322
+        },
+        {
+          "pid": 33644,
+          "created": 1793693286.312673
+        }
+      ],
+      "Process": {
+        "pid": 14068,
+        "created": 1793718422.719312,
+        "deadline": "2026-11-04T23:07:02.714243+08:00"
+      }
+    }
+  ],
+  "netlist_pending": [],
+  "full_t75_elinx_acceptance": false,
+  "mixed_search_complete": true,
+  "mixed_declared_vls": 63,
+  "known_81vl_mixed_failure": "Retained as a limitation outside the new mixed profile, not erased",
+  "BAG_acceptance_case": 16,
+  "BAG_fixed_order_case": 14
+}

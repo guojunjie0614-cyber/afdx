@@ -1,5 +1,7 @@
-# ModelSim-only entry: run from the repository root with do sim/run_judge.do.
-# ModelSim creates local vectors and libraries; Python is not required.
+# ModelSim batch entry: run from the repository root with do sim/run_judge.do.
+# The current T76 fallback uses Python only to prepare RTL simulation copies.
+# Configuration tasks stay in non-top endpoint modules; application file input
+# is isolated in tb/lib/afdx_sys_config.v (sim/run_app.do).
 # Compilation and each case are launched as external `vlog`/`vsim -batch`
 # processes: `vsim -c` uses the local vish<->vsim RPC transport, which is
 # unavailable on some hosts, and `transcript` is not available in -batch mode.
@@ -136,7 +138,8 @@ proc judge_main {root} {
     if {[catch {vmap -c}] || ![file isfile $ini]} {set ini ""}
     vlib work
     if {$ini ne ""} {catch {vmap -modelsimini $ini work [file join $output work]}}
-    set sources [concat [lsort [glob [file join $root rtl *.v]]] [lsort [glob [file join $root tb lib *.v]]]]
+    source [file join $root sim modelsim_compat.tcl]
+    set sources [concat [afdx_modelsim_rtl $root $output] [lsort [glob [file join $root tb lib *.v]]]]
     foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_sys_perf_var tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}

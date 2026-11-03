@@ -1,0 +1,35 @@
+{
+  "pid": 37848,
+  "created": 1793713458.0604444,
+  "started": "2026-11-03 21:44:18",
+  "command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\tools\\par_regress.py",
+    "--output",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_parallel",
+    "--jobs",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\sim\\t76_jobs.json",
+    "--max-sims",
+    "6",
+    "--max-owned-sims",
+    "4",
+    "--max-netlists",
+    "3",
+    "--max-synth",
+    "1",
+    "--raw-sources",
+    "--rtl-hours",
+    "24"
+  ],
+  "foreign_slots": [
+    17492,
+    33644,
+    42016
+  ],
+  "spec_confirmed": true,
+  "no_retries": true,
+  "no_heartbeat": true
+}

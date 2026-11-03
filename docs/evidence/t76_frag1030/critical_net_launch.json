@@ -1,0 +1,77 @@
+{
+  "pid": 21340,
+  "created": 1793720800.0898364,
+  "previous_owner": {
+    "pid": 10036,
+    "created": 1793718200.7065256
+  },
+  "command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\tools\\par_regress.py",
+    "--output",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel",
+    "--resume",
+    "--max-sims",
+    "10",
+    "--max-owned-sims",
+    "3",
+    "--max-netlists",
+    "3",
+    "--max-synth",
+    "1",
+    "--rtl-hours",
+    "24",
+    "--compute-cores",
+    "6",
+    "--paused-manifest",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\priority_pauses.json",
+    "--peer-queue",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\summary.json",
+    "--own-netlist-limit",
+    "--post-command",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\closeout_command.json"
+  ],
+  "started": "2026-11-03 23:46:40",
+  "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\finite_critical_net.log",
+  "preserved_descendants": [
+    {
+      "pid": 14068,
+      "created": 1793718422.719312,
+      "name": "python.exe"
+    },
+    {
+      "pid": 31428,
+      "created": 1793718453.37267,
+      "name": "vsim.exe"
+    },
+    {
+      "pid": 32,
+      "created": 1793718453.4228623,
+      "name": "vsimk.exe"
+    },
+    {
+      "pid": 32756,
+      "created": 1793718453.5946639,
+      "name": "vlm.exe"
+    },
+    {
+      "pid": 20412,
+      "created": 1793718470.5292137,
+      "name": "vsim.exe"
+    },
+    {
+      "pid": 13220,
+      "created": 1793718470.5451767,
+      "name": "vsimk.exe"
+    },
+    {
+      "pid": 41280,
+      "created": 1793718470.7067096,
+      "name": "vlm.exe"
+    }
+  ],
+  "note": "Only the T76 Python coordinator was replaced. Existing worker/native process identities, frozen inputs and deadlines are preserved. One finite end callback; no new simulation or scheduled continuation."
+}

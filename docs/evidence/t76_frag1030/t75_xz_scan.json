@@ -1,0 +1,112 @@
+{
+  "scanned_at": "2026-11-03 23:54:15",
+  "scope": "All numeric/hex capture fields. Active files are prefixes only; no final T75 acceptance inferred.",
+  "runs": [
+    {
+      "test": "tb_elinx",
+      "status": "NO_CAPTURE",
+      "t75_passed": null,
+      "note": "Covered by new monitored VQM windows; no T75 rerun requested"
+    },
+    {
+      "test": "tb_net_services",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_net_services_gui\\20261103_000708_762471",
+      "process_active": false,
+      "status": "PASS_NO_XZ",
+      "t75_passed": true,
+      "prefix_receipt": null,
+      "prefix_receipt_valid": false,
+      "hits": [],
+      "files": [
+        {
+          "name": "net_services.txt",
+          "present": true,
+          "bytes": 1435,
+          "sha256": "ddc42acd9965b61130fbee876fbdbe9a36f4f164b94c9ea36b495dd7e8b42e99"
+        },
+        {
+          "name": "es1_a.txt",
+          "present": true,
+          "bytes": 5032,
+          "sha256": "28e77a65da85c06f62779e9c965d5071795b2a96e36745608acad44ec82b0d03"
+        },
+        {
+          "name": "es1_b.txt",
+          "present": true,
+          "bytes": 5032,
+          "sha256": "401fd42bfdfb7abffc00ff0a9785691fbdff2f96c76aa2739a03a7693856abda"
+        },
+        {
+          "name": "es2_a.txt",
+          "present": true,
+          "bytes": 5425,
+          "sha256": "408737a03ab9c57430d9a8ad0983674dfa2ae8e97dd0dcbd005be8ef9915d51a"
+        },
+        {
+          "name": "es2_b.txt",
+          "present": true,
+          "bytes": 5425,
+          "sha256": "f599338c149031d7023c40826d1e52f0fb05b045921d882151f6c50a804b64b3"
+        },
+        {
+          "name": "es2_rx_a.txt",
+          "present": true,
+          "bytes": 5284,
+          "sha256": "7b91c8df24fa8a428dd47ce777b3ebc6ff390f93adecb6b3f695bc13c782c7da"
+        },
+        {
+          "name": "download_results.txt",
+          "present": true,
+          "bytes": 832,
+          "sha256": "523756d57c0dfbb86696de03fe7902a40eb91542a166cc11798b9a336fe6194c"
+        }
+      ]
+    },
+    {
+      "test": "tb_frag1030_net",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+      "process_active": true,
+      "status": "MISSING_CAPTURE",
+      "t75_passed": null,
+      "prefix_receipt": null,
+      "prefix_receipt_valid": false,
+      "hits": [],
+      "files": [
+        {
+          "name": "tx_a.txt",
+          "present": true,
+          "bytes": 12350,
+          "sha256": "3d4be24c4412c7f18c2608ccaa90fdbf49beabf73aedda9037a15c5a69ce46ae"
+        },
+        {
+          "name": "tx_b.txt",
+          "present": true,
+          "bytes": 12350,
+          "sha256": "0d9d42a86fedae444a97318df7d418a1b5cb3db953e30acac2a505d77a41037a"
+        },
+        {
+          "name": "rx.txt",
+          "present": true,
+          "bytes": 5961,
+          "sha256": "ae9e23d716437a3b226864e09ec44a53249e7214a6dd8eb8c07d446e41b0c3f4"
+        },
+        {
+          "name": "tx_messages.txt",
+          "present": true,
+          "bytes": 159,
+          "sha256": "874e5370dd164c33c6f8cea8ca4b1a6a11b62e1cd357c5d20cfca98e4040703e"
+        },
+        {
+          "name": "events.txt",
+          "present": true,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "summary.txt",
+          "present": false
+        }
+      ]
+    }
+  ]
+}

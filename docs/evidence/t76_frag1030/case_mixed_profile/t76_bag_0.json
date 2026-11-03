@@ -1,0 +1,329 @@
+{
+  "residual_cycles": [
+    [
+      0,
+      6178
+    ],
+    [
+      1,
+      62
+    ],
+    [
+      11082,
+      1
+    ]
+  ],
+  "plus_one_cycle_samples": [
+    {
+      "vl": 0,
+      "gmii_start": 195481,
+      "residual": 1
+    },
+    {
+      "vl": 1,
+      "gmii_start": 197019,
+      "residual": 1
+    },
+    {
+      "vl": 2,
+      "gmii_start": 198557,
+      "residual": 1
+    },
+    {
+      "vl": 3,
+      "gmii_start": 200095,
+      "residual": 1
+    },
+    {
+      "vl": 4,
+      "gmii_start": 201633,
+      "residual": 1
+    },
+    {
+      "vl": 5,
+      "gmii_start": 203171,
+      "residual": 1
+    },
+    {
+      "vl": 6,
+      "gmii_start": 204709,
+      "residual": 1
+    },
+    {
+      "vl": 7,
+      "gmii_start": 206247,
+      "residual": 1
+    },
+    {
+      "vl": 8,
+      "gmii_start": 207785,
+      "residual": 1
+    },
+    {
+      "vl": 9,
+      "gmii_start": 209323,
+      "residual": 1
+    },
+    {
+      "vl": 10,
+      "gmii_start": 210861,
+      "residual": 1
+    },
+    {
+      "vl": 11,
+      "gmii_start": 212399,
+      "residual": 1
+    },
+    {
+      "vl": 12,
+      "gmii_start": 213937,
+      "residual": 1
+    },
+    {
+      "vl": 13,
+      "gmii_start": 215475,
+      "residual": 1
+    },
+    {
+      "vl": 14,
+      "gmii_start": 217013,
+      "residual": 1
+    },
+    {
+      "vl": 15,
+      "gmii_start": 218551,
+      "residual": 1
+    },
+    {
+      "vl": 16,
+      "gmii_start": 220089,
+      "residual": 1
+    },
+    {
+      "vl": 17,
+      "gmii_start": 221627,
+      "residual": 1
+    },
+    {
+      "vl": 18,
+      "gmii_start": 223165,
+      "residual": 1
+    },
+    {
+      "vl": 19,
+      "gmii_start": 224703,
+      "residual": 1
+    },
+    {
+      "vl": 20,
+      "gmii_start": 226241,
+      "residual": 1
+    },
+    {
+      "vl": 21,
+      "gmii_start": 227779,
+      "residual": 1
+    },
+    {
+      "vl": 22,
+      "gmii_start": 229317,
+      "residual": 1
+    },
+    {
+      "vl": 23,
+      "gmii_start": 230855,
+      "residual": 1
+    },
+    {
+      "vl": 24,
+      "gmii_start": 232393,
+      "residual": 1
+    },
+    {
+      "vl": 25,
+      "gmii_start": 233931,
+      "residual": 1
+    },
+    {
+      "vl": 26,
+      "gmii_start": 235469,
+      "residual": 1
+    },
+    {
+      "vl": 27,
+      "gmii_start": 237007,
+      "residual": 1
+    },
+    {
+      "vl": 28,
+      "gmii_start": 238545,
+      "residual": 1
+    },
+    {
+      "vl": 29,
+      "gmii_start": 240083,
+      "residual": 1
+    },
+    {
+      "vl": 30,
+      "gmii_start": 241621,
+      "residual": 1
+    },
+    {
+      "vl": 31,
+      "gmii_start": 243159,
+      "residual": 1
+    },
+    {
+      "vl": 32,
+      "gmii_start": 244697,
+      "residual": 1
+    },
+    {
+      "vl": 33,
+      "gmii_start": 246235,
+      "residual": 1
+    },
+    {
+      "vl": 34,
+      "gmii_start": 247773,
+      "residual": 1
+    },
+    {
+      "vl": 35,
+      "gmii_start": 249311,
+      "residual": 1
+    },
+    {
+      "vl": 36,
+      "gmii_start": 250849,
+      "residual": 1
+    },
+    {
+      "vl": 37,
+      "gmii_start": 252387,
+      "residual": 1
+    },
+    {
+      "vl": 38,
+      "gmii_start": 253925,
+      "residual": 1
+    },
+    {
+      "vl": 39,
+      "gmii_start": 255463,
+      "residual": 1
+    },
+    {
+      "vl": 40,
+      "gmii_start": 257001,
+      "residual": 1
+    },
+    {
+      "vl": 41,
+      "gmii_start": 258539,
+      "residual": 1
+    },
+    {
+      "vl": 42,
+      "gmii_start": 260077,
+      "residual": 1
+    },
+    {
+      "vl": 43,
+      "gmii_start": 261615,
+      "residual": 1
+    },
+    {
+      "vl": 44,
+      "gmii_start": 263153,
+      "residual": 1
+    },
+    {
+      "vl": 45,
+      "gmii_start": 264691,
+      "residual": 1
+    },
+    {
+      "vl": 46,
+      "gmii_start": 266229,
+      "residual": 1
+    },
+    {
+      "vl": 47,
+      "gmii_start": 267767,
+      "residual": 1
+    },
+    {
+      "vl": 48,
+      "gmii_start": 269305,
+      "residual": 1
+    },
+    {
+      "vl": 49,
+      "gmii_start": 270843,
+      "residual": 1
+    },
+    {
+      "vl": 50,
+      "gmii_start": 272381,
+      "residual": 1
+    },
+    {
+      "vl": 51,
+      "gmii_start": 273919,
+      "residual": 1
+    },
+    {
+      "vl": 52,
+      "gmii_start": 275457,
+      "residual": 1
+    },
+    {
+      "vl": 53,
+      "gmii_start": 276995,
+      "residual": 1
+    },
+    {
+      "vl": 54,
+      "gmii_start": 278533,
+      "residual": 1
+    },
+    {
+      "vl": 55,
+      "gmii_start": 280071,
+      "residual": 1
+    },
+    {
+      "vl": 56,
+      "gmii_start": 281609,
+      "residual": 1
+    },
+    {
+      "vl": 57,
+      "gmii_start": 283147,
+      "residual": 1
+    },
+    {
+      "vl": 58,
+      "gmii_start": 284685,
+      "residual": 1
+    },
+    {
+      "vl": 59,
+      "gmii_start": 286223,
+      "residual": 1
+    },
+    {
+      "vl": 60,
+      "gmii_start": 287761,
+      "residual": 1
+    },
+    {
+      "vl": 62,
+      "gmii_start": 1801919,
+      "residual": 1
+    }
+  ],
+  "maximum_positive_residual": 11082
+}

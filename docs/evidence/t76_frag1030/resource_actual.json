@@ -1,0 +1,183 @@
+{
+  "checked": "2026-11-03 23:44:27",
+  "sample_seconds": 2.0,
+  "kernel_process_slots": 8,
+  "computing_kernels": 6,
+  "t76_computing_kernels": 4,
+  "t75_computing_kernels": 2,
+  "available_memory_gib": 10.33505630493164,
+  "free_disk_gib": 39.960243225097656,
+  "processes": [
+    {
+      "pid": 32,
+      "created": 1793718453.4228623,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\out\\t76_sim\\tb_t76_load\\20261103_070702_960902",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070702_960902}"
+      ],
+      "status": "running",
+      "cpu_seconds": 0.0
+    },
+    {
+      "pid": 13220,
+      "created": 1793718470.5451767,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\out\\t76_sim\\tb_t76_load\\20261103_070702_960902",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.046875
+    },
+    {
+      "pid": 28684,
+      "created": 1793718147.5331435,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\out\\t76_sim\\tb_t76_load\\20261103_070202_050887",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070202_050887}"
+      ],
+      "status": "running",
+      "cpu_seconds": 0.0
+    },
+    {
+      "pid": 33200,
+      "created": 1793718161.5274813,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\out\\t76_sim\\tb_t76_load\\20261103_070202_050887",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=0",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.03125
+    },
+    {
+      "pid": 33644,
+      "created": 1793693286.312673,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_frag1030_net",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.03125
+    },
+    {
+      "pid": 42016,
+      "created": 1793691255.5790815,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\gui_netlist\\tb_elinx_gui\\20261102_233351_107710",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_elinx",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.03125
+    },
+    {
+      "pid": 43984,
+      "created": 1793718031.5461512,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_070029_744614",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1024",
+        "-gMIXED=0",
+        "-gDUPLEX=1",
+        "-gDURATION=12500000",
+        "-gSMOKE=0",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.0625
+    },
+    {
+      "pid": 47876,
+      "created": 1793716007.3097394,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\t76_sim\\tb_t76_load\\20261103_062645_586079",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=0",
+        "-gDUPLEX=1",
+        "-gDURATION=12500000",
+        "-gSMOKE=0",
+        "-gSWAP=0",
+        "-gBAG_BURST=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "status": "running",
+      "cpu_seconds": 2.078125
+    }
+  ],
+  "note": "One bounded resource sample. Official .do hosts block on child simulators and consume process slots without an additional computing seat."
+}

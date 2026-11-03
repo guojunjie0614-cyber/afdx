@@ -1,0 +1,10 @@
+{
+  "residual_cycles": [
+    [
+      0,
+      8019
+    ]
+  ],
+  "plus_one_cycle_samples": [],
+  "maximum_positive_residual": 0
+}

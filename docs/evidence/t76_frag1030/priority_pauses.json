@@ -1,0 +1,49 @@
+{
+  "kernels": [
+    {
+      "pid": 29748,
+      "created": 1793714766.4969485,
+      "row_index": 13,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\perf_source\\out\\sim\\tb_sys_perf\\20261103_060548_028885",
+      "paused": false,
+      "original_deadline": "2026-11-04T22:05:47.632634+08:00",
+      "note": "Resumed promptly to preserve original 5400-second legacy simulation tool budget",
+      "resume_priority": 100,
+      "resumed": "2026-11-03T23:03:21.370800+08:00"
+    },
+    {
+      "pid": 42524,
+      "created": 1793716022.2014933,
+      "row_index": 4,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_062700_522137",
+      "paused": false,
+      "original_deadline": "2026-11-04T22:27:00.267323+08:00",
+      "resumed": "2026-11-03T22:57:04.083746+08:00",
+      "resume_priority": 10
+    },
+    {
+      "pid": 47876,
+      "created": 1793716007.3097394,
+      "row_index": 14,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\t76_sim\\tb_t76_load\\20261103_062645_586079",
+      "paused": false,
+      "original_deadline": "2026-11-04T22:26:45.345489+08:00",
+      "resumed": "2026-11-03T23:32:26.184781+08:00",
+      "resume_priority": 0
+    },
+    {
+      "pid": 43984,
+      "created": 1793718031.5461512,
+      "row_index": 5,
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_070029_744614",
+      "paused": false,
+      "resume_priority": 0,
+      "resumed": "2026-11-03T23:33:04.464387+08:00"
+    }
+  ],
+  "reason": "Confirmed priority: reserve physical cores for one eLinx build and mixed-load search; resume in place after eLinx exits",
+  "hold_owner": {
+    "pid": 33428,
+    "created": 1793716666.3658483
+  }
+}

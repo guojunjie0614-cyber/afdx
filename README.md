@@ -1,5 +1,7 @@
 # AFDX 端系统 FPGA 工程
 
+T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格与网络规划数值已确认)已确认数值：纯短消息每端最大 81 TX / 81 RX VL、每 VL BAG=1 ms / Lmax=1471、单消息 8192 字节（Lmax=1471 时为 6 片）、256 页 TX 共享池和 16 个 RX 重组上下文；短/长混合独立声明为 63 TX / 63 RX VL，默认 21 VL 是另一配置子集。满负载单方向计划载荷率 953.208 Mbit/s，长消息按分片机会计费并遵守页池约束。**规格确认、100 ms 功能与性能、官方网表分别验收。** 各项实际结果与未完成门槛见 [T76 记录](docs/evidence/t76_frag1030/summary.md)。
+
 > 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在不放宽约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
 当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
@@ -25,7 +27,7 @@
 
 ## 软件准备
 
-基本走查只需 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。纯 ModelSim 入口包含下面列出的八个用例，不依赖 Python。
+基本工具为 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。T76 的源码兼容候选已按覆盖决定试布线，因实际时序和锁定目标检查失败而回退；本分支入口使用 T75 仿真副本兼容方式，因此还需要 `AFDX_PYTHON=E:/anaconda3/python.exe`。变换只写每次运行的输出目录，原 RTL 不变；各次 `modelsim_compatibility.json` 保存变换与逆变换核验。
 完整 56 项回归（原有 40 项 + T65 新增 16 项）、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随工程分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
@@ -41,7 +43,7 @@
 
 ## 快速上手
 
-先走不需要 Python 的步骤 1、2。测试会自动建立工作库和输入文件，不必先做综合。
+先设置 `AFDX_PYTHON`，并保持 `AFDX_MODELSIM_DECL_ORDER=1`（默认值），再运行步骤 1、2。测试会自动建立工作库、兼容副本和输入文件，不必先做综合。下面 F1 界面走查的历史结果不代表 T76 原样 RTL 已通过兼容门槛。
 工程路径不要含中文或空格。实测 ModelSim 2020.4 在中文路径下无法创建工作库，在带空格的路径下无法载入仿真；入口会提前提示更换目录。
 
 1. 在 ModelSim 的 Transcript 窗口进入工程根目录，把下面的占位文字换成实际目录。
@@ -68,14 +70,14 @@
 
 ### 应用激励入口（只注入 VLID 和应用数据）
 
-R124、R126 要求顶层激励文件只注入 VLID 和应用数据，R120-3 说明发送侧输入、接收侧输出都是包含 VLID 的原始有效载荷。`sim/run_app.do` 就是这样的纯 ModelSim 入口，不需要 Python，也不要求评委理解配置寄存器：
+R124、R126 要求顶层激励文件只注入 VLID 和应用数据，R120-3 说明发送侧输入、接收侧输出都是包含 VLID 的原始有效载荷。`sim/run_app.do` 的顶层激励只负责应用数据，系统配置移到 `tb/lib/afdx_sys_config.v`；当前源码回退下的兼容副本准备需要 `AFDX_PYTHON`，评委不需要编写配置寄存器激励：
 
 ```tcl
 do sim/run_app.do
 do sim/run_app.do sim/vectors/app/small_stimulus.txt
 ```
 
-- `sim/vectors/app/vl_config.txt`：每行一条发送 VL，`<VLID> <BAG µs> <Lmax 字节> <源端口> <目的端口>`，默认 21 条，VLID 为四位十六进制。测试平台读取该文件，经 `cfg_*` 写两端配置；激励中的 VLID 两字节直接送入新顶层，不在测试平台换算成发送序号。
+- `sim/vectors/app/vl_config.txt`：每行一条发送 VL，`<VLID> <BAG µs> <Lmax 字节> <源端口> <目的端口>`，默认 21 条，VLID 为四位十六进制。非顶层 `afdx_sys_config` 读取该文件，经 `cfg_*` 写两端配置；激励中的 VLID 两字节直接送入新顶层，不在测试平台换算成发送序号。
 - `sim/vectors/app/stimulus.txt`：每行一条消息，`<发送时刻 µs> <VLID 四位十六进制> <载荷十六进制>`，`#` 开头为注释；时刻可以相同，相同时刻按文件顺序排队注入；载荷 1–8192 字节；超过 1471 字节时使用分片测试入口。VLID 不在配置中的行直接报错停止。
 - 默认激励同时覆盖 1、17、256、1024、1471 字节，21 条 VL 并发，并在 1–4 ms 的窗口内以约 210 Mbps 注入有效载荷；`tools/gen_app_vectors.py` 可重新生成这两份默认文件。
 
@@ -243,6 +245,8 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 ## 从 eLinx 界面运行自检
 
+本节保留 F1 的历史界面流程。T76 原样 RTL 兼容候选已按 VQM 门槛回退，不能据此声称当前 Run Behavioral Simulation 已直接编译通过；当前实际 RTL 运行使用上述兼容副本入口。官方网表复现见 [T76 复现说明](docs/evidence/t76_frag1030/official_reproduction.md)。
+
 1. 用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，在 Settings → Tool Settings → 3rd Party Simulators 设置 ModelSim 的安装目录。该目录应包含 `modelsim.exe`。
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
 3. 点击 Flow → Run Behavioral Simulation。ModelSim 会运行两个端系统经双网互发 1、64、1471 字节消息的自检；预期依次看到三条 `[ELINX_MESSAGE] ... both_directions=PASS`，最后是 `[RESULT] tb_elinx PASS checks=9238 errors=0`。测试不需要 Python、输入文件或额外的 include 路径和宏。
@@ -355,3 +359,9 @@ R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接�
 - R95-2建议调用并两次例化 `Tri_Mode_Ethernet_Mac`；R111说明无强制使用要求。本设计保留自研MAC，未集成官方MAC IP，理由及配置范围见[对照](docs/FACTS.md#九附录设计取舍依据的专项实验)。
 - 综合后网表仿真使用官方流程导出的 VQM，不含布局布线延迟；吞吐等性能指标没有在网表上重测。本轮没有进行含布线延迟的网表仿真；历史 `.vo` 的 RAM 位序不匹配记录不能作为本轮 VQM 结果。
 - 已采用 PRES1.30 和 5,540 条簇位置约束完成官方布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。
+
+## T76 混合负载声明
+
+混合最大声明为 **63 TX / 63 RX VL**；81 VL 全长短消息规格保持不变。固定激励的二分相邻边界为 70 VL 通过 20 ms、71 VL 失败，取 63 VL 留出 10.0% 余量，随后 100 ms 功能与逐字节交付通过，两套统计一致，TX 页上界不超过 256。此边界是按既定二分法、固定激励及其单调性假设得到，不冒称穷举所有 VL 数。性能门槛另见统计表，原 81 VL 混合溢出继续列为限制。
+
+[完整规格](docs/ARCH.md#t76-混合负载声明搜索确认)；[证据与各门槛](docs/evidence/t76_frag1030/summary.md)。

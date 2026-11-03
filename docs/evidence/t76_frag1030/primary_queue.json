@@ -1,0 +1,394 @@
+{
+  "Started": "2026-11-03T21:46:33.310559+08:00",
+  "Netlist": false,
+  "Runs": [
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1471",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_054633_707838",
+      "Checks": 16200,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 0,
+      "Started": "2026-11-03T21:46:33.471142+08:00",
+      "Finished": "2026-11-03T22:17:03.504304+08:00",
+      "Seconds": 1830.031,
+      "Process": {
+        "pid": 41804,
+        "created": 1793713593.4664645,
+        "deadline": "2026-11-04T21:46:33.464133+08:00"
+      },
+      "PeakTreeBytes": 265613312,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_0_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\0_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1471,MIXED=1",
+      "Status": "FAIL",
+      "Exit": 1,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_054634_869671",
+      "Checks": null,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 1,
+      "Started": "2026-11-03T21:46:34.639671+08:00",
+      "Finished": "2026-11-03T21:47:45.259340+08:00",
+      "Seconds": 70.609,
+      "Process": {
+        "pid": 30920,
+        "created": 1793713594.6344268,
+        "deadline": "2026-11-04T21:46:34.630668+08:00"
+      },
+      "PeakTreeBytes": 196104192,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_1_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\1_tb_t76_load.log",
+      "Error": "Simulation not passed; see simulation.log"
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_061703_896445",
+      "Checks": 16200,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 2,
+      "Started": "2026-11-03T22:17:03.671072+08:00",
+      "Finished": "2026-11-03T22:26:45.155556+08:00",
+      "Seconds": 581.485,
+      "Process": {
+        "pid": 31708,
+        "created": 1793715423.6650596,
+        "deadline": "2026-11-04T22:17:03.663066+08:00"
+      },
+      "PeakTreeBytes": 246280192,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_2_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\2_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=17",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_061705_106406",
+      "Checks": 16200,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 3,
+      "Started": "2026-11-03T22:17:04.858760+08:00",
+      "Finished": "2026-11-03T22:27:00.090644+08:00",
+      "Seconds": 595.234,
+      "Process": {
+        "pid": 2904,
+        "created": 1793715424.8533957,
+        "deadline": "2026-11-04T22:17:04.849237+08:00"
+      },
+      "PeakTreeBytes": 248074240,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_3_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\3_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=256",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\t76_sim\\tb_t76_load\\20261103_062700_522137",
+      "Checks": 16200,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 4,
+      "Started": "2026-11-03T22:27:00.269181+08:00",
+      "Finished": "2026-11-03T23:00:29.313277+08:00",
+      "Seconds": 2009.05,
+      "Process": {
+        "pid": 17124,
+        "created": 1793716020.2691815,
+        "deadline": "2026-11-04T22:27:00.267323+08:00"
+      },
+      "PeakTreeBytes": 159096832,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_4_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\4_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_fragmentation",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_fragmentation\\20261103_054636_100646",
+      "Checks": 33,
+      "CheckItems": 9,
+      "Kind": "RTL",
+      "Index": 6,
+      "Started": "2026-11-03T21:46:35.841991+08:00",
+      "Finished": "2026-11-03T21:47:26.501633+08:00",
+      "Seconds": 50.656,
+      "Process": {
+        "pid": 44460,
+        "created": 1793713595.8352854,
+        "deadline": "2026-11-04T21:46:35.833989+08:00"
+      },
+      "PeakTreeBytes": 198373376,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_6_latest_tb_fragmentation.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\6_tb_fragmentation.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_tx_buffer_bounds",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_tx_buffer_bounds\\20261103_054726_901438",
+      "Checks": 49800,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 7,
+      "Started": "2026-11-03T21:47:26.677851+08:00",
+      "Finished": "2026-11-03T21:47:31.490826+08:00",
+      "Seconds": 4.813,
+      "Process": {
+        "pid": 46224,
+        "created": 1793713646.6706479,
+        "deadline": "2026-11-04T21:47:26.668848+08:00"
+      },
+      "PeakTreeBytes": 186925056,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_7_latest_tb_tx_buffer_bounds.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\7_tb_tx_buffer_bounds.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_context_pipeline",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_context_pipeline\\20261103_054731_877688",
+      "Checks": 134,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 8,
+      "Started": "2026-11-03T21:47:31.658758+08:00",
+      "Finished": "2026-11-03T21:47:37.713848+08:00",
+      "Seconds": 6.062,
+      "Process": {
+        "pid": 40436,
+        "created": 1793713651.652679,
+        "deadline": "2026-11-04T21:47:31.650769+08:00"
+      },
+      "PeakTreeBytes": 158154752,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_8_latest_tb_context_pipeline.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\8_tb_context_pipeline.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_rtc_banked",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_rtc_banked\\20261103_054738_121261",
+      "Checks": 34,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 9,
+      "Started": "2026-11-03T21:47:37.894302+08:00",
+      "Finished": "2026-11-03T21:47:44.021217+08:00",
+      "Seconds": 6.125,
+      "Process": {
+        "pid": 10772,
+        "created": 1793713657.888483,
+        "deadline": "2026-11-04T21:47:37.886298+08:00"
+      },
+      "PeakTreeBytes": 174100480,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_9_latest_tb_rtc_banked.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\9_tb_rtc_banked.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_service_pipeline",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_service_pipeline\\20261103_054744_461956",
+      "Checks": 127,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 10,
+      "Started": "2026-11-03T21:47:44.216247+08:00",
+      "Finished": "2026-11-03T21:47:50.347717+08:00",
+      "Seconds": 6.125,
+      "Process": {
+        "pid": 30468,
+        "created": 1793713664.2091446,
+        "deadline": "2026-11-04T21:47:44.207247+08:00"
+      },
+      "PeakTreeBytes": 149168128,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_10_latest_tb_service_pipeline.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\10_tb_service_pipeline.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_reassembly_limits",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_reassembly_limits\\20261103_054745_698658",
+      "Checks": 71,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 11,
+      "Started": "2026-11-03T21:47:45.456873+08:00",
+      "Finished": "2026-11-03T21:47:51.604912+08:00",
+      "Seconds": 6.157,
+      "Process": {
+        "pid": 47816,
+        "created": 1793713665.4513595,
+        "deadline": "2026-11-04T21:47:45.448873+08:00"
+      },
+      "PeakTreeBytes": 151175168,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_11_latest_tb_reassembly_limits.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\11_tb_reassembly_limits.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_elinx",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\sim\\tb_elinx\\20261103_054750_779076",
+      "Checks": 9238,
+      "CheckItems": null,
+      "Kind": "RTL",
+      "Index": 12,
+      "Started": "2026-11-03T21:47:50.560353+08:00",
+      "Finished": "2026-11-03T21:48:10.981920+08:00",
+      "Seconds": 20.422,
+      "Process": {
+        "pid": 34340,
+        "created": 1793713670.5532737,
+        "deadline": "2026-11-04T21:47:50.551359+08:00"
+      },
+      "PeakTreeBytes": 284037120,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\out\\par_t76_fallback_parallel_12_latest_tb_elinx.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\12_tb_elinx.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_sys_perf",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\perf_source\\out\\sim\\tb_sys_perf\\20261103_060548_028885",
+      "Checks": 683408635,
+      "CheckItems": 1357450,
+      "Kind": "RTL",
+      "Index": 13,
+      "Started": "2026-11-03T22:05:47.634173+08:00",
+      "Finished": "2026-11-03T23:10:50.503866+08:00",
+      "Seconds": 3902.863,
+      "Process": {
+        "pid": 38568,
+        "created": 1793714747.6341734,
+        "deadline": "2026-11-04T22:05:47.632634+08:00"
+      },
+      "PeakTreeBytes": 897974272,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\perf_source\\out\\par_t76_fallback_parallel_13_latest_tb_sys_perf.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\13_tb_sys_perf.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1471,BAG_BURST=1",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\t76_sim\\tb_t76_load\\20261103_062645_586079",
+      "Checks": 16200,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 14,
+      "Started": "2026-11-03T22:26:45.347235+08:00",
+      "Finished": "2026-11-03T23:48:09.432373+08:00",
+      "Seconds": 4884.098,
+      "Process": {
+        "pid": 41748,
+        "created": 1793716005.3472347,
+        "deadline": "2026-11-04T22:26:45.345489+08:00"
+      },
+      "PeakTreeBytes": 158863360,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag_source\\out\\par_t76_fallback_parallel_14_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\14_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_mixed_search",
+      "Param": "",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\search_source\\out\\t76_search\\tb_t76_mixed_search\\20261103_064106_069134",
+      "Checks": null,
+      "CheckItems": null,
+      "Kind": "MIX_SEARCH76",
+      "Index": 15,
+      "Started": "2026-11-03T22:41:05.802974+08:00",
+      "Finished": "2026-11-03T23:33:04.174690+08:00",
+      "Seconds": 3118.373,
+      "Process": {
+        "pid": 21912,
+        "created": 1793716865.8029735,
+        "deadline": "2026-11-04T22:41:05.800450+08:00"
+      },
+      "PeakTreeBytes": 197468160,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\search_source\\out\\par_t76_fallback_parallel_15_latest_tb_t76_mixed_search.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\15_tb_t76_mixed_search.log",
+      "Error": null
+    }
+  ],
+  "Pending": [],
+  "Active": [
+    {
+      "test": "tb_t76_load",
+      "kind": "RTL76",
+      "params": "GROUP_LENGTH=1024",
+      "priority": 9000,
+      "after": [
+        0,
+        1
+      ],
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source",
+      "id": 5,
+      "prefix": "par_t76_fallback_parallel_5_",
+      "Process": {
+        "pid": 42168,
+        "created": 1793718029.491642,
+        "deadline": "2026-11-04T23:00:29.490269+08:00"
+      }
+    },
+    {
+      "test": "tb_t76_load",
+      "kind": "RTL76",
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag2_source",
+      "params": "GROUP_LENGTH=1471,BAG_BURST=2",
+      "priority": 99500,
+      "id": 16,
+      "prefix": "par_t76_fallback_parallel_16_",
+      "Process": {
+        "pid": 9940,
+        "created": 1793721154.1024892,
+        "deadline": "2026-11-04T23:52:34.100389+08:00"
+      }
+    }
+  ],
+  "Owner": {
+    "pid": 30060,
+    "created": 1793720776.2761233
+  },
+  "PeakMemory": {
+    "netlist_concurrency_limit": 1
+  },
+  "Finished": null
+}
