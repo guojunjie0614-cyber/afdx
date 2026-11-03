@@ -1,5 +1,6 @@
 {
   "passed": true,
+  "checked": "2026-11-03T20:46:17.841117+08:00",
   "cases": [
     {
       "case": "native launcher owns kernel; pending and inaccessible launchers reserve slots",
@@ -57,12 +58,41 @@
       "reserved": 0,
       "launch_allowed": true,
       "passed": true
+    },
+    {
+      "case": "4 mapping workers (2 running, 2 queued), 2 external GUI/helper processes",
+      "reserved": 6,
+      "launch_allowed": false,
+      "passed": true
+    },
+    {
+      "case": "4 mapping workers (2 running, 2 queued), 1 external GUI",
+      "reserved": 5,
+      "launch_allowed": true,
+      "passed": true
+    },
+    {
+      "case": "6 own running mappings occupy all synthesis slots",
+      "reserved": 6,
+      "launch_allowed": false,
+      "passed": true
+    },
+    {
+      "case": "RTL workers consume no synthesis slots; external GUI still counts",
+      "reserved": 2,
+      "launch_allowed": true,
+      "passed": true
     }
   ],
+  "source_hashes": {
+    "eda.py": "B3551CC22F1522B83F9078C035F179BEBFC0AA368B43CB3664B7C373E9DDBD0D",
+    "par_regress.py": "2C48386A0710414C19BE8BEFB5DA3010D48058D4A0DE3D4DA6EB16196F79C179",
+    "t75_resource_check.py": "261313B3CE3066DF899987C1E1B9A95B2718092FAD0AD1D8D5AD036E087C8153"
+  },
   "current_global_slots": [
     17492,
     33644,
     42016
   ],
-  "note": "Read-only unit inputs; no process or simulation launched. Final admission policy was checked after final RTL tests finished; simulation sources and checkers are unchanged."
+  "note": "Read-only simulated process lists; no process or simulation launched."
 }
