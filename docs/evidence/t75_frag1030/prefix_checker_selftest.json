@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "RTL fixture complete data has matching approved prefix",
+      "expected_match": true,
+      "passed": true
+    },
+    {
+      "case": "RTL fixture truncated exactly at approved records",
+      "expected_match": true,
+      "passed": true
+    },
+    {
+      "case": "reject byte difference in tx_a.txt",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject byte difference in tx_b.txt",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject byte difference in rx.txt",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject missing fourth RX record",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject missing sixth A frame",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject extra TX message record",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "reject extra event inside prefix",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "ignore complete events after cutoff",
+      "expected_match": true,
+      "passed": true
+    },
+    {
+      "case": "reject partial event inside prefix",
+      "expected_match": false,
+      "passed": true
+    },
+    {
+      "case": "retain exact line-ending byte comparison",
+      "expected_match": false,
+      "passed": true
+    }
+  ],
+  "source_sha256": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
+  "note": "RTL fixtures validate the file comparator only; no VQM acceptance or simulation is performed."
+}
