@@ -1,0 +1,64 @@
+Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
+------------------------------------Messages------------------------------------
+Options to suppress or downgrade errors.
+
+--------------------------------------------------------------------------------
++nowarnBSOB                     Disable BSOB warning message
+                                
++nowarnEXTSTR                   Disable EXTSTR warning message
+                                
++nowarnPSL                      Disable PSL warning message
+                                
++nowarnRDGN                     Disable RDGN warning message
+                                
++nowarnSVCHK                    Disable SVCHK warning message
+                                
++nowarnTFMPC                    Disable TFMPC warning message
+                                
++nowarnTMREN                    Disable TMREN warning message
+                                
+-error <msgNumber>[,<msgNumber>...]
+                                Report the listed messages as errors.
+                                
+-fatal <msgNumber>[,<msgNumber>...]
+                                Report the listed messages as fatal
+                                
+-msglimit [all,|none,][-|+]<msgNumber>[,[-|+]<msgNumber>...]
+                                Limit the reporting of listed messages to
+                                default count
+                                
+-msglimit [error|warning]       Limit the total number of errors/warnings to
+                                default count
+                                
+-msglimitcount <limit_value> -msglimit [all,|none,][-|+]<msgNumber>[,[-|+]<msgNumber>...]
+                                Limit the reporting of listed messages to user
+                                defined count
+                                
+-msglimitcount <limit_value> -msglimit [error|warning]
+                                Limit the total number of errors/warnings to
+                                user defined count
+                                
+-msgsingleline                  Display the messages in a single line.
+                                
+-note <msgNumber>[,<msgNumber>...]
+                                Report the listed message as notes
+                                
+-nowarn <number>                Disable specified category of warning messages;
+                                verror 1907 to see them.
+                                
+-source                         Print the source line with error messages.
+                                
+-suppress <msgNumber/msgGroup>[,<msgNumber/msgGroup>...]
+                                Suppress the listed messages using number or
+                                group. Valid <msgGroup> are All, GroupNote,
+                                GroupWarning, GroupFLI, GroupPLI, GroupSDF,
+                                GroupVCD, GroupVital, GroupWLF, GroupTCHK,
+                                GroupPA, GroupLRM
+                                
+-warnOOB                        Enable out-of-bounds warning message
+                                
+-warning error                  Report all warnings as errors
+                                
+-warning <msgNumber>[,<msgNumber>...]
+                                Report the listed messages as warnings
+                                
