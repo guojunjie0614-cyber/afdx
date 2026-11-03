@@ -1,0 +1,151 @@
+{
+  "status": "STOPPED_BY_CARD",
+  "reason": "Unmodified RTL official resynthesis differs from the required baseline VQM.",
+  "report_time": "2026-11-04 00:22:49",
+  "all_35_source_files_equal_to_baseline": true,
+  "baseline_synthesis_completed": true,
+  "vqm_gate_passed": false,
+  "byte_equal": false,
+  "ordered_noncomment_lines_equal": false,
+  "different_noncomment_line_positions": 2729,
+  "rtl_modified": false,
+  "readme_modified": false,
+  "route_started": false,
+  "required_five_simulations_started": false,
+  "acceptance_iverilog_compile_run": false,
+  "acceptance_modelsim_compile_passed": false,
+  "configured_modelsim_automatic_macro_verified": true,
+  "no_subagents": true,
+  "no_scheduled_tasks": true,
+  "no_push": true,
+  "owned_controller_termination_attempt": {
+    "pid": 27696,
+    "result": "Already exited naturally; identity lookup raised NoSuchProcess; no kill executed"
+  },
+  "remaining_t77_tools": [],
+  "peer_process_presence_at_closeout": [
+    {
+      "pid": 24460,
+      "created": 1793691230.8852773,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 12456,
+      "created": 1793691255.5005205,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 42016,
+      "created": 1793691255.5790815,
+      "name": "vsimk.exe",
+      "present": true
+    },
+    {
+      "pid": 38740,
+      "created": 1793693214.541258,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 47712,
+      "created": 1793693216.3226552,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 28808,
+      "created": 1793693286.2756767,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 33644,
+      "created": 1793693286.312673,
+      "name": "vsimk.exe",
+      "present": true
+    },
+    {
+      "pid": 43804,
+      "created": 1793714237.0192025,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 32848,
+      "created": 1793718121.7620716,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 10648,
+      "created": 1793718147.4924896,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 28684,
+      "created": 1793718147.5331435,
+      "name": "vsimk.exe",
+      "present": true
+    },
+    {
+      "pid": 7104,
+      "created": 1793718161.510272,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 33200,
+      "created": 1793718161.5274813,
+      "name": "vsimk.exe",
+      "present": true
+    },
+    {
+      "pid": 14068,
+      "created": 1793718422.719312,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 31428,
+      "created": 1793718453.37267,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 32,
+      "created": 1793718453.4228623,
+      "name": "vsimk.exe",
+      "present": true
+    },
+    {
+      "pid": 21340,
+      "created": 1793720800.0898364,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 30060,
+      "created": 1793720776.2761233,
+      "name": "python.exe",
+      "present": true
+    },
+    {
+      "pid": 24992,
+      "created": 1793721156.3937964,
+      "name": "vsim.exe",
+      "present": true
+    },
+    {
+      "pid": 47832,
+      "created": 1793721156.4440908,
+      "name": "vsimk.exe",
+      "present": true
+    }
+  ],
+  "baseline_synthesis_warning_lines": 64,
+  "raw_evidence_directory": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\baseline_original\\20261103_081503_980400",
+  "task_card_updated": false
+}
