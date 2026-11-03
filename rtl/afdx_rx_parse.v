@@ -37,6 +37,9 @@ module afdx_rx_parse #(
     // ev[3] 表示协议头错误。
     // ev[7] 表示用户数据缓存已满。
     output reg [7:0] ev);
+`ifdef MODEL_TECH
+    reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
+`endif
 
     localparam [RX_RING_AW:0] CAPACITY = {1'b1, {RX_RING_AW{1'b0}}};
 
@@ -96,7 +99,9 @@ module afdx_rx_parse #(
     wire fragmented = frame_fragmented;
     wire later_fragment = frame_later;
     wire [15:0] ip_data_len = ip_len - 16'd20;
+`ifndef MODEL_TECH
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
+`endif
     // Normalize both length forms before the final limits/select stage.
     reg [15:0] data_end_q, wire_length_q;
     reg pad_sn_q, pad_wire_q;

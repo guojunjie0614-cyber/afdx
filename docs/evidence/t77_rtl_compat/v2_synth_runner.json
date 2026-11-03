@@ -1,0 +1,584 @@
+{
+  "mode": "synth",
+  "started": "2026-11-04 00:33:40",
+  "deadline": "2026-11-04 03:26:50",
+  "runner": {
+    "pid": 37168,
+    "created": 1793723620.1018095,
+    "name": "python.exe",
+    "command": [
+      "E:\\anaconda3\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "docs/evidence/t77_rtl_compat/v2_run.py",
+      "synth",
+      "--deadline",
+      "2026-11-04T03:26:50+08:00"
+    ]
+  },
+  "protected_before": [
+    {
+      "pid": 32,
+      "created": 1793718453.4228623,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070702_960902}"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 32756,
+      "created": 1793718453.5946639,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-832474759",
+        "667663510"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 20412,
+      "created": 1793718470.5292137,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 13220,
+      "created": 1793718470.5451767,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=1",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 41280,
+      "created": 1793718470.7067096,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-831697994",
+        "667387481"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 10648,
+      "created": 1793718147.4924896,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070202_050887}"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 14768,
+      "created": 1793718147.5025513,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 28684,
+      "created": 1793718147.5331435,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070202_050887}"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 12320,
+      "created": 1793718147.675295,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-864894707",
+        "634916066"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 7104,
+      "created": 1793718161.510272,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=0",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 33200,
+      "created": 1793718161.5274813,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_t76_load",
+        "-gVL_COUNT=81",
+        "-gGROUP_LENGTH=1471",
+        "-gMIXED=2",
+        "-gDUPLEX=0",
+        "-gDURATION=125001",
+        "-gSMOKE=0",
+        "-gSWAP=0",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 3228,
+      "created": 1793718161.684955,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-865757857",
+        "634345648"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 14068,
+      "created": 1793718422.719312,
+      "name": "python.exe",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\tools\\t76_sim.py",
+        "--deadline",
+        "2026-11-04T23:07:02.714243+08:00",
+        "--netlist",
+        "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+        "--reference",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\t76_sim\\tb_t76_load\\20261103_060150_860384",
+        "--param",
+        "GROUP_LENGTH=1471",
+        "--param",
+        "MIXED=2",
+        "--param",
+        "DURATION=125001",
+        "--param",
+        "DUPLEX=0",
+        "--param",
+        "SWAP=1"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 29292,
+      "created": 1793718422.7278354,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 31428,
+      "created": 1793718453.37267,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-l",
+        "official_transcript.log",
+        "-wlf",
+        "official_entry.wlf",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/sim/run_t76_post_synth.do} {E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/critical_net_source/out/t76_sim/tb_t76_load/20261103_070702_960902}"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 21128,
+      "created": 1793718453.3859944,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 21340,
+      "created": 1793720800.0898364,
+      "name": "python.exe",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\tools\\par_regress.py",
+        "--output",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel",
+        "--resume",
+        "--max-sims",
+        "10",
+        "--max-owned-sims",
+        "3",
+        "--max-netlists",
+        "3",
+        "--max-synth",
+        "1",
+        "--rtl-hours",
+        "24",
+        "--compute-cores",
+        "6",
+        "--paused-manifest",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\priority_pauses.json",
+        "--peer-queue",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\summary.json",
+        "--own-netlist-limit",
+        "--post-command",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\closeout_command.json"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 42924,
+      "created": 1793720800.1019394,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 24460,
+      "created": 1793691230.8852773,
+      "name": "python.exe",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\tools\\gui_netlist.py",
+        "--test",
+        "tb_elinx",
+        "--netlist",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\build1030\\AFDX_top_1030\\20261102_212626_064390\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+        "--deadline",
+        "2026-11-04T15:33:50.883339+08:00"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 2272,
+      "created": 1793691230.8939965,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 12456,
+      "created": 1793691255.5005205,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_elinx",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 15556,
+      "created": 1793691255.5080996,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 42016,
+      "created": 1793691255.5790815,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_elinx",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 44600,
+      "created": 1793691255.8058045,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-738606194",
+        "978521697"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 32848,
+      "created": 1793718121.7620716,
+      "name": "python.exe",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source\\tools\\t76_sim.py",
+        "--deadline",
+        "2026-11-04T23:02:01.759646+08:00",
+        "--netlist",
+        "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+        "--reference",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\t76_sim\\tb_t76_load\\20261103_060141_115596",
+        "--param",
+        "GROUP_LENGTH=1471",
+        "--param",
+        "MIXED=2",
+        "--param",
+        "DURATION=125001",
+        "--param",
+        "DUPLEX=0"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 43288,
+      "created": 1793718121.7756555,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 43804,
+      "created": 1793714237.0192025,
+      "name": "python.exe",
+      "command": [
+        "E:/anaconda3/python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\tools\\t75_prefix_stop.py",
+        "--wait"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 22348,
+      "created": 1793714237.0275218,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 47712,
+      "created": 1793693216.3226552,
+      "name": "python.exe",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\tools\\gui_netlist.py",
+        "--test",
+        "tb_frag1030_net",
+        "--netlist",
+        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\build1030\\AFDX_top_1030\\20261102_212626_064390\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+        "--deadline",
+        "2026-11-04T16:06:56.320662+08:00"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 17148,
+      "created": 1793693216.3333397,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 28808,
+      "created": 1793693286.2756767,
+      "name": "vsim.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_frag1030_net",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 27216,
+      "created": 1793693286.2815485,
+      "name": "conhost.exe",
+      "command": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 33644,
+      "created": 1793693286.312673,
+      "name": "vsimk.exe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsimk.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_frag1030_net",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "same_process_still_running": true
+    },
+    {
+      "pid": 23196,
+      "created": 1793693286.4739552,
+      "name": "vlm.exe",
+      "command": [
+        "E:/Verilog/ModelSim/setup_pack/win64\\vlm.exe",
+        "-286397904",
+        "122103775"
+      ],
+      "same_process_still_running": true
+    }
+  ],
+  "per_task_max_official_synthesis": 1,
+  "per_task_max_modelsim": 1,
+  "passed": true,
+  "completed": true,
+  "finished": "2026-11-04 00:38:00",
+  "resources": [
+    {
+      "time": "2026-11-04 00:33:42",
+      "job": "analysis",
+      "executable": "quartus_map.exe",
+      "free_memory_gib": 9.709453582763672,
+      "e_free_gib": 39.39825439453125,
+      "global_modelsim_slots": 6,
+      "global_official_synthesis": 0
+    },
+    {
+      "time": "2026-11-04 00:37:50",
+      "job": "export",
+      "executable": "quartus_cdb.exe",
+      "free_memory_gib": 9.782306671142578,
+      "e_free_gib": 39.27411651611328,
+      "global_modelsim_slots": 6,
+      "global_official_synthesis": 0
+    }
+  ]
+}

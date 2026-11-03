@@ -76,6 +76,9 @@ module afdx_tx_engine #(
 
     // cfg_ok 为高时，发送核心可以写入外部配置。
     output wire cfg_ok);
+`ifdef MODEL_TECH
+    reg [31:0] words[0:5];
+`endif
 
     // 缓存端提前一拍提出请求，本拍采样后仍在原来的周期进入调度器。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg enq_sampled;
@@ -217,7 +220,9 @@ module afdx_tx_engine #(
     // words 暂存当前选中虚拟链路的六个配置字。
     // 配置字 0 的 [0] 是使能位，[1] 和 [2] 分别允许从 A 网和 B 网发送。
     // 配置字 0 的 [8:3] 是最多排队的消息数，[19:9] 是允许的最大消息长度（字节）。
+`ifndef MODEL_TECH
     reg [31:0] words[0:5];
+`endif
     // 配置和状态在 ENQ 的 phase=1 保存，phase=3 预计算，phase=4 只消费本地标志。
     // 长度比较也提前寄存，避免配置字 [19:9] 经拒绝优先级链驱动写使能。
     (* preserve = 1, dont_merge = 1 *) reg enq_disabled_q, enq_too_long_q, q_full_q, mnext_wr_q;

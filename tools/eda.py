@@ -166,7 +166,7 @@ def sim(options):
             if not modules & replaced:rtl.append(path)
         sources=rtl+sorted((ROOT/"tb/lib").glob("*.v"))+[bench]
         compile_sources=list(sources)
-        if os.environ.get("AFDX_MODELSIM_DECL_ORDER","1")=="1":
+        if os.environ.get("AFDX_MODELSIM_DECL_ORDER","0")=="1":
             from modelsim_sources import prepare
             portable,changes=prepare(rtl,f.folder)
             compile_sources=portable+compile_sources[len(rtl):]
@@ -285,7 +285,24 @@ def sim(options):
         diagnostics={kind:len(re.findall(r"\*\* "+kind+":",log)) for kind in ("Error","Fatal","Warning")}
         diagnostics["RAMCOLL"]=log.count("RAMCOLL")
         f.result["simulation_diagnostics"]=diagnostics
-        good=good and not any(diagnostics.values())
+        warning_lines=re.findall(r"(?m)^.*\*\* Warning:[^\r\n]*",log)
+        # Direct guarded RTL retains the existing system tasks and optional
+        # open inputs. Keep their elaboration warnings visible. Assertion
+        # messages still fail even if this ModelSim lacks finish_and_return.
+        known_rtl_warnings=(
+            r"\(vsim-PLI-3003\) \[TOFD\] - System task or function '\$finish_and_return' is not defined\.$",
+            r"afdx_app_tx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'payload'\.  Expected 9, found 8\.$",
+            r"afdx_app_tx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'raw_write_data'\.$",
+            r"afdx_app_rx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'reader'\.  Expected 11, found 10\.$",
+            r"afdx_app_rx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'next_limit'\.$",
+        )
+        unexpected_warnings=[line for line in warning_lines if netlists or
+                             not any(re.search(pattern,line) for pattern in known_rtl_warnings)]
+        f.result["simulation_warning_lines"]=warning_lines
+        f.result["unexpected_simulation_warnings"]=unexpected_warnings
+        f.result["rx_assertion_messages"]=log.count("[RX_ASSERT]")
+        good=good and not any(diagnostics[k] for k in ("Error","Fatal","RAMCOLL"))
+        good=good and not unexpected_warnings and not f.result["rx_assertion_messages"]
         good=good and all(sha(Path(r["path"]))==r["sha256"] for r in f.result["inputs"])
         if options.test.startswith(("tb_tx_","tb_rx_")) and not standalone_tx:
             report=f.job("check",[sys.executable,ROOT/"tools/afdx_ref.py","check","--test",options.test,"--dir",f.folder],180)

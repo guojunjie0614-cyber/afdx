@@ -1,0 +1,12 @@
+Implementation Status : Successful
+eLinx Version : 3.0 
+Top-level Entity Name : AFDX_top
+Total LUTs : 62274 / 136160 (46%)
+Total FFs : 35597 / 136160 (26%)
+Total Memorys : 814 / 1200 (68%)
+Total DSPs : 0 / 48 (0%)
+Total PLLs : 0 / 8 (0%)
+Total CLBs : 10230 / 13616 (75%)
+Total Pins : 172 / 339 (51%)
+Min Slack : 1e+30
+EndPoints : 40962

@@ -38,6 +38,12 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     input wire rx_last,
     input wire [15:0] rx_sport, rx_dport,
     output wire rx_claim);
+`ifdef MODEL_TECH
+    wire [1:0] engine_status;
+    wire [15:0] engine_main_tid;
+    wire [15:0] engine_status_tid;
+    wire [15:0] engine_deny_tid;
+`endif
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
@@ -191,14 +197,22 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [9:0] tx_ra;
     wire [7:0] tx_q, deny_q;
     wire  consume;
+`ifndef MODEL_TECH
     wire [1:0] engine_status;
+`endif
     wire [7:0] engine_reason;
     wire [13:0] engine_loaded;
     wire [15:0] engine_lus_counter;
     wire [31:0] engine_retry_total;
+`ifndef MODEL_TECH
     wire [15:0] engine_main_tid;
+`endif
+`ifndef MODEL_TECH
     wire [15:0] engine_status_tid;
+`endif
+`ifndef MODEL_TECH
     wire [15:0] engine_deny_tid;
+`endif
     wire [15:0] engine_tx_sport;
     wire [15:0] engine_tx_dport;
     wire  send_request;

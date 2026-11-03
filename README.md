@@ -18,7 +18,7 @@ T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格�
 
 ## 目录
 
-- `rtl/`：可综合的设计源码，共 29 个文件，模块分工见“模块一览”。
+- `rtl/`：可综合的设计源码，共 34 个文件，模块分工见“模块一览”。
 - `tb/`：自检测试平台；`tb/lib/` 是测试平台共用的端点和链路模型。
 - `sim/`：ModelSim do 文件、回归入口、测试清单和固定向量。
 - `tools/`：Python 参考模型、独立检查器和工具运行脚本。
@@ -27,7 +27,7 @@ T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格�
 
 ## 软件准备
 
-基本工具为 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。T76 的源码兼容候选已按覆盖决定试布线，因实际时序和锁定目标检查失败而回退；本分支入口使用 T75 仿真副本兼容方式，因此还需要 `AFDX_PYTHON=E:/anaconda3/python.exe`。变换只写每次运行的输出目录，原 RTL 不变；各次 `modelsim_compatibility.json` 保存变换与逆变换核验。
+基本工具为 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。本分支的 7 份 RTL 使用 `MODEL_TECH` 条件分支处理 21 处声明顺序：ModelSim 自动定义该宏，编译提前声明；其他工具保留原位置声明及表达式。不要在综合命令中定义 `MODEL_TECH`。本分支仿真入口默认直接编译 `rtl/`，使用 `AFDX_MODELSIM_DECL_ORDER=0` 关闭 T75 兼容副本。
 完整 56 项回归（原有 40 项 + T65 新增 16 项）、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
 软件不随工程分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
 
@@ -43,7 +43,21 @@ T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格�
 
 ## 快速上手
 
-先设置 `AFDX_PYTHON`，并保持 `AFDX_MODELSIM_DECL_ORDER=1`（默认值），再运行步骤 1、2。测试会自动建立工作库、兼容副本和输入文件，不必先做综合。下面 F1 界面走查的历史结果不代表 T76 原样 RTL 已通过兼容门槛。
+命令行参考模型使用 `AFDX_PYTHON=E:/anaconda3/python.exe`。保持 `AFDX_MODELSIM_DECL_ORDER=0`（默认值），再运行步骤 1、2；ModelSim Transcript 中可执行 `set ::env(AFDX_MODELSIM_DECL_ORDER) 0`。测试会自动建立工作库和输入文件，不必先做综合。T77 的双工具编译、五项直接 RTL 仿真及综合输入文本等价证据见 [T77 执行报告](docs/evidence/t77_rtl_compat/summary.md)；下面 F1 界面走查结果保留为历史记录。
+
+单独编译整顶层可在 ModelSim 的可写输出目录中执行 `vlib work`，然后 `vlog -vlog01compat <工程路径>/rtl/*.v`；无需显式 `+define+MODEL_TECH`。命令行自检示例：
+
+```powershell
+$env:AFDX_MODELSIM_DECL_ORDER='0'
+$env:AFDX_CE_DIV='2'
+& 'E:/anaconda3/python.exe' -B -X utf8 tools/eda.py sim --test tb_elinx
+```
+
+`$fatal`、`$finish_and_return` 保持原样。当前 ModelSim 会对未定义的 `$finish_and_return` 和两个未连接的可选输入端口发出警告，入口完整保留这些已知警告；其他警告、Error、Fatal、`RX_ASSERT` 与 RAM 冲突仍判失败。该兼容验收不证明 `$finish_and_return` 被触发时可以终止仿真，也不覆盖 yosys 辅助网表。
+
+T77 已通过五项直接 RTL 自检及改动后源码的完整 `build_1030.py --route --pres 1.30` 流程：默认 11,044 个锁定簇、172 个 P0 管脚不变，布线 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点。原样重综合网表 `e9e1734c…` 从官方 VQM 导入入口重新打包、锁定布线，也复现相同数值。旧基准 VQM `3cd8f5f8…` 和本次新 VQM `96d14e2f…` 分别绑定各自的布线证据；不要仅凭文本等价或结构等价混用网表、检查点与时序报告。
+
+官方综合导出的 VQM 存在排列不确定性；本轮比较的五份 VQM 名称和功能结构相同，保序文本不同。将运行副本的 `NUM_PARALLEL_PROCESSORS` 设为 1 已验证生效，但没有恢复基准顺序，也未证明输出固定。界面 Run Behavioral Simulation 的实际验收状态单列在 [T77 执行报告](docs/evidence/t77_rtl_compat/summary.md)；命令行通过不自动记为 GUI 点击通过。
 工程路径不要含中文或空格。实测 ModelSim 2020.4 在中文路径下无法创建工作库，在带空格的路径下无法载入仿真；入口会提前提示更换目录。
 
 1. 在 ModelSim 的 Transcript 窗口进入工程根目录，把下面的占位文字换成实际目录。
@@ -70,7 +84,7 @@ T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格�
 
 ### 应用激励入口（只注入 VLID 和应用数据）
 
-R124、R126 要求顶层激励文件只注入 VLID 和应用数据，R120-3 说明发送侧输入、接收侧输出都是包含 VLID 的原始有效载荷。`sim/run_app.do` 的顶层激励只负责应用数据，系统配置移到 `tb/lib/afdx_sys_config.v`；当前源码回退下的兼容副本准备需要 `AFDX_PYTHON`，评委不需要编写配置寄存器激励：
+R124、R126 要求顶层激励文件只注入 VLID 和应用数据，R120-3 说明发送侧输入、接收侧输出都是包含 VLID 的原始有效载荷。`sim/run_app.do` 的顶层激励只负责应用数据，系统配置移到 `tb/lib/afdx_sys_config.v`；默认直接编译 RTL，评委不需要编写配置寄存器激励：
 
 ```tcl
 do sim/run_app.do
