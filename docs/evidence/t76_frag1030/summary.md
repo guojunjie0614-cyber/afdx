@@ -1,6 +1,6 @@
 # T76 执行记录
 
-更新：2026-11-03 23:54:15。状态：**未验收**；有限作业队列仍有运行或排队项目。
+更新：2026-11-04 00:00:20。状态：**未验收**；有限作业队列仍有运行或排队项目。
 
 ## 第 0 步与规格
 
@@ -27,6 +27,7 @@
 | 2 | `GROUP_LENGTH=1` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\fallback_source\out\t76_sim\tb_t76_load\20261103_061703_896445` |
 | 3 | `GROUP_LENGTH=17` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\fallback_source\out\t76_sim\tb_t76_load\20261103_061705_106406` |
 | 4 | `GROUP_LENGTH=256` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\fallback_source\out\t76_sim\tb_t76_load\20261103_062700_522137` |
+| 5 | `GROUP_LENGTH=1024` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\fallback_source\out\t76_sim\tb_t76_load\20261103_070029_744614` |
 | mixed_profile | `VL_COUNT=63,MIXED=1,DURATION=12500000` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\search_source\out\t76_sim\tb_t76_load\20261103_070501_935849` |
 
 BAG 等待场景（每 VL 每 2 ms 连续两条最大载荷消息，长期平均仍为每 BAG 一帧），逐 VL 数值见 [BAG 等待统计表](bag_wait_metrics.tsv)：
