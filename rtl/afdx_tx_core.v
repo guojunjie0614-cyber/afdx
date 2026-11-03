@@ -59,20 +59,29 @@ module afdx_tx_core #(
     wire [TX_PAGE_AW - 1:0] mnext_write_addr, mnext_read_addr, desc_write_addr, desc_read_addr, pnext_write_addr,
         pnext_read_addr;
     wire [7:0] mnext_write_data, mnext_data, pnext_write_data, pnext_data, payload_write_data, payload_data;
-    wire [43:0] desc_write_data, desc_data;
+    wire [46:0] desc_write_data, desc_data;
     wire [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_write_addr, payload_read_addr;
     wire pop_req, pop_ready, pop_ack, pop_ok, ret1_valid, ret1_ready, ret2_valid, ret2_ready;
     wire [7:0] pop_page, ret1_page, ret2_page;
     wire enq_valid, enq_ack;
     wire [6:0] enq_vl;
     wire [7:0] enq_head;
-    wire [10:0] enq_len;
+    wire [13:0] enq_len;
     wire [2:0] enq_result;
     wire start_valid, grant_ready, grant_valid, grant_a, grant_b, grant_timed;
     wire [31:0] t_start, grant_time, grant_src, grant_dst;
     wire [15:0] grant_vlid, grant_sport, grant_dport;
     wire [10:0] grant_len;
-    wire [7:0] grant_sn, grant_page;
+    wire [7:0] grant_sn, grant_page, grant_head;
+    wire [TX_OFF_AW-1:0] grant_offset, fragment_done_offset;
+    wire [12:0] grant_ip_offset;
+    wire [13:0] grant_message_len;
+    wire [15:0] grant_ident;
+    wire grant_first, grant_more;
+    wire [6:0] grant_vl_index, fragment_done_vl;
+    wire fragment_done, completion_now;
+    wire [6:0] completion_vl;
+    wire [7:0] fragment_done_page;
     wire s_valid, s_last, s_en_a, s_en_b, tx_sof, tx_eof, tx_underrun;
     wire [7:0] s_data_a, s_data_b;
 
@@ -139,7 +148,7 @@ module afdx_tx_core #(
         .read_address(mnext_read_addr),
         .read_data(mnext_data)
     );
-    afdx_ram_sdp #(.WIDTH(44), .DEPTH(PAGES)) tx_desc (
+    afdx_ram_sdp #(.WIDTH(47), .DEPTH(PAGES)) tx_desc (
         .clk(clk),
         .write_enable(desc_write),
         .write_address(desc_write_addr),
@@ -159,12 +168,14 @@ module afdx_tx_core #(
         .read_address(pnext_read_addr),
         .read_data(pnext_data)
     );
-    afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAYLOAD_DEPTH)) tx_payload (
-        .clk(clk),
+    afdx_tx_payload_store #(.AW(TX_PAGE_AW+TX_OFF_AW)) tx_payload (
+        .clk(clk),.reset(reset),
         .write_enable(payload_write),
         .write_address(payload_write_addr),
         .write_data(payload_write_data),
-        .read_enable(payload_read),
+        // Used only to diagnose a collision on an actually consumed response;
+        // the storage read itself is unconditional.
+        .read_request(payload_read),
         .read_address(payload_read_addr),
         .read_data(payload_data)
     );
@@ -234,7 +245,7 @@ module afdx_tx_core #(
         .ev_drop_long(ev_drop_long),
         .ev_drop_nopage(ev_drop_nopage)
     );
-    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .LOOKAHEAD(LOOKAHEAD), .PIPELINED_ENQUEUE(1)) engine (
+    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD), .PIPELINED_ENQUEUE(1), .COMPLETION_LOOKAHEAD(1)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
@@ -283,7 +294,14 @@ module afdx_tx_core #(
         .grant_dst(grant_dst),
         .grant_len(grant_len),
         .grant_sn(grant_sn),
-        .grant_page(grant_page)
+        .grant_page(grant_page),
+        .grant_head(grant_head), .grant_offset(grant_offset),
+        .grant_ip_offset(grant_ip_offset), .grant_message_len(grant_message_len),
+        .grant_ident(grant_ident), .grant_first(grant_first), .grant_more(grant_more),
+        .completion_now(completion_now),.completion_vl(completion_vl),
+        .grant_vl_index(grant_vl_index), .fragment_done(fragment_done),
+        .fragment_done_vl(fragment_done_vl), .fragment_done_page(fragment_done_page),
+        .fragment_done_offset(fragment_done_offset)
     );
     localparam READY_COPIES = 15;
     wire [READY_COPIES - 1:0] s_ready;
@@ -310,6 +328,13 @@ module afdx_tx_core #(
         .grant_len(grant_len),
         .grant_sn(grant_sn),
         .grant_page(grant_page),
+        .grant_head(grant_head), .grant_offset(grant_offset),
+        .grant_ip_offset(grant_ip_offset), .grant_message_len(grant_message_len),
+        .grant_ident(grant_ident), .grant_first(grant_first), .grant_more(grant_more),
+        .completion_now(completion_now),.completion_vl(completion_vl),
+        .grant_vl_index(grant_vl_index), .fragment_done(fragment_done),
+        .fragment_done_vl(fragment_done_vl), .fragment_done_page(fragment_done_page),
+        .fragment_done_offset(fragment_done_offset),
         .start_valid(start_valid),
         .t_start(t_start),
         .payload_re(payload_read),
@@ -356,18 +381,20 @@ module afdx_tx_core #(
             skid_word <= 0;
         end
         else begin
+            // Invariant: up_ready == !skid_valid. Predict the next empty
+            // reserve slot every edge, including held cycles, without a ready
+            // feedback enable. The advertised credit always has real storage.
+            up_ready <= {READY_COPIES{main_free || (!skid_valid && !s_valid)}};
             if (main_free) begin
                 // MAC 取走或缓冲为空时，先补入暂存项，否则补入本拍新字节。
                 main_valid <= skid_valid || up_take;
                 main_word <= skid_valid ? skid_word : up_word;
                 skid_valid <= 0;
-                up_ready <= {READY_COPIES{1'b1}};
             end
             else if (up_take) begin
                 // MAC 本拍不取：新字节进暂存项，下一拍停止向组帧模块要数。
                 skid_valid <= 1;
                 skid_word <= up_word;
-                up_ready <= 0;
             end
         end
     end
@@ -394,4 +421,41 @@ module afdx_tx_core #(
         .tx_valid_b(tx_valid_b)
     );
 
+endmodule
+
+// Preserve the original single logical RAM and free-running synchronous read.
+// Builder E0 request -> E1 RAM -> E2 builder return FF -> E3 payload FIFO.
+// A complete write bundle is captured locally, then physically written one
+// clock later. Descriptor/admission scheduling leaves >=36 clocks before the
+// earliest new-message read; rollback cannot return a page before retirement.
+module afdx_tx_payload_store #(parameter AW=17) (
+    input wire clk,reset,write_enable,
+    input wire [AW-1:0] write_address,
+    input wire [7:0] write_data,
+    input wire read_request,
+    input wire [AW-1:0] read_address,
+    output reg [7:0] read_data
+);
+    (* preserve=1,dont_merge=1 *) reg write_command,write_qualifier;
+    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address_command;
+    (* preserve=1,dont_merge=1 *) reg [7:0] write_data_command;
+    (* ramstyle="no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
+    always @(posedge clk)begin
+        if(reset)begin write_command<=0;write_qualifier<=0;end
+        else begin write_command<=write_enable;write_qualifier<=write_enable;end
+        // Empty/unaccepted commands may sample; WE never gates wide FFs.
+        write_address_command<=write_address;
+        write_data_command<=write_data;
+    end
+    // Command and data qualifier have identical values but independent local
+    // loads. Reset flushes valid; a previously accepted write may retire on
+    // the first reset edge while all allocation/descriptor ownership is reset.
+    always @(posedge clk)if(write_command)
+        memory[write_address_command]<=write_qualifier ? write_data_command : 8'b0;
+    always @(posedge clk)read_data<=memory[read_address];
+`ifndef SYNTHESIS
+    // Only actual physical writes and consumed read requests may collide.
+    always @(posedge clk)if(!reset && write_command && read_request && write_address_command==read_address)
+        $display("** Error: [RAMCOLL] %m physical_read time=%0t address=%0d",$time,write_address_command);
+`endif
 endmodule

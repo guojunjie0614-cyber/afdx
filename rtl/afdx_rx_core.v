@@ -2,7 +2,8 @@
 // 两路线路分别接收，检查通过后由一个输出口交付消息。
 // 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
 module afdx_rx_core #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1, REGISTERED_TIME_TICK = 0) (
+    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1, REGISTERED_TIME_TICK = 0,
+    parameter REASSEMBLY_CONTEXTS = 16, REASSEMBLY_TIMEOUT_CYCLES = 250000000) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
     input wire clk, reset,
@@ -64,10 +65,19 @@ module afdx_rx_core #(
     wire [RX_RING_AW:0] ptr_a, ptr_b;
     wire [CFG_COPIES - 1:0] da_valid, db_valid;
     wire take_a, take_b, resolve_a, resolve_b, commit_a, commit_b;
-    wire [RX_RING_AW + 82:0] desc_a, desc_b;
+    wire [RX_RING_AW + 208:0] desc_a, desc_b;
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
 
-    localparam DQ_WIDTH = RX_RING_AW + 56;
+    localparam DQ_WIDTH = RX_RING_AW + 61;
+    wire query, cancel, result_valid, reserve, reserve_ok, reservation_net, frag_ready, frag_prepared, frag_start, frag_valid, frag_last, frag_net, frag_kind, frag_empty;
+    wire [1:0] query_bank, cancel_bank, reserve_bank;
+    wire [3:0] reserve_slot, frag_slot;
+    wire [125:0] reserve_meta;
+    wire [11:0] reserve_vl, frag_vl;
+    wire [10:0] reserve_length;
+    wire [15:0] reserve_sport, reserve_dport, frag_sport, frag_dport;
+    wire [7:0] frag_data;
+    wire [1:0] reassembly_reject;
     wire engine_rm, engine_deliver, dq_pop;
     wire dq_we, dq_re;
     wire [RX_DQ_AW - 1:0] dq_wa, dq_ra;
@@ -117,8 +127,8 @@ module afdx_rx_core #(
             // 地址与数据自由运行，写脉冲独立决定提交；清除比较不再出现在写数据锥内。
             cfg_wa <= init_done ? cfg_addr[11:0] : clear_addr[11:0];
             cfg_wd <= init_done ? cfg_wdata[31:0] : 32'b0;
-            ev_a <= parse_ev_a | engine_ev_a;
-            ev_b <= parse_ev_b | engine_ev_b;
+            ev_a <= parse_ev_a | engine_ev_a | (reassembly_reject[0] ? 8'h80 : 8'h00);
+            ev_b <= parse_ev_b | engine_ev_b | (reassembly_reject[1] ? 8'h80 : 8'h00);
             ev_rm_drop <= engine_rm;
             ev_deliver <= engine_deliver;
         end
@@ -128,96 +138,96 @@ module afdx_rx_core #(
     // cfg 保存接收开关、长度限制和两网允许的最大时间差。
     // state 保存各虚拟链路的接收序号和交付记录。
     // 32 个 bank 各保存 2048 项；每个局部地址只驱动本 bank 的存储块。
-    // 请求寄存器与引擎原来的 map_ra/map_re 同拍更新。
-    // RAM 口影子与回读输出各增加一级流水线，引擎的 FRAME 相位同步后移两拍。
+    // 引擎源端同时登记请求/地址，bank 次级驱动 RAM。
+    // 回读按2-bank、4-group、最终4-group三级归并，FRAME5保存最终响应。
     localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
-    // 读地址在源端译码并寄存为独热位，bank 内下一拍只合并单比特请求。
-    // 复用原有两级请求流水线，低地址与返回数据的固定相位均不改变。
+    // 首级地址寄存在 engine 的分发副本，bank 次级同时译码高位并登记低位。
+    // 请求仍为两级流水，低地址与返回数据的固定相位均不改变。
     // 写选通使用本 bank 所在总线副本的 map_we 位。
     wire [MAP_BANKS - 1:0] map_rd_sel, map_wr_sel;
-    (* preserve = 1, dont_merge = 1 *) reg [MAP_BANKS - 1:0] map_bank_oh;
-    always @(posedge clk) begin
-        if (reset) map_bank_oh <= 0;
-        else map_bank_oh <= map_rd_sel;
-    end
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
-    assign map_q = map_group_data[0 * 13 +: 13] |
-        map_group_data[1 * 13 +: 13] |
-        map_group_data[2 * 13 +: 13] |
-        map_group_data[3 * 13 +: 13] |
-        map_group_data[4 * 13 +: 13] |
-        map_group_data[5 * 13 +: 13] |
-        map_group_data[6 * 13 +: 13] |
-        map_group_data[7 * 13 +: 13] |
-        map_group_data[8 * 13 +: 13] |
-        map_group_data[9 * 13 +: 13] |
-        map_group_data[10 * 13 +: 13] |
-        map_group_data[11 * 13 +: 13] |
-        map_group_data[12 * 13 +: 13] |
-        map_group_data[13 * 13 +: 13] |
-        map_group_data[14 * 13 +: 13] |
-        map_group_data[15 * 13 +: 13];
+    (* preserve=1, dont_merge=1 *) reg [51:0] map_upper_data;
+    assign map_q=map_upper_data[12:0] | map_upper_data[25:13] |
+        map_upper_data[38:26] | map_upper_data[51:39];
     (* preserve = 1, dont_merge = 1 *) reg [12:0] map_q_r;
     always @(posedge clk) begin
         if (reset) map_q_r <= 0;
         else map_q_r <= map_q;
     end
 
-    genvar bank, map_group;
+    genvar bank, map_group, map_slice, upper_group, cfg_slice, state_slice;
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
             // 相邻 bank 共享一份配置/描述符分发；CFG_COPIES 为 MAP_BANKS 的正因数。
             localparam BUS_COPY = bank / (MAP_BANKS / CFG_COPIES);
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
             (* preserve = 1, dont_merge = 1 *) reg cleared;
+            (* preserve=1, dont_merge=1 *) reg clear_low_last, clear_high_last;
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16 +: 16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16 +: 16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32 +: 13];
             assign map_rd_sel[bank] = bank_read_addr[15:MAP_BANK_AW] == bank;
-            assign map_wr_sel[bank] = init_done && cfg_map_we[BUS_COPY]
+            assign map_wr_sel[bank] = cfg_map_we[BUS_COPY]
                 && cfg_ok[BUS_COPY] && bank_cfg_addr[15:MAP_BANK_AW] == bank;
-            (* preserve = 1, dont_merge = 1 *) reg read_request, write_request;
-            (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] read_address, write_address;
             (* preserve = 1, dont_merge = 1 *) reg ram_request_q;
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] ram_address_q;
-            (* preserve = 1, dont_merge = 1 *) reg [12:0] write_data;
             (* preserve = 1, dont_merge = 1 *) reg selected;
             wire [12:0] data;
             assign map_bank_data[bank * 13 +: 13] = data & {13{selected}};
             always @(posedge clk) begin
                 if (reset) begin
-                    read_request <= 0;
                     ram_request_q <= 0;
-                    write_request <= 0;
                     selected <= 0;
                     clear_local <= 0;
-                    cleared <= 0;
+                    cleared <= 0;clear_low_last<=0;clear_high_last<=0;
                 end
                 else begin
                     selected <= ram_request_q;
-                    // 使能和源端独热位同拍登记，再在 RAM 口前合并，不额外增加读延迟。
-                    read_request <= map_re[BUS_COPY];
-                    ram_request_q <= read_request && map_bank_oh[bank];
+                    // 地址首级已在源端登记；本级译码与低地址同步送到 RAM 口。
+                    ram_request_q <= map_re[BUS_COPY] && map_rd_sel[bank];
                     // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
-                    write_request <= !cleared || map_wr_sel[bank];
                     if (!cleared) begin
                         clear_local <= clear_local + 1'b1;
-                        if (&clear_local) cleared <= 1;
+                        // Joint prediction becomes true only when the current
+                        // count is 2047: low predicts 62->63, high stays at 31.
+                        clear_low_last<=clear_local[5:0]==6'd62;
+                        clear_high_last<=clear_local[10:6]==5'd31;
+                        if(clear_low_last && clear_high_last) cleared<=1;
                     end
                     // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
                     // 返回选择由 RAM 口读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
-                    read_address <= bank_read_addr[MAP_BANK_AW - 1:0];
-                    ram_address_q <= read_address;
-                    write_address <= cleared ? bank_cfg_addr[MAP_BANK_AW - 1:0] : clear_local;
-                    write_data <= cleared ? bank_cfg_data : 13'b0;
+                    ram_address_q <= bank_read_addr[MAP_BANK_AW - 1:0];
                 end
             end
-            afdx_ram_sdp #(.WIDTH(13), .DEPTH(1 << MAP_BANK_AW)) memory (
-                .clk(clk), .write_enable(write_request), .write_address(write_address), .write_data(write_data),
-                .read_enable(ram_request_q), .read_address(ram_address_q),
-                .read_data(data)
-            );
+            // Separate 7/6-bit write commands retain the original acceptance
+            // edge while halving each command's physical RAM input load.
+            for(map_slice=0;map_slice<2;map_slice=map_slice+1) begin:write_slice
+                localparam SLICE_WIDTH=map_slice==0 ? 7 : 6;
+                (* preserve=1, dont_merge=1 *) reg write_request, config_mode, write_is_config;
+                (* preserve=1, dont_merge=1 *) reg [MAP_BANK_AW-1:0] write_address, configuration_address;
+                (* preserve=1, dont_merge=1 *) reg [SLICE_WIDTH-1:0] write_data;
+                always @(posedge clk) begin
+                    // Remote configuration address crosses a bare FF first;
+                    // the clear/config mux is local to the physical RAM port.
+                    configuration_address<=bank_cfg_addr[MAP_BANK_AW-1:0];
+                    write_data<=config_mode ? bank_cfg_data[map_slice*7+:SLICE_WIDTH] : {SLICE_WIDTH{1'b0}};
+                    if(reset) begin
+                        write_request<=0;config_mode<=0;write_is_config<=0;write_address<={MAP_BANK_AW{1'b1}};
+                    end else begin
+                        // First enabled edge wraps -1 to 0; the final edge
+                        // records 2047, exactly as the old shared-counter pipe.
+                        if(!config_mode) write_address<=write_address+1'b1;
+                        write_is_config<=config_mode;
+                        if(clear_low_last && clear_high_last) config_mode<=1;
+                        write_request<=!config_mode || map_wr_sel[bank];
+                    end
+                end
+                afdx_ram_sdp #(.WIDTH(SLICE_WIDTH),.DEPTH(1<<MAP_BANK_AW)) memory(
+                    .clk(clk),.write_enable(write_request),.write_address(write_is_config ? configuration_address : write_address),.write_data(write_data),
+                    .read_enable(ram_request_q),.read_address(ram_address_q),
+                    .read_data(data[map_slice*7+:SLICE_WIDTH]));
+            end
         end
         // 每两个 bank 在附近合并并寄存，避免存储器输出跨八个 bank 后才遇到寄存器。
         for (map_group = 0; map_group < MAP_GROUPS; map_group = map_group + 1) begin : map_read_group
@@ -228,25 +238,28 @@ module afdx_rx_core #(
                     | map_bank_data[(map_group * 2 + 1) * 13 +: 13];
             end
         end
+        for(upper_group=0;upper_group<4;upper_group=upper_group+1) begin:map_upper_group
+            always @(posedge clk) begin
+                if(reset) map_upper_data[upper_group*13+:13]<=0;
+                else map_upper_data[upper_group*13+:13]<=
+                    map_group_data[upper_group*52+:13] | map_group_data[upper_group*52+13+:13] |
+                    map_group_data[upper_group*52+26+:13] | map_group_data[upper_group*52+39+:13];
+            end
+        end
+        // Four-bit read slices limit each local address to four native RAMs.
+        // Read latency and the single physical write edge remain unchanged.
+        for(cfg_slice=0;cfg_slice<8;cfg_slice=cfg_slice+1) begin:rx_cfg
+            afdx_rx_table_slice #(.WIDTH(4)) storage(
+                .clk(clk),.reset(reset),.we(cfg_we),.wa(cfg_wa),.wd(cfg_wd[cfg_slice*4+:4]),
+                .re(cfg_re),.ra(cfg_ra),.q(cfg_q[cfg_slice*4+:4]));
+        end
+        for(state_slice=0;state_slice<11;state_slice=state_slice+1) begin:rx_state
+            localparam WIDTH=state_slice==10 ? 3 : 4;
+            afdx_rx_table_slice #(.WIDTH(WIDTH)) storage(
+                .clk(clk),.reset(reset),.we(state_we),.wa(state_wa),.wd(state_wd[state_slice*4+:WIDTH]),
+                .re(state_re),.ra(state_ra),.q(state_q[state_slice*4+:WIDTH]));
+        end
     endgenerate
-    afdx_ram_sdp #(.WIDTH(32), .DEPTH(4096)) rx_cfg (
-        .clk(clk),
-        .write_enable(cfg_we),
-        .write_address(cfg_wa),
-        .write_data(cfg_wd),
-        .read_enable(cfg_re),
-        .read_address(cfg_ra),
-        .read_data(cfg_q)
-    );
-    afdx_ram_sdp #(.WIDTH(43), .DEPTH(4096)) rx_state (
-        .clk(clk),
-        .write_enable(state_we),
-        .write_address(state_wa),
-        .write_data(state_wd),
-        .read_enable(state_re),
-        .read_address(state_ra),
-        .read_data(state_q)
-    );
 
     // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
@@ -349,13 +362,14 @@ module afdx_rx_core #(
         .resolve_commit(commit_b),
         .ev(parse_ev_b)
     );
-    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(0), .DESC_COPIES(CFG_COPIES)) engine (
+    afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(0), .DESC_COPIES(CFG_COPIES), .CORE_ENABLE_PREDICT(1)) engine (
         // 时钟和复位
         .clk(clk),
         .reset(reset),
         .now_c(now_c),
                 // 配置和初始化
         .enable(init_done),
+        .core_enable_next(init_done || (flush_init && engine_initialized)),
         .initialized(engine_initialized),
         .cfg_re(cfg_re),
         .cfg_ra(cfg_ra),
@@ -386,6 +400,12 @@ module afdx_rx_core #(
         .dq_wa(dq_wa),
         .dq_wd(dq_wd),
         .dq_count(dq_count),
+        .reassembly_result_valid(result_valid), .reassembly_ok(reserve_ok), .reassembly_slot(reserve_slot),
+        .reassembly_query(query), .reassembly_cancel(cancel),
+        .reassembly_query_bank(query_bank), .reassembly_cancel_bank(cancel_bank), .reassembly_reserve_bank(reserve_bank),
+        .reassembly_reserve(reserve), .reassembly_meta(reserve_meta), .reassembly_vl(reserve_vl),
+        .reassembly_length(reserve_length), .reassembly_sport(reserve_sport),
+        .reassembly_dport(reserve_dport), .reassembly_net(reservation_net),
         // 事件
         .ev_a(engine_ev_a),
         .ev_b(engine_ev_b),
@@ -409,13 +429,40 @@ module afdx_rx_core #(
         .ring_b_q(rb_q),
         .read_ptr_a(ptr_a),
         .read_ptr_b(ptr_b),
-        .d_valid(d_valid),
-        .d_data(d_data),
-        .d_last(d_last),
-        .d_vl(d_vl),
-        .d_sport(d_sport),
-        .d_dport(d_dport),
-        .d_net(d_net)
+        .d_valid(frag_valid), .d_data(frag_data), .d_last(frag_last),
+        .d_vl(frag_vl), .d_sport(frag_sport), .d_dport(frag_dport), .d_net(frag_net),
+        .downstream_ready(frag_ready), .downstream_prepared(frag_prepared), .d_frag(frag_kind), .d_slot(frag_slot), .d_start(frag_start), .d_empty(frag_empty)
+    );
+    afdx_rx_reassembly #(.CONTEXTS(REASSEMBLY_CONTEXTS), .TIMEOUT_CYCLES(REASSEMBLY_TIMEOUT_CYCLES), .BANK_CTRL_COPIES(1)) reassembly (
+        .clk(clk), .reset(reset), .query(query), .reserve(reserve), .cancel(cancel),
+        .query_bank(query_bank), .reserve_bank(reserve_bank), .cancel_bank(cancel_bank), .result_valid(result_valid),
+        .r_vl(reserve_vl), .r_meta(reserve_meta),
+        .r_length(reserve_length), .r_sport(reserve_sport), .r_dport(reserve_dport), .r_net(reservation_net),
+        .reserve_ok(reserve_ok), .reserve_slot(reserve_slot), .in_valid(frag_valid), .in_last(frag_last),
+        .in_start(frag_start), .in_empty(frag_empty), .in_frag(frag_kind), .in_slot(frag_slot), .in_data(frag_data),
+        .in_vl(frag_vl), .in_sport(frag_sport), .in_dport(frag_dport), .in_net(frag_net), .ready(frag_ready), .prepared(frag_prepared),
+        .d_valid(d_valid), .d_last(d_last), .d_data(d_data), .d_vl(d_vl), .d_sport(d_sport), .d_dport(d_dport),
+        .d_net(d_net), .reject_events(reassembly_reject)
     );
 
+endmodule
+
+// RX-local narrow return region: command E0, RAM E1, local return E2.
+// RX SDP write isolation and no-collision contract remain; no extra write stage.
+module afdx_rx_table_slice #(parameter WIDTH=8)(
+    input wire clk, reset, we, input wire [11:0] wa,
+    input wire [WIDTH-1:0] wd, input wire re, input wire [11:0] ra,
+    (* preserve=1, dont_merge=1 *) output reg [WIDTH-1:0] q
+);
+    (* preserve=1, dont_merge=1 *) reg read_command;
+    (* preserve=1, dont_merge=1 *) reg [11:0] read_address;
+    wire [WIDTH-1:0] ram_q;
+    always @(posedge clk) begin
+        read_address<=ra;
+        if(reset) read_command<=0;else read_command<=re;
+        q<=ram_q;
+    end
+    afdx_rx_reassembly_ram #(.WIDTH(WIDTH),.AW(12)) memory(
+        .clk(clk),.we(we),.wa(wa),.wd(wd),
+        .re(read_command),.ra(read_address),.q(ram_q));
 endmodule

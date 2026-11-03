@@ -13,6 +13,10 @@
 `include "../rtl/afdx_rx_deliver.v"
 `include "../rtl/afdx_rx_engine.v"
 `include "../rtl/afdx_rx_parse.v"
+`include "../rtl/afdx_rx_reassembly.v"
+`include "../rtl/afdx_rx_reassembly_bank.v"
+`include "../rtl/afdx_rx_reassembly_ram.v"
+`include "../rtl/afdx_rx_reassembly_payload.v"
 `include "../rtl/afdx_snmp.v"
 `include "../rtl/afdx_snmp_engine.v"
 `include "../rtl/afdx_svc.v"
@@ -29,3 +33,4 @@
 `include "../rtl/afdx_app_read.v"
 
 `include "../rtl/afdx_app_map.v"
+`include "../rtl/afdx_app_payload.v"

@@ -67,7 +67,9 @@ module afdx_es #(
     // ev_rm_drop 表示丢弃一份重复帧，ev_deliver 表示接纳一条消息。
     output wire [6:0] ev_tx,
     output wire [7:0] ev_a, ev_b,
-    output wire ev_rm_drop, ev_deliver);
+    output wire ev_rm_drop, ev_deliver,
+    // Same-cycle ready replicas only for the wrapper's application tables.
+    output wire [1:0] app_cfg_ready);
 
     // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
     (* preserve = 1, dont_merge = 1 *) reg rx_init_a, rx_init_b, tx_init_a, tx_init_b;
@@ -97,12 +99,14 @@ module afdx_es #(
     // now 供发送调度计时，now_c 供接收引擎判断重复帧。
     // 两路核心都初始化完成后，顶层才允许服务开始工作。
     wire [31:0] now;
-    wire [15:0] now_c, user_id;
-    // 提前保存粗计时进位，与原来 now_c != now_previous 的触发拍完全一致。
+    wire [31:0] transmit_clock_now, receive_clock_now;
+    wire [15:0] now_c, receive_clock_coarse, user_id;
+    // 同钟同复位的局部计数器逐拍等值，避免 TX/RX 共用跨层组合节点。
+    // 粗计时进位仍提前一拍保存，保持原来的 AGE 触发边沿。
     reg now_c_tick;
     always @(posedge clk) begin
         if (reset) now_c_tick <= 0;
-        else now_c_tick <= &now[11:0];
+        else now_c_tick <= &receive_clock_now[11:0];
     end
     wire byte_en, tx_initialized, rx_initialized;
     wire tx_cfg_ok, tx_cfg_we, rx_cfg_we;
@@ -114,15 +118,20 @@ module afdx_es #(
     wire [RX_CONFIG_BANKS * 32 - 1:0] rx_cfg_wdata;
 
     wire m_valid, m_ready, m_last, m_port_en;
-    wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data;
+    wire [7:0] m_data, d_data, rtc_tx_data, svc_rx_data, snmp_rx_data, load_rx_data;
     wire [6:0] m_vl, rtc_tx_vl;
     wire [15:0] m_sport, m_dport, d_sport, d_dport, rtc_port, svc_rx_port, svc_rx_sport;
+    wire [15:0] snmp_rx_port, snmp_rx_sport, load_rx_port, load_rx_sport;
     wire d_valid, d_last, d_net, rtc_tx_valid, rtc_tx_last, rtc_claim, svc_rx_valid, svc_rx_last;
+    wire snmp_rx_valid, snmp_rx_last, load_rx_valid, load_rx_last;
     wire [11:0] d_vl;
     wire [2:0] svc_tx_ready;
     wire [31:0] rtc_rdata, rtc_sync_count;
     // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
-    wire cfg_ready_m;
+    wire cfg_ready_m, service_ready_next;
+    wire service_ready_base, service_ready_rx_term;
+    // 所有 RX 允许副本同 D/同复位；目的端用末项减轻 0 号副本负载。
+    wire service_ready_rx_ack = rx_cfg_ok[RX_CONFIG_BANKS - 1];
     wire [7:0] snmp_wr_sel;
     wire [6:0] loader_wr_sel;
     wire [5:0] rtc_wr_sel;
@@ -156,7 +165,8 @@ module afdx_es #(
     // 网络管理仅能写 user_id，独立分发该写使能，避免写握手进入所有读地址和 RTC 控制链。
     assign bus_addr = (cfg_rd || cfg_wr) ? cfg_addr : snmp_mib_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
-    assign mib_user_write = snmp_mib_wr && !cfg_wr && !cfg_rd && cfg_ready && mib_is_user_id;
+    // cfg_regs applies its equivalent local ready at the actual write edge.
+    assign mib_user_write = snmp_mib_wr && !cfg_wr && !cfg_rd && mib_is_user_id;
     assign cfg_rvalid = host_read_pipe[1];
 
     always @(posedge clk) begin
@@ -194,11 +204,18 @@ module afdx_es #(
     // SNMP 状态机保证 mib_rd/mib_wr 互斥，读抓拍不依赖写 ready。
     wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
         || (!cfg_rd && !cfg_wr && snmp_mib_rd && mib_snapshot_seconds);
-    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1), .CE_DIV(CE_DIV)) loader (
+    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1),
+        .READY_PREDICT(1), .CFG_READY_PREDICT(1), .CFG_READY_TERMS(1), .CE_DIV(CE_DIV)) loader (
         .ce(CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk(clk),
         .reset(reset),
         .enable(loader_ready_q),
+        .enable_next(tx_init_b && rx_init_b),
+        .cfg_ready_next(service_ready_next),
+        .cfg_ready_base(service_ready_base),
+        .cfg_ready_rx_term(service_ready_rx_term),
+        .cfg_ready_rx_ack(service_ready_rx_ack),
+        .cfg_write_request(cfg_wr && cfg_addr[17:4] == LOAD_ADDR_GROUP),
         .cfg_we(cfg_wr && cfg_ready_m && cfg_addr[17:4] == LOAD_ADDR_GROUP),
         .cfg_wr_sel(loader_wr_sel),
         .cfg_addr({cfg_addr[7:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
@@ -212,14 +229,14 @@ module afdx_es #(
         .tx_vl(load_tx_vl),
         .tx_sport(load_tx_sport),
         .tx_dport(load_tx_dport),
-        .rx_valid(svc_rx_valid),
-        .rx_data(svc_rx_data),
-        .rx_last(svc_rx_last),
-        .rx_sport(svc_rx_sport),
-        .rx_dport(svc_rx_port),
+        .rx_valid(load_rx_valid),
+        .rx_data(load_rx_data),
+        .rx_last(load_rx_last),
+        .rx_sport(load_rx_sport),
+        .rx_dport(load_rx_port),
         .rx_claim(load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1), .SPLIT_MIB_READY(1)) snmp (
+    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1), .SPLIT_MIB_READY(1), .LOCAL_TIMEBASE(1)) snmp (
         .clk(clk),
         .reset(reset),
         .ce(CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
@@ -246,19 +263,23 @@ module afdx_es #(
         .tx_last(snmp_tx_last),
         .tx_vl(snmp_tx_vl),
         .tx_dport(snmp_tx_dport),
-        .rx_valid(svc_rx_valid),
-        .rx_data(svc_rx_data),
-        .rx_last(svc_rx_last),
-        .rx_sport(svc_rx_sport),
-        .rx_dport(svc_rx_port),
+        .rx_valid(snmp_rx_valid),
+        .rx_data(snmp_rx_data),
+        .rx_last(snmp_rx_last),
+        .rx_sport(snmp_rx_sport),
+        .rx_dport(snmp_rx_port),
         .rx_claim(snmp_claim)
     );
-    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1)) rtc (
+    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1), .CFG_READY_TERMS(1), .RX_STREAM_DELAY_CYCLES(1)) rtc (
         .clk(clk),
         .reset(reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
         .enable(1'b1),
         .cfg_we(rtc_wr_sel),
+        .cfg_write_request(cfg_wr && cfg_addr[17:4] == RTC_ADDR_GROUP),
+        .cfg_ready_base(service_ready_base),
+        .cfg_ready_rx_term(service_ready_rx_term),
+        .cfg_ready_rx_ack(service_ready_rx_ack),
         .cfg_re(rtc_snapshot_read),
         .cfg_addr({cfg_addr[3:0], (cfg_rd || cfg_wr), cfg_addr[2:0], snmp_mib_addr[2:0]}),
         .cfg_wdata(cfg_wdata),
@@ -326,7 +347,17 @@ module afdx_es #(
         .app_rx_vl(app_rx_vl),
         .app_rx_sport(app_rx_sport),
         .app_rx_dport(app_rx_port),
-        .app_rx_net(app_rx_net)
+        .app_rx_net(app_rx_net),
+        .snmp_rx_valid(snmp_rx_valid),
+        .snmp_rx_data(snmp_rx_data),
+        .snmp_rx_last(snmp_rx_last),
+        .snmp_rx_sport(snmp_rx_sport),
+        .snmp_rx_dport(snmp_rx_port),
+        .load_rx_valid(load_rx_valid),
+        .load_rx_data(load_rx_data),
+        .load_rx_last(load_rx_last),
+        .load_rx_sport(load_rx_sport),
+        .load_rx_dport(load_rx_port)
     );
 
     always @(posedge clk) begin
@@ -358,6 +389,20 @@ module afdx_es #(
         .byte_en(byte_en),
         .now_c(now_c)
     );
+    afdx_timebase transmit_timebase (
+        .clk(clk),
+        .reset(reset),
+        .now(transmit_clock_now),
+        .byte_en(),
+        .now_c()
+    );
+    afdx_timebase receive_timebase (
+        .clk(clk),
+        .reset(reset),
+        .now(receive_clock_now),
+        .byte_en(),
+        .now_c(receive_clock_coarse)
+    );
     afdx_tx_core #(
         .TX_PAGE_AW(TX_PAGE_AW),
         .TX_OFF_AW(TX_OFF_AW),
@@ -365,7 +410,7 @@ module afdx_es #(
     ) tx_core (
         .clk(clk),
         .reset(reset),
-        .now(now),
+        .now(transmit_clock_now),
         .byte_en(byte_en),
         .m_valid(m_valid),
         .m_ready(m_ready),
@@ -400,7 +445,7 @@ module afdx_es #(
     ) rx_core (
         .clk(clk),
         .reset(reset),
-        .now_c({now_c_tick, now_c}),
+        .now_c({now_c_tick, receive_clock_coarse}),
         .rx_data_a(rx_data),
         .rx_valid_a(rx_valid),
         .rx_data_b(rx_data_b),
@@ -440,6 +485,10 @@ module afdx_es #(
         .host_read_addr(cfg_addr[2:0]),
         .cfg_ready(cfg_ready),
         .cfg_ready_m(cfg_ready_m),
+        .app_cfg_ready(app_cfg_ready),
+        .service_ready_next(service_ready_next),
+        .service_ready_base(service_ready_base),
+        .service_ready_rx_term(service_ready_rx_term),
         .snmp_wr_sel(snmp_wr_sel),
         .loader_wr_sel(loader_wr_sel),
         .rtc_wr_sel(rtc_wr_sel),

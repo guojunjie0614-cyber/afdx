@@ -29,13 +29,14 @@ module AFDX_top #(
     output wire [2:0] ev_app
 );
     wire initialized,m_valid,m_ready,m_last,d_valid,d_last;
+    wire [1:0] app_cfg_ready;
     wire [7:0] m_data,d_data;
     wire [6:0] m_vl;
     wire [11:0] d_index;
     // 核心交付端含服务选择组合逻辑；在封装边界整组寄存后再驱动接收 RAM。
-    reg delivery_valid,delivery_last;
-    reg [7:0] delivery_data;
-    reg [11:0] delivery_index;
+    (* preserve = 1, dont_merge = 1 *) reg delivery_valid,delivery_last;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] delivery_data;
+    (* preserve = 1, dont_merge = 1 *) reg [11:0] delivery_index;
     always @(posedge clk)begin
         if(reset)begin delivery_valid<=0;delivery_last<=0;delivery_data<=0;delivery_index<=0;end
         else begin
@@ -43,15 +44,15 @@ module AFDX_top #(
             delivery_data<=d_data;delivery_index<=d_index;
         end
     end
-    reg tx_cfg_write,rx_cfg_write;
-    reg [6:0] tx_cfg_index;
-    reg [11:0] rx_cfg_index;
-    reg [15:0] tx_cfg_vlid,rx_cfg_vlid;
+    (* preserve = 1, dont_merge = 1 *) reg tx_cfg_write,rx_cfg_write;
+    (* preserve = 1, dont_merge = 1 *) reg [6:0] tx_cfg_index;
+    (* preserve = 1, dont_merge = 1 *) reg [11:0] rx_cfg_index;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] tx_cfg_vlid,rx_cfg_vlid;
     always @(posedge clk)begin
         if(reset)begin tx_cfg_write<=0;rx_cfg_write<=0;tx_cfg_index<=0;rx_cfg_index<=0;tx_cfg_vlid<=0;rx_cfg_vlid<=0;end
         else begin
-            tx_cfg_write<=cfg_wr && cfg_ready && cfg_addr[17:10]==8'b00000100 && cfg_addr[2:0]==2;
-            rx_cfg_write<=cfg_wr && cfg_ready && cfg_addr[17:16]==2'b01 && cfg_wdata[12];
+            tx_cfg_write<=cfg_wr && app_cfg_ready[0] && cfg_addr[17:10]==8'b00000100 && cfg_addr[2:0]==2;
+            rx_cfg_write<=cfg_wr && app_cfg_ready[1] && cfg_addr[17:16]==2'b01 && cfg_wdata[12];
             tx_cfg_index<=cfg_addr[9:3];tx_cfg_vlid<=cfg_wdata[15:0];
             rx_cfg_index<=cfg_wdata[11:0];rx_cfg_vlid<=cfg_addr[15:0];
         end
@@ -70,6 +71,6 @@ module AFDX_top #(
         .app_rx_valid(d_valid),.app_rx_data(d_data),.app_rx_last(d_last),.app_rx_vl(d_index),
         .app_rx_port(),.app_rx_sport(),.app_rx_net(),
         .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),
-        .cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
+        .cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),.app_cfg_ready(app_cfg_ready),
         .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver));
 endmodule

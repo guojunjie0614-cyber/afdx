@@ -21,6 +21,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
     // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块写选通方向的负载。
     (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
+    (* preserve = 1, dont_merge = 1 *) output reg [1:0] app_cfg_ready,
+    output wire service_ready_next,
+    output wire service_ready_base, service_ready_rx_term,
     // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
     output wire [7:0] snmp_wr_sel,
     output wire [6:0] loader_wr_sel,
@@ -111,8 +114,19 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
             // 就绪电平本地寄存一拍：该电平一旦置位保持到复位，晚一拍只影响初始化边界。
             (* preserve = 1, dont_merge = 1 *) reg bank_ready_q;
-            wire capture_address = bank_ready_q && !transmit_pending && !receive_pending
-                && cfg_wr && ready && (select_map || select_rx);
+            // ready is low throughout either pending transaction.  Precompute
+            // its conjunction with the next sampled bank readiness locally.
+            (* preserve = 1, dont_merge = 1 *) reg address_available;
+            (* preserve = 1, dont_merge = 1 *) reg transmit_ack_q;
+            wire local_tx_rearm = !tx_cfg_we && transmit_ack_q;
+            // ready is zero for the full pending lifetime. Express the next
+            // value as parallel acceptance/rearm terms, not nested hold muxes.
+            wire local_idle = !transmit_pending && !receive_pending;
+            wire next_local_ready = bank_ready_q &&
+                ((transmit_pending && local_tx_rearm)
+                 || (receive_pending && rx_cfg_ok[bus_copy])
+                 || (local_idle && !(cfg_wr && ready && (select_tx || select_map || select_rx))));
+            wire capture_address = address_available && cfg_wr && (select_map || select_rx);
             assign rx_cfg_addr[bus_copy * 16 +: 16] = address;
             assign rx_cfg_wdata[bus_copy * 32 +: 32] = {{(32 - DATA_WIDTH){1'b0}}, data};
             assign rx_map_we[bus_copy] = map_we_q;
@@ -121,6 +135,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
             always @(posedge clk) begin
                 if (reset) begin
                     bank_ready_q <= 0;
+                    transmit_ack_q <= 0;
+                    address_available <= 0;
                     ready <= 0;
                     transmit_pending <= 0;
                     receive_pending <= 0;
@@ -129,6 +145,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                 end
                 else begin
                     bank_ready_q <= bank_ready;
+                    transmit_ack_q <= tx_cfg_ok;
+                    address_available <= bank_ready && next_local_ready;
                     if (!bank_ready_q) begin
                         ready <= 0;
                         transmit_pending <= 0;
@@ -136,7 +154,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         map_we_q <= 0;
                     end
                     else if (transmit_pending) begin
-                        if (tx_cfg_rearm) begin
+                        if (local_tx_rearm) begin
                             transmit_pending <= 0;
                             ready <= 1;
                         end
@@ -198,7 +216,10 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     localparam VERSION_VALUE = 32'hc3110000;
 
     // 位 0..7 依次对应使能、发送虚拟链路、团体名长度、团体名四字和通知使能。
-    // 请求与地址先会合，cfg_ready_m 只进入末级与门；不增加写入拍数。
+    // Each writable service field owns a same-cycle ready replica. The
+    // recurrence is identical to cfg_ready_m; no write or acknowledgement
+    // gains a cycle, and one remote ready FF no longer drives all field enables.
+    (* preserve = 1, dont_merge = 1 *) reg [20:0] service_ready;
     (* keep = 1 *) wire [7:0] snmp_write_hit = {
         cfg_wr && cfg_write_addr == ADDR_SNMP_TRAP_ENABLE,
         cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY3,
@@ -209,7 +230,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         cfg_wr && cfg_write_addr == ADDR_SNMP_TX_VL,
         cfg_wr && cfg_write_addr == ADDR_SNMP_ENABLE
     };
-    assign snmp_wr_sel = {8{cfg_ready_m}} & snmp_write_hit;
+    assign snmp_wr_sel = service_ready[7:0] & snmp_write_hit;
     // 加卸载同样先译码完整主机地址，ready 只参与末级选通，不增加写入拍数。
     // 位 0..6 对应 b0、b1、b4、b8、b9、ba、bb。
     (* keep = 1 *) wire [6:0] loader_write_hit = {
@@ -221,7 +242,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         cfg_wr && cfg_write_addr == 18'h000b1,
         cfg_wr && cfg_write_addr == 18'h000b0
     };
-    assign loader_wr_sel = {7{cfg_ready_m}} & loader_write_hit;
+    assign loader_wr_sel = service_ready[14:8] & loader_write_hit;
     // RTC 的六个可写寄存器同样先译码，ready 只驱动末级选通。
     (* keep = 1 *) wire [5:0] rtc_write_hit = {
         cfg_wr && cfg_write_addr == 18'h00085,
@@ -231,7 +252,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         cfg_wr && cfg_write_addr == 18'h00081,
         cfg_wr && cfg_write_addr == 18'h00080
     };
-    assign rtc_wr_sel = {6{cfg_ready_m}} & rtc_write_hit;
+    assign rtc_wr_sel = service_ready[20:15] & rtc_write_hit;
 
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
     // 0x40 组是发送计数，0x48、0x50 组是 A、B 网接收计数，0x80 组是时钟同步，
@@ -252,12 +273,10 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // pending 表示主机写请求已受理；发送写在真实应答后一拍恢复就绪，地址和数据继续保持。
     reg tx_pending, rx_pending;
     reg [31:0] read_regs, read_tx, read_a, read_b;
+    reg [31:0] read_regs_upper, read_tx_upper, read_a_upper, read_b_upper;
 
-    // 主机写任何地址时都优先于 MIB；保留原状态机的忙和初始化屏蔽条件。
-    wire user_id_hit = cfg_wr && cfg_write_addr == ADDR_USER_ID;
-    wire mib_user_hit = !cfg_wr && mib_user_wr;
-    (* keep = 1 *) wire user_id_write_hit = tx_ready_q && !tx_pending && !rx_pending
-        && (user_id_hit || mib_user_hit);
+    // Host writes suppress MIB at every address, including non-user writes.
+    wire user_write_request = cfg_wr ? cfg_write_addr == ADDR_USER_ID : mib_user_wr;
 
     // 这 27 个计数器分别累计一种事件。
     reg [31:0] count_accept;
@@ -363,21 +382,30 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     endfunction
 
-    reg [2:0] mib_group;
-    reg [1:0] mib_loader;
-    // 共享组选择来自本拍主机请求地址或已经寄存的网络管理地址。
-    wire [1:0] read_loader_next = host_read ? loader_select(cfg_write_addr) : mib_loader;
+    function [9:0] result_select;
+        input [17:0] address;
+        begin
+            result_select = 0;
+            case (address[17:3])
+                GROUP_TX_COUNT: result_select[1] = 1;
+                GROUP_A_COUNT: result_select[2] = 1;
+                GROUP_B_COUNT: result_select[3] = 1;
+                GROUP_RTC: result_select[4] = 1;
+                GROUP_SNMP_CONTROL: result_select[5] = 1;
+                GROUP_SNMP_STATUS: result_select[6] = 1;
+                GROUP_SNMP_DESCR: result_select[7] = 1;
+                GROUP_LOAD: result_select[8] = 1;
+                GROUP_LOAD_EXTRA: result_select[9] = 1;
+                default: result_select[0] = 1;
+            endcase
+        end
+    endfunction
+    reg [9:0] mib_result_select;
     wire [31:0] status_value = {31'b0, tx_ready};
     wire [31:0] user_value = {16'b0, user_id};
     always @(posedge clk) begin
-        if (reset) begin
-            mib_group <= SEL_REGS;
-            mib_loader <= SHARED_SNMP_DESCR;
-        end
-        else begin
-            mib_group <= group_select(mib_read_addr);
-            mib_loader <= loader_select(mib_read_addr);
-        end
+        if (reset) mib_result_select <= 10'b1;
+        else mib_result_select <= result_select(mib_read_addr);
     end
 
     // 每四位计数值使用独立的地址译码寄存器，发送和 B 网各用本地副本。
@@ -403,6 +431,8 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                     read_tx[read_slice * 4 +: 4] <= 0;
                     read_a[read_slice * 4 +: 4] <= 0;
                     read_b[read_slice * 4 +: 4] <= 0;
+                    read_regs_upper[read_slice*4+:4]<=0;read_tx_upper[read_slice*4+:4]<=0;
+                    read_a_upper[read_slice*4+:4]<=0;read_b_upper[read_slice*4+:4]<=0;
                 end
                 else begin
                     mib_lane <= 8'b1 << mib_read_addr[2:0];
@@ -413,8 +443,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         ({4{reg_lane[0]}} & VERSION_VALUE[read_slice * 4 +: 4])
                         | ({4{reg_lane[1]}} & status_value[read_slice * 4 +: 4])
                         | ({4{reg_lane[2]}} & user_value[read_slice * 4 +: 4])
-                        | ({4{reg_lane[3]}} & count_rm_drop[read_slice * 4 +: 4])
-                        | ({4{reg_lane[4]}} & count_deliver[read_slice * 4 +: 4])
+                        | ({4{reg_lane[3]}} & count_rm_drop[read_slice * 4 +: 4]);
+                    read_regs_upper[read_slice*4+:4] <=
+                          ({4{reg_lane[4]}} & count_deliver[read_slice * 4 +: 4])
                         | ({4{reg_lane[5]}} & count_a_gdrop[read_slice * 4 +: 4])
                         | ({4{reg_lane[6]}} & count_b_gdrop[read_slice * 4 +: 4])
                         | ({4{reg_lane[7]}} & rtc_sync_count[read_slice * 4 +: 4]);
@@ -422,16 +453,18 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         ({4{lane_tx[0]}} & count_accept[read_slice * 4 +: 4])
                         | ({4{lane_tx[1]}} & count_drop_dis[read_slice * 4 +: 4])
                         | ({4{lane_tx[2]}} & count_drop_full[read_slice * 4 +: 4])
-                        | ({4{lane_tx[3]}} & count_drop_long[read_slice * 4 +: 4])
-                        | ({4{lane_tx[4]}} & count_drop_nopage[read_slice * 4 +: 4])
+                        | ({4{lane_tx[3]}} & count_drop_long[read_slice * 4 +: 4]);
+                    read_tx_upper[read_slice*4+:4] <=
+                          ({4{lane_tx[4]}} & count_drop_nopage[read_slice * 4 +: 4])
                         | ({4{lane_tx[5]}} & count_tx_a[read_slice * 4 +: 4])
                         | ({4{lane_tx[6]}} & count_tx_b[read_slice * 4 +: 4]);
                     read_a[read_slice * 4 +: 4] <=
                         ({4{lane[0]}} & count_a_good[read_slice * 4 +: 4])
                         | ({4{lane[1]}} & count_a_fcs[read_slice * 4 +: 4])
                         | ({4{lane[2]}} & count_a_len[read_slice * 4 +: 4])
-                        | ({4{lane[3]}} & count_a_hdr[read_slice * 4 +: 4])
-                        | ({4{lane[4]}} & count_a_unk[read_slice * 4 +: 4])
+                        | ({4{lane[3]}} & count_a_hdr[read_slice * 4 +: 4]);
+                    read_a_upper[read_slice*4+:4] <=
+                          ({4{lane[4]}} & count_a_unk[read_slice * 4 +: 4])
                         | ({4{lane[5]}} & count_a_cfg[read_slice * 4 +: 4])
                         | ({4{lane[6]}} & count_a_ic[read_slice * 4 +: 4])
                         | ({4{lane[7]}} & count_a_ovf[read_slice * 4 +: 4]);
@@ -439,8 +472,9 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
                         ({4{lane_b[0]}} & count_b_good[read_slice * 4 +: 4])
                         | ({4{lane_b[1]}} & count_b_fcs[read_slice * 4 +: 4])
                         | ({4{lane_b[2]}} & count_b_len[read_slice * 4 +: 4])
-                        | ({4{lane_b[3]}} & count_b_hdr[read_slice * 4 +: 4])
-                        | ({4{lane_b[4]}} & count_b_unk[read_slice * 4 +: 4])
+                        | ({4{lane_b[3]}} & count_b_hdr[read_slice * 4 +: 4]);
+                    read_b_upper[read_slice*4+:4] <=
+                          ({4{lane_b[4]}} & count_b_unk[read_slice * 4 +: 4])
                         | ({4{lane_b[5]}} & count_b_cfg[read_slice * 4 +: 4])
                         | ({4{lane_b[6]}} & count_b_ic[read_slice * 4 +: 4])
                         | ({4{lane_b[7]}} & count_b_ovf[read_slice * 4 +: 4]);
@@ -511,12 +545,46 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
-    // 数据源和地址预先选择，就绪信号只参与最后一级写使能。
+    // A local ready replica follows exactly the public ready recurrence.
+    // It avoids routing the public handshake register to the user ID bank.
+    (* preserve = 1, dont_merge = 1 *) reg user_ready;
     always @(posedge clk) begin
-        if (reset) user_id <= 0;
-        else if (user_id_write_hit && cfg_ready)
-            user_id <= cfg_wr ? cfg_wdata[15:0] : mib_user_wdata;
+        if (reset || !tx_ready_q) user_ready <= 0;
+        else if (tx_pending) begin
+            if (tx_cfg_rearm) user_ready <= 1;
+        end else if (rx_pending) begin
+            if (rx_cfg_ok[0]) user_ready <= 1;
+        end else begin
+            user_ready <= 1;
+            if (cfg_wr && user_ready && (select_tx || select_map || select_rx)) user_ready <= 0;
+        end
     end
+
+    // Pending owns ready=0 throughout its lifetime. Parallel rearm/idle
+    // terms predict the original ready edge without a priority mux chain.
+    // Each byte samples initialization/ack locally; no shared ready FF drives
+    // the complete qualification cone and then both byte enables.
+    genvar user_byte;
+    generate for(user_byte=0;user_byte<2;user_byte=user_byte+1) begin : user_write_lane
+        (* preserve = 1, dont_merge = 1 *) reg allowed, initial_ready, transmit_ack;
+        wire idle_ready = !tx_pending && !rx_pending &&
+            !(cfg_wr && user_ready && (select_tx || select_map || select_rx));
+        wire rearm_ready = (tx_pending && !tx_cfg_we && transmit_ack)
+            || (rx_pending && rx_cfg_ok[0]);
+        always @(posedge clk) begin
+            if(reset) begin
+                allowed<=0;initial_ready<=0;transmit_ack<=0;
+                user_id[user_byte*8+:8]<=0;
+            end else begin
+                initial_ready<=tx_ready;
+                transmit_ack<=tx_cfg_ok;
+                allowed<=tx_ready && initial_ready && (idle_ready || rearm_ready);
+                if((allowed && cfg_wr && cfg_write_addr==ADDR_USER_ID) ||
+                   (allowed && !cfg_wr && mib_user_wr))
+                    user_id[user_byte*8+:8]<=cfg_wr ? cfg_wdata[user_byte*8+:8] : mib_user_wdata[user_byte*8+:8];
+            end
+        end
+    end endgenerate
 
     always @(posedge clk) begin
         if (reset) tx_cfg_we <= 0;
@@ -577,6 +645,21 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
+    // D value for destination-local service ready registers. This is a
+    // same-edge prediction of public ready, not a delayed ready sample.
+    assign service_ready_next = !reset && tx_ready_q &&
+        (tx_pending ? (tx_cfg_rearm || cfg_ready) :
+         rx_pending ? (rx_cfg_ok[0] || cfg_ready) :
+         !(cfg_wr && cfg_ready && (select_tx || select_map || select_rx)));
+
+    // Factor the same D at service destinations. Only the RX acknowledgement
+    // crosses into their final AND/OR; public ready and its edge stay intact.
+    assign service_ready_base = !reset && tx_ready_q &&
+        ((tx_pending && (tx_cfg_rearm || cfg_ready)) ||
+         (!tx_pending && rx_pending && cfg_ready) ||
+         (!tx_pending && !rx_pending && !(cfg_wr && cfg_ready && (select_tx || select_map || select_rx))));
+    assign service_ready_rx_term = !reset && tx_ready_q && !tx_pending && rx_pending;
+
     // 镜像寄存器沿用同一递推，保证任何拍都与 cfg_ready 同值。
     always @(posedge clk) begin
         if (reset) cfg_ready_m <= 0;
@@ -593,6 +676,47 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
+    // Dedicated application write domains retain the exact public recurrence.
+    genvar app_ready_copy;
+    generate for(app_ready_copy=0;app_ready_copy<2;app_ready_copy=app_ready_copy+1) begin : application_ready
+        always @(posedge clk) begin
+            if(reset || !tx_ready_q) app_cfg_ready[app_ready_copy]<=0;
+            else if(tx_pending) begin
+                if(tx_cfg_rearm) app_cfg_ready[app_ready_copy]<=1;
+            end else if(rx_pending) begin
+                if(rx_cfg_ok[0]) app_cfg_ready[app_ready_copy]<=1;
+            end else begin
+                app_cfg_ready[app_ready_copy]<=1;
+                if(cfg_wr && app_cfg_ready[app_ready_copy] && (select_tx || select_map || select_rx))
+                    app_cfg_ready[app_ready_copy]<=0;
+            end
+        end
+    end endgenerate
+
+    genvar service_copy;
+    generate
+        for (service_copy = 0; service_copy < 21; service_copy = service_copy + 1) begin : service_write_ready
+            (* preserve = 1, dont_merge = 1 *) reg transmit_ack_q;
+            always @(posedge clk) begin
+                if (reset) transmit_ack_q<=0;
+                else transmit_ack_q<=tx_cfg_ok;
+            end
+            always @(posedge clk) begin
+                if (reset) service_ready[service_copy] <= 0;
+                else if (!tx_ready_q) service_ready[service_copy] <= 0;
+                else if (tx_pending) begin
+                    if (!tx_cfg_we && transmit_ack_q) service_ready[service_copy] <= 1;
+                end else if (rx_pending) begin
+                    if (rx_cfg_ok[0]) service_ready[service_copy] <= 1;
+                end else begin
+                    service_ready[service_copy] <= 1;
+                    if (cfg_wr && service_ready[service_copy] && (select_tx || select_map || select_rx))
+                        service_ready[service_copy] <= 0;
+                end
+            end
+        end
+    endgenerate
+
     always @(posedge clk) begin
         if (reset) begin
             read_valid <= 0;
@@ -605,41 +729,39 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
         end
     end
 
-    // 保留组选择层次，每四位使用本地组选择与共享组独热选择。
-    // 共享组三个来源并行与或，避免数据经过串联的优先选择；返回仍为两拍。
-    wire [2:0] read_group_next = host_read ? group_select(cfg_write_addr) : mib_group;
+    // Ten independent registered source selects per nibble replace the
+    // binary group mux followed by the shared-group mux. Both address paths
+    // retain the original capture edge and the public two-clock read latency.
+    wire [9:0] read_result_next = host_read ? result_select(cfg_write_addr) : mib_result_select;
     genvar result_slice;
     generate
         for (result_slice = 0; result_slice < 8; result_slice = result_slice + 1) begin : result_bank
-            (* preserve = 1, dont_merge = 1 *) reg [2:0] group_q;
-            (* preserve = 1, dont_merge = 1 *) reg load_q, extra_q, descr_q;
+            (* preserve = 1, dont_merge = 1 *) reg [3:0] select_cnt_q;
+            (* preserve = 1, dont_merge = 1 *) reg [5:0] select_svc_q;
+            (* keep = 1 *) wire [3:0] c0 = {4{select_cnt_q[0]}} & (read_regs[result_slice*4+:4] | read_regs_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c1 = {4{select_cnt_q[1]}} & (read_tx[result_slice*4+:4] | read_tx_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c2 = {4{select_cnt_q[2]}} & (read_a[result_slice*4+:4] | read_a_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c3 = {4{select_cnt_q[3]}} & (read_b[result_slice*4+:4] | read_b_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] s_rtc_snmp =
+                ({4{select_svc_q[0]}} & rtc_rdata[result_slice*4+:4]) |
+                ({4{select_svc_q[1]}} & snmp_control_data[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] s_snmp2 =
+                ({4{select_svc_q[2]}} & snmp_status_data[result_slice*4+:4]) |
+                ({4{select_svc_q[3]}} & snmp_descr_data[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] s_load =
+                ({4{select_svc_q[4]}} & load_rdata[result_slice*4+:4]) |
+                ({4{select_svc_q[5]}} & load_extra_data[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] local_counters = c0 | c1 | c2 | c3;
+            (* keep = 1 *) wire [3:0] remote_services = s_rtc_snmp | s_snmp2 | s_load;
             always @(posedge clk) begin
                 if (reset) begin
-                    group_q <= SEL_REGS;
-                    load_q <= 0;
-                    extra_q <= 0;
-                    descr_q <= 0;
+                    select_cnt_q <= 4'b0001;
+                    select_svc_q <= 6'b0;
                     cfg_rdata[result_slice * 4 +: 4] <= 0;
-                end
-                else begin
-                    group_q <= read_group_next;
-                    load_q <= read_loader_next == SHARED_LOAD;
-                    extra_q <= read_loader_next == SHARED_LOAD_EXTRA;
-                    descr_q <= read_loader_next != SHARED_LOAD
-                        && read_loader_next != SHARED_LOAD_EXTRA;
-                    case (group_q)
-                        SEL_REGS : cfg_rdata[result_slice * 4 +: 4] <= read_regs[result_slice * 4 +: 4];
-                        SEL_TX : cfg_rdata[result_slice * 4 +: 4] <= read_tx[result_slice * 4 +: 4];
-                        SEL_A : cfg_rdata[result_slice * 4 +: 4] <= read_a[result_slice * 4 +: 4];
-                        SEL_B : cfg_rdata[result_slice * 4 +: 4] <= read_b[result_slice * 4 +: 4];
-                        SEL_RTC : cfg_rdata[result_slice * 4 +: 4] <= rtc_rdata[result_slice * 4 +: 4];
-                        SEL_SNMP_CONTROL : cfg_rdata[result_slice * 4 +: 4] <= snmp_control_data[result_slice * 4 +: 4];
-                        SEL_SNMP_STATUS : cfg_rdata[result_slice * 4 +: 4] <= snmp_status_data[result_slice * 4 +: 4];
-                        SEL_SHARED : cfg_rdata[result_slice * 4 +: 4] <=
-                            ({4{load_q}} & load_rdata[result_slice * 4 +: 4]) |
-                            ({4{extra_q}} & load_extra_data[result_slice * 4 +: 4]) |
-                            ({4{descr_q}} & snmp_descr_data[result_slice * 4 +: 4]);
-                    endcase
+                end else begin
+                    select_cnt_q <= read_result_next[3:0];
+                    select_svc_q <= read_result_next[9:4];
+                    cfg_rdata[result_slice * 4 +: 4] <= local_counters | remote_services;
                 end
             end
         end

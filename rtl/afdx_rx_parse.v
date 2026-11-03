@@ -27,7 +27,7 @@ module afdx_rx_parse #(
     // desc_valid 为高时提交完整帧信息，desc_take 表示引擎已取走。
     // resolve_valid 为高时，commit 决定保留还是释放本帧数据。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [DESC_COPIES - 1:0] desc_valid,
-    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [RX_RING_AW + 82:0] desc_data,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [RX_RING_AW + 208:0] desc_data,
     input wire desc_take,
     input wire resolve_valid, resolve_commit,
 
@@ -85,11 +85,21 @@ module afdx_rx_parse #(
     // 随 position 的有效步进提前译码下一字节，停顿时一起保持。
     // 字段写使能只使用本地标志；首字节重置时二者均为假。
     (* preserve = 1, dont_merge = 1 *) reg at_udp_check_low, at_payload;
+    (* preserve = 1, dont_merge = 1 *) reg at_ip_offset_low, at_udp_length_low;
     // in_payload 等价于 n_ok && POS_PAYLOAD <= position < end_data，随 position 提前一拍登记：
     // 进入首个用户字节时取 n_ok（长度相在第 41 字节前已算完），之后到 last_data 为止保持。
     reg in_payload;
     reg [7:0] high_byte, sn;
+    reg [15:0] ip_id, frag_word;
+    reg [31:0] ip_src, ip_dst;
+    (* preserve = 1, dont_merge = 1 *) reg frame_fragmented, frame_later;
+    wire fragmented = frame_fragmented;
+    wire later_fragment = frame_later;
+    wire [15:0] ip_data_len = ip_len - 16'd20;
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
+    // Normalize both length forms before the final limits/select stage.
+    reg [15:0] data_end_q, wire_length_q;
+    reg pad_sn_q, pad_wire_q;
     reg [RX_RING_AW:0] space_limit;
     wire [(RX_RING_AW > 15 ? RX_RING_AW : 15):0] space_limit_value = CAPACITY - n;
     // 长度是否超过整环容量提前登记；占用量仍按首个用户字节提交拍的读指针判断。
@@ -120,7 +130,52 @@ module afdx_rx_parse #(
     // FIN_REPORT：报告错误或提交完整帧信息，然后转 FIN_WAIT。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg [1:0] finish_phase, err_saved;
     reg end_bad, end_overflow, end_alloc;
-    reg [RX_RING_AW + 82:0] end_desc;
+    reg [RX_RING_AW + 208:0] end_desc;
+    reg [15:0] ip_data_length_q;
+    reg [16:0] fragment_end_q;
+    reg fragment_geometry_bad, ip_length_matches;
+    (* preserve=1, dont_merge=1 *) reg [15:0] arrival_snapshot;
+    // Geometry is stable long before the final sequence/FCS bytes. Split
+    // subtract/add/compare so none of them shares the frame-end enable cone.
+    always @(posedge clk) begin
+        arrival_snapshot<=now_c;
+        ip_data_length_q<=ip_len-16'd20;
+        fragment_end_q<={1'b0,frag_word[12:0],3'b0}+{1'b0,ip_data_length_q};
+        ip_length_matches<=ip_len==ip_expected;
+        fragment_geometry_bad<=frag_word[14] || (frag_word[13] && ip_data_length_q[2:0]!=0)
+            || fragment_end_q>17'd8200
+            || (!later_fragment && (udp_len<9 || udp_len>8200 || udp_len<ip_data_length_q));
+    end
+    // FIN_SETTLE registers separate local publish commands for every valid
+    // replica and 24-bit data group. FIN_REPORT retains the external edge.
+    localparam DESC_WIDTH=RX_RING_AW+209, DATA_GROUPS=(DESC_WIDTH+23)/24;
+    wire publish_next=finish_phase==FIN_SETTLE && !(f_end && allowed)
+        && err_saved==ERR_NONE && !end_bad && !udp_bad_q && !end_overflow;
+    genvar publish_copy, data_group;
+    generate
+        for(publish_copy=0;publish_copy<DESC_COPIES;publish_copy=publish_copy+1) begin:valid_publish
+            (* preserve=1, dont_merge=1 *) reg command;
+            always @(posedge clk) begin
+                if(reset) begin command<=0;desc_valid[publish_copy]<=0;end
+                else begin
+                    command<=publish_next;
+                    if(command && !(f_end && allowed)) desc_valid[publish_copy]<=1;
+                    else if(desc_take) desc_valid[publish_copy]<=0;
+                end
+            end
+        end
+        for(data_group=0;data_group<DATA_GROUPS;data_group=data_group+1) begin:data_publish
+            localparam GROUP_WIDTH=DESC_WIDTH-data_group*24>=24 ? 24 : DESC_WIDTH-data_group*24;
+            (* preserve=1, dont_merge=1 *) reg command;
+            always @(posedge clk) begin
+                if(reset) begin command<=0;desc_data[data_group*24+:GROUP_WIDTH]<=0;end
+                else begin
+                    command<=publish_next;
+                    if(command && !(f_end && allowed)) desc_data[data_group*24+:GROUP_WIDTH]<=end_desc[data_group*24+:GROUP_WIDTH];
+                end
+            end
+        end
+    endgenerate
 
     // 先登记本拍校验字，再累加；帧尾检查直接使用累加值的补码关系。
     // 字段检查先寄存成单比特结论，header_bad 只粘滞合并已寄存的值；
@@ -130,10 +185,10 @@ module afdx_rx_parse #(
         if (reset) header_byte_bad <= 0;
         else if (m_valid && allowed && ! m_first) begin
             case (position)
-                1, 2, 3, POS_ETHERTYPE_LOW, POS_IP_OFFSET_LOW : header_byte_bad <= m_data != 0;
+                1, 2, 3, POS_ETHERTYPE_LOW : header_byte_bad <= m_data != 0;
                 POS_ETHERTYPE_HIGH : header_byte_bad <= m_data != ETHERTYPE_HIGH;
                 POS_IP_HEADER : header_byte_bad <= m_data != IP_VERSION_IHL;
-                POS_IP_FLAGS : header_byte_bad <= (m_data & IP_FRAGMENT_MASK) != 0;
+                POS_IP_FLAGS : header_byte_bad <= m_data[7];
                 POS_IP_PROTOCOL : header_byte_bad <= m_data != IP_PROTOCOL_UDP;
                 default : header_byte_bad <= 0;
             endcase
@@ -175,12 +230,18 @@ module afdx_rx_parse #(
             ring_we <= 0;
             ring_wa <= 0;
             ring_wd <= 0;
-            desc_valid <= 0;
-            desc_data <= 0;
             ev <= 0;
             position <= 0;
             at_udp_check_low <= 0;
             at_payload <= 0;
+            at_ip_offset_low <= 0;
+            at_udp_length_low <= 0;
+            frame_fragmented <= 0;
+            frame_later <= 0;
+            data_end_q <= 0;
+            wire_length_q <= 0;
+            pad_sn_q <= 0;
+            pad_wire_q <= 0;
             in_payload <= 0;
             high_byte <= 0;
             sn <= 0;
@@ -229,7 +290,6 @@ module afdx_rx_parse #(
                 has_payload <= 0;
             end
             if ( ! enable) allowed <= 0;
-            if (desc_take) desc_valid <= 0;
             // 只有引擎决定接纳本帧后，才更新有效数据的末端指针。
             if (resolve_valid) begin
                 if (resolve_commit) committed <= desc_finish;
@@ -237,17 +297,26 @@ module afdx_rx_parse #(
             end
             case (length_phase)
                 LEN_SIZES : begin
-                    n <= udp_len - UDP_HEADER_LENGTH;
-                    n_ok <= udp_len >= MIN_UDP_LENGTH && udp_len <= MAX_UDP_LENGTH;
-                    ip_expected <= udp_len + IP_HEADER_LENGTH;
-                    begin udp_add_valid <= 1; udp_add_word <= udp_len; end
+                    n <= fragmented ? ip_data_len - (later_fragment ? 16'd0 : 16'd8) : udp_len - UDP_HEADER_LENGTH;
+                    n_ok <= fragmented ? (ip_data_len <= 1479 && ip_data_len >= (later_fragment ? 1 : 8)) :
+                        (udp_len >= MIN_UDP_LENGTH && udp_len <= MAX_UDP_LENGTH);
+                    ip_expected <= fragmented ? ip_len : udp_len + IP_HEADER_LENGTH;
+                    data_end_q <= fragmented ? ip_len + 16'd14 : udp_len + 16'd34;
+                    wire_length_q <= fragmented ? ip_len + 16'd19 : udp_len + 16'd39;
+                    // Include the original 16-bit wrap cases for malformed
+                    // lengths; accepted lengths use only the lower range.
+                    pad_sn_q <= fragmented ? (ip_len < 16'd45 || ip_len >= 16'd65522) :
+                        (udp_len >= 16'd8 && udp_len < 16'd25);
+                    pad_wire_q <= fragmented ? (ip_len < 16'd45 || ip_len >= 16'd65517) :
+                        (udp_len >= 16'd8 && udp_len < 16'd25);
+                    if (!fragmented) begin udp_add_valid <= 1; udp_add_word <= udp_len; end
                     length_phase <= LEN_LIMITS;
                 end
                 LEN_LIMITS : begin
-                    end_data <= n + HEADER_LENGTH;
-                    last_data <= n + HEADER_LENGTH - 16'd1;
-                    sn_position <= n < MIN_PAYLOAD ? MIN_SN_POSITION : n + HEADER_LENGTH;
-                    expected_len <= n < MIN_PAYLOAD ? MIN_FRAME_LENGTH : n + FRAME_OVERHEAD;
+                    end_data <= data_end_q;
+                    last_data <= data_end_q - 16'd1;
+                    sn_position <= pad_sn_q ? MIN_SN_POSITION : data_end_q;
+                    expected_len <= pad_wire_q ? MIN_FRAME_LENGTH : wire_length_q;
                     space_limit <= space_limit_value[RX_RING_AW:0];
                     fits_q <= n <= CAPACITY;
                     length_phase <= LEN_WAIT;
@@ -261,6 +330,10 @@ module afdx_rx_parse #(
                     position <= 1;
                     at_udp_check_low <= 0;
                     at_payload <= 0;
+                    at_ip_offset_low <= 0;
+                    at_udp_length_low <= 0;
+                    frame_fragmented <= 0;
+                    frame_later <= 0;
                     in_payload <= 0;
                     high_byte <= m_data;
                     overflow <= 0;
@@ -273,6 +346,7 @@ module afdx_rx_parse #(
                     sport <= 0;
                     dport <= 0;
                     ip_len <= 0;
+                    ip_id <= 0; frag_word <= 0; ip_src <= 0; ip_dst <= 0;
                     udp_len <= 0;
                     udp_check <= 0;
                     sn <= 0;
@@ -281,7 +355,12 @@ module afdx_rx_parse #(
                     position <= position + 1'b1;
                     at_udp_check_low <= position == POS_UDP_CHECK_LOW - 1;
                     at_payload <= position == POS_PAYLOAD - 1;
-                    in_payload <= position == POS_PAYLOAD - 1 ? n_ok : in_payload && position != last_data;
+                    at_ip_offset_low <= position == POS_IP_OFFSET_LOW - 1;
+                    at_udp_length_low <= position == POS_UDP_LENGTH_LOW - 1;
+                    if (at_ip_offset_low && (high_byte[5] || |high_byte[4:0] || m_data != 0))
+                        length_phase <= LEN_SIZES;
+                    if (at_udp_length_low && !fragmented) length_phase <= LEN_SIZES;
+                    in_payload <= position == ((fragmented && later_fragment) ? 33 : 41) ? (n_ok && n != 0) : in_payload && position != last_data;
                     // 环写口的数据和地址随字节自由运行，只在 ring_we 提交拍生效；
                     // 位置比较不再进入写数据与写地址的使能锥。
                     ring_wd <= m_data;
@@ -290,7 +369,7 @@ module afdx_rx_parse #(
                     if (at_udp_check_low) udp_check <= { high_byte, m_data };
                     // at_payload 等价于 position==42，范围判断可直接比较常数，
                     // 不再让外层 position 范围译码进入 frame_begin 的使能。
-                    if (at_payload && n_ok && HEADER_LENGTH < end_data) frame_begin <= committed;
+                    if (position == ((fragmented && later_fragment) ? 33 : 41) && n_ok) frame_begin <= committed;
                     case (position)
                         // 目的地址的第 1–3 字节和类型字段的低字节必须为零。
 
@@ -301,11 +380,20 @@ module afdx_rx_parse #(
 
                         POS_VLID_LOW : vlid <= { high_byte, m_data };
                         POS_IP_LENGTH_LOW : ip_len <= { high_byte, m_data };
+                        19 : ip_id <= {high_byte,m_data};
+                        21 : begin
+                            frag_word <= {high_byte,m_data};
+                            frame_fragmented <= high_byte[5] || |high_byte[4:0] || m_data != 0;
+                            frame_later <= |high_byte[4:0] || m_data != 0;
+                        end
+                        27 : ip_src[31:16] <= {high_byte,m_data};
+                        29 : ip_src[15:0] <= {high_byte,m_data};
+                        31 : ip_dst[31:16] <= {high_byte,m_data};
+                        33 : ip_dst[15:0] <= {high_byte,m_data};
                         POS_SPORT_LOW : sport <= { high_byte, m_data };
                         POS_DPORT_LOW : dport <= { high_byte, m_data };
                         POS_UDP_LENGTH_LOW : begin
                             udp_len <= { high_byte, m_data };
-                            length_phase <= LEN_SIZES;
                         end
                         default : ;
                     endcase
@@ -316,7 +404,7 @@ module afdx_rx_parse #(
                     if (in_payload) begin
                         if (position[0]) begin udp_add_valid <= 1; udp_add_word <= { high_byte, m_data }; end
                         else if (position == last_data) begin udp_add_valid <= 1; udp_add_word <= { m_data, 8'b0 }; end
-                        if (position == POS_PAYLOAD) begin
+                        if (position == ((fragmented && later_fragment) ? 34 : 42)) begin
                             // 容量比较已在前一相登记；本拍新释放的空间仍立即参与接纳判断。
                             has_payload <= 1;
                             overflow <= !fits_q || occupied > space_limit;
@@ -340,19 +428,23 @@ module afdx_rx_parse #(
                 err_saved <= f_err;
                 end_overflow <= overflow;
                 end_alloc <= has_payload;
-                end_bad <= header_bad || ! n_ok || !ip_checksum_good || ip_len != ip_expected
-                    || f_len != expected_len;
+                end_bad <= header_bad || ! n_ok || !ip_checksum_good || !ip_length_matches
+                    || f_len != expected_len || (fragmented && fragment_geometry_bad);
                 // 有效长度帧的末次 UDP 累加在序号拍完成，f_end 拍的 udp_sum 已稳定。
                 // 截短帧即使还有待累加字，也已被上述长度检查拒绝，不影响报告拍次。
-                udp_bad_q <= udp_check != 0 && !udp_checksum_good;
-                end_desc <= { vlid, sn, sport, dport, n[10:0], frame_begin[RX_RING_AW - 1:0], now_c };
+                udp_bad_q <= !fragmented && udp_check != 0 && !udp_checksum_good;
+                end_desc <= { ip_src, ip_dst, ip_id, frag_word[12:0], frag_word[13], udp_len, udp_check, vlid, sn, sport, dport, n[10:0], frame_begin[RX_RING_AW - 1:0], 16'b0 };
                 desc_finish <= trial;
                 finish_phase <= FIN_SETTLE;
             end
             else if (finish_phase != FIN_WAIT) begin
                 finish_phase <= finish_phase + 1'b1;
                 // 校验结论提前一拍登记，报告与描述符提交仍保持原来的相位。
-                if (finish_phase == FIN_SETTLE && udp_bad_q) end_bad <= 1;
+                if (finish_phase == FIN_SETTLE) begin
+                    if(udp_bad_q) end_bad<=1;
+                    // Snapshot sampled the exact preceding f_end edge.
+                    end_desc[15:0]<=arrival_snapshot;
+                end
                 if (finish_phase == FIN_REPORT) begin
                     finish_phase <= FIN_WAIT;
                     if (err_saved == ERR_FCS) ev <= EV_FCS;
@@ -361,8 +453,6 @@ module afdx_rx_parse #(
                     else if (end_overflow) ev <= EV_OVERFLOW;
                     else begin
                         ev <= EV_GOOD;
-                        desc_valid <= {DESC_COPIES{1'b1}};
-                        desc_data <= end_desc;
                     end
                     // 坏帧在这里释放暂占空间。
                     // 没有用户数据的前导码错误，不影响尚待判定的完整帧。
