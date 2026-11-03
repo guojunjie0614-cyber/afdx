@@ -16,7 +16,7 @@ import sys
 import time
 
 import psutil
-from eda import free_disk_bytes
+from eda import free_disk_bytes, modelsim_slot_pids
 
 ROOT = Path(__file__).resolve().parents[1]
 TZ = timezone(timedelta(hours=8))
@@ -82,28 +82,22 @@ def read_list(path, kind='RTL', source_root=None):
 
 
 def processes():
-    sims, eda = [], []
+    eda = []
     for p in psutil.process_iter(['pid', 'name', 'create_time', 'memory_info']):
         try:
             name = (p.info['name'] or '').lower()
-            if name in ('vsimk.exe', 'vsim.exe'):
-                sims.append(p)
             if name in ('elinx_synthesis.exe', 'implementation.exe', 'quartus_map.exe', 'elinx.exe'):
                 eda.append(p)
         except psutil.NoSuchProcess:
             pass
-    # vsim.exe is a launcher; count kernels, and launchers not yet owning one.
-    kernels = {p.pid for p in sims if p.info['name'].lower() == 'vsimk.exe'}
-    pending = 0
-    for p in sims:
-        if p.pid in kernels:
-            continue
-        try:
-            if not any(q.pid in kernels for q in p.children(recursive=True)):
-                pending += 1
-        except psutil.NoSuchProcess:
-            pass
-    return len(kernels) + pending, len(eda)
+    return modelsim_slot_pids(), len(eda)
+
+
+def reserved_sim_slots(active, global_slots):
+    """Include foreign kernels and own workers still in compile/check phases."""
+    workers=[v for v in active if v['row']['kind']!='SYNTH']
+    owned=set().union(*(v.get('sim_pids',set()) for v in workers))
+    return len(workers)+len(global_slots-owned)
 
 
 def reserved_netlist_bytes(active, observed_peak):
@@ -222,6 +216,7 @@ def main():
             p = item['process']
             try:
                 children = psutil.Process(p.pid).children(recursive=True)
+                item['sim_pids']={q.pid for q in children if q.name().lower() in ('vsim.exe','vsimk.exe')}
                 rss = sum(q.memory_info().rss for q in children)
                 item['rss'] = rss
                 item['peak'] = max(item['peak'], rss)
@@ -257,10 +252,11 @@ def main():
             changed = True
         if changed:
             report()
-        sims, edas = processes()
+        sim_slots, edas = processes()
         available = psutil.virtual_memory().available
         disk = free_disk_bytes(ROOT.anchor)
         sim_active = sum(v['row']['kind'] != 'SYNTH' for v in active.values())
+        sim_reserved = reserved_sim_slots(active.values(),sim_slots)
         synth_active = len(active) - sim_active
         observed = peaks.get('observed_class_a_tree_bytes', 0)
         # Reserve the complete measured footprint even for A runners which are
@@ -282,7 +278,7 @@ def main():
                 if max(edas, synth_active) >= 6:
                     continue
             else:
-                if max(sims, sim_active) >= args.max_sims:
+                if sim_reserved >= args.max_sims:
                     continue
                 if row['kind'] in ('A', 'B') and net_active >= net_limit:
                     continue
