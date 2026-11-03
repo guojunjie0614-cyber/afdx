@@ -1,0 +1,243 @@
+[
+  {
+    "file": "rtl/afdx_615a.v",
+    "declarations": [
+      {
+        "line": 194,
+        "original": "    wire [1:0] engine_status;\n",
+        "replacement": "\n",
+        "declaration": "    wire [1:0] engine_status;\n"
+      },
+      {
+        "line": 199,
+        "original": "    wire [15:0] engine_main_tid;\n",
+        "replacement": "\n",
+        "declaration": "    wire [15:0] engine_main_tid;\n"
+      },
+      {
+        "line": 200,
+        "original": "    wire [15:0] engine_status_tid;\n",
+        "replacement": "\n",
+        "declaration": "    wire [15:0] engine_status_tid;\n"
+      },
+      {
+        "line": 201,
+        "original": "    wire [15:0] engine_deny_tid;\n",
+        "replacement": "\n",
+        "declaration": "    wire [15:0] engine_deny_tid;\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "5a00250c2100ddf766547388bed4a2f77f0b70f6e4d80f4568e27b75575e1328",
+    "after_sha256": "408bf95812d2575781665967854b5b47ace659d925fb4e1ad0b2c52585affa8e"
+  },
+  {
+    "file": "rtl/afdx_app_tx.v",
+    "declarations": [
+      {
+        "line": 134,
+        "original": "    wire read_en;\n",
+        "replacement": "\n",
+        "declaration": "    wire read_en;\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "729bc86fd2598c28e5ebcf293ae180b530ca54c52f6bcabf05eb16dfb8473337",
+    "after_sha256": "70d83b65b5ddb3e2aa1a359d314bf7aac077b012c0d31bf169731419f54b84bf"
+  },
+  {
+    "file": "rtl/afdx_rtc.v",
+    "declarations": [
+      {
+        "line": 665,
+        "original": "    wire [31:0] receive_timestamp_seconds=receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];\n",
+        "replacement": "    assign receive_timestamp_seconds =receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];\n",
+        "declaration": "    wire [31:0] receive_timestamp_seconds;\n"
+      },
+      {
+        "line": 666,
+        "original": "    wire [31:0] receive_timestamp_nanoseconds=receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];\n",
+        "replacement": "    assign receive_timestamp_nanoseconds =receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];\n",
+        "declaration": "    wire [31:0] receive_timestamp_nanoseconds;\n"
+      },
+      {
+        "line": 835,
+        "original": "    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;\n",
+        "replacement": "\n",
+        "declaration": "    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;\n"
+      },
+      {
+        "line": 875,
+        "original": "    wire rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;\n",
+        "replacement": "    assign rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;\n",
+        "declaration": "    wire rtc_client_launch;\n"
+      },
+      {
+        "line": 876,
+        "original": "    wire rtc_server_launch = master_tx && reply_pending;\n",
+        "replacement": "    assign rtc_server_launch = master_tx && reply_pending;\n",
+        "declaration": "    wire rtc_server_launch;\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "fbd6dca681c5b8cdef2e5166173eb49d963202c56b276453ecd6524b44156732",
+    "after_sha256": "d858be1fce9a073cf04e324d1f8f12d4456522a180d0f39f59599b6c1c871e6e"
+  },
+  {
+    "file": "rtl/afdx_rx_deliver.v",
+    "declarations": [],
+    "guarded_blocks": 0,
+    "replaced_tasks": 3,
+    "declaration_inverse_verified": true,
+    "before_sha256": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991",
+    "after_sha256": "160bc0851b360f785f632463da1f8c6721da2abe2a6fed47b603bfd98d72e883"
+  },
+  {
+    "file": "rtl/afdx_rx_engine.v",
+    "declarations": [
+      {
+        "line": 176,
+        "original": "    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;\r\n",
+        "replacement": "\r\n",
+        "declaration": "    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;\r\n"
+      },
+      {
+        "line": 326,
+        "original": "    reg dq_room;\r\n",
+        "replacement": "\r\n",
+        "declaration": "    reg dq_room;\r\n"
+      },
+      {
+        "line": 328,
+        "original": "    wire fragmented = frame_fragmented;\r\n",
+        "replacement": "    assign fragmented = frame_fragmented;\r\n",
+        "declaration": "    wire fragmented;\r\n"
+      },
+      {
+        "line": 354,
+        "original": "    wire age_tick;\r\n",
+        "replacement": "\r\n",
+        "declaration": "    wire age_tick;\r\n"
+      },
+      {
+        "line": 381,
+        "original": "    reg dq_commit;\r\n",
+        "replacement": "\r\n",
+        "declaration": "    reg dq_commit;\r\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13",
+    "after_sha256": "892d6d16025df36b385dba3d19d77f5ede57239c79c6556aba91661ed3f94818"
+  },
+  {
+    "file": "rtl/afdx_rx_parse.v",
+    "declarations": [
+      {
+        "line": 99,
+        "original": "    reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;\r\n",
+        "replacement": "\r\n",
+        "declaration": "    reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;\r\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79",
+    "after_sha256": "8ffce24179476f3d58ce4a633a38eb768a242770d649807a273807b7b0f77e9a"
+  },
+  {
+    "file": "rtl/afdx_rx_reassembly.v",
+    "declarations": [],
+    "guarded_blocks": 0,
+    "replaced_tasks": 2,
+    "declaration_inverse_verified": true,
+    "before_sha256": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8",
+    "after_sha256": "23e394c1fb7dfbe8be6c1bda7b16d764c1a7fd2edd02eab92819169cd2c582e0"
+  },
+  {
+    "file": "rtl/afdx_rx_reassembly_bank.v",
+    "declarations": [
+      {
+        "line": 60,
+        "original": "    (* preserve=1, dont_merge=1 *) reg query_active, query_start;\n",
+        "replacement": "\n",
+        "declaration": "    (* preserve=1, dont_merge=1 *) reg query_active, query_start;\n"
+      },
+      {
+        "line": 133,
+        "original": "    (* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;\n",
+        "replacement": "\n",
+        "declaration": "    (* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;\n"
+      },
+      {
+        "line": 168,
+        "original": "    wire payload_we=copy_state==C_RUN && copy_valid_q;\n",
+        "replacement": "    assign payload_we =copy_state==C_RUN && copy_valid_q;\n",
+        "declaration": "    wire payload_we;\n"
+      },
+      {
+        "line": 205,
+        "original": "    (* maxfan=16 *) reg [13:0] output_position;\n",
+        "replacement": "\n",
+        "declaration": "    (* maxfan=16 *) reg [13:0] output_position;\n"
+      }
+    ],
+    "guarded_blocks": 0,
+    "replaced_tasks": 4,
+    "declaration_inverse_verified": true,
+    "before_sha256": "ca2450e8280779dbd95c03530e29d8d99ccd1edfb48d1f13d7f7f7aa45237703",
+    "after_sha256": "5ed811963e079a08c21759a4b8d60c71020e5ef31865a145fe32d0d377473187"
+  },
+  {
+    "file": "rtl/afdx_rx_reassembly_ram.v",
+    "declarations": [],
+    "guarded_blocks": 0,
+    "replaced_tasks": 1,
+    "declaration_inverse_verified": true,
+    "before_sha256": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369",
+    "after_sha256": "38ca6ec6e13188f7b55a8ae37c8f6d965eac2ae69a451ab5ee868c542d1f27f6"
+  },
+  {
+    "file": "rtl/afdx_tx_buf.v",
+    "declarations": [],
+    "guarded_blocks": 1,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105",
+    "after_sha256": "73a3f6a8f37933bb0e86b9b64eddbad5ca2519458c58f835654ae3e521d9cb9c"
+  },
+  {
+    "file": "rtl/afdx_tx_builder.v",
+    "declarations": [],
+    "guarded_blocks": 1,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700",
+    "after_sha256": "1ea0445eb31dbd1d667de3f51724756c7c8a7a9e83565dd2434cd9dd63befa6b"
+  },
+  {
+    "file": "rtl/afdx_tx_engine.v",
+    "declarations": [
+      {
+        "line": 220,
+        "original": "    reg [31:0] words[0:5];\n",
+        "replacement": "\n",
+        "declaration": "    reg [31:0] words[0:5];\n"
+      }
+    ],
+    "guarded_blocks": 1,
+    "replaced_tasks": 0,
+    "declaration_inverse_verified": true,
+    "before_sha256": "17f781f2687f4fd1231821754fe74f481388098f9b1374d00faf5d5a3efdafde",
+    "after_sha256": "f3f4acf5966bdf03db8e5efd7bbce276963e6aca04c6139240227e32b9298561"
+  }
+]

@@ -1,0 +1,136 @@
+{
+  "Started": "2026-11-03T22:01:39.492024+08:00",
+  "Netlist": false,
+  "Runs": [
+    {
+      "Test": "tb_t76_load",
+      "Param": "VL_COUNT=1,GROUP_LENGTH=17,DURATION=1,DUPLEX=0,SMOKE=1",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\t76_sim\\tb_t76_load\\20261103_060139_939302",
+      "Checks": 1,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 0,
+      "Started": "2026-11-03T22:01:39.688749+08:00",
+      "Finished": "2026-11-03T22:01:50.438785+08:00",
+      "Seconds": 10.75,
+      "Process": {
+        "pid": 21684,
+        "created": 1793714499.6819987,
+        "deadline": "2026-11-04T22:01:39.679746+08:00"
+      },
+      "PeakTreeBytes": 219099136,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\par_t76_vqm_parallel_0_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel\\0_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\t76_sim\\tb_t76_load\\20261103_060141_115596",
+      "Checks": 161,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 2,
+      "Started": "2026-11-03T22:01:40.860537+08:00",
+      "Finished": "2026-11-03T22:02:20.513163+08:00",
+      "Seconds": 39.656,
+      "Process": {
+        "pid": 17424,
+        "created": 1793714500.8548937,
+        "deadline": "2026-11-04T22:01:40.850521+08:00"
+      },
+      "PeakTreeBytes": 212770816,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\par_t76_vqm_parallel_2_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel\\2_tb_t76_load.log",
+      "Error": null
+    },
+    {
+      "Test": "tb_t76_load",
+      "Param": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0,SWAP=1",
+      "Status": "PASS",
+      "Exit": 0,
+      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\t76_sim\\tb_t76_load\\20261103_060150_860384",
+      "Checks": 161,
+      "CheckItems": null,
+      "Kind": "RTL76",
+      "Index": 4,
+      "Started": "2026-11-03T22:01:50.620675+08:00",
+      "Finished": "2026-11-03T22:02:30.338152+08:00",
+      "Seconds": 39.719,
+      "Process": {
+        "pid": 24008,
+        "created": 1793714510.6143055,
+        "deadline": "2026-11-04T22:01:50.612691+08:00"
+      },
+      "PeakTreeBytes": 200118272,
+      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\net_source\\out\\par_t76_vqm_parallel_4_latest_tb_t76_load.json",
+      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_vqm_parallel\\4_tb_t76_load.log",
+      "Error": null
+    }
+  ],
+  "Pending": [],
+  "Active": [
+    {
+      "test": "tb_t76_load",
+      "kind": "VQM76",
+      "label": "load_tx_vqm_window",
+      "reference_index": 2,
+      "params": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0",
+      "priority": 1000000,
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source",
+      "netlist": "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+      "id": 3,
+      "prefix": "par_t76_vqm_parallel_3_",
+      "Process": {
+        "pid": 32848,
+        "created": 1793718121.7620716,
+        "deadline": "2026-11-04T23:02:01.759646+08:00"
+      }
+    },
+    {
+      "test": "tb_t76_load",
+      "kind": "VQM76",
+      "label": "load_rx_vqm_window",
+      "reference_index": 4,
+      "params": "GROUP_LENGTH=1471,MIXED=2,DURATION=125001,DUPLEX=0,SWAP=1",
+      "priority": 999999,
+      "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\critical_net_source",
+      "netlist": "E:/2026_Embedded_FPGA/worktrees/active/c3_frag1030/out/build1030/AFDX_top_1030/20261102_212626_064390/project/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm",
+      "id": 5,
+      "prefix": "par_t76_vqm_parallel_5_",
+      "wait_until_any_exit": [
+        {
+          "pid": 42016,
+          "created": 1793691255.5790815
+        },
+        {
+          "pid": 17492,
+          "created": 1793693254.1008322
+        },
+        {
+          "pid": 33644,
+          "created": 1793693286.312673
+        }
+      ],
+      "Process": {
+        "pid": 14068,
+        "created": 1793718422.719312,
+        "deadline": "2026-11-04T23:07:02.714243+08:00"
+      }
+    }
+  ],
+  "Owner": {
+    "pid": 21340,
+    "created": 1793720800.0898364
+  },
+  "PeakMemory": {
+    "netlist_concurrency_limit": 2,
+    "observed_class_a_tree_bytes": 4481114112,
+    "class_a_runtime_measured": true
+  },
+  "Finished": null
+}

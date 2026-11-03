@@ -1,0 +1,9 @@
+case	policy	complete_window	source	VLID	payload_bytes	samples	planned_window_ms	first_frame_latency_us	observed_min_latency_us	max_latency_us	BAG_deduction_us	jitter_us	formula_valid	inject_mbps	receive_mbps	first_tx_cycle	first_rx_last_cycle	worst_tx_cycle	worst_rx_last_cycle	note
+1	fragment_completion	0	0	014E	1472	1	100.000000	1127.424000	1127.424000	1127.424000	NA	NA	NA	0.117760	0.117760	307980	448908	307980	448908	整条分片消息完成时间，不套单帧抖动门槛
+1	fragment_completion	0	1	014E	1472	1	100.000000	1127.424000	1127.424000	1127.424000	NA	NA	NA	0.117760	0.117760	307980	448908	307980	448908	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	0	013C	1472	50	100.000000	1079.120000	1067.928000	1079.120000	NA	NA	NA	5.888000	5.770240	280908	415798	280908	415798	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	0	013D	3000	33	100.000000	2092.248000	2092.248000	2103.920000	NA	NA	NA	7.920000	7.920000	282383	543914	655908	918898	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	0	013E	8192	17	100.000000	5212.296000	5212.296000	5212.304000	NA	NA	NA	11.141120	10.485760	285386	936923	1785386	2436924	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	1	013C	1472	50	100.000000	1079.120000	1067.928000	1079.120000	NA	NA	NA	5.888000	5.770240	280908	415798	280908	415798	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	1	013D	3000	33	100.000000	2092.248000	2092.248000	2103.920000	NA	NA	NA	7.920000	7.920000	282383	543914	655908	918898	整条分片消息完成时间，不套单帧抖动门槛
+mixed_profile	fragment_completion	1	1	013E	8192	17	100.000000	5212.296000	5212.296000	5212.304000	NA	NA	NA	11.141120	10.485760	285386	936923	1785386	2436924	整条分片消息完成时间，不套单帧抖动门槛

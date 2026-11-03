@@ -1,6 +1,6 @@
-# ModelSim-only entry for the T60 synthesizable VLID application stream top.
+# ModelSim batch entry for the T60 synthesizable VLID application stream top.
 # Run from the repository root: do sim/run_app.do [stimulus] [vl_config] [run_name]
-# The judge edits stimulus.txt; the testbench reads vl_config.txt and writes cfg.
+# The judge edits stimulus.txt; tb/lib/afdx_sys_config.v owns configuration.
 # Original VLID bytes are injected without conversion to a transmit index.
 onerror {resume}
 onbreak {}
@@ -148,8 +148,12 @@ proc app_entry::compile {folder} {
     file delete -force work
     catch {vlib work}
     if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
-    set sources [concat [lsort [glob [file join $root rtl *.v]]] \
+    source [file join $root sim modelsim_compat.tcl]
+    set sources [concat [afdx_modelsim_rtl $root $folder] \
         [lsort [glob [file join $root tb lib *.v]]] [list [file join $root tb tb_app_entry.v]]]
+    if {![file isfile [file join $root tb lib afdx_sys_config.v]]} {
+        fail "missing non-top system configuration module"
+    }
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
     if {$ce_div ni {1 2}} {fail "AFDX_CE_DIV must be 1 or 2"}
@@ -316,7 +320,8 @@ proc app_entry::run_fragmented {folder cfg msgs} {
     cd $frag
     catch {vlib work}
     if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
-    set sources [concat [lsort [glob [file join $root rtl *.v]]] [list [file join $root tb tb_fragmentation.v]]]
+    source [file join $root sim modelsim_compat.tcl]
+    set sources [concat [afdx_modelsim_rtl $root $frag] [list [file join $root tb tb_fragmentation.v]]]
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
     if {$ce_div ni {1 2}} {fail "AFDX_CE_DIV must be 1 or 2"}

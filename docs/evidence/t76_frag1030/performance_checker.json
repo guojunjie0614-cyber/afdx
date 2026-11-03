@@ -1,0 +1,9 @@
+{
+  "offline_source": "out/t76/perf_recheck",
+  "items": 1357450,
+  "errors": 0,
+  "actual_rtl_rerun": "out/t76_fallback_parallel job 13; pending real result",
+  "definition": "Public A record tx_data first and D record raw rx_data first/last; core completion times no longer used in performance measure",
+  "bag_plus_one": "retained; GMII interval must be at least BAG, no exact-equality zero-jitter assumption",
+  "not_equivalent_to_100ms_acceptance": true
+}

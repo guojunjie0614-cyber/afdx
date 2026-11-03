@@ -1,0 +1,30 @@
+{
+  "pid": 37720,
+  "created": 1793713593.0581374,
+  "started": "2026-11-03 21:46:33",
+  "command": [
+    "E:\\anaconda3\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\tools\\par_regress.py",
+    "--output",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel",
+    "--jobs",
+    "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source\\sim\\t76_jobs_frozen.json",
+    "--max-sims",
+    "6",
+    "--max-owned-sims",
+    "4",
+    "--max-netlists",
+    "3",
+    "--max-synth",
+    "1",
+    "--rtl-hours",
+    "24"
+  ],
+  "frozen_root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\fallback_source",
+  "fallback_reason": "step-0 nonidentical VQM",
+  "source_rtl": "e4573d22 exact; compatibility transformations only in each simulation output",
+  "no_retries": true
+}

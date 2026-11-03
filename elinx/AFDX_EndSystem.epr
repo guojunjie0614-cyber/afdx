@@ -21,6 +21,7 @@
             </Config>
         </FileSet>
         <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+            <File Path="/../tb/lib/afdx_sys_config.v"/>
             <File Path="/../tb/lib/top_stream_endpoint.v"/>
             <File Path="/../tb/lib/judge_endpoint.v"/>
             <File Path="/../tb/tb_elinx.v"/>

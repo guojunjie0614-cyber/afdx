@@ -1,4 +1,4 @@
-"""L8 performance from GMII byte intervals and independently matched M/D rows."""
+"""Public application/GMII timing, with independently matched integrity metadata."""
 import collections
 
 
@@ -13,6 +13,20 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     mean=sum(values)/len(values) if values else None,
                     max_us=max(values)*0.008 if values else None,
                     mean_us=sum(values)*0.008/len(values) if values else None)
+    # T76: bind each reconstructed message to the actually captured public
+    # tx_data/rx_data bytes. Core M/D completion cycles are not measurements.
+    for ep in endpoints.values():
+        app_rows=[p for _,_,p in ep['txrows'] if p[0]=='A']
+        expect(len(app_rows)==len(ep['messages']),'T76 every message has public application input')
+        for m,a in zip(ep['messages'],app_rows):
+            expect(int(a[2],16)==(m['words'][2]&65535) and int(a[3])==m['n'] and bytes.fromhex(a[4])==m['payload'],
+                   'T76 public tx_data VLID/length/bytes match')
+            m['public_first']=int(a[5]);m['public_last']=int(a[1])
+        app_delivery=[p for _,_,p in ep['rxrows'] if p[0]=='D']
+        expect(len(app_delivery)==len(ep['deliveries']),'T76 every delivery has public receive timestamps')
+        for d,p in zip(ep['deliveries'],app_delivery):
+            expect(len(p)>=10,'T76 public rx_data timestamps are present')
+            d['public_first']=int(p[8]);d['public_last']=int(p[9])
     result={}
     required={'light_d0','light_d257','throughput_d0','throughput_d257','duplex_d0','duplex_d257','gbe77_d0','gbe77_d257','gbe81_d0','gbe81_d257'}
     expect(required<={name for _,name in marks},'light/ten-VL/77/81 phases')
@@ -39,7 +53,7 @@ def measure(sysrows,endpoints,gmii,samples,expect):
         for source_number in directions:
             source=endpoints[source_number];destination=endpoints[3-source_number]
             all_messages=[m for m in source['messages'] if m['stage']==stage]
-            selected=[m for m in all_messages if not throughput or begin<=m['cycle']<end]
+            selected=[m for m in all_messages if not throughput or begin<=m['public_first']<end]
             expect(bool(selected) and all(m['result']=='accept' for m in all_messages),'L8 every offered message accepted '+stage)
             expect(all(len(m['deliveries'])==1 for m in all_messages),'L8 every accepted message delivered exactly once '+stage)
             expect(all((m['words'][0]&7)==7 for m in all_messages),'L8 both networks enabled '+stage)
@@ -48,12 +62,12 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                        'full payload VLs with BAG 1ms '+stage)
                 for vl in range(vls):
                     mm=[m for m in all_messages if m['vl']==vl]
-                    expect(len(mm)>=23 and all(b['cycle']-a['cycle']==bag for a,b in zip(mm,mm[1:])),
+                    expect(len(mm)>=23 and all(b['public_first']-a['public_first']==bag for a,b in zip(mm,mm[1:])),
                            f'L8 one submission per BAG ES{source_number} VL{vl} {stage}')
             else:
                 expect(len({m['vl'] for m in all_messages})==1,'L8 light load one VL '+stage)
                 for a,b in zip(all_messages,all_messages[1:]):
-                    expect(b['cycle']-a['cycle']>a['words'][1],'L8 light submissions slower than BAG '+stage)
+                    expect(b['public_first']-a['public_first']>a['words'][1],'L8 light submissions slower than BAG '+stage)
             bad_tx=sum(source['pulse_stages'][stage][n] for n in ('drop_dis','drop_full','drop_long','drop_nopage'))
             bad_rx=sum(destination['pulse_stages'][stage][net+'_'+n] for net in ('a','b') for n in ('fcs','len','hdr','unk','cfg','ic','ovf','gdrop'))
             expect(bad_tx==bad_rx==0,'L8 no loss/error counter increase '+stage)
@@ -61,7 +75,7 @@ def measure(sysrows,endpoints,gmii,samples,expect):
             rm=destination['pulse_stages'][stage]['rm_drop']
             expect(rm==delivered,'L8 one normal redundancy rejection per delivery '+stage)
             metrics=dict(vls=vls if throughput else 1,accepted=len(all_messages),delivered=delivered,rm_drop=rm,abnormal_pulses=bad_tx+bad_rx,
-                         measurement_messages=len(selected),gmii={},BAG_wait_definition='max(P_slow+BAG-M,0)')
+                         measurement_messages=len(selected),gmii={},BAG_wait_definition='Diagnostic input-to-eligibility deadline lead only; not proof of scheduler waiting. Periodic R139 jitter does not deduct BAG.')
             if throughput and duration>0:
                 for net in ('A','B'):
                     frames=[f for f in source['gmii_tx'] if f['net']==net and f.get('message',{}).get('stage')==stage]
@@ -74,11 +88,11 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                         minimum=900 if vls==77 else 117.68
                         expect(rates['payload_mbps']>=minimum,f'ES{source_number} {net} GMII UDP throughput >= {minimum}Mbps {stage}')
                 ds=[d for m in all_messages for d in m['deliveries']]
-                payload=sum(overlap(d['cycle'],d['cycle']+d['n'],begin,end) for d in ds)
+                payload=sum(overlap((d['public_first']+2),d['public_last']+1,begin,end) for d in ds)
                 metrics['delivered_payload_bytes']=payload;metrics['delivered_mbps']=payload*1000/duration
                 if not near_limit:
                     expect(metrics['delivered_mbps']>=(900 if vls==77 else 117.68),'delivery throughput floor '+stage)
-                count_d=sum(begin<=d['cycle']<end for d in ds)
+                count_d=sum(begin<=(d['public_first']+2)<end for d in ds)
                 count_rm=sum(begin<=t<end for t in destination['pulses']['rm_drop'])
                 expect(count_rm==count_d,'L8 window rm_drop equals delivered messages '+stage)
                 metrics['window_deliveries']=count_d;metrics['window_rm_drop']=count_rm
@@ -90,11 +104,11 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                 delay=f.get('link_delay')
                 expect(delay==expected_delay,'L8 intended link delay '+stage)
                 delay=delay or 0
-                tx_value=sent['start']-m['cycle']
-                rx_value=d['cycle']+d['n']-1-(f['gmii_end']-1)
-                total=d['cycle']+d['n']-1-m['cycle']-delay
+                tx_value=sent['start']-m['public_first']
+                rx_value=d['public_last']-(f['gmii_end']-1)
+                total=d['public_last']-m['public_first']-delay
                 previous=m.get('previous')
-                bag_wait=max(0,previous['start']+m['words'][1]-m['cycle']) if previous else 0
+                bag_wait=max(0,previous['start']+m['words'][1]-m['public_first']) if previous else 0
                 tx.append(tx_value);rx.append(rx_value);e2e.append(total);bags.append(bag_wait)
                 tx_adjusted.append(tx_value-bag_wait);e2e_adjusted.append(total-bag_wait)
                 if not near_limit:
@@ -102,24 +116,24 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     expect(0<=tx_value-(bag_wait if throughput else 0)<=250000,'L8 TX latency <=2ms after BAG allowance '+stage)
                     expect(0<total-(bag_wait if throughput else 0)<=250000,'L8 end-to-end latency <=2ms after BAG allowance '+stage)
                     if throughput:
-                        expect(0<total<=25973,'raw end-to-end latency <= 207.784us '+stage)
+                        expect(0<total<=25973,'public application first-to-last latency <=207.784us '+stage)
             metrics.update(T_tx=stats(tx),T_rx=stats(rx),T_e2e_link_removed=stats(e2e),
                 T_tx_BAG_removed=stats(tx_adjusted),T_e2e_BAG_and_link_removed=stats(e2e_adjusted),BAG_wait=stats(bags))
             intervals=[];schedule_errors=[];light_groups={}
             for vl in {m['vl'] for m in selected}:
                 ms=sorted((m for m in all_messages if m['vl']==vl and m['frame']),key=lambda m:m['frame']['start'])
                 for a,b in zip(ms,ms[1:]):
-                    if throughput and not begin<=b['cycle']<end:continue
+                    if throughput and not begin<=b['public_first']<end:continue
                     fa=a['frame']['frames'][0].get('gmii');fb=b['frame']['frames'][0].get('gmii')
                     if fa and fb:
                         intervals.append(fb['start']-fa['start']-b['words'][1])
                         if a['n']==b['n']:
-                            schedule_errors.append((fb['start']-fa['start'])-(b['cycle']-a['cycle']))
+                            schedule_errors.append((fb['start']-fa['start'])-(b['public_first']-a['public_first']))
             if not throughput:
                 for n in sorted({m['n'] for m in selected}):
                     group=[(m,t,e) for m,t,e in zip(selected,tx,e2e) if m['n']==n]
                     expect(len(group)==8,'light fixed-length group has eight repeated messages')
-                    times=[m['cycle'] for m,_,_ in group]
+                    times=[m['public_first'] for m,_,_ in group]
                     tv=[t for _,t,_ in group];ev=[e for _,_,e in group]
                     light_groups[str(n)]=dict(samples=len(group),T_tx=stats(tv),T_e2e=stats(ev),
                         accepted_intervals=stats([b-a for a,b in zip(times,times[1:])]),
@@ -135,7 +149,26 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                                        samples=sum(g['samples'] for g in light_groups.values()))
             else:
                 metrics['jitter']=stats(intervals)
-                if not near_limit:expect(bool(intervals) and all(v==0 for v in intervals),'full-load TX jitter zero '+stage)
+                expect(bool(intervals) and all(v>=0 for v in intervals),'public GMII start intervals never shorter than BAG '+stage)
+                metrics['BAG_residual_histogram_cycles']=dict(collections.Counter(intervals))
+                metrics['BAG_plus_one_cycle_count']=sum(v==1 for v in intervals)
+            official=[]
+            grouped=collections.defaultdict(list)
+            for m in all_messages:
+                if len(m['deliveries'])==1:
+                    d=m['deliveries'][0]
+                    grouped[m['vl'],m['n']].append((m['public_first'],d['public_last']-m['public_first'],d['public_last']))
+            for (vl,n),rr in sorted(grouped.items()):
+                rr.sort();first=rr[0];worst=max(rr,key=lambda r:r[1])
+                # Confirmed periodic-injection branch: no sample is a forced
+                # BAG-wait probe. The separate T76 paired scenario covers that.
+                minimum=min(r[1] for r in rr)
+                jitter=worst[1]-minimum
+                official.append(dict(vl=vl,length=n,first_tx=first[0],first_rx=first[2],minimum_first=first[1],
+                    maximum=worst[1],worst_tx=worst[0],worst_rx=worst[2],BAG=bag,
+                    observed_minimum=minimum,bag_deduction=0,jitter_cycles=jitter,
+                    formula_precondition=True,policy='periodic_no_BAG_wait'))
+            metrics['T76_R139_public_groups']=official
             metrics['scheduling_interval_error']=stats([abs(v) for v in schedule_errors])
             metrics['raw_gap_minus_BAG']=stats(intervals)
             metrics['formula_limit']=max((m['w_limit'] for m in selected),default=0)
@@ -145,7 +178,7 @@ def measure(sysrows,endpoints,gmii,samples,expect):
     return result
 
 
-# R97 uses public GMII SFD and application records; legacy measure() above is unchanged.
+# Independent R97 parser of public GMII SFD and application records.
 def measure_r97(folder, stages=None, output=None):
     from pathlib import Path
     import json

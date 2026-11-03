@@ -1,0 +1,98 @@
+[
+  {
+    "case": 1,
+    "source": 0,
+    "payload": 1472,
+    "complete_messages": 1,
+    "full_100ms_pass": false,
+    "status": "PREFIX_BYTE_MATCH_ONLY"
+  },
+  {
+    "case": 1,
+    "source": 0,
+    "payload": 3000,
+    "complete_messages": 0,
+    "full_100ms_pass": false,
+    "status": "NOT_DELIVERED_BEFORE_ABORT"
+  },
+  {
+    "case": 1,
+    "source": 0,
+    "payload": 8192,
+    "complete_messages": 0,
+    "full_100ms_pass": false,
+    "status": "NOT_DELIVERED_BEFORE_ABORT"
+  },
+  {
+    "case": 1,
+    "source": 1,
+    "payload": 1472,
+    "complete_messages": 1,
+    "full_100ms_pass": false,
+    "status": "PREFIX_BYTE_MATCH_ONLY"
+  },
+  {
+    "case": 1,
+    "source": 1,
+    "payload": 3000,
+    "complete_messages": 0,
+    "full_100ms_pass": false,
+    "status": "NOT_DELIVERED_BEFORE_ABORT"
+  },
+  {
+    "case": 1,
+    "source": 1,
+    "payload": 8192,
+    "complete_messages": 0,
+    "full_100ms_pass": false,
+    "status": "NOT_DELIVERED_BEFORE_ABORT"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 0,
+    "payload": 1472,
+    "complete_messages": 50,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 0,
+    "payload": 3000,
+    "complete_messages": 33,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 0,
+    "payload": 8192,
+    "complete_messages": 17,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 1,
+    "payload": 1472,
+    "complete_messages": 50,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 1,
+    "payload": 3000,
+    "complete_messages": 33,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  },
+  {
+    "case": "mixed_profile",
+    "source": 1,
+    "payload": 8192,
+    "complete_messages": 17,
+    "full_100ms_pass": true,
+    "status": "COMPLETE_BYTE_MATCH"
+  }
+]

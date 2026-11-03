@@ -117,7 +117,7 @@ def reserved_netlist_bytes(active, observed_peak):
     """
     budget=max(observed_peak*1.10,GIB)
     reserve=sum(max(0,budget-v.get('rss',0)) for v in active
-                if v['row']['kind'] in ('A','B'))
+                if v['row']['kind'] in ('A','B','VQM76'))
     return budget,reserve
 
 
@@ -125,6 +125,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--list', type=Path)
+    parser.add_argument('--jobs', type=Path, help='Explicit finite JSON job list')
     parser.add_argument('--rtl-root', type=Path, default=ROOT)
     parser.add_argument('--case', action='append', default=[])
     parser.add_argument('--branch-tests', action='store_true')
@@ -133,13 +134,25 @@ def main():
     parser.add_argument('--synth', action='append', default=[])
     parser.add_argument('--class-b', action='store_true')
     parser.add_argument('--max-sims', type=int, default=10)
+    parser.add_argument('--max-owned-sims', type=int, default=10)
+    parser.add_argument('--max-netlists', type=int, default=3)
+    parser.add_argument('--max-synth', type=int, default=6)
+    parser.add_argument('--raw-sources', action='store_true', help='Compile original RTL without portability copies')
+    parser.add_argument('--post-command',type=Path,help='Finite JSON argv to execute once after this queue ends')
+    parser.add_argument('--compute-cores',type=int,default=0,help='Computing simulations plus one owned build reservation')
+    parser.add_argument('--paused-manifest',type=Path,help='Identity-pinned T76 kernels held for priority work')
+    parser.add_argument('--manage-pauses',action='store_true')
+    parser.add_argument('--peer-queue',type=Path,action='append',default=[])
+    parser.add_argument('--critical-net-queue',type=Path)
+    parser.add_argument('--own-netlist-limit',action='store_true',help='Apply the netlist limit to this queue; still enforce whole-host CPU/RAM/ModelSim limits')
     parser.add_argument('--rtl-hours', type=float, default=8)
     parser.add_argument('--plan-only', action='store_true')
     parser.add_argument('--resume', action='store_true', help='Adopt original PID/creation-time pairs; do not restart jobs')
     parser.add_argument('--pending-root', type=Path, help='Frozen source root for jobs not yet started on resume')
     args = parser.parse_args()
-    if not 1 <= args.max_sims <= 10:
-        parser.error('--max-sims must be between 1 and 10')
+    if not (1 <= args.max_sims <= 10 and 1 <= args.max_owned_sims <= 10
+            and 1 <= args.max_netlists <= 3 and 1 <= args.max_synth <= 6):
+        parser.error('Invalid global/owned/netlist/synthesis resource limits')
     output = args.output.resolve()
     output.relative_to(ROOT / 'out')
     if args.resume:
@@ -185,6 +198,8 @@ def main():
                   adopted=[v['identity'] for v in active.values()],note='PID, creation time and original deadlines preserved; no simulation restarted'))
     if args.list:
         enqueue(read_list(args.list, source_root=args.rtl_root.resolve()))
+    if args.jobs:
+        enqueue(json.loads(args.jobs.read_text(encoding='utf-8')))
     enqueue([dict(test=t, kind='RTL') for t in args.case + (list(DEFAULT_BRANCH) if args.branch_tests else [])])
     enqueue([dict(test=t, kind='A', netlist=str(args.netlist.resolve())) for t in args.gui])
     enqueue([dict(test=t, kind='SYNTH') for t in args.synth])
@@ -198,7 +213,8 @@ def main():
              PeakMemory=peaks, Finished=now() if not jobs and not active else None))
 
     save(output / ('resume_plan.json' if args.resume else 'plan.json'), dict(Started=started, Jobs=jobs, max_sims=args.max_sims,
-         memory_launch_floor_gib=4, disk_launch_floor_gib=20, automatic_retries=False))
+         max_owned_sims=args.max_owned_sims,max_netlists=args.max_netlists,max_synth=args.max_synth,
+         raw_sources=args.raw_sources,memory_launch_floor_gib=4,disk_launch_floor_gib=20,automatic_retries=False))
     report()
     if args.plan_only:
         return 0
@@ -208,6 +224,16 @@ def main():
         return found[-1] if found else None
 
     def ready(row):
+        if row.get('wait_until_any_exit'):
+            alive=[]
+            for identity in row['wait_until_any_exit']:
+                try:alive.append(psutil.Process(identity['pid']).create_time()==identity['created'])
+                except psutil.NoSuchProcess:alive.append(False)
+            if all(alive):return False
+        if any(index not in {r['Index'] for r in runs} for index in row.get('after',[])):
+            return False
+        if row['kind']=='VQM76' and 'reference_index' in row:
+            return any(r['Index']==row['reference_index'] and r['Status']=='PASS' for r in runs)
         if row['kind'] != 'B':
             return True
         return all(synth_status(t) for t in row['tops']) and any(
@@ -229,11 +255,11 @@ def main():
                 rss = sum(q.memory_info().rss for q in children)
                 item['rss'] = rss
                 item['peak'] = max(item['peak'], rss)
-                if item['row']['kind'] == 'A' and any(q.name().lower() == 'vsimk.exe' for q in children):
+                if item['row']['kind'] in ('A','VQM76') and any(q.name().lower() == 'vsimk.exe' for q in children):
                     peaks['observed_class_a_tree_bytes'] = max(peaks.get('observed_class_a_tree_bytes', 0), rss)
                     kernels=[q for q in children if q.name().lower()=='vsimk.exe']
                     optimizing=any(q.name().lower().startswith('vopt') for q in children)
-                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
+                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/|/t76_sim/tb_t76_load/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
                         peaks['class_a_runtime_measured']=True
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
@@ -264,31 +290,94 @@ def main():
         sim_slots, eda_slots = processes()
         available = psutil.virtual_memory().available
         disk = free_disk_bytes(ROOT.anchor)
-        sim_reserved = reserved_sim_slots(active.values(),sim_slots)
+        sim_reserved = max(reserved_sim_slots(active.values(),sim_slots),len(sim_slots))
+        # The official .do host waits for one child simulator. Both kernels
+        # occupy process slots, but the bounded job computes on one core.
+        duplicate_hosts=sum(max(0,len(v.get('sim_pids',set()) & sim_slots)-1)
+            for v in active.values() if v['row']['kind']!='SYNTH')
+        own_workers={v['identity']['pid'] for v in active.values()}
+        for path in args.peer_queue:
+            peer=json.loads(path.read_text(encoding='utf-8'))
+            for row in peer.get('Active',[]):
+                identity=row['Process']
+                if row['kind']=='SYNTH' or identity['pid'] in own_workers:continue
+                try:
+                    process=psutil.Process(identity['pid'])
+                    if process.create_time()!=identity['created']:continue
+                    kernels={q.pid for q in process.children(recursive=True) if q.pid in sim_slots}
+                    if not kernels:sim_reserved+=1
+                    else:duplicate_hosts+=max(0,len(kernels)-1)
+                except psutil.NoSuchProcess:pass
+        compute_reserved=sim_reserved-duplicate_hosts
         synth_reserved = reserved_synth_slots(active.values(),eda_slots)
+        reserve_rx=0
+        if args.critical_net_queue:
+            peer=json.loads(args.critical_net_queue.read_text(encoding='utf-8'))
+            if not any(r.get('id',r.get('Index'))==5 for r in peer.get('Active',[])+peer.get('Runs',[])):
+                rx=next((r for r in peer.get('Pending',[]) if r.get('id')==5),None)
+                if rx:
+                    for identity in rx.get('wait_until_any_exit',[]):
+                        try:released=psutil.Process(identity['pid']).create_time()!=identity['created']
+                        except psutil.NoSuchProcess:released=True
+                        if released:reserve_rx=1;break
+        paused_count=0;build_reservation=bool(eda_slots)
+        if args.paused_manifest:
+            hold=json.loads(args.paused_manifest.read_text(encoding='utf-8'))
+            owner=hold.get('hold_owner',{})
+            try:build_reservation|=psutil.Process(owner['pid']).create_time()==owner['created']
+            except (KeyError,psutil.NoSuchProcess):pass
+            for entry in hold['kernels']:
+                if not entry.get('paused'):continue
+                try:
+                    q=psutil.Process(entry['pid'])
+                    if q.create_time()==entry['created'] and q.pid in sim_slots:paused_count+=1
+                except psutil.NoSuchProcess:pass
+            # Resume original kernels without re-launching or changing any
+            # deadline. All identities and the owning worktree are rechecked.
+            if args.manage_pauses and not build_reservation and args.compute_cores:
+                for entry in sorted(hold['kernels'],key=lambda r:-r.get('resume_priority',0)):
+                    if not entry.get('paused') or compute_reserved-paused_count+reserve_rx>=args.compute_cores:continue
+                    try:
+                        q=psutil.Process(entry['pid'])
+                        if q.create_time()!=entry['created']:continue
+                        if str(ROOT).lower() not in q.cwd().lower():raise RuntimeError('Paused kernel left task worktree')
+                        q.resume();entry.update(paused=False,resumed=now());paused_count-=1
+                        save(args.paused_manifest,hold)
+                        print('PAR RESUME ORIGINAL KERNEL '+str(q.pid),flush=True)
+                    except psutil.NoSuchProcess:
+                        entry.update(paused=False,note='Original kernel already exited; no replacement resumed')
+                        save(args.paused_manifest,hold)
         observed = peaks.get('observed_class_a_tree_bytes', 0)
         # Reserve the complete measured footprint even for A runners which are
         # still preparing a tiny RTL reference. Admit only one before measuring
         # a real official-netlist kernel past optimization.
-        net_active = sum(v['row']['kind'] in ('A', 'B') for v in active.values())
+        net_active = sum(v['row']['kind'] in ('A', 'B','VQM76') for v in active.values())
+        own_sim_workers=sum(v['row']['kind']!='SYNTH' for v in active.values())
+        owned_sim_pids=set().union(*(v.get('sim_pids',set()) for v in active.values()))
+        # Conservatively reserve every foreign kernel as a netlist seat. This
+        # keeps the three running T75 VQM jobs within the whole-host limit.
+        foreign_sim_workers=len(sim_slots-owned_sim_pids)
         net_budget,net_reserve=reserved_netlist_bytes(active.values(),observed)
         usable=available-net_reserve
         net_limit = min(args.max_sims, max(1, net_active + int(max(0,usable-4*GIB)/net_budget))) if peaks.get('class_a_runtime_measured') else 1
         peaks['netlist_concurrency_limit'] = net_limit
-        candidates = sorted(jobs, key=lambda r: (0 if r['kind'] in ('A','B') else 1 if r['kind']=='SYNTH' else 2,
-                            -WEIGHTS.get(r['test'], 100), r['id']))
+        candidates = sorted(jobs, key=lambda r: (0 if r['kind'] in ('A','B','VQM76') else 1 if r['kind']=='SYNTH' else 2,
+                            -r.get('priority',WEIGHTS.get(r['test'], 100)), r['id']))
         for row in candidates:
             if not ready(row):
                 continue
             if available < 4*GIB or usable < 4*GIB or disk < 20*GIB:
                 break
             if row['kind'] == 'SYNTH':
-                if synth_reserved >= 6:
+                if synth_reserved >= args.max_synth:
                     continue
             else:
-                if sim_reserved >= args.max_sims:
+                if sim_reserved >= args.max_sims or own_sim_workers >= args.max_owned_sims:
                     continue
-                if row['kind'] in ('A', 'B') and net_active >= net_limit:
+                if args.compute_cores and compute_reserved-paused_count+int(build_reservation)+reserve_rx>=args.compute_cores:
+                    continue
+                if row['kind'] in ('A', 'B','VQM76') and (net_active >= args.max_netlists or net_active >= net_limit or
+                        (not args.own_netlist_limit and net_active+foreign_sim_workers >= args.max_netlists)):
                     continue
             if row['kind'] == 'B' and any(synth_status(t)['Status'] != 'PASS' for t in row['tops']):
                 runs.append(dict(Test=row['test'],Param=row['params'],Status='BLOCKED',Exit=None,Folder=None,
@@ -297,13 +386,25 @@ def main():
                 report()
                 break
             root = Path(row['root'])
-            deadline = (datetime.now(TZ)+timedelta(hours=24 if row['kind'] in ('A','B') else args.rtl_hours)).isoformat()
+            deadline = (datetime.now(TZ)+timedelta(hours=24 if row['kind'] in ('A','B','VQM76','RTL76') else args.rtl_hours)).isoformat()
             env = os.environ.copy()
             env.update(AFDX_PYTHON=sys.executable, MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
                        ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack', AFDX_CE_DIV='2',
                        AFDX_MEM_FLOOR_GB='3', AFDX_LATEST_PREFIX=row['prefix'], AFDX_PAR_RESOURCE_GATES='1',
-                       AFDX_MODELSIM_DECL_ORDER='1')
-            if row['kind'] == 'A':
+                       AFDX_MODELSIM_DECL_ORDER='0' if args.raw_sources else '1')
+            if row['kind']=='MIX_SEARCH76':
+                command=[sys.executable,'-B','-X','utf8',str(root/'tools/t76_search.py'),'--deadline',deadline]
+                env['AFDX_T76_SPEC_CONFIRMED']='1'
+            elif row['kind'] in ('RTL76','VQM76'):
+                command=[sys.executable,'-B','-X','utf8',str(root/'tools/t76_sim.py'),'--deadline',deadline]
+                env['AFDX_T76_SPEC_CONFIRMED']='1'
+                if row['kind']=='VQM76':
+                    command+=['--netlist',row['netlist']]
+                    reference=next(r for r in runs if r['Index']==row['reference_index'])
+                    command+=['--reference',reference['Folder']]
+                for param in row['params'].split(','):
+                    if param:command+=['--param',param]
+            elif row['kind'] == 'A':
                 command = [sys.executable,'-B','-X','utf8',str(root/'tools/gui_netlist.py'),'--test',row['test'],
                            '--netlist',row['netlist'],'--deadline',deadline]
                 env['AFDX_GUI_SIM_TIMEOUT_SECONDS'] = '86400'
@@ -341,6 +442,13 @@ def main():
         time.sleep(1)
     report()
     print('PAR FINISHED ' + str(output / 'summary.json'), flush=True)
+    if args.post_command:
+        command=json.loads(args.post_command.read_text(encoding='utf-8'))
+        if not isinstance(command,list) or not all(isinstance(x,str) for x in command):
+            raise ValueError('Post command must be a JSON array of argv strings')
+        outcome=subprocess.run(command,cwd=ROOT,timeout=1800,creationflags=subprocess.CREATE_NO_WINDOW)
+        save(output/'postprocess.json',dict(command=command,exit=outcome.returncode,finished=now()))
+        if outcome.returncode:return outcome.returncode
     return 0 if all(r['Status']=='PASS' for r in runs) else 1
 
 
