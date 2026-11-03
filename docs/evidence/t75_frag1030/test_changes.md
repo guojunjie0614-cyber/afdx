@@ -27,7 +27,7 @@
 | tb_t65_tx_space / edge | 单条非法消息曾能填满旧 4096 环，count 在 8191 饱和 | 新环容量大于消息上限；仍用越界输入验证完整回滚，存储恰为 8192、计数 8194；边界输入改为两字节 VLID+8193 字节载荷；32 KiB 原始存储容量另由 tb_app_payload_pipeline 全容量测试覆盖 | hardware_contract.app_storage.depth_bytes=32768、单消息上限 8192；不把消息上限称为 32 KiB 环耗尽 |
 | T65 RX data / desc | 4 KiB 预留门槛 used>2624；原始 av 配合延后一拍的 active 重复记首帧；压力量和排空时间仅适合旧缓存 | 门槛 used>24575、描述符仍 >=30；独立寄存输入与元数据对齐 E1，保留原字节期望；扩大 data 压力上界/记账数组和排空时间以实际触及 32 KiB 数据门槛；HDL watchdog 有界增至 20000000 拍 | hardware_contract.app_storage.payload_write_latency / depth_bytes / rollback；输入 E0、本地接纳 E1，容量变化必须重新形成真实压力 |
 | RM 忙时覆盖统计 | 旧数值状态 FRAME=2、IDLE=1 | 使用 dut.FRAME / dut.engine.IDLE 符号比较，仍要求忙时改变粗时钟和验证老化 | 新状态为独热编码；原覆盖条件含义不变 |
-| 并发准入 | 用 max(全机内核数, 自有 worker 数) 合并计数，存在外部仿真与自有编译阶段时可能少算预留 | 逐 PID 识别自有原生子进程；槽位为自有仿真 worker 数加外部内核/待启动器数；已有内核的 launcher 不重复计数 | T75 第三节全机最多 10 个 ModelSim；9 个进程清单/槽位边界用例通过，见 resource_slot_checks.json |
+| 并发准入 | 用 max(全机原生进程数, 自有 worker 数) 合并计数，存在外部作业与自有编译/排队阶段时可能少算预留 | 逐 PID 识别自有原生子进程；槽位为对应自有 worker 数加外部内核/待启动器或 eLinx/GUI 进程数；已有内核的 launcher 不重复计数 | T75 第三节全机最多 10 个 ModelSim、6 个 eLinx；tools/t75_resource_check.py 的 13 个进程清单/槽位边界用例通过，见 resource_slot_checks.json |
 
 未放宽：FCS/IP/UDP 校验、字节值、网络副本、SN、ID、BAG、IFG 下界、容量、RAM 冲突、断言和复位检查。
 

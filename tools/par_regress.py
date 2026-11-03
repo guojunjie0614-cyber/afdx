@@ -21,6 +21,7 @@ from eda import free_disk_bytes, modelsim_slot_pids
 ROOT = Path(__file__).resolve().parents[1]
 TZ = timezone(timedelta(hours=8))
 GIB = 1024**3
+EDA_NAMES = ('elinx_synthesis.exe', 'implementation.exe', 'quartus_map.exe', 'elinx.exe')
 DEFAULT_BRANCH = ('tb_cfg_local_ready', 'tb_context_pipeline', 'tb_reassembly_engine',
                   'tb_reassembly_limits', 'tb_reassembly_transactions', 'tb_service_pipeline',
                   'tb_rtc_banked', 'tb_fragmentation', 'tb_app_payload_pipeline',
@@ -82,21 +83,28 @@ def read_list(path, kind='RTL', source_root=None):
 
 
 def processes():
-    eda = []
+    eda = set()
     for p in psutil.process_iter(['pid', 'name', 'create_time', 'memory_info']):
         try:
             name = (p.info['name'] or '').lower()
-            if name in ('elinx_synthesis.exe', 'implementation.exe', 'quartus_map.exe', 'elinx.exe'):
-                eda.append(p)
+            if name in EDA_NAMES:
+                eda.add(p.pid)
         except psutil.NoSuchProcess:
             pass
-    return modelsim_slot_pids(), len(eda)
+    return modelsim_slot_pids(), eda
 
 
 def reserved_sim_slots(active, global_slots):
     """Include foreign kernels and own workers still in compile/check phases."""
     workers=[v for v in active if v['row']['kind']!='SYNTH']
     owned=set().union(*(v.get('sim_pids',set()) for v in workers))
+    return len(workers)+len(global_slots-owned)
+
+
+def reserved_synth_slots(active, global_slots):
+    """Reserve mapping workers in addition to external eLinx/GUI processes."""
+    workers=[v for v in active if v['row']['kind']=='SYNTH']
+    owned=set().union(*(v.get('eda_pids',set()) for v in workers))
     return len(workers)+len(global_slots-owned)
 
 
@@ -217,6 +225,7 @@ def main():
             try:
                 children = psutil.Process(p.pid).children(recursive=True)
                 item['sim_pids']={q.pid for q in children if q.name().lower() in ('vsim.exe','vsimk.exe')}
+                item['eda_pids']={q.pid for q in children if q.name().lower() in EDA_NAMES}
                 rss = sum(q.memory_info().rss for q in children)
                 item['rss'] = rss
                 item['peak'] = max(item['peak'], rss)
@@ -252,12 +261,11 @@ def main():
             changed = True
         if changed:
             report()
-        sim_slots, edas = processes()
+        sim_slots, eda_slots = processes()
         available = psutil.virtual_memory().available
         disk = free_disk_bytes(ROOT.anchor)
-        sim_active = sum(v['row']['kind'] != 'SYNTH' for v in active.values())
         sim_reserved = reserved_sim_slots(active.values(),sim_slots)
-        synth_active = len(active) - sim_active
+        synth_reserved = reserved_synth_slots(active.values(),eda_slots)
         observed = peaks.get('observed_class_a_tree_bytes', 0)
         # Reserve the complete measured footprint even for A runners which are
         # still preparing a tiny RTL reference. Admit only one before measuring
@@ -275,7 +283,7 @@ def main():
             if available < 4*GIB or usable < 4*GIB or disk < 20*GIB:
                 break
             if row['kind'] == 'SYNTH':
-                if max(edas, synth_active) >= 6:
+                if synth_reserved >= 6:
                     continue
             else:
                 if sim_reserved >= args.max_sims:
