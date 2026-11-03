@@ -22,6 +22,22 @@ module afdx_tx_builder #(
     input wire [10:0] grant_len,
     input wire [7:0] grant_sn, grant_page,
 
+    input wire [7:0] grant_head,
+    input wire [TX_OFF_AW-1:0] grant_offset,
+    input wire [12:0] grant_ip_offset,
+    input wire [13:0] grant_message_len,
+    input wire [15:0] grant_ident,
+    input wire grant_first, grant_more,
+    input wire [6:0] grant_vl_index,
+    // Actual current stream handshake, sampled locally by engine at F0.
+    // Registered fragment_done and pointer publication remain unchanged.
+    output wire completion_now,
+    output wire [6:0] completion_vl,
+    output reg fragment_done,
+    output reg [6:0] fragment_done_vl,
+    output reg [7:0] fragment_done_page,
+    output reg [TX_OFF_AW-1:0] fragment_done_offset,
+
     // start_valid 为高时，t_start 报告线路实际发送首字节的周期。
     output reg start_valid,
     output reg [31:0] t_start,
@@ -52,23 +68,13 @@ module afdx_tx_builder #(
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg pending, prepared, stream_active, p_a, p_b, p_timed;
 
-    // prep 用十拍算出 IPv4 头校验和，每拍只做一次加法。
-    // prep=0：计算 IPv4 和 UDP 的长度字段，下一拍转 1。
-    // prep=1：加上 IPv4 总长度字段，下一拍转 2。
-    // prep=2：加上 IPv4 标识字段，下一拍转 3。
-    // prep=3：加上源 IP 地址的高 16 位，下一拍转 4。
-    // prep=4：加上源 IP 地址的低 16 位，下一拍转 5。
-    // prep=5：加上目的 IP 地址的高 16 位，下一拍转 6。
-    // prep=6：加上目的 IP 地址的低 16 位，下一拍转 7。
-    // prep=7：把进位加回低 16 位，下一拍转 8。
-    // prep=8：再处理一次进位，下一拍转 9。
-    // prep=9：取反得到校验和，置 prepared 后等待发送。
+    // Sequential additions include length, identification, fragment field and addresses.
     reg [3:0] prep;
 
     // part 的取值：一帧依次发送协议头、用户数据、补零和序号。
     localparam PART_HEADER = 0, PART_PAYLOAD = 1, PART_PADDING = 2, PART_SN = 3;
 
-    // 协议头共 42 字节，下标 0–41；发到下标 10 时，下一个字节是源地址里的网络标识。
+    // First fragment has a 42-byte Ethernet/IP/UDP header; later fragments have 34 bytes.
     // 用户数据不足 17 字节时补零到 17 字节。
     localparam HEADER_LAST = 41, NETWORK_ID_INDEX = 10, MIN_PAYLOAD = 17;
 
@@ -84,21 +90,38 @@ module afdx_tx_builder #(
     localparam IP_VERSION_TOS = 16'h4500, IP_NO_FRAGMENT = 16'h0000, IP_TTL_PROTOCOL = 16'h0111;
     localparam UDP_NO_CHECKSUM = 16'h0000;
 
-    // 时间判定再寄存一拍，送往 MAC 前还经过一级流水缓冲，因此提前六拍比较；
-    // 准备过程已保证 p_time 稳定，帧的首个前导字节仍在 p_time 那拍上线。
-    localparam START_LEAD_REGISTERED = 32'hfffffffa;
+    // Time subtraction and partial due reductions are separate stages.
+    // Eight clocks of lead compensate all stages, including the stream slot,
+    // so the actual first preamble byte still occurs at the scheduled time.
+    localparam START_LEAD_REGISTERED = 32'hfffffff8;
+    reg due_nonnegative, due_upper_max, due_lower_max, due_near;
+    wire due_reduced = (due_nonnegative && !(due_upper_max && due_lower_max)) || due_near;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg time_due;
 
     // 预读队列里已有这么多字节时，暂停发出新的读请求。
     localparam FIFO_STOP_LEVEL = 5;
-    reg [31:0] p_time, p_src, p_dst, now_q, time_difference;
-    reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ident, ip_length, udp_length, checksum;
+    reg [31:0] p_time, p_src, p_dst, time_difference;
+    (* preserve = 1, dont_merge = 1 *) reg [31:0] now_q;
+    (* preserve = 1, dont_merge = 1 *) reg [31:0] now_input;
+    reg [15:0] p_vlid, p_sport, p_dport, p_user, p_ident, ip_length, udp_length, checksum;
+    reg [12:0] p_ip_offset;
+    reg [13:0] p_message_len;
+    reg p_first, p_more, active_more;
+    reg [7:0] p_head, active_head, head_saved;
+    reg [6:0] p_vl_index, active_vl_index;
+    reg [TX_OFF_AW-1:0] p_offset;
+    reg [5:0] active_header_last;
+    reg [4:0] active_min_payload;
+    reg head_pending;
+    reg [2:0] fetch_delay;
     reg [10:0] p_len, active_len, payload_index;
     // 与负载下标同拍更新，移出字节队列控制路径上的长比较。
     reg payload_more;
     wire [10:0] payload_index_next = payload_index + 1'b1;
     reg [7:0] p_sn, p_page, active_sn;
-    reg [19:0] sum;
+    reg [16:0] first_fold;
+    reg [8:0] fold_low;
+    reg [7:0] fold_high;
     // 校验和的低 16 位与进位分开累加，每步的加法链不超过 16 位。
     reg [15:0] sum_low;
     reg [3:0] sum_high;
@@ -110,10 +133,11 @@ module afdx_tx_builder #(
     // header 保存 42 字节协议头：以太网头 14 字节、IPv4 头 20 字节、UDP 头 8 字节。
     // 发送时按顺序移出；两网的协议头只有源地址里的网络标识不同。
     reg [335:0] header;
+    (* preserve = 1, dont_merge = 1 *) reg [335:0] header_template;
     wire [335:0] prepared_header = { DMAC_PREFIX, p_vlid, SMAC_PREFIX, p_user, NETWORK_A, ETHERTYPE_IPV4,
                     IP_VERSION_TOS, ip_length, p_ident,
-                    IP_NO_FRAGMENT, IP_TTL_PROTOCOL, checksum, p_src, p_dst, p_sport, p_dport, udp_length,
-                    UDP_NO_CHECKSUM };
+                    {2'b00,p_more,p_ip_offset}, IP_TTL_PROTOCOL, checksum, p_src, p_dst,
+                    (p_first ? {p_sport, p_dport, udp_length, UDP_NO_CHECKSUM} : 64'b0) };
     wire [335:0] shifted_header = header << 8;
 
 
@@ -142,9 +166,10 @@ module afdx_tx_builder #(
     reg [2:0] return_count;
     reg [1:0] payload_pipe, pnext_pipe;
     wire fifo_push = payload_pipe[1];
-    wire fifo_pop = s_valid && s_ready[0] && ! s_last &&
-        ((part == PART_HEADER && header_index == HEADER_LAST)
-        || (part == PART_PAYLOAD && payload_more));
+    // Predict the FIFO action with the staged stream byte. Ready then drives
+    // only a local token and count update, without header/part comparisons.
+    reg fifo_pop_eligible;
+    wire fifo_pop = s_ready[0] && fifo_pop_eligible;
     wire return_push = payload_pipe[1] && return_pipe[1];
     wire return_pop = ( ! ret_valid || ret_ready) && return_count != 0;
     reg [TX_OFF_AW - 1:0] fetch_offset;
@@ -154,30 +179,89 @@ module afdx_tx_builder #(
     reg complete_a, complete_b, bad;
 
     assign grant_ready = ! pending;
+    assign completion_now = s_valid && s_ready[0] && s_last;
+    assign completion_vl = active_vl_index;
 
+    // Accept all external fields on E0; local field commands load E1. Pending
+    // changes on E0 as before, so a second grant cannot overwrite this snapshot.
+    (* preserve = 1, dont_merge = 1 *) reg [TX_OFF_AW+249:0] grant_snapshot;
+    (* preserve = 1, dont_merge = 1 *) reg [8:0] capture_grant;
+    wire snap_a, snap_b, snap_timed, snap_first, snap_more;
+    wire [31:0] snap_time, snap_src, snap_dst;
+    wire [15:0] snap_vlid, snap_sport, snap_dport, snap_user, snap_ident;
+    wire [10:0] snap_len;
+    wire [7:0] snap_sn, snap_page, snap_head;
+    wire [12:0] snap_ip_offset;
+    wire [13:0] snap_message_len;
+    wire [TX_OFF_AW-1:0] snap_offset;
+    wire [6:0] snap_vl_index;
+    assign {snap_a,snap_b,snap_timed,snap_time,snap_src,snap_dst,
+        snap_vlid,snap_sport,snap_dport,snap_len,snap_sn,snap_page,snap_user,
+        snap_ident,snap_ip_offset,snap_message_len,snap_first,snap_more,
+        snap_head,snap_offset,snap_vl_index}=grant_snapshot;
+    always @(posedge clk) begin
+        grant_snapshot <= {grant_a,grant_b,grant_timed,grant_time,grant_src,grant_dst,
+            grant_vlid,grant_sport,grant_dport,grant_len,grant_sn,grant_page,user_id,
+            grant_ident,grant_ip_offset,grant_message_len,grant_first,grant_more,
+            grant_head,grant_offset,grant_vl_index};
+        if (reset) capture_grant <= 0;
+        else capture_grant <= {9{grant_valid && grant_ready}};
+    end
+    always @(posedge clk) begin
+        if (reset) begin p_a<=0;p_b<=0;p_timed<=0;p_first<=0;p_more<=0;p_len<=0;p_vl_index<=0;end
+        else if (capture_grant[0]) begin
+            p_a<=snap_a;p_b<=snap_b;p_timed<=snap_timed;p_first<=snap_first;
+            p_more<=snap_more;p_len<=snap_len;p_vl_index<=snap_vl_index;
+        end
+    end
+    always @(posedge clk) if (reset) p_time<=0; else if(capture_grant[1]) p_time<=snap_time;
+    always @(posedge clk) if (reset) p_src<=0; else if(capture_grant[2]) p_src<=snap_src;
+    always @(posedge clk) if (reset) p_dst<=0; else if(capture_grant[3]) p_dst<=snap_dst;
+    always @(posedge clk) begin
+        if(reset)begin p_vlid<=0;p_sport<=0;end
+        else if(capture_grant[4])begin p_vlid<=snap_vlid;p_sport<=snap_sport;end
+    end
+    always @(posedge clk) begin
+        if(reset)begin p_dport<=0;p_ident<=0;end
+        else if(capture_grant[5])begin p_dport<=snap_dport;p_ident<=snap_ident;end
+    end
+    always @(posedge clk) begin
+        if(reset)begin p_sn<=0;p_page<=0;p_head<=0;end
+        else if(capture_grant[6])begin p_sn<=snap_sn;p_page<=snap_page;p_head<=snap_head;end
+    end
+    always @(posedge clk) begin
+        if(reset)begin p_ip_offset<=0;p_message_len<=0;end
+        else if(capture_grant[7])begin p_ip_offset<=snap_ip_offset;p_message_len<=snap_message_len;end
+    end
+    always @(posedge clk) begin
+        if(reset)begin p_offset<=0;p_user<=0;end
+        else if(capture_grant[8])begin p_offset<=snap_offset;p_user<=snap_user;end
+    end
     genvar header_group;
     generate
         for (header_group = 0; header_group < 14; header_group = header_group + 1) begin : header_word
             localparam READY_BIT = READY_COPIES > 1 ? header_group + 1 : 0;
-            // 空闲副本与 stream_active 同拍更新，不能简单延迟一拍取反：
-            // 两帧之间可能只有一个空闲拍，必须在下一帧启动拍装好模板。
-            (* preserve = 1, dont_merge = 1 *) reg header_idle;
+            (* preserve = 1, dont_merge = 1 *) reg header_idle, local_due;
             always @(posedge clk) begin
-                if (reset) header_idle <= 1;
+                header_template[header_group*24+:24] <= prepared_header[header_group*24+:24];
+                if (reset) begin header_idle<=1;local_due<=0;end
                 else begin
-                    if (pending && prepared && !stream_active && time_due) header_idle <= 0;
-                    // 与主控制保持相同优先级，末字节握手覆盖启动条件。
+                    local_due <= !p_timed || due_reduced;
+                    if (pending && prepared && !stream_active && !head_pending && local_due)
+                        header_idle <= 0;
+                    // Same-cycle ownership mirror; no extra bubble is required.
                     if (s_valid && s_ready[0] && s_last) header_idle <= 1;
                 end
             end
-            // 顶层提供 15 份接纳窗口，bit 0 供控制，其余各驱动 24 位。
+            // Header bits are no longer observed after PART_HEADER. Continue
+            // shifting on ready edges during payload instead of adding a
+            // header-terminal hold enable to every bit. Idle has load priority.
             always @(posedge clk) begin
                 if (reset) header[header_group * 24 +: 24] <= 0;
-                else if (s_valid && s_ready[READY_BIT] && !s_last
-                    && part == PART_HEADER && header_index < HEADER_LAST)
-                    header[header_group * 24 +: 24] <= shifted_header[header_group * 24 +: 24];
                 else if (header_idle)
-                    header[header_group * 24 +: 24] <= prepared_header[header_group * 24 +: 24];
+                    header[header_group * 24 +: 24] <= header_template[header_group * 24 +: 24];
+                else if (s_ready[READY_BIT])
+                    header[header_group * 24 +: 24] <= shifted_header[header_group * 24 +: 24];
             end
         end
     endgenerate
@@ -188,31 +272,23 @@ module afdx_tx_builder #(
             prepared <= 0;
             stream_active <= 0;
             prep <= 0;
-            p_a <= 0;
-            p_b <= 0;
-            p_timed <= 0;
-            p_time <= 0;
-            p_src <= 0;
-            p_dst <= 0;
-            p_vlid <= 0;
-            p_sport <= 0;
-            p_dport <= 0;
-            p_user <= 0;
-            p_ident <= 0;
-            ident <= 0;
-            p_len <= 0;
-            p_sn <= 0;
-            p_page <= 0;
+            active_more <= 0; active_head <= 0; active_vl_index <= 0;
+            active_header_last <= HEADER_LAST;
+            active_min_payload <= MIN_PAYLOAD;
+            head_pending <= 0; head_saved <= 0; fetch_delay <= 0;
+            fragment_done <= 0; fragment_done_vl <= 0; fragment_done_page <= 0; fragment_done_offset <= 0;
             ip_length <= 0;
             udp_length <= 0;
             checksum <= 0;
-            sum <= 0;
+            first_fold <= 0; fold_low <= 0; fold_high <= 0;
             sum_low <= 0;
             sum_high <= 0;
             sum_operand <= 0;
-            now_q <= 0;
+            now_input <= 0; now_q <= 0;
             time_difference <= 0;
             time_due <= 0;
+            due_nonnegative <= 0; due_upper_max <= 0;
+            due_lower_max <= 0; due_near <= 0;
             start_valid <= 0;
             t_start <= 0;
             payload_re <= 0;
@@ -245,6 +321,7 @@ module afdx_tx_builder #(
             fifo_wr <= 0;
             fifo_rd <= 0;
             fifo_count <= 0;
+            fifo_pop_eligible <= 0;
             issue_end <= 0;
             issue_page <= 0;
             return_page0 <= 0;
@@ -263,21 +340,35 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
         end
         else begin
-            // 空闲时预装帧头；启动拍使用的字段与原来相同。
+            // The first destination byte is constant whenever no stream is
+            // owned. Preload it without the head-return/time-due launch cone.
+            // These data pins are ignored while s_valid is low.
+            if (!stream_active) begin
+                s_data_a <= DMAC_BYTE0;
+                s_data_b <= DMAC_BYTE0;
+            end
 
-            now_q <= now;
+            now_input <= now;
+            now_q <= now_input;
             time_difference <= now_q - p_time;
-            // 等价于下一拍的有符号“差值 >= -5”，包含 32 位回绕边界。
-            time_due <= !p_timed || time_difference < 32'h7fffffff
-                || time_difference >= START_LEAD_REGISTERED;
+            // Exact partial reductions for d < 0x7fffffff or d >= -8.
+            // The wide difference drives only these local registers; each
+            // header group consumes the same registered four-bit conclusion.
+            due_nonnegative <= !time_difference[31];
+            due_upper_max <= &time_difference[30:16];
+            due_lower_max <= &time_difference[15:0];
+            due_near <= &time_difference[31:3];
+            time_due <= !p_timed || due_reduced;
             payload_re <= 0;
             pnext_re <= 0;
             start_valid <= 0;
+            fragment_done <= 0;
             ev_tx_a <= 0;
             ev_tx_b <= 0;
             payload_pipe <= { payload_pipe[0], payload_re };
             pnext_pipe <= { pnext_pipe[0], pnext_re };
-            // 存储器读结果先寄存，再与有效标记一起写入字节队列。
+            // E0 request -> E1 synchronous RAM -> E2 local return -> E3 FIFO.
+            // Valid, page-return tags and fetch timing retain the same edges.
             payload_qr <= payload_q;
             pnext_qr <= pnext_q;
             return_pipe <= { return_pipe[0], payload_re && issue_end };
@@ -303,6 +394,10 @@ module afdx_tx_builder #(
                 ret_valid <= 1;
                 ret_page <= return_fifo[{return_rd, 3'b0} +: 8];
                 return_rd <= return_rd + 1'b1;
+            end else if ((!ret_valid || ret_ready) && head_pending) begin
+                ret_valid <= 1;
+                ret_page <= head_saved;
+                head_pending <= 0;
             end else if (ret_valid && ret_ready) ret_valid <= 0;
             case ({return_push, return_pop})
                 2'b10 : return_count <= return_count + 1'b1;
@@ -310,11 +405,12 @@ module afdx_tx_builder #(
                 default : ;
             endcase
             // 最多同时等待三个读结果，队列剩五项时就暂停发出新读请求。
-            if (stream_active && fetch_left != 0 && fifo_count < FIFO_STOP_LEVEL) begin
+            if (stream_active && fetch_delay != 0) fetch_delay <= fetch_delay - 1'b1;
+            if (stream_active && fetch_delay == 0 && fetch_left != 0 && fifo_count < FIFO_STOP_LEVEL) begin
                 payload_re <= 1;
                 payload_ra <= { fetch_page[TX_PAGE_AW - 1:0], fetch_offset };
                 issue_page <= fetch_page;
-                issue_end <= fetch_left == 1 || offset_last;
+                issue_end <= (offset_last || (fetch_left == 1 && !active_more)) && fetch_page != active_head;
                 fetch_left <= fetch_left - 1'b1;
                 if (offset_last) begin
                     fetch_page <= next_page;
@@ -331,58 +427,43 @@ module afdx_tx_builder #(
                 pending <= 1;
                 prepared <= 0;
                 prep <= 0;
-                p_a <= grant_a;
-                p_b <= grant_b;
-                p_timed <= grant_timed;
-                p_time <= grant_time;
-                p_src <= grant_src;
-                p_dst <= grant_dst;
-                p_vlid <= grant_vlid;
-                p_sport <= grant_sport;
-                p_dport <= grant_dport;
-                p_len <= grant_len;
-                p_sn <= grant_sn;
-                p_page <= grant_page;
-                p_user <= user_id;
-                p_ident <= ident;
-                ident <= ident + 1'b1;
             end
-            else if (pending && ! prepared) begin
+            else if (pending && !prepared && !capture_grant[0]) begin
                 prep <= prep + 1'b1;
                 case (prep)
                     0 : sum_operand <= p_len;
                     1 : sum_operand <= p_ident;
-                    2 : sum_operand <= p_src[31:16];
-                    3 : sum_operand <= p_src[15:0];
-                    4 : sum_operand <= p_dst[31:16];
-                    5 : sum_operand <= p_dst[15:0];
+                    2 : sum_operand <= {2'b00,p_more,p_ip_offset};
+                    3 : sum_operand <= p_src[31:16];
+                    4 : sum_operand <= p_src[15:0];
+                    5 : sum_operand <= p_dst[31:16];
+                    6 : sum_operand <= p_dst[15:0];
                     default : ;
                 endcase
                 case (prep)
                     0 : begin
-                        ip_length <= p_len + IP_UDP_OVERHEAD;
-                        udp_length <= p_len + UDP_HEADER_LENGTH;
-                        // 校验和从两个固定字段之和开始累加：
-                        // 0x4500（版本和头长）加 0x0111（TTL和UDP）再加固定28字节头长；后续只累加原始负载长度。
-                        sum_low <= IP_SUM_LENGTH_SEED[15:0];
-                        sum_high <= IP_SUM_LENGTH_SEED[19:16];
+                        ip_length <= {5'b0,p_len} + (p_first ? 16'd28 : 16'd20);
+                        udp_length <= {2'b0,p_message_len} + 16'd8;
+                        sum_low <= p_first ? 16'h462d : 16'h4625;
+                        sum_high <= 0;
                     end
-                    // prep=1..6 的加数由上一拍准备，累加次数及最后两次回卷不变。
-                    1, 2, 3, 4, 5, 6 : begin
+                    1, 2, 3, 4, 5, 6, 7 : begin
                         sum_low <= sum_step[15:0];
                         sum_high <= sum_high + sum_step[16];
                     end
-                    7 : sum <= { 4'b0, sum_low } + sum_high;
-                    8 : sum <= { 4'b0, sum[15:0] } + sum[19:16];
+                    8 : first_fold <= {1'b0,sum_low} + {13'b0,sum_high};
                     9 : begin
-                        checksum <= ~ sum[15:0];
-                        prepared <= 1;
+                        fold_low <= {1'b0,first_fold[7:0]} + first_fold[16];
+                        fold_high <= first_fold[15:8];
                     end
+                    10 : checksum <= ~{(fold_high + {7'b0,fold_low[8]}),fold_low[7:0]};
+                    // The local header template has now observed checksum.
+                    11 : prepared <= 1;
                     default : ;
                 endcase
             end
             // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
-            if (pending && prepared && ! stream_active && time_due) begin
+            if (pending && prepared && ! stream_active && !head_pending && time_due) begin
                 stream_active <= 1;
                 s_valid <= 1;
                 s_last <= 0;
@@ -391,17 +472,20 @@ module afdx_tx_builder #(
                 // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
                 // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
 
-                s_data_a <= DMAC_BYTE0;
-                s_data_b <= DMAC_BYTE0;
                 header_index <= 0;
+                fifo_pop_eligible <= 0;
                 part <= PART_HEADER;
                 active_len <= p_len;
+                active_header_last <= p_first ? 6'd41 : 6'd33;
+                active_min_payload <= p_first ? 5'd17 : 5'd25;
+                active_more <= p_more; active_head <= p_head; active_vl_index <= p_vl_index;
+                fetch_delay <= 3'd4;
                 active_sn <= p_sn;
                 payload_index <= 0;
                 payload_more <= p_len != 0;
                 fetch_page <= p_page;
-                fetch_offset <= 0;
-                offset_last <= 0;
+                fetch_offset <= p_offset;
+                offset_last <= &p_offset;
                 fetch_left <= p_len;
                 fifo_wr <= 0;
                 fifo_rd <= 0;
@@ -412,7 +496,12 @@ module afdx_tx_builder #(
             if (tx_sof) begin
                 // 首个前导字节发送时，记录实际时间并允许接收下一条消息。
                 start_valid <= 1;
-                t_start <= now;
+                // now_input is the preceding native clock value. Reconstruct
+                // this edge locally rather than route now through SOF enables.
+                t_start <= {now_input[31:24] + {7'b0,(&now_input[23:0])},
+                    now_input[23:16] + {7'b0,(&now_input[15:0])},
+                    now_input[15:8] + {7'b0,(&now_input[7:0])},
+                    now_input[7:0] + 8'd1};
                 pending <= 0;
                 prepared <= 0;
                 complete_a <= s_en_a;
@@ -426,13 +515,23 @@ module afdx_tx_builder #(
             end
             // 帧头和用户数据发完后，短帧补零，最后发送序号并结束。
             if (s_valid && s_ready[0]) begin
+                fifo_pop_eligible <= 0;
                 if (s_last) begin
                     s_valid <= 0;
                     s_last <= 0;
                     stream_active <= 0;
+                    fragment_done <= 1;
+                    fragment_done_vl <= active_vl_index;
+                    fragment_done_page <= fetch_page;
+                    fragment_done_offset <= fetch_offset;
+                    if (!active_more) begin
+                        head_pending <= 1;
+                        head_saved <= active_head;
+                    end
                 end
-                else if (part == PART_HEADER && header_index < HEADER_LAST) begin
+                else if (part == PART_HEADER && header_index < active_header_last) begin
                     header_index <= header_index + 1'b1;
+                    fifo_pop_eligible <= header_index == active_header_last - 6'd1;
                     s_data_a <= header[327:320];
                     // B 网把源 MAC 地址里的网络标识换成 0x40，其余字节与 A 网相同。
                     s_data_b <= header_index == NETWORK_ID_INDEX ? NETWORK_B : header[327:320];
@@ -443,11 +542,12 @@ module afdx_tx_builder #(
                     s_data_b <= payload_fifo[{fifo_rd, 3'b0} +: 8];
                     payload_index <= payload_index_next;
                     payload_more <= payload_index_next < active_len;
+                    fifo_pop_eligible <= payload_index_next < active_len;
                 end
                 else if (part == PART_PAYLOAD) begin
-                    if (active_len < MIN_PAYLOAD) begin
+                    if (active_len < active_min_payload) begin
                         part <= PART_PADDING;
-                        padding_left <= MIN_PAYLOAD[4:0] - active_len[4:0];
+                        padding_left <= active_min_payload - active_len[4:0];
                         s_data_a <= 0;
                         s_data_b <= 0;
                     end
@@ -474,6 +574,14 @@ module afdx_tx_builder #(
 `ifdef AFDX_CE_DIV
     // 所有 RTL 回归都定义此宏；综合不定义，不产生硬件。
     always @(negedge clk) begin
+        if (!reset && (fifo_pop_eligible !== (s_valid && !s_last &&
+            ((part == PART_HEADER && header_index == active_header_last) ||
+            (part == PART_PAYLOAD && payload_more))))) begin
+            $display("[FAIL] fifo_pop_eligible invariant part=%0d header=%0d payload=%0d", part, header_index, payload_index);
+            // synthesis translate_off
+            $fatal(1, "fifo_pop_eligible invariant");
+            // synthesis translate_on
+        end
         if (!reset && (payload_more !== (payload_index < active_len))) begin
             $display("[FAIL] payload_more invariant index=%0d len=%0d", payload_index, active_len);
             // synthesis translate_off

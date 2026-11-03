@@ -4,7 +4,7 @@
 // 简单网络管理协议）功能，一次处理一个变量。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
 module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 59,
-    PREDECODED_CFG_WR = 0, SPLIT_MIB_READY = 0) (
+    PREDECODED_CFG_WR = 0, SPLIT_MIB_READY = 0, LOCAL_TIMEBASE = 0) (
 
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input wire clk, reset, enable,
@@ -60,7 +60,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     localparam MAX_COMMUNITY_LENGTH = 16, MAX_OID_LENGTH = 16;
     localparam [4:0] DEFAULT_COMMUNITY_LENGTH = 5'd6;
     localparam DEFAULT_COMMUNITY0 = 32'h7075626c, DEFAULT_COMMUNITY1 = 32'h69630000;
-    localparam UPTIME_TICK_LAST = 1249999;
+    localparam [20:0] UPTIME_TICK_LAST = 21'd1249999;
     localparam REG_ENABLE = 8'h90, REG_TX_VL = 8'h91, REG_COMMUNITY_LENGTH = 8'h92;
     localparam REG_COMMUNITY0 = 8'h93, REG_COMMUNITY1 = 8'h94, REG_COMMUNITY2 = 8'h95, REG_COMMUNITY3 = 8'h96;
     localparam REG_TRAP_ENABLE = 8'h9b;
@@ -81,9 +81,14 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg [6:0] response_vl;
     reg [4:0] configured_length;
     reg [31:0] community0, community1, community2, community3;
-    reg [31:0] uptime, uptime_cycles, requests, bad_community, traps_sent, sample_cycle;
+    reg [31:0] uptime, requests, bad_community, traps_sent, sample_cycle;
+    reg [20:0] uptime_cycles;
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] uptime_cycle_full;
+    (* preserve = 1, dont_merge = 1 *) reg uptime_high_match;
+    (* preserve = 1, dont_merge = 1 *) reg [3:0] uptime_tick;
+    (* preserve = 1, dont_merge = 1 *) reg [2:0] uptime_byte_full;
     reg req_we, receiving, overflow, capture_pending, trap_grant, cold_request;
-    reg [7:0] req_wa, req_wdata;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] req_wa, req_wdata;
     reg [8:0] rx_count, capture_length;
     reg [15:0] capture_port;
     reg consumed_q, idle_q, offer_q, cold_ack_q;
@@ -111,6 +116,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // 顶层交付口提前三拍给出端口，两级局部寄存分摊跨模块布线。
     // 独立使用本模块时，默认保持端口与有效字节同时到达的接口。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] port_byte_match;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
     reg local_port_match;
     always @(posedge clk) begin
@@ -118,11 +124,14 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             rx_port_stage <= 0;
             rx_port_local <= 0;
             local_port_match <= 0;
+            port_byte_match <= 0;
         end
         else begin
             rx_port_stage <= rx_dport;
             rx_port_local <= rx_port_stage;
-            local_port_match <= rx_port_stage == SNMP_PORT;
+            port_byte_match[0] <= rx_dport[7:0] == 8'd161;
+            port_byte_match[1] <= rx_dport[15:8] == 8'd0;
+            local_port_match <= &port_byte_match;
         end
     end
 
@@ -141,19 +150,29 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             community1 <= DEFAULT_COMMUNITY1;
             community2 <= 0;
             community3 <= 0;
-            uptime <= 0;
             uptime_cycles <= 0;
+            uptime_cycle_full <= 0;
+            uptime_high_match <= 0;
             if (SPLIT_CFG_ADDR != 2) cfg_control_data <= 0;
             if (SPLIT_CFG_ADDR != 2) cfg_status_data <= 0;
             if (SPLIT_CFG_ADDR != 2) cfg_descr_data <= 0;
         end
         else begin
-            // 每 1250000 拍是 10 ms，正好是 SNMP 运行时间（sysUpTime）的一个计数单位。
-            if (uptime_cycles == UPTIME_TICK_LAST) begin
+            // LAST low seven bits are 79: its upper part is stable on
+            // both clocks of this prediction, including modulo reset.
+            uptime_high_match <= uptime_cycles[20:7] == UPTIME_TICK_LAST[20:7];
+            if (uptime_tick[0]) begin
                 uptime_cycles <= 0;
-                uptime <= uptime + 32'd1;
+                uptime_cycle_full <= 0;
             end
-            else uptime_cycles <= uptime_cycles + 32'd1;
+            else begin
+                uptime_cycles[6:0] <= uptime_cycles[6:0] + 7'd1;
+                uptime_cycles[13:7] <= uptime_cycles[13:7] + uptime_cycle_full[0];
+                uptime_cycles[20:14] <= uptime_cycles[20:14] + (&uptime_cycle_full);
+                uptime_cycle_full[0] <= uptime_cycles[6:0] == 7'h7e;
+                uptime_cycle_full[1] <= uptime_cycle_full[0]
+                    ? uptime_cycles[13:7] == 7'h7e : uptime_cycles[13:7] == 7'h7f;
+            end
             if (cfg_write_sel[0]) configured <= cfg_wdata[0];
             if (cfg_write_sel[1]) response_vl <= cfg_wdata[6:0];
             if (cfg_write_sel[2]) configured_length <= cfg_wdata[4:0];
@@ -196,6 +215,38 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         end
     end
 
+    // sysUpTime still changes on exactly every 1,250,000th clock.
+    // Predict the terminal clock once and retain one local tick per byte.
+    genvar uptime_byte;
+    generate for (uptime_byte=0; uptime_byte<4; uptime_byte=uptime_byte+1) begin : uptime_lane
+        wire carry;
+        if (uptime_byte==0) begin : first_byte
+            assign carry=1'b1;
+        end else begin : upper_byte
+            assign carry=&uptime_byte_full[uptime_byte-1:0];
+        end
+        always @(posedge clk) begin
+            if (reset) begin
+                uptime_tick[uptime_byte]<=0;
+                uptime[uptime_byte*8+:8]<=0;
+            end else begin
+                uptime_tick[uptime_byte]<=uptime_high_match
+                    && uptime_cycles[6:0]==UPTIME_TICK_LAST[6:0]-7'd1;
+                if (uptime_tick[uptime_byte])
+                    uptime[uptime_byte*8+:8]<=uptime[uptime_byte*8+:8]+carry;
+            end
+        end
+        if (uptime_byte<3) begin : carry_flag
+            always @(posedge clk) begin
+                if (reset) uptime_byte_full[uptime_byte]<=0;
+                else if (uptime_tick[uptime_byte])
+                    uptime_byte_full[uptime_byte]<=carry
+                        ? uptime[uptime_byte*8+:8]==8'hfe
+                        : uptime[uptime_byte*8+:8]==8'hff;
+            end
+        end
+    end endgenerate
+
     // 捕获、计数、通知仲裁和配置脉冲展宽均在每拍执行。
     always @(posedge clk) begin
         if (reset) begin
@@ -228,6 +279,23 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             offer_q <= trap_offer;
             cold_ack_q <= cold_ack;
             req_we <= 0;
+            // Only the write token qualifies a physical RAM write. Candidate
+            // data/address run every clock, so distant idle/valid never gate
+            // the byte FFs. Before the first byte receiving is zero; every
+            // subsequent accepted byte uses the old count, exactly as before.
+            req_wdata <= rx_data;
+            req_wa <= receiving ? rx_count[7:0] : 8'd0;
+            // Count/length are meaningful only while receiving/pending. Prepare
+            // the first-byte values in idle, and hold a published length until
+            // the engine consumes it. No acceptance cone drives these banks.
+            if (!receiving) begin
+                rx_count <= 1;
+                overflow <= 0;
+                if (!capture_pending) begin
+                    capture_length <= 1;
+                    capture_port <= rx_sport;
+                end
+            end
             if (rx_valid && rx_claim && rx_last) requests <= requests + 32'd1;
             if (consumed_q) capture_pending <= 0;
             if (!idle_q || !offer_q) trap_grant <= 0;
@@ -235,38 +303,30 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             if (cold_ack_q) cold_request <= 0;
             if (cfg_write_sel[0] && cfg_wdata[0] && !configured && trap_enabled)
                 cold_request <= 1;
+            // Local acceptance is prepared before the last-byte gate.
+            receiving <= configured && en_q && (receiving || (accept_armed && rx_valid))
+                && !(rx_valid && rx_last);
             if (!configured || !en_q) begin
-                receiving <= 0;
                 capture_pending <= 0;
             end
             else if (!receiving) begin
                 // accept_armed 是全本地项，远端 rx_valid 只进末级与门。
                 if (accept_armed && rx_valid) begin
                     req_we <= 1;
-                    req_wa <= 0;
-                    req_wdata <= rx_data;
-                    capture_port <= rx_sport;
-                    rx_count <= 1;
-                    overflow <= 0;
-                    receiving <= !rx_last;
                     if (rx_last) begin
                         capture_pending <= 1;
-                        capture_length <= 1;
                     end
                 end
             end
             else if (rx_valid) begin
+                capture_length <= rx_count + 9'd1;
                 if (!overflow) begin
                     req_we <= 1;
-                    req_wa <= rx_count[7:0];
-                    req_wdata <= rx_data;
                     rx_count <= rx_count + 9'd1;
                 end
                 if (rx_count == REQUEST_LAST_POS) overflow <= 1;
                 if (rx_last) begin
-                    receiving <= 0;
                     capture_pending <= !overflow;
-                    capture_length <= rx_count + 9'd1;
                 end
             end
         end
@@ -374,14 +434,25 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         end
     end
 
+    // In the integrated end system both timebases share the exact clock and
+    // synchronous reset. This local free-running copy equals global now on
+    // every edge; it is not a delayed timestamp. Standalone callers retain
+    // their arbitrary externally supplied now value by default.
+    wire [31:0] engine_now;
     generate
+        if (LOCAL_TIMEBASE) begin : local_clock
+            afdx_timebase counter(.clk(clk),.reset(reset),.now(engine_now),
+                .byte_en(),.now_c());
+        end else begin : external_clock
+            assign engine_now = now;
+        end
         if (CE_DIV == 2) begin : half_rate
             afdx_snmp_engine #(.CE_BANKS(CE_BANKS)) engine (
                 .clk(clk),
                 .reset(reset),
                 .ce_phase(ce),
                 .enable_in(en_q),
-                .now_in(now),
+                .now_in(engine_now),
                 .configured_in(configured),
                 .trap_enabled_in(trap_enabled),
                 .configured_length_in(configured_length),
@@ -426,7 +497,7 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 .reset(reset),
                 .ce_phase(ce),
                 .enable_in(en_q),
-                .now_in(now),
+                .now_in(engine_now),
                 .configured_in(configured),
                 .trap_enabled_in(trap_enabled),
                 .configured_length_in(configured_length),
@@ -491,6 +562,31 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
                 (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
                 wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
+                (* keep = 1 *) wire [3:0] c01 =
+                    ({4{lane[0]}} & word_cfg_control_data_0[read_nibble * 4 +: 4]) |
+                    ({4{lane[1]}} & word_cfg_control_data_1[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] c23 =
+                    ({4{lane[2]}} & word_cfg_control_data_2[read_nibble * 4 +: 4]) |
+                    ({4{lane[3]}} & word_cfg_control_data_3[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] c45 =
+                    ({4{lane[4]}} & word_cfg_control_data_4[read_nibble * 4 +: 4]) |
+                    ({4{lane[5]}} & word_cfg_control_data_5[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] c67 =
+                    ({4{lane[6]}} & word_cfg_control_data_6[read_nibble * 4 +: 4]) |
+                    ({4{lane[7]}} & word_cfg_control_data_7[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] s01 =
+                    ({4{lane[0]}} & word_cfg_status_data_0[read_nibble * 4 +: 4]) |
+                    ({4{lane[1]}} & word_cfg_status_data_1[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] s23 =
+                    ({4{lane[2]}} & word_cfg_status_data_2[read_nibble * 4 +: 4]) |
+                    ({4{lane[3]}} & word_cfg_status_data_3[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] s4 = {4{lane[4]}} & word_cfg_status_data_4[read_nibble * 4 +: 4];
+                (* keep = 1 *) wire [3:0] d01 =
+                    ({4{lane[0]}} & word_cfg_descr_data_0[read_nibble * 4 +: 4]) |
+                    ({4{lane[1]}} & word_cfg_descr_data_1[read_nibble * 4 +: 4]);
+                (* keep = 1 *) wire [3:0] d23 =
+                    ({4{lane[2]}} & word_cfg_descr_data_2[read_nibble * 4 +: 4]) |
+                    ({4{lane[3]}} & word_cfg_descr_data_3[read_nibble * 4 +: 4]);
                 always @(posedge clk) begin
                     if (reset) begin
                         mib_lane <= 8'b1;
@@ -500,23 +596,9 @@ module afdx_snmp #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                     end
                     else begin
                         mib_lane <= 8'b1 << cfg_addr[2:0];
-                        cfg_control_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_control_data_0[read_nibble * 4 +: 4]) |
-                            ({4{lane[1]}} & word_cfg_control_data_1[read_nibble * 4 +: 4]) |
-                            ({4{lane[2]}} & word_cfg_control_data_2[read_nibble * 4 +: 4]) |
-                            ({4{lane[3]}} & word_cfg_control_data_3[read_nibble * 4 +: 4]) |
-                            ({4{lane[4]}} & word_cfg_control_data_4[read_nibble * 4 +: 4]) |
-                            ({4{lane[5]}} & word_cfg_control_data_5[read_nibble * 4 +: 4]) |
-                            ({4{lane[6]}} & word_cfg_control_data_6[read_nibble * 4 +: 4]) |
-                            ({4{lane[7]}} & word_cfg_control_data_7[read_nibble * 4 +: 4]);
-                        cfg_status_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_status_data_0[read_nibble * 4 +: 4]) |
-                            ({4{lane[1]}} & word_cfg_status_data_1[read_nibble * 4 +: 4]) |
-                            ({4{lane[2]}} & word_cfg_status_data_2[read_nibble * 4 +: 4]) |
-                            ({4{lane[3]}} & word_cfg_status_data_3[read_nibble * 4 +: 4]) |
-                            ({4{lane[4]}} & word_cfg_status_data_4[read_nibble * 4 +: 4]);
-                        cfg_descr_data[read_nibble * 4 +: 4] <= ({4{lane[0]}} & word_cfg_descr_data_0[read_nibble * 4 +: 4]) |
-                            ({4{lane[1]}} & word_cfg_descr_data_1[read_nibble * 4 +: 4]) |
-                            ({4{lane[2]}} & word_cfg_descr_data_2[read_nibble * 4 +: 4]) |
-                            ({4{lane[3]}} & word_cfg_descr_data_3[read_nibble * 4 +: 4]);
+                        cfg_control_data[read_nibble * 4 +: 4] <= c01 | c23 | c45 | c67;
+                        cfg_status_data[read_nibble * 4 +: 4] <= s01 | s23 | s4;
+                        cfg_descr_data[read_nibble * 4 +: 4] <= d01 | d23;
                     end
                 end
             end

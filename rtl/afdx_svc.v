@@ -56,7 +56,15 @@ module afdx_svc (
     output wire app_rx_last,
     output wire [11:0] app_rx_vl,
     output wire [15:0] app_rx_sport, app_rx_dport,
-    output wire app_rx_net);
+    output wire app_rx_net,
+    output wire snmp_rx_valid,
+    output wire [7:0] snmp_rx_data,
+    output wire snmp_rx_last,
+    output wire [15:0] snmp_rx_sport, snmp_rx_dport,
+    output wire load_rx_valid,
+    output wire [7:0] load_rx_data,
+    output wire load_rx_last,
+    output wire [15:0] load_rx_sport, load_rx_dport);
 
     // 四个发送方的编号，也是 request 里对应的位：应用、时钟同步、网络管理、加卸载。
     localparam SRC_APP = 0, SRC_RTC = 1, SRC_SNMP = 2, SRC_LOAD = 3;
@@ -65,16 +73,31 @@ module afdx_svc (
     // turn 指定下次从哪一方开始查找待发消息。
     // rx_active/rx_claimed 保存首字节时的选择，直到消息结束。
     reg busy, rx_active, rx_claimed;
+    reg reselect, select_pending;
+    reg completed_message;
+    (* preserve = 1, dont_merge = 1 *) reg [3:0] request_local;
+    // Separate service and application capture points keep the incoming
+    // byte/control fanout local. Metadata and bytes both gain one cycle.
+    (* preserve = 1, dont_merge = 1 *) reg service_valid, application_valid, snmp_valid_q, load_valid_q;
+    (* preserve = 1, dont_merge = 1 *) reg service_last, application_last, snmp_last_q, load_last_q;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] service_data, application_data, snmp_data_q, load_data_q;
+    (* preserve = 1, dont_merge = 1 *) reg [11:0] service_vl, application_vl;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] service_sport, service_dport, application_sport, application_dport;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] snmp_sport_q, snmp_dport_q, load_sport_q, load_dport_q;
+    (* preserve = 1, dont_merge = 1 *) reg service_net, application_net;
     reg [1:0] turn, selected;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] served;
     reg [3:0] next_granted;
     wire [3:0] request = { svc_tx_valid, app_tx_valid };
+    wire source_valid = |(request & served);
     wire finishing = m_valid && m_ready && m_last;
-    wire [3:0] eff_request = finishing ? (request & ~served) : request;
-    wire [1:0] base_turn = finishing ? selected + 2'd1 : turn;
+    wire [3:0] eff_request = request_local;
+    wire [1:0] base_turn = turn;
+    wire arbitrating = reselect || select_pending;
 
-    // 空闲裁决在下一拍生效；无请求时默认授予应用，保留通道可用电平。
-    // 完成拍跳过刚发完的来源，直接为下一条等待消息准备独热授予位。
+    // After a completed message, capture fresh requests in the first quiet
+    // cycle and choose from that local snapshot in the second. A source holds
+    // its byte until ready, so arbitration never consumes a speculative byte.
     always @* begin
         next_granted = 4'b0001;
         case (base_turn)
@@ -105,18 +128,25 @@ module afdx_svc (
         endcase
     end
 
-    // 首次有效拍与 busy 同时锁定，避免首字节后被新到的高优先级请求抢占。
-    // 消息保持期间不改选，末字节握手后或尚无有效候选时允许重新裁决。
+    // Keep the source fixed throughout a message, including backpressure.
+    // Remote valid feeds only the request capture and the small idle detector;
+    // priority selection and the grant update use registered local inputs.
     always @(posedge clk) begin
-        if (reset) served <= 4'b0001;
-        else if (!((busy || m_valid) && !finishing)) served <= next_granted;
+        if (reset) begin
+            served <= 4'b0001;reselect <= 0;select_pending <= 0;request_local <= 0;
+        end else begin
+            request_local <= request;
+            reselect <= !arbitrating && (finishing || (!busy && !source_valid));
+            select_pending <= reselect;
+            if (select_pending) served <= next_granted;
+        end
     end
 
     // 消费端只使用寄存后的独热位，隔断 turn 到跨模块数据和 ready 的译码链。
     always @* begin
         selected = {served[2] | served[3], served[1] | served[3]};
-        m_valid = |(request & served);
-        svc_tx_ready = served[3:1] & {3{m_ready}};
+        m_valid = source_valid && !arbitrating;
+        svc_tx_ready = served[3:1] & {3{m_ready && !arbitrating}};
         m_data = ({8{served[0]}} & app_tx_data) |
             ({8{served[1]}} & svc_tx_data[0 +: 8]) |
             ({8{served[2]}} & svc_tx_data[8 +: 8]) |
@@ -143,21 +173,51 @@ module afdx_svc (
             ({16{served[3]}} & svc_tx_dport[32 +: 16]);
     end
 
-    assign app_tx_ready = served[0] && m_ready;
-    assign svc_rx_valid = d_valid;
-    assign svc_rx_data = d_data;
-    assign svc_rx_last = d_last;
-    assign svc_rx_vl = d_vl;
-    assign svc_rx_sport = d_sport;
-    assign svc_rx_dport = d_dport;
-    assign svc_rx_net = d_net;
-    assign app_rx_valid = d_valid && ! (rx_active ? rx_claimed : | svc_rx_claim);
-    assign app_rx_last = d_last && app_rx_valid;
-    assign app_rx_data = d_data;
-    assign app_rx_vl = d_vl;
-    assign app_rx_sport = d_sport;
-    assign app_rx_dport = d_dport;
-    assign app_rx_net = d_net;
+    assign app_tx_ready = served[0] && m_ready && !arbitrating;
+    assign svc_rx_valid = service_valid;
+    assign svc_rx_data = service_data;
+    assign svc_rx_last = service_last;
+    assign svc_rx_vl = service_vl;
+    assign svc_rx_sport = service_sport;
+    assign svc_rx_dport = service_dport;
+    assign svc_rx_net = service_net;
+    assign snmp_rx_valid = snmp_valid_q;
+    assign snmp_rx_data = snmp_data_q;
+    assign snmp_rx_last = snmp_last_q;
+    assign snmp_rx_sport = snmp_sport_q;
+    assign snmp_rx_dport = snmp_dport_q;
+    assign load_rx_valid = load_valid_q;
+    assign load_rx_data = load_data_q;
+    assign load_rx_last = load_last_q;
+    assign load_rx_sport = load_sport_q;
+    assign load_rx_dport = load_dport_q;
+    assign app_rx_valid = application_valid && ! (rx_active ? rx_claimed : | svc_rx_claim);
+    // Like data, last is consumed only with valid. Keep claim/configuration
+    // qualification on that token instead of feeding the last data register.
+    assign app_rx_last = application_last;
+    assign app_rx_data = application_data;
+    assign app_rx_vl = application_vl;
+    assign app_rx_sport = application_sport;
+    assign app_rx_dport = application_dport;
+    assign app_rx_net = application_net;
+
+    always @(posedge clk) begin
+        if (reset) begin
+            service_valid<=0;service_last<=0;service_data<=0;service_vl<=0;
+            service_sport<=0;service_dport<=0;service_net<=0;
+            snmp_valid_q<=0;snmp_last_q<=0;snmp_data_q<=0;snmp_sport_q<=0;snmp_dport_q<=0;
+            load_valid_q<=0;load_last_q<=0;load_data_q<=0;load_sport_q<=0;load_dport_q<=0;
+            application_valid<=0;application_last<=0;application_data<=0;application_vl<=0;
+            application_sport<=0;application_dport<=0;application_net<=0;
+        end else begin
+            service_valid<=d_valid;service_last<=d_last;service_data<=d_data;service_vl<=d_vl;
+            service_sport<=d_sport;service_dport<=d_dport;service_net<=d_net;
+            snmp_valid_q<=d_valid;snmp_last_q<=d_last;snmp_data_q<=d_data;snmp_sport_q<=d_sport;snmp_dport_q<=d_dport;
+            load_valid_q<=d_valid;load_last_q<=d_last;load_data_q<=d_data;load_sport_q<=d_sport;load_dport_q<=d_dport;
+            application_valid<=d_valid;application_last<=d_last;application_data<=d_data;application_vl<=d_vl;
+            application_sport<=d_sport;application_dport<=d_dport;application_net<=d_net;
+        end
+    end
 
     // 发送末字节握手后，模块允许下一来源发送。
     // 接收时在首字节保存去向，在末字节释放这个选择。
@@ -165,22 +225,27 @@ module afdx_svc (
         if (reset) begin
             busy <= 0;
             turn <= 0;
+            completed_message <= 0;
             rx_active <= 0;
             rx_claimed <= 0;
         end
         else begin
+            // Retire the turn during the first existing quiet arbitration
+            // clock. served is still the completed source until the second
+            // quiet clock, so the actual next-grant edge remains unchanged.
+            completed_message <= finishing;
+            if (completed_message) turn <= selected + 2'd1;
             if (m_valid) begin
                 if (m_ready && m_last) begin
                     busy <= 0;
-                    turn <= selected + 2'd1;
                 end
                 else begin
                     busy <= 1;
                 end
             end
-            if (d_valid) begin
+            if (application_valid) begin
                 if ( ! rx_active) rx_claimed <= | svc_rx_claim;
-                rx_active <= ! d_last;
+                rx_active <= ! application_last;
             end
         end
     end

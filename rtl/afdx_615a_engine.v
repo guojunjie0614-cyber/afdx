@@ -36,6 +36,7 @@ module afdx_615a_engine #(parameter CE_DIV = 2, CE_BANKS = 72) (
     output reg  deny_we,
     output reg [4:0] deny_wa,
     output reg [7:0] deny_wd,
+    output reg [2:0] deny_format,
     output reg  rx_re,
     output reg [9:0] rx_ra,
     output reg  tx_we,
@@ -2262,6 +2263,7 @@ next_error_position = packet_pos - 10'd4;
             deny_we <= 0;
             deny_wa <= 0;
             deny_wd <= 0;
+            deny_format <= 0;
             status <= ST_IDLE;
         end
         else begin
@@ -2271,10 +2273,49 @@ next_error_position = packet_pos - 10'd4;
             deny_we <= next_deny_we;
             deny_wa <= next_deny_wa;
             deny_wd <= next_deny_wd;
+            // Capture the exact mode used by denial_byte on this command.
+            // The integrated RAM consumer decodes locally from address/mode.
+            deny_format <= {protocol_a4,deny_empty,deny_unsupported};
             status <= next_status;
         end
     end
     end
+    // Reason updates are mutually exclusive state-qualified events. Keep
+    // this small status register out of the large protocol next-state mux;
+    // no event or CE moves to a different clock.
+    wire local_description_event =
+        (state==NAME_BYTE && !name_mark && !name_option && name_bad) ||
+        (state==LUR_LENGTH && !number_metadata_ok) ||
+        (state==LUR_VERSION && !number_version_ok) ||
+        ((state==LUR_COUNT || state==HEADER_COUNT) && !number_one) ||
+        ((state==LUR_HLEN || state==LUR_PLEN) && (byte_value<2 || byte_value>MAX_FILENAME_BYTES)) ||
+        (state==LNR_USER_CHECK && (metadata_size!=lnr_expected_length || !lnr_name_ok)) ||
+        (state==LNR_BYTE && byte_value!=memory_name(scan_pos[6:0])) ||
+        (state==HEADER_LENGTH && !number_header_length_ok) ||
+        (state==HEADER_VERSION && !number_header_version_ok) ||
+        (state==HEADER_PTR_CHECK && !header_pointer_ok) ||
+        (state==HEADER_NLEN && !number_name_ok) ||
+        (state==HEADER_PLEN && !number_part_ok);
+    wire local_length_event =
+        (state==DATA_BYTE && (file_kind==FILE_LIST ? metadata_size>=LUR_BUFFER_BYTES :
+            file_kind==FILE_HEADER ? metadata_size>=HEADER_BUFFER_BYTES : loaded>=LOAD_BUFFER_BYTES)) ||
+        (state==HEADER_DCRC && !number_data_size_ok) ||
+        (state==DATA_CHECK && !load_size_ok);
+    wire local_checksum_event = (state==HEADER_CRC_CHECK && !number_crc_ok) ||
+        (state==DATA_CHECK && load_size_ok && data_crc!=expected_crc);
+    wire local_tftp_event =
+        (state==DISPATCH && !dispatch_action[0] && (dispatch_action[1] || dispatch_action[2])) ||
+        (state==MODE_BYTE && mode_bad) ||
+        (state==REQUEST_OK && !request_reject && request_write &&
+            !(status==ST_BUSY && wait_kind==WK_LUR));
+    wire local_retry_event = state==RETRY_DECIDE && retries==retry_limit;
+    wire local_clear_event = state==REQUEST_OK && !request_reject && !request_write;
+    wire local_event = local_description_event || local_length_event ||
+        local_checksum_event || local_tftp_event || local_retry_event || local_clear_event;
+    wire [7:0] local_reason_next = ({8{!local_event}} & reason) |
+        {5'b0, local_tftp_event || local_retry_event,
+         local_length_event || local_checksum_event,
+         local_description_event || local_checksum_event || local_retry_event};
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_29) begin
@@ -2284,7 +2325,7 @@ next_error_position = packet_pos - 10'd4;
             command_op <= 0;
         end
         else begin
-            reason <= next_reason;
+            reason <= local_reason_next;
             state <= next_state;
             command_op <= next_command_op;
         end

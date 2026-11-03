@@ -9,7 +9,7 @@ module afdx_timebase (
     // now 每拍加一，到 32 位上限后回零。
     // 复位结束后，byte_en 每拍都有效。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [31:0] now,
-    output reg byte_en,
+    (* preserve = 1, dont_merge = 1 *) output reg byte_en,
 
     // now_c 每 4096 拍加一，供重复帧比较和过期检查使用。
     output wire [15:0] now_c);
@@ -17,14 +17,20 @@ module afdx_timebase (
     // now_c 直接取 now 的部分高位。
     assign now_c = now[27:12];
 
-    // reset 为高时计数归零，否则每个时钟上升沿加一。
+    // A predicted carry is aligned with the current low half.  It is high
+    // exactly when now[15:0] is ffff, so both halves still advance on the
+    // original edge, including the full 32-bit wrap.
+    (* preserve = 1, dont_merge = 1 *) reg low_carry;
     always @(posedge clk) begin
         if (reset) begin
             now <= 0;
+            low_carry <= 0;
             byte_en <= 0;
         end
         else begin
-            now <= now + 1'b1;
+            now[15:0] <= now[15:0] + 16'd1;
+            now[31:16] <= now[31:16] + low_carry;
+            low_carry <= now[15:0] == 16'hfffe;
             byte_en <= 1'b1;
         end
     end

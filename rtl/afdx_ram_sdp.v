@@ -36,7 +36,11 @@ module afdx_ram_sdp #(
     // memory 保存数据，独立的读写过程用于推断片内存储器。
     (* ramstyle = "no_rw_check" *) reg [WIDTH - 1:0] memory[0:DEPTH - 1];
 
-    always @(posedge clk) if (write_enable) memory[write_address] <= write_data;
+    // Write-data isolation maps to a real input LUT in eLinx 3.0.7. Keep
+    // this qualification even though the write strobe also gates the RAM:
+    // the mapped FF-to-RAM input otherwise has negative synthesized hold.
+    always @(posedge clk) if (write_enable)
+        memory[write_address] <= write_enable ? write_data : {WIDTH{1'b0}};
 
     always @(posedge clk) if (read_enable) read_data <= memory[read_address];
 

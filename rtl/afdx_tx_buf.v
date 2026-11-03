@@ -38,14 +38,14 @@ module afdx_tx_buf #(
     output reg [7:0] pnext_wd,
     output reg desc_we,
     output reg [TX_PAGE_AW - 1:0] desc_wa,
-    output reg [43:0] desc_wd,
+    output reg [46:0] desc_wd,
 
     // 整条消息存好后，enq_* 请求加入发送队列。
     // enq_ack 为高时，enq_result 给出接纳或拒绝的原因。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg enq_valid,
     output reg [6:0] enq_vl,
     output reg [7:0] enq_head,
-    output reg [10:0] enq_len,
+    output reg [13:0] enq_len,
     input wire enq_ack,
     input wire [2:0] enq_result,
 
@@ -58,21 +58,27 @@ module afdx_tx_buf #(
     localparam [2:0] ENQ_TOO_LONG = 3'd3;
     localparam [2:0] ENQ_NO_PAGE = 3'd4;
 
-    // 一条消息最多 1471 字节，加上协议头和序号后正好是最长的以太网帧。
-    localparam MAX_PAYLOAD = 1471;
+    // Datagram bound; fragmentation is performed after enqueue.
+    localparam MAX_PAYLOAD = 8192;
+    localparam MAX_PAGES = (MAX_PAYLOAD + (1 << TX_OFF_AW) - 1) >> TX_OFF_AW;
     localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
         EVENT = 9;
     reg [3:0] state;
     // 从前一拍预告等待页状态，页号写使能和地址选择不再直接扇出独热态位。
     (* preserve = 1, dont_merge = 1 *) reg wait_page_q;
 
-    // 一条消息最多占六页，六个寄存器保存这些页号。
-    // 显式列出六个寄存器，避免综合工具为小数组额外分配存储块。
-    reg [7:0] page0, page1, page2, page3, page4, page5;
-
-    // used/returned 分别统计本条消息已占用和已归还的页数。
-    // reason 保存本次接收结果。
-    reg [2:0] used, returned, reason;
+    // The rollback table has independent synchronous ports. Accepted page
+    // writes retire locally one clock later; reads have an explicit response
+    // phase instead of sharing a state-dependent read/write address mux.
+    localparam PAGE_COUNT_W = TX_OFF_AW >= 13 ? 1 : 14 - TX_OFF_AW;
+    reg [PAGE_COUNT_W-1:0] used, returned;
+    wire [7:0] allocated_page_q;
+    reg return_read_pending;
+    wire return_read = state == RETURN && !ret_valid && !return_read_pending && returned < used;
+    afdx_tx_rollback_ram #(.AW(PAGE_COUNT_W),.DEPTH(MAX_PAGES)) allocated_pages (
+        .clk(clk),.reset(reset),.we(wait_page_q && pop_ack && pop_ok),
+        .wa(used),.wd(pop_page),.re(return_read),.ra(returned),.q(allocated_page_q));
+    reg [2:0] reason;
 
     // held_data/held_last 保存等待新页时的第一个字节。
     // boundary 表示上一页已满，ended 表示已收到消息末字节。
@@ -90,11 +96,58 @@ module afdx_tx_buf #(
     wire [7:0] payload_wd_d = payload_wait_d ? held_data : m_data_q;
 
     // init_q 是 init_done 的本地副本；远端 init_done 只进一次寄存器。
-    reg init_q;
-    wire m_accept = m_valid && init_q;
+    (* preserve = 1, dont_merge = 1 *) reg init_q;
+    // Two real input slots terminate service-arbitration valid/data locally.
+    // Credit is withdrawn while the reserve slot fills, so the previously
+    // advertised ready always has capacity even when allocation blocks RECV.
+    reg message_closed;
+    // Same-edge prediction of init_q && !message_closed. One local FF drives
+    // outward ready, avoiding the cross-layer init/closure qualification chain.
+    (* preserve=1,dont_merge=1 *) reg ingress_open;
+    wire input_valid, input_ready, ingress_ready;
+    always @(posedge clk)begin
+        if(reset)ingress_open<=0;
+        else ingress_open<=init_done && (state==EVENT ||
+            (!message_closed && !(m_valid && m_ready && m_last)));
+    end
+`ifdef AFDX_CE_DIV
+    always @(negedge clk)if(!reset && ingress_open !== (init_q && !message_closed))
+        $fatal(1,"ingress ready qualification prediction differs");
+`endif
+    // Queue capacity may run ahead within a message, but a new message must
+    // wait for the preceding result. Close exactly on external last accept.
+    always @(posedge clk) begin
+        if (reset || state == EVENT) message_closed <= 0;
+        else if (m_valid && m_ready && m_last) message_closed <= 1;
+    end
+    wire [7:0] input_data;
+    wire input_last, input_port_en;
+    wire [6:0] input_vl;
+    wire [15:0] input_sport, input_dport;
+    afdx_tx_ingress_elastic ingress (
+        .clk(clk),.reset(reset),.s_valid(m_valid && ingress_open),.s_ready(ingress_ready),
+        .s_word({m_data,m_last,m_vl,m_port_en,m_sport,m_dport}),
+        .m_valid(input_valid),.m_ready(input_ready),
+        .m_word({input_data,input_last,input_vl,input_port_en,input_sport,input_dport}));
+    wire m_accept = input_valid && init_q;
+    assign input_ready = init_q && (state == IDLE || state == RECV || state == DRAIN);
+    assign m_ready = ingress_open && ingress_ready;
 
-    assign m_ready = init_q && (state == IDLE || state == RECV || state == DRAIN);
+    // Predict the bound on accepted RECV bytes, keeping the 14-bit length
+    // equality out of offset, allocation, payload-write and rejection enables.
+    reg length_full;
+    always @(posedge clk) begin
+        if (reset || state == IDLE) length_full <= 0;
+        else if (state == RECV && m_accept && !length_full)
+            length_full <= enq_len == MAX_PAYLOAD-1;
+    end
 
+    // A new packet always passes IDLE before allocation. Error transitions
+    // therefore do not need to reset the rollback read cursor again.
+    always @(posedge clk) begin
+        if(reset || state==IDLE) returned<=0;
+        else if(state==RETURN && ret_valid && ret_ready) returned<=returned+1'b1;
+    end
     always @(posedge clk) begin
         if (reset) begin
             state <= IDLE;
@@ -107,12 +160,6 @@ module afdx_tx_buf #(
             desc_we <= 0;
             ret_valid <= 0;
             ret_page <= 0;
-            page0 <= 0;
-            page1 <= 0;
-            page2 <= 0;
-            page3 <= 0;
-            page4 <= 0;
-            page5 <= 0;
             payload_wa <= 0;
             payload_wd <= 0;
             payload_wa_d <= 0;
@@ -127,7 +174,7 @@ module afdx_tx_buf #(
             enq_head <= 0;
             enq_len <= 0;
             used <= 0;
-            returned <= 0;
+            return_read_pending <= 0;
             reason <= ENQ_ACCEPTED;
             current_page <= 0;
             held_data <= 0;
@@ -148,7 +195,7 @@ module afdx_tx_buf #(
         else begin
             init_q <= init_done;
             wait_page_q <= (state == ALLOC) || (state == WAIT_PAGE && ! pop_ack);
-            m_data_q <= m_data;
+            m_data_q <= input_data;
             held_capture_q <= state == IDLE || state == RECV;
             // 首字节和跨页字节晚一拍进入缓存；ALLOC 留出这一拍，进入 WAIT_PAGE 前已就绪。
             if (held_capture_q) held_data <= m_data_q;
@@ -160,19 +207,9 @@ module afdx_tx_buf #(
             payload_we <= payload_we_d;
             payload_wa <= payload_wa_d;
             payload_wd <= payload_wd_d;
-            if (wait_page_q && pop_ack && pop_ok) begin
-                case (used)
-                    0 : page0 <= pop_page;
-                    1 : page1 <= pop_page;
-                    2 : page2 <= pop_page;
-                    3 : page3 <= pop_page;
-                    4 : page4 <= pop_page;
-                    5 : page5 <= pop_page;
-                    default : ;
-                endcase
-            end
+            return_read_pending <= return_read;
             if (state == RECV) begin
-                held_last <= m_last;
+                held_last <= input_last;
             end
             payload_we_d <= 0;
             pnext_we <= 0;
@@ -187,15 +224,14 @@ module afdx_tx_buf #(
                 // IDLE：接收首字节，握手后转 ALLOC；数据经输入寄存器在下一拍存入缓存。
                 // 空闲时预存首字节标志和端口；只有握手改变状态。
                 IDLE : begin
-                    enq_vl <= m_vl;
-                    port_en <= m_port_en;
-                    sport <= m_sport;
-                    dport <= m_dport;
-                    held_last <= m_last;
-                    ended <= m_last;
+                    enq_vl <= input_vl;
+                    port_en <= input_port_en;
+                    sport <= input_sport;
+                    dport <= input_dport;
+                    held_last <= input_last;
+                    ended <= input_last;
                     enq_len <= 1;
                     used <= 0;
-                    returned <= 0;
                     reason <= ENQ_ACCEPTED;
                     boundary <= 0;
                     if (m_accept) state <= ALLOC;
@@ -213,7 +249,6 @@ module afdx_tx_buf #(
                     if (pop_ack) begin
                         if ( ! pop_ok) begin
                             reason <= ENQ_NO_PAGE;
-                            returned <= 0;
                             state <= RETURN;
                         end
                         else begin
@@ -235,10 +270,9 @@ module afdx_tx_buf #(
 
                 // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
                 RECV : if (m_accept) begin
-                    ended <= m_last;
-                    if (enq_len == MAX_PAYLOAD) begin
+                    ended <= input_last;
+                    if (length_full) begin
                         reason <= ENQ_TOO_LONG;
-                        returned <= 0;
                         state <= RETURN;
                     end
                     else begin
@@ -250,7 +284,7 @@ module afdx_tx_buf #(
                             payload_we_d <= 1;
                             offset <= offset + 1'b1;
                             if ( & offset) boundary <= 1;
-                            if (m_last) state <= DESC;
+                            if (input_last) state <= DESC;
                         end
                     end
                 end
@@ -276,7 +310,6 @@ module afdx_tx_buf #(
                     reason <= enq_result;
                     if (enq_result == ENQ_ACCEPTED) state <= EVENT;
                     else begin
-                        returned <= 0;
                         state <= RETURN;
                     end
                 end
@@ -285,27 +318,18 @@ module afdx_tx_buf #(
                 RETURN : begin
                     // 先归还已经占用的页，再丢弃尚未接收完的字节。
                     // reason 保持第一次出现的错误原因。
-                    if ( ! ret_valid && returned < used) begin
+                    if (return_read_pending) begin
                         ret_valid <= 1;
-                        case (returned)
-                            0 : ret_page <= page0;
-                            1 : ret_page <= page1;
-                            2 : ret_page <= page2;
-                            3 : ret_page <= page3;
-                            4 : ret_page <= page4;
-                            5 : ret_page <= page5;
-                            default : ret_page <= 0;
-                        endcase
+                        ret_page <= allocated_page_q;
                     end
                     if (ret_valid && ret_ready) begin
-                        returned <= returned + 1'b1;
                         ret_valid <= 0;
                     end
                     if (returned == used) state <= ended ? EVENT : DRAIN;
                 end
 
                 // DRAIN：继续接收但不保存字节，收到末字节后转 EVENT。
-                DRAIN : if (m_accept && m_last) state <= EVENT;
+                DRAIN : if (m_accept && input_last) state <= EVENT;
 
                 // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
                 EVENT : begin
@@ -325,4 +349,69 @@ module afdx_tx_buf #(
         end
     end
 
+endmodule
+
+// Two-entry elastic storage. A registered upstream credit names the reserve
+// slot, not a delayed consumer-ready signal. Full-rate simultaneous transfer
+// is allowed; when blocked, the final credited byte occupies skid_word.
+module afdx_tx_ingress_elastic (
+    input wire clk,reset,s_valid,
+    output reg s_ready,
+    input wire [48:0] s_word,
+    output reg m_valid,
+    input wire m_ready,
+    output reg [48:0] m_word
+);
+    reg skid_valid;
+    reg [48:0] skid_word;
+    wire main_free = !m_valid || m_ready;
+    wire take = s_valid && s_ready;
+    always @(posedge clk) begin
+        if (reset) begin
+            s_ready <= 1;
+            m_valid <= 0;
+            skid_valid <= 0;
+            m_word <= 0;
+            skid_word <= 0;
+        end else begin
+            // Invariant s_ready == !skid_valid makes this the exact next
+            // reserve-empty value; it does not advertise unbacked capacity.
+            s_ready <= main_free || (!skid_valid && !s_valid);
+            // Data storage uses only local ownership. An empty reserve may
+            // sample unaccepted words; only take transfers ownership to it.
+            // An occupied reserve holds its word even on its move-to-main edge.
+            // Thus remote valid/qualification drives two tokens, not 49 enables.
+            if (!skid_valid) skid_word <= s_word;
+            if (main_free) begin
+                m_valid <= skid_valid || take;
+                m_word <= skid_valid ? skid_word : s_word;
+                skid_valid <= 0;
+            end else if (take) begin
+                skid_valid <= 1;
+            end
+        end
+    end
+endmodule
+
+// Keep inference and data isolation inside a standalone storage hierarchy,
+// matching the RAM organization whose input LUTs survive this vendor flow.
+module afdx_tx_rollback_ram #(parameter AW=5, DEPTH=16) (
+    input wire clk,reset,we,
+    input wire [AW-1:0] wa,
+    input wire [7:0] wd,
+    input wire re,
+    input wire [AW-1:0] ra,
+    output reg [7:0] q
+);
+    (* preserve=1,dont_merge=1 *) reg write_command;
+    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address;
+    (* preserve=1,dont_merge=1 *) reg [7:0] write_data;
+    (* ramstyle="M4K,no_rw_check" *) reg [7:0] memory[0:DEPTH-1];
+    always @(posedge clk) begin
+        if(reset)write_command<=0;else write_command<=we;
+        write_address<=wa;write_data<=wd;
+    end
+    always @(posedge clk)if(write_command)
+        memory[write_address]<=write_command ? write_data : 8'b0;
+    always @(posedge clk)if(re)q<=memory[ra];
 endmodule

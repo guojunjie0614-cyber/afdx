@@ -37,7 +37,9 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
     // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
-    reg [1:0] fcs_index;
+    // Three remaining bytes follow the byte emitted on FCS entry.
+    // A shift token exposes terminal status directly, without counter decode.
+    reg [2:0] fcs_remaining;
     reg [6:0] gap_left;
 
     // en_a/b 保存本帧使用的网络。
@@ -46,7 +48,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
 
     // 两网分别计算帧校验值，正常时取反并先发低字节。
     // 发送途中缺字节时故意不取反，让接收方发现错误。
-    reg [31:0] crc_a, crc_b, fcs_a, fcs_b;
+    reg [31:0] crc_a, crc_b;
+    (* preserve = 1, dont_merge = 1 *) reg [31:0] fcs_a, fcs_b;
     wire [31:0] next_a, next_b;
     afdx_crc32_d8 update_a (
         .crc(crc_a),
@@ -69,7 +72,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                 PREAMBLE : ready_window <= {READY_COPIES{
                     pre_index < 7 ? pre_index == 6 : s_valid && !s_last}};
                 DATA : ready_window <= {READY_COPIES{!last_byte && s_valid && !s_last}};
-                FCS : ready_window <= {READY_COPIES{fcs_index == 3 && discard_tail}};
+                FCS : ready_window <= {READY_COPIES{!fcs_remaining[2] && discard_tail}};
                 DRAIN : ready_window <= {READY_COPIES{!(s_valid && s_last)}};
                 default : ready_window <= 0;
             endcase
@@ -81,7 +84,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
             state <= GAP;
             gap_left <= IFG_CYCLES;
             pre_index <= 0;
-            fcs_index <= 0;
+            fcs_remaining <= 3'b111;
             en_a <= 0;
             en_b <= 0;
             last_byte <= 0;
@@ -103,6 +106,12 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
             tx_eof <= 0;
             tx_underrun <= 0;
             if (gap_left != 0) gap_left <= gap_left - 1'b1;
+            // Entry loads below override these otherwise free-running shifts.
+            // Neither terminal status nor FSM state gates the stored CRC bits.
+            if (byte_en) begin
+                fcs_a <= {8'b0, fcs_a[31:8]};
+                fcs_b <= {8'b0, fcs_b[31:8]};
+            end
             // DRAIN：丢弃上游剩余字节，末字节握手后转 GAP。
             if (state == DRAIN) begin
                 // 丢弃剩余字节也只在 byte_en 为高时进行。
@@ -150,7 +159,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             tx_underrun <= 1;
                             discard_tail <= 1;
                             state <= FCS;
-                            fcs_index <= 0;
+                            fcs_remaining <= 3'b111;
                             tx_data_a <= en_a ? crc_a[7:0] : 8'd0;
                             tx_data_b <= en_b ? crc_b[7:0] : 8'd0;
                             fcs_a <= { 8'b0, crc_a[31:8] };
@@ -162,7 +171,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                     DATA : begin
                         if (last_byte || ! s_valid) begin
                             state <= FCS;
-                            fcs_index <= 0;
+                            fcs_remaining <= 3'b111;
                             if (last_byte) begin
                                 tx_data_a <= en_a ? ~ crc_a[7:0] : 8'd0;
                                 tx_data_b <= en_b ? ~ crc_b[7:0] : 8'd0;
@@ -189,7 +198,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
 
                     // FCS：发完四字节校验值，正常转 GAP，缺字节时转 DRAIN。
                     FCS : begin
-                        if (fcs_index == 3) begin
+                        if (!fcs_remaining[2]) begin
                             tx_data_a <= 0;
                             tx_data_b <= 0;
                             tx_valid_a <= 0;
@@ -200,11 +209,9 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             gap_left <= 11;
                         end
                         else begin
-                            fcs_index <= fcs_index + 1'b1;
+                            fcs_remaining <= {fcs_remaining[1:0],1'b0};
                             tx_data_a <= en_a ? fcs_a[7:0] : 8'd0;
                             tx_data_b <= en_b ? fcs_b[7:0] : 8'd0;
-                            fcs_a <= { 8'b0, fcs_a[31:8] };
-                            fcs_b <= { 8'b0, fcs_b[31:8] };
                         end
                     end
 

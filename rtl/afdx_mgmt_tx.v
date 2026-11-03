@@ -14,8 +14,8 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     output reg read_mode,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
     input wire tx_ready,
-    output reg [7:0] tx_data,
-    output reg tx_last,
+    output wire [7:0] tx_data,
+    output wire tx_last,
     output reg [6:0] tx_vl,
     output reg [15:0] tx_sport, tx_dport
 );
@@ -43,8 +43,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             sport_q <= 0;
             dport_q <= 0;
             mode_q <= 0;
-        end
-        else begin
+        end else begin
             request_p <= request;
             length_p <= length;
             vl_p <= vl;
@@ -60,20 +59,60 @@ module afdx_mgmt_tx #(parameter AW = 10) (
         end
     end
 
-    // 八字节预取队列包含在途读请求；反压时仍为已发出的读保留位置。
+    // Eight queue credits still cover all pending reads and queued bytes.
+    // A take is retired locally one clock later. Subtracting the registered
+    // debt reconstructs exactly the original current credit/head values, so
+    // read issue and public valid retain every original clock under backpressure.
     reg active, packet_request, return_valid;
     reg [AW:0] packet_length, issued;
-    // 字节严格按发起顺序出队，剩余数量可在前一次出队时预判下一字节是否为末字节。
-    // 标志不再随八项小 RAM 寻址读取；反压时计数与标志一起保持。
     (* preserve = 1, dont_merge = 1 *) reg [AW:0] output_left;
-    (* preserve = 1, dont_merge = 1 *) reg at_last;
     reg [3:0] queued, reserved;
     reg [2:0] write_pos, read_pos;
     reg [7:0] bytes [0:7];
-    wire issue = active && issued < packet_length && reserved < 8;
-    // 远端 tx_ready 只进末级与门，本地项先行会合。
-    wire take_armed = active && queued != 0;
+    (* preserve = 1, dont_merge = 1 *) reg take_q;
+    wire [3:0] queued_current = queued - {3'b0,take_q};
+    wire [3:0] reserved_current = reserved - {3'b0,take_q};
+    wire [2:0] queue_head = read_pos + {2'b0,take_q};
+    wire [AW:0] left_current = output_left - {{AW{1'b0}},take_q};
+    wire issue = active && issued < packet_length && reserved_current < 8;
+    wire take_armed = active && queued_current != 0;
     wire take = take_armed && (!tx_valid || tx_ready);
+    wire pop = tx_valid && tx_ready;
+
+    // There is still only ONE owned public output byte. The other physical
+    // candidate bank samples the queue head while free. A take changes only
+    // ownership/pointers; remote ready never enters either byte FF enable.
+    // Alternating banks allow an occupied byte to stay stable through stalls
+    // and allow a simultaneous pop/take every clock without extra capacity.
+    reg output_read;
+    // With at most one public byte, valid plus the head bit fully encode
+    // ownership. The next free candidate is the opposite bank while valid.
+    // Removing redundant ownership FFs also removes remote-ready D cones.
+    wire output_write = output_read ^ tx_valid;
+    wire [1:0] output_owned = tx_valid ? (2'b01 << output_read) : 2'b00;
+    wire [7:0] output_data [0:1];
+    wire [1:0] output_last;
+    assign tx_data = output_data[output_read];
+    assign tx_last = tx_valid && output_last[output_read];
+    genvar output_bank;
+    generate for (output_bank=0; output_bank<2; output_bank=output_bank+1) begin : candidate
+        (* preserve = 1, dont_merge = 1 *) reg [7:0] data;
+        (* preserve = 1, dont_merge = 1 *) reg last;
+        assign output_data[output_bank] = data;
+        assign output_last[output_bank] = last;
+        always @(posedge clk) begin
+            if (reset) begin
+                data <= 0;
+                last <= 0;
+            end else begin
+                if (!output_owned[output_bank]) begin
+                    data <= bytes[queue_head];
+                    last <= left_current == 1;
+                end
+                end
+        end
+    end endgenerate
+
     always @(posedge clk) begin
         if (reset) begin
             active <= 0;
@@ -81,35 +120,37 @@ module afdx_mgmt_tx #(parameter AW = 10) (
             packet_length <= 0;
             issued <= 0;
             output_left <= 0;
-            at_last <= 0;
             queued <= 0;
             reserved <= 0;
             write_pos <= 0;
             read_pos <= 0;
+            take_q <= 0;
+            output_read <= 0;
             read_enable <= 0;
             read_address <= 0;
             return_valid <= 0;
             complete <= 0;
             read_mode <= 0;
             tx_valid <= 0;
-            tx_data <= 0;
-            tx_last <= 0;
             tx_vl <= 0;
             tx_sport <= 0;
             tx_dport <= 0;
-        end
-        else begin
+        end else begin
             read_enable <= issue;
             return_valid <= read_enable;
+            take_q <= take;
+            read_pos <= queue_head;
+            if (take_q) output_left <= output_left - 1'b1;
+            if (pop) output_read <= !output_read;
             if (issue) begin
                 read_address <= issued[AW - 1:0];
                 issued <= issued + 1'b1;
             end
-            case ({issue, take})
+            case ({issue, take_q})
                 2'b10 : reserved <= reserved + 1'b1;
                 2'b01 : reserved <= reserved - 1'b1;
             endcase
-            case ({return_valid, take})
+            case ({return_valid, take_q})
                 2'b10 : queued <= queued + 1'b1;
                 2'b01 : queued <= queued - 1'b1;
             endcase
@@ -117,19 +158,9 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 bytes[write_pos] <= read_data;
                 write_pos <= write_pos + 1'b1;
             end
-            if (!tx_valid || tx_ready) begin
-                tx_valid <= take;
-                if (take) begin
-                    tx_data <= bytes[read_pos];
-                    tx_last <= at_last;
-                    output_left <= output_left - 1'b1;
-                    at_last <= output_left == 2;
-                    read_pos <= read_pos + 1'b1;
-                end
-            end
-            if (tx_valid && tx_ready && tx_last) begin
+            if (!tx_valid || tx_ready) tx_valid <= take;
+            if (pop && tx_last) begin
                 tx_valid <= 0;
-                tx_last <= 0;
                 active <= 0;
                 complete <= packet_request;
             end
@@ -139,12 +170,13 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 packet_length <= length_q;
                 issued <= 0;
                 output_left <= length_q;
-                at_last <= length_q == 1;
                 queued <= 0;
                 reserved <= 0;
                 write_pos <= 0;
                 read_pos <= 0;
-                return_valid <= 0;
+                take_q <= 0;
+                output_read <= 0;
+                    return_valid <= 0;
                 read_enable <= 0;
                 read_mode <= mode_q;
                 tx_vl <= vl_q;

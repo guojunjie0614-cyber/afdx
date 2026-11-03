@@ -929,18 +929,22 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     next_field_accept[FIELD_MESSAGE] = tag_value == TAG_SEQUENCE;
                     next_field_accept[FIELD_VERSION] = tag_value == TAG_INTEGER && field_length == 1;
                     next_field_accept[FIELD_COMMUNITY] = tag_value == TAG_OCTET_STRING
-                        && field_length >= 1 && field_length <= MAX_COMMUNITY_LENGTH;
+                        && (|field_length) && !(|field_length[15:5])
+                        && (!field_length[4] || !(|field_length[3:0]));
                     next_field_accept[FIELD_PDU] = tag_value == PDU_GET || tag_value == PDU_GET_NEXT
                         || tag_value == PDU_SET;
                     next_field_accept[FIELD_REQUEST_ID] = tag_value == TAG_INTEGER
-                        && field_length >= 1 && field_length <= 4;
+                        && (|field_length) && !(|field_length[15:3])
+                        && (!field_length[2] || !(|field_length[1:0]));
                     next_field_accept[FIELD_ERROR_STATUS] = 0;
                     next_field_accept[FIELD_ERROR_INDEX] = 0;
                     next_field_accept[FIELD_BINDING_LIST] = 0;
                     next_field_accept[FIELD_BINDING] = 0;
                     next_field_accept[FIELD_OID] = tag_value == TAG_OID
-                        && field_length >= 1 && field_length <= MAX_OID_LENGTH;
-                    next_field_accept[FIELD_VALUE] = (get_set && field_length <= 16)
+                        && (|field_length) && !(|field_length[15:5])
+                        && (!field_length[4] || !(|field_length[3:0]));
+                    next_field_accept[FIELD_VALUE] = (get_set && !(|field_length[15:5])
+                        && (!field_length[4] || !(|field_length[3:0])))
                         || (tag_value == TAG_NULL && field_length == 0);
                     next_state = DISPATCH_CHECK;
                 end
@@ -1354,7 +1358,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         emit (id_shift[31:24]);
                         next_id_shift = { id_shift[23:0], 8'b0 };
                         next_part_pos = part_pos + 5'd1;
-                        if (part_pos + 1 == request_id_length) next_part = B_STATUS_TAG;
+                        if (({1'b0,part_pos} + 6'd1) == request_id_length) next_part = B_STATUS_TAG;
                     end
 
                     B_STATUS_TAG : begin
@@ -1426,7 +1430,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                         else begin
                             emit (oid_shift[87:80]);
                             next_part_pos = part_pos + 5'd1;
-                            if (part_pos + 1 == response_oid_length) next_part = B_VALUE_TAG;
+                            if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
                         end
                     end
 
@@ -1457,7 +1461,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                             next_value_shift = { value_shift[23:0], 8'b0 };
                         end
                         next_part_pos = part_pos + 5'd1;
-                        if (part_pos + 1 == value_length) begin
+                        if (({1'b0,part_pos} + 6'd1) == value_length) begin
                             next_part_pos = 0;
                             next_state = sending_trap ? TRAP_WORD : TX_FLUSH;
                         end
@@ -1470,7 +1474,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 COPY_COMM : begin
                     emit (byte_value);
                     next_part_pos = part_pos + 5'd1;
-                    if (part_pos + 1 == community_length) next_part = B_PDU_TAG;
+                    if (({1'b0,part_pos} + 6'd1) == community_length) next_part = B_PDU_TAG;
                     next_state = 7'd26;
                 end
 
@@ -1478,7 +1482,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 COPY_OID : begin
                     emit (byte_value);
                     next_part_pos = part_pos + 5'd1;
-                    if (part_pos + 1 == response_oid_length) next_part = B_VALUE_TAG;
+                    if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
                     next_state = 7'd26;
                 end
 
@@ -1486,7 +1490,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 COPY_VALUE : begin
                     emit (byte_value);
                     next_part_pos = part_pos + 5'd1;
-                    next_state = part_pos + 1 == value_length ? TX_FLUSH : BUILD;
+                    next_state = ({1'b0,part_pos} + 6'd1) == value_length ? TX_FLUSH : BUILD;
                 end
 
                 // TRAP_INIT：准备事件通知及运行时间字段，然后计算回应长度。

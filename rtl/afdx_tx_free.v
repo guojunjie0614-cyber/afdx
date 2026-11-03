@@ -91,6 +91,10 @@ module afdx_tx_free #(
             we <= 0;
             re <= 0;
             pop_ack <= 0;
+            // Empty slots may sample freely. Occupied slots hold their page
+            // through arbitration/backpressure until the pending write retires.
+            if (!ret1_pending) ret1_saved <= ret1_page;
+            if (!ret2_pending) ret2_saved <= ret2_page;
             // 初始化时逐拍写入所有页号，再等最后一次写入完成。
             if ( ! init_done) begin
                 if ( ! init_flush) begin
@@ -108,11 +112,9 @@ module afdx_tx_free #(
             else begin
                 if (ret1_valid && ret1_ready) begin
                     ret1_pending <= 1;
-                    ret1_saved <= ret1_page;
                 end
                 if (ret2_valid && ret2_ready) begin
                     ret2_pending <= 1;
-                    ret2_saved <= ret2_page;
                 end
                 // 分配和归还同时完成时，空闲页数不变。
                 // 两个归还口先各自保存页号，再依次写入空闲队列。
