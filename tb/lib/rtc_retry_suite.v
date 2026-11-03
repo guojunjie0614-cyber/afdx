@@ -12,10 +12,12 @@ module rtc_retry_suite #(parameter NAME="tb_rtc_recovery", NEGATIVE=0);
     integer cycle=0,checks=0,errors=0,requests=0,replies=0,spos=0;
     integer phase=0,j,limit,first_start,last_start,previous_start,period=5000,base_sync,sweep;
     integer calc_crossings=0;reg [7:0] request[0:47],response[0:47],old_origin[0:7];
-    afdx_rtc slave(clk,reset,1'b1,sw,1'b0,sa,sd,sq,sc,stv,1'b1,std,stl,svl,sport,
-        inject?iv:(mtv&&pass_reply),inject?id:mtd,inject?il:mtl,16'd123,sclaim);
-    afdx_rtc master(clk,reset,1'b1,mw,1'b0,ma,md,mq,mc,mtv,1'b1,mtd,mtl,mvl,mport,
-        stv,std,stl,16'd123,mclaim);
+    afdx_rtc slave(.clk(clk),.reset(reset),.enable(1'b1),.cfg_we(sw),.cfg_re(1'b0),.cfg_addr(sa),.cfg_wdata(sd),.cfg_rdata(sq),.sync_count(sc),
+        .tx_valid(stv),.tx_ready(1'b1),.tx_data(std),.tx_last(stl),.tx_vl(svl),.tx_port(sport),
+        .rx_valid(inject?iv:(mtv&&pass_reply)),.rx_data(inject?id:mtd),.rx_last(inject?il:mtl),.rx_port(16'd123),.rx_claim(sclaim));
+    afdx_rtc master(.clk(clk),.reset(reset),.enable(1'b1),.cfg_we(mw),.cfg_re(1'b0),.cfg_addr(ma),.cfg_wdata(md),.cfg_rdata(mq),.sync_count(mc),
+        .tx_valid(mtv),.tx_ready(1'b1),.tx_data(mtd),.tx_last(mtl),.tx_vl(mvl),.tx_port(mport),
+        .rx_valid(stv),.rx_data(std),.rx_last(stl),.rx_port(16'd123),.rx_claim(mclaim));
     task check;input ok;input [8*100-1:0] why;
         begin checks=checks+1;if(ok!==1'b1)begin errors=errors+1;
             $display("[RTC_FAIL] %0s phase=%0d cycle=%0d %0s",NAME,phase,cycle,why);end end

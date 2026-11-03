@@ -162,8 +162,9 @@ endmodule
 module rtc_test_endpoint #(parameter ES=1)(
     input wire clk,reset,input wire [7:0] ra,input wire rva,input wire [7:0] rb,input wire rvb,
     output wire [7:0] ta,output wire tva,output wire [7:0] tb,output wire tvb,output wire ready,
-    output reg [31:0] checks=0,errors=0
+    output reg [31:0] checks,errors
 );
+    initial begin checks=0; errors=0; end
     reg m_valid=0,m_last=0;reg [7:0] m_data=0;reg [6:0] m_vl=1;wire m_ready;
     wire d_valid,d_last,d_net;wire [7:0] d_data;wire [11:0] d_vl;wire [15:0] d_sp,d_dp;
     reg wr=0,rd=0;reg [17:0] address=0;reg [31:0] wdata=0;

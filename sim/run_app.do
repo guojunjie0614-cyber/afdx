@@ -71,7 +71,7 @@ proc app_entry::read_stimulus {path cfg} {
         }
         if {[string length $payload] % 2} {fail "stimulus line $number: odd number of hex digits"}
         set length [expr {[string length $payload]/2}]
-        if {$length < 1 || $length > 1471} {fail "stimulus line $number: payload $length bytes outside 1..1471"}
+        if {$length < 1 || $length > 8192} {fail "stimulus line $number: payload $length bytes outside 1..8192"}
         if {[scan $vl_hex %x vlid] != 1} {fail "stimulus line $number: bad VLID '$vl_hex'"}
         set vlid [expr {$vlid & 0xFFFF}]
         if {![dict exists $cfg index $vlid]} {
@@ -295,6 +295,51 @@ proc app_entry::analyse {folder msgs cfg window} {
         [expr {$jitter*0.008}] [file tail $folder]]
 }
 
+# Long-datagram path uses the public-port fragmentation harness. Legacy R97
+# assumes one wire frame per message; its short-only path remains unchanged.
+proc app_entry::run_fragmented {folder cfg msgs} {
+    variable root
+    set frag [file join $folder fragmentation]
+    file mkdir $frag
+    set py python
+    if {[info exists ::env(AFDX_PYTHON)]} {set py $::env(AFDX_PYTHON)}
+    set helper [file join $root tools fragment_integration.py]
+    set failed [catch {exec $py $helper app-prepare $frag \
+        [file join $folder vectors vl_config.txt] [file join $folder vectors app_schedule.txt] \
+        [file join $folder vectors sys_payload.hex] [file join $folder vectors app_window.txt]} message]
+    if {$failed} {fail "fragment vector preparation: $message"}
+    set payload_count [string trim [read_text [file join $folder vectors sys_payload.count]]]
+    if {![string is integer -strict $payload_count] || $payload_count < 1} {
+        fail "invalid fragment payload count '$payload_count'"
+    }
+    set payload_capacity [expr {max(65536, $payload_count)}]
+    cd $frag
+    catch {vlib work}
+    if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
+    set sources [concat [lsort [glob [file join $root rtl *.v]]] [list [file join $root tb tb_fragmentation.v]]]
+    set ce_div 2
+    if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}
+    if {$ce_div ni {1 2}} {fail "AFDX_CE_DIV must be 1 or 2"}
+    set log [file join $frag compile.log]
+    set command [list [file join [tool_dir] vlog.exe] -vlog01compat +define+AFDX_CE_DIV=$ce_div]
+    set failed [catch {exec {*}$command {*}$sources > $log 2>@1} message]
+    if {$failed || [regexp {\*\* (Error|Fatal)} [read_text $log]]} {fail "fragment compile failed: $message; see $log"}
+    set log [file join $frag simulation.log]
+    set command [list [file join [tool_dir] vsim.exe] -batch -quiet -t 1ps -onfinish stop \
+        -gPAYLOAD_CAPACITY=$payload_capacity tb_fragmentation -do "run -all; quit -f"]
+    set failed [catch {exec {*}$command > $log 2>@1} message]
+    set report [read_text $log]
+    if {$failed || ![regexp {\[RESULT\] tb_fragmentation PASS errors=0} $report] || [regexp {\*\* (Error|Fatal)} $report]} {
+        fail "fragment simulation failed: $message; see $log"
+    }
+    set failed [catch {exec $py $helper app-check $frag} message]
+    if {$failed} {fail "fragment packet/application checks: $message"}
+    file copy -force [file join $frag rx.txt] [file join $folder rx.txt]
+    file copy -force [file join $frag summary.txt] [file join $folder summary.txt]
+    puts $message
+    return "APP ENTRY PASS run=[file tail $folder] messages=[llength $msgs] fragmented_metrics=report output=$folder"
+}
+
 proc app_entry::main {root parameters} {
     variable folder
     set app_entry::root $root
@@ -320,11 +365,17 @@ proc app_entry::main {root parameters} {
     file mkdir $folder
     set window [write_vectors $folder $msgs $cfg $stimulus]
     file copy -force $vl_config [file join $folder vectors vl_config.txt]
-    compile $folder
-    lassign [simulate $folder] checks warnings
-    set result [analyse $folder $msgs $cfg $window]
+    set has_long 0
+    foreach message $msgs {if {[lindex $message 2] > 1471} {set has_long 1}}
+    if {$has_long} {
+        set result [run_fragmented $folder $cfg $msgs]
+    } else {
+        compile $folder
+        lassign [simulate $folder] checks warnings
+        set result [analyse $folder $msgs $cfg $window]
+        puts [format "APP ENTRY SUMMARY checks=%d warnings=%d" $checks $warnings]
+    }
     puts $result
-    puts [format "APP ENTRY SUMMARY checks=%d warnings=%d" $checks $warnings]
     return $result
 }
 

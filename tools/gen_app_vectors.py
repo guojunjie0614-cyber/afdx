@@ -5,6 +5,7 @@ files under sim/vectors/app/.  R120-1 requires >=100 Mbps of injected payload
 over a sustained window, so the default keeps one frame per BAG per VL and
 16 throughput VLs at 1471 bytes and BAG 1 ms.
 """
+import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,14 +50,25 @@ def stimulus():
 
 
 def main():
+    global OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--long', action='store_true', help='add fragmentation boundary messages')
+    parser.add_argument('--out', type=Path, default=OUT, help='destination for generated files')
+    args = parser.parse_args()
+    OUT = args.out
     OUT.mkdir(parents=True, exist_ok=True)
     config = vl_config()
+    if args.long:
+        config.append((0x0300, BAG_US, 1471, 0x1234, 0x4321))
     (OUT / "vl_config.txt").write_text(
         "".join(f"{vlid:04X} {bag} {lmax} {sport} {dport}\n" for vlid, bag, lmax, sport, dport in config),
         encoding="ascii")
     lines = []
     message = 0
-    for due, vlid, length in stimulus():
+    schedule = stimulus()
+    if args.long:
+        schedule.extend((5000 + i*10000, 0x0300, length) for i, length in enumerate((1464, 1471, 1472, 8192)))
+    for due, vlid, length in schedule:
         message += 1
         lines.append(f"{due} {vlid:04X} {blob(message, length).hex()}\n")
     (OUT / "stimulus.txt").write_text("".join(lines), encoding="ascii")
