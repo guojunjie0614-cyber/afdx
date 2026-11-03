@@ -37,6 +37,13 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     output wire rx_claim,
     input wire cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
     input wire cfg_write_request);
+`ifdef MODEL_TECH
+    wire [31:0] receive_timestamp_seconds;
+    wire [31:0] receive_timestamp_nanoseconds;
+    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+    wire rtc_client_launch;
+    wire rtc_server_launch;
+`endif
 
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
     wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 4 : 0) +: 4];
@@ -662,8 +669,16 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire [(RX_STREAM_DELAY_CYCLES+1)*32-1:0] receive_seconds_history,receive_ns_history;
     assign receive_seconds_history[31:0]=timestamp_seconds;
     assign receive_ns_history[31:0]=timestamp_nanoseconds;
+`ifndef MODEL_TECH
     wire [31:0] receive_timestamp_seconds=receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
+`else
+    assign receive_timestamp_seconds =receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
+`endif
+`ifndef MODEL_TECH
     wire [31:0] receive_timestamp_nanoseconds=receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
+`else
+    assign receive_timestamp_nanoseconds =receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
+`endif
     genvar history_stage;
     generate for(history_stage=0;history_stage<RX_STREAM_DELAY_CYCLES;history_stage=history_stage+1) begin : receive_time_history
         (* preserve=1,dont_merge=1 *) reg [31:0] seconds_q,nanoseconds_q;
@@ -832,7 +847,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
 
     // Same-cycle run/first-request predicates use the original next values.
     // Enable remains a current-cycle input for standalone callers.
+`ifndef MODEL_TECH
     (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+`endif
     wire rtc_tx_running = rtc_run_ctl && enable;
     wire rtc_tx_idle = tx_state==TX_IDLE;
     wire rtc_tx_groups = tx_state==TX_GROUPS;
@@ -872,8 +889,16 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // Waiting responses may replace these seconds even while calculation is
     // busy; abort clears protocol control but never cancels that old-edge
     // seconds capture. Both original priority rules remain intact.
+`ifndef MODEL_TECH
     wire rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;
+`else
+    assign rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;
+`endif
+`ifndef MODEL_TECH
     wire rtc_server_launch = master_tx && reply_pending;
+`else
+    assign rtc_server_launch = master_tx && reply_pending;
+`endif
     wire rtc_waiting_next = !abort_protocol &&
         ((tx_state==TX_IDLE && rtc_client_launch) || (waiting && calc_state!=CALC_APPLY));
     wire rtc_tx_idle_next = abort_protocol ||

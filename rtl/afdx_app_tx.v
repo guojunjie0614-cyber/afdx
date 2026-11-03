@@ -15,6 +15,9 @@ module afdx_app_tx (
     output reg [6:0] app_vl,
     output reg [1:0] drop
 );
+`ifdef MODEL_TECH
+    wire read_en;
+`endif
     reg [15:0] vlids[0:127];
     reg [127:0] enabled;
     // One complete command capture terminates the remote configuration bus.
@@ -131,7 +134,9 @@ module afdx_app_tx (
         else if(store)write_ptr<=write_ptr+1'b1;
     end
     wire [8:0] memory_q;
+`ifndef MODEL_TECH
     wire read_en;
+`endif
     wire [14:0] read_addr;
     afdx_app_payload #(.SPLIT_RETURN(1)) payload(
         .clk(clk),.reset(reset),.write_enable(store),.write_address(write_ptr[14:0]),

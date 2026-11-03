@@ -1,0 +1,63 @@
+{
+  "test": "tb_rx_basic",
+  "items": 123855,
+  "errors": 0,
+  "either": 0,
+  "segments": 16523,
+  "segments_a": 8312,
+  "segments_b": 8211,
+  "pulses": {
+    "a_good": 8312,
+    "deliver": 8321,
+    "b_good": 8211,
+    "b_cfg": 3,
+    "a_cfg": 5,
+    "a_unk": 2,
+    "rm_drop": 8192
+  },
+  "deliveries": 8321,
+  "max_delivery_latency": 1452,
+  "stages": {
+    "len": {
+      "segments": 46,
+      "good": 46,
+      "deliver": 46
+    },
+    "nets": {
+      "segments": 18,
+      "good": 18,
+      "deliver": 12,
+      "b_cfg": 3,
+      "a_cfg": 3
+    },
+    "map": {
+      "segments": 8,
+      "good": 8,
+      "deliver": 4,
+      "a_unk": 2,
+      "a_cfg": 2
+    },
+    "ports": {
+      "segments": 9,
+      "good": 9,
+      "deliver": 9
+    },
+    "preamble": {
+      "segments": 8,
+      "good": 8,
+      "deliver": 8
+    },
+    "gap": {
+      "segments": 50,
+      "good": 50,
+      "deliver": 50
+    },
+    "all4096": {
+      "segments": 16384,
+      "good": 16384,
+      "deliver": 8192,
+      "rm_drop": 8192
+    }
+  },
+  "diagnostics": []
+}

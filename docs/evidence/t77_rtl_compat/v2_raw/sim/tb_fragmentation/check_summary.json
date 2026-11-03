@@ -1,0 +1,23 @@
+{
+  "errors": 0,
+  "items": 9,
+  "coverage_checks": [
+    "complete_delivery_1464",
+    "complete_delivery_1472",
+    "complete_delivery_8192",
+    "recovery_vl_0300",
+    "recovery_vl_0301",
+    "recovery_vl_0302",
+    "recovery_vl_0303",
+    "recovery_vl_0304",
+    "recovery_vl_0305"
+  ],
+  "independent_fragment_checker": "PASS",
+  "complete_deliveries": 11,
+  "tx_messages": 7,
+  "tx_target": 5,
+  "tx_frames": {
+    "a": 11,
+    "b": 11
+  }
+}

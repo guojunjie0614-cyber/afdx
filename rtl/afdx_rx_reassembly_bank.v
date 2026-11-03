@@ -22,6 +22,12 @@ module afdx_rx_reassembly_bank #(
     output reg [11:0] out_vl, output reg [15:0] out_sport, out_dport,
     output reg out_net, output reg [1:0] events
 );
+`ifdef MODEL_TECH
+    (* preserve=1, dont_merge=1 *) reg query_active, query_start;
+    (* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;
+    wire payload_we;
+    (* maxfan=16 *) reg [13:0] output_position;
+`endif
     function integer counter_width;
         input integer count; integer n;
         begin counter_width=1; for(n=1;n<32;n=n+1)
@@ -57,7 +63,9 @@ module afdx_rx_reassembly_bank #(
         always @(posedge clk) if(reset) command<=0;else command<=query_start;
     end endgenerate
 
+`ifndef MODEL_TECH
     (* preserve=1, dont_merge=1 *) reg query_active, query_start;
+`endif
     (* preserve=1, dont_merge=1 *) reg admission_read_enable;
     (* preserve=1, dont_merge=1 *) reg [2:0] admission_read_address;
     always @(posedge clk) begin
@@ -130,7 +138,9 @@ module afdx_rx_reassembly_bank #(
     reg [1:0] admission_phase;
     // The command is irrevocable after acceptance. A later cancel only ends
     // the query owner; it cannot mask this registered table-write command.
+`ifndef MODEL_TECH
     (* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;
+`endif
     (* preserve=1, dont_merge=1 *) reg [2:0] commit_row;
     wire [91:0] header_wd={query_key[91:80],q_sport,q_dport,q_app_total,initial_sum,(q_check==0),q_net};
     wire [27:0] admission_wd={q_end[13:0],(q_first ? q_udp_length[13:0] : selected_total)};
@@ -165,7 +175,11 @@ module afdx_rx_reassembly_bank #(
     end
     wire [16:0] checksum_next={1'b0,checksum_low}+{1'b0,checksum_word_q};
     wire [12:0] checksum_high_next=checksum_high+checksum_carry;
+`ifndef MODEL_TECH
     wire payload_we=copy_state==C_RUN && copy_valid_q;
+`else
+    assign payload_we =copy_state==C_RUN && copy_valid_q;
+`endif
     // Byte selection and its valid command cross a register together. The
     // accumulator owns its local load/add recurrence, independent of copy FSM.
     always @(posedge clk) begin
@@ -202,7 +216,9 @@ module afdx_rx_reassembly_bank #(
         else output_equal<={output_position[13:7]==output_compare_target[13:7],
             output_position[6:0]==output_compare_target[6:0]};
     end
+`ifndef MODEL_TECH
     (* maxfan=16 *) reg [13:0] output_position;
+`endif
     reg output_carry;
     (* preserve=1, dont_merge=1 *) reg output_read_active, output_last_request;
     wire [6:0] output_low_next=output_position[6:0]+1'b1;

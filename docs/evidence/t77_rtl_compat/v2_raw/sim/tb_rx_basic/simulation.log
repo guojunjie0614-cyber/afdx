@@ -1,0 +1,113 @@
+# vsim -batch tb_rx_basic -wlf simulation.wlf -do "do run.do" 
+# Start time: 08:35:14 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_rx_basic(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[0]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[1]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[2]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[3]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[4]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[5]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[6]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_cfg[7]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[0]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[1]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[2]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[3]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[4]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[5]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[6]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[7]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[8]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[9]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/rx_state[10]/storage/memory File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/deliver File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_deliver.v Line: 121
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/deliver File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_deliver.v Line: 124
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/deliver File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_deliver.v Line: 127
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank/key_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank/header_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank/admission_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank/progress_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 535
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 537
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 539
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[0]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 540
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank/key_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank/header_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank/admission_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank/progress_table File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_ram.v Line: 25
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 535
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 537
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 539
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly/banks[1]/u_bank File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly_bank.v Line: 540
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly.v Line: 196
+# ** Warning: (vsim-PLI-3003) [TOFD] - System task or function '$finish_and_return' is not defined.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rx_basic/suite/dut/reassembly File: E:/2026_Embedded_FPGA/worktrees/active/c3_t77/rtl/afdx_rx_reassembly.v Line: 198
+# 
+# do run.do
+# [STAGE] len cycle=70000
+# [STAGE] nets cycle=105070
+# [STAGE] map cycle=110553
+# [STAGE] ports cycle=114504
+# [STAGE] preamble cycle=118493
+# [STAGE] gap cycle=122259
+# [STAGE] all4096 cycle=145040
+# [COVERAGE] cycles=3238425 segments_a=8312 segments_b=8211 deliveries=8321
+# [RESULT] tb_rx_basic PASS checks=9960369 errors=0
+# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_t77/tb/lib/rx_core_suite.v(131)
+#    Time: 25907397 ns  Iteration: 0  Instance: /tb_rx_basic/suite
+# End time: 08:35:28 on Nov 03,2026, Elapsed time: 0:00:14
+# Errors: 0, Warnings: 40
