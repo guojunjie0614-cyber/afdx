@@ -1,0 +1,36 @@
+schema: afdx-hardware-spec-v1
+revision: 2
+status: draft
+project: afdx
+source_requirements:
+  - source: FPGA创新大赛问题汇总1030.xlsx Sheet1 R138-6
+    requirement: Support application messages larger than one AFDX frame through IPv4 fragmentation and reassembly.
+  - source: FPGA创新大赛问题汇总1030.xlsx Sheet1 R138-1,R138-5
+    requirement: Application stimulus carries VLID and payload; system configuration is separate.
+  - source: FPGA创新大赛问题汇总1030.xlsx Sheet1 R139
+    requirement: Report configured workload, throughput, latency and jitter; provide synthesis and post-synthesis simulation evidence.
+engineering_choices:
+  max_application_message_bytes: 8192
+  concurrent_reassembly_contexts: 16
+  reassembly_timeout_cycles: 250000000
+  note: These bounds are project choices, not maxima specified by the official FAQ.
+compatibility:
+  application_interface: Two big-endian VLID bytes followed by payload; continuous valid denotes a complete message.
+  preserve: [128_tx_vls, 4096_rx_vls, dual_network_ic_rm, service_protocols, cfg_register_layout]
+  lmax: Existing 11-bit configured Lmax remains the per-frame UDP-equivalent payload budget, not the whole fragmented message limit.
+timing:
+  device: EQ6HL130
+  package: CSG484_H
+  clock_period_ns: 8.0
+  setup_uncertainty_ns: 0.30
+  required_final_internal_setup_slack: positive
+  required_final_internal_hold_slack: positive
+  required_synthesized_internal_setup_slack: positive
+  required_synthesized_internal_hold_slack: positive
+  desired_synthesized_setup_margin_ns: 1.0
+  desired_setup_margin_ns: 0.20
+  acceptance: Requires separate synthesized and implemented setup/hold evidence with zero failing constrained endpoints; RTL simulation alone is insufficient. External IO closure requires an explicit board timing budget.
+validation_policy:
+  - Workers implement complete owned changes before a single bounded compile or smoke check.
+  - Parent runs consolidated integration validation; reruns are driven by failures.
+  - No new hash baselines, repeated full regressions, or unrequested external publication.
