@@ -1,11 +1,11 @@
 {
-  "scanned_at": "2026-11-04 00:00:20",
+  "scanned_at": "2026-11-04 06:37:27",
   "scope": "All numeric/hex capture fields. Active files are prefixes only; no final T75 acceptance inferred.",
   "runs": [
     {
       "test": "tb_elinx",
       "status": "NO_CAPTURE",
-      "t75_passed": null,
+      "t75_passed": true,
       "note": "Covered by new monitored VQM windows; no T75 rerun requested"
     },
     {
@@ -65,30 +65,126 @@
     {
       "test": "tb_frag1030_net",
       "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
-      "process_active": true,
+      "process_active": false,
       "status": "MISSING_CAPTURE",
-      "t75_passed": null,
-      "prefix_receipt": null,
-      "prefix_receipt_valid": false,
+      "t75_passed": false,
+      "prefix_receipt": {
+        "passed": true,
+        "items": 5,
+        "errors": 0,
+        "comparisons": [
+          {
+            "file": "tx_a.txt",
+            "equal": true,
+            "actual_sha256": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+            "reference_sha256": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+            "actual_bytes": 12503,
+            "reference_bytes": 12503,
+            "records": 6,
+            "first_difference_byte": null
+          },
+          {
+            "file": "tx_b.txt",
+            "equal": true,
+            "actual_sha256": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+            "reference_sha256": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+            "actual_bytes": 12503,
+            "reference_bytes": 12503,
+            "records": 6,
+            "first_difference_byte": null
+          },
+          {
+            "file": "rx.txt",
+            "equal": true,
+            "actual_sha256": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+            "reference_sha256": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+            "actual_bytes": 8926,
+            "reference_bytes": 8926,
+            "records": 4,
+            "first_difference_byte": null
+          },
+          {
+            "file": "tx_messages.txt",
+            "equal": true,
+            "actual_sha256": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+            "reference_sha256": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+            "actual_bytes": 159,
+            "reference_bytes": 159,
+            "records": 8,
+            "first_difference_byte": null
+          },
+          {
+            "file": "events.txt",
+            "equal": true,
+            "actual_sha256": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5",
+            "reference_sha256": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5",
+            "actual_bytes": 169,
+            "reference_bytes": 169,
+            "records": 8,
+            "first_difference_byte": null
+          }
+        ],
+        "compared_records": 32,
+        "coverage": {
+          "cutoff_cycle": 199578,
+          "vlid": "0x0102",
+          "reassembled_payload_bytes": 1472,
+          "rx_record": 4,
+          "second_fragment_tx_record": 6,
+          "second_fragment_tx_start": 197940,
+          "networks": [
+            "A",
+            "B"
+          ],
+          "full_tx_message_lines": 8,
+          "events_through_cutoff": 8
+        },
+        "Status": "PASS-PREFIX",
+        "checked": "2026-11-04T01:46:54.027050+08:00",
+        "flow": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+        "reference": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_rtl\\20261103_000656_614198",
+        "cutoff_cycle": 199578,
+        "complete_simulation": false,
+        "hdl_result_reached": false,
+        "vqm_sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+        "kernel": {
+          "pid": 33644,
+          "created": 1793693286.312673
+        },
+        "stop_record": "out\\t75\\fragment_prefix\\stop_record.json",
+        "source_sha256": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
+        "raw_sha256": {
+          "tx_a.txt": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+          "tx_b.txt": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+          "rx.txt": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+          "tx_messages.txt": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+          "events.txt": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5"
+        },
+        "deferred_vqm_coverage": [
+          "8192-byte complete message",
+          "fault recovery"
+        ]
+      },
+      "prefix_receipt_valid": true,
       "hits": [],
       "files": [
         {
           "name": "tx_a.txt",
           "present": true,
-          "bytes": 12350,
-          "sha256": "3d4be24c4412c7f18c2608ccaa90fdbf49beabf73aedda9037a15c5a69ce46ae"
+          "bytes": 12503,
+          "sha256": "e5741d5691cda81ab0c0bbbe3635152df7ea127dbd0c57b6dd45b81ca7ebee04"
         },
         {
           "name": "tx_b.txt",
           "present": true,
-          "bytes": 12350,
-          "sha256": "0d9d42a86fedae444a97318df7d418a1b5cb3db953e30acac2a505d77a41037a"
+          "bytes": 12503,
+          "sha256": "2404c00f478b42f4c4aee1c4612416c1b0f10b379509117830094cf8d3b970ea"
         },
         {
           "name": "rx.txt",
           "present": true,
-          "bytes": 5961,
-          "sha256": "ae9e23d716437a3b226864e09ec44a53249e7214a6dd8eb8c07d446e41b0c3f4"
+          "bytes": 8926,
+          "sha256": "055824897edcf875dfba925cc2c953ef3a9328d6c793ef9f796d9516f7836afa"
         },
         {
           "name": "tx_messages.txt",
@@ -99,8 +195,8 @@
         {
           "name": "events.txt",
           "present": true,
-          "bytes": 0,
-          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          "bytes": 169,
+          "sha256": "e8993bd740e766e70dd9fa0a16a828fbc6a1d686168bc141f3747dcab9eebdd5"
         },
         {
           "name": "summary.txt",
