@@ -40,14 +40,22 @@ module tb_t65_tx_desc #(parameter T65_MUTANT=0);
     integer two_full=0,two_miss=0;
     reg [7:0] bytes[0:4095],wbytes[0:2047];reg wav=0;
     reg admission_ready;
+    reg public_ready=0,public_valid=0;
+    always @(posedge clk)begin
+        if(reset)begin public_valid<=0;public_ready<=0;end
+        else begin
+            if(tv && !public_valid)public_ready<=ready;
+            public_valid<=tv;
+        end
+    end
     // First-byte admission is sampled before the sequential RTL update.
     // policy 1 is the deliberately overlength/space-exhausting input;
     // policy 2 is observation-only input sent after ready has fallen.
     always @(posedge clk)begin
-        admission_ready=dut.initialized && dut.application_tx.used<=2616 && dut.application_tx.descriptors<31;
+        admission_ready=dut.initialized && dut.application_tx.used<=24576 && dut.application_tx.descriptors<31;
         if(!reset && dut.application_tx.vq && !dut.application_tx.active)begin
             $fwrite(fd,"I %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",cycle,current_n,current_id,current_tag,
-                dut.initialized,dut.application_tx.descriptors,dut.application_tx.used,ready,current_policy,sent);
+                dut.initialized,dut.application_tx.descriptors,dut.application_tx.used,public_ready,current_policy,sent);
             if(current_n>=3 && current_policy!=1 && dut.initialized && dut.application_tx.descriptors<32)begin
                 ns[expected]=current_n-2;tags[expected]=current_tag;ids[expected]=current_id;expected=expected+1;
             end
@@ -124,7 +132,8 @@ module tb_t65_tx_desc #(parameter T65_MUTANT=0);
             if(n>=2)begin @(negedge clk);td=id;end
             for(j=2;j<n;j=j+1)begin @(negedge clk);td=tag+j-2;end
             @(negedge clk);tv=0;td=0;
-            repeat(2)@(negedge clk);
+            // Include the added descriptor publication clock before next admission.
+            repeat(3)@(negedge clk);
         end
     endtask
     task fill32;

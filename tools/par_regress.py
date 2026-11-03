@@ -106,6 +106,19 @@ def processes():
     return len(kernels) + pending, len(eda)
 
 
+def reserved_netlist_bytes(active, observed_peak):
+    """Reserve not-yet-resident memory for queued reference/compile phases.
+
+    An A runner in its small RTL-reference phase still reserves a complete VQM
+    slot. Otherwise several small wrappers can pass the free-RAM gate before
+    their netlists all grow at once.
+    """
+    budget=max(observed_peak*1.10,GIB)
+    reserve=sum(max(0,budget-v.get('rss',0)) for v in active
+                if v['row']['kind'] in ('A','B'))
+    return budget,reserve
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
@@ -210,9 +223,14 @@ def main():
             try:
                 children = psutil.Process(p.pid).children(recursive=True)
                 rss = sum(q.memory_info().rss for q in children)
+                item['rss'] = rss
                 item['peak'] = max(item['peak'], rss)
                 if item['row']['kind'] == 'A' and any(q.name().lower() == 'vsimk.exe' for q in children):
                     peaks['observed_class_a_tree_bytes'] = max(peaks.get('observed_class_a_tree_bytes', 0), rss)
+                    kernels=[q for q in children if q.name().lower()=='vsimk.exe']
+                    optimizing=any(q.name().lower().startswith('vopt') for q in children)
+                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
+                        peaks['class_a_runtime_measured']=True
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
             if p.poll() is None:
@@ -245,16 +263,20 @@ def main():
         sim_active = sum(v['row']['kind'] != 'SYNTH' for v in active.values())
         synth_active = len(active) - sim_active
         observed = peaks.get('observed_class_a_tree_bytes', 0)
-        # Reserve 50 percent growth above the first observed official-netlist peak.
+        # Reserve the complete measured footprint even for A runners which are
+        # still preparing a tiny RTL reference. Admit only one before measuring
+        # a real official-netlist kernel past optimization.
         net_active = sum(v['row']['kind'] in ('A', 'B') for v in active.values())
-        net_limit = min(args.max_sims, max(1, net_active + int(max(0,available-4*GIB) / max(observed*1.5, GIB))))
+        net_budget,net_reserve=reserved_netlist_bytes(active.values(),observed)
+        usable=available-net_reserve
+        net_limit = min(args.max_sims, max(1, net_active + int(max(0,usable-4*GIB)/net_budget))) if peaks.get('class_a_runtime_measured') else 1
         peaks['netlist_concurrency_limit'] = net_limit
         candidates = sorted(jobs, key=lambda r: (0 if r['kind'] in ('A','B') else 1 if r['kind']=='SYNTH' else 2,
                             -WEIGHTS.get(r['test'], 100), r['id']))
         for row in candidates:
             if not ready(row):
                 continue
-            if available < 4*GIB or disk < 20*GIB:
+            if available < 4*GIB or usable < 4*GIB or disk < 20*GIB:
                 break
             if row['kind'] == 'SYNTH':
                 if max(edas, synth_active) >= 6:

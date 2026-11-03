@@ -20,5 +20,12 @@
 | TX 超长回滚时限 | 所有长度沿用 96 拍 | 仅 >8192 字节新输入按六拍/页加三拍，16 页为 99 拍；其他输入仍 96 拍 | hardware_contract.tx.rollback_ram；RETURN 同步读/握手与 CE2；不扩大短消息界限 |
 | TX G7（系统复位场景） | 冷启动准备界限 100 拍，下一帧仅按 IFG 推断最晚起点 | 128 VL 扫描、5 拍扫描/ENQ、9 拍 GRANT、builder 捕获推导冷启动 310 拍；重授权准备 32 拍；12 拍 IFG 下界和精确 BAG 检查保留 | hardware_contract.tx.context_pipeline/busy_lookup/grant_commit/builder_capture；T75 P1.2 的流水延迟合法变化 |
 | tb_rx_fault | 所有 MF/非零 offset 都直接判坏头；修复同 SN 必须交付 | 两个孤立但 IPv4 合法的片经过 IC 后重组拒收，RM 不提交；同 SN 后帧被 IC 拒收；严格事件总数和全部 888 项检查保留 | R138-6；逐帧 IC/RM 先于重组；缺首片/长度矛盾拒收，事件位 7，无部分交付 |
+| tb_sys_basic / top_stream_endpoint | 直接 afdx_es 实例省略新增 app_cfg_ready 输出 | 显式空连接，检查与激励不变 | hardware_contract.architecture.external_ports；只给内部 wrapper 使用的输出 |
+| tb_rm_phase / rm_age_probe | 旧位置端口实例未适应插入的重组接口；95 位描述符和 68 位队列线网过时 | 全部改按端口名对应原信号；描述符低 95 位原样、补 126 个零；队列线网扩至 73 位；未使用重组输入置零、输出空连接 | hardware_contract RX 描述符/重组接口；该 fixture 只测试非分片 RM 老化，保留同 SN、忙时计龄、旧记录失效全部原检查 |
+| RTL 长用例工具预算 | tb_sys_rtc 沿用 900 秒预算而超时 | 冻结输入副本以 AFDX_SIM_TIMEOUT_SECONDS=28800 配置补跑和最终整表，旧超时保留 | T75 P1 八小时上限和 P0 可配置预算要求；不改变仿真时钟、激励、检查或 HDL watchdog |
+| T65 TX 全部应用入口用例 | 4 KiB 环、1471 字节预留形成 used<=2616；首字节 ready 在本地 vq 阶段记录；发送后观察早于新增描述符退休 | 32 KiB/8192 字节预留精确 used<=24576；记录真实公共首拍 ready；等待新增一拍描述符可见后再观察/开始下一消息；容量事件和逐字节检查不变 | hardware_contract.app_storage.payload_write_latency / tx_ingress_control；入口 ready 只授权消息起始，后续 valid 区间保持 |
+| tb_t65_tx_space / edge | 单条非法消息曾能填满旧 4096 环，count 在 8191 饱和 | 新环容量大于消息上限；仍用越界输入验证完整回滚，存储恰为 8192、计数 8194；边界输入改为两字节 VLID+8193 字节载荷；32 KiB 原始存储容量另由 tb_app_payload_pipeline 全容量测试覆盖 | hardware_contract.app_storage.depth_bytes=32768、单消息上限 8192；不把消息上限称为 32 KiB 环耗尽 |
+| T65 RX data / desc | 4 KiB 预留门槛 used>2624；原始 av 配合延后一拍的 active 重复记首帧；压力量和排空时间仅适合旧缓存 | 门槛 used>24575、描述符仍 >=30；独立寄存输入与元数据对齐 E1，保留原字节期望；扩大 data 压力上界/记账数组和排空时间以实际触及 32 KiB 数据门槛；HDL watchdog 有界增至 20000000 拍 | hardware_contract.app_storage.payload_write_latency / depth_bytes / rollback；输入 E0、本地接纳 E1，容量变化必须重新形成真实压力 |
+| RM 忙时覆盖统计 | 旧数值状态 FRAME=2、IDLE=1 | 使用 dut.FRAME / dut.engine.IDLE 符号比较，仍要求忙时改变粗时钟和验证老化 | 新状态为独热编码；原覆盖条件含义不变 |
 
 未放宽：FCS/IP/UDP 校验、字节值、网络副本、SN、ID、BAG、IFG 下界、容量、RAM 冲突、断言和复位检查。
