@@ -112,6 +112,22 @@
     "internal_50us_failures": 0
   },
   {
+    "index": 16,
+    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\bag2_source\\out\\t76_sim\\tb_t76_load\\20261103_075234_348460",
+    "independent_equal": true,
+    "partial": false,
+    "bag_burst": 2,
+    "vls": 81,
+    "mixed": 0,
+    "window_ms": 100.0,
+    "status": "PASS",
+    "groups": 162,
+    "issues": [],
+    "formula_invalid_groups": 0,
+    "jitter_100us_failures": 10,
+    "internal_50us_failures": 120
+  },
+  {
     "index": "mixed_profile",
     "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\search_source\\out\\t76_sim\\tb_t76_load\\20261103_070501_935849",
     "independent_equal": true,

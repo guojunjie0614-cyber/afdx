@@ -1,6 +1,6 @@
 # T76 执行记录
 
-更新：2026-11-04 00:00:20。状态：**未验收**；有限作业队列仍有运行或排队项目。
+更新：2026-11-04 06:37:27。状态：**未验收**；有限作业队列均已结束。
 
 ## 第 0 步与规格
 
@@ -37,6 +37,7 @@ BAG 等待场景（每 VL 每 2 ms 连续两条最大载荷消息，长期平均
 | 序号 | 场景 | HDL/完整性 | 两套统计 | 原始输出目录 |
 |---|---|---|---|---|
 | 14 | `GROUP_LENGTH=1471,BAG_BURST=1` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\bag_source\out\t76_sim\tb_t76_load\20261103_062645_586079` |
+| 16 | `GROUP_LENGTH=1471,BAG_BURST=2` | PASS | 一致 | `E:\2026_Embedded_FPGA\worktrees\active\c3_t76\out\t76\bag2_source\out\t76_sim\tb_t76_load\20261103_075234_348460` |
 
 长消息完成时延单独见 [长消息统计表](long_message_metrics.tsv)，三种长度的已交付数量与未完成边界见 `long_message_coverage.json`。各 VL 的吞吐在对应统计表，按方向的总吞吐见 [总吞吐表](total_throughput.tsv)；接收吞吐只统计窗口内的应用载荷，窗口后排空交付另由完整性检查保证。项目内部 50 µs 线独立计数在 `statistics_crosscheck.json` 的 `internal_50us_failures`，不替代官方 <100 µs 门槛。越过 100 µs 或 BAG 测量协议未满足的组，首帧/最坏样本、公开输入至线上起始及线上起始至交付的差分均保存在 `performance_diagnostics.json`；公式无效时表内抖动记 NA，带符号算式原值保留在诊断，不能计为性能通过。
 
@@ -48,7 +49,7 @@ BAG 等待场景（每 VL 每 2 ms 连续两条最大载荷消息，长期平均
 
 完整初始化保留，未强制未初始化 RAM、未改提交 RTL 或 MAC。每个窗口的实际耗时、PID/创建时刻/截止、工作集峰值见队列和各运行 `tool_metrics.json`。≤4 小时是目标，不能预称达到。官方 `.vo` 替换为综合 `.vqm` 的可复现入口见 `../../../sim/run_t76_post_synth.do` 和 `official_reproduction.md`。
 
-T75 的输出扫描见 `t75_xz_scan.json`；运行中文件仅为无 X/Z 前缀，不能算最终扫描。`tb_elinx` 无捕获文件，不补造扫描结论。原 T75 的三项最终成功和 frag1030 的第 199578 拍 PASS-PREFIX 仍要以其原始收据核对；本任务未停止、重跑或写入它们。B 类映射/仿真受“第 0 步 RTL 提交后”前提约束，本次未运行。
+T75 的输出扫描见 `t75_xz_scan.json`；运行中文件仅为无 X/Z 前缀，不能算最终扫描。`tb_elinx` 无捕获文件，不补造扫描结论。T75 的 `tb_elinx`、`tb_net_services` 原始终态和 frag1030 的第 199578 拍 PASS-PREFIX 仍要以各自原始收据核对；本任务未停止、重跑或写入它们。B 类映射/仿真受“第 0 步 RTL 提交后”前提约束，本次未运行。
 
 所有新产物和本地提交均限定在本工作区；未 push、未合并、未 amend。任务未整体完成时不把中间步骤列为最终验收。
 
