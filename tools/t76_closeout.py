@@ -39,7 +39,7 @@ def main():
                 ('t76_fallback_parallel','t76_vqm_parallel')}
         terminal=all(q.get('Finished') and not q.get('Active') and not q.get('Pending') for q in queues.values())
         if not terminal:
-            print('T76 this finite queue ended; the other queue still owns its original jobs')
+            print('T76 queues are not both terminal; original jobs and deadlines remain in place')
             return 0
         receipt=OUT/'closeout_commit.json'
         if receipt.is_file():

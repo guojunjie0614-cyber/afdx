@@ -324,13 +324,15 @@ T75 的输出扫描见 `t75_xz_scan.json`；运行中文件仅为无 X/Z 前缀�
     if args.commit_guard:
         paths=list(guard['files'])+[str(p.relative_to(ROOT)).replace('\\','/') for p in EVIDENCE.rglob('*') if p.is_file()]
         paths=sorted(set(paths))
-        subprocess.run(['git','add','--pathspec-from-file=-','--pathspec-file-nul'],
+        subprocess.run(['git','add','--force','--pathspec-from-file=-','--pathspec-file-nul'],
             input=('\0'.join(paths)+'\0').encode('utf-8'),cwd=ROOT,check=True)
         staged=subprocess.check_output(['git','diff','--cached','--name-only','-z'],cwd=ROOT).decode('utf-8').split('\0')
         if any(p and p not in paths for p in staged):raise RuntimeError('Unexpected staged path; not committing')
-        # Retain authentic Windows tool receipts and source CRLF bytes.
+        # Preserve native log bytes, including tool-generated trailing spaces;
+        # check source and structured evidence while retaining Windows CRLF.
         subprocess.run(['git','-c','core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol',
-            'diff','--cached','--check'],cwd=ROOT,check=True)
+            'diff','--cached','--check','--','.',
+            ':(glob,exclude)docs/evidence/t76_frag1030/**/*.log'],cwd=ROOT,check=True)
         subprocess.run(['git','commit','-m','test(t76): record bounded load and official-netlist evidence'],cwd=ROOT,check=True)
         commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
         save(OUT/'closeout_commit.json',dict(commit=commit,timestamp=timestamp,accepted=False))
