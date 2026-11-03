@@ -24,6 +24,23 @@ def free_disk_bytes(path):
         return available.value
     return shutil.disk_usage(path).free
 
+def modelsim_slot_pids():
+    """Count kernels plus launchers which have not acquired a kernel yet."""
+    native=[p for p in psutil.process_iter(["name"])
+            if (p.info["name"] or "").lower() in ("vsim.exe","vsimk.exe")]
+    kernels={p.pid for p in native if p.info["name"].lower()=="vsimk.exe"}
+    slots=set(kernels)
+    for process in native:
+        if process.pid in kernels:continue
+        try:
+            if not any(child.pid in kernels for child in process.children(recursive=True)):
+                slots.add(process.pid)
+        except psutil.NoSuchProcess:
+            pass
+        except psutil.AccessDenied:
+            slots.add(process.pid)
+    return slots
+
 def modelsim_dir():
     home=os.environ.get("MODELSIM_HOME")
     executable=Path(home)/"vsim.exe" if home else shutil.which("vsim.exe")
@@ -71,12 +88,11 @@ class Flow:
         # jobs and unrelated processes are never stopped by this launch gate.
         if os.environ.get("AFDX_PAR_RESOURCE_GATES")=="1":
             while True:
-                kernels=sum(1 for p in psutil.process_iter(["name"])
-                            if (p.info["name"] or "").lower()=="vsimk.exe")
+                slots=len(modelsim_slot_pids())
                 executable=Path(command[0]).name.lower()
                 enough=(psutil.virtual_memory().available>=4*1024**3 and
                         free_disk_bytes(ROOT.anchor)>=20*1024**3)
-                if enough and (executable!="vsim.exe" or kernels<10):break
+                if enough and (executable!="vsim.exe" or slots<10):break
                 if time.time()>=self.deadline:raise RuntimeError("Resource queue reached task deadline; no new tool launched")
                 time.sleep(1)
         remaining=self.deadline-time.time()

@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "native launcher owns kernel; pending and inaccessible launchers reserve slots",
+      "slots": [
+        2,
+        3,
+        4
+      ],
+      "passed": true
+    },
+    {
+      "case": "8 own workers (5 running, 3 compiling), 2 foreign kernels",
+      "reserved": 10,
+      "launch_allowed": false,
+      "passed": true
+    },
+    {
+      "case": "8 own workers (5 running, 3 compiling), 1 foreign launcher",
+      "reserved": 9,
+      "launch_allowed": true,
+      "passed": true
+    },
+    {
+      "case": "8 own kernels and 2 foreign kernels",
+      "reserved": 10,
+      "launch_allowed": false,
+      "passed": true
+    },
+    {
+      "case": "all 10 slots foreign",
+      "reserved": 10,
+      "launch_allowed": false,
+      "passed": true
+    },
+    {
+      "case": "9 slots foreign permit one",
+      "reserved": 9,
+      "launch_allowed": true,
+      "passed": true
+    },
+    {
+      "case": "synthesis workers consume no simulation slots",
+      "reserved": 1,
+      "launch_allowed": true,
+      "passed": true
+    },
+    {
+      "case": "unknown child ownership reserves conservatively",
+      "reserved": 4,
+      "launch_allowed": true,
+      "passed": true
+    },
+    {
+      "case": "no workers and no kernels",
+      "reserved": 0,
+      "launch_allowed": true,
+      "passed": true
+    }
+  ],
+  "current_global_slots": [
+    17492,
+    33644,
+    42016
+  ],
+  "note": "Read-only unit inputs; no process or simulation launched. Final admission policy was checked after final RTL tests finished; simulation sources and checkers are unchanged."
+}
