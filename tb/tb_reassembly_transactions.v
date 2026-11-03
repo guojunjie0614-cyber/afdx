@@ -23,7 +23,7 @@ module tb_reassembly_transactions;
     .in_valid(in_valid),.in_last(in_last),.in_empty(in_empty),.in_frag(in_frag),.in_slot(in_slot),.in_data(in_data),
     .in_vl(12'd0),.in_sport(16'd0),.in_dport(16'd0),.in_net(1'b0),.ready(ready),.prepared(prepared),
     .d_valid(d_valid),.d_last(d_last),.d_data(d_data),.d_vl(d_vl),.d_sport(d_sport),.d_dport(d_dport),
-    .d_net(d_net),.reject_events(reject_events));
+    .d_net(d_net),.reject_events(reject_events),.query_bank(),.reserve_bank(),.cancel_bank());
   integer cycle=0,errors=0,checks=0,deliveries=0,out_pos=0,event_count=0;
   integer expected_length[0:255],seen[0:255];
   integer event_allowed=0;
@@ -244,8 +244,8 @@ module tb_reassembly_transactions;
     repeat(2)@(negedge clk);
     if(context_pending(chosen)!=63 || !context_closed(chosen))fail("full prediction blocked the released credit");
     checks=checks+1;if(deliveries!=9 || out_pos!=0)fail("wrong number of complete datagrams");
-    if(errors)begin $display("[RESULT] tb_reassembly_transactions FAIL checks=%0d errors=%0d",checks,errors);$finish_and_return(1);end
+    if(errors)begin $display("[RESULT] tb_reassembly_transactions FAIL checks=%0d errors=%0d",checks,errors);$finish;end
     $display("[RESULT] tb_reassembly_transactions PASS checks=%0d errors=0 deliveries=%0d",checks,deliveries);$finish;
   end
-  initial begin #2000000;$display("[RESULT] tb_reassembly_transactions FAIL watchdog");$finish_and_return(1);end
+  initial begin #2000000;$display("[RESULT] tb_reassembly_transactions FAIL watchdog");$finish;end
 endmodule

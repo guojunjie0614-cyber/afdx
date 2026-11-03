@@ -1,10 +1,29 @@
 """统一工具入口；所有工具产物只写out，进程保护只作用本次子进程树。"""
-import argparse, hashlib, json, math, os, re, shutil, sqlite3, subprocess, sys, time
-from datetime import datetime
+import argparse, ctypes, hashlib, json, math, os, re, shutil, sqlite3, subprocess, sys, time
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import psutil
 
 ROOT=Path(__file__).resolve().parents[1]
+REPORT_TZ=timezone(timedelta(hours=8))
+
+def timeout_seconds(variable, default):
+    """Positive per-tool budget; absent overrides preserve historical limits."""
+    value=float(os.environ.get(variable,default))
+    if not math.isfinite(value) or value<=0:
+        raise ValueError(variable+" must be a positive finite number of seconds")
+    return value
+
+def free_disk_bytes(path):
+    # The installed psutil 5.9.0 disk_usage extension raises SystemError on
+    # this Python 3.12 host. Use the native wide-character API on Windows.
+    if os.name=="nt":
+        available=ctypes.c_ulonglong()
+        if not ctypes.windll.kernel32.GetDiskFreeSpaceExW(str(path),ctypes.byref(available),None,None):
+            raise ctypes.WinError()
+        return available.value
+    return shutil.disk_usage(path).free
+
 def modelsim_dir():
     home=os.environ.get("MODELSIM_HOME")
     executable=Path(home)/"vsim.exe" if home else shutil.which("vsim.exe")
@@ -43,21 +62,34 @@ class Flow:
         self.folder.mkdir(parents=True,exist_ok=False)
         self.deadline=datetime.fromisoformat(deadline).timestamp() if deadline else time.time()+3600
         self.jobs=[]
-        self.result={"name":name,"started":datetime.now().astimezone().isoformat(),
+        self.result={"name":name,"started":datetime.now(REPORT_TZ).isoformat(),
                      "folder":str(self.folder),"scope":"EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
                      "memory_floor_gib":MEMORY_FLOOR/1024**3,"memory_limit_gib":MEMORY_LIMIT/1024**3}
     def job(self,name,command,budget=900,cwd=None):
+        command=list(map(str,command))
+        # The parallel card requires queuing below the launch floors. Existing
+        # jobs and unrelated processes are never stopped by this launch gate.
+        if os.environ.get("AFDX_PAR_RESOURCE_GATES")=="1":
+            while True:
+                kernels=sum(1 for p in psutil.process_iter(["name"])
+                            if (p.info["name"] or "").lower()=="vsimk.exe")
+                executable=Path(command[0]).name.lower()
+                enough=(psutil.virtual_memory().available>=4*1024**3 and
+                        free_disk_bytes(ROOT.anchor)>=20*1024**3)
+                if enough and (executable!="vsim.exe" or kernels<10):break
+                if time.time()>=self.deadline:raise RuntimeError("Resource queue reached task deadline; no new tool launched")
+                time.sleep(1)
         remaining=self.deadline-time.time()
         if remaining<=0:raise RuntimeError("Task deadline reached; no new tool launched")
         if MEMORY_FLOOR and psutil.virtual_memory().available<MEMORY_FLOOR:
             raise RuntimeError(f"Available memory below {MEMORY_FLOOR/1024**3:g} GiB (AFDX_MEM_FLOOR_GB); other jobs untouched")
         budget=min(budget,remaining)
         begin=time.monotonic();owned={};peak=0;reason=None
-        command=list(map(str,command))
         log_path=self.folder/(name+".log")
         with log_path.open("wb") as stream:
             p=psutil.Popen(command,cwd=cwd or self.folder,stdout=stream,stderr=subprocess.STDOUT,
                            creationflags=subprocess.CREATE_NO_WINDOW)
+            p.nice(psutil.NORMAL_PRIORITY_CLASS)
             identity={"pid":p.pid,"created":p.create_time()}
             active={"name":name,"command":command,"cwd":str(cwd or self.folder),**identity,
                     "log":str(log_path),
@@ -88,7 +120,7 @@ class Flow:
         if p.returncode or reason:raise RuntimeError(f"{name}: exit={p.returncode} reason={reason}; {log_path}")
         return log_path.read_text(encoding="utf-8-sig",errors="replace")
     def finish(self):
-        self.result["finished"]=datetime.now().astimezone().isoformat()
+        self.result["finished"]=datetime.now(REPORT_TZ).isoformat()
         self.result["jobs"]=self.jobs
         save(self.folder/"summary.json",self.result)
         # Parallel verification batches keep separate latest pointers.
@@ -118,6 +150,19 @@ def sim(options):
             if not modules & replaced:rtl.append(path)
         sources=rtl+sorted((ROOT/"tb/lib").glob("*.v"))+[bench]
         compile_sources=list(sources)
+        if os.environ.get("AFDX_MODELSIM_DECL_ORDER","1")=="1":
+            from modelsim_sources import prepare
+            portable,changes=prepare(rtl,f.folder)
+            compile_sources=portable+compile_sources[len(rtl):]
+            f.result["modelsim_declaration_order"]=changes
+            sources.append(ROOT/"tools/modelsim_sources.py")
+        if options.test=="tb_cfg_local_ready":
+            revision="c857aba8361e7f9cea74801d4a4d908f49a76436"
+            baseline=subprocess.check_output(["git","show",revision+":rtl/afdx_cfg.v"],cwd=ROOT).decode("utf-8")
+            legacy=f.folder/"afdx_cfg_legacy.v"
+            legacy.write_text(baseline.replace("module afdx_cfg","module afdx_cfg_legacy",1),encoding="utf-8")
+            compile_sources.append(legacy)
+            f.result["legacy_reference"]={"revision":revision,"path":str(legacy),"sha256":sha(legacy)}
         sources.extend(sorted((ROOT/"tb/lib").glob("*.vh")))
         if netlists:
             BIN=elinx_bin()
@@ -132,7 +177,8 @@ def sim(options):
             for sub in ("es1_tx","es1_rx","es2_tx","es2_rx","es1_gmii_tx","es1_gmii_rx","es2_gmii_tx","es2_gmii_rx"):(f.folder/sub).mkdir()
             sources.extend(ROOT/"tools"/name for name in ("sys_cases.py","sys_ref.py","sys_checks.py","sys_run_checks.py","gmii_ref.py","tx_ref.py","rx_ref.py","rx_checks.py","afdx_ref.py"))
             if (ROOT/"tools/perf_ref.py").exists():sources.append(ROOT/"tools/perf_ref.py")
-        if options.test.startswith(("tb_mac_","tb_tx_","tb_rx_")) or options.test=="tb_probe_ram":
+        standalone_tx=options.test in ("tb_tx_ingress_elastic","tb_tx_buffer_bounds")
+        if (options.test.startswith(("tb_mac_","tb_tx_","tb_rx_")) and not standalone_tx) or options.test=="tb_probe_ram":
             ram_top="probe_p2_array" if "probe_p2_array" in replaced else "probe_p1_2048x8"
             command=[sys.executable,ROOT/"tools/afdx_ref.py","vectors","--test",options.test,
                      "--seed",str(options.seed),"--out",f.folder/"vectors","--ram-top",ram_top]
@@ -152,6 +198,12 @@ def sim(options):
         if options.test=="tb_net_services":
             f.job("vectors",[sys.executable,ROOT/"tools/net_services_ref.py","vectors","--dir",f.folder],30)
             sources.extend(ROOT/"tools"/name for name in ("net_services_ref.py","load_ref.py","download_ref.py","snmp_ref.py","afdx_ref.py"))
+        if options.test in ("tb_fragmentation","tb_frag1030_net"):
+            f.job("vectors",[sys.executable,"-B",ROOT/"tools/fragment_integration.py","prepare",f.folder],60)
+            sources.extend(ROOT/"tools"/name for name in ("fragment_integration.py","fragment_ref.py","t75_fragment_check.py"))
+            if options.test=="tb_frag1030_net":
+                sources.append(ROOT/"tb/tb_fragmentation.v")
+                compile_sources.append(ROOT/"tb/tb_fragmentation.v")
         if options.test.startswith("tb_t65_"):
             sources.append(ROOT/"tools/t65_check.py")
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
@@ -188,11 +240,11 @@ def sim(options):
                 raise ValueError("afdx_rx_core mapped netlist has fixed default parameters")
         if options.coverage:
             # t 记录翻转；测试平台另编译，不把激励与检查器计入 RTL 覆盖率。
-            compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*defines,*rtl],120)
+            compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*defines,*rtl],timeout_seconds("AFDX_COMPILE_TIMEOUT_SECONDS",120))
             if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("RTL compile diagnostic; see compile_rtl.log")
-            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources[len(rtl):]],120)
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources[len(rtl):]],timeout_seconds("AFDX_COMPILE_TIMEOUT_SECONDS",120))
         else:
-            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],120)
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],timeout_seconds("AFDX_COMPILE_TIMEOUT_SECONDS",120))
         if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("Compile diagnostic; see compile.log")
         parameters=[]
         for value in options.param:
@@ -204,6 +256,7 @@ def sim(options):
         if options.test in ("tb_sys_perf", "tb_sys_perf_var", "tb_sys_load") and not netlists:sim_budget=max(sim_budget,5400)
         if options.test=="tb_sys_perf_var" and not netlists:sim_budget=max(sim_budget,14400)
         if options.coverage:sim_budget=max(sim_budget,9000 if options.test=="tb_sys_perf" else 3600)
+        sim_budget=timeout_seconds("AFDX_NETLIST_SIM_TIMEOUT_SECONDS" if netlists else "AFDX_SIM_TIMEOUT_SECONDS",sim_budget)
         log=f.job("simulation",[MS/"vsim.exe","-batch",*(["-coverage"] if options.coverage else []),options.test,*parameters,"-wlf","simulation.wlf","-do","do run.do"],sim_budget)
         if options.coverage:
             ucdb=f.folder/"coverage.ucdb"
@@ -218,9 +271,14 @@ def sim(options):
         f.result["simulation_diagnostics"]=diagnostics
         good=good and not any(diagnostics.values())
         good=good and all(sha(Path(r["path"]))==r["sha256"] for r in f.result["inputs"])
-        if options.test.startswith(("tb_tx_","tb_rx_")):
+        if options.test.startswith(("tb_tx_","tb_rx_")) and not standalone_tx:
             report=f.job("check",[sys.executable,ROOT/"tools/afdx_ref.py","check","--test",options.test,"--dir",f.folder],180)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
+            good=good and f.result["check"]["errors"]==0
+            print(report.strip(),flush=True)
+        if options.test in ("tb_fragmentation","tb_frag1030_net"):
+            report=f.job("check",[sys.executable,"-B",ROOT/"tools/t75_fragment_check.py","--dir",f.folder],180)
+            f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
         if options.test.startswith("tb_sys_") and options.test not in ("tb_sys_rtc","tb_sys_snmp","tb_sys_snmp_settrap","tb_sys_615a"):
@@ -344,7 +402,7 @@ def synth(options):
             "check -assert","stat","rename -enumerate","write_ilang mapped.il",
             "write_verilog -noattr netlist.v"])+"\n"
         (f.folder/"mapping.ys").write_text(script,encoding="utf-8")
-        log=f.job("mapping",[BIN/"eLinx_synthesis.exe","-s",f.folder/"mapping.ys"],900)
+        log=f.job("mapping",[BIN/"eLinx_synthesis.exe","-s",f.folder/"mapping.ys"],timeout_seconds("AFDX_SYNTH_TIMEOUT_SECONDS",900))
         if "Yosys execute success!" not in log or re.search(r"(?im)^\s*ERROR:|Driver-driver conflict|bad allocation",log):
             raise RuntimeError("Mapping invalid; mapping.log")
         ilang=(f.folder/"mapped.il").read_text(encoding="utf-8-sig")

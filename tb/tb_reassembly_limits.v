@@ -26,7 +26,7 @@ module tb_reassembly_limits;
     .in_valid(in_valid),.in_last(in_last),.in_empty(in_empty),.in_frag(in_frag),.in_slot(in_slot),.in_data(in_data),
     .in_vl(in_vl),.in_sport(in_sport),.in_dport(in_dport),.in_net(in_net),.ready(ready),.prepared(prepared),
     .d_valid(d_valid),.d_last(d_last),.d_data(d_data),.d_vl(d_vl),.d_sport(d_sport),.d_dport(d_dport),
-    .d_net(d_net),.reject_events(reject_events));
+    .d_net(d_net),.reject_events(reject_events),.query_bank(),.reserve_bank(),.cancel_bank());
   integer cycle=0, errors=0, deliveries=0, byte_pos=0, byte_vl=-1;
   integer timeout_a=0,timeout_b=0,timeout_phase=0,checks=0;
   integer expected[0:4095], seen[0:4095];
@@ -144,8 +144,8 @@ module tb_reassembly_limits;
     if(deliveries!=18 || byte_pos!=0)fail("final unexpected output");
     for(i=0;i<17;i=i+1)if(seen[i]!=1)fail("first-phase output missing");
     if(seen[80]!=1)fail("post-reset recovery missing");
-    if(errors)begin $display("[RESULT] tb_reassembly_limits FAIL checks=%0d errors=%0d deliveries=%0d timeout_a=%0d timeout_b=%0d",checks,errors,deliveries,timeout_a,timeout_b);$finish_and_return(1);end
+    if(errors)begin $display("[RESULT] tb_reassembly_limits FAIL checks=%0d errors=%0d deliveries=%0d timeout_a=%0d timeout_b=%0d",checks,errors,deliveries,timeout_a,timeout_b);$finish;end
     $display("[RESULT] tb_reassembly_limits PASS checks=%0d errors=0 deliveries=%0d timeout_a=%0d timeout_b=%0d",checks,deliveries,timeout_a,timeout_b);$finish;
   end
-  initial begin #2000000; $display("[RESULT] tb_reassembly_limits FAIL watchdog");$finish_and_return(1);end
+  initial begin #2000000; $display("[RESULT] tb_reassembly_limits FAIL watchdog");$finish;end
 endmodule

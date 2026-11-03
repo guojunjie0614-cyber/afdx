@@ -49,7 +49,7 @@ module tb_context_pipeline;
         if(mnext_re) mnext_q<=next_mem[mnext_ra];
         if(mnext_we) next_mem[mnext_wa]<=mnext_wd;
         if(desc_re) desc_q<=desc_mem[desc_ra];
-        if(cycle>20000) begin $display("[RESULT] tb_context_pipeline FAIL checks=%0d errors=1 timeout",checks);$finish_and_return(1);end
+        if(cycle>20000) begin $display("[RESULT] tb_context_pipeline FAIL checks=%0d errors=1 timeout",checks);$finish;end
     end
     task check;
         input condition; input [8*100-1:0] label;
@@ -141,6 +141,6 @@ module tb_context_pipeline;
         repeat(200)@(negedge clk);
         check(frames==10,"six plus three plus one frames, no duplicate grant");
         $display("[RESULT] tb_context_pipeline %0s checks=%0d errors=%0d",errors==0 ? "PASS" : "FAIL",checks,errors);
-        if(errors)$finish_and_return(1);else $finish;
+        if(errors)$finish;else $finish;
     end
 endmodule

@@ -3,6 +3,7 @@
 module tb_reassembly_engine;
   reg clk=0;always #4 clk=~clk;
   reg reset=1,enable=0;
+  wire initialized;
   // Core prediction is valid only after engine initialization, then exercise
   // the stricter CE_DIV2 enable boundary on every existing frame trajectory.
   always @(posedge clk)if(reset || !initialized)enable<=0;else enable<=!enable;
@@ -12,7 +13,7 @@ module tb_reassembly_engine;
   reg [15:0] reference_previous=0;
   reg reference_age_pending=0;
   reg [220:0] ad=0,bd=0;
-  wire take_a,take_b,resolve_a,resolve_b,commit_a,commit_b,initialized;
+  wire take_a,take_b,resolve_a,resolve_b,commit_a,commit_b;
   wire map_re,cfg_re,state_re,state_we,dq_we;
   wire [15:0] map_ra;
   wire [11:0] cfg_ra,state_ra,state_wa;
@@ -74,13 +75,15 @@ module tb_reassembly_engine;
     .reassembly_result_valid(result_valid),.reassembly_ok(reserve_ok),.reassembly_slot(reserve_slot),
     .reassembly_query(query),.reassembly_cancel(cancel),.reassembly_reserve(reserve),.reassembly_meta(r_meta),
     .reassembly_vl(r_vl),.reassembly_length(r_length),.reassembly_sport(r_sport),.reassembly_dport(r_dport),.reassembly_net(r_net),
-    .ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm),.ev_deliver(ev_deliver),.cfg_ok(cfg_ok));
+    .ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm),.ev_deliver(ev_deliver),.cfg_ok(cfg_ok),
+    .reassembly_query_bank(),.reassembly_reserve_bank(),.reassembly_cancel_bank());
   afdx_rx_reassembly reassembly(
     .clk(clk),.reset(reset),.query(query),.cancel(cancel),.reserve(reserve),.result_valid(result_valid),
     .reserve_ok(reserve_ok),.reserve_slot(reserve_slot),.r_meta(r_meta),.r_vl(r_vl),.r_length(r_length),.r_sport(r_sport),.r_dport(r_dport),.r_net(r_net),
     .in_start(in_start),.in_valid(in_valid),.in_last(in_last),.in_empty(in_empty),.in_frag(in_frag),.in_slot(in_slot),.in_data(in_data),
     .in_vl(in_vl),.in_sport(in_sport),.in_dport(in_dport),.in_net(in_net),.ready(ready),.prepared(prepared),
-    .d_valid(d_valid),.d_last(d_last),.d_data(d_data),.d_vl(d_vl),.d_sport(d_sport),.d_dport(d_dport),.d_net(d_net),.reject_events(reject_events));
+    .d_valid(d_valid),.d_last(d_last),.d_data(d_data),.d_vl(d_vl),.d_sport(d_sport),.d_dport(d_dport),.d_net(d_net),.reject_events(reject_events),
+    .query_bank(),.reserve_bank(),.cancel_bank());
   integer cycle=0,checks=0,errors=0,accepted=0,duplicates=0,rejected_sequence=0,rejected_full=0;
   integer started=-1,last_take=-1,max_service=0,min_spacing=9999,max_spacing=0,paired_frames=0;
   reg pair_waiting=0;
@@ -279,8 +282,8 @@ module tb_reassembly_engine;
     @(negedge clk);coarse_tick=0;checks=checks+1;
     if(engine.op!=engine.IDLE || !engine.age_pending || engine.age_ptr!=saved_age_ptr+1 || engine.age_time!=100)
       fail("AGE completion lost its simultaneous tick or changed sampled time");
-    if(errors)begin $display("[RESULT] tb_reassembly_engine FAIL checks=%0d errors=%0d",checks,errors);$finish_and_return(1);end
+    if(errors)begin $display("[RESULT] tb_reassembly_engine FAIL checks=%0d errors=%0d",checks,errors);$finish;end
     $display("[RESULT] tb_reassembly_engine PASS checks=%0d errors=0 accepted=%0d duplicates=%0d max_service_cycles=%0d paired_take_spacing=%0d..%0d CE_DIV=2",checks,accepted,duplicates,max_service,min_spacing,max_spacing);$finish;
   end
-  initial begin #200000;$display("[RESULT] tb_reassembly_engine FAIL watchdog");$finish_and_return(1);end
+  initial begin #200000;$display("[RESULT] tb_reassembly_engine FAIL watchdog");$finish;end
 endmodule
