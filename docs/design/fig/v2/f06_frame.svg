@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="453.0pt" height="248.0pt" viewBox="-1.5 -1.5 453.0 248.0">
 <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
-<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) Wire format: payload and framing have different lengths</text>
+<text x="4.00" y="10.00" font-size="9" text-anchor="start" fill="#000" font-weight="bold">(a) Single-frame / 1st-fragment wire format (non-1st frag omits 8-B UDP)</text>
 <rect x="4.00" y="29.00" width="35.00" height="23.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>
 <text x="21.50" y="42.98" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">55 ×7</text>
 <rect x="39.00" y="29.00" width="22.00" height="23.00" rx="0" fill="#FFFFFF" stroke="none" stroke-width="0"/>

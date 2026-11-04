@@ -1,0 +1,113 @@
+% ======================================================================
+% 作品名称、摘要与第一部分：作品概述
+% 严格遵循模板字数限制：
+%   摘要 <= 800 字
+%   1.1 功能与特性 <= 400 字（可加重要图）
+%   1.2 应用领域 <= 400 字（可加重要图）
+%   1.3 主要技术特点 <= 400 字
+%   1.4 主要性能指标 <= 200 字（建议用表格）
+%   1.5 主要创新点 <= 200 字（逐点给出）
+%   1.6 设计流程 <= 200 字（可加重要图）
+% ======================================================================
+
+\begin{center}
+  \vspace*{4pt}
+  {\zihao{-2}\heiti\bfseries 基于以太网 MAC 总线的全硬件化高完整性 AFDX 端系统 FPGA 设计与实现\par}
+  \vspace{8pt}
+\end{center}
+
+\noindent{\zihao{4}\heiti\bfseries 摘要}\par
+\vspace{4pt}
+
+本作品针对“基于以太网 MAC 总线实现 AFDX”赛题及官方答疑规范，基于中科亿海微 EQ6HL130（CSG484\_H）FPGA 设计并实现了双网冗余 \mbox{ARINC} 664 Part 7 航电端系统。全芯片由单一 125~MHz（8~ns）主时钟驱动，采用 Verilog HDL 编写，共 \RtlFileCount{} 个源文件、\DesignUnitCount{} 个设计单元，顶层 \code{AFDX_top} 使用 \Pins{} 个引脚。系统支持 128 条发送虚拟链路（VL）与 4096 条接收 VL 的线速处理，实现 $1\text{--}\MaxMessageBytes$~B 应用消息的 IPv4 自动分片发送与 \ReasmContexts{} 路并发按序重组，并集成 \mbox{ARINC} 615A 软件数据加载、SNMPv1/v2c 网络管理与 SNTPv4/RTC 时钟同步服务。
+
+为兼顾大容量链路状态维护与 125~MHz 物理时序收敛，系统采用“顶层 2B-VLID 流封装 + 片上块 RAM 表格化存储 + 管理面 \code{CE_DIV=2} 多周期解耦”架构。接收映射表拆分为 32-Bank 双写分片并以三级寄存或树归并；重组引擎采用 2-Bank$\times$8 槽位及 128~KiB 四通道载荷缓存，在 256 个 M4K 数据输入端配置 128 个 \code{lut_mask="8888"} 写隔离 LUT 以消除短路径保持时间违例；SNMP 与 615A 协议状态机运行于 16~ns 多周期使能域，收发数据面、RAM 访问与配置总线保持 125~MHz 单周期运行。
+
+在单端 63 条发送 / 63 条接收 VL 的满载规格（$\text{BAG}=1$~ms，单帧最大载荷 $1471$~B，双网全双工）下，单向去重有效吞吐率达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps，77/81~VL 压力下达 \Thru/\ThruEightyOne~Mbps）；顶层流接口周期最大端到端时延为 \LatSixtyThreePMax~µs、同 VL 抖动 $\le\JitSixtyThreePer$~µs，两拍轮换突发最大时延为 \LatSixtyThreeBTwo~µs、抖动为 \JitSixtyThreeBTwo~µs；核心单帧硬件流水时延为 \LatAvg--\Lat~µs、同 VL 抖动为 \JitSameVl~µs；63~VL 混合 1472/3000/8192~B 分片场景下双向 12,206 条消息零错误交付。整机占用 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Mem{} M4K（\MemPct\%）；在计入 \ClkUncert~ns 时钟不确定度的 eLinx 3.0.7 布局布线签核中，全芯片 \countsep{\RoutedEndpoints} 个端点 0 违例，净建立裕量为 $+\RoutedSetup$~ns（原始 $+\RoutedSetupRaw$~ns，$F_\text{max}=\RoutedFmax$~MHz），保持裕量为 $+\RoutedHold$~ns。全设计通过 \RegCount{} 项 RTL 回归（语句覆盖率 \CovStmt\%、分支覆盖率 \CovBranch\%）与 4 类 VQM 门级网表后仿真。
+
+\vspace{4pt}
+\noindent{\heiti\bfseries 关键词：}AFDX 端系统；ARINC 664 P7；IPv4 分片重组；FPGA；静态时序收敛
+
+% ======================================================================
+\section{作品概述}
+
+\subsection{功能与特性}
+
+图~\ref{fig:ov_system} 沿一条消息展示端系统的收发通路。发送侧从 2 字节大端 VLID 前缀识别虚拟链路，按 BAG 调度后在 A、B 两网同拍发送；接收侧分别校验两个副本，经完整性检查（IC）与冗余管理（RM）后，仅交付一份有效消息。
+
+\figDesign[AFDX\_top 端系统总体架构图]{f01_system}{AFDX 端系统总体架构：共享存储、双网收发通路与应用流接口}{fig:ov_system}
+
+顶层 \code{AFDX_top} 通过 \code{afdx_app_tx} 和 \code{afdx_app_rx} 提供 \code{tx_data}/\code{rx_data} 应用流。超过单帧载荷上限（1471~B）的消息自动拆为最多 6 个 IPv4 分片，由 \code{afdx_rx_reassembly} 按序重组。表~\ref{tab:ov_func} 列出五项核心功能及其实现机制。
+
+\begin{table}[H]\centering
+\caption{赛题五项核心功能与本作品实现特性对照}\label{tab:ov_func}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.1cm}L>{\raggedright\arraybackslash}p{2.2cm}@{}}
+\toprule
+\thead{赛题功能模块} & \thead{核心实现特性与协议机制} & \thead{对应章节} \\
+\midrule
+ARINC 664 P7 通信 & 顶层 2B-VLID 流封装；128 发送 VL 按 BAG 调度与 $1\text{--}\MaxMessageBytes$~B IPv4 自动分片；A/B 双网锁步发送；4096 接收 VL 查表与 \ReasmContexts{} 路并发按序重组 & 2.2.3 节 \\
+高完整性通信 & 前导码、FCS、帧长、IPv4/UDP 头校验；每网独立 IC（容忍单帧丢失）；按可配窗口 \code{skew_max} 去重；14 类收发异常计数与预写指针无损回退 & 2.2.3 节 \\
+SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 与 SNMPv2-Trap；36 个 MIB 对象；ASN.1/BER 硬件编解码，\code{CE_DIV=2} 多周期解耦 & 2.2.3 节 \\
+615A 软件数据加载 & 基于 TFTP 的单文件上传（LUI/LUS/LUR/LUH/数据）与介质定义下载（MDD）；8~KiB 片上加载区；硬件流式 CRC-16 校验与超时重传 & 2.2.3 节 \\
+RTC 时钟同步 & SNTPv4 四时间戳双向对时；8~ns 分辨率的 32 位秒 $+$ 32 位纳秒本地时基；32 轮逐位迭代换算与 5 拍（40~ns）写回流水硬件补偿 & 2.2.3 节 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{应用领域}
+
+本作品面向民用航空与高可靠工业控制。在综合模块化航空电子（IMA）系统中，核心处理模块（CPM）、飞行控制计算机（FCC）、座舱显示系统（CDS）及机电管理单元可通过该端系统接入 AFDX 双冗余交换网，以硬件 BAG 调度替代软件协议栈，提供微秒级有界时延。图~\ref{fig:ov_path} 沿载荷与描述符两条路径说明：应用只写入一条消息，网络传输两个副本，对端应用只收到一次交付。
+
+\figDesign[端到端确定性通信数据通路]{f02_path}{用户消息从发送应用口经双冗余网络到接收应用口的交付路径}{fig:ov_path}
+
+在设备维护模式下，硬件 ARINC 615A 目标端与 SNMP 代理无需外挂软核 CPU，即可执行在翼固件上传校验、介质回读与 MIB 故障诊断。在地面综合联试台或半实物仿真（HIL）环境中，128 发送 / 4096 接收 VL 配置、63~VL 双工千兆线速注入、8192~B 分片传输及亚微秒级 SNTP 同步可用于机载设备的协议测试和故障注入。
+
+\subsection{主要技术特点}
+
+系统在单颗国产 EQ6HL130 FPGA 上实现全硬件线速处理与 125~MHz 严格时序收敛，具备五项主要技术特点：
+
+（1）\textbf{流式边界封装与片上 BRAM 全表格化状态管理：}顶层通过双侧 $8\times 4$~KiB 分体缓冲、3 级 128 路比较器与 $4096\times 16$~bit 反查 RAM 桥接 2B-VLID 应用流；全部 128 条发送 VL 与 4096 条接收 VL 的配置及状态收敛于 250 个同步 RAM 实例（映射为 \Mem{} 个 M4K），逻辑规模与链路数解耦。
+
+（2）\textbf{$1\text{--}\MaxMessageBytes$~B 硬件分片与 \ReasmContexts{} 路并发按序重组：}发送端单描述符按 BAG 逐片授权并硬件计算 IPv4 头校验和；接收端在双网 IC/RM 去重后经 2-Bank$\times$8 槽位与 128~KiB 四通道缓存按片偏移顺序拼接，支持非零全包 UDP 校验与 2~s 超时回收。
+
+（3）\textbf{512 拍前瞻预取与 $-8$ 拍提前补偿：}调度器提前扫描授权，组帧器补偿 12 拍校验和与输出缓冲延迟，实现到期当拍准点发包。
+
+（4）\textbf{双网锁步自研 MAC：}单状态机同拍驱动 A/B 网 CRC-32 与 GMII 寄存器，空闲启动延迟 0 拍。
+
+（5）\textbf{单时钟多周期服务解耦与精密时延补偿：}SNMP 与 615A 采用 \code{CE_DIV=2}（16~ns）多周期使能树解耦并复用公共状态序列；RTC 硬件补偿 40~ns 写回流水，空载同步零误差。
+
+\subsection{主要性能指标}
+
+赛题要求、设计目标和实测结果见表~\ref{tab:ov_metrics}。
+
+\begin{table}[H]\centering
+\caption{主要性能指标要求、设计目标与实测结果对照表}\label{tab:ov_metrics}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.0cm}L@{}}
+\toprule
+\thead{指标名称} & \thead{赛题要求} & \thead{设计目标} & \thead{实测结果（ModelSim 2020.4 \& eLinx 3.0.7）} \\
+\midrule
+有效吞吐率 & $\ge 100$~Mbps & 63~VL 满载 \ThruSixtyThree~Mbps；物理上限 956.44~Mbps & 63~VL 满载单向 \textbf{\ThruSixtyThree~Mbps}（双向 \textbf{\ThruSixtyThreeBi~Mbps}，线占率 \LineUtilSixtyThree\%）；77/81~VL 压力达 \textbf{\Thru{} / \ThruEightyOne~Mbps}，变长高负载 \ThruVarHigh~Mbps \\
+端到端时延 & $<1\text{--}2$~ms & 核心单帧 24.424~µs；顶层满载 $<2$~ms & 顶层流口径：63~VL 周期最大 \textbf{\LatSixtyThreePMax~µs}，两拍突发最大 \textbf{\LatSixtyThreeBTwo~µs}；核心流水口径：满载最大 \textbf{\Lat~µs}（$L_\text{tx}$ \Ttx~µs，$L_\text{rx}$ \TrxLast~µs） \\
+传输抖动 & $\le$几十微秒 & 定长发送抖动 0~µs；周期 $\le 5$~µs，突发 $<100$~µs & 发送间隔抖动 \textbf{\Jit~µs}；顶层 63~VL 周期 1471~B 同 VL 极差 \textbf{0.016~µs}（全包长 $\le\JitSixtyThreePer$~µs），两拍突发 \textbf{\JitSixtyThreeBTwo~µs}；核心定长同 VL 极差 \textbf{\JitSameVl~µs} \\
+帧与分片格式 & 单帧 $\le 1471$~B；支持至 8192~B & 单帧 $1\text{--}1471$~B；$1472\text{--}\MaxMessageBytes$~B 自动 2--6 分片 & 帧长 64--1518~B，复位首帧 SN=0、之后 1--255 循环；63~VL 混合 1472/3000/8192~B 分片共 12,206 条消息 100\% 无损交付 \\
+VL 与重组容量 & 128 发送 / 4096 接收 & 128 TX / 4096 RX 全配；\ReasmContexts{} 路并发重组 & 128 TX 与 4096 RX 全量并发验证通过；77/81 条最长帧同拍突发排空耗时 \textbf{\BurstSevSeven{} / \BurstEightOne~µs}（$<2$~ms） \\
+RTC 同步精度 & 支持时间报文同步 & 空载 0~ns；满载微秒级有界 & 空载最大误差 \textbf{\RtcIdle~ns}；评委入口 77~VL 满载下最大 \textbf{8~ns}（长时包碰撞极限下最大 \RtcLoad~ns） \\
+资源与静态时序 & 125~MHz 稳定收敛 & 含 \ClkUncert~ns 不确定度布线后 0 违例 & \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Mem{} M4K（\MemPct\%）、\Pins{} IO；\countsep{\RoutedEndpoints} 端点 0 违例，净 Setup \textbf{$+\RoutedSetup$~ns}（原始 $+\RoutedSetupRaw$~ns，$F_\text{max}=\RoutedFmax$~MHz），Hold \textbf{$+\RoutedHold$~ns} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{主要创新点}
+
+\begin{enumerate}[label=（\arabic*）,leftmargin=2.2em,itemsep=1pt]
+  \item \textbf{32-Bank 双写分片查表与窄切片存储：}将 65,536 项映射表拆为 32 库$\times$2 分片并以三级或树归并，消除哈希冲突与宽选择树扇出。
+  \item \textbf{单描述符按片调度与双库 16 槽写隔离重组：}8192~B 长包仅占 1 项描述符，接收侧以 64 通道交织 RAM 与 128 个写隔离 LUT 消除保持违例。
+  \item \textbf{512 拍前瞻预取与 $-8$ 拍提前量准点发送：}将扫描与组帧隐藏于前帧传输期，到期当拍输出首前导码。
+  \item \textbf{单时钟 \code{CE_DIV=2} 多周期解耦与簇锁定布局：}零异步跨时钟域完成管理引擎收敛，0.30~ns 不确定度下 96,142 端点 0 违例。
+\end{enumerate}
+
+\subsection{设计流程}
+
+工程按“协议参考模型建模 $\rightarrow$ 表格化与分域流水 RTL 实现 $\rightarrow$ 双重校验回归与覆盖率分析 $\rightarrow$ 簇锁定布局布线与门级网表仿真”四阶段推进（图~\ref{fig:ov_flow}）：先依据 ARINC 664 P7/615A 建立 Python 参考模型；再完成 \RtlFileCount{} 个 RTL 模块编码与存储/多周期静态审计；经 \RegCount{} 项回归与 \CovUcdbCount{} 份 UCDB 覆盖率核验后，在 eLinx 3.0.7 下完成布局布线 STA 与 4 类 VQM 门级网表后仿真。
+
+\figTest[三级门禁验证与工程签核流程]{t02_criteria}{正向设计验证与三重门禁签核流程（阶段 1 在线硬件断言自检 0 错误 $\rightarrow$ 阶段 2 独立 Golden Model 逐字节比对 0 差异 $\rightarrow$ 阶段 3 官方综合布局布线 STA 与 VQM 门级网表后仿真一致性签核）}{fig:ov_flow}

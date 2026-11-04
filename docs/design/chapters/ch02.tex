@@ -1,41 +1,43 @@
 \chapter{需求分析与规格分解}\label{ch:req}
 
-本章依据选题指南、官方《FPGA 创新大赛问题汇总》（1022 版，涵盖 R95--R97、R110--R112 等最新澄清）及表~\ref{tab:proto} 所列协议规范，将赛题需求细化为功能、性能和接口规格。
+本章依据选题指南、官方《FPGA 创新大赛问题汇总》（1022、1026 及 1030 版，涵盖 R95--R97、R110--R112、R119--R126、R138--R139 等最新澄清）及表~\ref{tab:proto} 所列协议规范，将赛题需求细化为功能、性能和接口规格。
 
 \section{赛题需求}
 
-选题指南（正文第 2--4 页）对 AFDX 端系统提出三类要求：
+选题指南（正文第 2--4 页）及后续官方答疑对 AFDX 端系统提出三类要求：
 \begin{itemize}
-  \item \textbf{功能：}ARINC 664 Part 7 通信、高完整性数据通信、SNMP 网络管理、ARINC 615A 软件数据加载、RTC 纳秒时钟同步。
-  \item \textbf{技术指标：}传输速率 100~Mbps；帧格式采用 IEEE 802.3 格式及 ARINC 664 扩展，含 VLID 和 1--255 的序列号，有效载荷不超过 1471 字节，总帧长不超过 1518 字节；端到端时延小于 1--2~ms，抖动不超过几十微秒；最多 128 条发送 VL、4096 条接收 VL。
-  \item \textbf{接口与编码：}顶层模块统一采用 \code{AFDX_top} 模板的 8 个端口；端口、信号和寄存器用小写，参数用大写，重要代码段须有简洁注释。
+  \item \textbf{功能：}ARINC 664 Part 7 通信（含超过单帧上限长报文的 IPv4 分片发送与接收重组）、高完整性数据通信、SNMP 网络管理、ARINC 615A 软件数据加载、RTC 纳秒时钟同步。
+  \item \textbf{技术指标：}传输速率 $\ge 100$~Mbps（按官方 1030 答疑 R138-3/R139-3 口径，满载 VL 数量由参赛队伍结合机载网络规划自主声明并一致验证；本设计声明满载规格为单端 63 条发送 / 63 条接收 VL、$\text{BAG}=1$~ms、单帧最大载荷 $1471$~B、双网冗余全双工，单向去重有效载荷吞吐 $741.384$~Mbps、双向 $1482.768$~Mbps，线路占用率 $77.5\%$）；单帧采用 IEEE 802.3 格式及 ARINC 664 扩展，含 VLID 和 1--255 的序列号，单帧有效载荷不超过 1471 字节，总帧长不超过 1518 字节，应用消息支持 $1\text{--}\MaxMessageBytes$ 字节自动分片与顺序重组；端到端时延小于 1--2~ms，抖动不超过几十微秒；硬件容量支持最多 128 条发送 VL、4096 条接收 VL。
+  \item \textbf{接口与编码：}顶层模块统一采用 \code{AFDX_top} 模板的 8 个核心端口（承载带 2 字节 VLID 前缀的应用层流式数据），并引出 A/B 双网 GMII 物理端口与配置统计端口；端口、信号和寄存器用小写，参数用大写，重要代码段须有简洁注释。
 \end{itemize}
 
 \section{官方答疑澄清与设计实现对照}
 
 \begin{table}\centering\small
-\caption{官方 1022 答疑澄清与设计实现对照}\label{tab:qa}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{4.6cm}L}
+\caption{官方 1022/1026/1030 答疑澄清与设计实现对照}\label{tab:qa}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{4.5cm}L}
 \toprule
 项目与答疑序号 & 官方答疑要求与澄清 & 本设计的实现与架构边界 \\
 \midrule
-顶层端口映射\newline (R61, R95-2, R110) & R110 说明模板 8 端口是仿真模型对外的通用接口；R61 明确 GMII 为 PHY 接口，R95-2 要求两次例化 MAC & 遵循 R61/R95-2 的物理分层边界：将模板 8 端口映射为 A 网 GMII 物理接口，扩展 B 网物理接口、独立的 \code{app_*} 应用数据流接口及 \code{cfg_*} 配置总线接口 \\
-MAC 实现要求\newline (R46, R57, R111) & R46/R57 允许调用厂商 IP；R111 明确澄清 MAC IP 无强制使用要求，允许参赛队自行设计 & 采用纯 RTL 自研双网一体化 MAC（第~\ref{sec:mactx}~节），单状态机双网同拍起始，空闲发送延迟为 0 拍，消除了官方 IP 的 59 拍起发延迟与额外 FIFO 资源 \\
-有效载荷吞吐\newline (R95-1) & 接收端去重后的有效载荷吞吐率须达到 100~Mbps，冗余副本只计一次，需千兆 GMII 接口 & 采用八位 125~MHz 千兆 GMII，双网线速 1~Gbps；定长满载有效载荷吞吐率达 \Thru~Mbps，变长高负载工况达 \ThruVarHigh~Mbps（表~\ref{tab:perf-meas}） \\
-时钟与复位\newline (R3, R59) & 频率与接口速率匹配，单时钟统一驱动；同步复位 & 全设计采用单一 125~MHz 全局时钟（周期 8~ns），GMII 每拍传输一字节；管理面复杂状态机采用 $\text{CE\_DIV}=2$ 多周期使能树解耦 \\
-端到端分段时延\newline (R96, R97-1) & 单帧 GMII 时延不超过 2~ms；明确定义分段时延：$L_\text{tx}$（提交末字节至 SFD）、$L_\text{gmii}$（网络传输）与 $L_\text{rx}$（SFD 至交付） & 严格按 R97-1 边界测量：满载最大端到端时延为 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs；$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs），远低于 2~ms 门限 \\
-传输抖动口径\newline (R97-2) & 明确定义抖动为同一条 VL 多帧端到端时延的最大值减最小值（极差），要求计算各 VL 极差并取最大值 & 稳态发送间隔抖动测量为 \Jit~µs；严格按 R97-2 口径，定长满载同 VL 时延极差仅为 \JitSameVl~µs，变长循环多 VL 工况下极差为 \JitVarCycle~µs \\
-目标器件与考核\newline (R30, R112) & 器件自主选择；允许以仿真结果截图和仿真演示视频作为核心考核依据 & 目标器件选用中科亿海微 EQ6HL130（CSG484\_H）；建立包含 39 项回归与纯 ModelSim 评委入口的完备仿真验证闭环 \\
-协议版本依据\newline (R12, R47, R48) & 协议版本未被强制限定，功能参考国际主流航空电子规范 & 严格依据 ARINC 664 P7（2005 版）、ARINC 615A-2（2002 版）、RFC 1157/3416（SNMPv1/v2c）与 RFC 4330（SNTPv4） \\
+顶层应用流与前缀封装\newline (R62, R110, R120-3, R124, R126) & 明确模板 8 端口中 \code{tx_data}/\code{rx_data} 作为顶层应用数据流接口，每条收发消息以 2 字节大端 VLID 作为前缀；双网 GMII 作为独立物理网络引脚引出 & 顶层 \code{AFDX_top}（\Pins{} 引脚）将 \code{tx_data}/\code{tx_valid}/\code{tx_ready} 与 \code{rx_data}/\code{rx_valid}/\code{rx_ready}（按 R62 口径保留 \code{rx_ready} 端口兼容，接收侧无反压连续输出）封装为带 2 字节大端 VLID 前缀的应用流接口，通过 \code{afdx_app_tx}/\code{afdx_app_rx} 桥接内部核心 \code{afdx_es}，并完整引出 \code{gmii_tx*_a/b} 与 \code{gmii_rx*_a/b} 物理端口 \\
+长消息分片与重组\newline (R120-1, R120-2, R138) & 超过单帧最大载荷（$1471$~B）的应用层长消息需支持硬件分片发送与接收重组，分片按所属 VL 的 BAG 调度，每片独立携带 AFDX 序列号 SN & 支持 $1\text{--}\MaxMessageBytes$~B 应用层消息：发送侧自动拆分为共享同一 IP 标识的 IPv4 分片（首片含 8 字节 UDP 头——UDP 校验和按 RFC 768 置 \code{0x0000}——与最多 $1464$~B 载荷，中间片最多 $1472$~B，逐片计算 IPv4 头校验和，最多 6 片），按 BAG 逐片调度并递增 SN；接收侧配备 2-Bank $\times$ 8 槽位共 \ReasmContexts{} 路并发顺序重组上下文与 128~KiB 缓存，支持非零全报文 UDP 校验和验证与 2~s 超时清理 \\
+满载规格与吞吐率\newline (R95-1, R119, R138-3, R139-3) & 接收端去重后的有效载荷吞吐率须达到指标要求；满载 VL 数由团队按网络规划自主声明并一致验证 & 硬件表保持 128 发送 / 4096 接收全容量；按团队声明的 63 发送 / 63 接收 VL 满载规格（$\text{BAG}=1$~ms，$L_\text{max}=1471$~B，双网冗余，线路占用率 \LineUtilSixtyThree\%），实测单向去重交付吞吐率 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps）；77~VL 与 81~VL 超规格极限压力实测达 \Thru~Mbps 与 \ThruEightyOne~Mbps \\
+端到端时延与抖动口径\newline (R96, R97, R119, R139) & 单帧端到端时延不超过 2~ms；抖动定义为同一 VL 多帧端到端时延的最大值减最小值（极差），并在顶层流式边界（\code{tx_data} 至 \code{rx_data}）与核心分段边界同时验证 & 核心单帧满载最大时延 \Lat~µs（同 VL 极差 \JitSameVl~µs）；顶层 \code{AFDX_top} 63~VL 满载周期激励下 $1471$~B 抖动仅 $0.016$~µs、全包长最大抖动 \JitSixtyThreePer~µs（最大时延 \LatSixtyThreePMax~µs），B2 旋转三元组背靠背突发最坏抢占下最大抖动 \JitSixtyThreeBTwo~µs（$<100$~µs）、最大时延 \LatSixtyThreeBTwo~µs（$<2$~ms） \\
+MAC 实现与时钟复位\newline (R3, R46, R57, R59, R111) & 允许调用厂商 IP 或自研 MAC；单一 125~MHz 全局时钟同步驱动，同步复位 & 采用纯 RTL 自研双网锁步 MAC（第~\ref{sec:mactx}~节），双网同拍起始、0 拍空闲启动延迟；全芯片由单一 125~MHz（8~ns）主时钟驱动，管理面复杂状态机采用 $\text{CE\_DIV}=2$ 多周期使能树解耦 \\
+目标器件与考核\newline (R30, R112) & 器件自主选择；以仿真结果、波形截图、门级网表与静态时序报告作为考核依据 & 目标器件选用中科亿海微 EQ6HL130（CSG484\_H）；建立包含 \RegCount{} 项自动化回归、\DesignUnitCount{} 单元代码覆盖率、VQM 门级网表后仿真及主动施加 $\ClkUncert$~ns 时钟不确定度的布局布线后 STA 签核闭环 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-端到端时延从发送端应用接口成功提交消息末字节时（$m_\text{last}$ 握手完成）开始计算，涵盖发送排队、组帧、MAC 处理、物理链路串行传输及接收处理的全流程时间。严格依据官方 1022 答疑 R97 口径，分别定义首字节端到端交付时延 $L_\text{app}$ 与末字节端到端交付时延 $L_\text{app,last}$：
+端到端时延支持核心内部接口与顶层公开流式接口双重测量口径：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{核心分段口径（R96/R97）：}从核心应用接口成功提交消息末字节（$m_\text{last}$ 握手完成）开始，至接收端完成首字节/末字节交付（$d_\text{valid}/d_\text{last}$）结束：
 \begin{equation}
 L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx},\qquad L_\text{app,last} = L_\text{tx} + L_\text{gmii} + L_\text{rx,last}
 \end{equation}
-其中 $L_\text{tx}$ 为应用提交末字节至 GMII 发送端输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的网络链路传输时延（直连模型下为 0 或固定仿真延迟）；$L_\text{rx}$ 为接收端 GMII 收到 SFD 至应用接口输出首字节交付的时间，$L_\text{rx,last}$ 为交付末字节的时间。各阶段拍数与流水预算推导见第~\ref{sec:budget}~节。
+其中 $L_\text{tx}$ 为提交末字节至 GMII 输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的物理链路传输时延；$L_\text{rx}$ 与 $L_\text{rx,last}$ 分别为接收端收到 SFD 至输出首字节与末字节交付的时间。
+  \item \textbf{顶层公开流式口径（R119/R139）：}从顶层 \code{AFDX_top} 发送端接收消息首字节（2 字节 VLID 前缀第 1 字节，\texttt{tx\_valid \&\& tx\_ready}）或末字节（$t_\text{tx,last}$）起，至接收端输出该消息末字节（\code{rx_valid} 连续消息流的末尾拍，$t_\text{rx,last}$）止，分别记为全消息入口至末字节时延 $L_\text{entry,last} = t_\text{rx,last} - t_\text{tx,first}$ 与末字节至末字节时延 $L_\text{last,last} = t_\text{rx,last} - t_\text{tx,last}$。对于多帧分片长消息，端到端完成时延包含跨 $(F-1)$ 个 BAG 周期的确定性调度间隔。
+\end{enumerate}
 
 \FloatBarrier
 \section{设计规格}
@@ -45,24 +47,23 @@ L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx},\qquad L_\text{app,last
 \begin{longtable}{>{\centering\arraybackslash}p{0.8cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-3.1cm-6\tabcolsep\relax}}
 \caption{设计规格}\label{tab:spec}\\
 \longtablehead{3}{编号 & 规格 & 内容}
-F1 & 用户数据发送 & 每个端系统支持 128 条发送 VL，每条均可独立配置 BAG（以时钟周期计，不超过 $2^{30}$）、VLID、源/目的 IP 与端口、最大载荷和队列深度；消息长度为 1--1471 字节；按 VL 配置选择 A 网、B 网或双网发送 \\
-F2 & 用户数据接收 & 支持 4096 条接收 VL，可映射任意 16 位 VLID；检查前导码、FCS、帧长、IP 头校验和、UDP 长度与校验和；两网分别进行完整性检查；启用冗余管理且副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次 \\
+F1 & 用户数据发送与自动分片 & 每个端系统支持 128 条发送 VL，每条均可独立配置 BAG（以时钟周期计，不超过 $2^{30}$）、VLID、源/目的 IP 与端口、单帧最大载荷 $L_\text{max}$（1--1471~B）和队列深度；应用消息长度为 $1\text{--}\MaxMessageBytes$ 字节，超过 $L_\text{max}$ 时硬件自动执行 IPv4 分片（首分片携带 8 字节 UDP 头且 UDP 校验和置 \code{0x0000}，逐片计算 IPv4 首部校验和、按 BAG 独立调度并分配递增 SN）；按 VL 配置选择 A 网、B 网或双网发送 \\
+F2 & 用户数据接收与并发重组 & 支持 4096 条接收 VL，可映射任意 16 位 VLID；检查前导码、FCS、帧长、IP 头校验和、UDP 长度与校验和；两网分别进行完整性检查（IC）；启用冗余管理（RM）且副本到达间隔在 \code{skew_max} 内时，同一帧或分片只交付一次；配备 \ReasmContexts{} 路并发硬件重组上下文（2-Bank $\times$ 8 槽位），支持 $1\text{--}\MaxMessageBytes$ 字节分片报文的严格顺序偏移重组、非零全报文 UDP 校验和验证与 2~s 超时回收 \\
 F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36 个管理对象；Community（\code{community}）校验 \\
 F4 & 615A 软件数据加载 & 基于 TFTP 的单文件上传与介质定义下载（Media-Defined Download, MDD）；LUH 头文件与数据文件 CRC-16 硬件校验；超时重传机制 \\
 F5 & RTC 时钟同步 & SNTPv4 纳秒级时钟同步；32 位秒加 32 位纳秒时间戳；应答报文回显客户端 Transmit 时间戳 \\
-P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（定长满载实测 \Thru~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
-P2 & 端到端时延 & 不超过 2000~µs（满载稳态最大端到端时延实测为 \Lat~µs） \\
-P3 & 传输抖动 & 发送间隔抖动实测为 \Jit~µs；同 VL 端到端时延极差定长满载实测仅 \JitSameVl~µs、变长循环为 \JitVarCycle~µs \\
-P4 & 帧格式 & 帧长 64--1518 字节（含 FCS）；复位后首帧 SN 为 0，之后按 1--255 循环 \\
-P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用 \\
-I1 & 官方端口 & \code{AFDX_top} 的 8 个端口名称、方向和位宽保持完全兼容，承载 A 网 GMII 物理接口 \\
-I2 & 线路接口 & A、B 两路八位 GMII，每拍一字节，帧间隔不少于 12 拍 \\
-I3 & 扩展接口 & 独立的应用发送/接收流接口、32 位字寻址配置总线、统计与事件脉冲端口 \\
-C1 & 时钟与物理时序 & 单一 125~MHz 全局时钟，周期 8~ns；管理面协议状态机采用 $\text{CE\_DIV}=2$ 多周期解耦；eLinx 布局布线后静态时序收敛（建立裕量 $+\RoutedSetup$~ns、保持裕量 $+\RoutedHold$~ns，最高频率 \RoutedFmax~MHz，0 违例端点） \\
+P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（63~VL 规划满载实测单向 \ThruSixtyThree~Mbps、双向 \ThruSixtyThreeBi~Mbps；77/81~VL 超规格压力实测 \Thru{} / \ThruEightyOne~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
+P2 & 端到端时延 & 单帧不超过 2000~µs（核心满载最大实测 \Lat~µs；63~VL 顶层周期激励最大 \LatSixtyThreePMax~µs，B2 背靠背突发最大 \LatSixtyThreeBTwo~µs；分片长包按 $(F-1)\times\text{BAG}$ 确定性完成） \\
+P3 & 传输抖动 & 63~VL 满载周期激励下 $1471$~B 抖动 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 背靠背突发最大 \JitSixtyThreeBTwo~µs；核心定长满载同 VL 极差仅 \JitSameVl~µs、变长循环为 \JitVarCycle~µs \\
+P4 & 帧格式 & 以太网帧长 64--1518 字节（含 FCS）；复位后首帧 SN 为 0，之后按 1--255 循环 \\
+P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用；团队声明单端满载网络规划规格为 63 发送 / 63 接收 VL \\
+I1 & 官方顶层端口 & \code{AFDX_top} 的 8 个模板端口名称、方向和位宽保持完全兼容，承载带 2 字节大端 VLID 前缀的应用层流式收发报文 \\
+I2 & 线路接口 & A、B 两路独立八位千兆 GMII（\code{gmii_tx_a/b}、\code{gmii_rx_a/b}），每拍一字节，帧间隔不少于 12 拍 \\
+I3 & 扩展接口 & 32 位字寻址配置总线 \code{cfg_*}、核心统计脉冲 \code{ev_*} 与应用包装层丢包事件 \code{ev_app[2:0]}；内部核心 \code{afdx_es} 同时保留显式信号接口 \code{app_tx_*}/\code{app_rx_*} \\
+C1 & 时钟与物理时序 & 单一 125~MHz 全局时钟，周期 8~ns；管理面协议状态机采用 $\text{CE\_DIV}=2$ 多周期解耦；在主动施加 $\ClkUncert$~ns（300~ps）时钟建立不确定度约束下，eLinx 布局布线后静态时序完全收敛（净建立裕量 $+\RoutedSetup$~ns、原始物理建立裕量 $+\RoutedSetupRaw$~ns、保持裕量 $+\RoutedHold$~ns，\RoutedEndpoints{} 端点 0 违例） \\
 C2 & 编码规范 & 信号小写、参数大写；每个模块的文件开头说明其作用、接口和关键时序 \\
 \end{longtable}
 
-\Needspace{8\baselineskip}
 \section{协议依据}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.2cm-6\tabcolsep\relax}}

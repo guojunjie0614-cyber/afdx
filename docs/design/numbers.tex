@@ -1,64 +1,136 @@
 % 全文引用的实测数字。最终版本重跑回归和综合后只改这里。
-% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/。
-% 性能（tb_sys_perf / tb_sys_perf_var，77 条 VL，1471 字节，BAG = 1 ms，双向，稳定测量 21 ms）
+% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/、docs/evidence/t79_63vl/。
+% 设计规模与架构常量（34 个 RTL 文件 / 15856 行 / 42 个设计单元）
+\newcommand{\MaxMessageBytes}{8192}
+\newcommand{\RtlFileCount}{34}
+\newcommand{\RtlLineCount}{15856}
+\newcommand{\DesignUnitCount}{42}
+\newcommand{\ReasmContexts}{16}
+\newcommand{\RamSdpCount}{90}
+% 性能（T79 63 条 VL 满载规格 + 77/81 条 VL 压力基线，BAG = 1 ms，双向）
 \newcommand{\Thru}{906.136}
+\newcommand{\ThruSixtyThree}{741.384}
+\newcommand{\ThruSixtyThreeBi}{1482.768}
+\newcommand{\ThruSixtyThreeRaw}{742.392}
+\newcommand{\LineUtilSixtyThree}{77.5}
 \newcommand{\ThruEightyOne}{953.208}
 \newcommand{\ThruTen}{117.680}
 \newcommand{\ThruVarHigh}{904.752}
 \newcommand{\Lat}{24.432}
+\newcommand{\LatAvg}{24.424}
+\newcommand{\LatMin}{24.416}
+\newcommand{\LatOneFourSevenOne}{80.336}
+\newcommand{\LatSixtyThreePMax}{80.336}
+\newcommand{\LatBOne}{1079.056}
+\newcommand{\LatBTwo}{1175.432}
+\newcommand{\LatSixtyThreeBTwo}{1175.432}
 \newcommand{\Jit}{0}
 \newcommand{\JitSameVl}{0.008}
 \newcommand{\JitVarCycle}{9.992}
+\newcommand{\JitSixtyThreePer}{3.360}
+\newcommand{\JitSixtyThreeBTwo}{96.752}
 \newcommand{\Ttx}{0.312}
+\newcommand{\TtxMin}{0.304}
 \newcommand{\TtxSof}{0.256}
 \newcommand{\Trx}{12.360}
 \newcommand{\TrxLast}{24.120}
 % 突发（tb_gbe_burst）
-\newcommand{\BurstSevSeven}{959.288}
+\newcommand{\BurstSevSeven}{983.720}
+\newcommand{\BurstEightOne}{1032.936}
+\newcommand{\BurstSevSevenTail}{75.120}
+\newcommand{\BurstEightOneTail}{77.136}
+\newcommand{\BurstSevSevenBase}{959.288}
+\newcommand{\BurstEightOneBase}{1008.504}
 \newcommand{\BurstSevSevenLast}{959.376}
-\newcommand{\BurstEightOne}{1008.504}
 \newcommand{\BurstEightOneLast}{1464.592}
 % RTC（tb_sys_rtc）
 \newcommand{\RtcIdle}{0}
 \newcommand{\RtcLoad}{10788}
-% 综合与布局布线（eLinx 官方综合 S2d + 布局布线 PRES1.50，EQ6HL130 / CSG484\_H，CE\_DIV = 2）
-\newcommand{\Lut}{34294}
-\newcommand{\FF}{17454}
-\newcommand{\Clb}{4521}
-\newcommand{\Mem}{366}
-\newcommand{\Pins}{259}
-\newcommand{\LutPct}{25.19}
-\newcommand{\FFPct}{12.82}
-\newcommand{\ClbPct}{33.20}
-\newcommand{\MemPct}{30.50}
-\newcommand{\PinPct}{76.40}
-\newcommand{\Setup}{4.459}
-\newcommand{\Fmax}{282.406}
-\newcommand{\Hold}{0.068}
-\newcommand{\RoutedSetup}{0.013}
-\newcommand{\RoutedHold}{0.229}
-\newcommand{\RoutedFmax}{125.203}
-\newcommand{\MulticycleSetup}{0.940}
-% 命令行官方综合（歷史基线耗时 233.062 s）
+% 综合与布局布线（build_1030.py + PRES 1.30 + tiles_1030.edc，EQ6HL130 / CSG484\_H，CE\_DIV = 2，0.30 ns 时钟不确定度）
+\newcommand{\Lut}{62274}
+\newcommand{\FF}{35597}
+\newcommand{\Clb}{10230}
+\newcommand{\Mem}{814}
+\newcommand{\Pins}{172}
+\newcommand{\LutPct}{45.74}
+\newcommand{\LutPctInt}{46}
+\newcommand{\FFPct}{26.14}
+\newcommand{\FFPctInt}{26}
+\newcommand{\ClbPct}{75.13}
+\newcommand{\ClbPctInt}{75}
+\newcommand{\MemPct}{67.83}
+\newcommand{\MemPctInt}{68}
+\newcommand{\PinPct}{50.74}
+\newcommand{\PinsPct}{50.74}
+\newcommand{\PinPctInt}{51}
+\newcommand{\Setup}{4.148}
+\newcommand{\Fmax}{259.61}
+\newcommand{\Hold}{0.192}
+\newcommand{\ClkUncert}{0.30}
+\newcommand{\ClkUncertPs}{300}
+\newcommand{\RoutedSetup}{0.029}
+\newcommand{\RoutedSetupRaw}{0.329}
+\newcommand{\RoutedHold}{0.604}
+\newcommand{\RoutedFmax}{125.45}
+\newcommand{\RoutedFmaxRaw}{130.36}
+\newcommand{\RoutedEndpoints}{96142}
+\newcommand{\SynthEndpoints}{164745}
+\newcommand{\LockedClusters}{11044}
+\newcommand{\MulticycleRules}{253}
+\newcommand{\MulticycleRegs}{2747}
+\newcommand{\MulticycleSetup}{0.720}
+% 命令行官方综合（历史基线耗时 233.062 s；T78 完整综合+布线耗时 898.5 s）
 \newcommand{\CliSynthSec}{233.062}
-% 验证
-\newcommand{\RegCount}{39}
-\newcommand{\RegChecks}{2585512887}
-\newcommand{\RegIndep}{3879565}
-\newcommand{\SvcChecks}{1124}
+\newcommand{\ParElapsedSec}{898.5}
+% 验证（63 项快速回归 + 4 项长耗时系统参考 = 67 项）
+\newcommand{\RegCount}{67}
+\newcommand{\RegFastCount}{63}
+\newcommand{\RegTSevEightCount}{65}
+\newcommand{\RegChecks}{2348850504}
+\newcommand{\RegIndep}{4180179}
+\newcommand{\RegFastChecks}{207367881}
+\newcommand{\RegFastIndep}{996050}
+\newcommand{\SvcChecks}{1123}
+\newcommand{\SvcChecksRtl}{1124}
 \newcommand{\CapChecks}{49924}
 \newcommand{\SnmpChecks}{699}
 \newcommand{\ElinxChecks}{9238}
-% 覆盖率（ModelSim SE-64 2020.4，39 项完整回归，24 个 RTL 模块 sbceft 插桩）
-\newcommand{\CovStmt}{98.55}
-\newcommand{\CovBranch}{96.46}
-\newcommand{\CovCond}{85.07}
-\newcommand{\CovExpr}{88.39}
-\newcommand{\CovFsm}{59.33}
-\newcommand{\CovFsmState}{100.00}
-\newcommand{\CovFsmTrans}{44.80}
-\newcommand{\CovToggle}{77.03}
+% 覆盖率（ModelSim SE-64 2020.4，58 份 UCDB，34 个 RTL 文件 / 42 个设计单元 sbceft 插桩）
+\newcommand{\CovUcdbCount}{58}
+\newcommand{\CovStmt}{96.82}
+\newcommand{\CovStmtOne}{96.8}
+\newcommand{\CovStmtCov}{12416}
+\newcommand{\CovStmtTot}{12824}
+\newcommand{\CovBranch}{94.61}
+\newcommand{\CovBranchOne}{94.6}
+\newcommand{\CovBranchCov}{7230}
+\newcommand{\CovBranchTot}{7642}
+\newcommand{\CovCond}{73.95}
+\newcommand{\CovCondOne}{74.0}
+\newcommand{\CovCondCov}{1306}
+\newcommand{\CovCondTot}{1766}
+\newcommand{\CovExpr}{81.31}
+\newcommand{\CovExprOne}{81.3}
+\newcommand{\CovExprCov}{3242}
+\newcommand{\CovExprTot}{3987}
+\newcommand{\CovFsm}{49.99}
+\newcommand{\CovFsmState}{83.94}
+\newcommand{\CovFsmStateOne}{83.9}
+\newcommand{\CovFsmStateCov}{115}
+\newcommand{\CovFsmStateTot}{137}
+\newcommand{\CovFsmTrans}{37.60}
+\newcommand{\CovFsmTransOne}{37.6}
+\newcommand{\CovFsmTransCov}{141}
+\newcommand{\CovFsmTransTot}{375}
+\newcommand{\CovToggle}{71.91}
+\newcommand{\CovToggleOne}{71.9}
+\newcommand{\CovToggleCov}{59358}
+\newcommand{\CovToggleTot}{82546}
 % 网表仿真耗时（秒）
-\newcommand{\NetCliTime}{8793.406}
-\newcommand{\NetGuiTime}{3121.109}
-\newcommand{\NetElinxTime}{7826.703}
+\newcommand{\NetCliTime}{23614.453}
+\newcommand{\NetGuiTime}{23614.453}
+\newcommand{\NetElinxTime}{52312.469}
+\newcommand{\NetFragTime}{34727.859}
+\newcommand{\NetTSixTxTime}{26897.997}
+\newcommand{\NetTSixRxTime}{27020.430}
+

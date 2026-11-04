@@ -12,8 +12,9 @@
 
 已实现赛题要求的五项功能：用户数据发送、用户数据接收（含双网冗余、虚拟链路带宽间隔调度、序号和完整性检查）、SNMP 网络管理、ARINC 615A 数据加载和卸载、RTC 时钟同步。
 
-## 设计与测试报告
+## 技术、设计与测试报告
 
+- [技术报告 PDF](docs/report/AFDX端系统FPGA技术文档报告.pdf)
 - [设计报告 PDF](docs/design/AFDX端系统FPGA设计文档.pdf)
 - [测试报告 PDF](docs/test/AFDX端系统FPGA测试报告.pdf)
 - [报告源码与编译说明](docs/README.md)

@@ -70,7 +70,7 @@ def f01_system():
     f.text(390.5,91,'SN=17 · next_time=T',7.3)
     f.arrow([(154,83),(154,109),(358,109),(358,101)])
     f.tag(190,118,'enqueue descriptor',size=6.7)
-    f.box(209,134,106,27,'white','Header / payload / SN','tx_builder',ssize=7.3)
+    f.box(209,134,106,27,'white','Header / payload / SN','tx_builder · frag',ssize=6.7)
     bytepath(f,[(262,101),(262,134)])
     f.arrow([(390,101),(390,122),(301,122),(301,134)])
     f.tag(342,131,'grant',size=6.7)
@@ -96,8 +96,8 @@ def f01_system():
     strip(f,325,221,['A','100','4'],[38,43,40],['pass']*3)
     f.tag(385,215,'rx_dq',size=7.3)
     f.arrow([(301,233),(325,233)])
-    f.box(325,257,121,24,'white','Deliver p0…p3 once',tsize=8)
-    f.arrow([(385,239),(385,257)])
+    f.box(325,256,121,26,'white','Reasm (16) / Deliver','deliver p0…p3 once',tsize=7.6,ssize=6.7,pad=2)
+    f.arrow([(385,239),(385,256)])
     bytepath(f,[(78,261),(85,261),(85,289),(313,289),(313,269),(325,269)])
     f.tag(252,285,'descriptor selects ring',size=6.7)
     f.box(201,263,100,14,'cfg','map / config / state',tsize=6.7,pad=2)
@@ -174,7 +174,7 @@ def f02_path():
 @fig
 def f06_frame():
     f=Fig(450,245)
-    heading(f,10,'(a) Wire format: payload and framing have different lengths')
+    heading(f,10,'(a) Single-frame / 1st-fragment wire format (non-1st frag omits 8-B UDP)')
     widths=[35,22,41,41,28,48,43,62,29,23,37,33]
     labels=['55 ×7','D5','Dst','Src','Type','IPv4','UDP','Payload','Pad','SN','FCS','IFG']
     kinds=['white','white','cfg','cfg','gray','cfg','cfg','rx','gray','tx','cfg','white']
@@ -271,7 +271,7 @@ def f18_tb():
     f.arrow([(225, lk.b), (225, 100)])
     f.tag(228, 90, 'frames', anchor='start')
     mon = f.box(165, 100, 120, 28, 'ram', 'Port monitors', 'dump · events · sys_events')
-    ref = f.box(0, 100, 110, 28, 'white', 'Python reference', 'afdx_ref, sys_ref')
+    ref = f.box(0, 100, 110, 28, 'white', 'Python reference', 'afdx_ref · fragment_ref', ssize=6.7)
     ver = f.box(340, 100, 110, 28, 'pass', 'Verdict', '[RESULT] + [CHECK]')
     f.arrow([(30, e1.b), (30, 90), (190, 90), (190, mon.t)], dash=True)
     f.arrow([(420, e2.b), (420, 90), (260, 90), (260, mon.t)], dash=True)
@@ -466,7 +466,7 @@ def f32_wapp():
         guide(f, xs[i], 2, yb + 4)
     dim(f, xs[2], xs[8], yb + 14, '6 cycles: page allocation', above=False)
     dim(f, xs[12], xs[16], yb + 14, '10 cycles: descriptor + enqueue', above=False)
-    f.tag(225, yb + 34, '(a) Submit', bold=True, size=T1)
+    f.tag(225, yb + 34, '(a) Core submit (afdx_es; wrapped by 2B-VLID afdx_app_tx)', bold=True, size=T1)
     xr = slots(100, [bw if i == 5 else 27 if i == 6 else cw for i in range(8)])
     y2 = yb + 53
     ys2 = wave(f, xr, y2, [
@@ -480,7 +480,7 @@ def f32_wapp():
     yb2 = ys2[-1] + 9
     f.text((xr[1] + xr[5]) / 2, ys2[-1] + 6.8, 'constant', 6.7)
     dim(f, xr[1], xr[7], yb2 + 14, 'n consecutive cycles, no back-pressure', above=False)
-    f.tag(225, yb2 + 34, '(b) Deliver', bold=True, size=T1)
+    f.tag(225, yb2 + 34, '(b) Core deliver (afdx_es; wrapped by 2B-VLID afdx_app_rx)', bold=True, size=T1)
     f.tag(354,y2+10,'Same message, consecutive bytes',size=7.3)
     strip(f,279,y2+20,['D0','D1','…','Dn−1'],[35,35,29,48],['pass']*4,h=18,size=7.3)
     f.tag(352,y2+53,'VL / ports / net stay fixed',size=7.3)

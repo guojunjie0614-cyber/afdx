@@ -1,0 +1,136 @@
+% ======================================================================
+% 第二部分：系统组成及功能说明（后半部分：2.2.3 接收通路、分片重组、高层服务与
+% 配置模块电路；2.3 软件系统介绍 2.3.1–2.3.2）
+% ======================================================================
+
+\paragraph{（3）接收通路与 \ReasmContexts{} 路并发顺序分片重组电路（\code{afdx_rx_core}）}
+
+接收核心 \code{afdx_rx_core} 由 A/B 双网独立接收 MAC（\code{afdx_mac_rx} $\times 2$）、双网流式帧头解析器（\code{afdx_rx_parse} $\times 2$）、双网 4~KiB 环形载荷缓冲（\code{rx_ring_a/b}）、共享 30 拍判定引擎（\code{afdx_rx_engine}）、交付读取器（\code{afdx_rx_deliver}）及双存储体 \ReasmContexts{} 路并发 IPv4 顺序分片重组引擎（\code{afdx_rx_reassembly*}）组成，总体查表与载荷定位结构如图~\ref{fig:s2_rx} 所示。
+
+\noindent \textbf{1.\quad 接收 MAC、流式帧头解析与三指针环形预写电路（\code{afdx_mac_rx} / \code{afdx_rx_parse}，图~\ref{fig:s2_macfsm}b、图~\ref{fig:s2_parse}、图~\ref{fig:s2_ring}）：}
+\code{afdx_mac_rx} 在 \code{gmii_rx_dv} 有效期内锁定前导码与 SFD（\code{0xD5}），通过 4 字节尾部移位寄存器自动剥离末尾 4 字节 FCS，并在帧尾比对 CRC-32 余数是否为固定幻数 \code{0x2144DF1C}，向解析器输出 \code{f_data[7:0]}/\code{f_valid}/\code{f_end}/\code{f_err_*}。\code{afdx_rx_parse} 逐拍校验目的/源 MAC 前缀、以太网类型（\code{0x0800}）、IPv4 版本与头长（\code{0x45}）、分片标志与 8B 对齐偏移、协议号（\code{0x11}）、16 位 IPv4 头校验和以及首片/单帧的 UDP 长度与校验和（图~\ref{fig:s2_parse}）。
+
+\figDesign[帧头流式解析与预写边界计算电路]{f23_parse}{帧头解析器（\code{afdx_rx_parse}）电路机制：(a) 帧字段位置；(b) 第 39--42 字节长度捕获与边界计算流水；(c) 帧尾发布描述或回退预写指针}{fig:s2_parse}
+
+从载荷首字节（单帧/首片第 42 字节，后续分片第 34 字节）起，解析器将字节边接收边预写入本网 4~KiB 环形缓冲（\code{rx_ring_a/b}）：环形缓冲维护预写指针 \code{trial}、已提交指针 \code{committed} 与读指针 \code{rd}（图~\ref{fig:s2_ring}）；帧尾校验通过后生成 221 位帧描述 \code{desc_*} 交予引擎，引擎准入通过时令 $\text{\code{committed}}\leftarrow\text{\code{trial}}$，若帧校验失败或被引擎拒绝则令 $\text{\code{trial}}\leftarrow\text{\code{committed}}$ 单拍无损回退，释放预写空间。
+
+\figDesign[接收环形缓冲三指针预写与回退机制]{f12_ring}{接收环形缓冲（\code{rx_ring_a/b}）三指针机制：预写推进 \code{trial}、接纳推进 \code{committed}、交付推进 \code{rd} 及异常拒绝时 $\code{trial}\leftarrow\code{committed}$ 回退}{fig:s2_ring}
+
+\noindent \textbf{2.\quad 32-Bank 查表、IC 序号完整性与 RM 冗余去重引擎电路（\code{afdx_rx_engine}，图~\ref{fig:s2_decide}、图~\ref{fig:s2_rxeng}）：}
+为消除 65,536 项 VLID 映射表（\code{rx_map}）的扇出瓶颈，电路将其拆分为 32 个子库且每库拆为高 7 位/低 6 位两块 SDP RAM（共 64 个 \code{afdx_ram_sdp} 实例），读回路径经“2-Bank $\rightarrow$ 4-Group $\rightarrow$ 最终 4-Group”三级寄存或树归并；同时将 $4096\times 32$~bit \code{rx_cfg} 与 $4096\times 43$~bit \code{rx_state} 拆分为 4~bit/3~bit 窄返回域切片（\code{afdx_rx_table_slice}）。
+
+引擎在收到 A/B 网帧描述后启动 30 拍（\code{phase 0..29}）固定判定日程（双网同时待处理时轮流交替仲裁，空闲期每 4096 拍即 32.768~µs 执行一次 4 拍 \code{AGE} 冗余记录老化扫描）：
+
+    \begin{itemize}[leftmargin=1.5em,itemsep=0pt]
+      \item \textit{配置与分片长度检查：}核对 \code{rx_map}[\code{vlid}] 有效位、\code{rx_cfg}[\code{idx}] 使能位、本网允许位 \code{net_a/b} 及本片载荷长度上限（单帧 $\le L_\text{max}$，首片 $\le L_\text{max}$，后续分片 $\le L_\text{max}+8$）；
+      \item \textit{每网独立完整性检查（IC）：}A、B 两网各自维护本网上一接收序列号 $\text{PSN}_A/\text{PSN}_B$ 与有效位。若本网首次收帧、$\text{SN}=0$（对端复位首帧）或 $\text{SN}\in\{\text{PSN}\oplus 1, \text{PSN}\oplus 2\}$（1--255 环上容忍单帧丢失），则 IC 判定通过；无论 IC 与后续 RM 是否通过，只要配置合法均以当前 SN 更新本网 PSN（图~\ref{fig:s2_rxeng}）；
+
+\end{itemize}
+
+\figDesign[接收引擎判定通路与状态写使能门控电路]{f24_rxeng}{接收引擎（\code{afdx_rx_engine}）IC 序号步进比较、RM 窗口时间差与模 255 序号距离判定及状态表/交付队列写使能门控电路}{fig:s2_rxeng}
+
+\textit{共享冗余管理（RM）：}启用 RM 时，比较当前帧 SN 与共享记录 \code{rm_sn}，并计算到达粗时间戳差值 $\Delta t = |\text{\code{arrival}} - \text{\code{rm_time}}|$：若 \code{rm_valid}$=1$、$\Delta t \le \text{\code{skew_max}}$ 且 $\text{SN}$ 落在 \code{rm_sn} 及其前序已接收窗口内，则判为晚到冗余副本（触发 \code{ev_rm_drop} 并回退 \code{trial} 指针）；否则判为新有效副本，更新 \code{rm_sn}/\code{rm_time} 并向 $32\times 73$~bit 块 RAM 交付队列 \code{rx_dq} 写入交付项（图~\ref{fig:s2_decide}）。
+
+\figDesign[双网冗余副本单次交付与去重机制]{f13_decide}{双网冗余副本单次交付机制（VL 7 的 SN 17 双网副本：A 网先到通过 IC/RM 入队交付，B 网通过本网 IC 后被共享 RM 判重丢弃并回退预写指针）}{fig:s2_decide}
+
+\noindent \textbf{3.\quad 流式交付与双 Bank \ReasmContexts{} 路并发顺序分片重组电路（\code{afdx_rx_deliver} / \code{afdx_rx_reassembly*}，图~\ref{fig:s2_deliver}）：}
+\code{afdx_rx_deliver} 从 \code{rx_dq} 取出 73 位描述项，经 6 拍启动流水后以每拍 1 字节从 \code{rx_ring_a} 或 \code{rx_ring_b} 连续读出载荷并推进读指针 \code{rd}（图~\ref{fig:s2_deliver}）。
+
+\figDesign[交付模块块 RAM 预取与连续字节输出时空图]{f25_deliver}{交付模块（\code{afdx_rx_deliver}）从队头读取、同步环形 RAM 访问到每拍 1 字节连续输出的逐拍流水时空图}{fig:s2_deliver}
+
+若为单帧（\code{frag=0}），字节流直通送往 \code{afdx_svc}；若为 IPv4 分片帧（\code{frag=1}），在 \code{afdx_rx_engine} 判定阶段第 5/6 拍即向 \code{afdx_rx_reassembly} 发起槽位查询，第 24/25 拍获得槽位准入结果，第 28/29 拍完成原子预约。
+
+重组引擎按接收 VL 索引最低位（\code{idx[0]}）划分为 \textbf{2 个独立存储体（\code{afdx_rx_reassembly_bank} $\times 2$，每体 8 个槽位，共 \ReasmContexts{} 路并发上下文）}：每体含 4 张专用同步 RAM 元数据表（\code{key} 存 \texttt{\{idx, ip\_src, ip\_dst, ip\_id\}}、\code{header} 存首片 UDP 端口/总长/校验和、\code{admission} 存期望片偏移与累计长、\code{progress} 存写进度与 2~s 超时计数器）及 8 个 8~KiB 载荷槽（\code{afdx_rx_reassembly_payload_slot}）。每个 8~KiB 槽位拆分为 4 条 $8192\times 2$~bit 通道 RAM（全芯片 64 通道共配置 \textbf{128 个显式 \code{lut_mask="8888"} 写数据隔离 LUT} 驱动全部 256 个 M4K 数据输入引脚）。后续分片必须满足片偏移严格等于当前已收齐字节数（拒绝缺首片、乱序、重叠及超 $8192$~B 分片）；末片（\code{MF=0}）写毕后，若总长匹配 UDP 头声明且非零全包 UDP 校验和验证通过，状态机按每拍 1 字节连续输出完整应用消息并释放槽位；超过 $250,000,000$ 拍（2~s）未收齐的残缺槽位由硬件自动老化回收。
+
+% 成对呈现服务的协议交互与实现电路，给读图段落留出版心。
+\begingroup
+\setlength{\designFigureHeight}{.345\textheight}
+\paragraph{（4）服务仲裁、RTC 时钟同步、SNMP 网络管理、615A 数据加载与配置统计电路}
+
+\noindent \textbf{1.\quad 服务通道仲裁与端口认领分发电路（\code{afdx_svc}，图~\ref{fig:s2_svc}）：}
+发送侧由状态寄存器 \code{busy}、\code{owner[1:0]}、\code{turn[1:0]} 及一级寄存授权向量 \code{served[3:0]} 构成四路整消息轮询仲裁器（依次轮询应用、RTC、SNMP、615A），当三项服务均无待发报文时应用接口零延迟直通；接收侧将交付字节流广播至应用与三项服务，各服务在首字节当拍根据 UDP 目的端口 \code{d_dport}（RTC 默认 123、SNMP 161、615A 默认 59 或会话动态 TID）组合生成 \code{svc_rx_claim} 认领脉冲并锁存至 \code{rx_claimed}，屏蔽应用口 \code{app_rx_valid}，实现控制面与用户面流量零干扰分流。
+
+\figDesign[服务通道轮询仲裁与 UDP 端口认领电路]{f26_svc}{服务通道（\code{afdx_svc}）四路整包发送轮询仲裁（寄存授权 \code{served[3:0]}）与接收端 UDP 目的端口首字节组合认领电路}{fig:s2_svc}
+
+\noindent \textbf{2.\quad RTC 纳秒级时钟同步电路（\code{afdx_rtc} / \code{afdx_ntp_fraction}，图~\ref{fig:s2_rtc}、图~\ref{fig:s2_rtcfsm}）：}
+模块维护 32 位秒寄存器与 32 位纳秒寄存器（每拍 $+8$~ns，满 $10^9$ 进位），遵循 RFC 4330 SNTPv4 四时间戳协议（图~\ref{fig:s2_rtc}）。
+
+\figDesign[SNTPv4 四时间戳对时原理与交互时序]{f14_rtc}{RTC 时钟同步（\code{afdx_rtc}）SNTPv4 四时间戳（$t_1\sim t_4$）双向对时机制与偏差校正时序}{fig:s2_rtc}
+
+发送请求/响应首字节握手当拍硬件锁存 $t_1/t_3$，接收首字节到达当拍锁存 $t_2/t_4$。
+
+三个 \code{afdx_ntp_fraction} 单元采用 32 轮（每轮 2 拍，共 65 拍）逐位非恢复余数除法与定点移位加减完成纳秒整数与 32 位 NTP 二进制小数的零误差双向换算，在 48 字节报文发送至第 40--47 字节（距首字节 $\ge 160$ 拍）前完成在飞编码。
+
+\figDesign[RTC 算术流水与 40 ns 延迟补偿数据通路]{f27_rtc}{RTC 算术数据通路：秒/纳秒借位候选计算、MUX 选择、跨秒进位与 5 拍（40~ns）写回流水硬件补偿电路}{fig:s2_rtcfsm}
+
+Client 收到 Originate 严格匹配的应答后，用 11 拍算术流水计算 $\text{offset}=[(t_2-t_1)+(t_3-t_4)]/2$，并在 \code{LATENCY} 步对 \code{ADD_OFFSET} 至 \code{APPLY} 的 5 拍写回流水精确补偿 $+40$~ns（图~\ref{fig:s2_rtcfsm}）。
+
+\noindent \textbf{3.\quad SNMPv1/v2c 网络管理电路（\code{afdx_snmp} / \code{afdx_snmp_engine} / \code{afdx_mgmt_tx}，图~\ref{fig:s2_snmp}、图~\ref{fig:s2_snmpfsm}）：}
+顶层 \code{afdx_snmp} 在 125~MHz 全速域捕获 UDP 161 端口请求存入 $256\times 8$ \code{request_ram}，并通过低扇出复制树生成 \code{CE_DIV=2}（16~ns 多周期）时钟使能驱动 47 态核心状态机 \code{afdx_snmp_engine}。
+
+\figDesign[SNMP Set 请求解码、查表与写后读回流程]{f15_snmp}{SNMP 代理（\code{afdx_snmp}）处理 Set \code{USER_ID}=42 请求的 RAM 解码、MIB 查表、配置总线写后读回与响应构造流程}{fig:s2_snmp}
+
+引擎通过公共 4 拍字节读取序列（\code{return_state}）解析 ASN.1/BER 编码（支持短格式与 \code{0x81}/\code{0x82} 长格式长度），对 36 个 MIB 对象（\code{sysDescr}、\code{sysUpTime} 及私有子树 \code{1.3.6.1.4.1.424242.3} 下 34 个设备/RTC/统计对象）执行 7 位移位累加 OID 比较（支持 Get 精确匹配、GetNext 字典序遍历、\code{USER_ID} 读写 Set 后读回校验及 \code{coldStart}/\code{authenticationFailure} SNMPv2-Trap 主动上报），经 \code{LEN1..LEN4} 自内向外计算长度后在 \code{response_ram} 组装应答，交由 8 字节预取适配器 \code{afdx_mgmt_tx} 全速发送。
+
+\figDesign[SNMP BER OID 解码与状态机数据通路]{f28_snmpfsm}{SNMP 引擎（\code{afdx_snmp_engine}）OID 7 位移位累加解码、36 项 MIB 字典序比较与 Set 写后读回电路}{fig:s2_snmpfsm}
+
+\noindent \textbf{4.\quad ARINC 615A 软件数据加载电路（\code{afdx_615a} / \code{afdx_615a_engine}，图~\ref{fig:s2_615a}、图~\ref{fig:s2_a615fsm}）：}
+核心状态机 \code{afdx_615a_engine}（约 70 个状态，运行于 \code{CE_DIV=2} 的 16~ns 多周期域）配合 6 块专用 SDP RAM（1~KiB \code{packet_rx}、1~KiB \code{packet_tx}、512B \code{lur_ram}、2~KiB \code{header_ram}、8~KiB \code{load_ram}、32B \code{denial_ram}）实现目标端 \code{DEMC3_1}（兼容 A4/A3 版本）的单文件上传与介质定义下载（MDD，回传 \code{MEMORY.BIN}）。
+
+\figDesign[ARINC 615A 软件数据加载与介质定义下载交互流程]{f16_615a}{ARINC 615A 目标端（\code{afdx_615a}）600 字节文件单文件上传（写入 8~KiB 加载 RAM）与介质定义下载（MDD，回传 \code{MEMORY.BIN}）完整协议交互}{fig:s2_615a}
+
+上传时依次处理 LUI 读请求、发送初始 LUS（\code{0001}）、接收 LUR 列表、发送进度 LUS（\code{0002}）、拉取并校验 ARINC 665 \code{8002} 格式 LUH 头文件、按 512~B 块接收数据文件写入 8~KiB \code{load_ram} 并以多项式 \code{0x1021} 流式校验两级 CRC-16，末块校验通过后发送完成 LUS（\code{0003}，进度 100\%）；支持超时重传（默认 2~s）与重复 DATA 块幂等 ACK（图~\ref{fig:s2_a615fsm}）。
+
+\figDesign[615A TFTP 超时重传与重复数据块幂等分派电路]{f29_615a}{615A 引擎（\code{afdx_615a_engine}）报文分派状态机与重复 DATA1 块仅重发 ACK、不重复更新长度及 CRC-16 的幂等保护机制}{fig:s2_a615fsm}
+
+\noindent \textbf{5.\quad 配置译码、冲突仲裁与 27 路两级流水统计计数器电路（\code{afdx_cfg}，图~\ref{fig:s2_cfg}）：}
+\code{afdx_cfg} 译码 18 位字地址（\code{0x00000}--\code{0x000BB} 为寄存器与计数器，\code{0x01000} 为 \code{tx_cfg}，\code{0x10000} 为 \code{rx_map}，\code{0x20000} 为 \code{rx_cfg}）。
+
+\figDesign[配置模块写许可握手与两拍读返回电路]{f30_cfg}{配置模块（\code{afdx_cfg}）电路：(a) 配置表写请求暂存、等待核心 \code{cfg_ok} 许可写入与 RX/TX 就绪重武装；(b) 两拍候选锁存读回通路}{fig:s2_cfg}
+
+写配置表时先锁存请求并拉低 \code{cfg_ready}，待收发引擎处于非读表拍给出 \code{cfg_ok=1} 许可时写入 RAM（等待上界 $\le 64$ 拍）；读通路采用“第 1 拍组内 8 选 1 预锁存 $\rightarrow$ 第 2 拍组间选择输出”的两拍流水；来自收发核心的 27 路统计脉冲先经两级寄存器（\code{_p}/\code{_q}）打拍隔离后再驱动 32 位累加器。
+
+\endgroup
+\FloatBarrier
+\subsection{软件系统介绍}
+
+\subsubsection{软件整体介绍}
+
+在主机配置、协议参考建模与自动化物理签核层面，工程配套构建了 PC 端\textbf{主机配置驱动、协议黄金参考模型（Golden Model）与 EDA 物理签核软件集}（位于仓库 \code{tools/}、\code{sim/} 与 \code{tb/} 目录）。PC 端验证软件与双端双网硬件测试平台的连接关系如图~\ref{fig:s2_platform} 所示。
+
+\figTest[双端双网系统级测试平台与 PC 端校验软件架构]{t01_platform}{双端双网测试平台与 PC 端软件架构：激励生成器驱动两个 \code{AFDX_top} 实例，链路模型在四条单向 GMII 通道施加延迟与故障注入，端口监视器导出追踪日志交由 Python 参考模型重建核对}{fig:s2_platform}
+
+软件系统分为四个功能部分：（1）\textbf{协议黄金参考模型（Golden Models）：}以 Python 独立实现 ARINC 664 P7 组帧、BAG 调度、IPv4 分片与 16 槽按序重组、IC/RM 判决、SNMP ASN.1/BER 编解码（基于 \code{pyasn1}）、ARINC 615A TFTP/LUS/CRC-16 会话及 SNTPv4 时间戳换算；（2）\textbf{激励生成与端口日志核对器（Vector Generators \& Trace Checkers）：}生成测试向量（\code{sim/vectors/}），并在仿真结束后读取 DUT 外部端口追踪文件（\code{tx.txt}、\code{rx.txt}、\code{gmii_*.txt}、\code{events.txt}），逐帧、逐字节比对应用交付与统计计数。图~\ref{fig:s2_tb_mech} 给出在线断言与离线参考模型比对的分工。
+
+\figDesign[在线硬件断言与离线参考模型双重校验机制]{f18_tb}{测试平台在线自检（Self-Checking Assertions）与 PC 端 Python 黄金参考模型（Golden Model）离线逐字节比对机制}{fig:s2_tb_mech}
+
+（3）\textbf{回归与评审批量运行器（Regression \& Judge Runners）：}提供无 Python 依赖的 8 项 ModelSim 评审批处理入口（\code{sim/run_judge.do}）、仅注入 VLID 与载荷的应用流入口（\code{sim/run_app.do}）、63~VL 满载与分片测试套件，以及支持 6 路并发的 \RegCount{} 项回归与 \CovUcdbCount{} 份 UCDB 覆盖率合并脚本；（4）\textbf{eLinx 综合、布局布线与网表审计脚本（EDA Build \& Signoff Suite）：}调用官方 \code{quartus_map}、\code{quartus_cdb} 与 \code{Implementation.exe} 完成综合、\countsep{\LockedClusters} 簇锁定布局布线、多周期约束审计、M4K 写隔离结构审计、布线后 STA 报告导出及 VQM 门级网表仿真适配。
+
+\subsubsection{软件各模块介绍}
+
+从顶层调度入口到底层算法模块的设计分工、处理流程及关键输入/输出变量见表~\ref{tab:s2_sw_modules}。
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-9.1cm-6\tabcolsep\relax}@{}}
+\caption{PC 端验证、参考模型与物理签核软件各模块输入/输出变量及流程说明}\label{tab:s2_sw_modules}\\
+\longtablehead{4}{\thead{软件模块与核心函数} & \thead{关键输入变量} & \thead{关键输出变量} & \thead{顶层到底层算法流程说明}}
+\code{tools/eda.py}\newline \code{run_sim()} / \code{run_regress()} & \code{test_name}, \code{ce_div}, \code{coverage}, \code{timeout_s}, \code{mem_limit_gb} & \code{sim_result.json}, \code{coverage.ucdb}, 退出码 \code{0/1} & 顶层统一调度入口：检查工作库与内存水位 $\rightarrow$ 调用 \code{gen_vectors()} 生成激励 $\rightarrow$ 启动 ModelSim 批处理执行 \code{.do} 脚本 $\rightarrow$ 解析日志检查 \code{Error/Fatal/RAMCOLL} $\rightarrow$ 调用对应 \code{*_ref.py} 核对外部追踪文件。 \\
+\addlinespace[2pt]
+\code{tools/par_regress.py}\newline \code{schedule_workers()} & \code{test_list}, \code{max_sims=6}, \code{raw_sources} & \code{regression.json}, 63 项逐用例日志与 SHA-256 摘要 & 多进程并行回归调度器：按预估耗时降序排列快速回归用例 $\rightarrow$ 维护进程池与内存阈值并发启动 ModelSim $\rightarrow$ 汇总 HDL 自检数 \code{checks} 与独立核对数 \code{indep_checks}。 \\
+\addlinespace[2pt]
+\code{tools/afdx_ref.py}\newline \code{tx_ref.py} / \code{rx_ref.py}\newline \code{fragment_ref.py} & \code{vl_cfg_table}, \code{app_tx_trace}, \code{gmii_rx_a/b_trace}, \code{skew_max} & \code{expected_frames}, \code{expected_rx_msgs}, \code{expected_counters}, \code{diff_count} & 核心协议黄金模型：按拍重建 128 条发送 VL 的 BAG 整形、IPv4 1472B（$184\times 8$B）分片切分、IP 头校验和、AFDX SN 循环与 CRC-32；在接收侧独立执行 4096 条 VL 查表、双网 PSN 步进判定、\code{skew_max} 窗口去重与 16 槽按序重组，与 DUT 导出文件逐字节比对。 \\
+\addlinespace[2pt]
+\code{tools/net_services_ref.py}\newline \code{verify_snmp()} / \code{verify_615a()} / \code{verify_rtc()} & \code{service_vectors}, \code{udp_packets}, \code{cfg_readback_log} & \code{mib_check_pass}, \code{lus_progress_list}, \code{memory_bin_diff}, \code{rtc_err_ns} & 高层服务黄金模型：用 \code{pyasn1} 解码 SNMP Get/GetNext/Set/Trap 报文并比对 36 项 MIB 寄存器；解析 615A TFTP RRQ/WRQ/DATA/ACK 及 LUS 进度并逐字节比对 8~KiB 加载 RAM 与 \code{MEMORY.BIN}；验算 SNTP 48B 报文四时间戳与 NTP 32 位小数换算误差。 \\
+\addlinespace[2pt]
+\code{tools/t76_sim.py}\newline \code{tools/t76_app.py} & \code{VL_COUNT} (63/81), \code{PAYLOAD_BYTES}, \code{MIXED} (0..3), \code{DUPLEX}, \code{netlist} & \code{summary.json}, \code{throughput_mbps}, \code{max_e2e_us}, \code{jitter_r119_us} & 顶层 2B-VLID 流规格与网表对照运行器：生成 63~VL 周期（\code{P1..P1471}）、两拍突发（\code{B1/B2}）与 1472/3000/8192~B 混合分片激励 $\rightarrow$ 双轨（Tcl $+$ Python）独立统计吞吐率、端到端时延与同 VL 极差抖动 $\rightarrow$ 支持加载 VQM 网表与 RTL 11 份公开记录逐字节比对。 \\
+\addlinespace[2pt]
+\code{tools/build_1030.py}\newline \code{report_routed_timing.py} & \code{afdx_all.v}, \code{constraints.edc}, \code{tiles_1030.edc}, \code{pres=1.30} & \code{AFDX_top.vqm}, \code{utilization_placed.rpt}, \code{slack.rpt}, \code{timing.json} & 官方 eLinx 确定性构建与 STA 导出器：调用 \code{quartus_map/cdb} 导出 VQM $\rightarrow$ 加载 \countsep{\LockedClusters} 个锁定簇与 \Pins{} 个引脚约束执行 \code{Implementation.exe} 布局布线 $\rightarrow$ 解析 \code{full_timing.tan.pb} 核验 8~ns 单周期与 16~ns 多周期全部 \countsep{\RoutedEndpoints} 个端点裕量。 \\
+\addlinespace[2pt]
+\code{tools/check_multicycle.py}\newline \code{audit_1030_storage.py}\newline \code{adapt_gui_vqm.py} & \code{AFDX_top.vqm}, \code{constraints.edc}, 原厂仿真库模型 & \code{multicycle_audit.json}, \code{storage_audit.json}, \code{adapted_sim.vqm} & 门级网表结构审计与后仿真适配器：遍历 VQM 逻辑锥验证 \countsep{\MulticycleRegs} 个 \code{CE_DIV=2} 寄存器使能真值表与 \MulticycleRules{} 条多周期规则；验证 64 通道重组 RAM 的 128 个 \code{lut_mask="8888"} 写隔离 LUT；补齐 VQM 原语默认端口供 ModelSim 门级仿真。 \\
+\end{longtable}
+
+主机初始化端系统与自动化验证按以下三个流程运行：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{主机配置与启动流程：}释放复位后轮询 \code{STATUS[0]}（\code{tx_ready}，约 524~µs 就绪） $\rightarrow$ 写入端系统标识 \code{USER_ID} $\rightarrow$ 依次配置 128 条发送 VL 的字 1--5（BAG、VLID、IP、UDP 端口）并最后写字 0 置位 \code{en}（顶层硬件自动窥探字 2 同步至 \code{afdx_app_tx}） $\rightarrow$ 依次写入接收配置 \code{rx_cfg}[idx] 与映射表 \code{rx_map}[VLID]$=\{1,\text{idx}\}$（顶层同步更新 \code{afdx_app_rx}） $\rightarrow$ 配置三项服务的发送 VL 与参数并置位 \code{ENABLE}，随后启动应用收发。
+  \item \textbf{仿真与双重校验流程：}运行脚本生成协议帧或应用消息流（含畸形帧、乱序 SN、双网时延差与丢包注入） $\rightarrow$ 驱动 ModelSim 运行 RTL 或 VQM 网表，实时监测在线硬件断言（\code{RX_ASSERT}、握手违例、RAM 同址读写冲突 \code{RAMCOLL}） $\rightarrow$ 仿真结束后由离线检查器将导出文件与 Python 参考模型逐字节比对，在线错误数为 0 且离线差异数为 0 时判定通过。
+  \item \textbf{物理实现与四步签核流程：}执行 \code{build_1030.py --route --pres 1.30} 完成综合与锁定布局布线 $\rightarrow$ 运行 \code{audit_1030_storage.py} 核验 250 个同步 RAM 与 128 个写隔离 LUT 映射 $\rightarrow$ 运行 \code{check_multicycle.py} 核验 \countsep{\MulticycleRegs} 个多周期寄存器约束边界 $\rightarrow$ 运行 \code{report_routed_timing.py} 导出全芯片 \countsep{\RoutedEndpoints} 个端点时序报告。
+\end{enumerate}

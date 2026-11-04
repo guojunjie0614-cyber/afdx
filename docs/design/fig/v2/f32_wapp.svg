@@ -98,7 +98,7 @@
 <text x="200.00" y="124.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">6 cycles: page allocation</text>
 <path d="M 336.00 115.00 L 336.00 119.00 M 405.00 115.00 L 405.00 119.00 M 336.00 117.00 L 405.00 117.00" fill="none" stroke="#000" stroke-width="0.5"/>
 <text x="370.50" y="124.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">10 cycles: descriptor + enqueue</text>
-<text x="225.00" y="137.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Submit</text>
+<text x="225.00" y="137.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(a) Core submit (afdx_es; wrapped by 2B-VLID afdx_app_tx)</text>
 <text x="94.00" y="163.00" font-size="7.3" text-anchor="end" fill="#000" font-weight="bold">clk</text>
 <path d="M 100.00 165.00 L 100.00 156.00 L 110.00 156.00 L 110.00 165.00 L 120.00 165.00" fill="none" stroke="#000" stroke-width="0.9"/>
 <path d="M 120.00 165.00 L 120.00 156.00 L 130.00 156.00 L 130.00 165.00 L 140.00 165.00" fill="none" stroke="#000" stroke-width="0.9"/>
@@ -147,7 +147,7 @@
 <text x="160.00" y="226.80" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">constant</text>
 <path d="M 120.00 241.00 L 120.00 245.00 M 236.00 241.00 L 236.00 245.00 M 120.00 243.00 L 236.00 243.00" fill="none" stroke="#000" stroke-width="0.5"/>
 <text x="178.00" y="250.50" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">n consecutive cycles, no back-pressure</text>
-<text x="225.00" y="263.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) Deliver</text>
+<text x="225.00" y="263.00" font-size="8.0" text-anchor="middle" fill="#000" font-weight="bold">(b) Core deliver (afdx_es; wrapped by 2B-VLID afdx_app_rx)</text>
 <text x="354.00" y="166.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">Same message, consecutive bytes</text>
 <rect x="279.00" y="176.00" width="35.00" height="18.00" rx="0" fill="#EAF2DF" stroke="none" stroke-width="0"/>
 <text x="296.50" y="187.48" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">D0</text>

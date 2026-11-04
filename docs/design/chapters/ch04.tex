@@ -2,51 +2,45 @@
 
 \section{顶层端口}
 
-\code{AFDX_top} 保留选题模板的 8 个端口（名称、方向和位宽不变），并按 AFDX 双网冗余与应用接口需求扩展 B 网、应用、配置和事件端口。顶层共声明 40 个端口，总位宽为 259 位，少于 EQ6HL130 可提供的 339 个用户 I/O。端口分组见表~\ref{tab:ports}。
+按官方 1026/1030 答疑澄清（R110、R120-3、R124、R126），顶层模块 \code{AFDX_top} 完整保留选题模板的 8 个核心端口（名称、方向和位宽不变，其中 \code{tx_data}/\code{rx_data} 直接承载带 2 字节大端 VLID 前缀的应用层流式消息），并显式引出 A、B 双网千兆 GMII 物理端口、32 位配置总线及硬件统计事件脉冲。顶层共声明 26 个端口信号，总位宽为 \Pins{} 位（占 EQ6HL130-CSG484\_H 可用 339 个用户 I/O 的 \PinPct\%）。顶层端口定义见表~\ref{tab:ports}；内部协议核心 \code{afdx_es} 同时保留显式的核心应用端口 \code{app_tx_*}/\code{app_rx_*}（第~\ref{sec:intif}~节）。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{5.2cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{7.6cm}}
-\caption{顶层端口}\label{tab:ports}\\
+\caption{\code{AFDX_top} 顶层端口定义（26 组信号，共 \Pins{} 引脚）}\label{tab:ports}\\
 \longtablehead{3}{端口 & 方向 & 含义}
-\multicolumn{3}{l}{\textit{选题模板端口}} \\*
-\code{clk} & 入 & 125~MHz 时钟 \\
+\multicolumn{3}{l}{\textit{选题模板端口（2 字节 VLID 前缀应用流接口）}} \\*
+\code{clk} & 入 & 125~MHz 全局主时钟 \\
 \code{reset} & 入 & 同步复位，高有效 \\
-\code{tx_data[7:0]}、\code{tx_valid} & 出 & A 网 GMII 发送，相当于 TXD、TX\_EN \\
-\code{rx_data[7:0]}、\code{rx_valid} & 入 & A 网 GMII 接收，相当于 RXD、RX\_DV \\
-\code{tx_ready} & 出 & 收发核心初始化完成 \\
-\code{rx_ready} & 入 & 不使用 \\
+\code{tx_data[7:0]}、\code{tx_valid} & 入 & 应用层发送字节流：\code{tx_valid} 连续为 1 区间构成一条消息（前 2 字节大端 VLID + $1\text{--}\MaxMessageBytes$~B 载荷），相邻消息间至少空闲 1 拍 \\
+\code{tx_ready} & 出 & 应用发送就绪：内部表初始化完成且发送包装缓存可接纳新消息时为 1 \\
+\code{rx_data[7:0]}、\code{rx_valid} & 出 & 应用层接收字节流：\code{rx_valid} 连续为 1 区间输出一条去重/重组后的完整消息（前 2 字节大端 VLID + 载荷），相邻消息间至少空闲 1 拍 \\
+\code{rx_ready} & 入 & 按官方答疑 R62 口径保留端口兼容，硬件内部不使用（无反压连续交付） \\
 \midrule
-\multicolumn{3}{l}{\textit{冗余网络}} \\*
-\code{tx_data_b[7:0]}、\code{tx_valid_b}、\code{rx_data_b[7:0]}、\code{rx_valid_b} & 出/入 & B 网，含义同 A 网 \\
+\multicolumn{3}{l}{\textit{A/B 双冗余网络 GMII 物理接口}} \\*
+\code{gmii_txd_a[7:0]}、\code{gmii_tx_en_a} & 出 & A 网 GMII 发送字节流与发送使能（含前导码、SFD 与 FCS） \\
+\code{gmii_txd_b[7:0]}、\code{gmii_tx_en_b} & 出 & B 网 GMII 发送字节流与发送使能，与 A 网锁步同拍起始 \\
+\code{gmii_rxd_a[7:0]}、\code{gmii_rx_dv_a} & 入 & A 网 GMII 接收字节流与数据有效 \\
+\code{gmii_rxd_b[7:0]}、\code{gmii_rx_dv_b} & 入 & B 网 GMII 接收字节流与数据有效 \\
 \midrule
-\multicolumn{3}{l}{\textit{应用发送}} \\*
-\code{app_tx_valid}、\code{app_tx_ready} & 入/出 & 字节握手 \\
-\code{app_tx_data[7:0]}、\code{app_tx_last} & 入 & 消息字节；\code{last} 标记末字节 \\
-\code{app_tx_vl[6:0]} & 入 & 发送 VL 索引，在首字节锁存 \\
-\code{app_tx_port_en}、\code{app_tx_sport[15:0]}、\code{app_tx_dport[15:0]} & 入 & \code{app_tx_port_en} 为 1 时使用消息自带的 UDP 端口，否则使用 VL 的默认端口；在首字节锁存 \\
-\midrule
-\multicolumn{3}{l}{\textit{应用接收}} \\*
-\code{app_rx_valid}、\code{app_rx_data[7:0]}、\code{app_rx_last} & 出 & 交付字节，不带反压 \\
-\code{app_rx_vl[11:0]}、\code{app_rx_sport[15:0]}、\code{app_rx_port[15:0]}、\code{app_rx_net} & 出 & 接收 VL 索引、UDP 源端口、UDP 目的端口（\code{app_rx_port}）及来源网络；整条消息期间保持不变 \\
-\midrule
-\multicolumn{3}{l}{\textit{配置与统计}} \\*
-\code{cfg_wr}、\code{cfg_rd}、\code{cfg_addr[17:0]}、\code{cfg_wdata[31:0]} & 入 & 配置总线请求 \\
-\code{cfg_rdata[31:0]}、\code{cfg_rvalid}、\code{cfg_ready} & 出 & 读数据、读有效、写就绪 \\
-\code{ev_tx[6:0]} & 出 & 发送统计脉冲：\code{accept}、\code{drop_dis}、\code{drop_full}、\code{drop_long}、\code{drop_nopage}、\code{tx_a}、\code{tx_b} \\
-\code{ev_a[7:0]}、\code{ev_b[7:0]} & 出 & 各网接收统计脉冲，见表~\ref{tab:rxev} \\
-\code{ev_rm_drop}、\code{ev_deliver} & 出 & 冗余丢弃、交付 \\
-\code{ev_gdrop[1:0]} & 出 & 保留端口，固定为 0 \\
+\multicolumn{3}{l}{\textit{配置与统计事件接口}} \\*
+\code{cfg_wr}、\code{cfg_rd}、\code{cfg_addr[17:0]}、\code{cfg_wdata[31:0]} & 入 & 32 位字寻址配置总线写/读使能、地址与写数据 \\
+\code{cfg_rdata[31:0]}、\code{cfg_rvalid}、\code{cfg_ready} & 出 & 配置读返回数据、读数据有效（固定 2 拍）与写就绪 \\
+\code{ev_tx[6:0]} & 出 & 核心发送统计脉冲：\code{accept}、\code{drop_dis}、\code{drop_full}、\code{drop_long}、\code{drop_nopage}、\code{tx_a}、\code{tx_b} \\
+\code{ev_a[7:0]}、\code{ev_b[7:0]} & 出 & A/B 网接收分类与异常脉冲（含 \code{ev_a/b[7]} 分片重组拒绝），见表~\ref{tab:rxev} \\
+\code{ev_rm_drop}、\code{ev_deliver} & 出 & 冗余管理去重丢弃脉冲、有效消息交付脉冲 \\
+\code{ev_app[2:0]} & 出 & 顶层应用流包装器丢包脉冲：\code{[0]} 发送未映射 VLID 丢弃，\code{[1]} 发送超 $8192$~B 或缓存满回滚丢弃，\code{[2]} 接收包装缓存溢出丢弃 \\
+\bottomrule
 \end{longtable}
 
-顶层参数 \code{TX_PAGE_AW}、\code{TX_OFF_AW}、\code{LOOKAHEAD}、\code{RX_RING_AW}、\code{RX_DQ_AW} 的默认值分别为 8、9、512、12、5，直接传递给收发核心。
+顶层参数 \code{CE_DIV}、\code{TX_PAGE_AW}、\code{TX_OFF_AW}、\code{LOOKAHEAD}、\code{RX_RING_AW}、\code{RX_DQ_AW}、\code{RX_CONFIG_BANKS} 的默认值分别为 2、8、9、512、12、5、16，透传至核心 \code{afdx_es}。
 
 \subsection{顶层端口映射与网络分层定义}
 
-按照 ARINC 664 Part 7 标准物理分层与官方 1022 答疑澄清（R61、R95-2、R110）：
+按照 ARINC 664 Part 7 标准分层与官方 1022/1026/1030 答疑澄清（R62、R110、R111、R112、R120-3、R124、R126）：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{A 网物理接口：}顶层模板的 8 个端口（\code{clk}、\code{reset}、\code{tx_data}、\code{tx_valid}、\code{rx_data}、\code{rx_valid}、\code{tx_ready}、\code{rx_ready}）对应 A 网 GMII 物理接口，传输包含前导码、SFD 与 FCS 的线速以太网字节流。
-  \item \textbf{双网冗余扩展：}按标准双网冗余要求对称扩展 B 网 GMII 物理端口（\code{tx/rx_data_b_*}），支持单网独立收发与双网并行收发。
-  \item \textbf{应用层与配置接口：}主机应用数据通过独立的流式消息接口 \code{app_tx_*}/\code{app_rx_*} 收发，端系统配置表与统计计数器通过 32 位字寻址总线 \code{cfg_*} 访问，硬件状态变化由 \code{ev_*} 脉冲输出。
-  \item \textbf{MAC 实现与评测依据（R111、R112）：}MAC 模块采用纯 RTL 自研实现（R111 允许参赛队自研 MAC）；功能仿真波形、日志与覆盖率记录作为设计验证的依据（R112）。
+  \item \textbf{顶层应用流接口（模板 8 端口）：}\code{clk}、\code{reset}、\code{tx_data}、\code{tx_valid}、\code{tx_ready}、\code{rx_data}、\code{rx_valid}、\code{rx_ready} 构成面向机载分区应用的流式收发边界；每条消息以 2 字节大端 VLID 为首，以 \code{valid} 连续高电平定界、消息间至少空 1 拍定帧。
+  \item \textbf{双网 GMII 物理接口：}独立引出 A 网（\code{gmii_txd_a}/\code{gmii_tx_en_a}、\code{gmii_rxd_a}/\code{gmii_rx_dv_a}）与 B 网（\code{gmii_txd_b}/\code{gmii_tx_en_b}、\code{gmii_rxd_b}/\code{gmii_rx_dv_b}）八位千兆 GMII 端口，传输含 7 字节前导码、1 字节 SFD 与 4 字节 FCS 的完整以太网字节流。
+  \item \textbf{配置同步窥探与核心显式接口：}主机通过 \code{cfg_*} 配置发送 VL 表与接收映射表时，\code{AFDX_top} 硬件自动窥探 \code{tx_cfg} 字 2（VLID）与 \code{rx_map} 写入事务，同步更新 \code{afdx_app_tx} 与 \code{afdx_app_rx} 的 VLID 映射，无需额外配置指令；内部 \code{afdx_es} 保留显式 \code{app_tx_*}/\code{app_rx_*} 信号供核心级与服务联合测试直接复用。
+  \item \textbf{MAC 实现与评测依据（R111、R112）：}MAC 模块采用纯 RTL 自研实现；功能仿真波形、日志、覆盖率记录、门级网表与布局布线后 STA 报告共同构成签核依据。
 \end{enumerate}
 
 \section{GMII 接口}\label{sec:gmii}
@@ -54,23 +48,27 @@
 A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一个字节。
 
 \begin{itemize}
-  \item \textbf{发送：}\code{tx_valid} 从前导码首字节至 FCS 末字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的 \code{tx_valid} 与 \code{tx_data} 全程保持为 0。
-  \item \textbf{接收：}\code{rx_valid} 的上升沿表示一帧开始，下降沿表示该帧结束。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始定界符（SFD）、累加 CRC 并剥离 FCS。
+  \item \textbf{发送：}\code{gmii_tx_en_a/b}（核心内为 \code{tx_valid}）从前导码首字节至 FCS 末字节连续为 1，帧间至少空闲 12 拍，见图~\ref{fig:wgmii}。GMII 输出直接来自 MAC 的输出寄存器，发送适配延迟为 0。若某条 VL 未使能其中一路网络，则该帧发送期间对应网络的使能与数据全程保持为 0。
+  \item \textbf{接收：}\code{gmii_rx_dv_a/b}（核心内为 \code{rx_valid}）的上升沿表示一帧开始，下降沿表示该帧结束。相邻两帧的低电平间隔最短为 1 拍。MAC 先寄存输入，再逐拍查找帧起始定界符（SFD）、累加 CRC 并剥离 FCS。
   \item \textbf{复位：}复位期间输出为 0；对于表初始化完成前开始接收的帧，接收核心将整帧忽略（第~\ref{sec:clkrst}~节）。
   \item \textbf{时钟与错误信号：}接口采用全双工模式，收发字节均与 \code{clk} 同步，不含 TX\_CLK、RX\_CLK、TX\_ER、RX\_ER、CRS 和 COL。接收核心根据字节流检查前导码、帧长和 FCS；连接外部 PHY 时，外围适配逻辑须处理 PHY 错误标记并丢弃带错帧。收发时钟适配见第~\ref{sec:clkrst}~节。
 \end{itemize}
 
 \figN[GMII 发送一帧的接口时序（1 字节消息，最短帧）]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息，最短帧）。第 0 拍为前导码首字节，图中按标注的周期段压缩展示；示例载荷为 B0、SN 为 17，两网同拍起始，仅第 11 字节（接口号，A 为 \texttt{0x20}、B 为 \texttt{0x40}）和 FCS 不同；某网未启用时该网整帧保持为 0}{fig:wgmii}
 
-\section{以太网帧格式}\label{sec:frame}
+\section{以太网帧与 IPv4 分片格式}\label{sec:frame}
 
-图~\ref{fig:frame} 给出了本设计发送的 AFDX 帧格式。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{0x20}、B 网 \code{0x40}）。其后依次为 IPv4 头、UDP 头和应用数据；应用数据不足 17 字节时补零至该长度，再附加 1 字节序列号 SN，最后由 MAC 添加 4 字节 FCS。
+图~\ref{fig:frame} 给出了本设计发送的 AFDX 单帧与首分片格式。目的 MAC 和源 MAC 按 ARINC 664 Part 7 的固定格式编码：目的 MAC 为 \code{03 00 00 00} 加 16 位 VLID，源 MAC 为 \code{02 00 00} 加 16 位端系统用户 ID 和 1 字节接口号（A 网 \code{0x20}、B 网 \code{0x40}）。当应用层消息总长 $M \le L_\text{max}$（$L_\text{max}\le 1471$~B）时，按不分片单帧发送；当 $L_\text{max} < M \le \MaxMessageBytes$~B 时，硬件按 IPv4 分片规则自动拆分为多个以太网帧（表~\ref{tab:frame}）：
+\begin{itemize}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{不分片帧与首分片（42 字节协议头）：}包含 14 字节以太网头、20 字节 IPv4 头与 8 字节 UDP 头。IPv4 片偏移为 0，首分片置 \code{MF=1}（不分片帧 \code{MF=0}）；UDP 长度字段填写整条应用消息总长加 8（$M+8$），UDP 校验和字段按 RFC 768 填 \code{0x0000}。非末分片的 IPv4 数据段长度（含首片 8 字节 UDP 头）向下取整为 $\min(L_\text{max}+8, 1479)$ 的最大 8 字节整数倍（当 $L_\text{max}=1471$~B 时，首片承载 8 字节 UDP 头加 $1464$~B 应用数据，共 $1472$~B IPv4 载荷）；应用数据不足 17 字节时补零至 17 字节。
+  \item \textbf{后续分片（34 字节协议头）：}仅含 14 字节以太网头与 20 字节 IPv4 头，不含 UDP 头。同一应用消息的所有分片共享同一个 16 位 IPv4 标识（Identification），片偏移字段以 8 字节为单位递增（例如 $L_\text{max}=1471$~B 时第 2 片偏移为 $1472/8=184$，承载最多 $1472$~B 应用数据；$8192$~B 消息共拆分为 6 个以太网帧，末片 \code{MF=0} 承载 $840$~B 应用数据）。后续分片若末片应用数据不足 25 字节，则硬件补零至 25 字节，使加 34 字节头、1 字节 SN 与 4 字节 FCS 后的以太网总帧长仍不小于 64 字节。
+\end{itemize}
 
-\figN[AFDX 帧格式]{f06_frame}{AFDX 帧格式与具体字节位置。应用数据长度 $1 \le n \le 1471$ 字节；示例 $n=4$ 时，p0--p3 位于第 42--45 字节，补零 13 字节，SN 位于第 59 字节，含 FCS 的帧长为 64 字节。地址编码采用 VL 7 与 USER\_ID=\texttt{0x1234}}{fig:frame}
+\figN[AFDX 帧格式]{f06_frame}{AFDX 单帧与首分片格式及具体字节位置。单帧应用数据长度 $1 \le n \le 1471$ 字节（后续分片无 8 字节 UDP 头，应用数据从第 34 字节起始，至多 1472 字节）；示例 $n=4$ 时，p0--p3 位于第 42--45 字节，补零 13 字节，SN 位于第 59 字节，含 FCS 的帧长为 64 字节。地址编码采用 VL 7 与 USER\_ID=\texttt{0x1234}}{fig:frame}
 
 \begin{table}\centering\small
-\caption{帧字段（字节序列以十六进制表示）}\label{tab:frame}
-\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{1.2cm}L}
+\caption{AFDX 以太网帧与 IPv4 分片字段（十六进制）}\label{tab:frame}
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.9cm}>{\raggedleft\arraybackslash}p{1.2cm}L}
 \toprule
 字节位置 & 长度 & 内容 \\
 \midrule
@@ -80,41 +78,41 @@ A、B 两网各有一组八位 GMII，在 \code{valid} 为 1 的每拍传送一�
 9--10 & 2 & 端系统用户 ID（寄存器 \code{USER_ID}） \\
 11 & 1 & 接口号：A 网 \code{0x20}，B 网 \code{0x40} \\
 12--13 & 2 & \code{08 00}（IPv4） \\
-14--33 & 20 & IPv4 头：\code{45 00}，总长度 $n+28$，标识（每帧加 1），\code{00 00}，TTL \code{0x01}，协议号 \code{0x11}（17），头校验和，源 IP，目的 IP \\
-34--41 & 8 & UDP 头：源端口，目的端口，长度 $n+8$，校验和（填 0） \\
-42 起 & $n$ & 应用数据 \\
-其后 & $17-n$ & $n<17$ 时补 0 至 17 字节 \\
-再后 & 1 & 序列号 SN \\
+14--33 & 20 & IPv4 头：\code{45 00}；总长度（首片/单帧 $n+28$，后续分片 $n+20$）；标识（每条应用消息递增 1，同消息各分片共享）；标志与片偏移 \texttt{\{2'b00, MF, offset[12:0]\}}；TTL \code{0x01}；协议号 \code{0x11}（UDP）；逐片硬件计算的 IPv4 头校验和；源 IP；目的 IP \\
+34--41 & 8/0 & 仅单帧与首分片存在 UDP 头：源端口、目的端口、总长度 $M+8$、校验和（发送填 \code{0x0000}）；后续分片无此 8 字节 \\
+42（或 34）起 & $n$ & 本帧承载的应用数据（单帧 $1\le n\le 1471$，首片 $\le 1464$，后续片 $\le 1472$） \\
+其后 & 补零 & 单帧/首片 $n<17$ 时补 0 至 17~B；后续分片 $n<25$ 时补 0 至 25~B \\
+再后 & 1 & AFDX 序列号 SN（每发出一个以太网帧/分片独立递增） \\
 最后 & 4 & FCS（CRC32，由 MAC 添加） \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-由此，含 FCS 的帧长为 $47+\max(n,17)$，范围 64--1518 字节；A、B 两份帧只有第 11 字节和 FCS 不同。复位后，各 VL 首帧的 SN 均为 0，之后按 1、2、…、255、1、… 循环。组播目的 IP 按 Part 7 图 3-38 配置为 \code{224.224.VLID[15:8].VLID[7:0]}，发送核心直接使用配置表中的目的 IP，因此单播服务（如 615A）也可共用该通路。
+由此，单帧/首片含 FCS 的帧长为 $47+\max(n,17)$，后续分片含 FCS 的帧长为 $39+\max(n,25)$，物理帧长均严格落在 64--1518 字节范围内；A、B 两份帧只有第 11 字节和 FCS 不同。复位后，各 VL 首帧的 SN 均为 0，之后按 1、2、…、255、1、… 循环（分片报文的每一个分片均独立消耗一个递增 SN 并遵守所属 VL 的 BAG 间隔）。组播目的 IP 按 Part 7 图 3-38 配置为 \code{224.224.VLID[15:8].VLID[7:0]}，发送核心直接使用配置表中的目的 IP，因此单播服务（如 615A）也可共用该通路。
 
-端系统以 VL 为独立调度与查表粒度，承载不分片的单包 UDP 消息：发送侧将 UDP 校验和置 0；接收侧直接以目的 MAC 低 16 位 VLID 查表定界并校验协议头字段，通过校验后将载荷与 UDP 端口一并交付上层应用或内部服务。
+端系统以 VL 为独立调度与查表粒度：发送侧支持 $1\text{--}\MaxMessageBytes$~B 消息的单帧直发或 IPv4 自动分片；接收侧先对每一到达帧执行 FCS/IPv4 校验、基于 VLID 的逐帧 IC 序号检查与双网 RM 去重，不分片帧直接交付上层应用或内部服务，分片帧则进入 \ReasmContexts{} 路并发重组引擎按片偏移顺序拼装为完整 UDP 报文（若发送方提供了非零 UDP 校验和则同时验证全报文校验和）后统一交付。
 
 CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆盖从目的 MAC 到 SN 的全部字节。结果取反后按低字节在前的顺序发送。收发通路均采用组合模块 \code{afdx_crc32_d8}，以 32 位当前 CRC 值和 8 位数据为输入，输出更新后的 CRC 值。
 
 \section{应用接口}
 
-\subsection{发送握手与缓存等待}
+\subsection{顶层 2B-VLID 流式边界与核心应用接口}
 
-应用以字节流提交消息：\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个字节，\code{app_tx_last} 标记末字节；VL 索引和 UDP 端口在首字节锁存。
+应用层消息交互包含\textbf{顶层公开流式接口}（\code{AFDX_top} 的 \code{tx_data}/\code{rx_data}）与\textbf{内部核心应用接口}（\code{afdx_es} 的 \code{app_tx_*}/\code{app_rx_*}）两层：
+\begin{itemize}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{顶层流式接口（R120-3/R124/R126）：}发送端在 \code{tx_ready=1} 时拉高 \code{tx_valid}，连续送入 2 字节大端 VLID 前缀与 $1\text{--}\MaxMessageBytes$~B 应用载荷（期间 \code{tx_valid} 不得间断），消息结束后至少拉低 \code{tx_valid} 1 拍以标志帧尾。包装器 \code{afdx_app_tx} 将消息写入 32~KiB 分体缓冲并通过 3 级流水比较器查得 7 位发送 VL 索引：若 VLID 未映射则整包丢弃并脉冲上报 \code{ev_app[0]}；若消息超过 $8192$~B 或包装缓冲/描述符队列满则回滚丢弃并上报 \code{ev_app[1]}。接收端由 \code{afdx_app_rx} 通过 $4096\times 16$~bit 映射 RAM 反查 16 位 VLID，在 \code{rx_valid} 连续高电平区间依次输出 2 字节大端 VLID 与完整载荷（相邻消息间至少空 1 拍；若 32~KiB 接收包装缓冲溢出则上报 \code{ev_app[2]}）。
+  \item \textbf{核心显式消息接口（\code{afdx_es}）：}\code{app_tx_valid} 与 \code{app_tx_ready} 同拍为 1 时传送一个载荷字节，\code{app_tx_last} 标记末字节；7 位 VL 索引 \code{app_tx_vl} 和可选 UDP 端口在首字节锁存。没有服务报文争用时，\code{app_tx_ready} 经两槽入口弹性缓冲连接 \code{afdx_tx_buf}，每拍接收一字节，仅在跨 512~B 页分配（暂停 6 拍）或消息末尾入队确认（暂停约 10 拍）时拉低；顶层 32~KiB 包装缓冲将该跨页停顿对外部流接口屏蔽。三个管理服务同时有待发报文时，核心应用口轮询等待上界约 1100 拍（约 8.8~µs，第~\ref{sec:budget}~节）。
+\end{itemize}
 
-没有服务报文争用时，\code{app_tx_ready} 直接连接发送核心的 \code{m_ready}。发送核心每拍接收一个字节，仅在分配缓存页或等待入队结果时暂停，连续暂停不超过 96 拍。服务报文传输期间，应用等待当前服务消息完成；三个服务同时有报文时，等待预算约为 3850 拍（第~\ref{sec:budget}~节）。
+核心缓存页用尽、消息超长（$>8192$~B）或 VL 队列已满时，发送核心丢弃该消息并计数，自动回收已分配的缓存页，随后继续接收并丢弃该消息的剩余字节。
 
-缓存页用尽或 VL 队列已满时，发送核心丢弃该消息并计数，回收已分配的缓存页，随后继续接收并丢弃该消息的剩余字节。
-
-图~\ref{fig:wapp}(a) 以无服务争用、长度为 $2\le n\le512$ 字节且不跨页的消息为例：接收首字节后，分配缓存页需 6 拍；接收末字节后，写入消息描述并完成入队需 10 拍。\code{app_tx_ready} 为 0 时，应用保持当前字节及其有效标记，直至完成握手；图中的 C0 是下一条消息的首字节。单字节消息或末字节跨页时，末尾处理需额外增加约 6 拍。
+图~\ref{fig:wapp}(a) 以核心口无服务争用、长度为 $2\le n\le512$ 字节且不跨页的消息为例：接收首字节后，分配缓存页需 6 拍；接收末字节后，写入消息描述并完成入队需 10 拍。\code{app_tx_ready} 为 0 时，上游预取器保持当前字节及其有效标记，直至完成握手；图中的 C0 是下一条消息的首字节。
 
 \subsection{接收消息的连续交付}
 
-接收时，一条消息的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍。VL 索引、端口和来源网络在整条消息期间保持固定。接口时序见图~\ref{fig:wapp}(b)。
+在核心接收接口上，一条消息（单帧或重组完成的长消息）的 $n$ 个字节在连续 $n$ 拍内送出，期间 \code{app_rx_valid} 保持为 1，\code{app_rx_last} 与末字节同拍；12 位 VL 索引、端口和来源网络在整条消息期间保持固定，见图~\ref{fig:wapp}(b)。顶层 \code{AFDX_top} 在此基础上前置 2 字节大端 VLID，以连续 $n+2$ 拍 \code{rx_valid=1} 无反压输出。
 
-接收接口不提供反压，按固定字节节拍连续交付消息，因此交付通路无需处理下游停顿。外部应用可用缓存写口或 DMA/FIFO 接口接收数据，并应保证每个有效周期都能接收一个字节。
-
-\figN[应用口时序]{f32_wapp}{应用接口时序：(a) 无争用、空闲引擎及时接纳时的消息提交与握手示例；(b) 接收消息连续交付。示例中的 6 拍取页和 10 拍提交间隔不代表所有争用条件下的等待上界}{fig:wapp}
+\figN[核心应用口时序]{f32_wapp}{核心应用接口（\code{afdx_es}）时序：(a) 无争用、空闲引擎及时接纳时的消息提交与握手示例；(b) 接收消息连续交付。顶层 \code{AFDX_top} 由 \code{afdx_app_tx}/\code{afdx_app_rx} 封装为带 2 字节大端 VLID 前缀的流式接口；示例中的 6 拍取页和 10 拍提交间隔不代表所有争用条件下的等待上界}{fig:wapp}
 
 \section{配置总线}
 
@@ -133,7 +131,6 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 \code{ev_*} 端口在统计事件发生时输出单周期脉冲，与第~\ref{ch:cfg}~章的计数器一一对应，供外部逻辑监视各类事件。对于每条发送消息，发送核心均产生且仅产生 \code{accept} 或四类丢弃脉冲中的一种。对于表初始化完成后开始接收的每一帧，接收核心在对应网络上产生一个帧分类脉冲；若判定为正确帧，还会输出一个处理结果脉冲（第~\ref{sec:rxclass}~节）。
 
-\Needspace{8\baselineskip}
 \section{内部接口}\label{sec:intif}
 
 一级模块之间及核心内部子模块之间的接口以寄存器输出为主。ready 握手与 \code{cfg_ok} 采用组合输出；\code{afdx_svc} 的数据选择和接收分发也采用组合直通，仅包含选择与门控逻辑。内部接口主要采用以下四种约定：
@@ -148,18 +145,20 @@ CRC32 采用反射多项式 \code{0xEDB88320}，初值为全 1，计算范围覆
 
 \begin{table}\centering\small
 \caption{内部接口汇总}\label{tab:ifsum}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{1.6cm}L}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}p{1.6cm}L}
 \toprule
 接口 & 两端 & 约定 & 关键时序 \\
 \midrule
-消息 \code{m_*} & \code{afdx_svc} $\rightarrow$ \code{tx_buf} & 字节流 & 每次分配缓存页时，\code{m_ready} 为低 6 拍；消息末尾为低约 10 拍；连续为低不超过 96 拍 \\
-入队 \code{enq_*} & \code{tx_buf} $\rightarrow$ \code{tx_engine} & 请求应答 & 应答不晚于请求后 64 拍 \\
-授权 \code{grant_*} & \code{tx_engine} $\rightarrow$ \code{tx_builder} & 单深缓冲握手 & 从当前帧 \code{tx_sof} 有效的当拍起，可接受下一帧授权 \\
-发送起始指示 & \code{tx_builder} $\rightarrow$ \code{tx_engine} & 单拍脉冲 & 回报首个前导字节输出当拍的 \code{now} \\
-帧字节 \code{s_*} & \code{tx_builder} $\leftrightarrow$ \code{mac_tx} & 字节流 & MAC 控制字节接收时刻，在前导码的最后一拍接收第 0 字节 \\
-帧描述 \code{desc_*} & \code{rx_parse} $\rightarrow$ \code{rx_engine} & 单深缓冲握手 & \code{f_end} 后第 3 拍给出；单网判定耗时 8--15 拍（含取描述与写回） \\
-交付队列 \code{rx_dq} & \code{rx_engine} $\rightarrow$ \code{rx_deliver} & 32 项队列 & 队列非空后的第 6 拍输出首个 \code{d_valid} \\
-交付 \code{d_*} & \code{rx_deliver} $\rightarrow$ \code{afdx_svc} & 字节流，无反压 & 服务在首字节当拍完成端口匹配 \\
+包装发送 \code{m_*} & \code{afdx_app_tx} $\rightarrow$ \code{afdx_es} & 字节流 & 经 8 信用预取器连续供给核心应用口 \\
+消息 \code{m_*} & \code{afdx_svc} $\rightarrow$ \code{tx_buf} & 字节流 & 经两槽弹性缓冲解耦；跨页取页低 6 拍，消息末尾低约 10 拍 \\
+入队 \code{enq_*} & \code{tx_buf} $\rightarrow$ \code{tx_engine} & 请求应答 & 携带 14 位消息长度，应答不晚于请求后 64 拍 \\
+授权 \code{grant_*} & \code{tx_engine} $\rightarrow$ \code{tx_builder} & 单深缓冲握手 & 含分片偏移、标识与首/后续片标志；当前帧 \code{tx_sof} 起可接受下一授权 \\
+发送起始/分片完成 & \code{tx_builder} $\rightarrow$ \code{tx_engine} & 单拍脉冲 & 回报首前导字节时刻 $t_\text{start}$ 及当前分片读末指针 \code{fragment_done_*} \\
+帧字节 \code{s_*} & \code{tx_builder} $\leftrightarrow$ \code{mac_tx} & 字节流 & 经一级双缓冲流寄存器解耦；MAC 在前导码末拍接收第 0 字节 \\
+帧描述 \code{desc_*} & \code{rx_parse} $\rightarrow$ \code{rx_engine} & 单深缓冲握手 & \code{f_end} 后第 3 拍给出；含分片偏移与 \code{MF}，单帧判定日程 30 拍 \\
+重组预约 \code{query/reserve} & \code{rx_engine} $\leftrightarrow$ \code{rx_reassembly} & 查询应答 & 帧准入第 5/6 拍发起查询，19 拍返回槽位可接纳结果，第 28/29 拍原子提交 \\
+交付队列 \code{rx_dq} & \code{rx_engine} $\rightarrow$ \code{rx_deliver} & $32\times 73$ 队列 & 队列非空后的第 6 拍输出首个 \code{frag_valid} \\
+重组与交付 \code{d_*} & \code{rx_deliver} $\rightarrow$ \code{rx_reassembly} $\rightarrow$ \code{afdx_svc} & 字节流 & 单帧直通，分片帧按顺序写入槽位并在末片校验通过后连续输出 \\
 服务发送 \code{svc_tx_*} & 三个服务 $\rightarrow$ \code{afdx_svc} & 字节流 & 按整条消息轮询 \\
 配置表写 & \code{afdx_cfg} $\rightarrow$ 收发核心 & 写允许授权 & 等待不超过 64 拍（第~\ref{sec:cfgok}~节） \\
 \bottomrule

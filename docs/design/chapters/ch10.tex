@@ -2,18 +2,39 @@
 
 \section{验证体系与自动化回归策略}\label{sec:verifstrat}
 
-设计构建了涵盖 RTL 行为级仿真、自动化全量回归测试、性能与变长压力验证、综合后门级网表验证的多层次验证体系。验证平台采用多重断言判据：不仅核对测试平台控制台无差错打印，还通过独立的 Python/Tcl 参考模型对顶层端口的字节流记录与配置寄存器读回值进行端到端全量比对。
+设计构建了涵盖 RTL 行为级仿真、自动化全量回归测试、63~VL 顶层满载与混合分片验证、代码覆盖率签核以及布局布线后门级网表对照验证的多层次验证体系。验证平台采用多重断言判据：不仅核对测试平台控制台零错误打印，还通过独立的 Python/Tcl 参考模型（含 \code{tools/fragment_ref.py} 分片/重组参考模型）对顶层端口字节流记录与配置寄存器读回值进行逐字节比对。
 
-针对全设计 24 个 RTL 模块，回归测试套件共包含 \RegCount{} 项自动化测试用例（涵盖单模块存储/MAC/调度、系统双端对发、故障异常注入、4096 容量抽测、SNMP/615A/RTC 专项服务，以及变长多 VL 并发测试 \code{tb_sys_perf_var}），在 ModelSim SE-64 2020.4 环境下累计通过 \RegChecks{} 次自检断言与 \RegIndep{} 项独立参考核对，全部用例通过。
+图~\ref{fig:verify-platform} 展示激励、双网链路和两条校验路径。
 
-\section{性能与多虚拟链路变长压力实测}\label{sec:perfmeas}
+\figN[在线断言与离线参考模型]{f18_tb}{双端双网验证平台：在线断言检查仿真运行，端口记录供独立参考模型逐字节核对。}{fig:verify-platform}
 
-性能仿真基于理想 125~MHz 时钟（每拍 8~ns，GMII 每拍传输 1 字节）。吞吐率按接收端去重后的有效载荷计数（不计头部、填充及 A/B 冗余副本）；端到端时延按 $m_\text{last} \rightarrow \text{SFD} \rightarrow d_\text{valid}/d_\text{last}$ 分段测量；传输抖动严格按照官方 1022 答疑 R97-2 口径统计同一 VL 多帧端到端时延极差。
+针对全设计 \RtlFileCount{} 个 RTL 源文件（共 \DesignUnitCount{} 个设计单元），回归测试套件包含 \RegCount{} 项自动化测试用例（\RegFastCount{} 项快速回归 + 4 项长耗时系统参考回归，另含配置写隔离与 IPv4 分片/重组专项验证套件），在 ModelSim SE-64 2020.4 环境下累计通过 \countsep{\RegChecks} 次自检断言与 \countsep{\RegIndep} 项独立参考核对，全部用例判定 PASS。
 
-测试包含定长满载（\code{gbe77}）与四组多 VL 变长并发场景（\code{var_fixed}、\code{var_cycle}、\code{var_high}、\code{var_burst}），覆盖 1、17、256、1024、1471 字节等典型载荷，测试结果汇总于表~\ref{tab:perf-meas}。
+\section{性能与多虚拟链路变长/分片压力实测}\label{sec:perfmeas}
+
+性能仿真基于理想 125~MHz 时钟（每拍 8~ns，GMII 每拍传输 1 字节），从两个层次完整验证系统性能边界：
+\textbf{顶层 \code{AFDX_top} 63~VL 满载规格与混合分片实测（1026 答疑 R119 / 1030 答疑 R138-3/R139）：}按本团队声明满载网络规划（双网冗余全双工，单端激活 63 条发送 VL 与 63 条接收 VL，$\text{BAG}=1$~ms，持续 100~ms，入口驱动脚本 \code{sim/run_app.do}），覆盖 5 档周期定长（\code{P1}、\code{P17}、\code{P256}、\code{P1024}、\code{P1471}）与 2 档突发激励（\code{B1} 固定顺序对齐突发、\code{B2} 旋转三元组突发），以及 60 条短帧 VL（$1471$~B）与 3 条分片长包 VL（$1472$~B 2 片、$3000$~B 3 片、$8192$~B 6 片）并发的混合场景，结果见表~\ref{tab:perf-63vl}。
 
 \begin{table}[!htbp]\centering\small
-\caption{多工况性能与分段时延实测结果（直连 0 拍链路）}\label{tab:perf-meas}
+\caption{顶层 \texttt{AFDX\_top} 63~VL 声明满载规格与混合分片实测结果（100~ms 双工）}\label{tab:perf-63vl}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.85cm}>{\centering\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{2.1cm}>{\raggedleft\arraybackslash}p{1.75cm}>{\raggedleft\arraybackslash}p{1.65cm}L}
+\toprule
+测试场景 & 载荷配置 & 双向净吞吐\newline (Mbps) & 最大时延\newline (µs) & R119 抖动\newline (µs) & 判定与边界说明 \\
+\midrule
+\code{P1}--\code{P1024} & 1/17/256/\allowbreak 1024~B & 1.008--1032.192 & 34.600--65.984 & 0.008--3.360 & 4 档周期定长全通过（0 错包） \\
+\code{P1471}（满载） & 63~VL $\times$ 1471~B & \ThruSixtyThreeBi & \LatSixtyThreePMax & 0.016 & 单向净吞吐 \ThruSixtyThree~Mbps（线占率 \LineUtilSixtyThree\%） \\
+\code{B1}（固定突发） & 63~VL $\times$ 1471~B & 1477.415 & \LatBOne & ---\textsuperscript{*} & 3,150 对消息 BAG 间隔与载荷完整性全部通过 \\
+\code{B2}（旋转突发） & 63~VL $\times$ 1471~B & 1477.119 & \LatSixtyThreeBTwo & \JitSixtyThreeBTwo & 满足抖动 $<100$~µs 与时延 $<2$~ms 判据 \\
+\code{mixed_63vl} & 60 短 + 3 分片 & --- & 5212.304 & --- & $1472/3000/8192$~B 并发，12,206 条双向消息 0 错 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{2pt}{\footnotesize\raggedright 注：\textsuperscript{*}\code{B1} 按固定 VL 次序连续注入两帧，次帧等待剩余 BAG（$\le 1$~ms）验证 BAG 最小间隔约束；跨帧抢占下的 BAG 等待抖动由每三相邻 VL 轮换注入次序的 \code{B2} 测量。\par}
+\end{table}
+
+\textbf{核心 \code{afdx_es} 分段时延与超规格极限压力基线（1022 答疑 R97）：}针对 \code{afdx_es} 核心口按 $m_\text{last} \rightarrow \text{SFD} \rightarrow d_\text{valid}/d_\text{last}$ 分段测量定长 77~VL 高负载（\code{gbe77}）及四组变长并发场景（\code{var_fixed}、\code{var_cycle}、\code{var_high}、\code{var_burst}），结果见表~\ref{tab:perf-meas}。
+
+\begin{table}[!htbp]\centering\small
+\caption{核心 \texttt{afdx\_es} 多工况分段时延与超规格压力基线（直连 0 拍链路）}\label{tab:perf-meas}
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.7cm}>{\centering\arraybackslash}p{1.3cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.5cm}>{\centering\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}X}
 \toprule
 测试工况 & 激活 VL 数 & 单向吞吐\newline (Mbps) & $L_\text{tx}$ 最大\newline (µs) & $L_\text{rx}$ 首/末\newline (µs) & $L_\text{app}$ 首/末\newline (µs) & R97 抖动\newline (µs) \\
@@ -27,48 +48,46 @@
 \end{tabularx}
 \end{table}
 
-实测表明：
-\begin{itemize}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{吞吐率：}定长满载每方向吞吐为 \Thru~Mbps（81 VL 极限容量为 \ThruEightyOne~Mbps），变长高负载（\code{var_high}）为 \ThruVarHigh~Mbps，满足赛题 100~Mbps 指标要求。
-  \item \textbf{端到端时延：}全部工况下端到端时延最大值不超过 34.840~µs（\code{gbe77} 稳态最大为 \Lat~µs），满足 1--2~ms 时延上限要求。
-  \item \textbf{抖动：}定长稳态发送间隔偏差为 \Jit~µs；在 R97 同 VL 时延极差口径下，定长满载为 \JitSameVl~µs，变长循环多帧轮转下极差为 \JitVarCycle~µs。
-\end{itemize}
+实测表明：在声明 63~VL 满载规格下，单向净吞吐达 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps，超规格 77/81~VL 单向达 \Thru/\ThruEightyOne~Mbps），稳态周期最大时延 \LatSixtyThreePMax~µs、旋转突发最大时延 \LatSixtyThreeBTwo~µs、抖动 \JitSixtyThreeBTwo~µs，全面满足 $\ge 100$~Mbps 吞吐、$<2$~ms 时延与 $<100$~µs 抖动指标。
 
 \section{代码覆盖率签核}\label{sec:coverage}
 
-对全工程 24 个 RTL 模块统一开启 ModelSim 代码覆盖率插桩（\code{-coverage} 参数，插桩类型包括语句 \code{s}、分支 \code{b}、条件 \code{c}、表达式 \code{e}、状态机 \code{f} 和翻转 \code{t}），回归测试平台不计入统计范围。39 项全量回归累计覆盖率如表~\ref{tab:coverage} 所示。
+对全工程 \RtlFileCount{} 个 RTL 文件（共 \DesignUnitCount{} 个设计单元，含顶层流包装器与双 Bank 分片重组子模块）统一开启 ModelSim 代码覆盖率插桩（\code{+cover=sbceft}），测试平台不计入统计范围。合并全部 \CovUcdbCount{} 份 UCDB 覆盖率数据库后的统计结果如表~\ref{tab:coverage} 所示。
 
-\begin{table}\centering\small
-\caption{24 个 RTL 模块代码覆盖率汇总与未覆盖项分类分析}\label{tab:coverage}
+\begin{table}[!htbp]\centering\small
+\caption{\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）代码覆盖率汇总}\label{tab:coverage}
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.0cm}>{\raggedleft\arraybackslash}p{2.6cm}>{\raggedleft\arraybackslash}p{2.4cm}L}
 \toprule
 覆盖率统计类别 & 覆盖项数 / 总项数 & 覆盖率 & 统计口径与未覆盖项分类说明 \\
 \midrule
-语句覆盖率（Statement） & 6981 / 7083 & \CovStmt\% & 未覆盖项主要为硬件异常超时与死锁保护熔断分支 \\
-分支覆盖率（Branch） & 3844 / 3985 & \CovBranch\% & 覆盖正常收发、协议边界与 14 类故障注入处理分支 \\
-条件覆盖率（Condition） & 610 / 717 & \CovCond\% & 覆盖各核心多信号组合输入判定；未覆盖为极端故障并发组合 \\
-表达式覆盖率（Expression） & 1760 / 1991 & \CovExpr\% & 覆盖关键数据通路表达式；未覆盖项为互斥使能判定分支 \\
-状态机状态覆盖率（FSM State） & 110 / 110 & \CovFsmState\% & 工具识别纳入统计的 110 个状态机状态全部覆盖 \\
-状态机转换覆盖率（FSM Transition） & 138 / 308 & \CovFsmTrans\% & 已覆盖 138 条主干与异常转移；未覆盖 170 条转移统计项主要包含防御性非法跳转与互斥分支 \\
-翻转覆盖率（Toggle） & 41314 / 53632 & \CovToggle\% & 未翻转主要为静态配置高位、未用地址高位及测试专用引脚 \\
+语句覆盖率（Statement） & \CovStmtCov{} / \CovStmtTot & \CovStmt\% & 未覆盖项主要为极端超时保护与防御性异常熔断分支 \\
+分支覆盖率（Branch） & \CovBranchCov{} / \CovBranchTot & \CovBranch\% & 覆盖正常收发、IPv4 分片重组与多类故障注入分支 \\
+条件覆盖率（Condition） & \CovCondCov{} / \CovCondTot & \CovCond\% & 覆盖多信号组合准入判定；未覆盖为互斥极端并发组合 \\
+表达式覆盖率（Expression） & \CovExprCov{} / \CovExprTot & \CovExpr\% & 覆盖关键数据通路表达式；未覆盖项为防御性冗余掩码项 \\
+状态机状态覆盖率（FSM State） & \CovFsmStateCov{} / \CovFsmStateTot & \CovFsmState\% & 覆盖主干收发、分片重组及管理面状态；未覆盖为防御性保护态 \\
+状态机转换覆盖率（FSM Transition） & \CovFsmTransCov{} / \CovFsmTransTot & \CovFsmTrans\% & 覆盖核心正常与故障恢复跳转；未覆盖项主要为异常交叉跳转 \\
+翻转覆盖率（Toggle） & \CovToggleCov{} / \CovToggleTot & \CovToggle\% & 未翻转主要为静态配置高位、32 位计数器高位及未用地址位 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-全设计状态机状态覆盖率达 100\%，语句覆盖率为 \CovStmt\%，分支覆盖率为 \CovBranch\%，满足设计验证要求。
+全设计语句覆盖率达 \CovStmt\%，分支覆盖率达 \CovBranch\%，状态机状态覆盖率为 \CovFsmState\%（\CovFsmStateCov/\CovFsmStateTot），关键协议与分片重组通路均得到充分激励验证。
 
-\section{综合后门级网表功能对照仿真}\label{sec:netlistsim}
+\section{综合与布局布线后门级网表对照仿真}\label{sec:netlistsim}
 
-为了验证综合与布局布线工具未改变 RTL 的行为语义，工程基于官方 eLinx 导出的真实门级网表（VQM 格式，包含芯片厂商专用原语网表）开展了综合后门级功能回归仿真。
+为验证官方 eLinx 综合与布局布线工具链（\code{AFDX_top.vqm} 真实厂商原语门级网表）与 RTL 行为语义完全一致，工程完成了四组门级网表仿真闭环：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{顶层门级烟雾回归（\code{tb_elinx}）：}命令行门级网表回归通过 \textbf{\ElinxChecks{} 项自检断言}（0 错误，耗时 \NetElinxTime~s），并在 eLinx IDE 图形界面完成行为级联动核验（耗时 \code{0:02:18}）。
+  \item \textbf{五功能综合门级对照（\code{tb_net_services}）：}验证用户流收发、双网冗余去重、SNMP、ARINC 615A 与 SNTP/RTC 联合运行，通过 \textbf{\SvcChecks{} 项自检断言}与 65 项独立核对（0 错误，耗时 \NetCliTime~s），导出的 7 份外部记录文件与 RTL 逐字节一致。
+  \item \textbf{1030 IPv4 分片重组门级窗口（\code{tb_frag1030_net}）：}覆盖复位清零及 \code{1472}~B 两分片长包双端发送与顺序重组交付（前 199,578 拍门级窗口，耗时 \NetFragTime~s），导出的 5 份记录（32 条记录项）与同周期 RTL 逐字节一致。
+  \item \textbf{高负载多 VL 加分片门级窗口（顶层流包装发送与接收双窗口）：}覆盖 81~VL 高负载叠加 \code{1472}~B 分片发送窗口（耗时 \NetTSixTxTime~s）与接收重组窗口（耗时 \NetTSixRxTime~s），各通过 161 项断言且 11 份导出记录与 RTL 逐字节一致。
+\end{enumerate}
 
-在五功能综合测试平台 \code{tb_net_services} 激励下，门级网表仿真通过 \textbf{\SvcChecks{} 项自检断言}（0 错误），仿真耗时 \textbf{\NetCliTime{} 秒}。测试平台导出的七份外部记录（包含用户消息交付内容、SNMP 读写数据、615A 加载与卸载字节、RTC 同步偏差等）与同激励 RTL 行为仿真记录逐字节完全一致，验证了综合网表在联合测试场景下的功能正确性。
-
-\Needspace{8\baselineskip}
 \section{硬件可观察性与可控性机制}\label{sec:observability}
 
-设计在硬件架构层提供了全方位的调试与验证支持：
+设计在硬件架构层提供三项调试与验证机制：
 \begin{itemize}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{确定性事件脉冲端口：}\code{ev_tx}、\code{ev_a}、\code{ev_b}、\code{ev_rm_drop}、\code{ev_deliver} 在对应事件发生后的确定拍数内输出单拍指示，支持外部逻辑分析仪抓取。
+  \item \textbf{确定性事件脉冲端口：}顶层提供应用包装丢弃脉冲 \code{ev_app[2:0]}（发送未命中 VLID、发送包装溢出/超长、接收包装溢出），核心提供 \code{ev_tx}、\code{ev_a}、\code{ev_b}（含 \code{0x80} 重组拒绝合并）、\code{ev_rm_drop}、\code{ev_deliver} 单拍指示脉冲，支持外部逻辑分析仪与仿真断言精确观测。
   \item \textbf{配置总线全透明读回：}27 个硬件统计计数器与三项高层服务的所有内部寄存器均可通过 32 位配置总线在线读回。
-  \item \textbf{RAM 碰撞实时断言：}在仿真环境下通过宏内建了 SDP RAM 同拍同址读写碰撞断言，一旦发生未授权冲突即刻中断报警。
+  \item \textbf{RAM 碰撞与存储隔离双重校验：}仿真环境下内建同步 RAM 同拍同址读写碰撞实时断言；门级网表下配以 \code{tools/audit_1030_storage.py} 静态验证重组 Bank 隔离与 128 个写数据隔离 LUT 完整性。
 \end{itemize}

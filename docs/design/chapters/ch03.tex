@@ -2,15 +2,17 @@
 
 \section{系统框图}
 
-图~\ref{fig:system} 是 \code{AFDX_top} 的系统框图。端系统由八个一级模块组成：发送核心和接收核心构成线速数据通路；应用口与 RTC、SNMP、615A 三个服务通过服务通道共用一对收发核心；配置模块提供寄存器、统计计数器和三张配置表的访问接口；时间基准为整个设计提供自由运行的周期计数。各模块的分工见表~\ref{tab:modules}。
+系统采用“顶层应用流式包装器 \code{AFDX_top} + 端系统协议核心 \code{afdx_es}”的两级顶层结构。图~\ref{fig:system} 展示了端系统核心 \code{afdx_es} 的共享存储与双网数据通路，外围由 \code{AFDX_top} 集成发送应用流包装器 \code{afdx_app_tx} 与接收应用流包装器 \code{afdx_app_rx}，对外提供带 2 字节大端 VLID 前缀的流式应用接口（\code{tx_data}/\code{rx_data}）。端系统核心由八个一级模块组成：发送核心和接收核心构成线速数据通路；应用口与 RTC、SNMP、615A 三个服务通过服务通道共用一对收发核心；配置模块提供寄存器、统计计数器和三张配置表的访问接口；时间基准为整个设计提供自由运行的周期计数。各模块的分工见表~\ref{tab:modules}。
 
-\figN[AFDX\_top 系统框图]{f01_system}{AFDX\_top 的共享存储与双网数据通路。示例消息的载荷仅存一份，由描述符授权组帧并发往已启用的两网；接收侧载荷预写在本网环形缓存中，共享引擎只发布获准交付的描述符。}{fig:system}
+\figN[AFDX\_top 系统框图]{f01_system}{端系统核心的共享存储与双网数据通路。示例消息的载荷仅存一份，由描述符授权组帧并发往已启用的两网；接收侧载荷预写在本网环形缓存中，共享引擎只发布获准交付的描述符（分片报文经 \code{afdx_rx_reassembly} 重组后统一交付）。}{fig:system}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-3.0cm-4\tabcolsep\relax}}
 \caption{一级模块分工}\label{tab:modules}\\
 \longtablehead{2}{模块 & 职责}
-\code{afdx_tx_core} & 发送核心：消息分页缓存、128 条 VL 的 BAG 调度、组帧、双网 MAC（第~\ref{ch:tx}~章） \\
-\code{afdx_rx_core} & 接收核心：双网 MAC、帧头解析、完整性检查、冗余管理、交付（第~\ref{ch:rx}~章） \\
+\code{afdx_app_tx} / \code{afdx_app_rx} & 顶层应用流包装器：解析/添加 2 字节大端 VLID 前缀，提供双侧 $8\times 4$~KiB（32~KiB）分体应用消息缓冲、发送侧 3 级流水 128 路 VLID 比较映射与接收侧 $4096\times 16$~bit 索引反查 \\
+\code{afdx_es} & 端系统协议核心顶层，集成下述八个一级核心子系统 \\
+\code{afdx_tx_core} & 发送核心：入口两槽弹性缓冲、消息分页缓存与超长回滚（支持 $1\text{--}\MaxMessageBytes$~B）、128 条 VL 的 BAG 调度与 IPv4 自动分片、组帧与逐片 IPv4 首部校验和计算、双网锁步 MAC（第~\ref{ch:tx}~章） \\
+\code{afdx_rx_core} & 接收核心：双网 MAC、帧头与分片解析、完整性检查（IC）、冗余管理（RM）、\ReasmContexts{} 路并发 IPv4 顺序分片重组、交付（第~\ref{ch:rx}~章） \\
 \code{afdx_svc} & 服务通道：应用与三个服务按整条消息轮询发送；按 UDP 目的端口将接收消息送至对应服务或应用 \\
 \code{afdx_rtc} & SNTPv4 纳秒级时钟同步（第~\ref{sec:rtc}~节） \\
 \code{afdx_snmp} & SNMP 代理（第~\ref{sec:snmp}~节） \\
@@ -20,74 +22,71 @@
 \end{longtable}
 
 \FloatBarrier
-\section{模块层次与 24 个 RTL 模块划分}
+\section{模块层次与 \RtlFileCount{} 个 RTL 文件划分}
 
-\code{AFDX_top} 顶层下共划分为 24 个 Verilog RTL 模块（源码位于 \code{rtl/} 目录），模块归属、层次关系与片上 RAM 实例数量见表~\ref{tab:hierarchy}（各源文件的具体职责见附录~\ref{app:files}）。全设计共包含 21 张逻辑存储表，在物理实现上封装为 52 个 \code{afdx_ram_sdp} 简单双端口 RAM 模块实例（经综合工具映射为 366 个 EBR 物理原语；其中发送核心 7 个、接收核心 37 个、SNMP 2 个、615A 6 个）。
+\code{AFDX_top} 顶层下共划分为 \RtlFileCount{} 个 Verilog RTL 源文件（累计 \RtlLineCount{} 行代码，包含 \DesignUnitCount{} 个 \code{module} 设计单元，源码位于 \code{rtl/} 目录），模块归属、层次关系与片上同步 RAM 实例数量见表~\ref{tab:hierarchy}（各源文件的具体职责见附录~\ref{app:files}）。全设计共例化 \RamSdpCount{} 个通用简单双端口 RAM（\code{afdx_ram_sdp}）与 160 个针对物理布线与写保持时序定制的专用同步 RAM 单元（合计 250 个同步 RAM 实例），经综合与装箱映射为 \Mem{} 个 M4K/EBR 物理存储块（占比 \MemPct\%）。
 
-为兼顾管理面协议状态机复杂度与 125~MHz 时钟约束，设计对 SNMP 与 615A 实施了引擎分离：
+为兼顾新增的应用流封装、\ReasmContexts{} 路并发顺序分片重组、管理面协议状态机复杂度与 125~MHz 物理时序收敛，设计实施了清晰的层次解耦：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{\code{afdx_snmp.v} 与 \code{afdx_snmp_engine.v}：}\code{afdx_snmp.v} 作为顶层封装，负责 UDP 报文捕获、配置总线路由、MIB/Trap RAM 访问控制以及 2 分频局部时钟使能（\code{CE_DIV=2}）复制树驱动；ASN.1/BER 解码、VarBind 查找与应答组装核心状态机位于 \code{afdx_snmp_engine.v}，运行于 16~ns 时序预算的 2 周期多周期使能域。
-  \item \textbf{\code{afdx_615a.v} 与 \code{afdx_615a_engine.v}：}\code{afdx_615a.v} 负责 TFTP 端口分发、超时计数器与 6 块协议 RAM（含第 6 块 \code{denial_ram}）的物理接口；数据加载协议主状态机、LUH 头文件与数据文件 CRC-16 硬件校验位于 \code{afdx_615a_engine.v}，约束在 16~ns 多周期路径中。
-  \item \textbf{\code{afdx_mgmt_tx.v}：}管理面流式预取发送适配器，由 SNMP 与 615A 独立实例化复用。该模块运行于 125~MHz 主时钟下，在引擎提交报文后直接从协议 RAM 中流式读出数据并适配为底层的发送握手，避免额外复制大容量帧缓冲，解耦管理面多周期引擎与底层发送仲裁器的时序关联。
+  \item \textbf{顶层流式包装器（\code{afdx_app_tx.v}、\code{afdx_app_rx.v}、\code{afdx_app_map.v}、\code{afdx_app_payload.v}、\code{afdx_app_read.v}）：}发送包装器从 \code{tx_data} 提取前 2 字节大端 VLID，通过内部 3 级流水 128 路 VLID 比较器完成 $\text{VLID}\rightarrow\text{VL\_idx}$ 映射，并将 $1\text{--}\MaxMessageBytes$~B 载荷写入 $8\times 4$~KiB 分体缓存（\code{afdx_app_payload}，每体拆分为 $4\times 1024\times 9$~bit 子片并配置写数据 LUT 门控隔离）后经 \code{afdx_app_read} 8 信用预取器送入核心；接收包装器通过 \code{afdx_app_map}（$4096\times 16$~bit 同步 RAM）将核心输出的 12 位接收 VL 索引还原为 2 字节大端 VLID 前缀，经 32~KiB 接收应用缓冲无反压连续输出至 \code{rx_data}。
+  \item \textbf{发送入口弹性级与接收 \ReasmContexts{} 路分体顺序重组（\code{afdx_tx_buf.v}、\code{afdx_rx_reassembly*.v}）：}\code{afdx_tx_buf.v} 内置两槽位 49~bit 入口弹性缓冲（\code{afdx_tx_ingress_elastic}）与 256~B 超长报文回滚 RAM（\code{afdx_tx_rollback_ram}），核心载荷池由独立封装的 \code{afdx_tx_payload_store}（$131072\times 8$~bit，带 27~bit 本地写捆绑与 LUT 写隔离）实现；接收核心在 \code{afdx_rx_engine} 准入阶段与 \code{afdx_rx_reassembly} 协同查询并预留槽位，经 \code{afdx_rx_deliver} 从双网 4~KiB 环形缓存读出后送入 2 个重组存储体（\code{afdx_rx_reassembly_bank} $\times 2$，每体含 4 张 \code{afdx_rx_reassembly_ram} 元数据表与 8 个槽位），每个槽位由 4 通道交织的 $8192\times 2$~bit 通道 RAM（\code{afdx_rx_reassembly_payload_lane}，全芯片 64 通道共配置 128 个 \code{lut_mask="8888"} 写数据隔离 LUT 驱动全部 256 个 RAM 数据输入端）构成，单拍并行写入 8 位分片字节并消除短路径保持时间违例。
+  \item \textbf{\code{afdx_snmp.v}、\code{afdx_615a.v} 与 \code{afdx_mgmt_tx.v}：}管理面核心状态机（\code{afdx_snmp_engine.v} 与 \code{afdx_615a_engine.v}）由 2 分频局部时钟使能（\code{CE_DIV=2}）驱动，运行于 16~ns 多周期使能域；外围报文捕获、RAM 接口及 \code{afdx_mgmt_tx.v} 流式预取发送适配器运行于 125~MHz 单周期主时钟域。
 \end{enumerate}
 
 \begingroup\tablestyle
 \setlength{\tabcolsep}{5pt}
 \setlength{\heavyrulewidth}{0.8pt}
 \setlength{\lightrulewidth}{0.35pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-4.5cm-4\tabcolsep\relax}>{\raggedleft\arraybackslash}p{1.3cm}@{}}
-\caption{24 个 RTL 模块分工与下级层次}\label{tab:hierarchy}\\
-\longtablehead{3}{\textbf{所属域与模块} & \textbf{子模块及下级关系} & \textbf{RAM\newline 物理数}}
-\textbf{\code{afdx_timebase}} & 周期计数 \code{now[31:0]} 与粗粒度计时 \code{now_c[15:0]} & 0 \\
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.3cm-4\tabcolsep\relax}>{\raggedleft\arraybackslash}p{1.9cm}@{}}
+\caption{\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）分工与下级层次}\label{tab:hierarchy}\\
+\longtablehead{3}{\textbf{所属域与模块} & \textbf{子模块及下级关系} & \textbf{同步 RAM\newline (SDP/专用)}}
+\textbf{\code{AFDX_top}} & 顶层流式包装器：例化 \code{afdx_app_tx}、\code{afdx_app_rx} 与 \code{afdx_es} & --- \\
 \addlinespace[3pt]
-\textbf{\code{afdx_cfg}} & 寄存器译码、27 个统计计数器两级流水更新与配置写握手 & 0 \\
+\textbf{\code{afdx_app_tx}} & 3 级流水 128 路 VLID 比较器、\code{descriptor_ids}（\code{afdx_ram_sdp} $\times 1$）、\code{afdx_app_payload}（$\hookrightarrow$ \code{afdx_app_payload_bank} $\times 8$ $\hookrightarrow$ \code{afdx_app_payload_slice} $\times 32$，$1024\times 9$）、\code{afdx_app_read} & 1 / 33 \\
 \addlinespace[3pt]
-\textbf{\code{afdx_svc}} & 应用与服务 4 路轮询发送仲裁（寄存输出）与端口分发 & 0 \\
+\textbf{\code{afdx_app_rx}} & \code{afdx_app_map}（$4096\times 16$ VLID 反查 RAM）、\code{descriptor_ids}（\code{afdx_ram_sdp} $\times 1$）、\code{afdx_app_payload}（$\hookrightarrow$ 8 Bank / 32 Slice）、\code{afdx_app_read} & 1 / 34 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_es}} & 端系统协议核心顶层：集成 \code{afdx_timebase}、\code{afdx_cfg}、\code{afdx_svc}、\code{afdx_tx_core}、\code{afdx_rx_core}、\code{afdx_rtc}、\code{afdx_snmp}、\code{afdx_615a} & --- \\
+\addlinespace[3pt]
+\textbf{\code{afdx_timebase}} / \textbf{\code{afdx_cfg}} / \textbf{\code{afdx_svc}} & 周期计数 \code{now[31:0]} 与 \code{now_c[15:0]}；寄存器译码与 27 个核心统计计数器；应用与 3 项服务 4 路轮询仲裁与 UDP 端口分发 & 0 / 0 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_tx_core}} &
-\code{afdx_tx_buf}（写口寄存）、\code{afdx_tx_engine}、\code{afdx_tx_builder}\newline
-\code{afdx_tx_free}（\(\hookrightarrow\) \code{afdx_ram_sdp}：\code{tx_free}）\newline
-\code{afdx_mac_tx}（\(\hookrightarrow\) \code{afdx_crc32_d8} $\times$2）、1 级流缓冲结构\newline
-\code{afdx_ram_sdp} $\times$6：\code{tx_cfg}、\code{tx_state}、\code{tx_desc}、\newline
-\hspace*{1em}\code{tx_mnext}、\code{tx_pnext}、\code{tx_payload} & 7 \\
+\code{afdx_tx_buf}（含 \code{afdx_tx_ingress_elastic} 与 \code{afdx_tx_rollback_ram}）、\code{afdx_tx_payload_store}（$131072\times 8$）\newline
+\code{afdx_tx_engine}（含 IPv4 分片表 \code{afdx_ram_sdp} $\times 7$）、\code{afdx_tx_builder}（12 拍帧头与 IPv4 校验和）\newline
+\code{afdx_tx_free}（\code{afdx_ram_sdp} $\times 1$）、\code{afdx_mac_tx}（$\hookrightarrow$ \code{afdx_crc32_d8} $\times 2$）\newline
+核心表 \code{afdx_ram_sdp} $\times 5$：\code{tx_cfg}、\code{tx_state}、\code{tx_desc}（$256\times 47$）、\code{tx_mnext}、\code{tx_pnext} & 13 / 2 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_rx_core}} &
-\code{afdx_mac_rx} $\times$2（每个含 1 个 \code{afdx_crc32_d8}）\newline
-\code{afdx_rx_parse} $\times$2、\code{afdx_rx_engine}、\code{afdx_rx_deliver}\newline
-\code{rx_map}（划分为 32 个 $2048\times 13$ 子库，\code{afdx_ram_sdp} $\times$32）\newline
-\code{rx_dq}（迁入块 RAM，\code{afdx_ram_sdp} $\times$1，32$\times$68~bit）\newline
-\code{afdx_ram_sdp} $\times$4：\code{rx_cfg}、\code{rx_state}、\code{rx_ring_a}、\code{rx_ring_b} & 37 \\
+\code{afdx_mac_rx} $\times 2$（各含 1 个 \code{afdx_crc32_d8}）、\code{afdx_rx_parse} $\times 2$、\code{afdx_rx_engine}、\code{afdx_rx_deliver}\newline
+\code{rx_map}（32 Bank $\times 2$ 写分片，\code{afdx_ram_sdp} $\times 64$）、\code{rx_dq}（$32\times 73$~bit，\code{afdx_ram_sdp} $\times 1$）、\code{rx_ring_a/b}（\code{afdx_ram_sdp} $\times 2$）、\code{rx_cfg}（\code{afdx_rx_table_slice} $\times 8$）、\code{rx_state}（\code{afdx_rx_table_slice} $\times 11$）\newline
+\code{afdx_rx_reassembly} $\hookrightarrow$ \code{afdx_rx_reassembly_bank} $\times 2$（每体含 \code{afdx_rx_reassembly_ram} $\times 4$ 元数据表 + \code{afdx_rx_reassembly_payload_slot} $\times 8$ $\hookrightarrow$ \code{afdx_rx_reassembly_payload_lane} $\times 32$，$8192\times 2$） & 67 / 91 \\
 \addlinespace[5pt]
-\textbf{\code{afdx_rtc}} & \code{afdx_ntp_fraction} $\times$3（NTP 小数换算单元） & 0 \\
+\textbf{\code{afdx_rtc}} & \code{afdx_ntp_fraction} $\times 3$（NTP 小数换算单元） & 0 / 0 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_snmp}} &
-\code{afdx_snmp_engine}（ASN.1/BER 核心，\code{CE_DIV=2} 多周期域）\newline
-\code{afdx_mgmt_tx}（125~MHz 流式预取发送适配器）\newline
-\code{afdx_ram_sdp} $\times$2：\code{request_ram}、\code{response_ram} & 2 \\
+\code{afdx_snmp_engine}（\code{CE_DIV=2} 多周期域）、\code{afdx_mgmt_tx}、\code{afdx_ram_sdp} $\times 2$：\code{request_ram}、\code{response_ram} & 2 / 0 \\
 \addlinespace[5pt]
 \textbf{\code{afdx_615a}} &
-\code{afdx_615a_engine}（数据加载状态机与 CRC16，\code{CE_DIV=2} 域）\newline
-\code{afdx_ram_sdp} $\times$6：\code{packet_rx}、\code{packet_tx}、\code{lur_ram}、\newline
-\hspace*{1em}\code{header_ram}、\code{load_ram}、\code{denial_ram}（拒绝原因表） & 6 \\
+\code{afdx_615a_engine}（\code{CE_DIV=2} 域）、\code{afdx_mgmt_tx}、\code{afdx_ram_sdp} $\times 6$：\code{packet_rx}、\code{packet_tx}、\code{lur_ram}、\code{header_ram}、\code{load_ram}、\code{denial_ram} & 6 / 0 \\
 \midrule
-\multicolumn{2}{l}{\textbf{全设计合计：24 个 RTL 模块，21 张逻辑表}} & \textbf{52} \\
+\multicolumn{2}{l}{\textbf{全设计合计：\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元），物理映射为 \Mem{} 个 M4K/EBR}} & \textbf{\RamSdpCount{} / 160} \\
 \end{longtable}
 \endgroup
 
-\Needspace{12\baselineskip}
 \section{关键设计决策}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.4cm-8\tabcolsep\relax}}
 \caption{关键设计决策}\label{tab:decisions}\\
 \longtablehead{4}{设计问题 & 候选方案 & 选择 & 理由}
 时钟结构 & 双网各自时钟域；统一 125~MHz 单时钟 & 单时钟 & GMII 接口线速为 1~Gbit/s，载荷容量为 956.44~Mbps，满足赛题 100~Mbps 的要求；核心内部收发与控制逻辑在同一时钟域协同运行 \\
-线路接口 & 模板端口传输 GMII 帧（含前导码、SFD、FCS）；传输 MAC 用户侧数据 & GMII 帧 & 与 GMII 的逐字节定义一致 \\
+顶层应用接口 & 直接暴露多信号核心口；2B VLID 前缀流式包装 & 2B VLID 流式包装 & 严格符合官方 1026/1030 答疑 R120-3/R124/R126 要求，保持 \code{AFDX_top} 模板端口定义，同时内部 \code{afdx_es} 保留完整显式控制接口 \\
+长包分片与重组 & 整包拆为多条独立消息入队；单描述符按片调度 + \ReasmContexts{} 路双 Bank 顺序重组 & 单描述符按片调度 + \ReasmContexts{} 路重组 & $8192$~B 长包仅占 1 个消息描述符与 16 个缓存页，由 \code{tx_engine} 记录剩余字节数与片偏移并按 BAG 逐片授权；接收端在逐帧 IC/RM 后经 2-Bank $\times$ 8 槽位支持 \ReasmContexts{} 条 VL 并发顺序偏移重组 \\
 MAC 实现 & eLinx 官方 MAC IP；自研 & 自研 & 直接控制前导码、FCS 和帧间隔；输出寄存器直接驱动 GMII，空闲发送延迟为 0 拍 \\
 双网 MAC & 双 MAC 独立发送；单 MAC 同时驱动两网 & 单 MAC 驱动两网 & 两网副本同拍起始，节省一套 MAC；单网 VL 也按整帧占用双网发送时隙（第~\ref{sec:mactx}~节） \\
 VL 状态存储 & 寄存器阵列；块 RAM 状态表 & 块 RAM 状态表 & 寄存器用量随 VL 数量线性增长；采用块 RAM 后，由对应引擎按固定流水读写，配置写入须等待访问许可 \\
-VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直接查表 & 查表固定耗时 2 拍，无地址冲突；需约 0.85~Mbit 存储（65536$\times$13~bit），可由片上存储提供 \\
+VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直接查表 & 接收核心采用 32-Bank $\times 2$ 分片 $65536\times 13$~bit 直接查表（3 级或树归并流水，无哈希冲突）；应用发送采用 3 级流水 128 路比较器完成映射 \\
 发送调度 & 轮询扫描；最早到期优先；预取窗口扫描 & 预取窗口扫描 & 每拍至多一级比较；512 拍窗口为扫描回访与组帧留出时间，无争用时可在允许时刻启动发送 \\
-接收写入 & 整帧检查后写入；边接收边预写入 & 先预写入后提交 & 载荷边接收边写入环形缓冲，检查失败时回退预写入指针，释放本帧占用的空间 \\
+接收写入 & 整帧检查后写入；边接收边预写入 & 先预写入后提交 & 载荷边接收边写入环形缓存，检查失败时回退预写入指针，释放本帧占用的空间 \\
 服务发送 & 服务独立发送通路；按消息轮询共享发送核心 & 共享发送核心 & 服务报文与用户报文遵守同一 BAG 调度；无服务报文时应用直通，零附加延迟 \\
 服务实现 & 软核处理器；硬件状态机 & 硬件状态机 & 协议解析与报文组装均由硬件状态机完成；RTC 时间戳在报文握手当拍采样 \\
 服务状态序列 & 各分支独立展开；公共状态序列加返回状态寄存器 & 公共状态序列 & SNMP 和 615A 复用取字节、整数拼接与报文输出过程，统一同步 RAM 的访问时序 \\
@@ -99,13 +98,13 @@ VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直�
 
 为满足航电高层管理协议（SNMP 与 ARINC 615A）在 125~MHz 主频下的静态时序收敛要求，系统在统一主时钟树下设置了管理面局部时钟使能结构：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{多周期引擎结构（$\text{CE\_DIV}=2$）：}在 \code{afdx_snmp} 与 \code{afdx_615a} 顶层生成每两拍有效一次的时钟使能信号 \code{ce}，并通过多级低扇出寄存器复制树（\code{CE_GROUPS}）驱动核心引擎内部逻辑。全工程共有 2,755 个触发器约束为 2 周期建立路径（16~ns 建立时间预算），大幅缓解深层协议分支的组合时序压力。
-  \item \textbf{单周期外围与接口隔离：}以太网报文接收捕获、双端口协议 RAM 写口、32 位配置总线、RTC 纳秒时钟基准以及用于流式预取的 \code{afdx_mgmt_tx} 适配模块均保持在 125~MHz 单周期全速运行。这种结构既避免了异步跨时钟域（CDC）带来的亚稳态风险与同步 FIFO 开销，又使关键控制与存储接口维持周期级确定性。
+  \item \textbf{多周期引擎结构（$\text{CE\_DIV}=2$）：}在 \code{afdx_snmp} 与 \code{afdx_615a} 顶层生成每两拍有效一次的时钟使能信号 \code{ce}，并通过多级低扇出寄存器复制树（\code{CE_GROUPS}）驱动核心引擎内部逻辑。全工程共有 \MulticycleRegs{} 个触发器（由 \MulticycleRules{} 条多周期约束规则覆盖）约束为 2 周期建立路径（16~ns 建立时间预算），大幅缓解深层协议分支的组合时序压力。
+  \item \textbf{单周期外围与接口隔离：}应用流包装器、以太网报文接收捕获、分片重组引擎、双端口协议 RAM 写口、32 位配置总线、RTC 纳秒时钟基准以及用于流式预取的 \code{afdx_mgmt_tx} 适配模块均保持在 125~MHz 单周期全速运行。这种结构既避免了异步跨时钟域（CDC）带来的亚稳态风险与同步 FIFO 开销，又使关键控制与存储接口维持周期级确定性。
 \end{enumerate}
 
 核心顶层采用与 \code{clk} 同步的 GMII 字节流接口。连接外部物理 PHY 时，接收数据随 PHY 恢复的 RX\_CLK 变化，发送侧需向外输出 GTX\_CLK；因此板级外围需在接收引脚与核心之间设置帧级弹性缓冲，将 RX\_CLK 域字节流同步至 \code{clk} 域，发送侧则由 \code{clk} 经输出寄存器驱动 GTX\_CLK。
 
-复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg}，并将 256 个页号写入空闲页池；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}。深度最大的 \code{rx_map} 物理划分为 32 个子库并行清零，配合初始化定时器计数需 65536 拍。两个核心的 \code{init_done} 经两级流水打拍并在顶层相与锁存输出为 \code{tx_ready}，从解除复位到 \code{tx_ready} 为 1 共 65539 拍，即 524.312~µs。表初始化完成之前，\code{cfg_ready} 保持 0、配置写不被接受，凡在此期间开始接收的以太网帧均整帧忽略。
+复位结束后，发送核心清零 \code{tx_state}、\code{tx_cfg} 及分片进度表，并将 256 个页号写入空闲页池；接收核心清零 \code{rx_map}、\code{rx_cfg} 和 \code{rx_state}，分片重组引擎复位 \ReasmContexts{} 个重组槽位状态，应用包装器清零映射表与描述符槽。深度最大的 \code{rx_map} 物理划分为 32 个子库并行清零，配合初始化定时器计数需 65536 拍。两个核心的 \code{init_done} 经流水打拍并在核心顶层相与锁存输出（从解除复位到 \code{afdx_es} 就绪为 65539 拍，即 524.312~µs；顶层 \code{AFDX_top} 的应用入口 \code{tx_ready} 在包装器同步完成清零后于约第 65,550 拍拉高）。表初始化完成之前，\code{cfg_ready} 保持 0、配置写不被接受，凡在此期间开始接收的以太网帧均整帧忽略。
 
 \section{时间基准}\label{sec:timebase}
 
@@ -118,11 +117,9 @@ VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直�
 
 \section{端到端数据通路}\label{sec:path}
 
-图~\ref{fig:path} 给出一条用户消息从发送端应用到接收端应用的完整路径。发送侧依次经过分页缓存、调度引擎、组帧器和双网 MAC；两份帧经 A、B 网到达接收端后，各自经 MAC 和解析器检查，由接收引擎做完整性检查和冗余管理，最后由交付模块逐字节送给应用。
+图~\ref{fig:path} 给出一帧用户消息从发送端应用到接收端应用的完整路径。在顶层 \code{AFDX_top} 中，应用发送流先经 \code{afdx_app_tx} 剥离 2 字节大端 VLID 前缀并映射为内部 VL 索引，随后进入 \code{afdx_es} 发送侧，依次经过入口弹性级、分页缓存、调度与分片引擎、组帧器和双网 MAC；两份以太网帧经 A、B 网到达接收端后，各自经 MAC 和解析器检查，由接收引擎做完整性检查和冗余管理，送入交付模块；单帧消息直通输出，IPv4 分片消息则进入 \code{afdx_rx_reassembly} 完成分片拼接与全报文 UDP 校验，最后经 \code{afdx_app_rx} 加上 2 字节大端 VLID 前缀流式交付给上层应用。
 
-\figN[一条用户消息的端到端路径]{f02_path}{一条四字节消息的端到端表示。ES1 将同一组 p0--p3 加上 42 字节帧头、13 字节补零、SN 与 FCS 后发往两网；ES2 去掉帧封装并交付一次。示例采用 VL 7、SN 17，两帧均正确、IC/RM 启用、处于冗余窗口内且交付队列有空位，A 描述先被处理}{fig:path}
-
-帧内数据通路每拍处理一个字节，对应 1~Gbit/s。发送侧先把应用消息写入分页缓存，满足调度条件后，一边读取载荷，一边生成以太网帧；接收侧将到达的载荷预写入环形缓冲，帧检查通过后再提交给交付模块。各段的拍数和上界在第~\ref{sec:budget}~节推导。
+帧内数据通路每拍处理一个字节，对应 1~Gbit/s。发送侧先把应用消息写入分页缓存，满足调度条件后，一边读取载荷，一边生成以太网帧；接收侧将到达的载荷预写入环形缓存，帧检查通过后再提交给交付与重组模块。各段的拍数和上界在第~\ref{sec:budget}~节推导。
 
 \section{设计预算}\label{sec:budget}
 
@@ -132,26 +129,30 @@ VLID 映射 & 全地址直接查表；哈希加 CAM；限制 VLID 范围 & 直�
 
 \subsection{吞吐}
 
-载荷为 $n$ 字节的帧连同 8 字节前导码、4 字节 FCS 和 12 拍帧间隔，在线路上占用的时长为
+单帧载荷为 $n$ 字节（$1\le n\le 1471$）的以太网帧连同 8 字节前导码、4 字节 FCS 和 12 拍帧间隔，在物理线路上占用的时长为
 \begin{equation}
 C(n) = 8 + 47 + \max(n,17) + 12 = 67 + \max(n,17)\ \text{拍}.
 \end{equation}
-满载帧 $n=1471$ 占 $C=1538$ 拍，最短帧 $n\le 17$ 占 84 拍。每网每方向的载荷容量为
+满载帧 $n=1471$ 占 $C=1538$ 拍，最短帧 $n\le 17$ 占 84 拍。每网每方向的单帧最大有效载荷容量为
 \begin{equation}
 R_\text{max} = \frac{1471 \times 8~\text{bit}}{1538 \times 8~\text{ns}} = 956.44~\text{Mbps}.
 \end{equation}
-设 BAG 为 $B$ 拍，$N$ 条 VL 各按该间隔发送满载帧时，总载荷率为 $N \times 1471 \times 8~\text{bit}/(B \times 8~\text{ns})$，可调度条件为 $N \times C \le B$。BAG 为 1~ms 时 $B=125000$，$N \le \lfloor 125000/1538 \rfloor = 81$，此时载荷率 953.208~Mbps；77 条 VL 为 906.136~Mbps，线路占用率为 94.7\%。
+设 BAG 为 $B$ 拍，$N$ 条 VL 各按该间隔发送满载帧时，单向有效载荷率为 $N \times 1471 \times 8~\text{bit}/(B \times 8~\text{ns})$，可调度条件为 $N \times C \le B$。当 $\text{BAG}=1$~ms（$B=125000$ 拍）时：
+\begin{itemize}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{声明 63~VL 满载规划基准（R119/R138-3/R139-3）：}单端激活 $N=63$ 条发送 VL 与 $63$ 条接收 VL，每毫秒占用物理线路 $63\times 1538 = 96,894$ 拍，线路占用率为 $96894/125000 = 77.5152\%$（约 $77.5\%$），单向去重有效载荷吞吐率为 $63\times 1471\times 8~\text{bit}/1~\text{ms} = \ThruSixtyThree$~Mbps（若计入顶层 2 字节 VLID 前缀则输入流速率为 $\ThruSixtyThreeRaw$~Mbps），双向全双工合计有效载荷吞吐率为 $\ThruSixtyThreeBi$~Mbps。
+  \item \textbf{77~VL 与 81~VL 超规格极限压力基准：}$N=77$ 条 VL 时单向有效载荷率为 $\Thru$~Mbps（线路占用率 $94.7\%$）；物理极限 $N = \lfloor 125000/1538 \rfloor = 81$ 条 VL 时，单向有效载荷率达 $\ThruEightyOne$~Mbps（线路占用率 $99.66\%$）。
+\end{itemize}
 
 线速通路上各环节的吞吐预算如下：
 \begin{itemize}
-  \item \textbf{应用消息接收：}\code{afdx_tx_buf} 正常每拍接收一字节，每次申请新缓存页暂停 6 拍；消息接收结束后，写入描述符及等待入队应答共暂停 10 拍。一条占 3 页的 1471 字节消息在应用口共耗时 $1471 + 3\times 6 + 10 = 1499$ 拍，小于该帧占用线路的 1538 拍。
-  \item \textbf{授权与准备：}引擎完成一帧授权需要 9 拍，组帧器准备帧头需要 11 拍，合计 20 拍，在当前帧发送期间完成，小于最短帧的 84 拍时隙。
-  \item \textbf{接收交付：}交付口每拍一字节；单网到达的载荷率至多 $1471/1538$ 字节每拍，低于交付速率。
+  \item \textbf{应用消息接收：}顶层 \code{afdx_app_tx} 以每拍 1 字节无间断接收带 2 字节 VLID 前缀的消息并写入 $8\times 4$~KiB 分体缓冲；核心 \code{afdx_tx_buf} 正常每拍接收一字节，每次申请新缓存页暂停 6 拍；消息接收结束后，写入描述符及等待入队应答共暂停约 10 拍。一条占 3 页的 1471 字节消息在核心口共耗时 $1471 + 3\times 6 + 10 = 1499$ 拍，小于该帧占用线路的 1538 拍；一条占 16 页的 $8192$ 字节最大分片消息写入核心耗时 $8192 + 16\times 6 + 10 = 8298$ 拍（66.384~µs），而其拆分为 6 个以太网帧跨 5 个 BAG 周期发送，入口写入速率远高于线路消耗速率。
+  \item \textbf{授权与准备：}引擎完成一帧或一片授权约需 9--12 拍，组帧器 \code{afdx_tx_builder} 采用 12 拍（步骤 \code{0..11}）准备序列在帧头阶段硬件计算 20 字节 IPv4 首部校验和（IPv4 首分片 UDP 校验和按 RFC 768 固定置 \code{0x0000}，无需预读整包载荷），并在计划起始时刻前 8 拍（\code{START_LEAD_REGISTERED = -8}）完成准备，均在当前帧发送期间重叠完成，远小于最短帧的 84 拍时隙。
+  \item \textbf{接收重组与交付：}核心交付口与 \ReasmContexts{} 路重组引擎均支持每拍 1 字节线速吞吐；最短以太网帧占 84 拍，接收引擎 30 拍（相位 \code{0..30}）帧处理日程可在连续两帧最短帧到达期间处理双网副本；单网到达的载荷率至多 $1471/1538$ 字节每拍，低于交付与重组速率。
 \end{itemize}
 
 \subsection{端到端时延}
 
-端到端时延的起止点定义见第~\ref{ch:req}~章。下文按收发通路无其他消息争用、当前 VL 已满足 BAG 发送间隔的基准条件，给出各区段的典型拍数和设计上界（表~\ref{tab:latbudget}），发送侧和接收侧的逐拍时序见图~\ref{fig:pipe}。
+端到端时延的起止点定义见第~\ref{ch:req}~章。下文按收发通路无其他消息争用、当前 VL 已满足 BAG 发送间隔的基准条件，给出核心分段口径下各区段的典型拍数和设计上界（表~\ref{tab:latbudget}），发送侧和接收侧的逐拍时序见图~\ref{fig:pipe}。若从顶层 \code{AFDX_top} 流式接口计时（R119/R139 全消息入口首字节至接收末字节），由于 \code{afdx_app_tx} 与 \code{afdx_app_rx} 均采用“整包收齐并完成 VLID 映射后转发”的存储转发边界，单条 $n$ 字节消息在无排队争用时额外叠加顶层发送写入（$n+2$ 拍加跨层预取）与顶层接收缓存转发（$n$ 拍加 2 字节 VLID 前缀输出）；例如在 63~VL 周期稳态激励下，$1471$~B 消息顶层全消息最大端到端时延实测为 \LatSixtyThreePMax~µs，旋转突发（B2）最大时延为 \LatSixtyThreeBTwo~µs；对于拆分为 $F$ 片的 $8192$~B 长消息（$F=6$，$\text{BAG}=1$~ms），端到端完成时延由 $(F-1)\times\text{BAG}$ 主导，实测为 $5212.304$~µs。
 
 图~\ref{fig:pipe}(a) 中，消息入队时直接成为候选。若末字节在 RECV 状态下正常接收，且无需在消息尾部申请新页，由于载荷写口增加了 1 拍流水寄存、核心输出端插入了 1 级流缓冲（双缓冲结构），从接收末字节到输出首个前导码字节固定为 32 拍（0.256~µs）；按 1022 答疑 R95 规则计至以太网帧 SFD 结束（8 字节前导码尾），发送处理时延 $L_\text{tx}$ 典型为 39 拍（0.312~µs）。单字节消息或末字节跨页时多约 6 拍。图~\ref{fig:pipe}(b) 给出单网单帧的接收过程，由于 \code{rx_map} 采用 32 子库多 Bank 分块存储增加 2 拍读回流水，从 GMII 最后一个 FCS 字节到首个交付字节由 24 拍更新为 26 拍（0.208~µs）。
 
@@ -217,27 +218,26 @@ J_v \le \Big(\sum_{u \in Q_v} \big(C(n_u) + w_u\big) + 422\Big) \times 8~\text{n
 
 与 ARINC 664 P7 的抖动公式 $40~\text{µs} + \sum(20+L_\text{max})\times 8~\text{bit}/1~\text{Gbit/s}$ 相比，$C(n)\times 8~\text{ns}$ 恰等于公式中对应帧的线路占用时间；本设计的扫描开销 422 拍（3.4~µs）与至多 8 次提前授权等待（共 4096 拍）之和小于公式中的 40~µs 项。因此对满足 P7 公式、且排在前面的提前授权帧不超过 8 个的配置，式~(\ref{eq:jitter}) 给出的发送抖动上界不超过按 P7 抖动公式计算的值，也不超过 P7 规定的 500~µs 抖动上限。
 
-\Needspace{27\baselineskip}
 \subsection{存储预算与缓存规划}\label{sec:bufbudget}
 
 在存储架构规划中，设计严格解耦了“全量静态链路配置”与“动态在途流量缓冲深度”：
 \begin{itemize}
-  \item \textbf{静态配置容量：}硬件配置表与映射表完全支持 128 条发送 VL 与 4096 条接收 VL 的并发静态配置，支持任意 16 位 VLID 查表映射。
-  \item \textbf{动态发送载荷缓存：}发送侧片上配置 128~KiB 共享载荷存储池（划分为 256 页 $\times$ 512 字节），采用基于单向链表的动态页分配机制。单个最长报文（1471 字节）占用 $\lceil 1471/512 \rceil = 3$ 页，存储池最多可支持 85 帧满载大包同时在途排队。在 77 条与 81 条 VL 双向满载的基准测试工况下，各 VL 同时排队一条最长报文分别占用 231 页（占比 90.2\%）与 243 页（占比 94.9\%），完全覆盖满载无损调度需求；当突发流量导致空闲页暂时耗尽时，硬件等待固定上限拍数后执行安全丢弃并置位统计脉冲，确保系统免于死锁。
-  \item \textbf{接收端环形缓冲与描述队列：}A、B 网各设 4096 字节接收环形缓冲，解析器基于已提交指针实时计算剩余容量，可安全容纳连续两个最长报文（$2\times 1471$ 字节有效载荷）。交付描述队列 \code{rx_dq} 设为 32 项深度；在最长消息交付持续 1471 拍期间，单网线速到达的最短帧至多为 $\lceil 1471/84 \rceil = 18$ 个，双网冗余副本经 RM 去重后只交付一份，32 项深度具备充裕的突发吸收裕量。
+  \item \textbf{静态配置容量：}硬件配置表与映射表完全支持 128 条发送 VL 与 4096 条接收 VL（加上接收映射表 65536 个 VLID 全地址空间）的并发静态配置；接收包装器 \code{afdx_app_map} 同步维护 $4096\times 16$~bit 的 $\text{VL\_idx}\rightarrow\text{VLID}$ 反查映射。
+  \item \textbf{顶层应用流包装缓冲：}\code{afdx_app_tx} 与 \code{afdx_app_rx} 各自配备 $8\times 4$~KiB（共 32~KiB）分体消息缓存与 32 项描述符队列，单侧即可容纳 4 条 $8192$~B 最长消息或 22 条 $1471$~B 单帧消息，吸收顶层连续突发与核心分页申请之间的短时速率差；\code{afdx_tx_buf} 另设 256~B 回滚 RAM（\code{afdx_tx_rollback_ram}），对超过 $8192$~B 的异常超长消息安全回收已分配缓存页并上报 \code{ev_app[1]}。
+  \item \textbf{动态发送载荷缓存：}发送核心配置 128~KiB 共享载荷存储池（\code{afdx_tx_payload_store}，划分为 256 页 $\times$ 512 字节），采用基于单向链表的动态页分配机制。单帧最长报文（1471 字节）占 $\lceil 1471/512 \rceil = 3$ 页，$8192$~B 最大分片消息占 16 页。在团队声明的 63~VL 满载规格下，63 条单帧大包同时在途占 $63\times 3 = 189$ 页（73.8\%）；在 60 条 $1471$~B 短包与 $1472/3000/8192$~B 三条分片长包并发的 63~VL 混合满载工况下，峰值占 $180 + 3 + 6 + 16 = 205$ 页（80.1\%），均留有充裕空闲页裕量（77/81~VL 超规格单帧压力下分别占 231/243 页）；当超规格突发导致空闲页耗尽时，硬件执行安全丢弃并置位统计脉冲，确保系统免于死锁。
+  \item \textbf{接收端环形缓冲、描述队列与 \ReasmContexts{} 路重组缓存：}A、B 网各设 4096 字节接收环形缓冲（\code{rx_ring_a/b}），可安全容纳连续两个最长以太网帧（$2\times 1471$ 字节）。交付描述队列 \code{rx_dq} 设为 $32\times 73$~bit；分片帧经 IC/RM 去重通过后立即由 \code{afdx_rx_deliver} 搬移至 \code{afdx_rx_reassembly} 的专用重组槽位（2-Bank $\times$ 8 槽位 = \ReasmContexts{} 路并发上下文，每槽位 8~KiB，总计 128~KiB 重组载荷 RAM），使跨多个 BAG 周期到达的长报文分片完全不驻留占用 4~KiB 线速环形缓冲；超时未收齐的残缺上下文在 $250,000,000$ 拍（2~s）后由硬件自动老化回收。
 \end{itemize}
 
-\Needspace{8\baselineskip}
 \subsection{握手等待}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-2.4cm-4\tabcolsep\relax}}
 \caption{握手等待与初始化预算}\label{tab:handshakebudget}\\
 \longtablehead{2}{接口或操作 & 等待上界与计算依据}
-入队应答 & 引擎一次只执行一种操作，其中最长的授权操作需 9 拍。每扫描满 16 次或已有候选时，可插入入队操作；入队应答等待不超过 64 拍。 \\
-\code{m_ready} 反压 & 取页暂停 6 拍；消息末尾写描述符、入队应答、页面释放（至多 3 页，每页 3 拍）和事件脉冲共暂停 $2 + 64 + 9 + 1 = 76$ 拍，连续反压上界取 96 拍。 \\
+入队应答 & 发送引擎一次只执行一种操作（含分片元数据读写的授权操作约 9--12 拍）。每扫描满 16 次或已有候选时可插入入队操作，入队应答等待不超过 64 拍。 \\
+\code{m_ready} 反压 & 核心入口经两槽弹性缓冲隔离后，取页暂停 6 拍；消息末尾写描述符、入队应答、异常时页面回滚释放和事件脉冲存在短时停顿；顶层 \code{AFDX_top} 则由 32~KiB \code{afdx_app_tx} 缓存吸收核心跨页停顿，在缓存未满时保持 \code{tx_ready=1} 连续接收整条应用消息。 \\
 应用口等待 & \code{app_tx_ready} 受服务通道轮询仲裁控制（第~\ref{sec:svcch}~节）。三个服务均有报文待发时，应用至多等待其各发送一条：RTC 报文 48 字节、SNMP 响应不超过 256 字节、615A 报文不超过 516 字节；经管理发送适配器流式预取后，字节发送以线速每拍 1 字节推进，连同预取启动与入队等待，握手等待上界约为 1100 拍（约 8.8~µs）。 \\
-配置写 & 向配置表写入时，需等待对应收发核心通过 \code{cfg_ok} 给出许可。发送引擎最坏连续执行发送起始确认、入队和授权约 25 拍，接收引擎处理两网各一份描述需至多 30 拍，若中断 AGE 清理则另加 1 拍，等待上界取 64 拍（第~\ref{sec:cfgok}~节）。 \\
-初始化 & 最大的 \code{rx_map} 逻辑容量 65536 项，硬件划分为 32 个子库并行清零（2048 拍），配合全局清表定时器计数及 \code{tx_ready} 跨级输出寄存，从解除复位至 \code{tx_ready} 有效共耗时 65539 拍（524.312~µs）。 \\
+配置写 & 向配置表写入时，需等待对应收发核心通过 \code{cfg_ok} 给出许可。发送引擎最坏连续执行发送起始确认、入队和分片授权约 28 拍；接收引擎单次帧处理日程（含分片重组槽位查询与预留）为 30 拍（相位 \code{0..30}），双网连续处理两份描述加 AGE 中断等待上界约 64 拍（第~\ref{sec:cfgok}~节）。 \\
+初始化 & 最大的 \code{rx_map} 逻辑容量 65536 项，硬件划分为 32 个子库并行清零（2048 拍），配合全局清表定时器计数及跨级输出寄存，从解除复位至核心 \code{afdx_es} 就绪耗时 65539 拍（524.312~µs），顶层 \code{AFDX_top} \code{tx_ready} 于约第 65,550 拍有效。 \\
 \end{longtable}
 
 服务通道按整条消息轮询，限制了服务连续占用消息通路的时间，表中的约 8.8~µs 是提交口的握手等待预算。入队后，用户与服务报文按各自 VL 的 BAG 参与调度，共享组帧器和发送 MAC；服务 VL 的线路占用与提前授权等待统一计入式~(\ref{eq:jitter}) 及第~\ref{sec:cfgrule}~节的配置预算。
