@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta, timezone
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -37,7 +38,26 @@ def stop_owned(active):
 
 def collect(row):
     from t76_stats import analyse
+    import eda
     folder=Path(row['folder'])
+    run=json.loads((folder/'summary.json').read_text())
+    log=(folder/'simulation.log').read_text(encoding='utf-8-sig',errors='replace')
+    known=(r"\(vsim-PLI-3003\) \[TOFD\] - System task or function '\$finish_and_return' is not defined\.$",
+        r"afdx_app_tx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'payload'\.  Expected 9, found 8\.$",
+        r"afdx_app_tx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'raw_write_data'\.$",
+        r"afdx_app_rx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'reader'\.  Expected 11, found 10\.$",
+        r"afdx_app_rx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'next_limit'\.$")
+    warnings=re.findall(r'(?m)^.*\*\* Warning:[^\r\n]*',log)
+    unexpected=[line for line in warnings if not any(re.search(p,line) for p in known)]
+    results=re.findall(r'\[RESULT\] tb_t76_load (PASS|FAIL) checks=(\d+) errors=(\d+)',log)
+    hdl=(len(results)==1 and results[0][0]=='PASS' and results[0][2]=='0'
+        and not unexpected and not any(s in log for s in ('** Error:','** Fatal:','RAMCOLL','[RX_ASSERT]')))
+    unchanged=all(eda.sha(Path(p))==h for p,h in run['inputs'].items())
+    adjudication=dict(hdl_pass=hdl,inputs_unchanged=unchanged,known_warning_count=len(warnings)-len(unexpected),
+        unexpected_warnings=unexpected,wrapper_passed=run['passed'],wrapper_error=run.get('error'),
+        policy='Same exact known-warning patterns as tools/eda.py direct RTL gate; original wrapper result retained')
+    save(folder/'t79_adjudication.json',adjudication)
+    if not hdl or not unchanged:raise RuntimeError('HDL/diagnostics/input gate failed: '+row['case'])
     stats=analyse(folder)
     with (folder/'tcl_stats.log').open('wb') as log:
         subprocess.run(['E:/2026_Embedded_FPGA/setup_pack/bin/Passkey/bin/tclsh.exe',
@@ -49,8 +69,8 @@ def collect(row):
     invalid=[g for g in groups if not g['formula_precondition']]
     over=[g for g in groups if g['formula_precondition'] and not g['under_100us']]
     values=dict(line.split('\t') for line in (folder/'t76_python.tsv').read_text().splitlines())
-    run=json.loads((folder/'summary.json').read_text())
-    row.update(hdl_pass=run['passed'],integrity_pass=not stats['issues'],statistics_equal=equal,
+    row.update(hdl_pass=hdl,wrapper_passed=run['passed'],known_warning_count=adjudication['known_warning_count'],
+        integrity_pass=not stats['issues'],statistics_equal=equal,
         groups=len(groups),formula_invalid=len(invalid),jitter_failures=len(over),
         maximum_jitter_us=worst['official_jitter_us'],worst_vlid=worst['vlid'],
         worst_length=worst['length'],worst_source=worst['source'],
@@ -64,14 +84,15 @@ def collect(row):
         issues=stats['issues'])
     target=EVIDENCE/row['case'];target.mkdir()
     for name in ('summary.json','tool_metrics.json','simulation.log','window.txt','t76_stats.json',
-                 't76_python.tsv','t76_tcl.tsv','t76_budget_0.json','t76_budget_1.json'):
+                 't76_python.tsv','t76_tcl.tsv','t76_budget_0.json','t76_budget_1.json','t79_adjudication.json'):
         (target/name).write_bytes((folder/name).read_bytes())
     row['status']='PASS' if (row['hdl_pass'] and row['integrity_pass'] and equal and not invalid
         and not over and row['latency_pass']) else 'FAIL'
     return bool(invalid or over)
 
 def main():
-    OUT.mkdir(parents=True,exist_ok=False)
+    adopt='--adopt' in sys.argv
+    OUT.mkdir(parents=True,exist_ok=adopt)
     EVIDENCE.mkdir(parents=True,exist_ok=True)
     os.environ.update(AFDX_PYTHON=sys.executable,MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
         ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack',AFDX_CE_DIV='2',AFDX_MEM_FLOOR_GB='3',
@@ -81,6 +102,26 @@ def main():
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         per_case_limit_seconds=10800,runs=[],status='RUNNING')
     active=[];pending=list(CASES)
+    if adopt:
+        previous=json.loads((OUT/'run.json').read_text())
+        previous['controller_history']=previous.get('controller_history',[])+[
+            {k:previous[k] for k in ('pid','created','source_commit')}]
+        previous.update(pid=own.pid,created=own.create_time(),adopted=now())
+        receipt=previous
+        pending=[c for c in CASES if c[0] not in {r['case'] for r in receipt['runs']}]
+        class Adopted:
+            def __init__(self,row):
+                self.pid=row['pid'];self.p=psutil.Process(self.pid)
+                assert self.p.create_time()==row['created']
+                self.returncode=None
+            def poll(self):
+                try:self.returncode=self.p.wait(timeout=0)
+                except psutil.TimeoutExpired:return None
+                return self.returncode
+            def wait(self):return self.p.wait()
+        for row in receipt['runs']:
+            if row['status']=='RUNNING':
+                active.append((Adopted(row),row,(OUT/(row['case']+'.adopt.log')).open('ab')))
     def persist():
         save(OUT/'run.json',receipt);save(EVIDENCE/'run_receipt.json',receipt)
     persist()
@@ -95,8 +136,6 @@ def main():
                 matches=[p for p in folders if json.loads(p.read_text()).get('parameters')==row['parameters']]
                 if len(matches)!=1:raise RuntimeError('Expected one unique result for '+row['case'])
                 row['folder']=str(matches[0].parent)
-                if process.returncode:
-                    row['status']='TOOL_OR_HDL_FAIL';raise RuntimeError('Run failed: '+row['case'])
                 if collect(row):
                     receipt['report_condition']='Formula invalid or jitter >=100 us: '+row['case']
                     raise RuntimeError(receipt['report_condition'])

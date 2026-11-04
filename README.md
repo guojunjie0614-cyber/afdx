@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-T76 的[系统声明规格与网络规划](docs/ARCH.md#t76-系统声明规格与网络规划数值已确认)已确认数值：纯短消息每端最大 81 TX / 81 RX VL、每 VL BAG=1 ms / Lmax=1471、单消息 8192 字节（Lmax=1471 时为 6 片）、256 页 TX 共享池和 16 个 RX 重组上下文；短/长混合独立声明为 63 TX / 63 RX VL，默认 21 VL 是另一配置子集。满负载单方向计划载荷率 953.208 Mbit/s，长消息按分片机会计费并遵守页池约束。**规格确认、100 ms 功能与性能、官方网表分别验收。** 各项最终结果、限制及基准差异见 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)，历史 T76 记录单独保留。
+T79 已统一声明满负载每端 **63 TX / 63 RX VL**，每 VL BAG=1 ms / Lmax=1471，线路占用约 77.5%，单向计划载荷 741.384 Mbit/s；配置规模仍为发送 128 / 接收 4096 条 VL。单消息上限 8192 字节，TX 256 页、RX 16 重组上下文，默认 21 VL 子集不变。63 VL 七场景性能验证正在运行，结果见 [T79 证据](docs/evidence/t79_63vl/summary.md)。81 VL 保留为超出声明的压力测试：周期最大抖动 3.368 µs；BAG 对齐撞车最大 107.7 µs 超门槛；混合溢出。**声明、RTL 性能与官方网表分别验收。** 交付边界见 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)。
 
 > 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在不放宽约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
@@ -57,7 +57,7 @@ $env:AFDX_CE_DIV='2'
 
 T77 已通过五项直接 RTL 自检及改动后源码的完整 `build_1030.py --route --pres 1.30` 流程：默认 11,044 个锁定簇、172 个 P0 管脚不变，布线 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点。原样重综合网表 `e9e1734c…` 从官方 VQM 导入入口重新打包、锁定布线，也复现相同数值。旧基准 VQM `3cd8f5f8…` 和本次新 VQM `96d14e2f…` 分别绑定各自的布线证据；不要仅凭文本等价或结构等价混用网表、检查点与时序报告。
 
-官方综合导出的 VQM 存在排列不确定性；本轮比较的五份 VQM 名称和功能结构相同，保序文本不同。将运行副本的 `NUM_PARALLEL_PROCESSORS` 设为 1 已验证生效，但没有恢复基准顺序，也未证明输出固定。界面 Run Behavioral Simulation 的实际验收状态单列在 [T77 执行报告](docs/evidence/t77_rtl_compat/summary.md)；命令行通过不自动记为 GUI 点击通过。
+官方综合导出的 VQM 存在排列不确定性；本轮比较的五份 VQM 名称和功能结构相同，保序文本不同。将运行副本的 `NUM_PARALLEL_PROCESSORS` 设为 1 已验证生效，但没有恢复基准顺序，也未证明输出固定。界面 Run Behavioral Simulation 已于 11-04 人工验证 PASS：checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；[截图](docs/evidence/t79_63vl/elinx_gui_behav_pass.png)及警告边界见 [T79 证据](docs/evidence/t79_63vl/summary.md)。
 工程路径不要含中文或空格。实测 ModelSim 2020.4 在中文路径下无法创建工作库，在带空格的路径下无法载入仿真；入口会提前提示更换目录。
 
 1. 在 ModelSim 的 Transcript 窗口进入工程根目录，把下面的占位文字换成实际目录。
@@ -259,7 +259,9 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 ## 从 eLinx 界面运行自检
 
-本节保留 F1 的历史界面流程。T76 原样 RTL 兼容候选已按 VQM 门槛回退，不能据此声称当前 Run Behavioral Simulation 已直接编译通过；当前实际 RTL 运行使用上述兼容副本入口。官方网表复现见 [T76 复现说明](docs/evidence/t76_frag1030/official_reproduction.md)。
+当前源码的 Run Behavioral Simulation 已于 11-04 人工点击验证通过：`[RESULT] tb_elinx PASS checks=9238 errors=0`，Errors 0、Warnings 90、Elapsed 0:02:18，[截图](docs/evidence/t79_63vl/elinx_gui_behav_pass.png)。Warnings 为既有 ModelSim 系统任务/可选端口诊断，完整说明见 [T79 证据](docs/evidence/t79_63vl/summary.md)。官方网表复现见 [T76 复现说明](docs/evidence/t76_frag1030/official_reproduction.md)。
+
+若界面卡在 “Loading...”，已定位的原因是 vish 与仿真内核的本机连接失败（`couldn't open socket: invalid argument`），可关闭代理/VPN 后重试；也可在 `elinx/AFDX_EndSystem.sim/sim_1/behav` 下执行 `vsim -batch -t 1ps work.tb_elinx -do "run -all; quit -f"`。该备用入口已有 15 s、9238 检查 PASS 记录（任务卡提供，本轮未重跑）。
 
 1. 用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，在 Settings → Tool Settings → 3rd Party Simulators 设置 ModelSim 的安装目录。该目录应包含 `modelsim.exe`。
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
@@ -376,7 +378,7 @@ R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接�
 
 ## T76 混合负载声明
 
-混合最大声明为 **63 TX / 63 RX VL**；81 VL 全长短消息规格保持不变。固定激励的二分相邻边界为 70 VL 通过 20 ms、71 VL 失败，取 63 VL 留出 10.0% 余量，随后 100 ms 功能与逐字节交付通过，两套统计一致，TX 页上界不超过 256。此边界是按既定二分法、固定激励及其单调性假设得到，不冒称穷举所有 VL 数。性能门槛另见统计表，原 81 VL 混合溢出继续列为限制。
+混合最大声明为 **63 TX / 63 RX VL**；T79 已将纯短消息同步下调为 63 TX / 63 RX VL，81 VL 保留为超出声明的压力测试。固定激励的二分相邻边界为 70 VL 通过 20 ms、71 VL 失败，取 63 VL 留出 10.0% 余量，随后 100 ms 功能与逐字节交付通过，两套统计一致，TX 页上界不超过 256。此边界是按既定二分法、固定激励及其单调性假设得到，不冒称穷举所有 VL 数。性能门槛另见统计表，原 81 VL 混合溢出继续列为限制。
 
 [完整规格](docs/ARCH.md#t76-混合负载声明搜索确认)；[证据与各门槛](docs/evidence/t76_frag1030/summary.md)。
 
@@ -393,7 +395,7 @@ $env:AFDX_MEM_FLOOR_GB='3'
 $env:AFDX_MODELSIM_DECL_ORDER='0'
 ```
 
-1. RTL：打开 `elinx/AFDX_EndSystem.epr`，仿真顶层 `tb_elinx`，点 Run Behavioral Simulation；该界面点击路径尚未人工验收。已验证命令行等价入口：
+1. RTL：打开 `elinx/AFDX_EndSystem.epr`，仿真顶层 `tb_elinx`，点 Run Behavioral Simulation；该界面点击路径已于 11-04 人工验收 PASS 9238，截图见 T79 证据。已验证命令行等价入口：
 
    ```powershell
    & $env:AFDX_PYTHON -B -X utf8 tools/eda.py sim --test tb_elinx
@@ -430,4 +432,4 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
 
    预期 routed setup `+0.029 ns`、hold `+0.604 ns`，setup/hold 各 `0/96142` 失败端点；核对全部 11044 个锁定簇和 172 个 P0 管脚。新输出须绑定自身 VQM SHA256；T77 已验证文本排列不同但结构和锁定布线时序相同，不保证任意安装的普遍确定性。
 
-当前 81 VL 与 63 VL 的适用场景、未通过性能项、GUI 未验收项及工程基准差异见 [交付总表](docs/evidence/frag1030_delivery/summary.md)。
+当前 63 VL 统一声明、81 VL 压力测试、GUI 人工验收及工程基准差异见 [交付总表](docs/evidence/frag1030_delivery/summary.md)。
