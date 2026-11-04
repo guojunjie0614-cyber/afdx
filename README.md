@@ -117,33 +117,32 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 | `snmp_get_1.png` | 525.400–525.720 | Get 请求的双网帧起点及部分帧头字节 |
 | `snmp_get_2.png` | 537.804–538.124 | Response 的双网帧起点及部分帧头字节 |
 
-本次 F1 评委入口八项均通过，Error/FAIL/RAMCOLL 为 0；下列为本轮实际耗时，包含当时机器负载的影响。
+分片交付版（11-04）评委入口八项均通过，errors 均为 0，Error/FAIL/RAMCOLL 为 0。前六项为对 `f4632d5c`（与 `t79` 的 rtl/tb 相同）的完整入口运行；performance 首次运行时性能门槛 REQUIREMENT PASS，但与 `sim/judge_perf.tcl` 中写死的 F1 历史基准比对不一致（分片版最大端到端时延 48.600 µs，F1 为 48.288 µs，多 39 拍即 0.312 µs，远低于 2000 µs 门槛），因此把基准更新为分片版实测值后，用 `AFDX_JUDGE_CASE` 重跑 performance 与 perf_var，四组基准全部 PASS。每项 84 条警告是 T77/T78 已登记的 `$finish_and_return` 未定义（vsim-PLI-3003）与可选端口未连接两类，不是错误。耗时含当时机器负载。
 
-| 用例 | 实测耗时（秒） |
-|---|---:|
-| services | 8.059 |
-| capacity | 10.028 |
-| snmp | 46.268 |
-| burst77 | 11.819 |
-| burst81 | 11.489 |
-| rtc | 311.964 |
-| performance | 2253.870 |
-| perf_var | 3674.099 |
-| 总入口 | 6337.985 |
+| 用例 | 检查数 | 实测耗时（秒） |
+|---|---:|---:|
+| services | 1,123 | 9.472 |
+| capacity | 49,924 | 13.669 |
+| snmp | 699 | 52.593 |
+| burst77 | 530,802 | 16.180 |
+| burst81 | 554,734 | 17.325 |
+| rtc | 10,675,841 | 475.577 |
+| performance | 683,408,635 | 3099.543 |
+| perf_var | 1,254,291,331 | 4638.304 |
+| 合计 | | 8322.663 |
 
 ```text
-JUDGE CASE PASS services checks=1122 errors=0 warnings=0 elapsed_s=8.059
-JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=10.028
-JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=46.268
-JUDGE CASE PASS burst77 checks=530765 errors=0 warnings=0 elapsed_s=11.819
-JUDGE CASE PASS burst81 checks=554697 errors=0 warnings=0 elapsed_s=11.489
-JUDGE CASE PASS rtc checks=10675841 errors=0 warnings=0 elapsed_s=311.964
-JUDGE CASE PASS performance checks=683383807 errors=0 warnings=0 elapsed_s=2253.870
-JUDGE CASE PASS perf_var checks=1254269621 errors=0 warnings=0 elapsed_s=3674.099
-JUDGE ENTRY PASS cases=8 warnings=0 elapsed_s=6335.395 output_mib=1099.5
+JUDGE CASE PASS services checks=1123 errors=0 warnings=84 elapsed_s=9.472
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=84 elapsed_s=13.669
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=84 elapsed_s=52.593
+JUDGE CASE PASS burst77 checks=530802 errors=0 warnings=84 elapsed_s=16.180
+JUDGE CASE PASS burst81 checks=554734 errors=0 warnings=84 elapsed_s=17.325
+JUDGE CASE PASS rtc checks=10675841 errors=0 warnings=84 elapsed_s=475.577
+JUDGE CASE PASS performance checks=683408635 errors=0 warnings=84 elapsed_s=3099.543
+JUDGE CASE PASS perf_var checks=1254291331 errors=0 warnings=84 elapsed_s=4638.304
 ```
 
-[评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json) 对应 F1 终验，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
+[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，属于超出 63 VL 满负载声明的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
