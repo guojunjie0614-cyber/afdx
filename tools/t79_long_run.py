@@ -93,7 +93,7 @@ def main():
     p=psutil.Process();p.cpu_affinity(p.cpu_affinity()[::2][:6])
     receipt=dict(status='RUNNING',started=now(),pid=p.pid,created=p.create_time(),runs=[],
         source_tree=str(SOURCE),source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-        global_kernel_limit=6,own_parallel_limit=3,extra_round_limit=1)
+        global_kernel_limit=6,own_parallel_limit=3,extra_round_limit=0)
     def persist():save(OUT/'run.json',receipt);save(E/'run_receipt.json',receipt)
     def run_round(counts,ms,hours):
         pending=list(counts);active=[]
@@ -125,17 +125,12 @@ def main():
             if pending or active:time.sleep(1)
     persist()
     try:
-        run_round([2,3,4],20,1)
-        if any(r['long_count']==4 and r['status']=='PASS' for r in receipt['runs']):
-            run_round([6,8],20,1)
+        run_round([2,3,4],20,0.5)
         passed=[r['long_count'] for r in receipt['runs'] if r['window_ms']==20 and r['status']=='PASS']
         if passed:
-            selected=max(passed);receipt['selected_for_100ms']=selected;persist()
-            run_round([selected],100,2)
-            confirmed=[r['long_count'] for r in receipt['runs'] if r['window_ms']==100 and r['status']=='PASS']
-            receipt['confirmed_limit']=max(confirmed) if confirmed else None
+            receipt['confirmed_limit']=max(passed)
         else:receipt['confirmed_limit']=None
-        receipt['status']='COMPLETE'
+        receipt.update(status='COMPLETE_20MS_ONLY',confirmed_window_ms=20)
     except Exception as exc:receipt.update(status='STOPPED',error=str(exc))
     finally:receipt['finished']=now();persist()
     return int(receipt.get('confirmed_limit') is None)

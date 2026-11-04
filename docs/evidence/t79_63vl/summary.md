@@ -36,7 +36,7 @@
 
 ## 原始输出与运行收据
 
-[run_receipt.json](run_receipt.json) 保留命令、PID/创建时刻、截止、退出状态、原始目录、仿真用时和场景用时；各场景 tool_metrics.json 保留内核身份和峰值内存。前六项先启动，第七项等待空位；所有子进程继承最多六个逻辑 CPU 的亲和性。每项从首次启动起上限 10800 s，无重试、heartbeat、定时任务或续接。
+[run_receipt.json](run_receipt.json) 保留命令、PID/创建时刻、截止、退出状态、原始目录、仿真用时和场景用时；各场景 tool_metrics.json 保留内核身份和峰值内存。前六项先启动，第七项等待空位；所有子进程继承最多六个逻辑 CPU 的亲和性。每次授权运行上限 10800 s；P1471/B2 按后续明确授权在新目录补跑一次，初次记录保留。没有隐式重试、heartbeat、定时任务或续接。
 - P1：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191938_500768`
 - P17：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191939_542797`
 - P256：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191940_599960`
@@ -99,21 +99,20 @@ B1 的 HDL/完整性/双统计 **PASS**；按最新裁定不作抖动判据， *
 
 追加授权测试 MIXED=3、VL_COUNT=63、GROUP_LENGTH=1471、DUPLEX=1。末 LONG_COUNT 条 VL 在 sequence>0 后发送 8192 B，其余发送 1471 B；首轮全部 VL 先发送一次 1471 B。每条 8192 B 消息占六帧发送机会，同 VL 到期时刻至少间隔 6 ms，沿用既有按片计费调度。公开接口依次串行注入，同一批 VL 的计划到期时刻相同。
 
-先跑 N=2/3/4 的 20 ms 窗口，各 1 小时；若 N=4 通过，最多再加 N=6/8 一轮 20 ms。选择这些测试中通过的最大 N 跑一次 100 ms 确认，上限 2 小时，不作未测试 N 的穷举边界承诺。失败不影响七个基础场景，不修改 RTL。
+该项已按最终指令暂停，不再启动新作业。暂停前 N=2/3/4 的 20 ms 局部试验结果原样保留；100 ms 任务此前已取消，仅保留前缀，6/8 未运行。三项 20 ms 实际用时均低于 30 分钟，无超时，但不据此完成专项验收或写并发规格限制。失败不影响基础七场景，不修改 RTL。
 
-边界队列：**RUNNING**；100 ms 确认值 N：**待确认**。完整运行身份、截止、原始路径与失败事件见 [边界收据](long_concurrent/run_receipt.json)。
+边界队列：**已暂停、未完成（PAUSED_INCOMPLETE）**。**已验证单条 VL 发 8192 B（63 VL 混合场景）；多条 VL 并发长消息未验证**。以下仅归档暂停前的局部试验，不作规格限制。运行身份与暂停核对见 [边界收据](long_concurrent/run_receipt.json)、[暂停收据](long_concurrent/pause_receipt.json)。
 
 | N | 窗口 ms | 结果 | HDL/完整性 | 双统计 | 短消息最大抖动 µs / VLID | 短消息最大端到端 µs | 8192 B 最大完成时延 µs | 仿真用时 s |
 |---|---|---|---|---|---|---|---|---|
 | 2 | 20 | PASS | PASS/PASS | 一致 | 0.016 / 0x0119 | 80.328 | 5219.288 | 334.281 |
 | 3 | 20 | HDL_FAIL | FAIL/FAIL | — | — | — | — | 121.312 |
+| 4 | 20 | HDL_FAIL | FAIL/FAIL | — | — | — | — | 121.563 |
 
 首次失败 N3_20ms：端点 1、第 950089 拍、仿真 7600708 ns；ev_a=0x80、ev_b=0x01、ev_app=0x0。
 
-| 4 | 20 | HDL_FAIL | FAIL/FAIL | — | — | — | — | 121.563 |
-
 首次失败 N4_20ms：端点 1、第 952002 拍、仿真 7616012 ns；ev_a=0x80、ev_b=0x01、ev_app=0x0。
 
-| 2 | 100 | RUNNING | —/— | — | — | — | — | — |
+N2_100ms：CANCELLED_BY_SCOPE_REDUCTION，按范围压缩指令中止，经过 920.423 s，不作 100 ms 验收；前缀及进程取消收据见 long_concurrent/N2_100ms/cancellation.json。
 
 验收核对 HDL、逐字节完整性交付、Python/Tcl 逐字段一致、短消息分组抖动 <100 µs、短消息原 2 ms 门槛和页池上界。8192 B 只单列整条消息完成时延，不套单帧抖动或 2 ms 门槛。原始失败保留，未重试或修 RTL。新模式的旧路径不变证明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)。
