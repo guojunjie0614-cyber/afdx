@@ -51,7 +51,7 @@ T77/T78 原样 RTL 在 ModelSim 下存在 `$finish_and_return` 未定义和可�
 
 ## 81 VL 行为不变的证明
 
-选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。基础七场景的运行版本相对起点 f4632d5c，仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝，其余运行代码及测试台原样。初次核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。随后追加 MIXED=3：新消息长度分支只在 MIXED=3 生效，LONG_COUNT 在 MIXED=0/1/2 下未使用，原七字段 window.txt 输出和全部到期/序号/相位/轮换逻辑不变；Python 新的预期覆盖分支也仅对 MIXED=3 生效，统计公式和 Tcl 未改。新改动逐项精确逆变换核对及旧路径不变说明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)，正式文件接纳见 [mixed3_adoption.json](mixed3_adoption.json)。全部 RTL 始终逐字节不变，独立诊断不改变激励或公开端口记录。
+选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。基础七场景的运行版本相对起点 f4632d5c，仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝，其余运行代码及测试台原样。初次核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。随后追加 MIXED=3：新消息长度分支只在 MIXED=3 生效，LONG_COUNT 在 MIXED=0/1/2 下未使用，原七字段 window.txt 输出和全部到期/序号/相位/轮换逻辑不变；Python 新的预期覆盖分支也仅对 MIXED=3 生效，统计公式和 Tcl 未改。旧模式的参数集合和命令也保持不变，历史 RTL/VQM 参考仍可精确匹配，见 [legacy_parameter_proof.json](legacy_parameter_proof.json)。新改动逐项精确逆变换核对及旧路径不变说明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)，正式文件接纳见 [mixed3_adoption.json](mixed3_adoption.json)。全部 RTL 始终逐字节不变，独立诊断不改变激励或公开端口记录。
 
 ## 混合场景复用
 
