@@ -6,7 +6,7 @@
 
 > 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在原约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+**以下为分片前的历史基线 F1，已被上文分片版取代，不是当前交付版本。** F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
 本工程是中科亿海微赛题“AFDX 端系统”的 FPGA 实现，顶层模块为 `AFDX_top`，A、B 双网 GMII 接口共用一个 125 MHz 时钟，目标器件 EQ6HL130（封装 CSG484_H）。提供 eLinx 3.0.7 的综合、实现入口和 ModelSim 自检仿真，不需要硬件平台；当前布线后时序见“综合与布线结果”。
 
@@ -156,7 +156,7 @@ JUDGE CASE PASS performance checks=683408635 errors=0 warnings=84 elapsed_s=3099
 JUDGE CASE PASS perf_var checks=1254291331 errors=0 warnings=84 elapsed_s=4638.304
 ```
 
-[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，用作满负载规格之外的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
+[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，用作满负载规格之外的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 逐项验收](docs/evidence/t65b_regress/acceptance.txt)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -206,7 +206,7 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 
 ### F1 历史基线：T65 合并覆盖率与定向补测
 
-T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见 [T65 补测报告](docs/T65_GAP_TESTS.md)与[目标命中记录](docs/evidence/t65_gap_tests/target_hits.json)。
+T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见[目标命中记录](docs/evidence/t65_gap_tests/target_hits.json)。
 
 F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](docs/evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
 
@@ -222,11 +222,11 @@ F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正
 
 合并统计与 T64 有 9 组设计单元/指标的分母不同，两次百分比按各自分母分别报告。原始分母保留，全部 bin 计入、无排除项，差异见 [分母核对](docs/evidence/t65_gap_tests/denominators.json)。状态 100% 指工具识别的状态集合；接收封装压力为模块级测试，复位恢复覆盖登记的三个状态，1 字节输入为观察项。
 
-新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](docs/T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，只接受该 40 项清单，用于复现历史基线。
+新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 逐项验收](docs/evidence/t65b_regress/acceptance.txt)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，只接受该 40 项清单，用于复现历史基线。
 
 ### F1 历史基线：T64 冻结覆盖率基线
 
-T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](docs/T64_F1_COVERAGE.md)。
+T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率证据](docs/evidence/t64_f1_coverage/coverage.json)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
@@ -243,18 +243,19 @@ T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RT
 
 T64 串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，两次结果分别对照各自版本。
 
-4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
+4. 综合并布局布线完整顶层，检查 8 ns 时钟约束下的时序。
 
-   先设置 `ELINX_HOME` 为 eLinx 安装根目录，即 `eLinx3.0.exe` 所在目录（可在桌面快捷方式上右键“打开文件所在的位置”找到），其下应有 `bin/Passkey/bin` 和 `bin/shell/bin`。把下面的占位文字换成实际路径；未设置时脚本会提示 `Set ELINX_HOME` 并退出：
+   先设置 `ELINX_HOME` 为 eLinx 安装根目录，即 `eLinx3.0.exe` 所在目录（可在桌面快捷方式上右键“打开文件所在的位置”找到），其下应有 `bin/Passkey/bin` 和 `bin/shell/bin`。把下面的占位文字换成实际路径：
 
    ```powershell
    $env:ELINX_HOME='eLinx安装根目录'
-   powershell -NoProfile -ExecutionPolicy Bypass -File elinx/synth.ps1
+   $env:AFDX_PYTHON='Python 3 解释器路径'
+   & $env:AFDX_PYTHON -B -X utf8 tools/build_1030.py --route --pres 1.30
    ```
 
-   预期：打印 `OFFICIAL SYNTH PASS`，`out/latest_AFDX_top.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径。综合工具仅调用 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，按工程设置依次完成分析综合、VQM 导出、装箱和综合后时序；所有运行产物写入 `out/synth/AFDX_top/`，不覆盖界面结果。
+   约 27 分钟（综合约 23 分钟，锁定布局布线约 4 分钟）；不加 `--deadline` 时默认 2 小时硬截止。预期打印 `SYNTH` 与 `ROUTE` 两行时序：综合后 setup `+4.148 ns` / hold `+0.192 ns`，布线后 setup `+0.029 ns` / hold `+0.604 ns`，setup/hold 各 `0/96142` 失败端点；`out/latest_AFDX_top_1030.json` 给出资源数、时序裕量、耗时及 `.vqm` 路径（`netlist` 字段），运行产物写入 `out/build1030/AFDX_top_1030/`，不覆盖界面结果。工具仅调用官方 `quartus_map.exe`、`quartus_cdb.exe` 和 `Implementation.exe`，综合与装箱阶段不加簇锁，布局布线阶段加载 `elinx/tiles_1030.edc` 的 11,044 条簇位置、172 条 P0 管脚和 PRES 1.30；改 RTL 会使布局失效，须加 `--no-tiles` 重新自由布局并更新锁文件。只综合不布线时去掉 `--route`。
 
-综合后运行 `powershell -NoProfile -ExecutionPolicy Bypass -File elinx/impl.ps1` 完成官方布局布线。`elinx/constraints.edc` 包含 PRES_FAC_MULT=1.30、172 条 P0 管脚和 5,540 条簇位置语句，固定布局来自 C0 加局部手工微调；改 RTL 会使布局失效。界面工程登记物理 EDC 与纯时序 SDC 两份文件，CLI 经 Tcl `source` 完整 EDC、再 `read_sdc` 纯时序 SDC。本轮在 125 MHz、0.30 ns setup uncertainty 下为 setup +0.016 ns、hold +0.229 ns，setup/hold 各 0/53,882 失败端点；界面复跑结果相同。eLinx 界面会对登记的每个约束文件生成 `read_sdc`，并对 `.edc` 另加 `source`，因此 `physical_only.edc` 也会交给 SDC 解析器；解析器对其中约 5,700 条 PRES、管脚和簇位置语句逐条报 `invalid command`，这是预期现象，这些语句已由 `source` 生效，界面结果与 CLI 逐字节一致。
+`elinx/synth.ps1` 与 `elinx/impl.ps1` 是分片前 F1 版本的入口，按 F1 的 `elinx/constraints.edc`（5,540 条簇位置）校验约束，不适用于当前分片版，请勿使用。F1 在该入口下为 setup +0.016 ns、hold +0.229 ns，setup/hold 各 0/53,882 失败端点，仅作历史对照。eLinx 界面会对登记的每个约束文件生成 `read_sdc`，并对 `.edc` 另加 `source`，因此 `physical_only.edc` 也会交给 SDC 解析器；解析器对其中的 PRES、管脚和簇位置语句逐条报 `invalid command`，这是预期现象，这些语句已由 `source` 生效；F1 的界面结果与 CLI 逐字节一致。
 
 主机配置访问优先；主机与 SNMP MIB 同时读同一地址时共用返回值，不同地址时 MIB 保持请求到主机释放总线。主机读延迟仍为两拍。接收映射、配置或序号检查拒绝的报文多用一拍登记判断，正常数据帧保持原处理拍数。
 
@@ -268,7 +269,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 布线完成后执行 `python tools/report_routed_timing.py`，复用已布线图和延迟导出全部端点，核对每条报告路径的 16 ns／8 ns 要求以及同沿 hold，产物放在 `out/timing/`。它不会重新布局布线。综合、实现和全量时序报告入口均支持硬截止时间保护；用 `--deadline` 传入 ISO 时间。
 
-也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。两个入口使用同一套官方引擎，默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和 `constraints.edc` 不动。命令行不需要先运行界面；已有 `.qsf` 时保留其中的综合设置，干净检出时按 `.epr` 的当前设置生成运行副本。网表验证见“综合后网表仿真”。
+也可用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，点击 Run Synthesis。两个入口使用同一套官方引擎，默认器件为 EQ6HL130、封装为 CSG484_H；保持相邻的默认设置文件和约束文件不动。命令行不需要先运行界面；已有 `.qsf` 时保留其中的综合设置，干净检出时按 `.epr` 的当前设置生成运行副本。网表验证见“综合后网表仿真”。
 
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
@@ -302,10 +303,10 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 
 ## 综合后网表仿真
 
-界面 Run Synthesis 和命令行 `elinx/synth.ps1` 导出同一官方流程的 `.vqm`，共用下面的仿真入口。先完成快速上手第 4 步，再在 PowerShell 中执行：
+界面 Run Synthesis 和命令行 `tools/build_1030.py` 导出同一官方流程的 `.vqm`，共用下面的仿真入口。先完成快速上手第 4 步，再在 PowerShell 中执行：
 
 ```powershell
-$net = (Get-Content out/latest_AFDX_top.json -Raw | ConvertFrom-Json).netlist
+$net = (Get-Content out/latest_AFDX_top_1030.json -Raw | ConvertFrom-Json).netlist
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Test tb_net_services -Netlist $net
 ```
 
@@ -321,9 +322,30 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 ## 综合与布线结果
 
-当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+当前交付版本为分片版（8192 B IPv4 分片与 16 上下文重组）。综合与布局布线入口为 `tools/build_1030.py --route --pres 1.30`，布局布线阶段加载固定簇布局 `elinx/tiles_1030.edc`。完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
-| 项目 | 当前官方结果 |
+| 项目 | 当前官方结果（分片版） |
+|---|---:|
+| 查找表（LUT） | 62274 / 136160（45.74%） |
+| 触发器（FF） | 35597 / 136160（26.14%） |
+| 可配置逻辑块（CLB） | 10230 / 13616（75.13%） |
+| 存储器（M4K） | 814 / 1200（67.83%） |
+| 用户引脚 | 172 / 339（50.74%） |
+| DSP / PLL | 0 / 0 |
+| 综合后建立裕量／保持裕量 | +4.148 / +0.192 ns（0 / 164745 失败） |
+| 布线后建立裕量／保持裕量 | +0.029 / +0.604 ns |
+| 布线后 setup / hold 失败端点 | 0 / 96142；0 / 96142 |
+| 8 ns 单周期路径数／最差 setup | 269131 / +0.029 ns |
+| 16 ns 多周期路径数／最差 setup | 50050 / +0.720 ns |
+| hold 路径数／最差 hold | 319181 / +0.604 ns |
+
+setup 已含 0.30 ns 时钟不确定度，253 组 CE 多周期约束与 172 个 P0 管脚不变。
+
+### 历史基线：F1（分片前）
+
+以下为分片前的 F1 版本，已被上面的分片版取代，仅作历史对照。F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
+
+| 项目 | F1 历史结果 |
 |---|---:|
 | 查找表（LUT） | 39895 / 136160（29.30%） |
 | 触发器（FF） | 20885 / 136160（15.34%） |
@@ -337,7 +359,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | 16 ns 多周期路径数／最差 setup | 50296 / +0.268 ns |
 | 同沿 hold 路径数 | 231296 |
 
-`elinx/constraints.edc` 包含 PRES 1.30、172 条 P0 管脚语句和 5,540 条簇位置语句；固定布局来自 C0 布局加局部手工微调。**改 RTL 会使布局失效**，必须重新生成并验证位置约束。界面工程登记 `physical_only.edc` 与 `timing_only.sdc`，两者拼接与完整 EDC 一致；物理语句经 Tcl `source`，纯时序部分经 `read_sdc`，0.30 ns uncertainty 与已批准多周期约束保持不变。eLinx 界面会对登记的每个约束文件生成 `read_sdc`，并对 `.edc` 另加 `source`，因此 `physical_only.edc` 也会交给 SDC 解析器；解析器对其中约 5,700 条 PRES、管脚和簇位置语句逐条报 `invalid command`，这是预期现象，这些语句已由 `source` 生效，界面结果与 CLI 逐字节一致。
+F1 的 `elinx/constraints.edc` 包含 PRES 1.30、172 条 P0 管脚语句和 5,540 条簇位置语句，固定布局来自 C0 布局加局部手工微调；分片版不使用这 5,540 条簇位置。分片版界面工程登记 `physical_only.edc`（PRES 1.30、172 条管脚与 `tiles_1030.edc` 的 11,044 条簇位置）与 `timing_only.sdc`。**改 RTL 会使布局失效**，必须重新生成并验证位置约束。物理语句经 Tcl `source`，纯时序部分经 `read_sdc`，0.30 ns uncertainty 与已批准多周期约束保持不变。eLinx 界面会对登记的每个约束文件生成 `read_sdc`，并对 `.edc` 另加 `source`，因此 `physical_only.edc` 也会交给 SDC 解析器；解析器对其中的 PRES、管脚和簇位置语句逐条报 `invalid command`，这是预期现象，这些语句已由 `source` 生效；F1 的界面结果与 CLI 逐字节一致。
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
@@ -345,7 +367,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
-F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](docs/evidence/t63_f1_gui_compare.json)；操作步骤见 [F1 界面复跑](docs/T63_F1_GUI.md)。
+F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](docs/evidence/t63_f1_gui_compare.json)。
 
 `sim/wave/png/` 已更新为来源 `12858ddf` 的分片版 11-03 波形，`tb_elinx.png` 使用 11-04 eLinx 界面截图。
 

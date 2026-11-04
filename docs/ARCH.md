@@ -620,7 +620,7 @@ Python 参考模型按报文格式和协议规则生成输入及期望值，CRC 
 
 标准回归共有 56 项（原有 40 项 + T65 新增 16 项），包含基础存储/MAC、发送分页与 BAG、接收错误/序号/冗余、双端用户通信与配置/复位、服务报文与失败恢复、容量/突发/性能等类别。T65 增加 A 网队列满及恢复、应用收发封装资源边界和三个登记状态的复位恢复；新增测试在 RTL 上运行，接收封装压力为模块级测试，复位恢复覆盖三个登记状态，1 字节输入为观察项。具体测试、参数、检查项目和结果见[补充数据的回归表](FACTS_DETAIL.md#逐项回归与评委入口)。
 
-`tools/eda.py` 对 `tb_t65_` 测试在仿真后调用 `tools/t65_check.py`，检查器纳入输入摘要，结果写入 `summary.json` 的 `check` 字段；独立核对有错误时，即使 TB 自检通过，入口仍返回失败。T65b 在 CE_DIV=2 下完成唯一官方批次 56/56 PASS，原 40 项的检查数与 F1/T64 一致，新增 16 项与 T65 一致；详见 [T65b 验收](T65b_REGRESS.md)。覆盖率目标命中及分母差异见[补充数据中的当前覆盖率](FACTS_DETAIL.md)；T65b 只新增测试，RTL 与约束保持不变。
+`tools/eda.py` 对 `tb_t65_` 测试在仿真后调用 `tools/t65_check.py`，检查器纳入输入摘要，结果写入 `summary.json` 的 `check` 字段；独立核对有错误时，即使 TB 自检通过，入口仍返回失败。T65b 在 CE_DIV=2 下完成唯一官方批次 56/56 PASS，原 40 项的检查数与 F1/T64 一致，新增 16 项与 T65 一致；详见 [T65b 逐项验收](evidence/t65b_regress/acceptance.txt)。覆盖率目标命中及分母差异见[补充数据中的当前覆盖率](FACTS_DETAIL.md)；T65b 只新增测试，RTL 与约束保持不变。
 
 评委从仓库根目录的 ModelSim Transcript 运行 `do sim/run_judge.do`；本地 ModelSim 的 `vsim -c` 走 vish 与 vsim 的 RPC 传输，在部分主机上不可用，因此用 `vsim -batch -do "do sim/run_judge.do; quit -f"` 启动。入口覆盖五功能、配置容量、SNMP、突发、RTC 和性能。eLinx 工程的行为仿真入口为 tb_elinx，完整 RTL 回归入口为 sim/regress.ps1；软件准备、命令及预期输出见 [README](../README.md)。
 
@@ -671,7 +671,7 @@ Python 参考模型按报文格式和协议规则生成输入及期望值，CRC 
 
 `elinx/constraints.edc` 包含 PRES 1.30、172 条 P0 管脚语句和 5,540 条簇位置语句；固定布局来自 C0 布局加局部手工微调。**改 RTL 会使布局失效**，必须重新生成并验证位置约束。界面工程登记 `physical_only.edc` 与 `timing_only.sdc`，两者拼接与完整 EDC 一致；物理语句经 Tcl `source`，纯时序部分经 `read_sdc`，0.30 ns uncertainty 与已批准多周期约束保持不变。eLinx 界面会对登记的每个约束文件生成 `read_sdc`，并对 `.edc` 另加 `source`，因此 `physical_only.edc` 也会交给 SDC 解析器；解析器对其中约 5,700 条 PRES、管脚和簇位置语句逐条报 `invalid command`，这是预期现象，这些语句已由 `source` 生效，界面结果与 CLI 逐字节一致。
 
-官方资源为 LUT/FF/CLB/M4K/引脚 39895/20885/5136/404/172；单周期 181000 条、多周期 50296 条、hold 231296 条路径均按原始报告核对。时序与逐条落点证据见 [F1 时序证据](evidence/t63_f1_timing.json)；界面复跑与 CLI 一致，见 [界面比对](evidence/t63_f1_gui_compare.json) 和 [界面复跑步骤](T63_F1_GUI.md)。
+官方资源为 LUT/FF/CLB/M4K/引脚 39895/20885/5136/404/172；单周期 181000 条、多周期 50296 条、hold 231296 条路径均按原始报告核对。时序与逐条落点证据见 [F1 时序证据](evidence/t63_f1_timing.json)；界面复跑与 CLI 一致，见 [界面比对](evidence/t63_f1_gui_compare.json)。
 
 `tb_sys_net` 网表仿真首轮为 1,901,442 项检查、103 个断言错误（独立核对 16 项、11 个错误），首个失败在第 86042 周期：`SYS_TOP_NETLIST` 分支将 `core_valid/core_ready/core_last` 固定为 0，测试台仍据此维护发送结果队列；未映射 RTL 加同一宏复现了相同失败，定位为测试台观察逻辑。F1b 修正公开输入消息观测和双网接收来源观测后，RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88。首轮记录见 [整顶层网表失败证据](evidence/t63_f1_sys_net_failure.json)，通过证据见 [F1b 补验](evidence/t63_f1b_sys_net_pass.json)。
 

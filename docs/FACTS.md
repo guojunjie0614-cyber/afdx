@@ -130,7 +130,7 @@ var_cycle 的发送间隔偏差为 12.336 µs；gbe77、var_fixed、var_high、v
 
 约束审查：2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。本轮完整时序路径与原始数值见 `证据/t63_f1_timing.json`；`.place` 和官方资源报告均随证据保存。
 
-F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](evidence/t63_f1_gui_compare.json)；操作步骤见 [F1 界面复跑](T63_F1_GUI.md)。
+F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](evidence/t63_f1_gui_compare.json)。
 
 综合估算、布线后静态时序和 RTL 性能采用各自原始证据；测量条件见第五节。
 
@@ -149,7 +149,7 @@ F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](evide
 
 | 入口 | 当前结果 | 证据 |
 |---|---|---|
-| CE2 标准回归 | 56/56 PASS；自检 2334495386；原 40 项独立核对 4091874，新增 16 项独立核对 2246 | [T65b 验收](T65b_REGRESS.md)、[56 项汇总](evidence/t65b_regress/regression_summary.txt) |
+| CE2 标准回归 | 56/56 PASS；自检 2334495386；原 40 项独立核对 4091874，新增 16 项独立核对 2246 | [T65b 逐项验收](evidence/t65b_regress/acceptance.txt)、[56 项汇总](evidence/t65b_regress/regression_summary.txt) |
 | 评委入口 | 8/8 PASS；Error/FAIL/RAMCOLL=0 | `参考/judge_result.txt` |
 | 应用默认与小激励 | 2/2 APP ENTRY PASS | `参考/app_result.json` |
 | check_wrapper | 5/5 PASS | `证据/t63_f1_functional.json:wrapper` |
@@ -188,7 +188,7 @@ F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来
 
 #### F1 历史基线：T65 合并覆盖率与定向补测
 
-T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见 [T65 补测报告](T65_GAP_TESTS.md)与[目标命中记录](evidence/t65_gap_tests/target_hits.json)。
+T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见[目标命中记录](evidence/t65_gap_tests/target_hits.json)。
 
 F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
 
@@ -204,11 +204,11 @@ F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正
 
 合并统计与 T64 有 9 组设计单元/指标的分母不同，两次百分比按各自分母分别报告。原始分母保留，全部 bin 计入、无排除项，差异见 [分母核对](evidence/t65_gap_tests/denominators.json)。状态 100% 指工具识别的状态集合；接收封装压力为模块级测试，复位恢复覆盖登记的三个状态，1 字节输入为观察项。
 
-新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，只接受该 40 项清单，用于复现历史基线。
+新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 逐项验收](evidence/t65b_regress/acceptance.txt)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，只接受该 40 项清单，用于复现历史基线。
 
 #### F1 历史基线：T64 冻结覆盖率基线
 
-T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](T64_F1_COVERAGE.md)。
+T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率证据](evidence/t64_f1_coverage/coverage.json)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
