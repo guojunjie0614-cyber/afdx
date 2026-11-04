@@ -175,11 +175,27 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 代码覆盖率默认关闭。完整回归追加 `-Coverage`，单项运行用 `sim/run.ps1 -Test tb_ram_sdp -Coverage`；仅 RTL 按 `+cover=sbceft` 编译，每项在输出目录保存带唯一测试名的 `coverage.ucdb`，测试平台不计入覆盖率。
 用 ModelSim 的 `vcover merge merged.ucdb input1.ucdb input2.ucdb ...` 合并，再用 `vcover report -codeAll "-du=work.afdx_snmp" -output report.txt merged.ucdb` 导出模块报告，替换其中的模块名即可。T64 冻结基线与原始报告在 `docs/evidence/t64_f1_coverage/`；T65 合并统计与原始报告在 `docs/evidence/t65_gap_tests/`，输入清单和数据库摘要见其中 `ucdb_inputs.json`、`coverage.json`。大型 UCDB 不随提交包分发。
 
-### T65 合并覆盖率与定向补测
+### 当前分片版覆盖率（T79 引用）
+
+11-03 在分片版 RTL `b3a60639` 上采集，58 份 UCDB、42 个 RTL 设计单元。交付 RTL = `b3a60639` + T77 `MODEL_TECH` 声明前移分支，ModelSim 编译的电路等价；覆盖率直接引用、未重跑。
+
+| 覆盖类别 | 已覆盖 / 总数 | 未覆盖 | 汇总覆盖率 |
+|---|---|---|---|
+| 语句 | 12416 / 12824 | 408 | 96.8% |
+| 分支 | 7230 / 7642 | 412 | 94.6% |
+| 表达式 | 3242 / 3987 | 745 | 81.3% |
+| FSM 状态 | 115 / 137 | 22 | 83.9% |
+| 条件 | 1306 / 1766 | 460 | 74.0% |
+| 翻转 | 59358 / 82546 | 23188 | 71.9% |
+| FSM 跳转 | 141 / 375 | 234 | 37.6% |
+
+按原始计数汇总后四舍五入到一位小数。原始数据、SHA256、58 个测试运行名和源码绑定见 [分片版覆盖率来源](docs/evidence/t79_63vl/coverage_source.md)及 [原始 JSON](docs/evidence/t79_63vl/coverage_frag1030.json)。T79 新增满负载测试未计入这批覆盖率。
+
+### F1 历史基线：T65 合并覆盖率与定向补测
 
 T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装资源边界，以及 RX 引擎、MAC TX、应用 TX 三个登记状态的复位恢复；正向测试和独立核对全部通过。登记目标中，A01 的 26 项、A02 的 2 项、G3 的 3 项均有 UCDB 命中证据，合计 31 项；G3 备选 T64-0906 未注入。32 个仿真反例和 32 个离线捕获破坏反例均被检出。详见 [T65 补测报告](docs/T65_GAP_TESTS.md)与[目标命中记录](docs/evidence/t65_gap_tests/target_hits.json)。
 
-当前合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](docs/evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
+F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正式 UCDB，共 56 次尝试、29 个 RTL 设计单元；失败及反例未纳入。以下数字来自 [T65 合并统计](docs/evidence/t65_gap_tests/coverage.json)，百分比按计数截断到两位。T65b 的 56 项普通回归不带覆盖率，未生成新的覆盖率批次。
 
 | 覆盖类别 | 已覆盖 / 总数 | 百分比 |
 |---|---|---|
@@ -195,7 +211,7 @@ T65 的 16 项新增测试补测了 A 网队列满及恢复、应用收发封装
 
 新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](docs/T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，当前 56 项清单会触发其预期集合校验失败；保留该工具及历史证据，不把此失败计为功能失败。
 
-### T64 冻结覆盖率基线
+### F1 历史基线：T64 冻结覆盖率基线
 
 T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RTL 回归、29 个 RTL 设计单元、40 份 UCDB，按 `sbceft` 插桩，测试平台不计入。40/40 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为零；普通回归复用 40 项，补跑 0 项，Checks、CheckItems 及 491 个确定性产物一致。详细来源与复用边界见 [T64 覆盖率报告](docs/T64_F1_COVERAGE.md)。
 
@@ -312,7 +328,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 未改 RTL 或约束，也未重跑这些入口。T64 的 40 项覆盖率基线与 T65 新增 16 项的合并统计分别保留，T57 旧记录仅作为历史保留。
+当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 未改 RTL 或约束，也未重跑这些入口。当前覆盖率引用 58 份 UCDB、42 单元的分片版数据；T64 的 40 项与 T65 新增 16 项合并统计、T57 旧记录均作为 F1 历史基线保留。
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
