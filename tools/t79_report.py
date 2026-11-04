@@ -25,7 +25,8 @@ def main():
             text.append(f"| {name}/{length} | {row.get('status','未启动')} | {hdl} | 未完成 | — | — | — | {elapsed} |")
             continue
         jitter=f"{row['maximum_jitter_us']:.3f}" if row['formula_invalid']==0 else 'NA（存在公式无效组）'
-        text.append(f"| {name}/{length} | {row['status']} | {'PASS' if row['hdl_pass'] else 'FAIL'}/{'PASS' if row['integrity_pass'] else 'FAIL'} | {'一致' if row['statistics_equal'] else '不一致'} | {jitter} / 0x{row['worst_vlid']} / {row['worst_source']} | {row['maximum_latency_us']:.3f} | {sum(row['receive_mbps']):.6f} | {row['simulation_seconds']:.3f} / {row['seconds']:.3f} |")
+        status='PASS（不作抖动判据）' if row['status']=='PASS_NONCRITERION' else row['status']
+        text.append(f"| {name}/{length} | {status} | {'PASS' if row['hdl_pass'] else 'FAIL'}/{'PASS' if row['integrity_pass'] else 'FAIL'} | {'一致' if row['statistics_equal'] else '不一致'} | {jitter} / 0x{row['worst_vlid']} / {row['worst_source']} | {row['maximum_latency_us']:.3f} | {sum(row['receive_mbps']):.6f} | {row['simulation_seconds']:.3f} / {row['seconds']:.3f} |")
         stats=json.loads((E/name/'t76_stats.json').read_text(encoding='utf-8'))
         for g in stats['groups']:
             metrics.append('\t'.join(map(str,[name,g['source'],g['vlid'],g['length'],g['samples'],
@@ -33,7 +34,7 @@ def main():
                 g['official_jitter_cycles'],int(g['formula_precondition']),
                 f"{g['official_jitter_us']:.3f}" if g['formula_precondition'] else 'NA',g['under_100us']])))
     (E/'per_vl_metrics.tsv').write_text('\n'.join(metrics)+'\n',encoding='utf-8')
-    text+=['','逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式与 Python/Tcl 源码均保持 T76 原样。场景用时为启动至控制器确认结束，含接管识别延迟；实际仿真用时以 tool_metrics.json 为准。',
+    text+=['','逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式保持 T76 原样；Python 仅为 MIXED=3 扩展预期序列检查，Tcl 源码保持原样。场景用时为启动至控制器确认结束，含接管识别延迟；实际仿真用时以 tool_metrics.json 为准。',
         '', '## 完整性、公式与预算','', '| 场景 | 分组数 | 公式无效组 | ≥100 µs 组 | 页池上界（两方向） | BAG 等待对/失败对（两方向） |',
         '|---|---|---|---|---|---|']
     for name,_ in CASES:
@@ -48,7 +49,7 @@ def main():
     text+=['', '### 原样 RTL 的 ModelSim 诊断边界','',
         'T77/T78 原样 RTL 在 ModelSim 下存在 `$finish_and_return` 未定义和可选端口未连接警告。旧 t76_sim.py 把所有 Warning 视为失败，原 summary.json/退出码原样保留；T79 用与 tools/eda.py 相同的五条精确模式单独判定，完整警告仍在 simulation.log。未知 Warning、Error、Fatal、RAMCOLL、RX_ASSERT、HDL FAIL、输入哈希变化均不放行。t79_adjudication.json 单列 HDL、已知警告数与包装器状态，不把包装器 FAIL 改写为 PASS。接管队列控制器时保留原有仿真 PID、首次启动时刻和截止，未重跑。',
         '', '## 81 VL 行为不变的证明','',
-        '选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。相对起点 f4632d5c，tools/t76_sim.py 仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝。其余运行代码逐字相同；tb_t76_load.v、t76_load_endpoint.v、全部 RTL、Python/Tcl 统计均逐字节未改。轮换函数 base=(vl/3)*3、rank=base+(vl-base+round)%3 原本就参数化，消息长度/到期时刻/相位/顺序算法均未改。哈希与自动核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。T79 独立诊断不改变 HDL 激励或公开端口记录。',
+        '选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。基础七场景的运行版本相对起点 f4632d5c，仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝，其余运行代码及测试台原样。初次核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。随后追加 MIXED=3：新消息长度分支只在 MIXED=3 生效，LONG_COUNT 在 MIXED=0/1/2 下未使用，原七字段 window.txt 输出和全部到期/序号/相位/轮换逻辑不变；Python 新的预期覆盖分支也仅对 MIXED=3 生效，统计公式和 Tcl 未改。新改动逐项精确逆变换核对及旧路径不变说明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)，正式文件接纳见 [mixed3_adoption.json](mixed3_adoption.json)。全部 RTL 始终逐字节不变，独立诊断不改变激励或公开端口记录。',
         '', '## 混合场景复用','',
         '不重跑 mixed_profile。只读引用 T76 的 63 VL、100 ms 混合结果：HDL/逐字节完整性 PASS、两套统计一致、页池上界≤256。原始目录 `E:/2026_Embedded_FPGA/worktrees/active/c3_t76/out/t76/search_source/out/t76_sim/tb_t76_load/20261103_070501_935849`；[T76 汇总](../t76_frag1030/summary.md)、[统计交叉核对](../t76_frag1030/statistics_crosscheck.json)。短/长混合不额外叠加到纯短消息满负载；长消息按分片机会计费。',
         '', '## 超出声明的压力测试（81 VL 历史）','',
@@ -65,7 +66,7 @@ def main():
         '| docs/design/chapters/ch10.tex | 32 | 81 VL 极限容量 |',
         '| docs/design/AFDX端系统FPGA设计文档.tex | 191 | 摘要中的 81 VL 吞吐率 |',
         '', '## 文档与验收边界','',
-        '本轮更新 README.md、docs/ARCH.md、docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/summary.md，并新建本证据目录。docs/design/、docs/test/、rtl/、elinx/、sim/wave/png/、submission/、setup_pack/ 未改。不跑网表、不综合、不布线、不 push、不合并、不 amend。',
+        '本轮更新 README.md、docs/ARCH.md、docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/summary.md，并新建本证据目录。docs/design/、docs/test/、rtl/、elinx/、submission/、setup_pack/ 未改。sim/wave/png/ 的 14 张 PNG 按追加授权更新并单独提交 686aeed，来源 12858ddf，提交正文列出逐文件 SHA256；tb_elinx.png 为 11-04 界面截图。不跑网表、不综合、不布线、不 push、不合并、不 amend。',
         '', '按最新裁定：B1 的 HDL/完整性/双统计为 PASS，公式前提不成立的组保留带符号值，不作抖动判据，BAG 等待抖动由 B2 承担。仅在 B2 或周期场景出现≥100 µs 组、B2 公式不成立、或 HDL/完整性失败时停止回报。']
     if receipt.get('error'):
         text+=['',f"本轮停止原因：**{receipt['error']}**。"]
@@ -82,8 +83,34 @@ def main():
             text+=['','### B1：通过完整性，不作抖动判据','',
                 f"B1 的 HDL/完整性/双统计 **PASS**；按最新裁定不作抖动判据， **{len(bad)}/126 组公式不成立**，详见 [无效组原值](formula_invalid_groups.tsv)。只有 VLID 0x0114、0x0115 的两个方向共 4 组满足前提，有效组中最大为 0.984 µs（0x0115）；该子集最大值不作为抖动验收判据；判据由 B2 承担。",
                 '', f"例：方向 {g['source']}、VLID 0x{g['vlid']}、1471 字节：首帧 {g['first_frame_minimum']} 拍（{g['first_frame_minimum']*.008:.3f} µs），全程最大 {g['maximum']} 拍（{g['maximum']*.008:.3f} µs）；最大−首帧={g['raw_spread_cycles']} 拍（{g['raw_spread_cycles']*.008:.3f} µs）≤125000 拍 BAG，减 BAG 后原值 {g['official_jitter_us']:.3f} µs，故该组记 NA。",
-                '', '该现象与“第二条确实等待 BAG”不矛盾：线上 BAG 从前一帧起点计时，而每条消息的端到端时延各从自己的输入首字节计时；背靠背第二条输入晚于首条，等待的是剩余 BAG，固定输入顺序也未保证全程最大与首帧的差值超过完整 BAG。统计前提额外要求最大−首帧>BAG，本次未满足；没有改公式、钳零或转用其他抖动口径。两方向各 3150 对均通过等待证明，页池上界均 144/256，最大端到端时延 1079.056 µs。',
+                '', '该现象与“第二条确实等待 BAG”不矛盾：线上 BAG 从前一帧起点计时，而每条消息的端到端时延各从自己的输入首字节计时；背靠背第二条输入晚于首条，等待的是剩余 BAG，固定输入顺序也未保证全程最大与首帧的差值超过完整 BAG。这是与 T76 case 14 相同的固定顺序测量现象；带符号值为负不代表抖动超标。按最新裁定 B1 不作抖动判据，B2 承担该判据；没有改公式、钳零或转用其他抖动口径。两方向各 3150 对均通过等待证明，页池上界均 144/256，最大端到端时延 1079.056 µs。',
                 '', '此前按旧停止条件结束的 P1471/B2 记录保存在 stopped_initial/，初次队列见 initial_run_receipt.json。随后按明确授权，同参数、新目录重新启动 P1471/B2，各 3 小时上限；当前结果以上表和 run_receipt.json 为准。旧停止记录不覆盖新运行状态。']
+    long_receipt=E/'long_concurrent/run_receipt.json'
+    if long_receipt.exists():
+        extra=json.loads(long_receipt.read_text(encoding='utf-8'))
+        text+=['','## 多条 VL 同时发送 8192 B 的边界测试','',
+            '追加授权测试 MIXED=3、VL_COUNT=63、GROUP_LENGTH=1471、DUPLEX=1。末 LONG_COUNT 条 VL 在 sequence>0 后发送 8192 B，其余发送 1471 B；首轮全部 VL 先发送一次 1471 B。每条 8192 B 消息占六帧发送机会，同 VL 到期时刻至少间隔 6 ms，沿用既有按片计费调度。公开接口依次串行注入，同一批 VL 的计划到期时刻相同。',
+            '', '先跑 N=2/3/4 的 20 ms 窗口，各 1 小时；若 N=4 通过，最多再加 N=6/8 一轮 20 ms。选择这些测试中通过的最大 N 跑一次 100 ms 确认，上限 2 小时，不作未测试 N 的穷举边界承诺。失败不影响七个基础场景，不修改 RTL。',
+            '', f"边界队列：**{extra['status']}**；100 ms 确认值 N：**{extra.get('confirmed_limit','待确认')}**。完整运行身份、截止、原始路径与失败事件见 [边界收据](long_concurrent/run_receipt.json)。",
+            '', '| N | 窗口 ms | 结果 | HDL/完整性 | 双统计 | 短消息最大抖动 µs / VLID | 短消息最大端到端 µs | 8192 B 最大完成时延 µs | 仿真用时 s |',
+            '|---|---|---|---|---|---|---|---|---|']
+        long_metrics=['case\tsource\tvlid\tlength\tsamples\tmaximum_completion_us\tjitter_us\tformula_valid']
+        for row in extra['runs']:
+            short=f"{row['maximum_short_jitter_us']:.3f} / 0x{row['worst_short_vlid']}" if 'maximum_short_jitter_us' in row else '—'
+            latency=f"{row['maximum_short_latency_us']:.3f}" if 'maximum_short_latency_us' in row else '—'
+            completion=f"{row['maximum_long_completion_us']:.3f}" if 'maximum_long_completion_us' in row else '—'
+            hdl='PASS' if row.get('hdl_pass') else 'FAIL' if 'hdl_pass' in row else '—'
+            integrity='PASS' if row.get('integrity_pass') else 'FAIL' if 'integrity_pass' in row else '—'
+            equal='一致' if row.get('statistics_equal') else '—'
+            text.append(f"| {row['long_count']} | {row['window_ms']} | {row['status']} | {hdl}/{integrity} | {equal} | {short} | {latency} | {completion} | {row.get('simulation_seconds','—')} |")
+            if row.get('first_failure'):
+                f=row['first_failure'];text+=['',f"首次失败 {row['case']}：端点 {f['source']}、第 {f['cycle']} 拍、仿真 {f['simulation_ns']} ns；ev_a={f['ev_a']}、ev_b={f['ev_b']}、ev_app={f['ev_app']}。",'']
+            stats_file=E/'long_concurrent'/row['case']/'t76_stats.json'
+            if stats_file.exists():
+                for g in json.loads(stats_file.read_text(encoding='utf-8'))['groups']:
+                    long_metrics.append('\t'.join(map(str,[row['case'],g['source'],g['vlid'],g['length'],g['samples'],g['maximum']*.008,g['official_jitter_us'],int(g['formula_precondition'])])))
+        (E/'long_per_vl_metrics.tsv').write_text('\n'.join(long_metrics)+'\n',encoding='utf-8')
+        text+=['','验收核对 HDL、逐字节完整性交付、Python/Tcl 逐字段一致、短消息分组抖动 <100 µs、短消息原 2 ms 门槛和页池上界。8192 B 只单列整条消息完成时延，不套单帧抖动或 2 ms 门槛。原始失败保留，未重试或修 RTL。新模式的旧路径不变证明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)。']
     (E/'summary.md').write_text('\n'.join(text)+'\n',encoding='utf-8')
 
 if __name__=='__main__':main()

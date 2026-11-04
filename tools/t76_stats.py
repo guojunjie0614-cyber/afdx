@@ -42,6 +42,7 @@ def analyse(folder,partial=False):
     window=list(map(int,(folder/'window.txt').read_text().split()))
     begin,end,vls,group,mixed,duplex=window[:6]
     burst=window[6] if len(window)>6 else 0
+    long_count=window[7] if len(window)>7 else 1
     answer={};groups=[];issues=[];samples=[];source_hashes={}
     for source in range(1+duplex):
         txpath=folder/f'ep{source}_tx.txt';rxpath=folder/f'ep{1-source}_rx.txt'
@@ -54,7 +55,7 @@ def analyse(folder,partial=False):
             for vl in range(vls):
                 expected=[];due=begin;sequence=0
                 while due<end:
-                    length=1472 if mixed==2 and vl==vls-1 else (
+                    length=8192 if mixed==3 and sequence>0 and vl>=vls-long_count else 1472 if mixed==2 and vl==vls-1 else (
                         (1472,3000,8192)[vl-(vls-3)] if mixed==1 and sequence>0 and vl>=vls-3 else group)
                     expected.append((sequence,length,due))
                     if burst:
@@ -172,6 +173,7 @@ def analyse(folder,partial=False):
     result=dict(partial=partial,window_cycles=end-begin,window_ms=(end-begin)*0.000008,
         declared_vls=vls,group=group,mixed=mixed,duplex=duplex,bag_burst=burst,issues=issues,groups=groups,
         source_hashes=source_hashes,formula='Confirmed protocol: periodic=max-min without BAG deduction; paired burst=max-first_frame-BAG')
+    if mixed==3:result['long_count']=long_count
     (folder/'t76_samples.json').write_text(json.dumps(samples,indent=2)+'\n',encoding='utf-8')
     (folder/'t76_stats.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     return result

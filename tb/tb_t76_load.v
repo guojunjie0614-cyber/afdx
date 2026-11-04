@@ -2,14 +2,14 @@
 // Each run is independent. Long runs require the line-1 confirmation gate.
 module tb_t76_load #(
     parameter VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,DUPLEX=1,
-    DURATION=12500000,SMOKE=0,SWAP=0,BAG_BURST=0
+    DURATION=12500000,SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1
 );
     reg clk=0,reset=1;
     always #4 clk=~clk;
     wire [7:0] a0,b0,a1,b1;
     wire av0,bv0,av1,bv1,c0,c1;
-    t76_load_endpoint #(0,VL_COUNT,GROUP_LENGTH,MIXED,SWAP) ep0(clk,reset,a1,b1,av1,bv1,a0,b0,av0,bv0,c0);
-    t76_load_endpoint #(1,VL_COUNT,GROUP_LENGTH,MIXED,!SWAP) ep1(clk,reset,a0,b0,av0,bv0,a1,b1,av1,bv1,c1);
+    t76_load_endpoint #(0,VL_COUNT,GROUP_LENGTH,MIXED,SWAP,LONG_COUNT) ep0(clk,reset,a1,b1,av1,bv1,a0,b0,av0,bv0,c0);
+    t76_load_endpoint #(1,VL_COUNT,GROUP_LENGTH,MIXED,!SWAP,LONG_COUNT) ep1(clk,reset,a0,b0,av0,bv0,a1,b1,av1,bv1,c1);
     integer epoch,fd,cycles=0;
     // Mode 2 changes only the order among equally due VLs. Three adjacent
     // VLs rotate each round; message lengths, counts and due times are fixed.
@@ -75,7 +75,8 @@ module tb_t76_load #(
         fd=$fopen("window.txt","w");
         repeat(8)@(negedge clk);reset=0;
         wait(c0 && c1);@(negedge clk);epoch=ep0.cycle+16;
-        $fwrite(fd,"%0d %0d %0d %0d %0d %0d %0d\n",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST);$fclose(fd);
+        if(MIXED==3)$fwrite(fd,"%0d %0d %0d %0d %0d %0d %0d %0d\n",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST,LONG_COUNT);
+        else $fwrite(fd,"%0d %0d %0d %0d %0d %0d %0d\n",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST);$fclose(fd);
         fork source0;source1;join
         while(ep0.cycle<epoch+DURATION || ep1.received<ep0.sent || ep0.received<ep1.sent)@(negedge clk);
         repeat(SMOKE ? 64 : 20000)@(negedge clk);

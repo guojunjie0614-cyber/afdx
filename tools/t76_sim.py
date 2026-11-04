@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--reference',type=Path,help='Exact passed RTL run of this stimulus')
     parser.add_argument('--param', action='append', default=[])
     args = parser.parse_args()
-    params = dict(VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,DUPLEX=1,DURATION=12500000,SMOKE=0,SWAP=0,BAG_BURST=0)
+    params = dict(VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,DUPLEX=1,DURATION=12500000,SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1)
     for entry in args.param:
         key, value = entry.split('=', 1)
         if key not in params or not value.isdigit():
@@ -36,6 +36,8 @@ def main():
         parser.error('The rotating equal-due BAG protocol requires complete groups of three VLs')
     if params['DURATION'] >= 12500000 and os.environ.get('AFDX_T76_SPEC_CONFIRMED') != '1':
         parser.error('Line-1 specification confirmation required for long RTL scenarios')
+    if params['MIXED']==3 and (params['GROUP_LENGTH']!=1471 or params['BAG_BURST'] or not 1<=params['LONG_COUNT']<=params['VL_COUNT']):
+        parser.error('Mode 3 requires 1..VL_COUNT long VLs, 1471-byte short messages and no BAG burst')
     flow = eda.Flow('t76_sim', 'tb_t76_load', args.deadline)
     flow.result.update(parameters=params,kind='official_vqm' if args.netlist else 'RTL',passed=False)
     originals = sorted((ROOT/'rtl').glob('*.v')) + [ROOT/'tb/tb_t76_load.v',
