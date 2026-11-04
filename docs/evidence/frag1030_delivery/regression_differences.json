@@ -1,0 +1,130 @@
+[
+  {
+    "test": "tb_t65_queue_a",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 10,
+    "actual": 10,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_reset_app",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 42,
+    "actual": 42,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_reset_mac",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 45,
+    "actual": 45,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_reset_rx",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 44,
+    "actual": 44,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_rx_data",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 9874,
+    "actual": 9874,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_rx_desc",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 216,
+    "actual": 216,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_desc",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 250,
+    "actual": 250,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_hint",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 235,
+    "actual": 235,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_init",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 14,
+    "actual": 14,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_ready",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 239,
+    "actual": 239,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_short_full",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 18,
+    "actual": 18,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_short_init",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 17,
+    "actual": 17,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_short_normal",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 17,
+    "actual": 17,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_space",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 22,
+    "actual": 22,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_space_edge",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 14,
+    "actual": 14,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  },
+  {
+    "test": "tb_t65_tx_unmapped",
+    "params": "",
+    "field": "CheckItems extraction",
+    "previous": 14,
+    "actual": 14,
+    "reason": "Queue reads check.items; T65 native receipt stores check.checks. Native values recovered and compared; raw queue preserved."
+  }
+]

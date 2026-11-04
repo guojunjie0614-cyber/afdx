@@ -1,0 +1,117 @@
+[
+  {
+    "receipt": {
+      "Test": "tb_elinx",
+      "Param": "",
+      "Kind": "A",
+      "Status": "PASS",
+      "Checks": 9238,
+      "CheckItems": null,
+      "ExternalErrors": null,
+      "NativeResult": "PASS",
+      "NativeErrors": 0,
+      "SimulationSeconds": 52312.469,
+      "Seconds": 52338.064,
+      "Started": "2026-11-03T15:33:51.108401+08:00",
+      "Finished": "2026-11-04T06:06:08.522195+08:00",
+      "Folder": "out/gui_netlist/tb_elinx_gui/20261102_233351_107710",
+      "Summary": "out/par_baseline_run_56_latest_tb_elinx_gui.json",
+      "Error": null,
+      "PeakTreeBytes": 4378238976,
+      "Process": {
+        "pid": 24460,
+        "created": 1793691230.8852773,
+        "deadline": "2026-11-04T15:33:50.883339+08:00"
+      },
+      "RTLReference": null,
+      "ExactExternalRecords": null
+    },
+    "result": [
+      "# [RESULT] tb_elinx PASS checks=9238 errors=0",
+      "# ** Note: $finish    : tb_elinx.v(61)",
+      "#    Time: 2557777 ns  Iteration: 0  Instance: /tb_elinx",
+      "# End time: 14:06:07 on Nov 03,2026, Elapsed time: 14:31:52"
+    ],
+    "source_evidence_commit": "451b91c4"
+  },
+  {
+    "receipt": {
+      "Test": "tb_net_services",
+      "Param": "",
+      "Kind": "A",
+      "Status": "PASS",
+      "Checks": 1123,
+      "CheckItems": 65,
+      "ExternalErrors": 0,
+      "NativeResult": "PASS",
+      "NativeErrors": 0,
+      "SimulationSeconds": 23614.453,
+      "Seconds": 23655.766,
+      "Started": "2026-11-03T16:07:08.762471+08:00",
+      "Finished": "2026-11-03T22:41:09.766228+08:00",
+      "Folder": "out/t75/candidate1_source/out/gui_netlist/tb_net_services_gui/20261103_000708_762471",
+      "Summary": "out/t75/candidate1_source/out/par_baseline_run_117_latest_tb_net_services_gui.json",
+      "Error": null,
+      "PeakTreeBytes": 4375875584,
+      "Process": {
+        "pid": 1676,
+        "created": 1793693215.120551,
+        "deadline": "2026-11-04T16:06:55.118125+08:00"
+      },
+      "RTLReference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_net_services_rtl\\20261103_000655_481368",
+      "ExactExternalRecords": {
+        "net_services.txt": true,
+        "es1_a.txt": true,
+        "es1_b.txt": true,
+        "es2_a.txt": true,
+        "es2_b.txt": true,
+        "es2_rx_a.txt": true,
+        "download_results.txt": true
+      }
+    },
+    "result": [
+      "# [RESULT] tb_net_services PASS checks=1123 errors=0",
+      "# ** Note: $finish    : tb_net_services.v(153)",
+      "#    Time: 1095014 ns  Iteration: 0  Instance: /tb_net_services",
+      "# End time: 06:41:08 on Nov 03,2026, Elapsed time: 6:33:34"
+    ],
+    "source_evidence_commit": "451b91c4"
+  },
+  {
+    "receipt": {
+      "Test": "tb_frag1030_net",
+      "Param": "",
+      "Kind": "A",
+      "Status": "PASS-PREFIX",
+      "Checks": null,
+      "CheckItems": 5,
+      "ExternalErrors": 0,
+      "NativeResult": null,
+      "NativeErrors": null,
+      "SimulationSeconds": 34727.859,
+      "Seconds": 34798.047,
+      "Started": "2026-11-03T16:07:41.186882+08:00",
+      "Finished": "2026-11-04T01:46:54.131858+08:00",
+      "Folder": "out/t75/candidate1_source/out/gui_netlist/tb_frag1030_net_gui/20261103_000741_186882",
+      "Summary": "out/t75/candidate1_source/out/par_baseline_run_135_latest_tb_frag1030_net_gui.json",
+      "Error": null,
+      "PeakTreeBytes": 4405579776,
+      "Process": {
+        "pid": 47712,
+        "created": 1793693216.3226552,
+        "deadline": "2026-11-04T16:06:56.320662+08:00"
+      },
+      "RTLReference": null,
+      "ExactExternalRecords": null,
+      "RawStatus": "FAIL",
+      "RawError": "simulation: exit=1 reason=None; E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882\\simulation.log",
+      "PrefixCutoff": 199578,
+      "PrefixComparedRecords": 32,
+      "PrefixEvidence": "out/t75/fragment_prefix/check_summary.json"
+    },
+    "result": [
+      "# End time: 09:46:53 on Nov 03,2026, Elapsed time: 9:38:47"
+    ],
+    "source_evidence_commit": "451b91c4"
+  }
+]

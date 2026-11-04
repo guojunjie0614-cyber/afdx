@@ -1,0 +1,46 @@
+{
+  "source_commit": "360cd0294e9ae129eef97fe37ae325187e13650c",
+  "pid": 45148,
+  "created": 1793753638.569158,
+  "started": "2026-11-04 08:41:20",
+  "deadline": "2026-11-04 09:41:20",
+  "runs": [
+    {
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/t76_app.py",
+        "--deadline",
+        "2026-11-04T09:41:20+08:00"
+      ],
+      "pid": 46708,
+      "created": 1793753638.770014,
+      "exit": 0
+    },
+    {
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/t76_app.py",
+        "--deadline",
+        "2026-11-04T09:41:20+08:00",
+        "--small"
+      ],
+      "pid": 17352,
+      "created": 1793753677.418008,
+      "exit": 0
+    }
+  ],
+  "excluded": [
+    "tb_sys_load",
+    "tb_sys_perf",
+    "tb_sys_perf_var",
+    "tb_sys_rtc"
+  ],
+  "finished": "2026-11-04 08:54:53",
+  "seconds": 813.637209
+}

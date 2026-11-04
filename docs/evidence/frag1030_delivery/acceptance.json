@@ -1,0 +1,10 @@
+{
+  "rtl_pass": 63,
+  "total": 63,
+  "configuration_pass": 2,
+  "native_raw_sources": true,
+  "elinx_baseline_gate": false,
+  "original_limitations_verbatim": true,
+  "performance_accepted": false,
+  "vqm_windows_equal": true
+}
