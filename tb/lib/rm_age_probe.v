@@ -3,7 +3,7 @@
 // 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
 // 测试每 128 拍推进一次输入时间，让变化发生在帧处理期间。
-module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,errors=0);
+module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,output reg [31:0] errors=0);
     reg reset=1;reg [15:0] now_c=0;reg [94:0] desc=0;reg valid=0;
     wire init,take,resolve,commit,mre,cre,sre,swe,dwe,rm,deliver,ok;
     wire [15:0] ma;wire [11:0] ca,sa,wa;wire [42:0] wd;
@@ -36,7 +36,7 @@ module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,
             // 描述先开始；第8拍切粗时钟，原实现每次都会错过老化触发。
             @(negedge clk);desc={16'd1,8'd1,16'd3001,16'd4001,11'd17,12'd0,now_c};valid=1;
             while(!take)@(negedge clk);valid=0;
-            repeat(6)@(negedge clk);check(dut.op==2,"coarse change is under engine load");
+            repeat(6)@(negedge clk);check(dut.op==dut.FRAME,"coarse change is under engine load");
             now_c=now_c+1'b1;sent=sent+1;limit=origin+sent*128;
             while(cycle<limit)@(negedge clk);
             if(now_c==16'h5002)check(!states[0][24],"old record aged before signed half-wrap");

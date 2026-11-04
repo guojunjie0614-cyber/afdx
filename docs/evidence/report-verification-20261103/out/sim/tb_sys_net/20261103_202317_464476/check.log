@@ -1,0 +1,6 @@
+[CHECK] tb_sys_net_es1_tx PASS items=106 errors=0 either=0
+[CHECK] tb_sys_net_es2_tx PASS items=106 errors=0 either=0
+[CHECK] tb_sys_net_es1_rx PASS items=45 errors=0 either=0
+[CHECK] tb_sys_net_es2_rx PASS items=43 errors=0 either=0
+[CHECK] tb_sys_net PASS items=846 errors=0 either=0 w_over=0
+[CHECK] tb_sys_net_gmii PASS items=161 errors=0 either=0

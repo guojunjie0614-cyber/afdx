@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "command": [
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\tb_fragmentation\\simulation.exe"
+  ],
+  "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\long128",
+  "timeout_seconds": 1800,
+  "memory_tree_limit_bytes": 1073741824,
+  "available_memory_floor_bytes": 5368709120,
+  "started": "2026-11-03T21:37:03.856417+08:00",
+  "returncode": 0,
+  "failure": "Missing real HDL PASS result",
+  "ended": "2026-11-03T21:40:25.267946+08:00"
+}

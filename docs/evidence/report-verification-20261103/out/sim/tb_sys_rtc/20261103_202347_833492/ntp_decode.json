@@ -1,0 +1,6070 @@
+[
+  {
+    "cycle": 66153,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5ef33333446",
+      "seconds": 3155674607,
+      "fraction": 858993734,
+      "nanoseconds": 200000064,
+      "utc": "2000-01-01T00:16:47.200000064Z"
+    }
+  },
+  {
+    "cycle": 66588,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5ef33333446",
+      "seconds": 3155674607,
+      "fraction": 858993734,
+      "nanoseconds": 200000064,
+      "utc": "2000-01-01T00:16:47.200000064Z"
+    },
+    "receive": {
+      "raw": "bc17c5e8fffee488",
+      "seconds": 3155674600,
+      "fraction": 4294894728,
+      "nanoseconds": 999983104,
+      "utc": "2000-01-01T00:16:40.999983104Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e8fffeec51",
+      "seconds": 3155674600,
+      "fraction": 4294896721,
+      "nanoseconds": 999983568,
+      "utc": "2000-01-01T00:16:40.999983568Z"
+    }
+  },
+  {
+    "cycle": 128654,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9001f76ac",
+      "seconds": 3155674601,
+      "fraction": 2061996,
+      "nanoseconds": 480096,
+      "utc": "2000-01-01T00:16:41.000480096Z"
+    }
+  },
+  {
+    "cycle": 129089,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9001f76ac",
+      "seconds": 3155674601,
+      "fraction": 2061996,
+      "nanoseconds": 480096,
+      "utc": "2000-01-01T00:16:41.000480096Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9001fa946",
+      "seconds": 3155674601,
+      "fraction": 2074950,
+      "nanoseconds": 483112,
+      "utc": "2000-01-01T00:16:41.000483112Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9001fb10f",
+      "seconds": 3155674601,
+      "fraction": 2076943,
+      "nanoseconds": 483576,
+      "utc": "2000-01-01T00:16:41.000483576Z"
+    }
+  },
+  {
+    "cycle": 191155,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900403b6a",
+      "seconds": 3155674601,
+      "fraction": 4209514,
+      "nanoseconds": 980104,
+      "utc": "2000-01-01T00:16:41.000980104Z"
+    }
+  },
+  {
+    "cycle": 191590,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900403b6a",
+      "seconds": 3155674601,
+      "fraction": 4209514,
+      "nanoseconds": 980104,
+      "utc": "2000-01-01T00:16:41.000980104Z"
+    },
+    "receive": {
+      "raw": "bc17c5e900406e04",
+      "seconds": 3155674601,
+      "fraction": 4222468,
+      "nanoseconds": 983120,
+      "utc": "2000-01-01T00:16:41.000983120Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9004075cd",
+      "seconds": 3155674601,
+      "fraction": 4224461,
+      "nanoseconds": 983584,
+      "utc": "2000-01-01T00:16:41.000983584Z"
+    }
+  },
+  {
+    "cycle": 253656,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900610028",
+      "seconds": 3155674601,
+      "fraction": 6357032,
+      "nanoseconds": 1480112,
+      "utc": "2000-01-01T00:16:41.001480112Z"
+    }
+  },
+  {
+    "cycle": 254091,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900610028",
+      "seconds": 3155674601,
+      "fraction": 6357032,
+      "nanoseconds": 1480112,
+      "utc": "2000-01-01T00:16:41.001480112Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9006132c2",
+      "seconds": 3155674601,
+      "fraction": 6369986,
+      "nanoseconds": 1483128,
+      "utc": "2000-01-01T00:16:41.001483128Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e900613a8b",
+      "seconds": 3155674601,
+      "fraction": 6371979,
+      "nanoseconds": 1483592,
+      "utc": "2000-01-01T00:16:41.001483592Z"
+    }
+  },
+  {
+    "cycle": 316157,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90081c4e6",
+      "seconds": 3155674601,
+      "fraction": 8504550,
+      "nanoseconds": 1980120,
+      "utc": "2000-01-01T00:16:41.001980120Z"
+    }
+  },
+  {
+    "cycle": 316592,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90081c4e6",
+      "seconds": 3155674601,
+      "fraction": 8504550,
+      "nanoseconds": 1980120,
+      "utc": "2000-01-01T00:16:41.001980120Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90081f780",
+      "seconds": 3155674601,
+      "fraction": 8517504,
+      "nanoseconds": 1983136,
+      "utc": "2000-01-01T00:16:41.001983136Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90081ff49",
+      "seconds": 3155674601,
+      "fraction": 8519497,
+      "nanoseconds": 1983600,
+      "utc": "2000-01-01T00:16:41.001983600Z"
+    }
+  },
+  {
+    "cycle": 567211,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5dfb3333446",
+      "seconds": 3155674591,
+      "fraction": 3006477382,
+      "nanoseconds": 700000064,
+      "utc": "2000-01-01T00:16:31.700000064Z"
+    }
+  },
+  {
+    "cycle": 567646,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5dfb3333446",
+      "seconds": 3155674591,
+      "fraction": 3006477382,
+      "nanoseconds": 700000064,
+      "utc": "2000-01-01T00:16:31.700000064Z"
+    },
+    "receive": {
+      "raw": "bc17c5e8fffee488",
+      "seconds": 3155674600,
+      "fraction": 4294894728,
+      "nanoseconds": 999983104,
+      "utc": "2000-01-01T00:16:40.999983104Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e8fffeec51",
+      "seconds": 3155674600,
+      "fraction": 4294896721,
+      "nanoseconds": 999983568,
+      "utc": "2000-01-01T00:16:40.999983568Z"
+    }
+  },
+  {
+    "cycle": 629712,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9001f76ac",
+      "seconds": 3155674601,
+      "fraction": 2061996,
+      "nanoseconds": 480096,
+      "utc": "2000-01-01T00:16:41.000480096Z"
+    }
+  },
+  {
+    "cycle": 630147,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9001f76ac",
+      "seconds": 3155674601,
+      "fraction": 2061996,
+      "nanoseconds": 480096,
+      "utc": "2000-01-01T00:16:41.000480096Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9001fa946",
+      "seconds": 3155674601,
+      "fraction": 2074950,
+      "nanoseconds": 483112,
+      "utc": "2000-01-01T00:16:41.000483112Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9001fb10f",
+      "seconds": 3155674601,
+      "fraction": 2076943,
+      "nanoseconds": 483576,
+      "utc": "2000-01-01T00:16:41.000483576Z"
+    }
+  },
+  {
+    "cycle": 692213,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900403b6a",
+      "seconds": 3155674601,
+      "fraction": 4209514,
+      "nanoseconds": 980104,
+      "utc": "2000-01-01T00:16:41.000980104Z"
+    }
+  },
+  {
+    "cycle": 692648,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900403b6a",
+      "seconds": 3155674601,
+      "fraction": 4209514,
+      "nanoseconds": 980104,
+      "utc": "2000-01-01T00:16:41.000980104Z"
+    },
+    "receive": {
+      "raw": "bc17c5e900406e04",
+      "seconds": 3155674601,
+      "fraction": 4222468,
+      "nanoseconds": 983120,
+      "utc": "2000-01-01T00:16:41.000983120Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9004075cd",
+      "seconds": 3155674601,
+      "fraction": 4224461,
+      "nanoseconds": 983584,
+      "utc": "2000-01-01T00:16:41.000983584Z"
+    }
+  },
+  {
+    "cycle": 754714,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900610028",
+      "seconds": 3155674601,
+      "fraction": 6357032,
+      "nanoseconds": 1480112,
+      "utc": "2000-01-01T00:16:41.001480112Z"
+    }
+  },
+  {
+    "cycle": 755149,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900610028",
+      "seconds": 3155674601,
+      "fraction": 6357032,
+      "nanoseconds": 1480112,
+      "utc": "2000-01-01T00:16:41.001480112Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9006132c2",
+      "seconds": 3155674601,
+      "fraction": 6369986,
+      "nanoseconds": 1483128,
+      "utc": "2000-01-01T00:16:41.001483128Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e900613a8b",
+      "seconds": 3155674601,
+      "fraction": 6371979,
+      "nanoseconds": 1483592,
+      "utc": "2000-01-01T00:16:41.001483592Z"
+    }
+  },
+  {
+    "cycle": 817215,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90081c4e6",
+      "seconds": 3155674601,
+      "fraction": 8504550,
+      "nanoseconds": 1980120,
+      "utc": "2000-01-01T00:16:41.001980120Z"
+    }
+  },
+  {
+    "cycle": 817650,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90081c4e6",
+      "seconds": 3155674601,
+      "fraction": 8504550,
+      "nanoseconds": 1980120,
+      "utc": "2000-01-01T00:16:41.001980120Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90081f780",
+      "seconds": 3155674601,
+      "fraction": 8517504,
+      "nanoseconds": 1983136,
+      "utc": "2000-01-01T00:16:41.001983136Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90081ff49",
+      "seconds": 3155674601,
+      "fraction": 8519497,
+      "nanoseconds": 1983600,
+      "utc": "2000-01-01T00:16:41.001983600Z"
+    }
+  },
+  {
+    "cycle": 1068260,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901056397",
+      "seconds": 3155674601,
+      "fraction": 17130391,
+      "nanoseconds": 3988480,
+      "utc": "2000-01-01T00:16:41.003988480Z"
+    }
+  },
+  {
+    "cycle": 1068695,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901056397",
+      "seconds": 3155674601,
+      "fraction": 17130391,
+      "nanoseconds": 3988480,
+      "utc": "2000-01-01T00:16:41.003988480Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901059630",
+      "seconds": 3155674601,
+      "fraction": 17143344,
+      "nanoseconds": 3991496,
+      "utc": "2000-01-01T00:16:41.003991496Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901059df9",
+      "seconds": 3155674601,
+      "fraction": 17145337,
+      "nanoseconds": 3991960,
+      "utc": "2000-01-01T00:16:41.003991960Z"
+    }
+  },
+  {
+    "cycle": 1130761,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901262855",
+      "seconds": 3155674601,
+      "fraction": 19277909,
+      "nanoseconds": 4488488,
+      "utc": "2000-01-01T00:16:41.004488488Z"
+    }
+  },
+  {
+    "cycle": 1131196,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901262855",
+      "seconds": 3155674601,
+      "fraction": 19277909,
+      "nanoseconds": 4488488,
+      "utc": "2000-01-01T00:16:41.004488488Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901265aee",
+      "seconds": 3155674601,
+      "fraction": 19290862,
+      "nanoseconds": 4491504,
+      "utc": "2000-01-01T00:16:41.004491504Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9012662b7",
+      "seconds": 3155674601,
+      "fraction": 19292855,
+      "nanoseconds": 4491968,
+      "utc": "2000-01-01T00:16:41.004491968Z"
+    }
+  },
+  {
+    "cycle": 1193262,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90146ed13",
+      "seconds": 3155674601,
+      "fraction": 21425427,
+      "nanoseconds": 4988496,
+      "utc": "2000-01-01T00:16:41.004988496Z"
+    }
+  },
+  {
+    "cycle": 1193697,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90146ed13",
+      "seconds": 3155674601,
+      "fraction": 21425427,
+      "nanoseconds": 4988496,
+      "utc": "2000-01-01T00:16:41.004988496Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901471fac",
+      "seconds": 3155674601,
+      "fraction": 21438380,
+      "nanoseconds": 4991512,
+      "utc": "2000-01-01T00:16:41.004991512Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901472775",
+      "seconds": 3155674601,
+      "fraction": 21440373,
+      "nanoseconds": 4991976,
+      "utc": "2000-01-01T00:16:41.004991976Z"
+    }
+  },
+  {
+    "cycle": 1255763,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90167b1d1",
+      "seconds": 3155674601,
+      "fraction": 23572945,
+      "nanoseconds": 5488504,
+      "utc": "2000-01-01T00:16:41.005488504Z"
+    }
+  },
+  {
+    "cycle": 1256198,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90167b1d1",
+      "seconds": 3155674601,
+      "fraction": 23572945,
+      "nanoseconds": 5488504,
+      "utc": "2000-01-01T00:16:41.005488504Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90167e46a",
+      "seconds": 3155674601,
+      "fraction": 23585898,
+      "nanoseconds": 5491520,
+      "utc": "2000-01-01T00:16:41.005491520Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90167ec33",
+      "seconds": 3155674601,
+      "fraction": 23587891,
+      "nanoseconds": 5491984,
+      "utc": "2000-01-01T00:16:41.005491984Z"
+    }
+  },
+  {
+    "cycle": 1318264,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90188768f",
+      "seconds": 3155674601,
+      "fraction": 25720463,
+      "nanoseconds": 5988512,
+      "utc": "2000-01-01T00:16:41.005988512Z"
+    }
+  },
+  {
+    "cycle": 1318699,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90188768f",
+      "seconds": 3155674601,
+      "fraction": 25720463,
+      "nanoseconds": 5988512,
+      "utc": "2000-01-01T00:16:41.005988512Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90188a928",
+      "seconds": 3155674601,
+      "fraction": 25733416,
+      "nanoseconds": 5991528,
+      "utc": "2000-01-01T00:16:41.005991528Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90188b0f1",
+      "seconds": 3155674601,
+      "fraction": 25735409,
+      "nanoseconds": 5991992,
+      "utc": "2000-01-01T00:16:41.005991992Z"
+    }
+  },
+  {
+    "cycle": 1380765,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901a93b4d",
+      "seconds": 3155674601,
+      "fraction": 27867981,
+      "nanoseconds": 6488520,
+      "utc": "2000-01-01T00:16:41.006488520Z"
+    }
+  },
+  {
+    "cycle": 1381200,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901a93b4d",
+      "seconds": 3155674601,
+      "fraction": 27867981,
+      "nanoseconds": 6488520,
+      "utc": "2000-01-01T00:16:41.006488520Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901a96de6",
+      "seconds": 3155674601,
+      "fraction": 27880934,
+      "nanoseconds": 6491536,
+      "utc": "2000-01-01T00:16:41.006491536Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901a975af",
+      "seconds": 3155674601,
+      "fraction": 27882927,
+      "nanoseconds": 6492000,
+      "utc": "2000-01-01T00:16:41.006492000Z"
+    }
+  },
+  {
+    "cycle": 1443266,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901ca000b",
+      "seconds": 3155674601,
+      "fraction": 30015499,
+      "nanoseconds": 6988528,
+      "utc": "2000-01-01T00:16:41.006988528Z"
+    }
+  },
+  {
+    "cycle": 1443701,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901ca000b",
+      "seconds": 3155674601,
+      "fraction": 30015499,
+      "nanoseconds": 6988528,
+      "utc": "2000-01-01T00:16:41.006988528Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901ca32a4",
+      "seconds": 3155674601,
+      "fraction": 30028452,
+      "nanoseconds": 6991544,
+      "utc": "2000-01-01T00:16:41.006991544Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901ca3a6d",
+      "seconds": 3155674601,
+      "fraction": 30030445,
+      "nanoseconds": 6992008,
+      "utc": "2000-01-01T00:16:41.006992008Z"
+    }
+  },
+  {
+    "cycle": 1505767,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901eac4c9",
+      "seconds": 3155674601,
+      "fraction": 32163017,
+      "nanoseconds": 7488536,
+      "utc": "2000-01-01T00:16:41.007488536Z"
+    }
+  },
+  {
+    "cycle": 1506202,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901eac4c9",
+      "seconds": 3155674601,
+      "fraction": 32163017,
+      "nanoseconds": 7488536,
+      "utc": "2000-01-01T00:16:41.007488536Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901eaf762",
+      "seconds": 3155674601,
+      "fraction": 32175970,
+      "nanoseconds": 7491552,
+      "utc": "2000-01-01T00:16:41.007491552Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901eaff2b",
+      "seconds": 3155674601,
+      "fraction": 32177963,
+      "nanoseconds": 7492016,
+      "utc": "2000-01-01T00:16:41.007492016Z"
+    }
+  },
+  {
+    "cycle": 1667232,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5ef33333423",
+      "seconds": 3155674607,
+      "fraction": 858993699,
+      "nanoseconds": 200000056,
+      "utc": "2000-01-01T00:16:47.200000056Z"
+    }
+  },
+  {
+    "cycle": 1667667,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5ef33333423",
+      "seconds": 3155674607,
+      "fraction": 858993699,
+      "nanoseconds": 200000056,
+      "utc": "2000-01-01T00:16:47.200000056Z"
+    },
+    "receive": {
+      "raw": "bc17c5e8fffee465",
+      "seconds": 3155674600,
+      "fraction": 4294894693,
+      "nanoseconds": 999983096,
+      "utc": "2000-01-01T00:16:40.999983096Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e8fffeec2e",
+      "seconds": 3155674600,
+      "fraction": 4294896686,
+      "nanoseconds": 999983560,
+      "utc": "2000-01-01T00:16:40.999983560Z"
+    }
+  },
+  {
+    "cycle": 1729733,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9001f768a",
+      "seconds": 3155674601,
+      "fraction": 2061962,
+      "nanoseconds": 480088,
+      "utc": "2000-01-01T00:16:41.000480088Z"
+    }
+  },
+  {
+    "cycle": 1730168,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9001f768a",
+      "seconds": 3155674601,
+      "fraction": 2061962,
+      "nanoseconds": 480088,
+      "utc": "2000-01-01T00:16:41.000480088Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9001fa923",
+      "seconds": 3155674601,
+      "fraction": 2074915,
+      "nanoseconds": 483104,
+      "utc": "2000-01-01T00:16:41.000483104Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9001fb0ec",
+      "seconds": 3155674601,
+      "fraction": 2076908,
+      "nanoseconds": 483568,
+      "utc": "2000-01-01T00:16:41.000483568Z"
+    }
+  },
+  {
+    "cycle": 1792234,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900403b48",
+      "seconds": 3155674601,
+      "fraction": 4209480,
+      "nanoseconds": 980096,
+      "utc": "2000-01-01T00:16:41.000980096Z"
+    }
+  },
+  {
+    "cycle": 1792669,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900403b48",
+      "seconds": 3155674601,
+      "fraction": 4209480,
+      "nanoseconds": 980096,
+      "utc": "2000-01-01T00:16:41.000980096Z"
+    },
+    "receive": {
+      "raw": "bc17c5e900406de1",
+      "seconds": 3155674601,
+      "fraction": 4222433,
+      "nanoseconds": 983112,
+      "utc": "2000-01-01T00:16:41.000983112Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9004075aa",
+      "seconds": 3155674601,
+      "fraction": 4224426,
+      "nanoseconds": 983576,
+      "utc": "2000-01-01T00:16:41.000983576Z"
+    }
+  },
+  {
+    "cycle": 1854735,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900610006",
+      "seconds": 3155674601,
+      "fraction": 6356998,
+      "nanoseconds": 1480104,
+      "utc": "2000-01-01T00:16:41.001480104Z"
+    }
+  },
+  {
+    "cycle": 1855170,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900610006",
+      "seconds": 3155674601,
+      "fraction": 6356998,
+      "nanoseconds": 1480104,
+      "utc": "2000-01-01T00:16:41.001480104Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90061329f",
+      "seconds": 3155674601,
+      "fraction": 6369951,
+      "nanoseconds": 1483120,
+      "utc": "2000-01-01T00:16:41.001483120Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e900613a68",
+      "seconds": 3155674601,
+      "fraction": 6371944,
+      "nanoseconds": 1483584,
+      "utc": "2000-01-01T00:16:41.001483584Z"
+    }
+  },
+  {
+    "cycle": 1917236,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90081c4c4",
+      "seconds": 3155674601,
+      "fraction": 8504516,
+      "nanoseconds": 1980112,
+      "utc": "2000-01-01T00:16:41.001980112Z"
+    }
+  },
+  {
+    "cycle": 1917671,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90081c4c4",
+      "seconds": 3155674601,
+      "fraction": 8504516,
+      "nanoseconds": 1980112,
+      "utc": "2000-01-01T00:16:41.001980112Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90081f75d",
+      "seconds": 3155674601,
+      "fraction": 8517469,
+      "nanoseconds": 1983128,
+      "utc": "2000-01-01T00:16:41.001983128Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90081ff26",
+      "seconds": 3155674601,
+      "fraction": 8519462,
+      "nanoseconds": 1983592,
+      "utc": "2000-01-01T00:16:41.001983592Z"
+    }
+  },
+  {
+    "cycle": 2168290,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5dfb3333423",
+      "seconds": 3155674591,
+      "fraction": 3006477347,
+      "nanoseconds": 700000056,
+      "utc": "2000-01-01T00:16:31.700000056Z"
+    }
+  },
+  {
+    "cycle": 2168725,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5dfb3333423",
+      "seconds": 3155674591,
+      "fraction": 3006477347,
+      "nanoseconds": 700000056,
+      "utc": "2000-01-01T00:16:31.700000056Z"
+    },
+    "receive": {
+      "raw": "bc17c5e8fffee465",
+      "seconds": 3155674600,
+      "fraction": 4294894693,
+      "nanoseconds": 999983096,
+      "utc": "2000-01-01T00:16:40.999983096Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e8fffeec2e",
+      "seconds": 3155674600,
+      "fraction": 4294896686,
+      "nanoseconds": 999983560,
+      "utc": "2000-01-01T00:16:40.999983560Z"
+    }
+  },
+  {
+    "cycle": 2230791,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9001f768a",
+      "seconds": 3155674601,
+      "fraction": 2061962,
+      "nanoseconds": 480088,
+      "utc": "2000-01-01T00:16:41.000480088Z"
+    }
+  },
+  {
+    "cycle": 2231226,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9001f768a",
+      "seconds": 3155674601,
+      "fraction": 2061962,
+      "nanoseconds": 480088,
+      "utc": "2000-01-01T00:16:41.000480088Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9001fa923",
+      "seconds": 3155674601,
+      "fraction": 2074915,
+      "nanoseconds": 483104,
+      "utc": "2000-01-01T00:16:41.000483104Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9001fb0ec",
+      "seconds": 3155674601,
+      "fraction": 2076908,
+      "nanoseconds": 483568,
+      "utc": "2000-01-01T00:16:41.000483568Z"
+    }
+  },
+  {
+    "cycle": 2293292,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900403b48",
+      "seconds": 3155674601,
+      "fraction": 4209480,
+      "nanoseconds": 980096,
+      "utc": "2000-01-01T00:16:41.000980096Z"
+    }
+  },
+  {
+    "cycle": 2293727,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900403b48",
+      "seconds": 3155674601,
+      "fraction": 4209480,
+      "nanoseconds": 980096,
+      "utc": "2000-01-01T00:16:41.000980096Z"
+    },
+    "receive": {
+      "raw": "bc17c5e900406de1",
+      "seconds": 3155674601,
+      "fraction": 4222433,
+      "nanoseconds": 983112,
+      "utc": "2000-01-01T00:16:41.000983112Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9004075aa",
+      "seconds": 3155674601,
+      "fraction": 4224426,
+      "nanoseconds": 983576,
+      "utc": "2000-01-01T00:16:41.000983576Z"
+    }
+  },
+  {
+    "cycle": 2355793,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e900610006",
+      "seconds": 3155674601,
+      "fraction": 6356998,
+      "nanoseconds": 1480104,
+      "utc": "2000-01-01T00:16:41.001480104Z"
+    }
+  },
+  {
+    "cycle": 2356228,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e900610006",
+      "seconds": 3155674601,
+      "fraction": 6356998,
+      "nanoseconds": 1480104,
+      "utc": "2000-01-01T00:16:41.001480104Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90061329f",
+      "seconds": 3155674601,
+      "fraction": 6369951,
+      "nanoseconds": 1483120,
+      "utc": "2000-01-01T00:16:41.001483120Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e900613a68",
+      "seconds": 3155674601,
+      "fraction": 6371944,
+      "nanoseconds": 1483584,
+      "utc": "2000-01-01T00:16:41.001483584Z"
+    }
+  },
+  {
+    "cycle": 2418294,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90081c4c4",
+      "seconds": 3155674601,
+      "fraction": 8504516,
+      "nanoseconds": 1980112,
+      "utc": "2000-01-01T00:16:41.001980112Z"
+    }
+  },
+  {
+    "cycle": 2418729,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5e8fffeb074",
+      "seconds": 3155674600,
+      "fraction": 4294881396,
+      "nanoseconds": 999980000,
+      "utc": "2000-01-01T00:16:40.999980000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90081c4c4",
+      "seconds": 3155674601,
+      "fraction": 8504516,
+      "nanoseconds": 1980112,
+      "utc": "2000-01-01T00:16:41.001980112Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90081f75d",
+      "seconds": 3155674601,
+      "fraction": 8517469,
+      "nanoseconds": 1983128,
+      "utc": "2000-01-01T00:16:41.001983128Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90081ff26",
+      "seconds": 3155674601,
+      "fraction": 8519462,
+      "nanoseconds": 1983592,
+      "utc": "2000-01-01T00:16:41.001983592Z"
+    }
+  },
+  {
+    "cycle": 2672729,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901072a74",
+      "seconds": 3155674601,
+      "fraction": 17246836,
+      "nanoseconds": 4015592,
+      "utc": "2000-01-01T00:16:41.004015592Z"
+    }
+  },
+  {
+    "cycle": 2673164,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901072a74",
+      "seconds": 3155674601,
+      "fraction": 17246836,
+      "nanoseconds": 4015592,
+      "utc": "2000-01-01T00:16:41.004015592Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901075d0d",
+      "seconds": 3155674601,
+      "fraction": 17259789,
+      "nanoseconds": 4018608,
+      "utc": "2000-01-01T00:16:41.004018608Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9010764d6",
+      "seconds": 3155674601,
+      "fraction": 17261782,
+      "nanoseconds": 4019072,
+      "utc": "2000-01-01T00:16:41.004019072Z"
+    }
+  },
+  {
+    "cycle": 2737213,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9012845c4",
+      "seconds": 3155674601,
+      "fraction": 19416516,
+      "nanoseconds": 4520760,
+      "utc": "2000-01-01T00:16:41.004520760Z"
+    }
+  },
+  {
+    "cycle": 2740459,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9012845c4",
+      "seconds": 3155674601,
+      "fraction": 19416516,
+      "nanoseconds": 4520760,
+      "utc": "2000-01-01T00:16:41.004520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90129e38f",
+      "seconds": 3155674601,
+      "fraction": 19522447,
+      "nanoseconds": 4545424,
+      "utc": "2000-01-01T00:16:41.004545424Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90129f970",
+      "seconds": 3155674601,
+      "fraction": 19528048,
+      "nanoseconds": 4546728,
+      "utc": "2000-01-01T00:16:41.004546728Z"
+    }
+  },
+  {
+    "cycle": 2800524,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901497739",
+      "seconds": 3155674601,
+      "fraction": 21591865,
+      "nanoseconds": 5027248,
+      "utc": "2000-01-01T00:16:41.005027248Z"
+    }
+  },
+  {
+    "cycle": 2803773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901497739",
+      "seconds": 3155674601,
+      "fraction": 21591865,
+      "nanoseconds": 5027248,
+      "utc": "2000-01-01T00:16:41.005027248Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9014b1504",
+      "seconds": 3155674601,
+      "fraction": 21697796,
+      "nanoseconds": 5051912,
+      "utc": "2000-01-01T00:16:41.005051912Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9014b2b4c",
+      "seconds": 3155674601,
+      "fraction": 21703500,
+      "nanoseconds": 5053240,
+      "utc": "2000-01-01T00:16:41.005053240Z"
+    }
+  },
+  {
+    "cycle": 2862213,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90169ced9",
+      "seconds": 3155674601,
+      "fraction": 23711449,
+      "nanoseconds": 5520752,
+      "utc": "2000-01-01T00:16:41.005520752Z"
+    }
+  },
+  {
+    "cycle": 2865461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90169ced9",
+      "seconds": 3155674601,
+      "fraction": 23711449,
+      "nanoseconds": 5520752,
+      "utc": "2000-01-01T00:16:41.005520752Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9016b6cc6",
+      "seconds": 3155674601,
+      "fraction": 23817414,
+      "nanoseconds": 5545424,
+      "utc": "2000-01-01T00:16:41.005545424Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9016b82ec",
+      "seconds": 3155674601,
+      "fraction": 23823084,
+      "nanoseconds": 5546744,
+      "utc": "2000-01-01T00:16:41.005546744Z"
+    }
+  },
+  {
+    "cycle": 2925526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9018b00c6",
+      "seconds": 3155674601,
+      "fraction": 25886918,
+      "nanoseconds": 6027268,
+      "utc": "2000-01-01T00:16:41.006027268Z"
+    }
+  },
+  {
+    "cycle": 2928773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9018b00c6",
+      "seconds": 3155674601,
+      "fraction": 25886918,
+      "nanoseconds": 6027268,
+      "utc": "2000-01-01T00:16:41.006027268Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9018c9e80",
+      "seconds": 3155674601,
+      "fraction": 25992832,
+      "nanoseconds": 6051928,
+      "utc": "2000-01-01T00:16:41.006051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9018cb461",
+      "seconds": 3155674601,
+      "fraction": 25998433,
+      "nanoseconds": 6053232,
+      "utc": "2000-01-01T00:16:41.006053232Z"
+    }
+  },
+  {
+    "cycle": 2987214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901ab5844",
+      "seconds": 3155674601,
+      "fraction": 28006468,
+      "nanoseconds": 6520764,
+      "utc": "2000-01-01T00:16:41.006520764Z"
+    }
+  },
+  {
+    "cycle": 2990461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901ab5844",
+      "seconds": 3155674601,
+      "fraction": 28006468,
+      "nanoseconds": 6520764,
+      "utc": "2000-01-01T00:16:41.006520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901acf620",
+      "seconds": 3155674601,
+      "fraction": 28112416,
+      "nanoseconds": 6545432,
+      "utc": "2000-01-01T00:16:41.006545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901ad0c01",
+      "seconds": 3155674601,
+      "fraction": 28118017,
+      "nanoseconds": 6546736,
+      "utc": "2000-01-01T00:16:41.006546736Z"
+    }
+  },
+  {
+    "cycle": 3050526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901cc89b9",
+      "seconds": 3155674601,
+      "fraction": 30181817,
+      "nanoseconds": 7027252,
+      "utc": "2000-01-01T00:16:41.007027252Z"
+    }
+  },
+  {
+    "cycle": 3053773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901cc89b9",
+      "seconds": 3155674601,
+      "fraction": 30181817,
+      "nanoseconds": 7027252,
+      "utc": "2000-01-01T00:16:41.007027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901ce27b8",
+      "seconds": 3155674601,
+      "fraction": 30287800,
+      "nanoseconds": 7051928,
+      "utc": "2000-01-01T00:16:41.007051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901ce3d76",
+      "seconds": 3155674601,
+      "fraction": 30293366,
+      "nanoseconds": 7053224,
+      "utc": "2000-01-01T00:16:41.007053224Z"
+    }
+  },
+  {
+    "cycle": 3112214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e901ece159",
+      "seconds": 3155674601,
+      "fraction": 32301401,
+      "nanoseconds": 7520756,
+      "utc": "2000-01-01T00:16:41.007520756Z"
+    }
+  },
+  {
+    "cycle": 3115461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e901ece159",
+      "seconds": 3155674601,
+      "fraction": 32301401,
+      "nanoseconds": 7520756,
+      "utc": "2000-01-01T00:16:41.007520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e901ee7f57",
+      "seconds": 3155674601,
+      "fraction": 32407383,
+      "nanoseconds": 7545432,
+      "utc": "2000-01-01T00:16:41.007545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e901ee9515",
+      "seconds": 3155674601,
+      "fraction": 32412949,
+      "nanoseconds": 7546728,
+      "utc": "2000-01-01T00:16:41.007546728Z"
+    }
+  },
+  {
+    "cycle": 3175526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9020e12ce",
+      "seconds": 3155674601,
+      "fraction": 34476750,
+      "nanoseconds": 8027244,
+      "utc": "2000-01-01T00:16:41.008027244Z"
+    }
+  },
+  {
+    "cycle": 3178773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9020e12ce",
+      "seconds": 3155674601,
+      "fraction": 34476750,
+      "nanoseconds": 8027244,
+      "utc": "2000-01-01T00:16:41.008027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9020fb0ef",
+      "seconds": 3155674601,
+      "fraction": 34582767,
+      "nanoseconds": 8051928,
+      "utc": "2000-01-01T00:16:41.008051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9020fc6f2",
+      "seconds": 3155674601,
+      "fraction": 34588402,
+      "nanoseconds": 8053240,
+      "utc": "2000-01-01T00:16:41.008053240Z"
+    }
+  },
+  {
+    "cycle": 3237214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9022e6aa1",
+      "seconds": 3155674601,
+      "fraction": 36596385,
+      "nanoseconds": 8520760,
+      "utc": "2000-01-01T00:16:41.008520760Z"
+    }
+  },
+  {
+    "cycle": 3240461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9022e6aa1",
+      "seconds": 3155674601,
+      "fraction": 36596385,
+      "nanoseconds": 8520760,
+      "utc": "2000-01-01T00:16:41.008520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90230088e",
+      "seconds": 3155674601,
+      "fraction": 36702350,
+      "nanoseconds": 8545432,
+      "utc": "2000-01-01T00:16:41.008545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e902301e91",
+      "seconds": 3155674601,
+      "fraction": 36707985,
+      "nanoseconds": 8546744,
+      "utc": "2000-01-01T00:16:41.008546744Z"
+    }
+  },
+  {
+    "cycle": 3300526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9024f9c7e",
+      "seconds": 3155674601,
+      "fraction": 38771838,
+      "nanoseconds": 9027272,
+      "utc": "2000-01-01T00:16:41.009027272Z"
+    }
+  },
+  {
+    "cycle": 3303773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9024f9c7e",
+      "seconds": 3155674601,
+      "fraction": 38771838,
+      "nanoseconds": 9027272,
+      "utc": "2000-01-01T00:16:41.009027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e902513a26",
+      "seconds": 3155674601,
+      "fraction": 38877734,
+      "nanoseconds": 9051928,
+      "utc": "2000-01-01T00:16:41.009051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e902515007",
+      "seconds": 3155674601,
+      "fraction": 38883335,
+      "nanoseconds": 9053232,
+      "utc": "2000-01-01T00:16:41.009053232Z"
+    }
+  },
+  {
+    "cycle": 3362214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9026ff3ea",
+      "seconds": 3155674601,
+      "fraction": 40891370,
+      "nanoseconds": 9520764,
+      "utc": "2000-01-01T00:16:41.009520764Z"
+    }
+  },
+  {
+    "cycle": 3365461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9026ff3ea",
+      "seconds": 3155674601,
+      "fraction": 40891370,
+      "nanoseconds": 9520764,
+      "utc": "2000-01-01T00:16:41.009520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9027191c6",
+      "seconds": 3155674601,
+      "fraction": 40997318,
+      "nanoseconds": 9545432,
+      "utc": "2000-01-01T00:16:41.009545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90271a7a6",
+      "seconds": 3155674601,
+      "fraction": 41002918,
+      "nanoseconds": 9546736,
+      "utc": "2000-01-01T00:16:41.009546736Z"
+    }
+  },
+  {
+    "cycle": 3425526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90291255f",
+      "seconds": 3155674601,
+      "fraction": 43066719,
+      "nanoseconds": 10027252,
+      "utc": "2000-01-01T00:16:41.010027252Z"
+    }
+  },
+  {
+    "cycle": 3428773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90291255f",
+      "seconds": 3155674601,
+      "fraction": 43066719,
+      "nanoseconds": 10027252,
+      "utc": "2000-01-01T00:16:41.010027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90292c35e",
+      "seconds": 3155674601,
+      "fraction": 43172702,
+      "nanoseconds": 10051928,
+      "utc": "2000-01-01T00:16:41.010051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90292d91c",
+      "seconds": 3155674601,
+      "fraction": 43178268,
+      "nanoseconds": 10053224,
+      "utc": "2000-01-01T00:16:41.010053224Z"
+    }
+  },
+  {
+    "cycle": 3487214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e902b17cfe",
+      "seconds": 3155674601,
+      "fraction": 45186302,
+      "nanoseconds": 10520756,
+      "utc": "2000-01-01T00:16:41.010520756Z"
+    }
+  },
+  {
+    "cycle": 3490461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e902b17cfe",
+      "seconds": 3155674601,
+      "fraction": 45186302,
+      "nanoseconds": 10520756,
+      "utc": "2000-01-01T00:16:41.010520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e902b31afd",
+      "seconds": 3155674601,
+      "fraction": 45292285,
+      "nanoseconds": 10545432,
+      "utc": "2000-01-01T00:16:41.010545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e902b330bb",
+      "seconds": 3155674601,
+      "fraction": 45297851,
+      "nanoseconds": 10546728,
+      "utc": "2000-01-01T00:16:41.010546728Z"
+    }
+  },
+  {
+    "cycle": 3550526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e902d2ae74",
+      "seconds": 3155674601,
+      "fraction": 47361652,
+      "nanoseconds": 11027244,
+      "utc": "2000-01-01T00:16:41.011027244Z"
+    }
+  },
+  {
+    "cycle": 3553773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e902d2ae74",
+      "seconds": 3155674601,
+      "fraction": 47361652,
+      "nanoseconds": 11027244,
+      "utc": "2000-01-01T00:16:41.011027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e902d44c95",
+      "seconds": 3155674601,
+      "fraction": 47467669,
+      "nanoseconds": 11051928,
+      "utc": "2000-01-01T00:16:41.011051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e902d46298",
+      "seconds": 3155674601,
+      "fraction": 47473304,
+      "nanoseconds": 11053240,
+      "utc": "2000-01-01T00:16:41.011053240Z"
+    }
+  },
+  {
+    "cycle": 3612214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e902f30647",
+      "seconds": 3155674601,
+      "fraction": 49481287,
+      "nanoseconds": 11520760,
+      "utc": "2000-01-01T00:16:41.011520760Z"
+    }
+  },
+  {
+    "cycle": 3615461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e902f30647",
+      "seconds": 3155674601,
+      "fraction": 49481287,
+      "nanoseconds": 11520760,
+      "utc": "2000-01-01T00:16:41.011520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e902f4a434",
+      "seconds": 3155674601,
+      "fraction": 49587252,
+      "nanoseconds": 11545432,
+      "utc": "2000-01-01T00:16:41.011545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e902f4ba37",
+      "seconds": 3155674601,
+      "fraction": 49592887,
+      "nanoseconds": 11546744,
+      "utc": "2000-01-01T00:16:41.011546744Z"
+    }
+  },
+  {
+    "cycle": 3675526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903143823",
+      "seconds": 3155674601,
+      "fraction": 51656739,
+      "nanoseconds": 12027272,
+      "utc": "2000-01-01T00:16:41.012027272Z"
+    }
+  },
+  {
+    "cycle": 3678773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903143823",
+      "seconds": 3155674601,
+      "fraction": 51656739,
+      "nanoseconds": 12027272,
+      "utc": "2000-01-01T00:16:41.012027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90315d5cc",
+      "seconds": 3155674601,
+      "fraction": 51762636,
+      "nanoseconds": 12051928,
+      "utc": "2000-01-01T00:16:41.012051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90315ebad",
+      "seconds": 3155674601,
+      "fraction": 51768237,
+      "nanoseconds": 12053232,
+      "utc": "2000-01-01T00:16:41.012053232Z"
+    }
+  },
+  {
+    "cycle": 3737214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903348f8f",
+      "seconds": 3155674601,
+      "fraction": 53776271,
+      "nanoseconds": 12520764,
+      "utc": "2000-01-01T00:16:41.012520764Z"
+    }
+  },
+  {
+    "cycle": 3740461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903348f8f",
+      "seconds": 3155674601,
+      "fraction": 53776271,
+      "nanoseconds": 12520764,
+      "utc": "2000-01-01T00:16:41.012520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e903362d6c",
+      "seconds": 3155674601,
+      "fraction": 53882220,
+      "nanoseconds": 12545432,
+      "utc": "2000-01-01T00:16:41.012545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90336434c",
+      "seconds": 3155674601,
+      "fraction": 53887820,
+      "nanoseconds": 12546736,
+      "utc": "2000-01-01T00:16:41.012546736Z"
+    }
+  },
+  {
+    "cycle": 3800526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90355c105",
+      "seconds": 3155674601,
+      "fraction": 55951621,
+      "nanoseconds": 13027252,
+      "utc": "2000-01-01T00:16:41.013027252Z"
+    }
+  },
+  {
+    "cycle": 3803773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90355c105",
+      "seconds": 3155674601,
+      "fraction": 55951621,
+      "nanoseconds": 13027252,
+      "utc": "2000-01-01T00:16:41.013027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e903575f03",
+      "seconds": 3155674601,
+      "fraction": 56057603,
+      "nanoseconds": 13051928,
+      "utc": "2000-01-01T00:16:41.013051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9035774c2",
+      "seconds": 3155674601,
+      "fraction": 56063170,
+      "nanoseconds": 13053224,
+      "utc": "2000-01-01T00:16:41.013053224Z"
+    }
+  },
+  {
+    "cycle": 3862214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9037618a4",
+      "seconds": 3155674601,
+      "fraction": 58071204,
+      "nanoseconds": 13520756,
+      "utc": "2000-01-01T00:16:41.013520756Z"
+    }
+  },
+  {
+    "cycle": 3865461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9037618a4",
+      "seconds": 3155674601,
+      "fraction": 58071204,
+      "nanoseconds": 13520756,
+      "utc": "2000-01-01T00:16:41.013520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90377b6a3",
+      "seconds": 3155674601,
+      "fraction": 58177187,
+      "nanoseconds": 13545432,
+      "utc": "2000-01-01T00:16:41.013545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90377cc61",
+      "seconds": 3155674601,
+      "fraction": 58182753,
+      "nanoseconds": 13546728,
+      "utc": "2000-01-01T00:16:41.013546728Z"
+    }
+  },
+  {
+    "cycle": 3925526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903974a1a",
+      "seconds": 3155674601,
+      "fraction": 60246554,
+      "nanoseconds": 14027244,
+      "utc": "2000-01-01T00:16:41.014027244Z"
+    }
+  },
+  {
+    "cycle": 3928773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903974a1a",
+      "seconds": 3155674601,
+      "fraction": 60246554,
+      "nanoseconds": 14027244,
+      "utc": "2000-01-01T00:16:41.014027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90398e83b",
+      "seconds": 3155674601,
+      "fraction": 60352571,
+      "nanoseconds": 14051928,
+      "utc": "2000-01-01T00:16:41.014051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90398fe3e",
+      "seconds": 3155674601,
+      "fraction": 60358206,
+      "nanoseconds": 14053240,
+      "utc": "2000-01-01T00:16:41.014053240Z"
+    }
+  },
+  {
+    "cycle": 3987214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903b7a1ed",
+      "seconds": 3155674601,
+      "fraction": 62366189,
+      "nanoseconds": 14520760,
+      "utc": "2000-01-01T00:16:41.014520760Z"
+    }
+  },
+  {
+    "cycle": 3990461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903b7a1ed",
+      "seconds": 3155674601,
+      "fraction": 62366189,
+      "nanoseconds": 14520760,
+      "utc": "2000-01-01T00:16:41.014520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e903b93fda",
+      "seconds": 3155674601,
+      "fraction": 62472154,
+      "nanoseconds": 14545432,
+      "utc": "2000-01-01T00:16:41.014545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e903b955dd",
+      "seconds": 3155674601,
+      "fraction": 62477789,
+      "nanoseconds": 14546744,
+      "utc": "2000-01-01T00:16:41.014546744Z"
+    }
+  },
+  {
+    "cycle": 4050526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903d8d3c9",
+      "seconds": 3155674601,
+      "fraction": 64541641,
+      "nanoseconds": 15027272,
+      "utc": "2000-01-01T00:16:41.015027272Z"
+    }
+  },
+  {
+    "cycle": 4053773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903d8d3c9",
+      "seconds": 3155674601,
+      "fraction": 64541641,
+      "nanoseconds": 15027272,
+      "utc": "2000-01-01T00:16:41.015027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e903da7172",
+      "seconds": 3155674601,
+      "fraction": 64647538,
+      "nanoseconds": 15051928,
+      "utc": "2000-01-01T00:16:41.015051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e903da8753",
+      "seconds": 3155674601,
+      "fraction": 64653139,
+      "nanoseconds": 15053232,
+      "utc": "2000-01-01T00:16:41.015053232Z"
+    }
+  },
+  {
+    "cycle": 4112214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e903f92b35",
+      "seconds": 3155674601,
+      "fraction": 66661173,
+      "nanoseconds": 15520764,
+      "utc": "2000-01-01T00:16:41.015520764Z"
+    }
+  },
+  {
+    "cycle": 4115461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e903f92b35",
+      "seconds": 3155674601,
+      "fraction": 66661173,
+      "nanoseconds": 15520764,
+      "utc": "2000-01-01T00:16:41.015520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e903fac912",
+      "seconds": 3155674601,
+      "fraction": 66767122,
+      "nanoseconds": 15545432,
+      "utc": "2000-01-01T00:16:41.015545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e903fadef2",
+      "seconds": 3155674601,
+      "fraction": 66772722,
+      "nanoseconds": 15546736,
+      "utc": "2000-01-01T00:16:41.015546736Z"
+    }
+  },
+  {
+    "cycle": 4175526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9041a5cab",
+      "seconds": 3155674601,
+      "fraction": 68836523,
+      "nanoseconds": 16027252,
+      "utc": "2000-01-01T00:16:41.016027252Z"
+    }
+  },
+  {
+    "cycle": 4178773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9041a5cab",
+      "seconds": 3155674601,
+      "fraction": 68836523,
+      "nanoseconds": 16027252,
+      "utc": "2000-01-01T00:16:41.016027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9041bfaa9",
+      "seconds": 3155674601,
+      "fraction": 68942505,
+      "nanoseconds": 16051928,
+      "utc": "2000-01-01T00:16:41.016051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9041c1068",
+      "seconds": 3155674601,
+      "fraction": 68948072,
+      "nanoseconds": 16053224,
+      "utc": "2000-01-01T00:16:41.016053224Z"
+    }
+  },
+  {
+    "cycle": 4237214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9043ab44a",
+      "seconds": 3155674601,
+      "fraction": 70956106,
+      "nanoseconds": 16520756,
+      "utc": "2000-01-01T00:16:41.016520756Z"
+    }
+  },
+  {
+    "cycle": 4240461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9043ab44a",
+      "seconds": 3155674601,
+      "fraction": 70956106,
+      "nanoseconds": 16520756,
+      "utc": "2000-01-01T00:16:41.016520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9043c5249",
+      "seconds": 3155674601,
+      "fraction": 71062089,
+      "nanoseconds": 16545432,
+      "utc": "2000-01-01T00:16:41.016545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9043c6807",
+      "seconds": 3155674601,
+      "fraction": 71067655,
+      "nanoseconds": 16546728,
+      "utc": "2000-01-01T00:16:41.016546728Z"
+    }
+  },
+  {
+    "cycle": 4300526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9045be5c0",
+      "seconds": 3155674601,
+      "fraction": 73131456,
+      "nanoseconds": 17027244,
+      "utc": "2000-01-01T00:16:41.017027244Z"
+    }
+  },
+  {
+    "cycle": 4303773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9045be5c0",
+      "seconds": 3155674601,
+      "fraction": 73131456,
+      "nanoseconds": 17027244,
+      "utc": "2000-01-01T00:16:41.017027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9045d83e1",
+      "seconds": 3155674601,
+      "fraction": 73237473,
+      "nanoseconds": 17051928,
+      "utc": "2000-01-01T00:16:41.017051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9045d99e4",
+      "seconds": 3155674601,
+      "fraction": 73243108,
+      "nanoseconds": 17053240,
+      "utc": "2000-01-01T00:16:41.017053240Z"
+    }
+  },
+  {
+    "cycle": 4362214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9047c3d93",
+      "seconds": 3155674601,
+      "fraction": 75251091,
+      "nanoseconds": 17520760,
+      "utc": "2000-01-01T00:16:41.017520760Z"
+    }
+  },
+  {
+    "cycle": 4365461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9047c3d93",
+      "seconds": 3155674601,
+      "fraction": 75251091,
+      "nanoseconds": 17520760,
+      "utc": "2000-01-01T00:16:41.017520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9047ddb80",
+      "seconds": 3155674601,
+      "fraction": 75357056,
+      "nanoseconds": 17545432,
+      "utc": "2000-01-01T00:16:41.017545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9047df183",
+      "seconds": 3155674601,
+      "fraction": 75362691,
+      "nanoseconds": 17546744,
+      "utc": "2000-01-01T00:16:41.017546744Z"
+    }
+  },
+  {
+    "cycle": 4425526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9049d6f6f",
+      "seconds": 3155674601,
+      "fraction": 77426543,
+      "nanoseconds": 18027272,
+      "utc": "2000-01-01T00:16:41.018027272Z"
+    }
+  },
+  {
+    "cycle": 4428773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9049d6f6f",
+      "seconds": 3155674601,
+      "fraction": 77426543,
+      "nanoseconds": 18027272,
+      "utc": "2000-01-01T00:16:41.018027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9049f0d18",
+      "seconds": 3155674601,
+      "fraction": 77532440,
+      "nanoseconds": 18051928,
+      "utc": "2000-01-01T00:16:41.018051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9049f22f9",
+      "seconds": 3155674601,
+      "fraction": 77538041,
+      "nanoseconds": 18053232,
+      "utc": "2000-01-01T00:16:41.018053232Z"
+    }
+  },
+  {
+    "cycle": 4487214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e904bdc6db",
+      "seconds": 3155674601,
+      "fraction": 79546075,
+      "nanoseconds": 18520764,
+      "utc": "2000-01-01T00:16:41.018520764Z"
+    }
+  },
+  {
+    "cycle": 4490461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e904bdc6db",
+      "seconds": 3155674601,
+      "fraction": 79546075,
+      "nanoseconds": 18520764,
+      "utc": "2000-01-01T00:16:41.018520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e904bf64b7",
+      "seconds": 3155674601,
+      "fraction": 79652023,
+      "nanoseconds": 18545432,
+      "utc": "2000-01-01T00:16:41.018545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e904bf7a98",
+      "seconds": 3155674601,
+      "fraction": 79657624,
+      "nanoseconds": 18546736,
+      "utc": "2000-01-01T00:16:41.018546736Z"
+    }
+  },
+  {
+    "cycle": 4550526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e904def851",
+      "seconds": 3155674601,
+      "fraction": 81721425,
+      "nanoseconds": 19027252,
+      "utc": "2000-01-01T00:16:41.019027252Z"
+    }
+  },
+  {
+    "cycle": 4553773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e904def851",
+      "seconds": 3155674601,
+      "fraction": 81721425,
+      "nanoseconds": 19027252,
+      "utc": "2000-01-01T00:16:41.019027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e904e0964f",
+      "seconds": 3155674601,
+      "fraction": 81827407,
+      "nanoseconds": 19051928,
+      "utc": "2000-01-01T00:16:41.019051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e904e0ac0d",
+      "seconds": 3155674601,
+      "fraction": 81832973,
+      "nanoseconds": 19053224,
+      "utc": "2000-01-01T00:16:41.019053224Z"
+    }
+  },
+  {
+    "cycle": 4612214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e904ff4ff0",
+      "seconds": 3155674601,
+      "fraction": 83841008,
+      "nanoseconds": 19520756,
+      "utc": "2000-01-01T00:16:41.019520756Z"
+    }
+  },
+  {
+    "cycle": 4615461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e904ff4ff0",
+      "seconds": 3155674601,
+      "fraction": 83841008,
+      "nanoseconds": 19520756,
+      "utc": "2000-01-01T00:16:41.019520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90500edef",
+      "seconds": 3155674601,
+      "fraction": 83946991,
+      "nanoseconds": 19545432,
+      "utc": "2000-01-01T00:16:41.019545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9050103ad",
+      "seconds": 3155674601,
+      "fraction": 83952557,
+      "nanoseconds": 19546728,
+      "utc": "2000-01-01T00:16:41.019546728Z"
+    }
+  },
+  {
+    "cycle": 4675526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905208166",
+      "seconds": 3155674601,
+      "fraction": 86016358,
+      "nanoseconds": 20027244,
+      "utc": "2000-01-01T00:16:41.020027244Z"
+    }
+  },
+  {
+    "cycle": 4678773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905208166",
+      "seconds": 3155674601,
+      "fraction": 86016358,
+      "nanoseconds": 20027244,
+      "utc": "2000-01-01T00:16:41.020027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e905221f86",
+      "seconds": 3155674601,
+      "fraction": 86122374,
+      "nanoseconds": 20051928,
+      "utc": "2000-01-01T00:16:41.020051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e905223589",
+      "seconds": 3155674601,
+      "fraction": 86128009,
+      "nanoseconds": 20053240,
+      "utc": "2000-01-01T00:16:41.020053240Z"
+    }
+  },
+  {
+    "cycle": 4737214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90540d939",
+      "seconds": 3155674601,
+      "fraction": 88135993,
+      "nanoseconds": 20520760,
+      "utc": "2000-01-01T00:16:41.020520760Z"
+    }
+  },
+  {
+    "cycle": 4740461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90540d939",
+      "seconds": 3155674601,
+      "fraction": 88135993,
+      "nanoseconds": 20520760,
+      "utc": "2000-01-01T00:16:41.020520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e905427726",
+      "seconds": 3155674601,
+      "fraction": 88241958,
+      "nanoseconds": 20545432,
+      "utc": "2000-01-01T00:16:41.020545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e905428d29",
+      "seconds": 3155674601,
+      "fraction": 88247593,
+      "nanoseconds": 20546744,
+      "utc": "2000-01-01T00:16:41.020546744Z"
+    }
+  },
+  {
+    "cycle": 4800526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905620b15",
+      "seconds": 3155674601,
+      "fraction": 90311445,
+      "nanoseconds": 21027272,
+      "utc": "2000-01-01T00:16:41.021027272Z"
+    }
+  },
+  {
+    "cycle": 4803773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905620b15",
+      "seconds": 3155674601,
+      "fraction": 90311445,
+      "nanoseconds": 21027272,
+      "utc": "2000-01-01T00:16:41.021027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90563a8be",
+      "seconds": 3155674601,
+      "fraction": 90417342,
+      "nanoseconds": 21051928,
+      "utc": "2000-01-01T00:16:41.021051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90563be9e",
+      "seconds": 3155674601,
+      "fraction": 90422942,
+      "nanoseconds": 21053232,
+      "utc": "2000-01-01T00:16:41.021053232Z"
+    }
+  },
+  {
+    "cycle": 4862214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905826281",
+      "seconds": 3155674601,
+      "fraction": 92430977,
+      "nanoseconds": 21520764,
+      "utc": "2000-01-01T00:16:41.021520764Z"
+    }
+  },
+  {
+    "cycle": 4865461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905826281",
+      "seconds": 3155674601,
+      "fraction": 92430977,
+      "nanoseconds": 21520764,
+      "utc": "2000-01-01T00:16:41.021520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90584005d",
+      "seconds": 3155674601,
+      "fraction": 92536925,
+      "nanoseconds": 21545432,
+      "utc": "2000-01-01T00:16:41.021545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90584163e",
+      "seconds": 3155674601,
+      "fraction": 92542526,
+      "nanoseconds": 21546736,
+      "utc": "2000-01-01T00:16:41.021546736Z"
+    }
+  },
+  {
+    "cycle": 4925526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905a393f6",
+      "seconds": 3155674601,
+      "fraction": 94606326,
+      "nanoseconds": 22027252,
+      "utc": "2000-01-01T00:16:41.022027252Z"
+    }
+  },
+  {
+    "cycle": 4928773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905a393f6",
+      "seconds": 3155674601,
+      "fraction": 94606326,
+      "nanoseconds": 22027252,
+      "utc": "2000-01-01T00:16:41.022027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e905a531f5",
+      "seconds": 3155674601,
+      "fraction": 94712309,
+      "nanoseconds": 22051928,
+      "utc": "2000-01-01T00:16:41.022051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e905a547b3",
+      "seconds": 3155674601,
+      "fraction": 94717875,
+      "nanoseconds": 22053224,
+      "utc": "2000-01-01T00:16:41.022053224Z"
+    }
+  },
+  {
+    "cycle": 4987214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905c3eb96",
+      "seconds": 3155674601,
+      "fraction": 96725910,
+      "nanoseconds": 22520756,
+      "utc": "2000-01-01T00:16:41.022520756Z"
+    }
+  },
+  {
+    "cycle": 4990461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905c3eb96",
+      "seconds": 3155674601,
+      "fraction": 96725910,
+      "nanoseconds": 22520756,
+      "utc": "2000-01-01T00:16:41.022520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e905c58995",
+      "seconds": 3155674601,
+      "fraction": 96831893,
+      "nanoseconds": 22545432,
+      "utc": "2000-01-01T00:16:41.022545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e905c59f53",
+      "seconds": 3155674601,
+      "fraction": 96837459,
+      "nanoseconds": 22546728,
+      "utc": "2000-01-01T00:16:41.022546728Z"
+    }
+  },
+  {
+    "cycle": 5050526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e905e51d0b",
+      "seconds": 3155674601,
+      "fraction": 98901259,
+      "nanoseconds": 23027244,
+      "utc": "2000-01-01T00:16:41.023027244Z"
+    }
+  },
+  {
+    "cycle": 5053773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e905e51d0b",
+      "seconds": 3155674601,
+      "fraction": 98901259,
+      "nanoseconds": 23027244,
+      "utc": "2000-01-01T00:16:41.023027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e905e6bb2c",
+      "seconds": 3155674601,
+      "fraction": 99007276,
+      "nanoseconds": 23051928,
+      "utc": "2000-01-01T00:16:41.023051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e905e6d12f",
+      "seconds": 3155674601,
+      "fraction": 99012911,
+      "nanoseconds": 23053240,
+      "utc": "2000-01-01T00:16:41.023053240Z"
+    }
+  },
+  {
+    "cycle": 5112214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e9060574de",
+      "seconds": 3155674601,
+      "fraction": 101020894,
+      "nanoseconds": 23520760,
+      "utc": "2000-01-01T00:16:41.023520760Z"
+    }
+  },
+  {
+    "cycle": 5115461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e9060574de",
+      "seconds": 3155674601,
+      "fraction": 101020894,
+      "nanoseconds": 23520760,
+      "utc": "2000-01-01T00:16:41.023520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9060712cc",
+      "seconds": 3155674601,
+      "fraction": 101126860,
+      "nanoseconds": 23545432,
+      "utc": "2000-01-01T00:16:41.023545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9060728cf",
+      "seconds": 3155674601,
+      "fraction": 101132495,
+      "nanoseconds": 23546744,
+      "utc": "2000-01-01T00:16:41.023546744Z"
+    }
+  },
+  {
+    "cycle": 5175526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90626a6bb",
+      "seconds": 3155674601,
+      "fraction": 103196347,
+      "nanoseconds": 24027272,
+      "utc": "2000-01-01T00:16:41.024027272Z"
+    }
+  },
+  {
+    "cycle": 5178773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90626a6bb",
+      "seconds": 3155674601,
+      "fraction": 103196347,
+      "nanoseconds": 24027272,
+      "utc": "2000-01-01T00:16:41.024027272Z"
+    },
+    "receive": {
+      "raw": "bc17c5e906284464",
+      "seconds": 3155674601,
+      "fraction": 103302244,
+      "nanoseconds": 24051928,
+      "utc": "2000-01-01T00:16:41.024051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e906285a44",
+      "seconds": 3155674601,
+      "fraction": 103307844,
+      "nanoseconds": 24053232,
+      "utc": "2000-01-01T00:16:41.024053232Z"
+    }
+  },
+  {
+    "cycle": 5237214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90646fe27",
+      "seconds": 3155674601,
+      "fraction": 105315879,
+      "nanoseconds": 24520764,
+      "utc": "2000-01-01T00:16:41.024520764Z"
+    }
+  },
+  {
+    "cycle": 5240461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90646fe27",
+      "seconds": 3155674601,
+      "fraction": 105315879,
+      "nanoseconds": 24520764,
+      "utc": "2000-01-01T00:16:41.024520764Z"
+    },
+    "receive": {
+      "raw": "bc17c5e906489c03",
+      "seconds": 3155674601,
+      "fraction": 105421827,
+      "nanoseconds": 24545432,
+      "utc": "2000-01-01T00:16:41.024545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90648b1e4",
+      "seconds": 3155674601,
+      "fraction": 105427428,
+      "nanoseconds": 24546736,
+      "utc": "2000-01-01T00:16:41.024546736Z"
+    }
+  },
+  {
+    "cycle": 5300526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e906682f9c",
+      "seconds": 3155674601,
+      "fraction": 107491228,
+      "nanoseconds": 25027252,
+      "utc": "2000-01-01T00:16:41.025027252Z"
+    }
+  },
+  {
+    "cycle": 5303773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e906682f9c",
+      "seconds": 3155674601,
+      "fraction": 107491228,
+      "nanoseconds": 25027252,
+      "utc": "2000-01-01T00:16:41.025027252Z"
+    },
+    "receive": {
+      "raw": "bc17c5e90669cd9b",
+      "seconds": 3155674601,
+      "fraction": 107597211,
+      "nanoseconds": 25051928,
+      "utc": "2000-01-01T00:16:41.025051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e90669e359",
+      "seconds": 3155674601,
+      "fraction": 107602777,
+      "nanoseconds": 25053224,
+      "utc": "2000-01-01T00:16:41.025053224Z"
+    }
+  },
+  {
+    "cycle": 5362214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e90688873c",
+      "seconds": 3155674601,
+      "fraction": 109610812,
+      "nanoseconds": 25520756,
+      "utc": "2000-01-01T00:16:41.025520756Z"
+    }
+  },
+  {
+    "cycle": 5365461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e90688873c",
+      "seconds": 3155674601,
+      "fraction": 109610812,
+      "nanoseconds": 25520756,
+      "utc": "2000-01-01T00:16:41.025520756Z"
+    },
+    "receive": {
+      "raw": "bc17c5e9068a253b",
+      "seconds": 3155674601,
+      "fraction": 109716795,
+      "nanoseconds": 25545432,
+      "utc": "2000-01-01T00:16:41.025545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e9068a3af9",
+      "seconds": 3155674601,
+      "fraction": 109722361,
+      "nanoseconds": 25546728,
+      "utc": "2000-01-01T00:16:41.025546728Z"
+    }
+  },
+  {
+    "cycle": 5425526,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e906a9b8b1",
+      "seconds": 3155674601,
+      "fraction": 111786161,
+      "nanoseconds": 26027244,
+      "utc": "2000-01-01T00:16:41.026027244Z"
+    }
+  },
+  {
+    "cycle": 5428773,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e906a9b8b1",
+      "seconds": 3155674601,
+      "fraction": 111786161,
+      "nanoseconds": 26027244,
+      "utc": "2000-01-01T00:16:41.026027244Z"
+    },
+    "receive": {
+      "raw": "bc17c5e906ab56d2",
+      "seconds": 3155674601,
+      "fraction": 111892178,
+      "nanoseconds": 26051928,
+      "utc": "2000-01-01T00:16:41.026051928Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e906ab6cd5",
+      "seconds": 3155674601,
+      "fraction": 111897813,
+      "nanoseconds": 26053240,
+      "utc": "2000-01-01T00:16:41.026053240Z"
+    }
+  },
+  {
+    "cycle": 5487214,
+    "es": 2,
+    "li": 0,
+    "version": 4,
+    "mode": 3,
+    "stratum": 0,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 0,
+    "reference": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "originate": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "receive": {
+      "raw": "0000000000000000",
+      "seconds": 0,
+      "fraction": 0,
+      "nanoseconds": 0,
+      "utc": null
+    },
+    "transmit": {
+      "raw": "bc17c5e906ca1084",
+      "seconds": 3155674601,
+      "fraction": 113905796,
+      "nanoseconds": 26520760,
+      "utc": "2000-01-01T00:16:41.026520760Z"
+    }
+  },
+  {
+    "cycle": 5490461,
+    "es": 1,
+    "li": 0,
+    "version": 4,
+    "mode": 4,
+    "stratum": 1,
+    "poll": 4,
+    "precision": -26,
+    "root_delay": 0,
+    "root_dispersion": 0,
+    "reference_id": 1280262988,
+    "reference": {
+      "raw": "bc17c5dfb3333333",
+      "seconds": 3155674591,
+      "fraction": 3006477107,
+      "nanoseconds": 700000000,
+      "utc": "2000-01-01T00:16:31.700000000Z"
+    },
+    "originate": {
+      "raw": "bc17c5e906ca1084",
+      "seconds": 3155674601,
+      "fraction": 113905796,
+      "nanoseconds": 26520760,
+      "utc": "2000-01-01T00:16:41.026520760Z"
+    },
+    "receive": {
+      "raw": "bc17c5e906cbae72",
+      "seconds": 3155674601,
+      "fraction": 114011762,
+      "nanoseconds": 26545432,
+      "utc": "2000-01-01T00:16:41.026545432Z"
+    },
+    "transmit": {
+      "raw": "bc17c5e906cbc475",
+      "seconds": 3155674601,
+      "fraction": 114017397,
+      "nanoseconds": 26546744,
+      "utc": "2000-01-01T00:16:41.026546744Z"
+    }
+  }
+]

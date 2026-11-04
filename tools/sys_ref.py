@@ -98,7 +98,10 @@ def endpoint(folder, number, expect):
             limit = 5000 + sum((20+47+max((cfg.get(v*8, 0)>>9)&2047, 17))
                               for v in range(128) if cfg.get(v*8, 0)&1 and cfg.get(v*8, 0)&6)
             m = dict(index=len(messages), es=number, cycle=c, epoch=epoch,
-                     stage=stage, vl=vl, n=n, pen=pen, sport=int(p[5], 16),
+                     stage=stage, vl=vl, n=n, pen=pen,
+                     public_first=int(p[8]) if len(p)>11 else None,
+                     public_last=int(p[10]) if len(p)>11 else None,
+                     sport=int(p[5], 16),
                      dport=int(p[6], 16), payload=body, words=words, uid=uid,
                      result=None, frame=None, deliveries=[], copies=[], w_limit=limit)
             expect(len(body) == n, 'S1 M byte count')
@@ -146,7 +149,10 @@ def endpoint(folder, number, expect):
     for c, _, p in rxrows:
         if p[0] == 'D':
             body = bytes.fromhex(p[7])
-            ep['deliveries'].append(dict(cycle=c, net=p[2], idx=int(p[3]),
+            ep['deliveries'].append(dict(cycle=c,
+                public_payload_first=int(p[8])+2 if len(p)>9 else None,
+                public_last=int(p[9]) if len(p)>9 else None,
+                net=p[2], idx=int(p[3]),
                 sport=int(p[4], 16), dport=int(p[5], 16), n=int(p[6]), payload=body))
             expect(len(body) == int(p[6]), 'S1 D byte count')
     ep['clocks'] = [(c, int(p[2], 16), int(p[3])) for c, _, p in rxrows if p[0] == 'K']

@@ -1,0 +1,40 @@
+[
+  {
+    "name": "gui",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-gui",
+      "-do",
+      "do current_wave_entry.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\project",
+    "pid": 31560,
+    "created": 1793703138.3442924,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 52.599,
+    "peak_tree_bytes": 393256960,
+    "budget_seconds": 6600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\gui.log"
+  },
+  {
+    "name": "check",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\project\\tools\\sys_run_checks.py",
+      "--test",
+      "tb_sys_net",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\project\\out\\wave\\tx_dual_20261103_185228_32200"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162",
+    "pid": 31992,
+    "created": 1793703190.973398,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.272,
+    "peak_tree_bytes": 7610368,
+    "budget_seconds": 300,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\check.log"
+  }
+]

@@ -1,0 +1,791 @@
+{
+  "name": "tb_net_services_gui",
+  "started": "2026-11-03T22:21:01.970095+08:00",
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 10.0,
+  "mode": "gui",
+  "rtl_reference": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_rtl\\20261103_222054_084009",
+  "available_memory_start_bytes": 6803918848,
+  "subprocess_environment": {
+    "MODELSIM_HOME": "C:/modeltech64_2020.4/win64",
+    "ELINX_HOME": "C:/Program Files (x86)/eHiWay/eLinx3.0",
+    "LM_LICENSE_FILE": "C:/Users/susu/ModelSimLicenses/2020.4/LICENSE.TXT",
+    "MGLS_LICENSE_FILE": "C:/Users/susu/ModelSimLicenses/2020.4/LICENSE.TXT"
+  },
+  "ce_div": 2,
+  "adaptation": {
+    "source_sha256": "c5343a337b8f396134a0515ea8a262e6e1dcb635e9cd267274fa066bd41ebb34",
+    "adapted_sha256": "79f3b710d3efc9bb94ef6b9e23326d5220916e08a83d07bde728ede33fb1a836",
+    "cells": {
+      "stratix_lcell": 62274,
+      "stratix_ram_block": 2981
+    },
+    "added_input_defaults": {
+      "stratix_lcell": {
+        "datac=1'b1": 40367,
+        "aload=1'b0": 62274,
+        "sload=1'b0": 59624,
+        "cin=1'b0": 55918,
+        "cin0=1'b0": 62274,
+        "cin1=1'b0": 62274,
+        "inverta=1'b0": 62274,
+        "regcascin=1'b0": 62274,
+        "devclrn=1'b1": 62274,
+        "devpor=1'b1": 62274,
+        "datab=1'b1": 29505,
+        "datad=1'b1": 29424,
+        "sclr=1'b0": 49241,
+        "ena=1'b1": 48252,
+        "clk=1'b0": 26677,
+        "aclr=1'b0": 26677,
+        "dataa=1'b1": 1338
+      },
+      "stratix_ram_block": {
+        "clr0=1'b0": 2981,
+        "clr1=1'b0": 2981,
+        "devclrn=1'b1": 2981,
+        "devpor=1'b1": 2981,
+        "portbdatain=1'b0": 2981,
+        "portabyteenamasks={1{1'b1}}": 2981,
+        "portbbyteenamasks={1{1'b1}}": 2981,
+        "ena0=1'b1": 18,
+        "ena1=1'b1": 34,
+        "clk1=1'b0": 18
+      }
+    },
+    "original_connections_and_functional_parameters_unchanged": true,
+    "synthesis_provenance_not_model_parameters": [
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~12_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~18_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~24_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~1_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[3]~6_I",
+        "created_from": "REGOUT(phase[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~20_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~2_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~21_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~14_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~0_I",
+        "created_from": "REGOUT(init_done)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[0]~21_I",
+        "created_from": "REGOUT(cfg_ra[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[1]~22_I",
+        "created_from": "REGOUT(cfg_ra[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[2]~23_I",
+        "created_from": "REGOUT(cfg_ra[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~1_I",
+        "created_from": "REGOUT(init_done)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[0]~0_I",
+        "created_from": "REGOUT(output_position[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[1]~2_I",
+        "created_from": "REGOUT(output_position[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~1_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~4_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~2_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~3_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[2]~4_I",
+        "created_from": "REGOUT(output_position[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[3]~6_I",
+        "created_from": "REGOUT(output_position[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[4]~8_I",
+        "created_from": "REGOUT(output_position[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[5]~10_I",
+        "created_from": "REGOUT(output_position[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[6]~12_I",
+        "created_from": "REGOUT(output_position[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[7]~15_I",
+        "created_from": "REGOUT(output_position[7])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[7]~14_I",
+        "created_from": "REGOUT(output_position[7])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[8]~17_I",
+        "created_from": "REGOUT(output_position[8])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[8]~16_I",
+        "created_from": "REGOUT(output_position[8])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[9]~19_I",
+        "created_from": "REGOUT(output_position[9])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[9]~18_I",
+        "created_from": "REGOUT(output_position[9])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[10]~21_I",
+        "created_from": "REGOUT(output_position[10])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[10]~20_I",
+        "created_from": "REGOUT(output_position[10])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[11]~23_I",
+        "created_from": "REGOUT(output_position[11])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[11]~22_I",
+        "created_from": "REGOUT(output_position[11])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[12]~25_I",
+        "created_from": "REGOUT(output_position[12])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[12]~24_I",
+        "created_from": "REGOUT(output_position[12])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[0]~0_I",
+        "created_from": "REGOUT(output_position[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[1]~2_I",
+        "created_from": "REGOUT(output_position[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[2]~4_I",
+        "created_from": "REGOUT(output_position[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[3]~6_I",
+        "created_from": "REGOUT(output_position[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[4]~8_I",
+        "created_from": "REGOUT(output_position[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[5]~10_I",
+        "created_from": "REGOUT(output_position[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[6]~12_I",
+        "created_from": "REGOUT(output_position[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[7]~15_I",
+        "created_from": "REGOUT(output_position[7])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[7]~14_I",
+        "created_from": "REGOUT(output_position[7])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[8]~17_I",
+        "created_from": "REGOUT(output_position[8])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[8]~16_I",
+        "created_from": "REGOUT(output_position[8])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[9]~19_I",
+        "created_from": "REGOUT(output_position[9])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[9]~18_I",
+        "created_from": "REGOUT(output_position[9])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[10]~21_I",
+        "created_from": "REGOUT(output_position[10])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[10]~20_I",
+        "created_from": "REGOUT(output_position[10])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[11]~23_I",
+        "created_from": "REGOUT(output_position[11])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[11]~22_I",
+        "created_from": "REGOUT(output_position[11])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[12]~25_I",
+        "created_from": "REGOUT(output_position[12])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[12]~24_I",
+        "created_from": "REGOUT(output_position[12])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[0]~1_I",
+        "created_from": "REGOUT(output_position[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[1]~3_I",
+        "created_from": "REGOUT(output_position[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[2]~5_I",
+        "created_from": "REGOUT(output_position[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[3]~7_I",
+        "created_from": "REGOUT(output_position[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[4]~9_I",
+        "created_from": "REGOUT(output_position[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[5]~11_I",
+        "created_from": "REGOUT(output_position[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[6]~13_I",
+        "created_from": "REGOUT(output_position[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[0]~1_I",
+        "created_from": "REGOUT(output_position[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[1]~3_I",
+        "created_from": "REGOUT(output_position[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[2]~5_I",
+        "created_from": "REGOUT(output_position[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[3]~7_I",
+        "created_from": "REGOUT(output_position[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[4]~9_I",
+        "created_from": "REGOUT(output_position[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[5]~11_I",
+        "created_from": "REGOUT(output_position[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[6]~13_I",
+        "created_from": "REGOUT(output_position[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~11_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~12_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~3_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~9_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~10_I",
+        "created_from": "REGOUT(tick_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~2_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~1_I",
+        "created_from": "REGOUT(final_overflow)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_builder:builder|stream_active~3_I",
+        "created_from": "REGOUT(stream_active)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~22_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~31_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~17_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~9_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~32_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~23_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~3_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~4_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[5]~26_I",
+        "created_from": "REGOUT(cfg_ra[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[6]~27_I",
+        "created_from": "REGOUT(cfg_ra[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[7]~28_I",
+        "created_from": "REGOUT(cfg_ra[7])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[8]~29_I",
+        "created_from": "REGOUT(cfg_ra[8])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[9]~30_I",
+        "created_from": "REGOUT(cfg_ra[9])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[0]~22_I",
+        "created_from": "REGOUT(state_ra[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[1]~23_I",
+        "created_from": "REGOUT(state_ra[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[2]~24_I",
+        "created_from": "REGOUT(state_ra[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[3]~25_I",
+        "created_from": "REGOUT(state_ra[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[4]~26_I",
+        "created_from": "REGOUT(state_ra[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[5]~27_I",
+        "created_from": "REGOUT(state_ra[5])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[6]~28_I",
+        "created_from": "REGOUT(state_ra[6])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~33_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~11_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~10_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[4]~25_I",
+        "created_from": "REGOUT(cfg_ra[4])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~7_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~29_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~15_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~26_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~8_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~16_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~5_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~25_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~27_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~30_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~6_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~28_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[3]~24_I",
+        "created_from": "REGOUT(cfg_ra[3])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[0]~4_I",
+        "created_from": "REGOUT(phase[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~19_I",
+        "created_from": "REGOUT(op[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~0_I",
+        "created_from": "REGOUT(op[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[1]~5_I",
+        "created_from": "REGOUT(phase[1])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~13_I",
+        "created_from": "REGOUT(op[2])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~2_I",
+        "created_from": "REGOUT(init_done)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~5_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~0_I",
+        "created_from": "REGOUT(tx_cfg_we)"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_parse:parse_a|desc_valid[0]~16_I",
+        "created_from": "REGOUT(desc_valid[0])"
+      },
+      {
+        "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_builder:builder|payload_ra[16]~26_I",
+        "created_from": "REGOUT(payload_ra[16])"
+      }
+    ],
+    "provenance_parameter_count": 125,
+    "carry_use_parameters_added": {
+      "cin_used": 6356
+    },
+    "lut_masks_changed": 0
+  },
+  "same_reference_inputs": {
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_current.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_current.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_net_services.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\net_services_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\load_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\download_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\snmp_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py": true
+  },
+  "same_reference_vectors": {
+    "bytes.hex": true,
+    "data.bin": true,
+    "offsets.txt": true
+  },
+  "modelsim_adaptations": 0,
+  "compile_diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0
+  },
+  "passed": false,
+  "error": "simulation: exit=15 reason=memory_guard; C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\simulation.log",
+  "inputs": {
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\gui_netlist.py": "14A33DF2C7372BB83DC66F6856C25694CC9A1DB98F593FB69340041899868621",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py": "2C9ED6A39AA2ECD1760128122244B4E38AFE26CB744F8F1D0BC1EEA1B455A004",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\adapt_gui_vqm.py": "9A2FEB26B192A8010270E3EA337032B27AA231BC3FABC9B609B323710C53C0C4",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\eda.py": "754CCFEDDC61B0F389C1D70A700DE641F1C7946D13594C23A7BF12EA22B6DEFC",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\build1030\\AFDX_top_1030\\20261103_103410_728861\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm": "C5343A337B8F396134A0515EA8A262E6E1DCB635E9CD267274FA066BD41EBB34",
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\220model.v": "86B57BE6BBA90BBCE156DBAC2641512095FD9CBDC182AF18AAC5488E0BC5C3B6",
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_mf.v": "8096BD395E8A8AF515643CF46F76A0A077FEB7F6D7593722209E71B95802134A",
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_primitives.v": "F8670B892DCC9F3B10647F9818E4A381FA0B0856A3933DD902E733E53E643E33",
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratix_atoms.v": "98F26BE0121DE5ACEA108E774668491E39AF47659E903F2D309E8AEAB613B278",
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratixiv_atoms.v": "1115498A11E74A6E80AAFCA487CD3FE8F698389F6B29E89C42C9E10B549D5577",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_current.v": "854C3F61C7743A3D16CC24E925FF0A02022F9A2C865A8D8C845A09B1239EC28D",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_current.v": "D14055AF8196F655CC07EE739D15C4F4A42B721195AB8CF7CAAC6790DB837EF9",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A",
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_net_services.v": "D023AA619B169EE5AC483C45DF7AD317B3C1008266FF2A06234042D70D4F902B",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\net_services_ref.py": "274261DF4998D8F3D395C14326CBCFD4BCE88A4E2A2B2D37A3C0C20A99E7B9AD",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\load_ref.py": "7D40E7B866E193743DF1E94E70DB64BDB15F90DEC5B22BF139F0284D41C34F2E",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\download_ref.py": "8F0494877CA8C5F0ABF5AC83DC1778A5C96EEF1BC2794659B74CC91AE8F895B7",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\snmp_ref.py": "DD0DC77D3AD7C72714A483CB91A8B3B5A2898AEBC72328EC7F061F5856263B40",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py": "B2F0F2010A26F8F4861C7BE0F80D6621BFA1AFABE6EFEEC59342FBCF9D212327"
+  },
+  "diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0
+  },
+  "results": [],
+  "inputs_unchanged": {
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\gui_netlist.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\adapt_gui_vqm.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\eda.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\build1030\\AFDX_top_1030\\20261103_103410_728861\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm": true,
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\220model.v": true,
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_mf.v": true,
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_primitives.v": true,
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratix_atoms.v": true,
+    "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratixiv_atoms.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_current.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_current.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_net_services.v": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\net_services_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\load_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\download_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\snmp_ref.py": true,
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py": true
+  },
+  "finished": "2026-11-03T22:22:39.967655+08:00",
+  "jobs": [
+    {
+      "name": "vectors",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\original_sources\\tools\\net_services_ref.py",
+        "vectors",
+        "--dir",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316",
+      "pid": 36112,
+      "created": 1793715669.1877549,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.277,
+      "peak_tree_bytes": 11247616,
+      "budget_seconds": 60,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\vectors.log"
+    },
+    {
+      "name": "library",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316",
+      "pid": 31604,
+      "created": 1793715669.4787061,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.273,
+      "peak_tree_bytes": 12296192,
+      "budget_seconds": 60,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\library.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+compile_sources/tb/lib",
+        "+define+AFDX_CE_DIV=2",
+        "+define+SYS_TOP_NETLIST",
+        "simulation.vqm",
+        "220model.v",
+        "altera_mf.v",
+        "altera_primitives.v",
+        "stratix_atoms.v",
+        "stratixiv_atoms.v",
+        "compile_sources/tb/lib/gmii_monitor.v",
+        "compile_sources/tb/lib/judge_endpoint.v",
+        "compile_sources/tb/lib/line_driver.v",
+        "compile_sources/tb/lib/line_monitor.v",
+        "compile_sources/tb/lib/link_model.v",
+        "compile_sources/tb/lib/load_test_endpoint.v",
+        "compile_sources/tb/lib/mac_tx_suite.v",
+        "compile_sources/tb/lib/rm_age_current.v",
+        "compile_sources/tb/lib/rm_age_probe.v",
+        "compile_sources/tb/lib/rtc_retry_current.v",
+        "compile_sources/tb/lib/rtc_retry_suite.v",
+        "compile_sources/tb/lib/rx_core_suite.v",
+        "compile_sources/tb/lib/snmp_test_endpoint.v",
+        "compile_sources/tb/lib/sys_endpoint.v",
+        "compile_sources/tb/lib/sys_suite.v",
+        "compile_sources/tb/lib/top_stream_endpoint.v",
+        "compile_sources/tb/lib/tx_core_suite.v",
+        "compile_sources/tb/tb_net_services.v"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316",
+      "pid": 13292,
+      "created": 1793715669.7532177,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 8.263,
+      "peak_tree_bytes": 1062465536,
+      "budget_seconds": 600,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-batch",
+        "-t",
+        "1ps",
+        "work.tb_net_services",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316",
+      "pid": 38648,
+      "created": 1793715678.0219495,
+      "exit_code": 15,
+      "stop_reason": "memory_guard",
+      "seconds": 81.861,
+      "peak_tree_bytes": 2655092736,
+      "budget_seconds": 18000,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_net_services_gui\\20261103_222101_969316\\simulation.log"
+    }
+  ]
+}

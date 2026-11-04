@@ -2,6 +2,7 @@
 module tb_t65_tx_space #(parameter T65_MUTANT=0);
     reg clk=0; always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,fd;
+    reg pressure_done=0;
     task check; input ok; input [8*120-1:0] label;
         begin
             checks=checks+1;
@@ -12,6 +13,7 @@ module tb_t65_tx_space #(parameter T65_MUTANT=0);
     endtask
     task finish_test;
         begin
+            while(!pressure_done)@(negedge clk);
             $fflush(fd);$fclose(fd);
             $display("[RESULT] tb_t65_tx_space %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
             $finish;
@@ -38,18 +40,28 @@ module tb_t65_tx_space #(parameter T65_MUTANT=0);
     integer max_used=0,max_desc=0,max_count=0,wire_frames=0;
     integer i,k,wpos=0,wstart=0,start_cycle=0,optional_last=0,observation_mode=0;
     integer two_full=0,two_miss=0;
-    reg [7:0] bytes[0:4095],wbytes[0:2047];reg wav=0;
+    reg [7:0] bytes[0:8191],wbytes[0:2047];reg wav=0,input_was_valid=0;
+    integer expected_frames=0;
+    function integer frame_count;input integer n;integer left;
+        begin frame_count=1;left=n+8;if(n>1471)while(left>1479)begin frame_count=frame_count+1;left=left-1472;end end
+    endfunction
     reg admission_ready;
     // First-byte admission is sampled before the sequential RTL update.
     // policy 1 is the deliberately overlength/space-exhausting input;
     // policy 2 is observation-only input sent after ready has fallen.
     always @(posedge clk)begin
-        admission_ready=dut.initialized && dut.application_tx.used<=2616 && dut.application_tx.descriptors<31;
-        if(!reset && dut.application_tx.vq && !dut.application_tx.active)begin
+        admission_ready=dut.initialized && dut.application_tx.used<=24576 && dut.application_tx.descriptors<31;
+        // I observes the external first byte, before any DUT input pipeline.
+        if(!reset && tv && !input_was_valid)
             $fwrite(fd,"I %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",cycle,current_n,current_id,current_tag,
                 dut.initialized,dut.application_tx.descriptors,dut.application_tx.used,ready,current_policy,sent);
-            if(current_n>=3 && current_policy!=1 && dut.initialized && dut.application_tx.descriptors<32)begin
+        input_was_valid=!reset && tv;
+        if(!reset && dut.application_tx.vq && !dut.application_tx.active)begin
+            // F contains resources at admission, never the DUT accept/drop result.
+            $fwrite(fd,"F %0d %0d %0d %0d %0d\n",cycle,sent,dut.initialized,dut.application_tx.descriptors,dut.application_tx.used);
+            if(current_n>=3 && current_n<=8194 && current_policy!=1 && dut.initialized && dut.application_tx.descriptors<32)begin
                 ns[expected]=current_n-2;tags[expected]=current_tag;ids[expected]=current_id;expected=expected+1;
+                expected_frames=expected_frames+frame_count(current_n-2);
             end
             if(current_n>=2)begin
                 if(current_policy==1 || !dut.initialized || dut.application_tx.descriptors==32)exp_full=exp_full+1;
@@ -143,7 +155,7 @@ module tb_t65_tx_space #(parameter T65_MUTANT=0);
         integer waited;
         begin
             waited=0;
-            while(((!observation_mode && (got<expected-optional_last || wire_frames<expected-optional_last)) ||
+            while(((!observation_mode && (got<expected-optional_last || wire_frames<expected_frames-optional_last)) ||
                     dut.application_tx.descriptors!=0 || av) && waited<600000)begin
                 @(negedge clk);waited=waited+1;
             end
@@ -151,7 +163,7 @@ module tb_t65_tx_space #(parameter T65_MUTANT=0);
             // to finish before starting a separately checked recovery message.
             if(observation_mode)repeat(100000)@(negedge clk);
             else repeat(300)@(negedge clk);
-            if(!observation_mode)check(got>=expected-optional_last && got<=expected && wire_frames==got && pos==0,"legal messages emitted; optional ready-low input observed whole or absent");
+            if(!observation_mode)check(got>=expected-optional_last && got<=expected && wire_frames==expected_frames && pos==0,"legal messages emitted; optional ready-low input observed whole or absent");
             check(dut.application_tx.descriptors+(T65_MUTANT==2?1:0)==0 &&
                 dut.application_tx.write_ptr==dut.application_tx.read_ptr,"TX drain releases descriptors and data");
             check(ready,"ready recovers after drain");
@@ -173,17 +185,84 @@ module tb_t65_tx_space #(parameter T65_MUTANT=0);
         begin
             drain;
             $fwrite(fd,"S recovery %0d\n",cycle);
-            observation_mode=0;got=0;expected=0;wire_frames=0;pos=0;
+            observation_mode=0;got=0;expected=0;wire_frames=0;expected_frames=0;pos=0;
             send(66,16'h4000,8'h90,0);conclude(0);
         end
     endtask
 
+    // Independent application-ring fixture. A legal downstream stall isolates
+    // physical ring exhaustion from the 8192-byte single-message bound.
+    reg p_valid=0,p_cfg=0,p_run=0;reg [7:0] p_in=0;
+    wire p_ready,p_valid_out,p_last;wire [7:0] p_out;wire [1:0] p_drop;
+    afdx_app_tx pressure(.clk(clk),.reset(reset),.initialized(1'b1),.data(p_in),.valid(p_valid),.ready(p_ready),
+        .cfg_write(p_cfg),.cfg_index(7'd0),.cfg_vlid(16'h4000),.app_valid(p_valid_out),.app_ready(p_run),
+        .app_data(p_out),.app_last(p_last),.app_vl(),.drop(p_drop));
+    integer p_expected=0,p_got=0,p_pos=0,p_serial=0,p_drops=0,p_max_used=0,p_wait=0,p_i,p_k;
+    integer p_lengths[0:7],p_tags[0:7];reg [7:0] p_bytes[0:8191];
+    always @(posedge clk)if(!reset)begin
+        if(pressure.used>p_max_used)p_max_used=pressure.used;
+        if(p_drop[1])p_drops=p_drops+1;
+        if(p_valid_out && p_run)begin
+            check(p_got<p_expected,"pressure output belongs to a predetermined accepted input");
+            if(p_got<p_expected)begin
+                check(p_out==((p_tags[p_got]+p_pos)&255),"pressure exact retained/recovery byte");
+                check(p_last==(p_pos==p_lengths[p_got]-1),"pressure complete message boundary");
+                p_bytes[p_pos]=p_out;p_pos=p_pos+1;
+                if(p_last)begin
+                    $fwrite(fd,"M pressure %0d %0d ",cycle,p_pos);
+                    for(p_k=0;p_k<p_pos;p_k=p_k+1)$fwrite(fd,"%02x",p_bytes[p_k]);$fwrite(fd,"\n");
+                    p_got=p_got+1;p_pos=0;
+                end
+            end
+        end
+    end
+    task pressure_send;input integer n,tag,keep_message;integer b;
+        begin
+            @(negedge clk);p_serial=p_serial+1;
+            $fwrite(fd,"K input %0d %0d %0d %0d %0d\n",cycle,p_serial,n,tag,keep_message);
+            if(keep_message)begin p_lengths[p_expected]=n;p_tags[p_expected]=tag;p_expected=p_expected+1;end
+            p_valid=1;p_in=8'h40;@(negedge clk);p_in=0;
+            for(b=0;b<n;b=b+1)begin @(negedge clk);p_in=tag+b;end
+            @(negedge clk);p_valid=0;p_in=0;repeat(6)@(negedge clk);
+        end
+    endtask
+    task pressure_drain;
+        begin
+            p_run=1;p_wait=0;
+            while((p_got<p_expected || pressure.descriptors!=0 || p_valid_out) && p_wait<100000)begin
+                @(negedge clk);p_wait=p_wait+1;
+            end
+            repeat(12)@(negedge clk);
+            check(p_got==p_expected && p_pos==0,"pressure complete retained sequence drains");
+            check(pressure.descriptors==0 && pressure.write_ptr==pressure.read_ptr,"pressure all allocation reclaimed");
+            $fwrite(fd,"K drain %0d %0d %0d\n",pressure.write_ptr,pressure.read_ptr,pressure.descriptors);
+        end
+    endtask
+    initial begin
+        wait(!reset);@(negedge clk);p_cfg=1;@(negedge clk);p_cfg=0;repeat(8)@(negedge clk);
+        for(p_i=0;p_i<4;p_i=p_i+1)pressure_send(8192,8'h40+p_i,1);
+        // Eight existing reader credits have prefetched out of the ring while
+        // public consumption is stopped. Fill exactly those eight free bytes.
+        check(pressure.read_ptr==8 && pressure.used==32760,"pressure eight prefetched credits accounted");
+        pressure_send(8,8'h70,1);
+        check(pressure.used==32768 && pressure.descriptors==5 && !p_ready,"pressure physical 32KiB ring truly full");
+        $fwrite(fd,"K before %0d %0d %0d %0d %0d\n",pressure.used,pressure.descriptors,pressure.write_ptr,pressure.committed,pressure.read_ptr);
+        pressure_send(19,8'he2,0);
+        check(p_drops==1 && pressure.used==32768 && pressure.descriptors==5,"pressure full ring rejects one whole message");
+        $fwrite(fd,"K after %0d %0d %0d %0d %0d\n",pressure.used,pressure.descriptors,pressure.write_ptr,pressure.committed,pressure.read_ptr);
+        pressure_drain;pressure_send(64,8'h90,1);pressure_drain;
+        check(p_max_used==32768 && p_drops==1,"pressure full boundary and drop ledger");
+        $fwrite(fd,"K summary %0d %0d %0d\n",p_max_used,p_drops,p_got);pressure_done=1;
+    end
     initial begin
         repeat(5)@(negedge clk);reset=0;
 
-        setup;send(9002,16'h4000,8'h22,1);repeat(20)@(negedge clk);
-        check(max_used==4096 && max_count==8191,"real data exhaustion and saturated count reached");
+        setup;
+        send(8195,16'h4000,8'h12,1);repeat(20)@(negedge clk);
+        check(full==1 && dut.application_tx.write_ptr==0 && dut.application_tx.committed==0,"8193-byte payload wholly rejected and rolled back");
+        send(9002,16'h4000,8'h22,1);repeat(20)@(negedge clk);
+        check(full==2 && max_used==8192 && max_count==8194,"9000-byte payload rejected at 8192-byte limit");
         check(dut.application_tx.write_ptr==0 && dut.application_tx.committed==0,"whole oversized message rolls back write pointer");
-        send(1473,16'h4000,8'h80,0);drain;send(66,16'h4000,8'h90,0);conclude(1);
+        send(8194,16'h4000,8'h80,0);drain;send(66,16'h4000,8'h90,0);conclude(1);
     end
 endmodule

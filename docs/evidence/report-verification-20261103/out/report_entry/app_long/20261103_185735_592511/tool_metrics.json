@@ -1,0 +1,39 @@
+[
+  {
+    "name": "long_vectors",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\gen_app_vectors.py",
+      "--long",
+      "--out",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_long\\20261103_185735_592511\\project\\sim\\vectors\\app_long"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_long\\20261103_185735_592511",
+    "pid": 24676,
+    "created": 1793703455.7932384,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.268,
+    "peak_tree_bytes": 9129984,
+    "budget_seconds": 60,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_long\\20261103_185735_592511\\long_vectors.log"
+  },
+  {
+    "name": "entry",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-batch",
+      "-do",
+      "do sim/run_app.do sim/vectors/app_long/stimulus.txt sim/vectors/app_long/vl_config.txt current_long"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_long\\20261103_185735_592511\\project",
+    "pid": 23704,
+    "created": 1793703456.068702,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 123.315,
+    "peak_tree_bytes": 359690240,
+    "budget_seconds": 25200,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_long\\20261103_185735_592511\\entry.log"
+  }
+]

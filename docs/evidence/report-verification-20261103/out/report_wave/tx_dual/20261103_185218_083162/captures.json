@@ -1,0 +1,33 @@
+{
+  "captures": [
+    {
+      "name": "tx_dual_1",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\captures\\tx_dual_1.png",
+      "sha256": "A3939DE9AB1955D882F20FFC974B6B3248FE74EE7E64940D3E3E725CCD66EE99",
+      "requested_pid": 32200,
+      "owned_processes": {
+        "31560": 1793703138.3442924,
+        "27436": 1793703138.353982,
+        "32200": 1793703138.378003,
+        "19224": 1793703138.4858568,
+        "23948": 1793703156.301784
+      },
+      "window": "686272.000ns 689372.000ns"
+    },
+    {
+      "name": "tx_dual_2",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\captures\\tx_dual_2.png",
+      "sha256": "FBD31B6E207F238329B4647C6DA194B5A0315CE3B432A3E050C1E5D52C5BDBD3",
+      "requested_pid": 32200,
+      "owned_processes": {
+        "31560": 1793703138.3442924,
+        "27436": 1793703138.353982,
+        "32200": 1793703138.378003,
+        "19224": 1793703138.4858568,
+        "23948": 1793703156.301784
+      },
+      "window": "688564.000ns 688892.000ns"
+    }
+  ],
+  "failures": []
+}

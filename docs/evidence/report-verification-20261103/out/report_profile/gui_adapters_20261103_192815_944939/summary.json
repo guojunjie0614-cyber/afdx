@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "now": "123456",
+      "resolution": "1ps",
+      "expected_ns": 123.456,
+      "actual_ns": 123.456,
+      "passed": true
+    },
+    {
+      "now": "123450 ps",
+      "resolution": "10ps",
+      "expected_ns": 123.45,
+      "actual_ns": 123.45,
+      "passed": true
+    },
+    {
+      "now": "42",
+      "resolution": "1ns",
+      "expected_ns": 42,
+      "actual_ns": 42.0,
+      "passed": true
+    },
+    {
+      "now": "8",
+      "resolution": "1us",
+      "expected_ns": 8000,
+      "actual_ns": 8000.0,
+      "passed": true
+    },
+    {
+      "now": "1234",
+      "resolution": "1fs",
+      "expected_ns": 0.001234,
+      "actual_ns": 0.0012339999999999999,
+      "passed": true
+    },
+    {
+      "now": "0.9 ns",
+      "resolution": "100fs",
+      "expected_ns": 0.9,
+      "actual_ns": 0.9,
+      "passed": true
+    },
+    {
+      "now": "1",
+      "resolution": "1zs",
+      "rejected": true,
+      "passed": true
+    },
+    {
+      "now": "1 zs",
+      "resolution": "1ps",
+      "rejected": true,
+      "passed": true
+    },
+    {
+      "control": "actual minimized-only historical capture",
+      "width": 314,
+      "height": 50,
+      "passed": true
+    }
+  ],
+  "scope": "Offline Tcl conversion and capture guard controls; no HDL execution or coverage claim"
+}

@@ -1,0 +1,235 @@
+{
+  "test": "tb_sys_net",
+  "verification_profile": "fragmentation1030",
+  "items": 1307,
+  "errors": 0,
+  "reports": {
+    "es1_tx": {
+      "test": "tb_sys_net_es1_tx",
+      "items": 106,
+      "errors": 0,
+      "either": 0,
+      "messages": 4,
+      "frames_a": 4,
+      "frames_b": 4,
+      "sends": 4,
+      "stages": {
+        "net": 4
+      },
+      "diagnostics": []
+    },
+    "es2_tx": {
+      "test": "tb_sys_net_es2_tx",
+      "items": 106,
+      "errors": 0,
+      "either": 0,
+      "messages": 4,
+      "frames_a": 4,
+      "frames_b": 4,
+      "sends": 4,
+      "stages": {
+        "net": 4
+      },
+      "diagnostics": []
+    },
+    "es1_rx": {
+      "test": "tb_sys_net_es1_rx",
+      "items": 45,
+      "errors": 0,
+      "either": 0,
+      "segments": 8,
+      "segments_a": 4,
+      "segments_b": 4,
+      "pulses": {
+        "a_good": 4,
+        "b_good": 4,
+        "deliver": 4,
+        "rm_drop": 4
+      },
+      "deliveries": 4,
+      "max_delivery_latency": 68,
+      "stages": {
+        "net": {
+          "segments": 8,
+          "good": 8,
+          "deliver": 4,
+          "rm_drop": 4
+        }
+      },
+      "diagnostics": []
+    },
+    "es2_rx": {
+      "test": "tb_sys_net_es2_rx",
+      "items": 43,
+      "errors": 0,
+      "either": 0,
+      "segments": 8,
+      "segments_a": 4,
+      "segments_b": 4,
+      "pulses": {
+        "a_good": 3,
+        "b_good": 4,
+        "deliver": 4,
+        "rm_drop": 3,
+        "a_fcs": 1
+      },
+      "deliveries": 4,
+      "max_delivery_latency": 68,
+      "stages": {
+        "net": {
+          "segments": 8,
+          "good": 7,
+          "deliver": 4,
+          "rm_drop": 3,
+          "fcs": 1
+        }
+      },
+      "diagnostics": []
+    },
+    "system": {
+      "test": "tb_sys_net",
+      "items": 846,
+      "errors": 0,
+      "either": 0,
+      "w_over": 0,
+      "latency": {
+        "net": {
+          "samples": 8,
+          "limit_min": 5131,
+          "limit_max": 5131,
+          "W_samples": 6,
+          "W_max": 0,
+          "W_mean": 0.0,
+          "rx_samples": 8,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 8,
+          "e2e_max": 15440,
+          "e2e_mean": 14310.75,
+          "w_over": 0
+        }
+      },
+      "w_over_rows": [],
+      "endpoints": {
+        "es1": {
+          "messages": 4,
+          "accepted": 4,
+          "deliveries": 4,
+          "counter_nonzero": {
+            "accept": 4,
+            "tx_a": 4,
+            "tx_b": 4,
+            "a_good": 4,
+            "b_good": 4,
+            "rm_drop": 4,
+            "deliver": 4
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "net": {
+              "accept": 4,
+              "tx_a": 4,
+              "tx_b": 4,
+              "a_good": 4,
+              "b_good": 4,
+              "deliver": 4,
+              "rm_drop": 4
+            }
+          }
+        },
+        "es2": {
+          "messages": 4,
+          "accepted": 4,
+          "deliveries": 4,
+          "counter_nonzero": {
+            "accept": 4,
+            "tx_a": 4,
+            "tx_b": 4,
+            "a_good": 3,
+            "a_fcs": 1,
+            "b_good": 4,
+            "rm_drop": 3,
+            "deliver": 4
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "net": {
+              "accept": 4,
+              "tx_a": 4,
+              "tx_b": 4,
+              "a_good": 3,
+              "b_good": 4,
+              "deliver": 4,
+              "rm_drop": 3,
+              "a_fcs": 1
+            }
+          }
+        }
+      },
+      "rewrites": {
+        "tx": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "map": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "cfg": {
+          "count": 0,
+          "max_wait": 0
+        }
+      },
+      "performance": {},
+      "diagnostics": []
+    },
+    "gmii": {
+      "test": "tb_sys_net_gmii",
+      "items": 161,
+      "errors": 0,
+      "either": 0,
+      "tx_delay": 0,
+      "replay_delay": 0,
+      "capacity": 0,
+      "channels": {
+        "es2_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 4,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es2_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 4,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 4,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 4,
+          "dropped": 0,
+          "self_spaced_input": true
+        }
+      },
+      "diagnostics": []
+    }
+  }
+}

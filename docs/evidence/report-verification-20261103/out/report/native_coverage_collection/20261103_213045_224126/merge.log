@@ -1,0 +1,66 @@
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+Start time: 21:30:46 on Nov 03,2026
+vcover merge -checkinputs -ucdbchecks C:\Users\susu\Desktop\afdx\out\report\native_coverage_collection\20261103_213045_224126\merged.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_perf_var\20261103_175508_683841\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_perf\20261103_175508_684130\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_rx_data\20261103_194737_395259\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_drop\20261103_194825_421380\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_ram_sdp\20261103_194914_763089\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_mac_tx\20261103_194917_802580\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_mac_rx\20261103_194921_358137\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_mac_loop\20261103_194924_662089\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_basic\20261103_194929_304030\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_basic\20261103_194934_706212\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_bag\20261103_194940_357673\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_multi\20261103_195005_632404\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_tx_net\20261103_195038_096065\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_basic\20261103_195042_451625\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_fault\20261103_195104_228690\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_icrm\20261103_195109_628884\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_load\20261103_195119_435328\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_ovf_ring\20261103_195132_643371\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_ovf_dq\20261103_195137_777794\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rx_net\20261103_195142_913711\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_basic\20261103_201510_248153\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_fault\20261103_195219_967787\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_delay\20261103_195608_460495\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_load\20261103_195729_032890\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_cfg\20261103_201831_653429\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_reset\20261103_202046_779501\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_ovf\20261103_202204_547673\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_net\20261103_202317_464476\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_rtc\20261103_202347_833492\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_snmp\20261103_204509_676691\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_snmp_settrap\20261103_204856_845365\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_sys_615a\20261103_205210_747517\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_gbe_burst\20261103_205807_517716\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_gbe_burst\20261103_205850_995639\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_212918_293871\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_recovery\20261103_211446_175361\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_originate\20261103_211451_753008\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_judge_capacity\20261103_210022_157068\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_judge_snmp\20261103_210101_511006\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_elinx\20261103_210313_385898\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_top_wrap\20261103_210400_029947\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_queue_a\20261103_210430_048892\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_app\20261103_210436_702458\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_210511_959718\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_rx\20261103_210554_617374\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_rx_desc\20261103_210630_169232\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_desc\20261103_210635_801238\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_hint\20261103_210639_650890\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_init\20261103_210648_205600\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_ready\20261103_210653_701972\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_full\20261103_210701_669877\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_init\20261103_210706_680197\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_normal\20261103_210720_231070\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_space\20261103_210728_098943\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_space_edge\20261103_210741_047681\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_unmapped\20261103_210748_348837\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_211455_992015\coverage.ucdb C:\Users\susu\Desktop\afdx\out\sim\tb_net_services\20261103_174256_134605\coverage.ucdb 
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_perf_var\20261103_175508_683841\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_perf\20261103_175508_684130\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_rx_data\20261103_194737_395259\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_drop\20261103_194825_421380\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_ram_sdp\20261103_194914_763089\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_mac_tx\20261103_194917_802580\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_mac_rx\20261103_194921_358137\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_mac_loop\20261103_194924_662089\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_basic\20261103_194929_304030\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_basic\20261103_194934_706212\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_bag\20261103_194940_357673\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_multi\20261103_195005_632404\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_tx_net\20261103_195038_096065\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_basic\20261103_195042_451625\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_fault\20261103_195104_228690\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_icrm\20261103_195109_628884\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_load\20261103_195119_435328\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_ovf_ring\20261103_195132_643371\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_ovf_dq\20261103_195137_777794\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rx_net\20261103_195142_913711\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_basic\20261103_201510_248153\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_fault\20261103_195219_967787\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_delay\20261103_195608_460495\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_load\20261103_195729_032890\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_cfg\20261103_201831_653429\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_reset\20261103_202046_779501\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_ovf\20261103_202204_547673\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_net\20261103_202317_464476\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_rtc\20261103_202347_833492\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_snmp\20261103_204509_676691\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_snmp_settrap\20261103_204856_845365\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_sys_615a\20261103_205210_747517\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_gbe_burst\20261103_205807_517716\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_gbe_burst\20261103_205850_995639\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_212918_293871\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_recovery\20261103_211446_175361\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_originate\20261103_211451_753008\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_judge_capacity\20261103_210022_157068\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_judge_snmp\20261103_210101_511006\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_elinx\20261103_210313_385898\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_top_wrap\20261103_210400_029947\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_queue_a\20261103_210430_048892\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_app\20261103_210436_702458\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_210511_959718\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_rx\20261103_210554_617374\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_rx_desc\20261103_210630_169232\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_desc\20261103_210635_801238\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_hint\20261103_210639_650890\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_init\20261103_210648_205600\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_ready\20261103_210653_701972\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_full\20261103_210701_669877\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_init\20261103_210706_680197\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_short_normal\20261103_210720_231070\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_space\20261103_210728_098943\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_space_edge\20261103_210741_047681\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_t65_tx_unmapped\20261103_210748_348837\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_211455_992015\coverage.ucdb
+Merging file C:\Users\susu\Desktop\afdx\out\sim\tb_net_services\20261103_174256_134605\coverage.ucdb
+Writing merged result to C:\Users\susu\Desktop\afdx\out\report\native_coverage_collection\20261103_213045_224126\merged.ucdb
+All input files merged successfully.
+End time: 21:30:54 on Nov 03,2026, Elapsed time: 0:00:08
+Errors: 0, Warnings: 0

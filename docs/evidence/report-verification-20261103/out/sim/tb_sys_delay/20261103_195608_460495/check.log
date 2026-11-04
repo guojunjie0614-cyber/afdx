@@ -1,0 +1,6 @@
+[CHECK] tb_sys_delay_es1_tx PASS items=370 errors=0 either=0
+[CHECK] tb_sys_delay_es2_tx PASS items=370 errors=0 either=0
+[CHECK] tb_sys_delay_es1_rx PASS items=175 errors=0 either=0
+[CHECK] tb_sys_delay_es2_rx PASS items=175 errors=0 either=0
+[CHECK] tb_sys_delay PASS items=2254 errors=0 either=0 w_over=0
+[CHECK] tb_sys_delay_gmii PASS items=571 errors=0 either=0

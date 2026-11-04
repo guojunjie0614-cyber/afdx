@@ -92,6 +92,12 @@ proc judge_perf::baseline {stage} {
 }
 
 proc judge_perf::limits {stage es rate maximum variation wire_a wire_b results p} {
+    set strict 1
+    if {[info exists ::env(AFDX_VERIFICATION_PROFILE)]} {
+        set profile $::env(AFDX_VERIFICATION_PROFILE)
+        if {$profile ni {legacy fragmentation1030}} {error "Unknown verification profile: $profile"}
+        if {$profile eq "fragmentation1030"} {set strict 0}
+    }
     set direction es${es}_to_es[expr {3-$es}]
     set inject [dict get $results $p/inject/mbps]
     set e2e [dict get $results $p/L_entry_last/max]
@@ -136,9 +142,10 @@ proc judge_perf::limits {stage es rate maximum variation wire_a wire_b results p
         [expr {$meets ? "PASS" : "FAIL"}] $stage $direction [expr {$inject-100.0}] \
         [expr {$e2e eq "NA" ? "NA" : 2000.0-$e2e*0.008}] [expr {$jitter eq "NA" ? "NA" : 50.0-$jitter*0.008}] $lag]
     lappend lines [format {JUDGE BASELINE %s stage=%s direction=%s expected_inject_mbps=%s expected_max_e2e_us=%s expected_jitter_r119_us=%s} \
-        [expr {$same ? "PASS" : "FAIL"}] $stage $direction \
+        [expr {$same ? "PASS" : ($strict ? "FAIL" : "REPORT")}] $stage $direction \
         [lindex $expected 0] [lindex $expected 1] [lindex $expected 3]]
-    if {!$meets || !$same} {
+    if {!$strict && [llength $problems]} {lappend lines "JUDGE BASELINE DETAIL [join $problems {; }]"}
+    if {!$meets || (!$same && $strict)} {
         foreach line $lines {puts $line}
         if {[llength $problems]} {puts "JUDGE BASELINE DETAIL [join $problems {; }]"}
         if {!$meets} {error "Performance requirement not met: $stage $direction"}

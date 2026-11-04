@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "messages": 3,
+  "active_vls": 2,
+  "frames_per_network": 4,
+  "redundancy_rejections": 4,
+  "raw_latencies": [
+    {
+      "vl": 257,
+      "payload_bytes": 64,
+      "first_valid_cycle": 67627,
+      "public_last_cycle": 71773,
+      "raw_completion_us": 33.168
+    },
+    {
+      "vl": 256,
+      "payload_bytes": 1472,
+      "first_valid_cycle": 65627,
+      "public_last_cycle": 195280,
+      "raw_completion_us": 1037.224
+    },
+    {
+      "vl": 257,
+      "payload_bytes": 17,
+      "first_valid_cycle": 70627,
+      "public_last_cycle": 195326,
+      "raw_completion_us": 997.592
+    }
+  ],
+  "progress_while_fragment_open": true,
+  "fragmented_latency_rule": "C156-1: 既然已经分片，不再受单帧限制。 Raw completion retained; no new numeric limit inferred.",
+  "checks": "input-derived exact payload/order/quantity; FCS/IP/UDP; ID/MF/offset/SN; per-fragment BAG; A/B bytes; short raw <=2ms"
+}

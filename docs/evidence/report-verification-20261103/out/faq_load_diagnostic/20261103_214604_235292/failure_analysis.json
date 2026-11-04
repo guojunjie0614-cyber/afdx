@@ -1,0 +1,3504 @@
+{
+  "kind": "read-only diagnosis of actual mixed128 FAIL; no HDL executed",
+  "capture": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\mixed128",
+  "raw_failure": "[RESULT] tb_fragmentation FAIL missing deliveries 4011/4032\n- C:/Users/susu/Desktop/afdx/out/open_verilator/20261103_162731_314847/sources/tb/tb_fragmentation.v:92: Verilog $finish\n",
+  "source_sha256": "d3d2f2f617db73a76f43b819ae1fa0255d62525241a851b26f8ef80eca09c7d7",
+  "unchanged_capture_sha256": {
+    "tx_messages.txt": "7f0df83774bec0b4628f287cb6c27c1489ab9c1c29e59492959debde4f88acf6",
+    "rx.txt": "84f216c85b6636bed4cf40a1962707458806a069d530657e8e712bd14b077f1d",
+    "tx_a.txt": "e19665d950210755be3f5c26fd3fb6e788d07740c1f2f327765e907a10d9842f",
+    "tx_b.txt": "80283a29bb77ca99a72d3e875af8c5908aeaa647ad89c4c511bd9b9330fec6e4",
+    "events.txt": "363b0e9ed7e74eff958d4fe8612a4ff68c88c8b9ec0def2789aff9e5d28b0152",
+    "simulation.log": "1b1619ad21c209c0d88a38e14e83891055375e6fce44fe93811af3070ee21520",
+    "run.json": "a59d8296211dd56f728cbab53b43284fabb4f4dc4654421fa031c836f6e7c788",
+    "faq_manifest.json": "b29e43c023f09c1ea1547ccd8495d59e3f828f932ee4ee2d28ff433200b71765"
+  },
+  "expected_messages": 4032,
+  "actual_public_inputs": 4032,
+  "exact_phase_violations": [],
+  "delivered_messages": 4011,
+  "unknown_deliveries": [],
+  "duplicate_deliveries": [],
+  "missing_count": 21,
+  "missing": [
+    {
+      "due": 647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 1695,
+      "repeat": 1,
+      "index": 161,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 716907,
+        "last": 718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 5.180016,
+      "wire_a": {
+        "first": 719920,
+        "last": 721445,
+        "fragments": [
+          {
+            "index": 161,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 719920,
+            "end": 721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 161,
+            "sn": 1
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 719920,
+        "last": 721445,
+        "fragments": [
+          {
+            "index": 161,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 719920,
+            "end": 721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 161,
+            "sn": 1
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 161,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 719920,
+              "end": 721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 161,
+              "sn": 1
+            },
+            "b": {
+              "index": 161,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 719920,
+              "end": 721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 161,
+              "sn": 1
+            }
+          }
+        },
+        {
+          "cycle": 721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 161,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 719920,
+              "end": 721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 161,
+              "sn": 1
+            },
+            "b": {
+              "index": 161,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 719920,
+              "end": 721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 161,
+              "sn": 1
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 0,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 713354,
+          "last": 721547
+        }
+      ]
+    },
+    {
+      "due": 1397500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 47256,
+      "repeat": 2,
+      "index": 350,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 1466907,
+        "last": 1468379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 11.180016,
+      "wire_a": {
+        "first": 1469920,
+        "last": 1471445,
+        "fragments": [
+          {
+            "index": 350,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 1469920,
+            "end": 1471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 350,
+            "sn": 2
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 1469920,
+        "last": 1471445,
+        "fragments": [
+          {
+            "index": 350,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 1469920,
+            "end": 1471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 350,
+            "sn": 2
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 1471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 350,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 1469920,
+              "end": 1471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 350,
+              "sn": 2
+            },
+            "b": {
+              "index": 350,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 1469920,
+              "end": 1471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 350,
+              "sn": 2
+            }
+          }
+        },
+        {
+          "cycle": 1471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 350,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 1469920,
+              "end": 1471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 350,
+              "sn": 2
+            },
+            "b": {
+              "index": 350,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 1469920,
+              "end": 1471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 350,
+              "sn": 2
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 189,
+          "vl": 383,
+          "vl_hex": "017f",
+          "first": 1463354,
+          "last": 1471547
+        }
+      ]
+    },
+    {
+      "due": 2147500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 25452,
+      "repeat": 4,
+      "index": 539,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 2216907,
+        "last": 2218379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 17.180016,
+      "wire_a": {
+        "first": 2219920,
+        "last": 2221445,
+        "fragments": [
+          {
+            "index": 539,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 2219920,
+            "end": 2221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 539,
+            "sn": 4
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 2219920,
+        "last": 2221445,
+        "fragments": [
+          {
+            "index": 539,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 2219920,
+            "end": 2221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 539,
+            "sn": 4
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 2221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 539,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 2219920,
+              "end": 2221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 539,
+              "sn": 4
+            },
+            "b": {
+              "index": 539,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 2219920,
+              "end": 2221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 539,
+              "sn": 4
+            }
+          }
+        },
+        {
+          "cycle": 2221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 539,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 2219920,
+              "end": 2221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 539,
+              "sn": 4
+            },
+            "b": {
+              "index": 539,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 2219920,
+              "end": 2221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 539,
+              "sn": 4
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 378,
+          "vl": 382,
+          "vl_hex": "017e",
+          "first": 2213354,
+          "last": 2221547
+        }
+      ]
+    },
+    {
+      "due": 2897500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 6947,
+      "repeat": 5,
+      "index": 728,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 2966907,
+        "last": 2968379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 23.180016,
+      "wire_a": {
+        "first": 2969920,
+        "last": 2971445,
+        "fragments": [
+          {
+            "index": 728,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 2969920,
+            "end": 2971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 728,
+            "sn": 5
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 2969920,
+        "last": 2971445,
+        "fragments": [
+          {
+            "index": 728,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 2969920,
+            "end": 2971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 728,
+            "sn": 5
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 2971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 728,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 2969920,
+              "end": 2971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 728,
+              "sn": 5
+            },
+            "b": {
+              "index": 728,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 2969920,
+              "end": 2971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 728,
+              "sn": 5
+            }
+          }
+        },
+        {
+          "cycle": 2971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 728,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 2969920,
+              "end": 2971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 728,
+              "sn": 5
+            },
+            "b": {
+              "index": 728,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 2969920,
+              "end": 2971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 728,
+              "sn": 5
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 567,
+          "vl": 381,
+          "vl_hex": "017d",
+          "first": 2963354,
+          "last": 2971547
+        }
+      ]
+    },
+    {
+      "due": 3647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 49209,
+      "repeat": 7,
+      "index": 917,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 3716907,
+        "last": 3718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 29.180016,
+      "wire_a": {
+        "first": 3719920,
+        "last": 3721445,
+        "fragments": [
+          {
+            "index": 917,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 3719920,
+            "end": 3721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 917,
+            "sn": 7
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 3719920,
+        "last": 3721445,
+        "fragments": [
+          {
+            "index": 917,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 3719920,
+            "end": 3721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 917,
+            "sn": 7
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 3721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 917,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 3719920,
+              "end": 3721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 917,
+              "sn": 7
+            },
+            "b": {
+              "index": 917,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 3719920,
+              "end": 3721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 917,
+              "sn": 7
+            }
+          }
+        },
+        {
+          "cycle": 3721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 917,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 3719920,
+              "end": 3721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 917,
+              "sn": 7
+            },
+            "b": {
+              "index": 917,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 3719920,
+              "end": 3721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 917,
+              "sn": 7
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 756,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 3713354,
+          "last": 3721547
+        }
+      ]
+    },
+    {
+      "due": 4397500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 30704,
+      "repeat": 8,
+      "index": 1106,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 4466907,
+        "last": 4468379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 35.180016,
+      "wire_a": {
+        "first": 4469920,
+        "last": 4471445,
+        "fragments": [
+          {
+            "index": 1106,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 4469920,
+            "end": 4471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1106,
+            "sn": 8
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 4469920,
+        "last": 4471445,
+        "fragments": [
+          {
+            "index": 1106,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 4469920,
+            "end": 4471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1106,
+            "sn": 8
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 4471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1106,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 4469920,
+              "end": 4471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1106,
+              "sn": 8
+            },
+            "b": {
+              "index": 1106,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 4469920,
+              "end": 4471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1106,
+              "sn": 8
+            }
+          }
+        },
+        {
+          "cycle": 4471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1106,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 4469920,
+              "end": 4471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1106,
+              "sn": 8
+            },
+            "b": {
+              "index": 1106,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 4469920,
+              "end": 4471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1106,
+              "sn": 8
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 945,
+          "vl": 383,
+          "vl_hex": "017f",
+          "first": 4463354,
+          "last": 4471547
+        }
+      ]
+    },
+    {
+      "due": 5147500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 8900,
+      "repeat": 10,
+      "index": 1295,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 5216907,
+        "last": 5218379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 41.180016,
+      "wire_a": {
+        "first": 5219920,
+        "last": 5221445,
+        "fragments": [
+          {
+            "index": 1295,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 5219920,
+            "end": 5221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1295,
+            "sn": 10
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 5219920,
+        "last": 5221445,
+        "fragments": [
+          {
+            "index": 1295,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 5219920,
+            "end": 5221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1295,
+            "sn": 10
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 5221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1295,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 5219920,
+              "end": 5221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1295,
+              "sn": 10
+            },
+            "b": {
+              "index": 1295,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 5219920,
+              "end": 5221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1295,
+              "sn": 10
+            }
+          }
+        },
+        {
+          "cycle": 5221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1295,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 5219920,
+              "end": 5221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1295,
+              "sn": 10
+            },
+            "b": {
+              "index": 1295,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 5219920,
+              "end": 5221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1295,
+              "sn": 10
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 1134,
+          "vl": 382,
+          "vl_hex": "017e",
+          "first": 5213354,
+          "last": 5221547
+        }
+      ]
+    },
+    {
+      "due": 5897500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 54461,
+      "repeat": 11,
+      "index": 1484,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 5966907,
+        "last": 5968379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 47.180016,
+      "wire_a": {
+        "first": 5969920,
+        "last": 5971445,
+        "fragments": [
+          {
+            "index": 1484,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 5969920,
+            "end": 5971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1484,
+            "sn": 11
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 5969920,
+        "last": 5971445,
+        "fragments": [
+          {
+            "index": 1484,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 5969920,
+            "end": 5971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1484,
+            "sn": 11
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 5971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1484,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 5969920,
+              "end": 5971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1484,
+              "sn": 11
+            },
+            "b": {
+              "index": 1484,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 5969920,
+              "end": 5971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1484,
+              "sn": 11
+            }
+          }
+        },
+        {
+          "cycle": 5971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1484,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 5969920,
+              "end": 5971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1484,
+              "sn": 11
+            },
+            "b": {
+              "index": 1484,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 5969920,
+              "end": 5971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1484,
+              "sn": 11
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 1323,
+          "vl": 381,
+          "vl_hex": "017d",
+          "first": 5963354,
+          "last": 5971547
+        }
+      ]
+    },
+    {
+      "due": 6647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 32657,
+      "repeat": 13,
+      "index": 1673,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 6716907,
+        "last": 6718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 53.180016,
+      "wire_a": {
+        "first": 6719920,
+        "last": 6721445,
+        "fragments": [
+          {
+            "index": 1673,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 6719920,
+            "end": 6721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1673,
+            "sn": 13
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 6719920,
+        "last": 6721445,
+        "fragments": [
+          {
+            "index": 1673,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 6719920,
+            "end": 6721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1673,
+            "sn": 13
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 6721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1673,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 6719920,
+              "end": 6721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1673,
+              "sn": 13
+            },
+            "b": {
+              "index": 1673,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 6719920,
+              "end": 6721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1673,
+              "sn": 13
+            }
+          }
+        },
+        {
+          "cycle": 6721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1673,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 6719920,
+              "end": 6721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1673,
+              "sn": 13
+            },
+            "b": {
+              "index": 1673,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 6719920,
+              "end": 6721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1673,
+              "sn": 13
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 1512,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 6713354,
+          "last": 6721547
+        }
+      ]
+    },
+    {
+      "due": 7397500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 14152,
+      "repeat": 14,
+      "index": 1862,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 7466907,
+        "last": 7468379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 59.180016,
+      "wire_a": {
+        "first": 7469920,
+        "last": 7471445,
+        "fragments": [
+          {
+            "index": 1862,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 7469920,
+            "end": 7471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1862,
+            "sn": 14
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 7469920,
+        "last": 7471445,
+        "fragments": [
+          {
+            "index": 1862,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 7469920,
+            "end": 7471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 1862,
+            "sn": 14
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 7471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1862,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 7469920,
+              "end": 7471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1862,
+              "sn": 14
+            },
+            "b": {
+              "index": 1862,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 7469920,
+              "end": 7471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1862,
+              "sn": 14
+            }
+          }
+        },
+        {
+          "cycle": 7471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 1862,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 7469920,
+              "end": 7471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1862,
+              "sn": 14
+            },
+            "b": {
+              "index": 1862,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 7469920,
+              "end": 7471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 1862,
+              "sn": 14
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 1701,
+          "vl": 383,
+          "vl_hex": "017f",
+          "first": 7463354,
+          "last": 7471547
+        }
+      ]
+    },
+    {
+      "due": 8147500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 56414,
+      "repeat": 16,
+      "index": 2051,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 8216907,
+        "last": 8218379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 65.180016,
+      "wire_a": {
+        "first": 8219920,
+        "last": 8221445,
+        "fragments": [
+          {
+            "index": 2051,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 8219920,
+            "end": 8221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2051,
+            "sn": 16
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 8219920,
+        "last": 8221445,
+        "fragments": [
+          {
+            "index": 2051,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 8219920,
+            "end": 8221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2051,
+            "sn": 16
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 8221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2051,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 8219920,
+              "end": 8221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2051,
+              "sn": 16
+            },
+            "b": {
+              "index": 2051,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 8219920,
+              "end": 8221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2051,
+              "sn": 16
+            }
+          }
+        },
+        {
+          "cycle": 8221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2051,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 8219920,
+              "end": 8221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2051,
+              "sn": 16
+            },
+            "b": {
+              "index": 2051,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 8219920,
+              "end": 8221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2051,
+              "sn": 16
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 1890,
+          "vl": 382,
+          "vl_hex": "017e",
+          "first": 8213354,
+          "last": 8221547
+        }
+      ]
+    },
+    {
+      "due": 8897500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 37909,
+      "repeat": 17,
+      "index": 2240,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 8966907,
+        "last": 8968379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 71.180016,
+      "wire_a": {
+        "first": 8969920,
+        "last": 8971445,
+        "fragments": [
+          {
+            "index": 2240,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 8969920,
+            "end": 8971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2240,
+            "sn": 17
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 8969920,
+        "last": 8971445,
+        "fragments": [
+          {
+            "index": 2240,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 8969920,
+            "end": 8971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2240,
+            "sn": 17
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 8971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2240,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 8969920,
+              "end": 8971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2240,
+              "sn": 17
+            },
+            "b": {
+              "index": 2240,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 8969920,
+              "end": 8971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2240,
+              "sn": 17
+            }
+          }
+        },
+        {
+          "cycle": 8971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2240,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 8969920,
+              "end": 8971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2240,
+              "sn": 17
+            },
+            "b": {
+              "index": 2240,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 8969920,
+              "end": 8971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2240,
+              "sn": 17
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 2079,
+          "vl": 381,
+          "vl_hex": "017d",
+          "first": 8963354,
+          "last": 8971547
+        }
+      ]
+    },
+    {
+      "due": 9647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 16105,
+      "repeat": 19,
+      "index": 2429,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 9716907,
+        "last": 9718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 77.180016,
+      "wire_a": {
+        "first": 9719920,
+        "last": 9721445,
+        "fragments": [
+          {
+            "index": 2429,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 9719920,
+            "end": 9721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2429,
+            "sn": 19
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 9719920,
+        "last": 9721445,
+        "fragments": [
+          {
+            "index": 2429,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 9719920,
+            "end": 9721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2429,
+            "sn": 19
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 9721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2429,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 9719920,
+              "end": 9721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2429,
+              "sn": 19
+            },
+            "b": {
+              "index": 2429,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 9719920,
+              "end": 9721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2429,
+              "sn": 19
+            }
+          }
+        },
+        {
+          "cycle": 9721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2429,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 9719920,
+              "end": 9721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2429,
+              "sn": 19
+            },
+            "b": {
+              "index": 2429,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 9719920,
+              "end": 9721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2429,
+              "sn": 19
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 2268,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 9713354,
+          "last": 9721547
+        }
+      ]
+    },
+    {
+      "due": 10397500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 61666,
+      "repeat": 20,
+      "index": 2618,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 10466907,
+        "last": 10468379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 83.180016,
+      "wire_a": {
+        "first": 10469920,
+        "last": 10471445,
+        "fragments": [
+          {
+            "index": 2618,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 10469920,
+            "end": 10471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2618,
+            "sn": 20
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 10469920,
+        "last": 10471445,
+        "fragments": [
+          {
+            "index": 2618,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 10469920,
+            "end": 10471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2618,
+            "sn": 20
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 10471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2618,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 10469920,
+              "end": 10471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2618,
+              "sn": 20
+            },
+            "b": {
+              "index": 2618,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 10469920,
+              "end": 10471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2618,
+              "sn": 20
+            }
+          }
+        },
+        {
+          "cycle": 10471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2618,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 10469920,
+              "end": 10471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2618,
+              "sn": 20
+            },
+            "b": {
+              "index": 2618,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 10469920,
+              "end": 10471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2618,
+              "sn": 20
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 2457,
+          "vl": 383,
+          "vl_hex": "017f",
+          "first": 10463354,
+          "last": 10471547
+        }
+      ]
+    },
+    {
+      "due": 11147500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 39862,
+      "repeat": 22,
+      "index": 2807,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 11216907,
+        "last": 11218379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 89.180016,
+      "wire_a": {
+        "first": 11219920,
+        "last": 11221445,
+        "fragments": [
+          {
+            "index": 2807,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 11219920,
+            "end": 11221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2807,
+            "sn": 22
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 11219920,
+        "last": 11221445,
+        "fragments": [
+          {
+            "index": 2807,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 11219920,
+            "end": 11221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2807,
+            "sn": 22
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 11221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2807,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 11219920,
+              "end": 11221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2807,
+              "sn": 22
+            },
+            "b": {
+              "index": 2807,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 11219920,
+              "end": 11221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2807,
+              "sn": 22
+            }
+          }
+        },
+        {
+          "cycle": 11221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2807,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 11219920,
+              "end": 11221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2807,
+              "sn": 22
+            },
+            "b": {
+              "index": 2807,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 11219920,
+              "end": 11221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2807,
+              "sn": 22
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 2646,
+          "vl": 382,
+          "vl_hex": "017e",
+          "first": 11213354,
+          "last": 11221547
+        }
+      ]
+    },
+    {
+      "due": 11897500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 21357,
+      "repeat": 23,
+      "index": 2996,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 11966907,
+        "last": 11968379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 95.180016,
+      "wire_a": {
+        "first": 11969920,
+        "last": 11971445,
+        "fragments": [
+          {
+            "index": 2996,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 11969920,
+            "end": 11971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2996,
+            "sn": 23
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 11969920,
+        "last": 11971445,
+        "fragments": [
+          {
+            "index": 2996,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 11969920,
+            "end": 11971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 2996,
+            "sn": 23
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 11971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2996,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 11969920,
+              "end": 11971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2996,
+              "sn": 23
+            },
+            "b": {
+              "index": 2996,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 11969920,
+              "end": 11971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2996,
+              "sn": 23
+            }
+          }
+        },
+        {
+          "cycle": 11971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 2996,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 11969920,
+              "end": 11971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2996,
+              "sn": 23
+            },
+            "b": {
+              "index": 2996,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 11969920,
+              "end": 11971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 2996,
+              "sn": 23
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 2835,
+          "vl": 381,
+          "vl_hex": "017d",
+          "first": 11963354,
+          "last": 11971547
+        }
+      ]
+    },
+    {
+      "due": 12647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 63619,
+      "repeat": 25,
+      "index": 3185,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 12716907,
+        "last": 12718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 101.180016,
+      "wire_a": {
+        "first": 12719920,
+        "last": 12721445,
+        "fragments": [
+          {
+            "index": 3185,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 12719920,
+            "end": 12721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3185,
+            "sn": 25
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 12719920,
+        "last": 12721445,
+        "fragments": [
+          {
+            "index": 3185,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 12719920,
+            "end": 12721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3185,
+            "sn": 25
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 12721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3185,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 12719920,
+              "end": 12721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3185,
+              "sn": 25
+            },
+            "b": {
+              "index": 3185,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 12719920,
+              "end": 12721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3185,
+              "sn": 25
+            }
+          }
+        },
+        {
+          "cycle": 12721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3185,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 12719920,
+              "end": 12721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3185,
+              "sn": 25
+            },
+            "b": {
+              "index": 3185,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 12719920,
+              "end": 12721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3185,
+              "sn": 25
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 3024,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 12713354,
+          "last": 12721547
+        }
+      ]
+    },
+    {
+      "due": 13397500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 45114,
+      "repeat": 26,
+      "index": 3374,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 13466907,
+        "last": 13468379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 107.180016,
+      "wire_a": {
+        "first": 13469920,
+        "last": 13471445,
+        "fragments": [
+          {
+            "index": 3374,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 13469920,
+            "end": 13471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3374,
+            "sn": 26
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 13469920,
+        "last": 13471445,
+        "fragments": [
+          {
+            "index": 3374,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 13469920,
+            "end": 13471445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3374,
+            "sn": 26
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 13471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3374,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 13469920,
+              "end": 13471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3374,
+              "sn": 26
+            },
+            "b": {
+              "index": 3374,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 13469920,
+              "end": 13471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3374,
+              "sn": 26
+            }
+          }
+        },
+        {
+          "cycle": 13471452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3374,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 13469920,
+              "end": 13471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3374,
+              "sn": 26
+            },
+            "b": {
+              "index": 3374,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 13469920,
+              "end": 13471445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3374,
+              "sn": 26
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 3213,
+          "vl": 383,
+          "vl_hex": "017f",
+          "first": 13463354,
+          "last": 13471547
+        }
+      ]
+    },
+    {
+      "due": 14147500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 23310,
+      "repeat": 28,
+      "index": 3563,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 14216907,
+        "last": 14218379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 113.180016,
+      "wire_a": {
+        "first": 14219920,
+        "last": 14221445,
+        "fragments": [
+          {
+            "index": 3563,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 14219920,
+            "end": 14221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3563,
+            "sn": 28
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 14219920,
+        "last": 14221445,
+        "fragments": [
+          {
+            "index": 3563,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 14219920,
+            "end": 14221445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3563,
+            "sn": 28
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 14221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3563,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 14219920,
+              "end": 14221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3563,
+              "sn": 28
+            },
+            "b": {
+              "index": 3563,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 14219920,
+              "end": 14221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3563,
+              "sn": 28
+            }
+          }
+        },
+        {
+          "cycle": 14221452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3563,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 14219920,
+              "end": 14221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3563,
+              "sn": 28
+            },
+            "b": {
+              "index": 3563,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 14219920,
+              "end": 14221445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3563,
+              "sn": 28
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 3402,
+          "vl": 382,
+          "vl_hex": "017e",
+          "first": 14213354,
+          "last": 14221547
+        }
+      ]
+    },
+    {
+      "due": 14897500,
+      "vl": 352,
+      "n": 1471,
+      "offset": 4805,
+      "repeat": 29,
+      "index": 3752,
+      "vl_hex": "0160",
+      "public_input": {
+        "first": 14966907,
+        "last": 14968379,
+        "vl": 352,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 119.180016,
+      "wire_a": {
+        "first": 14969920,
+        "last": 14971445,
+        "fragments": [
+          {
+            "index": 3752,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 14969920,
+            "end": 14971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3752,
+            "sn": 29
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 14969920,
+        "last": 14971445,
+        "fragments": [
+          {
+            "index": 3752,
+            "vl": 352,
+            "vl_hex": "0160",
+            "n": 1471,
+            "start": 14969920,
+            "end": 14971445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3752,
+            "sn": 29
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 14971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3752,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 14969920,
+              "end": 14971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3752,
+              "sn": 29
+            },
+            "b": {
+              "index": 3752,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 14969920,
+              "end": 14971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3752,
+              "sn": 29
+            }
+          }
+        },
+        {
+          "cycle": 14971452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3752,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 14969920,
+              "end": 14971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3752,
+              "sn": 29
+            },
+            "b": {
+              "index": 3752,
+              "vl": 352,
+              "vl_hex": "0160",
+              "n": 1471,
+              "start": 14969920,
+              "end": 14971445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3752,
+              "sn": 29
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 3591,
+          "vl": 381,
+          "vl_hex": "017d",
+          "first": 14963354,
+          "last": 14971547
+        }
+      ]
+    },
+    {
+      "due": 15647500,
+      "vl": 290,
+      "n": 1471,
+      "offset": 47067,
+      "repeat": 31,
+      "index": 3941,
+      "vl_hex": "0122",
+      "public_input": {
+        "first": 15716907,
+        "last": 15718379,
+        "vl": 290,
+        "n": 1471
+      },
+      "input_first_ms_since_epoch": 125.180016,
+      "wire_a": {
+        "first": 15719920,
+        "last": 15721445,
+        "fragments": [
+          {
+            "index": 3941,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 15719920,
+            "end": 15721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3941,
+            "sn": 31
+          }
+        ]
+      },
+      "wire_b": {
+        "first": 15719920,
+        "last": 15721445,
+        "fragments": [
+          {
+            "index": 3941,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 15719920,
+            "end": 15721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 3941,
+            "sn": 31
+          }
+        ]
+      },
+      "error_events": [
+        {
+          "cycle": 15721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3941,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 15719920,
+              "end": 15721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3941,
+              "sn": 31
+            },
+            "b": {
+              "index": 3941,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 15719920,
+              "end": 15721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3941,
+              "sn": 31
+            }
+          }
+        },
+        {
+          "cycle": 15721452,
+          "tx": 0,
+          "a": 128,
+          "b": 128,
+          "source_app": 0,
+          "rm": 0,
+          "frame_EOF_plus_7": {
+            "a": {
+              "index": 3941,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 15719920,
+              "end": 15721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3941,
+              "sn": 31
+            },
+            "b": {
+              "index": 3941,
+              "vl": 290,
+              "vl_hex": "0122",
+              "n": 1471,
+              "start": 15719920,
+              "end": 15721445,
+              "offset": 0,
+              "mf": false,
+              "ip_data_bytes": 1479,
+              "stored_payload_bytes": 1471,
+              "ident": 3941,
+              "sn": 31
+            }
+          }
+        }
+      ],
+      "long_public_output_overlapping_error": [
+        {
+          "index": 3780,
+          "vl": 380,
+          "vl_hex": "017c",
+          "first": 15713354,
+          "last": 15721547
+        }
+      ]
+    }
+  ],
+  "wire": {
+    "a": {
+      "frames": 4352,
+      "complete_messages": 4032,
+      "exact_independent_frame_comparison": true,
+      "CRC_IP_UDP_valid": true,
+      "no_partial_datagrams": true,
+      "minimum_fragment_BAG_deviation_cycles": 0,
+      "maximum_fragment_BAG_deviation_cycles": 253080,
+      "peak_wire_long_contexts": 3,
+      "first_cycle": 85940,
+      "last_cycle": 16461844
+    },
+    "b": {
+      "frames": 4352,
+      "complete_messages": 4032,
+      "exact_independent_frame_comparison": true,
+      "CRC_IP_UDP_valid": true,
+      "no_partial_datagrams": true,
+      "minimum_fragment_BAG_deviation_cycles": 0,
+      "maximum_fragment_BAG_deviation_cycles": 253080,
+      "peak_wire_long_contexts": 3,
+      "first_cycle": 85940,
+      "last_cycle": 16461844
+    }
+  },
+  "AB_identical_start_and_fragment_matrix": true,
+  "event_rows": 4352,
+  "event_histogram": [
+    {
+      "tx": 0,
+      "a": 0,
+      "b": 0,
+      "source_app": 0,
+      "rm": 1,
+      "rows": 4227
+    },
+    {
+      "tx": 0,
+      "a": 128,
+      "b": 1,
+      "source_app": 0,
+      "rm": 0,
+      "rows": 83
+    },
+    {
+      "tx": 0,
+      "a": 128,
+      "b": 128,
+      "source_app": 0,
+      "rm": 0,
+      "rows": 21
+    },
+    {
+      "tx": 0,
+      "a": 1,
+      "b": 128,
+      "source_app": 0,
+      "rm": 0,
+      "rows": 21
+    }
+  ],
+  "source_errors": [],
+  "abnormal_event_rows": 125,
+  "network_a_0x80_pulses": 104,
+  "network_b_0x80_pulses": 42,
+  "simultaneous_AB_0x80": 21,
+  "all_errors_correlate_EOF_plus_7": true,
+  "redundancy_rejections": 4227,
+  "expected_redundancy_rejections": 4352,
+  "resource_and_timing": {
+    "tx_page_envelope": {
+      "peak": 60,
+      "capacity": 256,
+      "margin": 196,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 591907,
+        "units": 60,
+        "messages": [
+          0,
+          63,
+          126,
+          127,
+          128,
+          129,
+          130
+        ]
+      }
+    },
+    "app_tx_byte_envelope": {
+      "peak": 11140,
+      "capacity": 32768,
+      "margin": 21628,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 84907,
+        "units": 11140,
+        "messages": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    "app_rx_successful_messages_only_byte_envelope": {
+      "peak": 12613,
+      "capacity": 32768,
+      "margin": 20155,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 976919,
+        "units": 12613,
+        "messages": [
+          63,
+          224,
+          225,
+          226
+        ]
+      }
+    },
+    "first_wire_delay": {
+      "samples": 4032,
+      "min_cycles": 3011,
+      "max_cycles": 18082,
+      "range_cycles": 15071,
+      "min_witness": {
+        "index": 3,
+        "cycles": 3011,
+        "vl": 258,
+        "n": 1471
+      },
+      "max_witness": {
+        "index": 63,
+        "cycles": 18082,
+        "vl": 381,
+        "n": 8192
+      }
+    },
+    "all_first_SOF_within_200us": true,
+    "long_one_outstanding_retirement_margin_min_cycles": 350500,
+    "short_delivered_public_latency": {
+      "samples": 3947,
+      "min_cycles": 6072,
+      "max_cycles": 14617,
+      "range_cycles": 8545,
+      "min_witness": {
+        "first": 93007,
+        "last": 94479,
+        "cycles": 6072,
+        "index": 3,
+        "vl": 258,
+        "n": 1471
+      },
+      "max_witness": {
+        "first": 723052,
+        "last": 724524,
+        "cycles": 14617,
+        "index": 159,
+        "vl": 288,
+        "n": 1471
+      }
+    },
+    "long_delivered_public_latency": {
+      "samples": 64,
+      "min_cycles": 651556,
+      "max_cycles": 659140,
+      "range_cycles": 7584,
+      "min_witness": {
+        "first": 16462770,
+        "last": 16470963,
+        "cycles": 651556,
+        "index": 3969,
+        "vl": 383,
+        "n": 8192
+      },
+      "max_witness": {
+        "first": 12970354,
+        "last": 12978547,
+        "cycles": 659140,
+        "index": 3087,
+        "vl": 381,
+        "n": 8192
+      }
+    },
+    "short_latency_over_2ms": [],
+    "short_raw_jitter_max_cycles": 8545,
+    "rx_success_only_envelope_limitation": "Excludes 21 lost messages; cannot certify full expected delivery or zero RX events.",
+    "unmodelled_in_original_planning": {
+      "resource": "Per-network core RX raw payload ring",
+      "bytes_per_network": 4096,
+      "source": "rtl/afdx_es.v:14; rtl/afdx_rx_core.v:5",
+      "parser_overflow": "rtl/afdx_rx_parse.v:407-414,448-459",
+      "blocking": "rtl/afdx_rx_reassembly.v:146-175 ready low through D_OUTPUT; rtl/afdx_rx_deliver.v:30-31 gates new DQ fetch on downstream_ready"
+    }
+  },
+  "first_error_cluster": {
+    "frames": [
+      {
+        "index": 158,
+        "vl": 287,
+        "vl_hex": "011f",
+        "n": 1471,
+        "start": 709420,
+        "end": 710945,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 158,
+        "sn": 1
+      },
+      {
+        "index": 0,
+        "vl": 380,
+        "vl_hex": "017c",
+        "n": 8192,
+        "start": 710958,
+        "end": 711844,
+        "offset": 7360,
+        "mf": false,
+        "ip_data_bytes": 840,
+        "stored_payload_bytes": 840,
+        "ident": 0,
+        "sn": 5
+      },
+      {
+        "index": 126,
+        "vl": 382,
+        "vl_hex": "017e",
+        "n": 8192,
+        "start": 712489,
+        "end": 714007,
+        "offset": 1472,
+        "mf": true,
+        "ip_data_bytes": 1472,
+        "stored_payload_bytes": 1472,
+        "ident": 126,
+        "sn": 1
+      },
+      {
+        "index": 159,
+        "vl": 288,
+        "vl_hex": "0120",
+        "n": 1471,
+        "start": 714020,
+        "end": 715545,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 159,
+        "sn": 1
+      },
+      {
+        "index": 63,
+        "vl": 381,
+        "vl_hex": "017d",
+        "n": 8192,
+        "start": 715558,
+        "end": 717076,
+        "offset": 4416,
+        "mf": true,
+        "ip_data_bytes": 1472,
+        "stored_payload_bytes": 1472,
+        "ident": 63,
+        "sn": 3
+      },
+      {
+        "index": 160,
+        "vl": 289,
+        "vl_hex": "0121",
+        "n": 1471,
+        "start": 717089,
+        "end": 718614,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 160,
+        "sn": 1
+      },
+      {
+        "index": 161,
+        "vl": 290,
+        "vl_hex": "0122",
+        "n": 1471,
+        "start": 719920,
+        "end": 721445,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 161,
+        "sn": 1
+      },
+      {
+        "index": 162,
+        "vl": 291,
+        "vl_hex": "0123",
+        "n": 1471,
+        "start": 723418,
+        "end": 724943,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 162,
+        "sn": 1
+      },
+      {
+        "index": 163,
+        "vl": 292,
+        "vl_hex": "0124",
+        "n": 1471,
+        "start": 726919,
+        "end": 728444,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 163,
+        "sn": 1
+      },
+      {
+        "index": 164,
+        "vl": 293,
+        "vl_hex": "0125",
+        "n": 1471,
+        "start": 730420,
+        "end": 731945,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 164,
+        "sn": 1
+      },
+      {
+        "index": 165,
+        "vl": 294,
+        "vl_hex": "0126",
+        "n": 1471,
+        "start": 733918,
+        "end": 735443,
+        "offset": 0,
+        "mf": false,
+        "ip_data_bytes": 1479,
+        "stored_payload_bytes": 1471,
+        "ident": 165,
+        "sn": 1
+      }
+    ],
+    "errors": [
+      {
+        "cycle": 717083,
+        "tx": 0,
+        "a": 128,
+        "b": 1,
+        "source_app": 0,
+        "rm": 0,
+        "frame_EOF_plus_7": {
+          "a": {
+            "index": 63,
+            "vl": 381,
+            "vl_hex": "017d",
+            "n": 8192,
+            "start": 715558,
+            "end": 717076,
+            "offset": 4416,
+            "mf": true,
+            "ip_data_bytes": 1472,
+            "stored_payload_bytes": 1472,
+            "ident": 63,
+            "sn": 3
+          }
+        }
+      },
+      {
+        "cycle": 718621,
+        "tx": 0,
+        "a": 128,
+        "b": 1,
+        "source_app": 0,
+        "rm": 0,
+        "frame_EOF_plus_7": {
+          "a": {
+            "index": 160,
+            "vl": 289,
+            "vl_hex": "0121",
+            "n": 1471,
+            "start": 717089,
+            "end": 718614,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 160,
+            "sn": 1
+          }
+        }
+      },
+      {
+        "cycle": 721452,
+        "tx": 0,
+        "a": 128,
+        "b": 128,
+        "source_app": 0,
+        "rm": 0,
+        "frame_EOF_plus_7": {
+          "a": {
+            "index": 161,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 719920,
+            "end": 721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 161,
+            "sn": 1
+          },
+          "b": {
+            "index": 161,
+            "vl": 290,
+            "vl_hex": "0122",
+            "n": 1471,
+            "start": 719920,
+            "end": 721445,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 161,
+            "sn": 1
+          }
+        }
+      },
+      {
+        "cycle": 724950,
+        "tx": 0,
+        "a": 1,
+        "b": 128,
+        "source_app": 0,
+        "rm": 0,
+        "frame_EOF_plus_7": {
+          "b": {
+            "index": 162,
+            "vl": 291,
+            "vl_hex": "0123",
+            "n": 1471,
+            "start": 723418,
+            "end": 724943,
+            "offset": 0,
+            "mf": false,
+            "ip_data_bytes": 1479,
+            "stored_payload_bytes": 1471,
+            "ident": 162,
+            "sn": 1
+          }
+        }
+      }
+    ],
+    "long_delivery": {
+      "first": 713354,
+      "last": 721547,
+      "cycles": 652140,
+      "index": 0,
+      "vl": 380,
+      "n": 8192
+    },
+    "three_pending_frame_payloads_bytes": 4415
+  },
+  "conclusion": "All 4032 source messages were transmitted correctly on both networks. The 21 losses are short messages whose both network parsers report 0x80 exactly EOF+7. Their raw-ring reservations fail during long reassembly output blocking. Original TX/app storage plan omitted the independent 4KiB per-network core receive ring; average wire load and app32KiB headroom do not protect it. No evidence of source rejection, malformed wire frame or incomplete transmitted datagram."
+}

@@ -1,0 +1,247 @@
+{
+  "test": "tb_sys_reset",
+  "verification_profile": "fragmentation1030",
+  "items": 3844,
+  "errors": 0,
+  "reports": {
+    "es1_tx": {
+      "test": "tb_sys_reset_es1_tx",
+      "items": 405,
+      "errors": 0,
+      "either": 0,
+      "messages": 16,
+      "frames_a": 16,
+      "frames_b": 16,
+      "sends": 16,
+      "stages": {
+        "reset": 16
+      },
+      "diagnostics": []
+    },
+    "es2_tx": {
+      "test": "tb_sys_reset_es2_tx",
+      "items": 405,
+      "errors": 0,
+      "either": 0,
+      "messages": 16,
+      "frames_a": 16,
+      "frames_b": 16,
+      "sends": 16,
+      "stages": {
+        "reset": 16
+      },
+      "diagnostics": []
+    },
+    "es1_rx": {
+      "test": "tb_sys_reset_es1_rx",
+      "items": 100,
+      "errors": 0,
+      "either": 0,
+      "segments": 30,
+      "segments_a": 15,
+      "segments_b": 15,
+      "pulses": {
+        "a_good": 8,
+        "b_good": 8,
+        "deliver": 7,
+        "rm_drop": 7,
+        "a_unk": 1,
+        "b_unk": 1
+      },
+      "deliveries": 7,
+      "max_delivery_latency": 68,
+      "stages": {
+        "reset": {
+          "segments": 30,
+          "good": 16,
+          "deliver": 7,
+          "rm_drop": 7,
+          "a_unk": 1,
+          "b_unk": 1
+        }
+      },
+      "diagnostics": []
+    },
+    "es2_rx": {
+      "test": "tb_sys_reset_es2_rx",
+      "items": 100,
+      "errors": 0,
+      "either": 0,
+      "segments": 30,
+      "segments_a": 15,
+      "segments_b": 15,
+      "pulses": {
+        "a_good": 8,
+        "b_good": 8,
+        "deliver": 7,
+        "rm_drop": 7,
+        "a_unk": 1,
+        "b_unk": 1
+      },
+      "deliveries": 7,
+      "max_delivery_latency": 68,
+      "stages": {
+        "reset": {
+          "segments": 30,
+          "good": 16,
+          "deliver": 7,
+          "rm_drop": 7,
+          "a_unk": 1,
+          "b_unk": 1
+        }
+      },
+      "diagnostics": []
+    },
+    "system": {
+      "test": "tb_sys_reset",
+      "items": 2259,
+      "errors": 0,
+      "either": 0,
+      "w_over": 0,
+      "latency": {
+        "reset": {
+          "samples": 14,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 10,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 14,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 14,
+          "e2e_max": 13178,
+          "e2e_mean": 13178.0,
+          "w_over": 0
+        }
+      },
+      "w_over_rows": [],
+      "endpoints": {
+        "es1": {
+          "messages": 16,
+          "accepted": 16,
+          "deliveries": 7,
+          "counter_nonzero": {
+            "accept": 13,
+            "tx_a": 13,
+            "tx_b": 13,
+            "a_good": 4,
+            "b_good": 4,
+            "rm_drop": 4,
+            "deliver": 4,
+            "a_unk": 1,
+            "b_unk": 1
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "reset": {
+              "accept": 16,
+              "tx_a": 16,
+              "tx_b": 16,
+              "a_good": 8,
+              "b_good": 8,
+              "deliver": 7,
+              "rm_drop": 7,
+              "a_unk": 1,
+              "b_unk": 1
+            }
+          }
+        },
+        "es2": {
+          "messages": 16,
+          "accepted": 16,
+          "deliveries": 7,
+          "counter_nonzero": {
+            "accept": 15,
+            "tx_a": 15,
+            "tx_b": 15,
+            "a_good": 7,
+            "a_unk": 1,
+            "b_good": 7,
+            "b_unk": 1,
+            "rm_drop": 6,
+            "deliver": 6
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "reset": {
+              "accept": 16,
+              "tx_a": 16,
+              "tx_b": 16,
+              "a_good": 8,
+              "b_good": 8,
+              "deliver": 7,
+              "rm_drop": 7,
+              "a_unk": 1,
+              "b_unk": 1
+            }
+          }
+        }
+      },
+      "rewrites": {
+        "tx": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "map": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "cfg": {
+          "count": 0,
+          "max_wait": 0
+        }
+      },
+      "performance": {},
+      "diagnostics": []
+    },
+    "gmii": {
+      "test": "tb_sys_reset_gmii",
+      "items": 575,
+      "errors": 0,
+      "either": 0,
+      "tx_delay": 0,
+      "replay_delay": 0,
+      "capacity": 0,
+      "channels": {
+        "es2_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es2_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        }
+      },
+      "diagnostics": []
+    }
+  }
+}

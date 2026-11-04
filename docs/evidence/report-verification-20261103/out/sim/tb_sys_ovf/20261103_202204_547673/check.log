@@ -1,0 +1,6 @@
+[CHECK] tb_sys_ovf_es1_tx PASS items=154 errors=0 either=0
+[CHECK] tb_sys_ovf_es2_tx PASS items=154 errors=0 either=0
+[CHECK] tb_sys_ovf_es1_rx PASS items=46 errors=0 either=0
+[CHECK] tb_sys_ovf_es2_rx PASS items=46 errors=0 either=0
+[CHECK] tb_sys_ovf PASS items=919 errors=0 either=0 w_over=0
+[CHECK] tb_sys_ovf_gmii PASS items=231 errors=0 either=0

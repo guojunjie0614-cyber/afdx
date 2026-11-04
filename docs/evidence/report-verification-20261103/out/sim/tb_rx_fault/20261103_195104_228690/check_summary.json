@@ -1,0 +1,69 @@
+{
+  "test": "tb_rx_fault",
+  "items": 897,
+  "errors": 0,
+  "either": 0,
+  "segments": 152,
+  "segments_a": 124,
+  "segments_b": 28,
+  "pulses": {
+    "a_fcs": 9,
+    "a_good": 70,
+    "deliver": 83,
+    "b_fcs": 4,
+    "b_good": 16,
+    "a_len": 17,
+    "b_len": 5,
+    "a_hdr": 28,
+    "b_hdr": 3,
+    "rm_drop": 1,
+    "a_ic": 1,
+    "a_unk": 1
+  },
+  "deliveries": 83,
+  "max_delivery_latency": 1197,
+  "stages": {
+    "fcs": {
+      "segments": 22,
+      "fcs": 11,
+      "good": 11,
+      "deliver": 11
+    },
+    "len": {
+      "segments": 26,
+      "len": 13,
+      "good": 13,
+      "deliver": 13
+    },
+    "preamble": {
+      "segments": 12,
+      "len": 6,
+      "good": 6,
+      "deliver": 6
+    },
+    "hdr": {
+      "segments": 60,
+      "hdr": 28,
+      "good": 30,
+      "deliver": 30,
+      "len": 2
+    },
+    "ok": {
+      "segments": 13,
+      "good": 13,
+      "deliver": 13
+    },
+    "six": {
+      "segments": 19,
+      "fcs": 2,
+      "good": 13,
+      "deliver": 10,
+      "rm_drop": 1,
+      "a_ic": 1,
+      "len": 1,
+      "a_unk": 1,
+      "hdr": 3
+    }
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "C:\Users\susu\Desktop\afdx\.scratch\report-verification\retry_faq_gate.py", line 23, in <module>
+    faq.verify_prepared(prepared)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\susu\Desktop\afdx\tools\faq_gls.py", line 74, in verify_prepared
+    raise RuntimeError('Prepared input changed: ' + path)
+RuntimeError: Prepared input changed: C:\Users\susu\Desktop\afdx\tools\gui_netlist.py
+
+[exited with code 1]

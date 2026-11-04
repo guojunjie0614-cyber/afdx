@@ -1,0 +1,40 @@
+{
+  "test": "tb_rx_load",
+  "items": 19180,
+  "errors": 0,
+  "either": 0,
+  "segments": 3200,
+  "segments_a": 1600,
+  "segments_b": 1600,
+  "pulses": {
+    "a_good": 1519,
+    "deliver": 2228,
+    "b_good": 1522,
+    "rm_drop": 617,
+    "a_unk": 34,
+    "a_fcs": 44,
+    "b_unk": 25,
+    "b_ic": 68,
+    "b_hdr": 37,
+    "b_fcs": 41,
+    "a_ic": 69,
+    "a_hdr": 37
+  },
+  "deliveries": 2228,
+  "max_delivery_latency": 1332,
+  "stages": {
+    "load": {
+      "segments": 3200,
+      "good": 3041,
+      "deliver": 2228,
+      "rm_drop": 617,
+      "a_unk": 34,
+      "fcs": 85,
+      "b_unk": 25,
+      "b_ic": 68,
+      "hdr": 74,
+      "a_ic": 69
+    }
+  },
+  "diagnostics": []
+}

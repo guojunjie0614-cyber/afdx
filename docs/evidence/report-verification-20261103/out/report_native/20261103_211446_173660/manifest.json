@@ -1,0 +1,14 @@
+{
+  "cases": [
+    "tb_rtc_recovery",
+    "tb_rtc_originate",
+    "tb_rtc_banked"
+  ],
+  "workers": 1,
+  "seed": 20261007,
+  "profile": "fragmentation1030",
+  "coverage": true,
+  "deadline": "2026-11-04T05:14:46.174106+08:00",
+  "simulator": "C:\\modeltech64_2020.4\\win64",
+  "source_identity": "per-case immutable inputs in summary.json"
+}

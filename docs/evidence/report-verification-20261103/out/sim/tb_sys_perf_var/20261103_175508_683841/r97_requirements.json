@@ -1,0 +1,790 @@
+[
+  {
+    "status": "PASS",
+    "label": "all eight variable stages present"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_burst_d0 es1_to_es2 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 0
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_burst_d0 es2_to_es1 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d0 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_burst_d257 es1_to_es2 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 0
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_burst_d257 es2_to_es1 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 0
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_burst_d257 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_cycle_d0 es1_to_es2 offered-load throughput",
+    "measured_mbps": 70.403
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 2443
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_cycle_d0 es2_to_es1 offered-load throughput",
+    "measured_mbps": 70.403
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 2443
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d0 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_cycle_d257 es1_to_es2 offered-load throughput",
+    "measured_mbps": 70.403
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 2443
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_cycle_d257 es2_to_es1 offered-load throughput",
+    "measured_mbps": 70.403
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 2443
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_cycle_d257 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_fixed_d0 es1_to_es2 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_fixed_d0 es2_to_es1 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d0 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_fixed_d257 es1_to_es2 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "REPORT",
+    "label": "var_fixed_d257 es2_to_es1 offered-load throughput",
+    "measured_mbps": 57.794
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_fixed_d257 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 injection payload >=100Mbps",
+    "measured_inject_mbps": 904.752
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 injection payload >=100Mbps",
+    "measured_inject_mbps": 904.752
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d0 es2_to_es1 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 warmup >=2 maximum BAG"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 five payload lengths"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 injection payload >=100Mbps",
+    "measured_inject_mbps": 904.752
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es1_to_es2 no overflow"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 window >=20ms"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 >=8 frames per VL"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 five payload lengths"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 injection payload >=100Mbps",
+    "measured_inject_mbps": 904.752
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 all-frame R119 latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 all-frame first-byte latency <=2000us"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 same-VL same-length jitter <=50us",
+    "cycles": 1
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 injection lag <= one maximum payload",
+    "cycles": 2
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 no dropped"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 no duplicate"
+  },
+  {
+    "status": "PASS",
+    "label": "var_high_d257 es2_to_es1 no overflow"
+  }
+]

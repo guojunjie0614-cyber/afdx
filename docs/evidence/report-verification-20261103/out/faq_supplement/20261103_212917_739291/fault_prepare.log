@@ -1,0 +1,13 @@
+{
+  "status": "prepared_not_simulated",
+  "injection_frames": 36,
+  "injection_bytes": 24545,
+  "injection_cycles": 193237,
+  "all_expected_deliveries": 20,
+  "limits": {
+    "process_tree_gib": 1,
+    "minimum_free_gib": 5
+  },
+  "scope": "public GMII-to-application isolation and bounded progress; no 2ms application-input latency claim",
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\fault"
+}

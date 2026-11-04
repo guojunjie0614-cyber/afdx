@@ -1,0 +1,39 @@
+# vsim -batch -coverage tb_rx_fault -wlf simulation.wlf -do "do run.do" 
+# Start time: 19:51:05 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_reassembly(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_rx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_parse(fast)".
+# ** Note: (vopt-143) Recognized 3 FSMs in module "afdx_rx_reassembly_bank(fast)".
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_rx_fault(fast)
+# Loading work.afdx_rx_core(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# 
+# do run.do
+# [STAGE] fcs cycle=70000
+# [STAGE] len cycle=86649
+# [STAGE] preamble cycle=104900
+# [STAGE] hdr cycle=109085
+# [STAGE] ok cycle=123310
+# [STAGE] six cycle=127900
+# [COVERAGE] cycles=139066 segments_a=124 segments_b=28 deliveries=83
+# [RESULT] tb_rx_fault PASS checks=576923 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_rx_fault/20261103_195104_228690/compile_sources/tb/lib/rx_core_suite.v(131)
+#    Time: 1112525 ns  Iteration: 0  Instance: /tb_rx_fault/suite
+# Saving coverage database on exit...
+# End time: 19:51:09 on Nov 03,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 0

@@ -1,0 +1,549 @@
+{
+  "source_sha256": "c5343a337b8f396134a0515ea8a262e6e1dcb635e9cd267274fa066bd41ebb34",
+  "adapted_sha256": "79f3b710d3efc9bb94ef6b9e23326d5220916e08a83d07bde728ede33fb1a836",
+  "cells": {
+    "stratix_lcell": 62274,
+    "stratix_ram_block": 2981
+  },
+  "added_input_defaults": {
+    "stratix_lcell": {
+      "datac=1'b1": 40367,
+      "aload=1'b0": 62274,
+      "sload=1'b0": 59624,
+      "cin=1'b0": 55918,
+      "cin0=1'b0": 62274,
+      "cin1=1'b0": 62274,
+      "inverta=1'b0": 62274,
+      "regcascin=1'b0": 62274,
+      "devclrn=1'b1": 62274,
+      "devpor=1'b1": 62274,
+      "datab=1'b1": 29505,
+      "datad=1'b1": 29424,
+      "sclr=1'b0": 49241,
+      "ena=1'b1": 48252,
+      "clk=1'b0": 26677,
+      "aclr=1'b0": 26677,
+      "dataa=1'b1": 1338
+    },
+    "stratix_ram_block": {
+      "clr0=1'b0": 2981,
+      "clr1=1'b0": 2981,
+      "devclrn=1'b1": 2981,
+      "devpor=1'b1": 2981,
+      "portbdatain=1'b0": 2981,
+      "portabyteenamasks={1{1'b1}}": 2981,
+      "portbbyteenamasks={1{1'b1}}": 2981,
+      "ena0=1'b1": 18,
+      "ena1=1'b1": 34,
+      "clk1=1'b0": 18
+    }
+  },
+  "original_connections_and_functional_parameters_unchanged": true,
+  "synthesis_provenance_not_model_parameters": [
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~12_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~18_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~24_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~1_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[3]~6_I",
+      "created_from": "REGOUT(phase[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~20_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~2_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~21_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~14_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~0_I",
+      "created_from": "REGOUT(init_done)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[0]~21_I",
+      "created_from": "REGOUT(cfg_ra[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[1]~22_I",
+      "created_from": "REGOUT(cfg_ra[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[2]~23_I",
+      "created_from": "REGOUT(cfg_ra[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~1_I",
+      "created_from": "REGOUT(init_done)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[0]~0_I",
+      "created_from": "REGOUT(output_position[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[1]~2_I",
+      "created_from": "REGOUT(output_position[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~1_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~4_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~2_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~3_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[2]~4_I",
+      "created_from": "REGOUT(output_position[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[3]~6_I",
+      "created_from": "REGOUT(output_position[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[4]~8_I",
+      "created_from": "REGOUT(output_position[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[5]~10_I",
+      "created_from": "REGOUT(output_position[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[6]~12_I",
+      "created_from": "REGOUT(output_position[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[7]~15_I",
+      "created_from": "REGOUT(output_position[7])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[7]~14_I",
+      "created_from": "REGOUT(output_position[7])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[8]~17_I",
+      "created_from": "REGOUT(output_position[8])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[8]~16_I",
+      "created_from": "REGOUT(output_position[8])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[9]~19_I",
+      "created_from": "REGOUT(output_position[9])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[9]~18_I",
+      "created_from": "REGOUT(output_position[9])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[10]~21_I",
+      "created_from": "REGOUT(output_position[10])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[10]~20_I",
+      "created_from": "REGOUT(output_position[10])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[11]~23_I",
+      "created_from": "REGOUT(output_position[11])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[11]~22_I",
+      "created_from": "REGOUT(output_position[11])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[12]~25_I",
+      "created_from": "REGOUT(output_position[12])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[12]~24_I",
+      "created_from": "REGOUT(output_position[12])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[0]~0_I",
+      "created_from": "REGOUT(output_position[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[1]~2_I",
+      "created_from": "REGOUT(output_position[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[2]~4_I",
+      "created_from": "REGOUT(output_position[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[3]~6_I",
+      "created_from": "REGOUT(output_position[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[4]~8_I",
+      "created_from": "REGOUT(output_position[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[5]~10_I",
+      "created_from": "REGOUT(output_position[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[6]~12_I",
+      "created_from": "REGOUT(output_position[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[7]~15_I",
+      "created_from": "REGOUT(output_position[7])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[7]~14_I",
+      "created_from": "REGOUT(output_position[7])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[8]~17_I",
+      "created_from": "REGOUT(output_position[8])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[8]~16_I",
+      "created_from": "REGOUT(output_position[8])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[9]~19_I",
+      "created_from": "REGOUT(output_position[9])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[9]~18_I",
+      "created_from": "REGOUT(output_position[9])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[10]~21_I",
+      "created_from": "REGOUT(output_position[10])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[10]~20_I",
+      "created_from": "REGOUT(output_position[10])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[11]~23_I",
+      "created_from": "REGOUT(output_position[11])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[11]~22_I",
+      "created_from": "REGOUT(output_position[11])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[12]~25_I",
+      "created_from": "REGOUT(output_position[12])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[12]~24_I",
+      "created_from": "REGOUT(output_position[12])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[0]~1_I",
+      "created_from": "REGOUT(output_position[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[1]~3_I",
+      "created_from": "REGOUT(output_position[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[2]~5_I",
+      "created_from": "REGOUT(output_position[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[3]~7_I",
+      "created_from": "REGOUT(output_position[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[4]~9_I",
+      "created_from": "REGOUT(output_position[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[5]~11_I",
+      "created_from": "REGOUT(output_position[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|output_position[6]~13_I",
+      "created_from": "REGOUT(output_position[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[0]~1_I",
+      "created_from": "REGOUT(output_position[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[1]~3_I",
+      "created_from": "REGOUT(output_position[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[2]~5_I",
+      "created_from": "REGOUT(output_position[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[3]~7_I",
+      "created_from": "REGOUT(output_position[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[4]~9_I",
+      "created_from": "REGOUT(output_position[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[5]~11_I",
+      "created_from": "REGOUT(output_position[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|output_position[6]~13_I",
+      "created_from": "REGOUT(output_position[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~11_I",
+      "created_from": "REGOUT(tick_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~12_I",
+      "created_from": "REGOUT(tick_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~3_I",
+      "created_from": "REGOUT(final_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~9_I",
+      "created_from": "REGOUT(tick_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|tick_overflow~10_I",
+      "created_from": "REGOUT(tick_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~2_I",
+      "created_from": "REGOUT(final_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rtc:rtc|final_overflow~1_I",
+      "created_from": "REGOUT(final_overflow)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_builder:builder|stream_active~3_I",
+      "created_from": "REGOUT(stream_active)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~22_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~31_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~17_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~9_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~32_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~23_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~3_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~4_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[5]~26_I",
+      "created_from": "REGOUT(cfg_ra[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[6]~27_I",
+      "created_from": "REGOUT(cfg_ra[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[7]~28_I",
+      "created_from": "REGOUT(cfg_ra[7])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[8]~29_I",
+      "created_from": "REGOUT(cfg_ra[8])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[9]~30_I",
+      "created_from": "REGOUT(cfg_ra[9])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[0]~22_I",
+      "created_from": "REGOUT(state_ra[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[1]~23_I",
+      "created_from": "REGOUT(state_ra[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[2]~24_I",
+      "created_from": "REGOUT(state_ra[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[3]~25_I",
+      "created_from": "REGOUT(state_ra[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[4]~26_I",
+      "created_from": "REGOUT(state_ra[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[5]~27_I",
+      "created_from": "REGOUT(state_ra[5])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|state_ra[6]~28_I",
+      "created_from": "REGOUT(state_ra[6])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~33_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~11_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~10_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[4]~25_I",
+      "created_from": "REGOUT(cfg_ra[4])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~7_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~29_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~15_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~26_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~8_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~16_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~5_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~25_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~27_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~30_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~6_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~28_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|cfg_ra[3]~24_I",
+      "created_from": "REGOUT(cfg_ra[3])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[0]~4_I",
+      "created_from": "REGOUT(phase[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[1]~19_I",
+      "created_from": "REGOUT(op[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[0]~0_I",
+      "created_from": "REGOUT(op[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|phase[1]~5_I",
+      "created_from": "REGOUT(phase[1])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_engine:engine|op[2]~13_I",
+      "created_from": "REGOUT(op[2])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|init_done~2_I",
+      "created_from": "REGOUT(init_done)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~5_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_cfg:cfg_regs|tx_cfg_we~0_I",
+      "created_from": "REGOUT(tx_cfg_we)"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_parse:parse_a|desc_valid[0]~16_I",
+      "created_from": "REGOUT(desc_valid[0])"
+    },
+    {
+      "cell": "\\afdx_es:es|afdx_tx_core:tx_core|afdx_tx_builder:builder|payload_ra[16]~26_I",
+      "created_from": "REGOUT(payload_ra[16])"
+    }
+  ],
+  "provenance_parameter_count": 125,
+  "carry_use_parameters_added": {
+    "cin_used": 6356
+  },
+  "lut_masks_changed": 0
+}

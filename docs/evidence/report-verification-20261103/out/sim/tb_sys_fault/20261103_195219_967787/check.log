@@ -1,0 +1,6 @@
+[CHECK] tb_sys_fault_es1_tx PASS items=692 errors=0 either=0
+[CHECK] tb_sys_fault_es2_tx PASS items=692 errors=0 either=0
+[CHECK] tb_sys_fault_es1_rx PASS items=318 errors=0 either=0
+[CHECK] tb_sys_fault_es2_rx PASS items=364 errors=0 either=0
+[CHECK] tb_sys_fault PASS items=5637 errors=0 either=0 w_over=0
+[CHECK] tb_sys_fault_gmii PASS items=1305 errors=0 either=0

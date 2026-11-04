@@ -1,0 +1,37 @@
+{
+  "captures": [
+    {
+      "name": "snmp_get_1",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\snmp_get\\20261103_192253_556672\\captures\\snmp_get_1.png",
+      "sha256": "1EFC9D9A3BBABFBE28B903945864155EEFF1EE1E2CBB4C4C782BA616F4FDF722",
+      "width": 1520,
+      "height": 709,
+      "requested_pid": 25856,
+      "owned_processes": {
+        "5208": 1793704973.7348216,
+        "12936": 1793704973.7425745,
+        "25856": 1793704973.7609391,
+        "30008": 1793704973.810242,
+        "20356": 1793704986.6111348
+      },
+      "window": "525944.000ns 526284.000ns"
+    },
+    {
+      "name": "snmp_get_2",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\snmp_get\\20261103_192253_556672\\captures\\snmp_get_2.png",
+      "sha256": "00F314FAF82E3A84DD5FA69F5C181039082BC6E48C81169A9A1755A8C45F6C33",
+      "width": 1520,
+      "height": 709,
+      "requested_pid": 25856,
+      "owned_processes": {
+        "5208": 1793704973.7348216,
+        "12936": 1793704973.7425745,
+        "25856": 1793704973.7609391,
+        "30008": 1793704973.810242,
+        "20356": 1793704986.6111348
+      },
+      "window": "538604.000ns 538948.000ns"
+    }
+  ],
+  "failures": []
+}

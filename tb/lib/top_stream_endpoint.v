@@ -51,6 +51,7 @@ module top_stream_endpoint #(
     wire [11:0] core_dvl;
     wire [15:0] core_dsp,core_ddp;
     generate if(DIRECT_CORE)begin:direct
+        wire [1:0] app_cfg_ready_unused;
         afdx_es #(.TX_PAGE_AW(TX_PAGE_AW),.TX_OFF_AW(TX_OFF_AW),.LOOKAHEAD(LOOKAHEAD),.RX_RING_AW(RX_RING_AW),.RX_DQ_AW(RX_DQ_AW)) es(
             .clk(clk),.reset(reset),.tx_data(tx_data),.tx_valid(tx_valid),.rx_data(rx_data),.rx_valid(rx_valid),.tx_ready(tx_ready),.rx_ready(rx_ready),
             .tx_data_b(tx_data_b),.tx_valid_b(tx_valid_b),.rx_data_b(rx_data_b),.rx_valid_b(rx_valid_b),
@@ -59,7 +60,7 @@ module top_stream_endpoint #(
             .app_rx_valid(app_rx_valid),.app_rx_data(app_rx_data),.app_rx_last(app_rx_last),.app_rx_vl(app_rx_vl),
             .app_rx_sport(app_rx_sport),.app_rx_port(app_rx_port),.app_rx_net(app_rx_net),
             .cfg_wr(cfg_wr),.cfg_rd(cfg_rd),.cfg_addr(cfg_addr),.cfg_wdata(cfg_wdata),.cfg_rdata(cfg_rdata),.cfg_rvalid(cfg_rvalid),.cfg_ready(cfg_ready),
-            .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver));
+            .ev_tx(ev_tx),.ev_a(ev_a),.ev_b(ev_b),.ev_rm_drop(ev_rm_drop),.ev_deliver(ev_deliver),.app_cfg_ready(app_cfg_ready_unused));
         assign initialized=tx_ready;
         assign last_input_stalls=0;assign last_input_maxstall=0;
         assign current_source_first=cycle;assign current_source_last=cycle;assign current_stalls=0;assign current_maxstall=0;assign input_empty=1;

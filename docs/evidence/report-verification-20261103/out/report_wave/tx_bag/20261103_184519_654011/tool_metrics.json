@@ -1,0 +1,41 @@
+[
+  {
+    "name": "gui",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-gui",
+      "-do",
+      "do current_wave_entry.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\project",
+    "pid": 13508,
+    "created": 1793702719.965374,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 62.313,
+    "peak_tree_bytes": 312274944,
+    "budget_seconds": 6600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\gui.log"
+  },
+  {
+    "name": "check",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\project\\tools\\afdx_ref.py",
+      "check",
+      "--test",
+      "tb_tx_bag",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\project\\out\\wave\\tx_bag_20261103_184531_8056"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011",
+    "pid": 33228,
+    "created": 1793702782.3058474,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.538,
+    "peak_tree_bytes": 32968704,
+    "budget_seconds": 180,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\check.log"
+  }
+]

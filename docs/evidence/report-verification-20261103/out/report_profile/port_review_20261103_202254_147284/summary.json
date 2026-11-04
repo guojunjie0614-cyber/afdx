@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checks": 17,
+  "items": [
+    "Python syntax for acceptance, collector and follow-up scripts",
+    "Actual completed evidence accepted with exact scope: tb_sys_perf",
+    "Actual completed evidence accepted with exact scope: tb_net_services",
+    "Actual completed evidence accepted with exact scope: tb_sys_basic",
+    "Default identity mode rejects changed TB",
+    "Identity-only false predicate receives a separate exact-source recheck",
+    "Unexplained failed summary without source delta rejected",
+    "Actual positive with simulation_diagnostics corruption rejected",
+    "Actual positive with errors corruption rejected",
+    "Actual positive with result corruption rejected",
+    "Independent checker failure rejected",
+    "Failed tool exit rejected",
+    "Isolated exact two-edit proof accepted",
+    "Extra logic change rejected",
+    "New sink consumer rejected",
+    "Input instead of output direction rejected",
+    "Old two-warning run remains rejected"
+  ]
+}

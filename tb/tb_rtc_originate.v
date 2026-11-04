@@ -3,5 +3,5 @@
 // 全部检查完成后，只有最后的 [RESULT] 为 PASS 且 errors=0 才通过。
 `timescale 1ns/1ps
 module tb_rtc_originate;
-    rtc_retry_suite #(.NAME("tb_rtc_originate"),.NEGATIVE(1)) test();
+    rtc_retry_current #(.NAME("tb_rtc_originate"),.NEGATIVE(1)) test();
 endmodule

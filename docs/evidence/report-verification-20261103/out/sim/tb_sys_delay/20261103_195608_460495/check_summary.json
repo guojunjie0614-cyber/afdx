@@ -1,0 +1,415 @@
+{
+  "test": "tb_sys_delay",
+  "verification_profile": "fragmentation1030",
+  "items": 3915,
+  "errors": 0,
+  "reports": {
+    "es1_tx": {
+      "test": "tb_sys_delay_es1_tx",
+      "items": 370,
+      "errors": 0,
+      "either": 0,
+      "messages": 15,
+      "frames_a": 15,
+      "frames_b": 15,
+      "sends": 15,
+      "stages": {
+        "equal": 3,
+        "a_late": 3,
+        "b_late": 3,
+        "boundary_inside": 3,
+        "boundary_outside": 3
+      },
+      "diagnostics": []
+    },
+    "es2_tx": {
+      "test": "tb_sys_delay_es2_tx",
+      "items": 370,
+      "errors": 0,
+      "either": 0,
+      "messages": 15,
+      "frames_a": 15,
+      "frames_b": 15,
+      "sends": 15,
+      "stages": {
+        "equal": 3,
+        "a_late": 3,
+        "b_late": 3,
+        "boundary_inside": 3,
+        "boundary_outside": 3
+      },
+      "diagnostics": []
+    },
+    "es1_rx": {
+      "test": "tb_sys_delay_es1_rx",
+      "items": 175,
+      "errors": 0,
+      "either": 0,
+      "segments": 30,
+      "segments_a": 15,
+      "segments_b": 15,
+      "pulses": {
+        "a_good": 15,
+        "b_good": 15,
+        "deliver": 18,
+        "rm_drop": 12
+      },
+      "deliveries": 18,
+      "max_delivery_latency": 68,
+      "stages": {
+        "equal": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "a_late": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "b_late": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "boundary_inside": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "boundary_outside": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 6
+        }
+      },
+      "diagnostics": []
+    },
+    "es2_rx": {
+      "test": "tb_sys_delay_es2_rx",
+      "items": 175,
+      "errors": 0,
+      "either": 0,
+      "segments": 30,
+      "segments_a": 15,
+      "segments_b": 15,
+      "pulses": {
+        "a_good": 15,
+        "b_good": 15,
+        "deliver": 18,
+        "rm_drop": 12
+      },
+      "deliveries": 18,
+      "max_delivery_latency": 68,
+      "stages": {
+        "equal": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "a_late": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "b_late": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "boundary_inside": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 3,
+          "rm_drop": 3
+        },
+        "boundary_outside": {
+          "segments": 6,
+          "good": 6,
+          "deliver": 6
+        }
+      },
+      "diagnostics": []
+    },
+    "system": {
+      "test": "tb_sys_delay",
+      "items": 2254,
+      "errors": 0,
+      "either": 0,
+      "w_over": 0,
+      "latency": {
+        "a_late": {
+          "samples": 6,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 6,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 6,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 6,
+          "e2e_max": 13178,
+          "e2e_mean": 13178.0,
+          "w_over": 0
+        },
+        "b_late": {
+          "samples": 6,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 6,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 6,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 6,
+          "e2e_max": 13178,
+          "e2e_mean": 13178.0,
+          "w_over": 0
+        },
+        "boundary_inside": {
+          "samples": 6,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 6,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 6,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 6,
+          "e2e_max": 13178,
+          "e2e_mean": 13178.0,
+          "w_over": 0
+        },
+        "boundary_outside": {
+          "samples": 12,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 12,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 12,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 12,
+          "e2e_max": 25466,
+          "e2e_mean": 19322.0,
+          "w_over": 0
+        },
+        "equal": {
+          "samples": 6,
+          "limit_min": 6538,
+          "limit_max": 6538,
+          "W_samples": 4,
+          "W_max": 37,
+          "W_mean": 37.0,
+          "rx_samples": 6,
+          "rx_max": 67,
+          "rx_mean": 67.0,
+          "e2e_samples": 6,
+          "e2e_max": 13178,
+          "e2e_mean": 13178.0,
+          "w_over": 0
+        }
+      },
+      "w_over_rows": [],
+      "endpoints": {
+        "es1": {
+          "messages": 15,
+          "accepted": 15,
+          "deliveries": 18,
+          "counter_nonzero": {
+            "accept": 15,
+            "tx_a": 15,
+            "tx_b": 15,
+            "a_good": 15,
+            "b_good": 15,
+            "rm_drop": 12,
+            "deliver": 18
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "equal": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "b_good": 3,
+              "deliver": 3,
+              "rm_drop": 3
+            },
+            "a_late": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "b_good": 3,
+              "deliver": 3,
+              "a_good": 3,
+              "rm_drop": 3
+            },
+            "b_late": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 3,
+              "b_good": 3,
+              "rm_drop": 3
+            },
+            "boundary_inside": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 3,
+              "b_good": 3,
+              "rm_drop": 3
+            },
+            "boundary_outside": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 6,
+              "b_good": 3
+            }
+          }
+        },
+        "es2": {
+          "messages": 15,
+          "accepted": 15,
+          "deliveries": 18,
+          "counter_nonzero": {
+            "accept": 15,
+            "tx_a": 15,
+            "tx_b": 15,
+            "a_good": 15,
+            "b_good": 15,
+            "rm_drop": 12,
+            "deliver": 18
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "equal": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "b_good": 3,
+              "deliver": 3,
+              "rm_drop": 3
+            },
+            "a_late": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "b_good": 3,
+              "deliver": 3,
+              "a_good": 3,
+              "rm_drop": 3
+            },
+            "b_late": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 3,
+              "b_good": 3,
+              "rm_drop": 3
+            },
+            "boundary_inside": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 3,
+              "b_good": 3,
+              "rm_drop": 3
+            },
+            "boundary_outside": {
+              "accept": 3,
+              "tx_a": 3,
+              "tx_b": 3,
+              "a_good": 3,
+              "deliver": 6,
+              "b_good": 3
+            }
+          }
+        }
+      },
+      "rewrites": {
+        "tx": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "map": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "cfg": {
+          "count": 0,
+          "max_wait": 0
+        }
+      },
+      "performance": {},
+      "diagnostics": []
+    },
+    "gmii": {
+      "test": "tb_sys_delay_gmii",
+      "items": 571,
+      "errors": 0,
+      "either": 0,
+      "tx_delay": 0,
+      "replay_delay": 0,
+      "capacity": 0,
+      "channels": {
+        "es2_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es2_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 15,
+          "dropped": 0,
+          "self_spaced_input": true
+        }
+      },
+      "diagnostics": []
+    }
+  }
+}

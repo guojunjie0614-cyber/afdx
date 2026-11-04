@@ -1,0 +1,6 @@
+[CHECK] tb_sys_cfg_es1_tx PASS items=15717 errors=0 either=0
+[CHECK] tb_sys_cfg_es2_tx PASS items=130 errors=0 either=0
+[CHECK] tb_sys_cfg_es1_rx PASS items=56 errors=0 either=0
+[CHECK] tb_sys_cfg_es2_rx PASS items=7195 errors=0 either=6
+[CHECK] tb_sys_cfg PASS items=682669 errors=0 either=0 w_over=0
+[CHECK] tb_sys_cfg_gmii PASS items=11877 errors=0 either=0

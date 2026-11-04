@@ -1,0 +1,36 @@
+JUDGE CE_DIV=2
+JUDGE WARNINGS compile count=0
+JUDGE COMPILE PASS warnings=0
+JUDGE WARNINGS services count=0
+JUDGE CASE PASS services checks=1123 errors=0 warnings=0 elapsed_s=5.949
+JUDGE WARNINGS capacity count=0
+JUDGE CASE PASS capacity checks=49924 errors=0 warnings=0 elapsed_s=9.493
+JUDGE WARNINGS snmp count=0
+JUDGE CASE PASS snmp checks=699 errors=0 warnings=0 elapsed_s=32.309
+JUDGE WARNINGS burst77 count=0
+JUDGE CASE PASS burst77 checks=530802 errors=0 warnings=0 elapsed_s=12.170
+JUDGE METRIC burst_vls=77 queue_clear_us=983.720 app_last_to_delivery_last_us=75.120
+JUDGE WARNINGS burst81 count=0
+JUDGE CASE PASS burst81 checks=554734 errors=0 warnings=0 elapsed_s=12.056
+JUDGE METRIC burst_vls=81 queue_clear_us=1032.936 app_last_to_delivery_last_us=77.136
+JUDGE WARNINGS rtc count=0
+JUDGE CASE PASS rtc checks=10675841 errors=0 warnings=0 elapsed_s=333.263
+JUDGE METRIC rtc_idle_max_ns=0 rtc_loaded_max_ns=0 rtc_77vl_max_ns=8
+JUDGE WARNINGS performance count=0
+JUDGE CASE PASS performance checks=683408635 errors=0 warnings=0 elapsed_s=2083.337
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es1_to_es2 inject_mbps=906.136 max_e2e_us=48.600 max_e2e_first_us=36.824 jitter_r119_us=0.008 jitter_vl=48 jitter_len=1471 stall_cycles=0 stall_maxrun=0 lag_max_cycles=2 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es1_to_es2 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1951.400 jitter_margin_us=49.992 lag_max_cycles=2
+JUDGE BASELINE REPORT stage=gbe77_d0 direction=es1_to_es2 expected_inject_mbps=906.136 expected_max_e2e_us=48.288 expected_jitter_r119_us=0.008
+JUDGE BASELINE DETAIL max_e2e_us=48.600000000000001!=48.288; max_e2e_first_us=36.823999999999998!=36.512
+JUDGE METRIC tb_sys_perf stage=gbe77_d0 direction=es2_to_es1 inject_mbps=906.136 max_e2e_us=48.600 max_e2e_first_us=36.824 jitter_r119_us=0.008 jitter_vl=52 jitter_len=1471 stall_cycles=0 stall_maxrun=0 lag_max_cycles=2 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d0 direction=es2_to_es1 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1951.400 jitter_margin_us=49.992 lag_max_cycles=2
+JUDGE BASELINE REPORT stage=gbe77_d0 direction=es2_to_es1 expected_inject_mbps=906.136 expected_max_e2e_us=48.288 expected_jitter_r119_us=0.008
+JUDGE BASELINE DETAIL max_e2e_us=48.600000000000001!=48.288; max_e2e_first_us=36.823999999999998!=36.512
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es1_to_es2 inject_mbps=906.136 max_e2e_us=50.656 max_e2e_first_us=38.880 jitter_r119_us=0.008 jitter_vl=45 jitter_len=1471 stall_cycles=0 stall_maxrun=0 lag_max_cycles=2 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es1_to_es2 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1949.344 jitter_margin_us=49.992 lag_max_cycles=2
+JUDGE BASELINE REPORT stage=gbe77_d257 direction=es1_to_es2 expected_inject_mbps=906.136 expected_max_e2e_us=50.344 expected_jitter_r119_us=0.008
+JUDGE BASELINE DETAIL max_e2e_us=50.655999999999999!=50.344; max_e2e_first_us=38.880000000000003!=38.568
+JUDGE METRIC tb_sys_perf stage=gbe77_d257 direction=es2_to_es1 inject_mbps=906.136 max_e2e_us=50.656 max_e2e_first_us=38.880 jitter_r119_us=0.008 jitter_vl=4 jitter_len=1471 stall_cycles=0 stall_maxrun=0 lag_max_cycles=2 dropped=0 duplicate=0 overflow=0 delivered_mbps=906.136 gmii_a_mbps=906.136 gmii_b_mbps=906.136
+JUDGE REQUIREMENT PASS stage=gbe77_d257 direction=es2_to_es1 min_mbps=100 max_e2e_us=2000 max_jitter_us=50 inject_margin_mbps=806.136 latency_margin_us=1949.344 jitter_margin_us=49.992 lag_max_cycles=2
+JUDGE BASELINE REPORT stage=gbe77_d257 direction=es2_to_es1 expected_inject_mbps=906.136 expected_max_e2e_us=50.344 expected_jitter_r119_us=0.008
+JUDGE BASELINE DETAIL max_e2e_us=50.655999999999999!=50.344; max_e2e_first_us=38.880000000000003!=38.568

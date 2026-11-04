@@ -1,0 +1,35 @@
+{
+  "tb_gbe_rm_psn": {
+    "stage": "done",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_183202_203088\\tb_gbe_rm_psn",
+    "passed": true,
+    "simulation_seconds": 30.221,
+    "results": [
+      "[RESULT] tb_gbe_rm_psn PASS checks=38765994 errors=0"
+    ],
+    "metrics": [
+      "[COVERAGE] cycles=12588330 segments_a=16899 segments_b=16947 deliveries=16420"
+    ],
+    "checks": 38765994,
+    "independent_check": {
+      "passed": true,
+      "checks": 169270,
+      "errors": 0,
+      "failures": [],
+      "reconstructed": true,
+      "historical_counts_reproduced": false,
+      "pairs": 16384,
+      "frames": 33846,
+      "deliveries": 16420,
+      "matrix_points": 2688,
+      "reversed_pairs": 37,
+      "coarse_cross_pairs": 2520,
+      "wrap_pairs": 1,
+      "busy_arrivals": 16051,
+      "sn_wraps": 130,
+      "expected_ic_rejects": 1039,
+      "expected_rm_drops": 16387
+    },
+    "seconds": 64.989
+  }
+}

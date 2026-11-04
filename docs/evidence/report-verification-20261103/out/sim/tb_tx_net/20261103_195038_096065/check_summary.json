@@ -1,0 +1,15 @@
+{
+  "test": "tb_tx_net",
+  "items": 231,
+  "errors": 0,
+  "either": 1,
+  "messages": 13,
+  "frames_a": 10,
+  "frames_b": 8,
+  "sends": 10,
+  "stages": {
+    "lengths": 5,
+    "queue": 8
+  },
+  "diagnostics": []
+}

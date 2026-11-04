@@ -1,0 +1,344 @@
+[
+  {
+    "case": "tb_sys_perf",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_rx_data",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_194737_395259",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_drop",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_drop\\20261103_194825_421380",
+    "passed": true
+  },
+  {
+    "case": "tb_ram_sdp",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_ram_sdp\\20261103_194914_763089",
+    "passed": true
+  },
+  {
+    "case": "tb_mac_tx",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_tx\\20261103_194917_802580",
+    "passed": true
+  },
+  {
+    "case": "tb_mac_rx",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_rx\\20261103_194921_358137",
+    "passed": true
+  },
+  {
+    "case": "tb_mac_loop",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_loop\\20261103_194924_662089",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_basic",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194929_304030",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_basic|TX_PAGE_AW=5,TX_OFF_AW=11",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194934_706212",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_bag",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_bag\\20261103_194940_357673",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_multi",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_multi\\20261103_195005_632404",
+    "passed": true
+  },
+  {
+    "case": "tb_tx_net",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_net\\20261103_195038_096065",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_basic",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_basic\\20261103_195042_451625",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_fault",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_fault\\20261103_195104_228690",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_icrm",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_icrm\\20261103_195109_628884",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_load",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_load\\20261103_195119_435328",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_ovf_ring|RX_RING_AW=9",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_ring\\20261103_195132_643371",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_ovf_dq|RX_DQ_AW=1",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_dq\\20261103_195137_777794",
+    "passed": true
+  },
+  {
+    "case": "tb_rx_net",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_net\\20261103_195142_913711",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_basic",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_basic\\20261103_195148_053558",
+    "passed": false
+  },
+  {
+    "case": "tb_sys_fault",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_fault\\20261103_195219_967787",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_delay",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_delay\\20261103_195608_460495",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_load",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_load\\20261103_195729_032890",
+    "passed": false
+  },
+  {
+    "case": "tb_sys_cfg",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_cfg\\20261103_201831_653429",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_reset",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_reset\\20261103_202046_779501",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_ovf|RX_RING_AW=9",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_ovf\\20261103_202204_547673",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_net",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_net\\20261103_202317_464476",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_rtc",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_rtc\\20261103_202347_833492",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_snmp",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp\\20261103_204509_676691",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_snmp_settrap",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp_settrap\\20261103_204856_845365",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_615a",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_615a\\20261103_205210_747517",
+    "passed": true
+  },
+  {
+    "case": "tb_gbe_burst|COUNT=77",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205807_517716",
+    "passed": true
+  },
+  {
+    "case": "tb_gbe_burst|COUNT=81",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205850_995639",
+    "passed": true
+  },
+  {
+    "case": "tb_rm_phase",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rm_phase\\20261103_205943_516571",
+    "passed": false
+  },
+  {
+    "case": "tb_rtc_recovery",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_recovery\\20261103_210013_582353",
+    "passed": false
+  },
+  {
+    "case": "tb_rtc_originate",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_originate\\20261103_210017_756044",
+    "passed": false
+  },
+  {
+    "case": "tb_judge_capacity",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_capacity\\20261103_210022_157068",
+    "passed": true
+  },
+  {
+    "case": "tb_judge_snmp",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_snmp\\20261103_210101_511006",
+    "passed": true
+  },
+  {
+    "case": "tb_elinx",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_elinx\\20261103_210313_385898",
+    "passed": true
+  },
+  {
+    "case": "tb_top_wrap",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_top_wrap\\20261103_210400_029947",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_queue_a",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_210430_048892",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_reset_app",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_app\\20261103_210436_702458",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_reset_mac",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_210511_959718",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_reset_rx",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_rx\\20261103_210554_617374",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_rx_desc",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_desc\\20261103_210630_169232",
+    "passed": true
+  },
+  {
+    "case": "tb_sys_perf_var",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf_var\\20261103_175508_683841",
+    "passed": false
+  },
+  {
+    "case": "tb_t65_tx_desc",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_desc\\20261103_210635_801238",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_hint",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_hint\\20261103_210639_650890",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_init",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_init\\20261103_210648_205600",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_ready",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_ready\\20261103_210653_701972",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_short_full",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_full\\20261103_210701_669877",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_short_init",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_init\\20261103_210706_680197",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_short_normal",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_normal\\20261103_210720_231070",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_space",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_210728_098943",
+    "passed": true
+  },
+  {
+    "case": "tb_t65_tx_space_edge",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_210741_047681",
+    "passed": true
+  },
+  {
+    "case": "tb_rtc_banked",
+    "exit_code": 1,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_banked\\20261103_210758_126052",
+    "passed": false
+  },
+  {
+    "case": "tb_t65_tx_unmapped",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_unmapped\\20261103_210748_348837",
+    "passed": true
+  }
+]

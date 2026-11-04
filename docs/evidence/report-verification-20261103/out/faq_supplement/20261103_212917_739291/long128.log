@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\susu\Desktop\afdx\tools\faq_load.py", line 915, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\susu\Desktop\afdx\tools\faq_load.py", line 909, in main
+    result = run(args.folder, args.timeout) if args.action == 'run' else check(args.folder)
+             ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\susu\Desktop\afdx\tools\faq_load.py", line 664, in run
+    hdl_result(folder)
+    ~~~~~~~~~~^^^^^^^^
+  File "C:\Users\susu\Desktop\afdx\tools\faq_load.py", line 614, in hdl_result
+    require(re.search(r'\[RESULT\]\s+tb_fragmentation PASS errors=0 deliveries=\d+', text) is not None,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'Missing real HDL PASS result')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\susu\Desktop\afdx\tools\faq_load.py", line 65, in require
+    raise ValueError(label)
+ValueError: Missing real HDL PASS result

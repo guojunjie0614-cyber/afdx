@@ -1,0 +1,9 @@
+Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
+Start time: 22:13:20 on Nov 03,2026
+vlog -sv "+define+AFDX_CE_DIV=2" C:\Users\susu\Desktop\afdx\out\faq_rx_trace_queue\20261103_221319_550979\mixed128\compile_sources\tb\tb_faq_rx_trace.v 
+-- Compiling module tb_faq_rx_trace
+
+Top level modules:
+	tb_faq_rx_trace
+End time: 22:13:21 on Nov 03,2026, Elapsed time: 0:00:01
+Errors: 0, Warnings: 0

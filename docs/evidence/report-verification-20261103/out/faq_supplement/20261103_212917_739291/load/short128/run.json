@@ -1,0 +1,21 @@
+{
+  "status": "hdl_pass",
+  "command": [
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\tb_fragmentation\\simulation.exe"
+  ],
+  "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\short128",
+  "timeout_seconds": 1800,
+  "memory_tree_limit_bytes": 1073741824,
+  "available_memory_floor_bytes": 5368709120,
+  "started": "2026-11-03T21:29:23.495037+08:00",
+  "returncode": 0,
+  "capture_sha256": {
+    "tx_messages.txt": "bc1cbee6f8c3c7c62e1053e96572b9b991f07bac35c94c3a28b9d35ea60f90ad",
+    "rx.txt": "ea7a43740335bb1b9e32d86ac4c6c0788f46a287be3e137b05f70bacb331c58d",
+    "tx_a.txt": "53e4369cf815b82b5f7d373c97a3a8535fbbba7f387788e3a993eff7503e7925",
+    "tx_b.txt": "912fdbeea035b8f814a7e6784fd243dd57f64233283e4dac09791bd4b3e4406b",
+    "events.txt": "a254fc2ea05d79b2b0efd6d94ff531c551c80ec2022ccebedf689f189336b6ea",
+    "simulation.log": "7bbac214f4737c96a79c78e8ced6213d51147afaade91369bc3ed2777c43e376"
+  },
+  "ended": "2026-11-03T21:32:51.047883+08:00"
+}

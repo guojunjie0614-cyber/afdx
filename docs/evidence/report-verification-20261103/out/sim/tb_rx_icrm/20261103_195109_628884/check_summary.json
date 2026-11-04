@@ -1,0 +1,111 @@
+{
+  "test": "tb_rx_icrm",
+  "items": 1274,
+  "errors": 0,
+  "either": 0,
+  "segments": 194,
+  "segments_a": 110,
+  "segments_b": 84,
+  "pulses": {
+    "a_good": 108,
+    "deliver": 126,
+    "a_ic": 9,
+    "b_good": 84,
+    "b_ic": 3,
+    "rm_drop": 48,
+    "a_cfg": 2,
+    "b_cfg": 3,
+    "a_unk": 1
+  },
+  "deliveries": 125,
+  "max_delivery_latency": 82,
+  "stages": {
+    "ic_seq": {
+      "segments": 20,
+      "good": 20,
+      "deliver": 13,
+      "a_ic": 7
+    },
+    "ic_nets": {
+      "segments": 8,
+      "good": 8,
+      "deliver": 7,
+      "b_ic": 1
+    },
+    "ic_off": {
+      "segments": 6,
+      "good": 6,
+      "deliver": 6
+    },
+    "rm_pair": {
+      "segments": 20,
+      "good": 20,
+      "deliver": 10,
+      "rm_drop": 10
+    },
+    "rm_same": {
+      "segments": 10,
+      "good": 10,
+      "deliver": 5,
+      "rm_drop": 5
+    },
+    "rm_single": {
+      "segments": 10,
+      "good": 10,
+      "deliver": 10
+    },
+    "rm_loss": {
+      "segments": 9,
+      "good": 9,
+      "deliver": 5,
+      "rm_drop": 4
+    },
+    "rm_skew": {
+      "segments": 17,
+      "good": 17,
+      "deliver": 12,
+      "rm_drop": 5
+    },
+    "rm_ahead": {
+      "segments": 21,
+      "good": 21,
+      "deliver": 13,
+      "rm_drop": 8
+    },
+    "rm_modes": {
+      "segments": 40,
+      "good": 40,
+      "deliver": 27,
+      "rm_drop": 9,
+      "a_ic": 2,
+      "b_ic": 2
+    },
+    "cfg_keep": {
+      "segments": 10,
+      "good": 10,
+      "deliver": 6,
+      "a_cfg": 2,
+      "b_cfg": 2
+    },
+    "rm_wrap": {
+      "segments": 12,
+      "good": 12,
+      "deliver": 6,
+      "rm_drop": 6
+    },
+    "aging": {
+      "segments": 4,
+      "good": 4,
+      "deliver": 4
+    },
+    "reset": {
+      "segments": 7,
+      "good": 5,
+      "deliver": 2,
+      "a_unk": 1,
+      "b_cfg": 1,
+      "rm_drop": 1
+    }
+  },
+  "diagnostics": []
+}

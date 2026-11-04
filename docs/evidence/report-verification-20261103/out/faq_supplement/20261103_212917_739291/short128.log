@@ -1,0 +1,229 @@
+{
+  "passed": true,
+  "errors": 0,
+  "checks": 270737,
+  "failures": [],
+  "case": "short128",
+  "epoch": 69405,
+  "configuration_count": 1,
+  "reset_count": 1,
+  "window": {
+    "warmup": {
+      "begin_cycle": 69405,
+      "end_cycle": 2069405,
+      "cycles": 2000000,
+      "input_messages_starting": 1024,
+      "delivered_messages_ending": 1021,
+      "injected_payload_bytes": 1506304,
+      "delivered_payload_bytes": 1503145,
+      "inject_payload_mbps": 753.152,
+      "delivered_payload_mbps": 751.5725
+    },
+    "measurement": {
+      "begin_cycle": 2069405,
+      "end_cycle": 14569405,
+      "cycles": 12500000,
+      "input_messages_starting": 6400,
+      "delivered_messages_ending": 6400,
+      "injected_payload_bytes": 9414400,
+      "delivered_payload_bytes": 9414400,
+      "inject_payload_mbps": 753.152,
+      "delivered_payload_mbps": 753.152
+    },
+    "continued_injection": {
+      "begin_cycle": 14569405,
+      "end_cycle": 16069405,
+      "cycles": 1500000,
+      "input_messages_starting": 768,
+      "delivered_messages_ending": 768,
+      "injected_payload_bytes": 1129728,
+      "delivered_payload_bytes": 1129728,
+      "inject_payload_mbps": 753.152,
+      "delivered_payload_mbps": 753.152
+    }
+  },
+  "messages": 8192,
+  "delivered": 8192,
+  "redundancy_rejections": 8192,
+  "public_input_first": 69407,
+  "public_input_last": 16068925,
+  "public_output_first": 74007,
+  "public_output_last": 16073527,
+  "drain_after_last_public_input_cycles": 4602,
+  "drain": {
+    "begin_cycle": 16068926,
+    "end_cycle": 16073528,
+    "cycles": 4602,
+    "subsequent_TB_quiet_cycles": 22000,
+    "quiet_evidence": "Pinned TB waits 2000+20000 cycles after target completion; FINAL row has no cycle timestamp."
+  },
+  "captured_event_observability": {
+    "captured": "TX rejects, source app rejects/overflow, destination network errors and RM duplicate pulses",
+    "not_captured": "Destination ev_app overflow pin is not logged by the existing executable; any lost/truncated/corrupt output still fails exact delivery checking."
+  },
+  "transient_storage": {
+    "tx_page_envelope": {
+      "peak": 9,
+      "capacity": 256,
+      "margin": 247,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 73313,
+        "units": 9,
+        "messages": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    "app_tx_byte_envelope": {
+      "peak": 2946,
+      "capacity": 32768,
+      "margin": 29822,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 71360,
+        "units": 2946,
+        "messages": [
+          0,
+          1
+        ]
+      }
+    },
+    "app_rx_byte_envelope": {
+      "peak": 2946,
+      "capacity": 32768,
+      "margin": 29822,
+      "fits": true,
+      "peak_witness": {
+        "cycle": 74371,
+        "units": 2946,
+        "messages": [
+          0,
+          1
+        ]
+      }
+    },
+    "planning_assumptions": {
+      "tx_page_bytes": 512,
+      "tx_pool_pages": 256,
+      "tx_pool_bytes": 131072,
+      "application_ring_bytes": 32768,
+      "app_conservative_ready_used_limit": 24576,
+      "first_frame_from_public_first_budget_cycles": 25000,
+      "app_retirement_guard_cycles": 16,
+      "page_return_guard_cycles": 64,
+      "planned_app_tx_byte_envelope": {
+        "peak": 19149,
+        "capacity": 32768,
+        "margin": 13619,
+        "fits": true,
+        "peak_witness": {
+          "cycle": 23439,
+          "units": 19149,
+          "messages": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      },
+      "short_full_message_page_envelope": {
+        "peak": 42,
+        "capacity": 256,
+        "margin": 214,
+        "fits": true,
+        "peak_witness": {
+          "cycle": 25392,
+          "units": 42,
+          "messages": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        }
+      },
+      "planned_long_page_envelope": 0,
+      "long_page_residence_budget_cycles": null,
+      "planned_total_page_upper_bound": 42,
+      "planned_page_margin": 214,
+      "page_assumptions": "A/B: all short pages reserved until stated lifetime; one full 16-page message per long VL. C: whole messages reserved for a declared 6ms page-residence budget+64 cycles, verified against captured EOF; this is resource-plan safety, not an official long completion limit.",
+      "app_assumptions": "Reserve n+2 bytes from public first-valid until first GMII SOF+16; require first SOF within declared 200us case-planning budget.",
+      "return_guard_basis": "Normal valid traffic has no rollback; page-return FIFO, ret_valid and free-ret1 pending retire long before 64 clocks after final GMII EOF (afdx_tx_builder.v:162-174,374-404; afdx_tx_free.v:48-56,113-133).",
+      "interpretation": "Conservative scenario storage envelopes, not internal counter measurements or official latency formulae."
+    },
+    "interpretation": "Conservative complete-message reservations from public pins; not DUT allocation/admission observations."
+  },
+  "short_public_completion": {
+    "samples": 8192,
+    "min_cycles": 6072,
+    "max_cycles": 6075,
+    "range_cycles": 3,
+    "min_witness": {
+      "first": 74007,
+      "last": 75479,
+      "cycles": 6072,
+      "index": 0,
+      "vl": 256,
+      "n": 1471
+    },
+    "max_witness": {
+      "first": 6824010,
+      "last": 6825482,
+      "cycles": 6075,
+      "index": 3456,
+      "vl": 256,
+      "n": 1471
+    }
+  },
+  "long_public_completion_informational": {
+    "samples": 0,
+    "min_cycles": null,
+    "max_cycles": null,
+    "range_cycles": null
+  },
+  "internal_short_50us_target_passed": true,
+  "short_raw_100us_comparison_passed": true,
+  "official_FAQ_first_frame_BAG_interpretation": "raw comparisons and explicit remaining-eligibility statistics; not a claim that range-minus-full-BAG is universally valid",
+  "event_first": 74014,
+  "event_last": 16072062,
+  "limitations": [
+    "Two-state RTL; no X-propagation or VQM evidence.",
+    "One traffic direction with simultaneous A/B redundancy.",
+    "Long completion and long jitter are reported raw without applying ordinary short-message 2ms/100us gates.",
+    "Internal 50us target is reported separately from <100us raw comparison."
+  ],
+  "capture_sha256": {
+    "tx_messages.txt": "bc1cbee6f8c3c7c62e1053e96572b9b991f07bac35c94c3a28b9d35ea60f90ad",
+    "rx.txt": "ea7a43740335bb1b9e32d86ac4c6c0788f46a287be3e137b05f70bacb331c58d",
+    "tx_a.txt": "53e4369cf815b82b5f7d373c97a3a8535fbbba7f387788e3a993eff7503e7925",
+    "tx_b.txt": "912fdbeea035b8f814a7e6784fd243dd57f64233283e4dac09791bd4b3e4406b",
+    "events.txt": "a254fc2ea05d79b2b0efd6d94ff531c551c80ec2022ccebedf689f189336b6ea",
+    "simulation.log": "7bbac214f4737c96a79c78e8ced6213d51147afaade91369bc3ed2777c43e376"
+  },
+  "check_output": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\short128\\checks\\20261103_213251_049028",
+  "evidence_kind": "actual HDL execution",
+  "executable_sha256": "a7cbd0fcaacb06c50105ccda6d1d1ed3af24dc5415c06cab7228e30befcddf70"
+}

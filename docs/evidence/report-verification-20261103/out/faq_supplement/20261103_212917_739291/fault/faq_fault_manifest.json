@@ -1,0 +1,292 @@
+{
+  "schema": "faq-fault-isolation-v1",
+  "status": "prepared_not_simulated",
+  "source_identity": {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\tb_fragmentation",
+    "executable": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\tb_fragmentation\\simulation.exe",
+    "executable_sha256": "a7cbd0fcaacb06c50105ccda6d1d1ed3af24dc5415c06cab7228e30befcddf70",
+    "dependencies": [
+      {
+        "path": "rtl/AFDX_top.v",
+        "sha256": "986f42b7d24d7c35a015067c2c0981d22f187d2de9038899ef0f2c45b9929273",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\AFDX_top.v",
+        "compiled_sha256": "80ecc83e3ceeca466b56c744fb514075bd0e038d70751347b6d0cd10743bcc0d"
+      },
+      {
+        "path": "rtl/afdx_615a.v",
+        "sha256": "5a00250c2100ddf766547388bed4a2f77f0b70f6e4d80f4568e27b75575e1328",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_615a.v",
+        "compiled_sha256": "a2bbd9aa9bf4139471b7a1a0f1aaf255e80c6ab6d27ad3ce779dfc2798a2f7b2"
+      },
+      {
+        "path": "rtl/afdx_615a_engine.v",
+        "sha256": "2b738eb758fbcde4ca0b0d2b3c7b92e8a1a57160bc4ec424e8bb2c3aaa336684",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_615a_engine.v",
+        "compiled_sha256": "b8b6f4464bd81c95cdd8661ce5936bca2e4ea16bc401d41e4aa7a48a94af6f80"
+      },
+      {
+        "path": "rtl/afdx_app_map.v",
+        "sha256": "61db60365eb3bfda06732391aba6ae639b5a1e17731d3e7f54d637d62e490619",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_app_map.v",
+        "compiled_sha256": "58bee3fb075b8ab2e0a99354c07c9c5d4f82005f21355a9984fd2bdc37252c6d"
+      },
+      {
+        "path": "rtl/afdx_app_payload.v",
+        "sha256": "0ea09a102ce850192b69af4cca480fc7b26bc3572a17e995514df4c0a58be8c6",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_app_payload.v",
+        "compiled_sha256": "2da8b88896bb76ab5423f377137018a856644d261cbbd174b2ab06d60a093bc2"
+      },
+      {
+        "path": "rtl/afdx_app_read.v",
+        "sha256": "32caab22b87d59ad6d33cd06a5d451772673bb2bdabb78abcdb567965454acba",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_app_read.v",
+        "compiled_sha256": "7a4396eff5d848f1bc3041833e618a541373ad72e4a1a77f92aac46d4001b71b"
+      },
+      {
+        "path": "rtl/afdx_app_rx.v",
+        "sha256": "e1154212ccdc46d9200917f31951b05dd61b75f561b2ab77b1c4f2b12524490b",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_app_rx.v",
+        "compiled_sha256": "c1cd3c29747acc8466d6fddffcf1932d05a7680ddc154cc955dc43ad80874985"
+      },
+      {
+        "path": "rtl/afdx_app_tx.v",
+        "sha256": "729bc86fd2598c28e5ebcf293ae180b530ca54c52f6bcabf05eb16dfb8473337",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_app_tx.v",
+        "compiled_sha256": "e3b06086fe005969c0070109a332c8c38d0e15926444f1ac9b4a63492c66342f"
+      },
+      {
+        "path": "rtl/afdx_cfg.v",
+        "sha256": "ed7c4e5d11d037954ef809ff14bf9c0bd143e79b2998a5b7a92bdf9e7cdfdbca",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_cfg.v",
+        "compiled_sha256": "a602a3970d02591ae84161d63b25341e7f28a744a706d48ad8ac8431e862d925"
+      },
+      {
+        "path": "rtl/afdx_crc32_d8.v",
+        "sha256": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_crc32_d8.v",
+        "compiled_sha256": "01439d63b5957b68ac4e0e914fa517b296bf540ea6b0b68331fcbd70e29dcd1c"
+      },
+      {
+        "path": "rtl/afdx_es.v",
+        "sha256": "0bcea4294262de512cbd05f337b3acf6a241ba169d64aa039b12d7790ece61b7",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_es.v",
+        "compiled_sha256": "a74ccb4e79d80859a3b01e420aa19f7dfad089ae7046eb835261fb66143fa736"
+      },
+      {
+        "path": "rtl/afdx_mac_rx.v",
+        "sha256": "ee01466b3a4876ad902afe15dd75cd2b6d64b7819548763a57b44b521fd58300",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_mac_rx.v",
+        "compiled_sha256": "40e1ebfd8257f113e30a28ac506d1efd76f3abd06087402095957d1ed3493ef4"
+      },
+      {
+        "path": "rtl/afdx_mac_tx.v",
+        "sha256": "682a248af47177ee0a771d4369d5c92539e08253ed33472ea9d654882d804180",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_mac_tx.v",
+        "compiled_sha256": "efe5f524c8b346cd8f5b23e7c88d43d893f4cbce1ebf423ac5886404cde736ce"
+      },
+      {
+        "path": "rtl/afdx_mgmt_tx.v",
+        "sha256": "142580bb28e7b16bc09fefc50f7e6f6d1e36fd7eed5a835937c890145cb40d19",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_mgmt_tx.v",
+        "compiled_sha256": "acbc3986bd9fee86d774423888c65268702a5552288aeafcfa35759a9d89f73c"
+      },
+      {
+        "path": "rtl/afdx_ntp_fraction.v",
+        "sha256": "645457c9637fa3cb148624b34b76e2d19868d263957fe5424476685775666cbf",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_ntp_fraction.v",
+        "compiled_sha256": "57a5f199aea08f356b5ac56b40c9279739a677e972a32c3664e876ad5027f108"
+      },
+      {
+        "path": "rtl/afdx_ram_sdp.v",
+        "sha256": "13aabc3c48dfbc513e1c555f3d84e79b9bb9405873e6357e11c3d2d4bcaedbdd",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_ram_sdp.v",
+        "compiled_sha256": "00e7f377776267cf49c4808ee716b6f331937f80861d6cc47b4a9a2ce080709d"
+      },
+      {
+        "path": "rtl/afdx_rtc.v",
+        "sha256": "fbd6dca681c5b8cdef2e5166173eb49d963202c56b276453ecd6524b44156732",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rtc.v",
+        "compiled_sha256": "64acb8f6416db74e10592785a43b913185f7ddde96cd77dacca108c755075ca8"
+      },
+      {
+        "path": "rtl/afdx_rx_core.v",
+        "sha256": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_core.v",
+        "compiled_sha256": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1"
+      },
+      {
+        "path": "rtl/afdx_rx_deliver.v",
+        "sha256": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_deliver.v",
+        "compiled_sha256": "43d44ecb08bc3b94ffc8c2fcffd96cb1e9ac7c85419fa1ae551e02d15df33f39"
+      },
+      {
+        "path": "rtl/afdx_rx_engine.v",
+        "sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_engine.v",
+        "compiled_sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13"
+      },
+      {
+        "path": "rtl/afdx_rx_parse.v",
+        "sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_parse.v",
+        "compiled_sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly.v",
+        "sha256": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_reassembly.v",
+        "compiled_sha256": "c24968b1b097b2ca4f22cb97563c522935c0811fc2e30ca7c0ce4d0a1f02bda6"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_bank.v",
+        "sha256": "ca2450e8280779dbd95c03530e29d8d99ccd1edfb48d1f13d7f7f7aa45237703",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_reassembly_bank.v",
+        "compiled_sha256": "4e2f020cdfecb916f39f844340c354a2fdfa5ecd8a554d1bad7d689e50800af6"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_payload.v",
+        "sha256": "45b6a4068a3616b232a5cb787d3a3e6d032178ebd16b22c6f95fc8c64ad42b7e",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_reassembly_payload.v",
+        "compiled_sha256": "df8660ce20e291ee39c4fd22674abeb85aa3b9aae1ba38385dd7cd010ee94368"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_ram.v",
+        "sha256": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_rx_reassembly_ram.v",
+        "compiled_sha256": "f16e364cd3a7cbe03665f1235bc5ceb663268e36b148bffb1920bf4a54bad70a"
+      },
+      {
+        "path": "rtl/afdx_snmp.v",
+        "sha256": "416d734a8c3e5c8e76f426ef84c9f691ebfdcad89dcc63376c8291f4badd3b21",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_snmp.v",
+        "compiled_sha256": "c4dc2e91fa5c4274d7ce27d263f1f0b3e7d236c401f78c9d0db5a015b9202e1f"
+      },
+      {
+        "path": "rtl/afdx_snmp_engine.v",
+        "sha256": "05f03d3d5ee2775129cf55350c3d8e2bf3d3920f509b1204bb3c026d59bd8392",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_snmp_engine.v",
+        "compiled_sha256": "c3452b4eaa93e98179dd4810a82d0534e110aa6f98fdf4e0d3a4d2c19bce08d6"
+      },
+      {
+        "path": "rtl/afdx_svc.v",
+        "sha256": "8bea777aac38e083c61f1a3d7f59ebba6083a0ffd305231073f8291753ddbf60",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_svc.v",
+        "compiled_sha256": "69845402be8cbf30bc61414a826bab49aff4afe817b591096d0b8ca5ab844f81"
+      },
+      {
+        "path": "rtl/afdx_timebase.v",
+        "sha256": "17c66eadcbd2c11539a6bd0aef6ce4ea5377e04448c2d054a332d9112723769a",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_timebase.v",
+        "compiled_sha256": "02088cb72ca167d25f3355fbbbf9bd47bca1a5129aac970b8cc3c77b35b27797"
+      },
+      {
+        "path": "rtl/afdx_tx_buf.v",
+        "sha256": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_tx_buf.v",
+        "compiled_sha256": "b1c3b7155c099b071700e329025efc597f62bdd7458c3fe90331418d18af006b"
+      },
+      {
+        "path": "rtl/afdx_tx_builder.v",
+        "sha256": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_tx_builder.v",
+        "compiled_sha256": "7f9d9b6f4c0146917cad6093b288734cea72d04ef516c669b55de2e4b8f423b2"
+      },
+      {
+        "path": "rtl/afdx_tx_core.v",
+        "sha256": "4f59495299a1527b86d60a1b06778461b9a6afe620a36be08fa0999d6512b1b9",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_tx_core.v",
+        "compiled_sha256": "1ff1622a4f2525c6e27d1d152e8354340615709a8c3257a53eda318eb133565d"
+      },
+      {
+        "path": "rtl/afdx_tx_engine.v",
+        "sha256": "17f781f2687f4fd1231821754fe74f481388098f9b1374d00faf5d5a3efdafde",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_tx_engine.v",
+        "compiled_sha256": "08c12b992c018e4b4e8d5a6721e351706930e02ef45d2f552fa7dbb80696b8e2"
+      },
+      {
+        "path": "rtl/afdx_tx_free.v",
+        "sha256": "422ddf4b9993b862faaa2b498dd9ac6d976fb6d98f2a877a2121257ecca5cf95",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\rtl\\afdx_tx_free.v",
+        "compiled_sha256": "d47775e08b43ec52df11eacc99c5e0ac25c9242bda20e59736bfc5f783bf79c9"
+      },
+      {
+        "path": "tb/tb_fragmentation.v",
+        "sha256": "e70bd66befe45736b0741a7086cab23f9746891b67877e2f5ee586bd235d54f0",
+        "compiled": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_162731_314847\\sources\\tb\\tb_fragmentation.v",
+        "compiled_sha256": "e70bd66befe45736b0741a7086cab23f9746891b67877e2f5ee586bd235d54f0"
+      }
+    ],
+    "external_S_records": [
+      "S  15875854 1688849861404001  1790602492   288436000  1698235360           0 \"/eLinx3.0/verilator/verilator\""
+    ],
+    "dependency_manifest_sha256": "0cd263919d9d075e9198cc68f54a41be317beff3ca1ba9dc3f1f966b9e76841b",
+    "build_sha256": "751462fad78bb9c7ba0ed960f18a44dca2fe5611afce5682c19b2d1f9c5afc43"
+  },
+  "prepared": "2026-11-03T21:29:17.890540+08:00",
+  "analysis": [
+    {
+      "path": "tools/faq_fault.py",
+      "sha256": "ce87702fb0048fcbd5942380e17d03ed9ceefe4164c00a2bd48501dc0669fc06"
+    },
+    {
+      "path": "tools/fragment_ref.py",
+      "sha256": "e8db436fbc16bc91e6d1d419c7d04dc748db0878344087bdf60ae134d4b7184f"
+    },
+    {
+      "path": "tools/process_guard.py",
+      "sha256": "e466b153514851bbcb52e15808b7eb23e24aff10529a2fdc1ce4bafb3ac27036"
+    },
+    {
+      "path": "hardware_spec.yaml",
+      "sha256": "7bafdc001a344eb8107833f2260648143126841aa1685880084265b189ce7bea"
+    },
+    {
+      "path": "hardware_contract.yaml",
+      "sha256": "3ec729bac269e7d280e57d0c7a53562c51dbac242240d63a7a4c16bc4cbda441"
+    }
+  ],
+  "vector_sha256": {
+    "config.txt": "f14a6ab52f16cb8183c8fb5783d149a341877e03dbc58dfbd5ed19a8ecdaa4da",
+    "schedule.txt": "6a759b6c54cfa9cff55da3d8ff00cfe940df25c0dd0256d6b5ca16c4d5eba074",
+    "payload.hex": "dff834d952ac88183ff1c525b535428ca88908861314c2c7f9901e6583d7d8dc",
+    "injection.txt": "2c6caf298f46e21c21fc86301e6da5acde4e71eba61e6d52e178f3caa01cccd7",
+    "injection.hex": "b0a6308bbe8f6a6bd212a9c773d905e6636afdb60d30743b39575aa2a4dc0166"
+  },
+  "source_plan_sha256": "8425f67cdccf132ed47ed8c8d7e3ca8313ee2721a573fbb9d5624c5f01258866",
+  "model": {
+    "completed_messages": 19,
+    "events": {
+      "rm_drop": 2,
+      "a_fcs": 1,
+      "a_ic": 2,
+      "a_ovf": 1
+    },
+    "live_contexts": 1,
+    "max_contexts": 2,
+    "final_psn": {
+      "(1280, 1)": 16,
+      "(1280, 2)": 0,
+      "(1281, 1)": 4,
+      "(1282, 1)": 4,
+      "(1283, 1)": 10,
+      "(1283, 2)": 1,
+      "(1284, 1)": 4
+    }
+  },
+  "normal_healthy_deliveries": 13,
+  "all_expected_deliveries": 20,
+  "injection_frames": 36,
+  "injection_bytes": 24545,
+  "injection_cycles": 193237,
+  "limits": {
+    "process_tree_gib": 1,
+    "minimum_free_gib": 5
+  },
+  "scope": "public GMII-to-application isolation and bounded progress; no 2ms application-input latency claim",
+  "limitations": [
+    "GMII injection times follow the frozen public-pin file driver; this reused TB does not capture its injected GMII input separately.",
+    "No context timeout/cleanup claim; wrong-offset context intentionally remains incomplete.",
+    "This is isolation/bounded progress, not application-input 2ms latency or throughput."
+  ]
+}

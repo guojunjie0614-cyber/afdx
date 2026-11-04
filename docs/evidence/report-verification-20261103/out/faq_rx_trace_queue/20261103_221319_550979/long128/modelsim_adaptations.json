@@ -1,0 +1,296 @@
+[
+  {
+    "path": "rtl/afdx_615a.v",
+    "action": "hoist_declaration",
+    "names": [
+      "engine_status"
+    ],
+    "original_line": 194,
+    "insert_after_line": 40,
+    "original": "wire [1:0] engine_status;",
+    "hoisted": "wire [1:0] engine_status;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_615a.v",
+    "action": "hoist_declaration",
+    "names": [
+      "engine_main_tid"
+    ],
+    "original_line": 199,
+    "insert_after_line": 40,
+    "original": "wire [15:0] engine_main_tid;",
+    "hoisted": "wire [15:0] engine_main_tid;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_615a.v",
+    "action": "hoist_declaration",
+    "names": [
+      "engine_status_tid"
+    ],
+    "original_line": 200,
+    "insert_after_line": 40,
+    "original": "wire [15:0] engine_status_tid;",
+    "hoisted": "wire [15:0] engine_status_tid;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_615a.v",
+    "action": "hoist_declaration",
+    "names": [
+      "engine_deny_tid"
+    ],
+    "original_line": 201,
+    "insert_after_line": 40,
+    "original": "wire [15:0] engine_deny_tid;",
+    "hoisted": "wire [15:0] engine_deny_tid;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_app_rx.v",
+    "action": "explicit_open_optional_input"
+  },
+  {
+    "path": "rtl/afdx_app_tx.v",
+    "action": "hoist_declaration",
+    "names": [
+      "read_en"
+    ],
+    "original_line": 134,
+    "insert_after_line": 17,
+    "original": "wire read_en;",
+    "hoisted": "wire read_en;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_app_tx.v",
+    "action": "explicit_open_optional_input"
+  },
+  {
+    "path": "rtl/afdx_rtc.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "receive_timestamp_seconds"
+    ],
+    "original_line": 665,
+    "insert_after_line": 39,
+    "original": "wire [31:0] receive_timestamp_seconds=receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];",
+    "hoisted": "wire [31:0] receive_timestamp_seconds;",
+    "replacement": "assign receive_timestamp_seconds =receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];"
+  },
+  {
+    "path": "rtl/afdx_rtc.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "receive_timestamp_nanoseconds"
+    ],
+    "original_line": 666,
+    "insert_after_line": 39,
+    "original": "wire [31:0] receive_timestamp_nanoseconds=receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];",
+    "hoisted": "wire [31:0] receive_timestamp_nanoseconds;",
+    "replacement": "assign receive_timestamp_nanoseconds =receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];"
+  },
+  {
+    "path": "rtl/afdx_rtc.v",
+    "action": "hoist_declaration",
+    "names": [
+      "rtc_run_ctl",
+      "rtc_request_armed"
+    ],
+    "original_line": 835,
+    "insert_after_line": 39,
+    "original": "(* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;",
+    "hoisted": "(* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rtc.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "rtc_client_launch"
+    ],
+    "original_line": 875,
+    "insert_after_line": 39,
+    "original": "wire rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;",
+    "hoisted": "wire rtc_client_launch ;",
+    "replacement": "assign rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;"
+  },
+  {
+    "path": "rtl/afdx_rtc.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "rtc_server_launch"
+    ],
+    "original_line": 876,
+    "insert_after_line": 39,
+    "original": "wire rtc_server_launch = master_tx && reply_pending;",
+    "hoisted": "wire rtc_server_launch ;",
+    "replacement": "assign rtc_server_launch = master_tx && reply_pending;"
+  },
+  {
+    "path": "rtl/afdx_rx_deliver.v",
+    "action": "portable_failure_exit",
+    "count": 3
+  },
+  {
+    "path": "rtl/afdx_rx_engine.v",
+    "action": "hoist_declaration",
+    "names": [
+      "frame_start_q",
+      "age_start_q"
+    ],
+    "original_line": 176,
+    "insert_after_line": 60,
+    "original": "(* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;",
+    "hoisted": "(* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_engine.v",
+    "action": "hoist_declaration",
+    "names": [
+      "dq_room"
+    ],
+    "original_line": 326,
+    "insert_after_line": 60,
+    "original": "reg dq_room;",
+    "hoisted": "reg dq_room;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_engine.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "fragmented"
+    ],
+    "original_line": 328,
+    "insert_after_line": 60,
+    "original": "wire fragmented = frame_fragmented;",
+    "hoisted": "wire fragmented ;",
+    "replacement": "assign fragmented = frame_fragmented;"
+  },
+  {
+    "path": "rtl/afdx_rx_engine.v",
+    "action": "hoist_declaration",
+    "names": [
+      "age_tick"
+    ],
+    "original_line": 354,
+    "insert_after_line": 60,
+    "original": "wire age_tick;",
+    "hoisted": "wire age_tick;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_engine.v",
+    "action": "hoist_declaration",
+    "names": [
+      "dq_commit"
+    ],
+    "original_line": 381,
+    "insert_after_line": 60,
+    "original": "reg dq_commit;",
+    "hoisted": "reg dq_commit;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_parse.v",
+    "action": "hoist_declaration",
+    "names": [
+      "vlid",
+      "sport",
+      "dport",
+      "ip_len",
+      "udp_len",
+      "udp_check",
+      "n",
+      "ip_expected",
+      "end_data",
+      "sn_position",
+      "expected_len"
+    ],
+    "original_line": 99,
+    "insert_after_line": 39,
+    "original": "reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;",
+    "hoisted": "reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly.v",
+    "action": "portable_failure_exit",
+    "count": 2
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_bank.v",
+    "action": "hoist_declaration",
+    "names": [
+      "query_active",
+      "query_start"
+    ],
+    "original_line": 60,
+    "insert_after_line": 24,
+    "original": "(* preserve=1, dont_merge=1 *) reg query_active, query_start;",
+    "hoisted": "(* preserve=1, dont_merge=1 *) reg query_active, query_start;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_bank.v",
+    "action": "hoist_declaration",
+    "names": [
+      "commit_cmd",
+      "allocate"
+    ],
+    "original_line": 133,
+    "insert_after_line": 24,
+    "original": "(* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;",
+    "hoisted": "(* preserve=1, dont_merge=1 *) reg commit_cmd, allocate;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_bank.v",
+    "action": "hoist_wire_declaration_keep_continuous_assignment",
+    "names": [
+      "payload_we"
+    ],
+    "original_line": 168,
+    "insert_after_line": 24,
+    "original": "wire payload_we=copy_state==C_RUN && copy_valid_q;",
+    "hoisted": "wire payload_we;",
+    "replacement": "assign payload_we =copy_state==C_RUN && copy_valid_q;"
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_bank.v",
+    "action": "hoist_declaration",
+    "names": [
+      "output_position"
+    ],
+    "original_line": 205,
+    "insert_after_line": 24,
+    "original": "(* maxfan=16 *) reg [13:0] output_position;",
+    "hoisted": "(* maxfan=16 *) reg [13:0] output_position;",
+    "replacement": ""
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_bank.v",
+    "action": "portable_failure_exit",
+    "count": 4
+  },
+  {
+    "path": "rtl/afdx_rx_reassembly_ram.v",
+    "action": "portable_failure_exit",
+    "count": 1
+  },
+  {
+    "path": "rtl/afdx_tx_engine.v",
+    "action": "hoist_declaration",
+    "names": [
+      "words"
+    ],
+    "original_line": 220,
+    "insert_after_line": 78,
+    "original": "reg [31:0] words[0:5];",
+    "hoisted": "reg [31:0] words[0:5];",
+    "replacement": ""
+  }
+]

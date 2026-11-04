@@ -1,0 +1,75 @@
+{
+  "items": 41,
+  "errors": 0,
+  "cases": {
+    "0": {
+      "start": 87201,
+      "size": 16,
+      "version": 16692,
+      "port": 59,
+      "mode": 0,
+      "status": 2,
+      "received": 16,
+      "retries": 0,
+      "lost": 0,
+      "nstatus": 3,
+      "end": 136877,
+      "lnr": {
+        "version": "A4",
+        "names": [
+          "MEMORY.BIN"
+        ],
+        "user_data": ""
+      },
+      "lns": [
+        {
+          "version": "A4",
+          "status": 1,
+          "description": "",
+          "counter": 1,
+          "exception": 0,
+          "estimated": 0,
+          "ratio": 0,
+          "count": 0,
+          "files": []
+        },
+        {
+          "version": "A4",
+          "status": 2,
+          "description": "",
+          "counter": 2,
+          "exception": 0,
+          "estimated": 65535,
+          "ratio": 0,
+          "count": 1,
+          "files": [
+            {
+              "name": "MEMORY.BIN",
+              "status": 2,
+              "description": ""
+            }
+          ]
+        },
+        {
+          "version": "A4",
+          "status": 3,
+          "description": "",
+          "counter": 3,
+          "exception": 0,
+          "estimated": 0,
+          "ratio": 100,
+          "count": 1,
+          "files": [
+            {
+              "name": "MEMORY.BIN",
+              "status": 3,
+              "description": ""
+            }
+          ]
+        }
+      ],
+      "bytes_equal": true
+    }
+  },
+  "busy_rejections": 0
+}

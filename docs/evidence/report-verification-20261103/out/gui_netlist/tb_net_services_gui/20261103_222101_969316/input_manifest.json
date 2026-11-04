@@ -1,0 +1,210 @@
+[
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\gui_netlist.py",
+    "snapshot": "original_sources/tools/gui_netlist.py",
+    "sha256": "14A33DF2C7372BB83DC66F6856C25694CC9A1DB98F593FB69340041899868621"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py",
+    "snapshot": "original_sources/tools/modelsim_compat.py",
+    "sha256": "2C9ED6A39AA2ECD1760128122244B4E38AFE26CB744F8F1D0BC1EEA1B455A004"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\adapt_gui_vqm.py",
+    "snapshot": "original_sources/tools/adapt_gui_vqm.py",
+    "sha256": "9A2FEB26B192A8010270E3EA337032B27AA231BC3FABC9B609B323710C53C0C4"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\eda.py",
+    "snapshot": "original_sources/tools/eda.py",
+    "sha256": "754CCFEDDC61B0F389C1D70A700DE641F1C7946D13594C23A7BF12EA22B6DEFC"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\build1030\\AFDX_top_1030\\20261103_103410_728861\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+    "snapshot": "original.vqm",
+    "sha256": "C5343A337B8F396134A0515EA8A262E6E1DCB635E9CD267274FA066BD41EBB34"
+  },
+  {
+    "source": "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\220model.v",
+    "snapshot": "220model.v",
+    "sha256": "86B57BE6BBA90BBCE156DBAC2641512095FD9CBDC182AF18AAC5488E0BC5C3B6"
+  },
+  {
+    "source": "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_mf.v",
+    "snapshot": "altera_mf.v",
+    "sha256": "8096BD395E8A8AF515643CF46F76A0A077FEB7F6D7593722209E71B95802134A"
+  },
+  {
+    "source": "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\altera_primitives.v",
+    "snapshot": "altera_primitives.v",
+    "sha256": "F8670B892DCC9F3B10647F9818E4A381FA0B0856A3933DD902E733E53E643E33"
+  },
+  {
+    "source": "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratix_atoms.v",
+    "snapshot": "stratix_atoms.v",
+    "sha256": "98F26BE0121DE5ACEA108E774668491E39AF47659E903F2D309E8AEAB613B278"
+  },
+  {
+    "source": "C:\\Program Files (x86)\\eHiWay\\eLinx3.0\\Simulation\\elinx_lib\\stratixiv_atoms.v",
+    "snapshot": "stratixiv_atoms.v",
+    "sha256": "1115498A11E74A6E80AAFCA487CD3FE8F698389F6B29E89C42C9E10B549D5577"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh",
+    "snapshot": "original_sources/tb/lib/download_test_tasks.vh",
+    "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3",
+    "compile_source": "compile_sources/tb/lib/download_test_tasks.vh",
+    "adapted_sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v",
+    "snapshot": "original_sources/tb/lib/gmii_monitor.v",
+    "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9",
+    "compile_source": "compile_sources/tb/lib/gmii_monitor.v",
+    "adapted_sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v",
+    "snapshot": "original_sources/tb/lib/judge_endpoint.v",
+    "sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD",
+    "compile_source": "compile_sources/tb/lib/judge_endpoint.v",
+    "adapted_sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v",
+    "snapshot": "original_sources/tb/lib/line_driver.v",
+    "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F",
+    "compile_source": "compile_sources/tb/lib/line_driver.v",
+    "adapted_sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v",
+    "snapshot": "original_sources/tb/lib/line_monitor.v",
+    "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF",
+    "compile_source": "compile_sources/tb/lib/line_monitor.v",
+    "adapted_sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v",
+    "snapshot": "original_sources/tb/lib/link_model.v",
+    "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91",
+    "compile_source": "compile_sources/tb/lib/link_model.v",
+    "adapted_sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v",
+    "snapshot": "original_sources/tb/lib/load_test_endpoint.v",
+    "sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF",
+    "compile_source": "compile_sources/tb/lib/load_test_endpoint.v",
+    "adapted_sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v",
+    "snapshot": "original_sources/tb/lib/mac_tx_suite.v",
+    "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537",
+    "compile_source": "compile_sources/tb/lib/mac_tx_suite.v",
+    "adapted_sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_current.v",
+    "snapshot": "original_sources/tb/lib/rm_age_current.v",
+    "sha256": "854C3F61C7743A3D16CC24E925FF0A02022F9A2C865A8D8C845A09B1239EC28D",
+    "compile_source": "compile_sources/tb/lib/rm_age_current.v",
+    "adapted_sha256": "854C3F61C7743A3D16CC24E925FF0A02022F9A2C865A8D8C845A09B1239EC28D"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v",
+    "snapshot": "original_sources/tb/lib/rm_age_probe.v",
+    "sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A",
+    "compile_source": "compile_sources/tb/lib/rm_age_probe.v",
+    "adapted_sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_current.v",
+    "snapshot": "original_sources/tb/lib/rtc_retry_current.v",
+    "sha256": "D14055AF8196F655CC07EE739D15C4F4A42B721195AB8CF7CAAC6790DB837EF9",
+    "compile_source": "compile_sources/tb/lib/rtc_retry_current.v",
+    "adapted_sha256": "D14055AF8196F655CC07EE739D15C4F4A42B721195AB8CF7CAAC6790DB837EF9"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v",
+    "snapshot": "original_sources/tb/lib/rtc_retry_suite.v",
+    "sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A",
+    "compile_source": "compile_sources/tb/lib/rtc_retry_suite.v",
+    "adapted_sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v",
+    "snapshot": "original_sources/tb/lib/rx_core_suite.v",
+    "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52",
+    "compile_source": "compile_sources/tb/lib/rx_core_suite.v",
+    "adapted_sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v",
+    "snapshot": "original_sources/tb/lib/snmp_test_endpoint.v",
+    "sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E",
+    "compile_source": "compile_sources/tb/lib/snmp_test_endpoint.v",
+    "adapted_sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v",
+    "snapshot": "original_sources/tb/lib/sys_endpoint.v",
+    "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A",
+    "compile_source": "compile_sources/tb/lib/sys_endpoint.v",
+    "adapted_sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v",
+    "snapshot": "original_sources/tb/lib/sys_suite.v",
+    "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E",
+    "compile_source": "compile_sources/tb/lib/sys_suite.v",
+    "adapted_sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+    "snapshot": "original_sources/tb/lib/top_stream_endpoint.v",
+    "sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+    "compile_source": "compile_sources/tb/lib/top_stream_endpoint.v",
+    "adapted_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v",
+    "snapshot": "original_sources/tb/lib/tx_core_suite.v",
+    "sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A",
+    "compile_source": "compile_sources/tb/lib/tx_core_suite.v",
+    "adapted_sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_net_services.v",
+    "snapshot": "original_sources/tb/tb_net_services.v",
+    "sha256": "D023AA619B169EE5AC483C45DF7AD317B3C1008266FF2A06234042D70D4F902B",
+    "compile_source": "compile_sources/tb/tb_net_services.v",
+    "adapted_sha256": "D023AA619B169EE5AC483C45DF7AD317B3C1008266FF2A06234042D70D4F902B"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\net_services_ref.py",
+    "snapshot": "original_sources/tools/net_services_ref.py",
+    "sha256": "274261DF4998D8F3D395C14326CBCFD4BCE88A4E2A2B2D37A3C0C20A99E7B9AD"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\load_ref.py",
+    "snapshot": "original_sources/tools/load_ref.py",
+    "sha256": "7D40E7B866E193743DF1E94E70DB64BDB15F90DEC5B22BF139F0284D41C34F2E"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\download_ref.py",
+    "snapshot": "original_sources/tools/download_ref.py",
+    "sha256": "8F0494877CA8C5F0ABF5AC83DC1778A5C96EEF1BC2794659B74CC91AE8F895B7"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\snmp_ref.py",
+    "snapshot": "original_sources/tools/snmp_ref.py",
+    "sha256": "DD0DC77D3AD7C72714A483CB91A8B3B5A2898AEBC72328EC7F061F5856263B40"
+  },
+  {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py",
+    "snapshot": "original_sources/tools/afdx_ref.py",
+    "sha256": "B2F0F2010A26F8F4861C7BE0F80D6621BFA1AFABE6EFEEC59342FBCF9D212327"
+  }
+]

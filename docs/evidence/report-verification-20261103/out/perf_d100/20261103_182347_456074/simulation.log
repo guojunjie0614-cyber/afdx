@@ -1,0 +1,4 @@
+[STAGE] gbe77_d100 cycle=85623
+[COVERAGE] cycles=3154681
+[RESULT] tb_sys_perf PASS checks=71899473 errors=0
+- C:/Users/susu/Desktop/afdx/out/open_verilator/20261103_164842_323414/sources/tb/lib/sys_suite.v:279: Verilog $finish

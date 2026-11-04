@@ -1,0 +1,191 @@
+[CHECK] tb_sys_perf_var_es1_tx PASS items=254423 errors=0 either=0
+[CHECK] tb_sys_perf_var_es2_tx PASS items=254420 errors=0 either=0
+[CHECK] tb_sys_perf_var_es1_rx PASS items=117921 errors=0 either=46
+[CHECK] tb_sys_perf_var_es2_rx PASS items=117921 errors=0 either=44
+[CHECK] tb_sys_perf_var PASS items=549376 errors=0 either=0 w_over=0
+[CHECK] tb_sys_perf_var_gmii PASS items=385967 errors=0 either=0
+[R97 PASS] all eight variable stages present {}
+[R97 PASS] var_burst_d0 warmup >=2 maximum BAG {}
+[R97 PASS] var_burst_d0 es1_to_es2 window >=20ms {}
+[R97 PASS] var_burst_d0 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_burst_d0 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_burst_d0 es1_to_es2 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_burst_d0 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_burst_d0 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_burst_d0 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 0}
+[R97 PASS] var_burst_d0 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_burst_d0 es1_to_es2 no dropped {}
+[R97 PASS] var_burst_d0 es1_to_es2 no duplicate {}
+[R97 PASS] var_burst_d0 es1_to_es2 no overflow {}
+[R97 PASS] var_burst_d0 es2_to_es1 window >=20ms {}
+[R97 PASS] var_burst_d0 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_burst_d0 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_burst_d0 es2_to_es1 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_burst_d0 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_burst_d0 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_burst_d0 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_burst_d0 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_burst_d0 es2_to_es1 no dropped {}
+[R97 PASS] var_burst_d0 es2_to_es1 no duplicate {}
+[R97 PASS] var_burst_d0 es2_to_es1 no overflow {}
+[R97 PASS] var_burst_d257 warmup >=2 maximum BAG {}
+[R97 PASS] var_burst_d257 es1_to_es2 window >=20ms {}
+[R97 PASS] var_burst_d257 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_burst_d257 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_burst_d257 es1_to_es2 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_burst_d257 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_burst_d257 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_burst_d257 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 0}
+[R97 PASS] var_burst_d257 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_burst_d257 es1_to_es2 no dropped {}
+[R97 PASS] var_burst_d257 es1_to_es2 no duplicate {}
+[R97 PASS] var_burst_d257 es1_to_es2 no overflow {}
+[R97 PASS] var_burst_d257 es2_to_es1 window >=20ms {}
+[R97 PASS] var_burst_d257 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_burst_d257 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_burst_d257 es2_to_es1 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_burst_d257 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_burst_d257 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_burst_d257 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 0}
+[R97 PASS] var_burst_d257 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_burst_d257 es2_to_es1 no dropped {}
+[R97 PASS] var_burst_d257 es2_to_es1 no duplicate {}
+[R97 PASS] var_burst_d257 es2_to_es1 no overflow {}
+[R97 PASS] var_cycle_d0 warmup >=2 maximum BAG {}
+[R97 PASS] var_cycle_d0 es1_to_es2 window >=20ms {}
+[R97 PASS] var_cycle_d0 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_cycle_d0 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_cycle_d0 es1_to_es2 offered-load throughput {'measured_mbps': 70.403}
+[R97 PASS] var_cycle_d0 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_cycle_d0 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_cycle_d0 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 2443}
+[R97 PASS] var_cycle_d0 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_cycle_d0 es1_to_es2 no dropped {}
+[R97 PASS] var_cycle_d0 es1_to_es2 no duplicate {}
+[R97 PASS] var_cycle_d0 es1_to_es2 no overflow {}
+[R97 PASS] var_cycle_d0 es2_to_es1 window >=20ms {}
+[R97 PASS] var_cycle_d0 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_cycle_d0 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_cycle_d0 es2_to_es1 offered-load throughput {'measured_mbps': 70.403}
+[R97 PASS] var_cycle_d0 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_cycle_d0 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_cycle_d0 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 2443}
+[R97 PASS] var_cycle_d0 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_cycle_d0 es2_to_es1 no dropped {}
+[R97 PASS] var_cycle_d0 es2_to_es1 no duplicate {}
+[R97 PASS] var_cycle_d0 es2_to_es1 no overflow {}
+[R97 PASS] var_cycle_d257 warmup >=2 maximum BAG {}
+[R97 PASS] var_cycle_d257 es1_to_es2 window >=20ms {}
+[R97 PASS] var_cycle_d257 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_cycle_d257 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_cycle_d257 es1_to_es2 offered-load throughput {'measured_mbps': 70.403}
+[R97 PASS] var_cycle_d257 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_cycle_d257 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_cycle_d257 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 2443}
+[R97 PASS] var_cycle_d257 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_cycle_d257 es1_to_es2 no dropped {}
+[R97 PASS] var_cycle_d257 es1_to_es2 no duplicate {}
+[R97 PASS] var_cycle_d257 es1_to_es2 no overflow {}
+[R97 PASS] var_cycle_d257 es2_to_es1 window >=20ms {}
+[R97 PASS] var_cycle_d257 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_cycle_d257 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_cycle_d257 es2_to_es1 offered-load throughput {'measured_mbps': 70.403}
+[R97 PASS] var_cycle_d257 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_cycle_d257 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_cycle_d257 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 2443}
+[R97 PASS] var_cycle_d257 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_cycle_d257 es2_to_es1 no dropped {}
+[R97 PASS] var_cycle_d257 es2_to_es1 no duplicate {}
+[R97 PASS] var_cycle_d257 es2_to_es1 no overflow {}
+[R97 PASS] var_fixed_d0 warmup >=2 maximum BAG {}
+[R97 PASS] var_fixed_d0 es1_to_es2 window >=20ms {}
+[R97 PASS] var_fixed_d0 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_fixed_d0 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_fixed_d0 es1_to_es2 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_fixed_d0 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_fixed_d0 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_fixed_d0 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_fixed_d0 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_fixed_d0 es1_to_es2 no dropped {}
+[R97 PASS] var_fixed_d0 es1_to_es2 no duplicate {}
+[R97 PASS] var_fixed_d0 es1_to_es2 no overflow {}
+[R97 PASS] var_fixed_d0 es2_to_es1 window >=20ms {}
+[R97 PASS] var_fixed_d0 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_fixed_d0 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_fixed_d0 es2_to_es1 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_fixed_d0 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_fixed_d0 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_fixed_d0 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_fixed_d0 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_fixed_d0 es2_to_es1 no dropped {}
+[R97 PASS] var_fixed_d0 es2_to_es1 no duplicate {}
+[R97 PASS] var_fixed_d0 es2_to_es1 no overflow {}
+[R97 PASS] var_fixed_d257 warmup >=2 maximum BAG {}
+[R97 PASS] var_fixed_d257 es1_to_es2 window >=20ms {}
+[R97 PASS] var_fixed_d257 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_fixed_d257 es1_to_es2 five payload lengths {}
+[R97 REPORT] var_fixed_d257 es1_to_es2 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_fixed_d257 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_fixed_d257 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_fixed_d257 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_fixed_d257 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_fixed_d257 es1_to_es2 no dropped {}
+[R97 PASS] var_fixed_d257 es1_to_es2 no duplicate {}
+[R97 PASS] var_fixed_d257 es1_to_es2 no overflow {}
+[R97 PASS] var_fixed_d257 es2_to_es1 window >=20ms {}
+[R97 PASS] var_fixed_d257 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_fixed_d257 es2_to_es1 five payload lengths {}
+[R97 REPORT] var_fixed_d257 es2_to_es1 offered-load throughput {'measured_mbps': 57.794}
+[R97 PASS] var_fixed_d257 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_fixed_d257 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_fixed_d257 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_fixed_d257 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_fixed_d257 es2_to_es1 no dropped {}
+[R97 PASS] var_fixed_d257 es2_to_es1 no duplicate {}
+[R97 PASS] var_fixed_d257 es2_to_es1 no overflow {}
+[R97 PASS] var_high_d0 warmup >=2 maximum BAG {}
+[R97 PASS] var_high_d0 es1_to_es2 window >=20ms {}
+[R97 PASS] var_high_d0 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_high_d0 es1_to_es2 five payload lengths {}
+[R97 PASS] var_high_d0 es1_to_es2 injection payload >=100Mbps {'measured_inject_mbps': 904.752}
+[R97 PASS] var_high_d0 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_high_d0 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_high_d0 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_high_d0 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_high_d0 es1_to_es2 no dropped {}
+[R97 PASS] var_high_d0 es1_to_es2 no duplicate {}
+[R97 PASS] var_high_d0 es1_to_es2 no overflow {}
+[R97 PASS] var_high_d0 es2_to_es1 window >=20ms {}
+[R97 PASS] var_high_d0 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_high_d0 es2_to_es1 five payload lengths {}
+[R97 PASS] var_high_d0 es2_to_es1 injection payload >=100Mbps {'measured_inject_mbps': 904.752}
+[R97 PASS] var_high_d0 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_high_d0 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_high_d0 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_high_d0 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_high_d0 es2_to_es1 no dropped {}
+[R97 PASS] var_high_d0 es2_to_es1 no duplicate {}
+[R97 PASS] var_high_d0 es2_to_es1 no overflow {}
+[R97 PASS] var_high_d257 warmup >=2 maximum BAG {}
+[R97 PASS] var_high_d257 es1_to_es2 window >=20ms {}
+[R97 PASS] var_high_d257 es1_to_es2 >=8 frames per VL {}
+[R97 PASS] var_high_d257 es1_to_es2 five payload lengths {}
+[R97 PASS] var_high_d257 es1_to_es2 injection payload >=100Mbps {'measured_inject_mbps': 904.752}
+[R97 PASS] var_high_d257 es1_to_es2 all-frame R119 latency <=2000us {}
+[R97 PASS] var_high_d257 es1_to_es2 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_high_d257 es1_to_es2 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_high_d257 es1_to_es2 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_high_d257 es1_to_es2 no dropped {}
+[R97 PASS] var_high_d257 es1_to_es2 no duplicate {}
+[R97 PASS] var_high_d257 es1_to_es2 no overflow {}
+[R97 PASS] var_high_d257 es2_to_es1 window >=20ms {}
+[R97 PASS] var_high_d257 es2_to_es1 >=8 frames per VL {}
+[R97 PASS] var_high_d257 es2_to_es1 five payload lengths {}
+[R97 PASS] var_high_d257 es2_to_es1 injection payload >=100Mbps {'measured_inject_mbps': 904.752}
+[R97 PASS] var_high_d257 es2_to_es1 all-frame R119 latency <=2000us {}
+[R97 PASS] var_high_d257 es2_to_es1 all-frame first-byte latency <=2000us {}
+[R97 PASS] var_high_d257 es2_to_es1 same-VL same-length jitter <=50us {'cycles': 1}
+[R97 PASS] var_high_d257 es2_to_es1 injection lag <= one maximum payload {'cycles': 2}
+[R97 PASS] var_high_d257 es2_to_es1 no dropped {}
+[R97 PASS] var_high_d257 es2_to_es1 no duplicate {}
+[R97 PASS] var_high_d257 es2_to_es1 no overflow {}

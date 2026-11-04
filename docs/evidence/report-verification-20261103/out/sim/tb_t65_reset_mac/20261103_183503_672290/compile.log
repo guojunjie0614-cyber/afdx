@@ -1,0 +1,77 @@
+Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
+Start time: 18:35:04 on Nov 03,2026
+vlog -vlog01compat "+incdir+C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib" "+define+AFDX_CE_DIV=2" C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_615a.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_615a_engine.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_app_map.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_app_payload.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_app_read.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_app_rx.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_app_tx.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_cfg.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_crc32_d8.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_es.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_mac_rx.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_mac_tx.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_mgmt_tx.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_ntp_fraction.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_ram_sdp.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rtc.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_core.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_deliver.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_engine.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_parse.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_reassembly.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_reassembly_bank.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_reassembly_payload.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_rx_reassembly_ram.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_snmp.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_snmp_engine.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_svc.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_timebase.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\AFDX_top.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_tx_buf.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_tx_builder.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_tx_core.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_tx_engine.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\rtl\afdx_tx_free.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\gmii_monitor.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\judge_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\line_driver.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\line_monitor.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\link_model.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\load_test_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\mac_tx_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\rm_age_probe.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\rtc_retry_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\rx_core_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\snmp_test_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\sys_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\sys_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\top_stream_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\lib\tx_core_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_t65_reset_mac\20261103_183503_672290\compile_sources\tb\tb_t65_reset_mac.v 
+-- Compiling module afdx_615a
+-- Compiling module afdx_615a_engine
+-- Compiling module afdx_app_map
+-- Compiling module afdx_app_payload
+-- Compiling module afdx_app_payload_bank
+-- Compiling module afdx_app_payload_slice
+-- Compiling module afdx_app_read
+-- Compiling module afdx_app_rx
+-- Compiling module afdx_app_tx
+-- Compiling module afdx_cfg
+-- Compiling module afdx_crc32_d8
+-- Compiling module afdx_es
+-- Compiling module afdx_mac_rx
+-- Compiling module afdx_mac_tx
+-- Compiling module afdx_mgmt_tx
+-- Compiling module afdx_ntp_fraction
+-- Compiling module afdx_ram_sdp
+-- Compiling module afdx_rtc
+-- Compiling module afdx_rx_core
+-- Compiling module afdx_rx_table_slice
+-- Compiling module afdx_rx_deliver
+-- Compiling module afdx_rx_engine
+-- Compiling module afdx_rx_parse
+-- Compiling module afdx_rx_reassembly
+-- Compiling module afdx_rx_reassembly_bank
+-- Compiling module afdx_rx_reassembly_payload
+-- Compiling module afdx_rx_reassembly_payload_slot
+-- Compiling module afdx_rx_reassembly_payload_lane
+-- Compiling module afdx_rx_reassembly_ram
+-- Compiling module afdx_snmp
+-- Compiling module afdx_snmp_engine
+-- Compiling module afdx_svc
+-- Compiling module afdx_timebase
+-- Compiling module AFDX_top
+-- Compiling module afdx_tx_buf
+-- Compiling module afdx_tx_ingress_elastic
+-- Compiling module afdx_tx_rollback_ram
+-- Compiling module afdx_tx_builder
+-- Compiling module afdx_tx_core
+-- Compiling module afdx_tx_payload_store
+-- Compiling module afdx_tx_engine
+-- Compiling module afdx_tx_free
+-- Compiling module gmii_monitor
+-- Compiling module judge_endpoint
+-- Compiling module line_driver
+-- Compiling module line_monitor
+-- Compiling module link_model
+-- Compiling module load_test_endpoint
+-- Compiling module mac_tx_suite
+-- Compiling module rm_age_probe
+-- Compiling module rtc_retry_suite
+-- Compiling module rx_core_suite
+-- Compiling module snmp_test_endpoint
+-- Compiling module sys_endpoint
+-- Compiling module sys_suite
+-- Compiling module top_stream_endpoint
+-- Compiling module tx_core_suite
+-- Compiling module tb_t65_reset_mac
+-- Compiling module t65_capture
+
+Top level modules:
+	judge_endpoint
+	line_driver
+	load_test_endpoint
+	mac_tx_suite
+	rm_age_probe
+	rtc_retry_suite
+	rx_core_suite
+	snmp_test_endpoint
+	sys_suite
+	tx_core_suite
+	tb_t65_reset_mac
+End time: 18:35:04 on Nov 03,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0

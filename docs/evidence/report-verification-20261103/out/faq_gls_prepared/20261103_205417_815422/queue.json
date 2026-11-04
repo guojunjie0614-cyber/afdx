@@ -1,0 +1,38 @@
+[
+  {
+    "stage": "rtl",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_gls.py",
+      "rtl",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_gls_prepared\\20261103_205417_815422"
+    ],
+    "status": "finished",
+    "returncode": 0
+  },
+  {
+    "stage": "gate",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_gls.py",
+      "gate",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_gls_prepared\\20261103_205417_815422",
+      "--rtl-reference",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_gls\\rtl\\20261103_205418_274519",
+      "--wait-net-driver",
+      "16724",
+      "--wait-created",
+      "1793699579.0795856"
+    ],
+    "status": "failed",
+    "error": "Verification process stopped: available_memory_floor"
+  }
+]

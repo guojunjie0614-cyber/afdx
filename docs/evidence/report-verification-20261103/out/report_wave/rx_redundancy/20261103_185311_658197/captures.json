@@ -1,0 +1,33 @@
+{
+  "captures": [
+    {
+      "name": "rx_redundancy_1",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\captures\\rx_redundancy_1.png",
+      "sha256": "B5217F2EAD4704BF053E1CE03A5F9084F9D1D849AB91126528DC16FBCC912D44",
+      "requested_pid": 25024,
+      "owned_processes": {
+        "27104": 1793703191.9085543,
+        "27432": 1793703191.9178207,
+        "25024": 1793703191.944306,
+        "26364": 1793703192.0204148,
+        "29652": 1793703211.7681258
+      },
+      "window": "3016794.000ns 3017104.000ns"
+    },
+    {
+      "name": "rx_redundancy_2",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\captures\\rx_redundancy_2.png",
+      "sha256": "74FB7C2C3FC88983C9FCA2DD7A03EC259D48291EF58D9F51F66EC136A889EFEE",
+      "requested_pid": 25024,
+      "owned_processes": {
+        "27104": 1793703191.9085543,
+        "27432": 1793703191.9178207,
+        "25024": 1793703191.944306,
+        "26364": 1793703192.0204148,
+        "29652": 1793703211.7681258
+      },
+      "window": "3032408.000ns 3032668.000ns"
+    }
+  ],
+  "failures": []
+}

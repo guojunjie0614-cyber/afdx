@@ -1,0 +1,231 @@
+{
+  "test": "tb_sys_perf_d100",
+  "verification_profile": "fragmentation1030",
+  "items": 277508,
+  "errors": 0,
+  "reports": {
+    "es1_tx": {
+      "test": "tb_sys_perf_d100_es1_tx",
+      "items": 41124,
+      "errors": 0,
+      "either": 0,
+      "messages": 1771,
+      "frames_a": 1771,
+      "frames_b": 1771,
+      "sends": 1771,
+      "stages": {
+        "gbe77_d100": 1771
+      },
+      "diagnostics": []
+    },
+    "es2_tx": {
+      "test": "tb_sys_perf_d100_es2_tx",
+      "items": 41124,
+      "errors": 0,
+      "either": 0,
+      "messages": 1771,
+      "frames_a": 1771,
+      "frames_b": 1771,
+      "sends": 1771,
+      "stages": {
+        "gbe77_d100": 1771
+      },
+      "diagnostics": []
+    },
+    "es1_rx": {
+      "test": "tb_sys_perf_d100_es1_rx",
+      "items": 19482,
+      "errors": 0,
+      "either": 7,
+      "segments": 3542,
+      "segments_a": 1771,
+      "segments_b": 1771,
+      "pulses": {
+        "a_good": 1771,
+        "b_good": 1771,
+        "deliver": 1771,
+        "rm_drop": 1771
+      },
+      "deliveries": 1771,
+      "max_delivery_latency": 69,
+      "stages": {
+        "gbe77_d100": {
+          "segments": 3542,
+          "good": 3542,
+          "deliver": 1771,
+          "rm_drop": 1771
+        }
+      },
+      "diagnostics": []
+    },
+    "es2_rx": {
+      "test": "tb_sys_perf_d100_es2_rx",
+      "items": 19482,
+      "errors": 0,
+      "either": 6,
+      "segments": 3542,
+      "segments_a": 1771,
+      "segments_b": 1771,
+      "pulses": {
+        "a_good": 1771,
+        "b_good": 1771,
+        "deliver": 1771,
+        "rm_drop": 1771
+      },
+      "deliveries": 1771,
+      "max_delivery_latency": 69,
+      "stages": {
+        "gbe77_d100": {
+          "segments": 3542,
+          "good": 3542,
+          "deliver": 1771,
+          "rm_drop": 1771
+        }
+      },
+      "diagnostics": []
+    },
+    "system": {
+      "test": "tb_sys_perf_d100",
+      "items": 92521,
+      "errors": 0,
+      "either": 0,
+      "w_over": 0,
+      "latency": {
+        "gbe77_d100": {
+          "samples": 3542,
+          "limit_min": 123426,
+          "limit_max": 123426,
+          "W_samples": 3388,
+          "W_max": 1,
+          "W_mean": 0.048996458087367176,
+          "rx_samples": 3542,
+          "rx_max": 68,
+          "rx_mean": 67.00141163184641,
+          "e2e_samples": 3542,
+          "e2e_max": 1733,
+          "e2e_mean": 1730.94099378882,
+          "w_over": 0
+        }
+      },
+      "w_over_rows": [],
+      "endpoints": {
+        "es1": {
+          "messages": 1771,
+          "accepted": 1771,
+          "deliveries": 1771,
+          "counter_nonzero": {
+            "accept": 1771,
+            "tx_a": 1771,
+            "tx_b": 1771,
+            "a_good": 1771,
+            "b_good": 1771,
+            "rm_drop": 1771,
+            "deliver": 1771
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "gbe77_d100": {
+              "accept": 1771,
+              "tx_a": 1771,
+              "tx_b": 1771,
+              "a_good": 1771,
+              "b_good": 1771,
+              "deliver": 1771,
+              "rm_drop": 1771
+            }
+          }
+        },
+        "es2": {
+          "messages": 1771,
+          "accepted": 1771,
+          "deliveries": 1771,
+          "counter_nonzero": {
+            "accept": 1771,
+            "tx_a": 1771,
+            "tx_b": 1771,
+            "a_good": 1771,
+            "b_good": 1771,
+            "rm_drop": 1771,
+            "deliver": 1771
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "gbe77_d100": {
+              "accept": 1771,
+              "tx_a": 1771,
+              "tx_b": 1771,
+              "a_good": 1771,
+              "b_good": 1771,
+              "deliver": 1771,
+              "rm_drop": 1771
+            }
+          }
+        }
+      },
+      "rewrites": {
+        "tx": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "map": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "cfg": {
+          "count": 0,
+          "max_wait": 0
+        }
+      },
+      "performance": {},
+      "diagnostics": []
+    },
+    "gmii": {
+      "test": "tb_sys_perf_d100_gmii",
+      "items": 63775,
+      "errors": 0,
+      "either": 0,
+      "tx_delay": 0,
+      "replay_delay": 0,
+      "capacity": 0,
+      "channels": {
+        "es2_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 1771,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es2_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 1771,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 1771,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 1771,
+          "dropped": 0,
+          "self_spaced_input": true
+        }
+      },
+      "diagnostics": []
+    }
+  }
+}

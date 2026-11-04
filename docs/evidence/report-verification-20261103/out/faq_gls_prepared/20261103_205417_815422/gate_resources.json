@@ -1,0 +1,7 @@
+{
+  "pid": 31740,
+  "peak_tree_bytes": 151302144,
+  "seconds": 5188.984,
+  "returncode": 15,
+  "stop_reason": "available_memory_floor"
+}

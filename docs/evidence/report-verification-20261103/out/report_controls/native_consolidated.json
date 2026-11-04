@@ -1,0 +1,612 @@
+{
+  "passed": true,
+  "hdl_mutants": 32,
+  "checker_failure_propagation": 1,
+  "results": [
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_183425_112999",
+      "test": "tb_t65_queue_a",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 3088,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_183429_613598",
+      "test": "tb_t65_queue_a",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 3088,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_app\\20261103_183433_596444",
+      "test": "tb_t65_reset_app",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_app\\20261103_183443_056783",
+      "test": "tb_t65_reset_app",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 10,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183454_588864",
+      "test": "tb_t65_reset_mac",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+      "test": "tb_t65_reset_mac",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 10,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_rx\\20261103_183512_999393",
+      "test": "tb_t65_reset_rx",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_rx\\20261103_183521_790381",
+      "test": "tb_t65_reset_rx",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 204,
+      "hdl_errors": 10,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_183530_375606",
+      "test": "tb_t65_rx_data",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 43625157,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_183604_051414",
+      "test": "tb_t65_rx_data",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 43625157,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_desc\\20261103_183636_421699",
+      "test": "tb_t65_rx_desc",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 2154,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_desc\\20261103_183640_064310",
+      "test": "tb_t65_rx_desc",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 2154,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_desc\\20261103_183643_748619",
+      "test": "tb_t65_tx_desc",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 221974,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_desc\\20261103_183649_845949",
+      "test": "tb_t65_tx_desc",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 221974,
+      "hdl_errors": 3,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_hint\\20261103_183655_648489",
+      "test": "tb_t65_tx_hint",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 219058,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_hint\\20261103_183701_432103",
+      "test": "tb_t65_tx_hint",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 219058,
+      "hdl_errors": 2,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_init\\20261103_183706_636873",
+      "test": "tb_t65_tx_init",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 198841,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_init\\20261103_183712_103022",
+      "test": "tb_t65_tx_init",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 198841,
+      "hdl_errors": 2,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_ready\\20261103_183717_905113",
+      "test": "tb_t65_tx_ready",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 220279,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_ready\\20261103_183723_426534",
+      "test": "tb_t65_tx_ready",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 220279,
+      "hdl_errors": 3,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_full\\20261103_183729_160825",
+      "test": "tb_t65_tx_short_full",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 504801,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_full\\20261103_183736_179324",
+      "test": "tb_t65_tx_short_full",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 504801,
+      "hdl_errors": 2,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_init\\20261103_183742_953000",
+      "test": "tb_t65_tx_short_init",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 498847,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_init\\20261103_183749_765366",
+      "test": "tb_t65_tx_short_init",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 498847,
+      "hdl_errors": 2,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_normal\\20261103_183756_870505",
+      "test": "tb_t65_tx_short_normal",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 499054,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_normal\\20261103_183804_173576",
+      "test": "tb_t65_tx_short_normal",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 499054,
+      "hdl_errors": 2,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_unmapped\\20261103_183816_062154",
+      "test": "tb_t65_tx_unmapped",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 199802,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_unmapped\\20261103_183821_889894",
+      "test": "tb_t65_tx_unmapped",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 199802,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_183827_351727",
+      "test": "tb_t65_queue_a",
+      "entry_exit": 1,
+      "hdl_status": "PASS",
+      "hdl_checks": 3088,
+      "hdl_errors": 0,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 0,
+      "propagation": true
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_184141_215156",
+      "test": "tb_t65_tx_space",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 458440,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_184148_527673",
+      "test": "tb_t65_tx_space",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 458440,
+      "hdl_errors": 3,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_184155_602295",
+      "test": "tb_t65_tx_space_edge",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 352942,
+      "hdl_errors": 1,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": true,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_184201_838942",
+      "test": "tb_t65_tx_space_edge",
+      "entry_exit": 1,
+      "hdl_status": "FAIL",
+      "hdl_checks": 352942,
+      "hdl_errors": 3,
+      "diagnostics": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 0,
+        "RAMCOLL": 0
+      },
+      "mutant": 2,
+      "propagation": false
+    }
+  ],
+  "preserved_failed_attempts": [
+    {
+      "passed": false,
+      "test": "tb_t65_tx_space",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_183811_202576",
+      "entry_exit": 1,
+      "error": "Control did not execute normally: compile",
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": false,
+      "test": "tb_t65_tx_space",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_183812_404965",
+      "entry_exit": 1,
+      "error": "Control did not execute normally: compile",
+      "mutant": 2,
+      "propagation": false
+    },
+    {
+      "passed": false,
+      "test": "tb_t65_tx_space_edge",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_183813_613072",
+      "entry_exit": 1,
+      "error": "Control did not execute normally: compile",
+      "mutant": 1,
+      "propagation": false
+    },
+    {
+      "passed": false,
+      "test": "tb_t65_tx_space_edge",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_183814_837513",
+      "entry_exit": 1,
+      "error": "Control did not execute normally: compile",
+      "mutant": 2,
+      "propagation": false
+    }
+  ],
+  "batches": [
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_controls\\native_20261103_183425_111647",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_controls\\native_20261103_184141_213911"
+  ],
+  "identity": "Every accepted real run revalidated against current input bytes",
+  "policy": "Normal native compilation/simulation; diagnostic-free HDL FAIL, official entry exit1; no negative UCDBs"
+}

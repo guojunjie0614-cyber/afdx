@@ -1,0 +1,3 @@
+GUI NETLIST START tb_elinx mode=gui output=C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_elinx_gui\20261103_175259_260854
+GUI NETLIST FAIL tb_elinx mode=gui: simulation: exit=15 reason=memory_guard; C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_elinx_gui\20261103_175259_260854\simulation.log
+GUI NETLIST ENTRY FAIL: simulation: exit=15 reason=memory_guard; C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_elinx_gui\20261103_175259_260854\simulation.log

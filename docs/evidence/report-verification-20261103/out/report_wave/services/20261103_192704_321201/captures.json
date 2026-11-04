@@ -1,0 +1,21 @@
+{
+  "captures": [
+    {
+      "name": "services",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\captures\\services.png",
+      "sha256": "6F5D4FBC21983B1F2D0F3BC9A14EBFB9B640E01F2A66DE49A5C46C5A88E52598",
+      "width": 1496,
+      "height": 709,
+      "requested_pid": 30644,
+      "owned_processes": {
+        "29988": 1793705224.5248516,
+        "9284": 1793705224.5325549,
+        "30644": 1793705224.5498753,
+        "28740": 1793705224.5991964,
+        "19596": 1793705234.0331132
+      },
+      "window": "0ns 1095014.000ns"
+    }
+  ],
+  "failures": []
+}

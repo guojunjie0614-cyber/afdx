@@ -1,0 +1,34 @@
+# vsim -batch tb_faq_rx_trace -wlf simulation.wlf -do "do run.do" 
+# Start time: 22:22:16 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.tb_faq_rx_trace(fast)
+# Loading work.tb_fragmentation(fast)
+# Loading work.afdx_app_tx(fast)
+# Loading work.afdx_615a(fast)
+# Loading work.afdx_snmp(fast)
+# Loading work.afdx_rtc(fast)
+# Loading work.afdx_tx_core(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# Loading work.afdx_cfg(fast)
+# Loading work.afdx_rx_reassembly_bank(fast__1)
+# 
+# do run.do
+# [RESULT] tb_fragmentation FAIL missing deliveries 33/40
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/faq_rx_trace_context/20261103_222215_278495/compile_sources/tb/tb_fragmentation.v(92)
+#    Time: 36120800 ns  Iteration: 1  Instance: /tb_faq_rx_trace/suite
+# End time: 22:25:17 on Nov 03,2026, Elapsed time: 0:03:01
+# Errors: 0, Warnings: 0

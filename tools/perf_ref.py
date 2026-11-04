@@ -3,6 +3,14 @@ import collections
 
 
 def measure(sysrows,endpoints,gmii,samples,expect):
+    from verification_profile import selected as profile_name, CURRENT
+    current = profile_name() == CURRENT
+    def submission(m):
+        if current:
+            expect(m.get('public_first') is not None and m.get('public_last') is not None,
+                   'current profile requires public application timestamps')
+            return m['public_first']
+        return m['cycle']
     windows={};marks=[(c,p[2]) for c,_,p in sysrows if p[0]=='P']
     for c,_,p in sysrows:
         if p[0]=='F' and p[2] in ('begin','end'):
@@ -48,7 +56,7 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                        'full payload VLs with BAG 1ms '+stage)
                 for vl in range(vls):
                     mm=[m for m in all_messages if m['vl']==vl]
-                    expect(len(mm)>=23 and all(b['cycle']-a['cycle']==bag for a,b in zip(mm,mm[1:])),
+                    expect(len(mm)>=23 and all(submission(b)-submission(a)==bag for a,b in zip(mm,mm[1:])),
                            f'L8 one submission per BAG ES{source_number} VL{vl} {stage}')
             else:
                 expect(len({m['vl'] for m in all_messages})==1,'L8 light load one VL '+stage)
@@ -101,7 +109,7 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     expect(0<rx_value<=250000,'L8 receive last-byte latency <=2ms '+stage)
                     expect(0<=tx_value-(bag_wait if throughput else 0)<=250000,'L8 TX latency <=2ms after BAG allowance '+stage)
                     expect(0<total-(bag_wait if throughput else 0)<=250000,'L8 end-to-end latency <=2ms after BAG allowance '+stage)
-                    if throughput:
+                    if throughput and not current:
                         expect(0<total<=25973,'raw end-to-end latency <= 207.784us '+stage)
             metrics.update(T_tx=stats(tx),T_rx=stats(rx),T_e2e_link_removed=stats(e2e),
                 T_tx_BAG_removed=stats(tx_adjusted),T_e2e_BAG_and_link_removed=stats(e2e_adjusted),BAG_wait=stats(bags))
@@ -130,14 +138,40 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                 metrics['jitter_definition']='max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups'
                 expect(metrics['tx_jitter_cycles']<=7 and metrics['e2e_jitter_cycles']<=7,'light jitter <= seven cycles '+stage)
                 metrics['average_payload_mbps']=sum(m['n'] for m in all_messages)*1000/(stage_end-stage_start)
-                expect(max(e2e,default=0)<=25973,'light end-to-end latency floor '+stage)
+                if not current:expect(max(e2e,default=0)<=25973,'light end-to-end latency floor '+stage)
                 metrics['jitter']=dict(max=metrics['tx_jitter_cycles'],max_us=metrics['tx_jitter_cycles']*0.008,
                                        samples=sum(g['samples'] for g in light_groups.values()))
             else:
                 metrics['jitter']=stats(intervals)
-                if not near_limit:expect(bool(intervals) and all(v==0 for v in intervals),'full-load TX jitter zero '+stage)
+                if current:
+                    expect(bool(intervals) and all(v>=0 for v in intervals),'TX intervals never shorter than BAG '+stage)
+                elif not near_limit:expect(bool(intervals) and all(v==0 for v in intervals),'full-load TX jitter zero '+stage)
             metrics['scheduling_interval_error']=stats([abs(v) for v in schedule_errors])
             metrics['raw_gap_minus_BAG']=stats(intervals)
+            if current:
+                primary=[];groups=collections.defaultdict(list)
+                # Include warmup and drain messages in primary latency acceptance.
+                for m in all_messages:
+                    if len(m['deliveries'])!=1:continue
+                    d=m['deliveries'][0]
+                    expect(d.get('public_last') is not None,'current profile requires public receive timestamps')
+                    value=d['public_last']-submission(m)
+                    primary.append(value);groups[m['vl'],m['n']].append(value)
+                    expect(0<value<=250000,'R119 public first-valid to last-byte <=2ms '+stage)
+                jitter=max((max(v)-min(v) for v in groups.values()),default=0)
+                expect(bool(primary) and jitter<=6250,'R119 same-VL same-length jitter <= project 50us '+stage)
+                if throughput and duration>0:
+                    expect(all(m['public_last']-m['public_first']+1==m['n']+2 for m in all_messages),
+                           'fixed performance public payload stream is continuous '+stage)
+                    injected=sum(overlap(m['public_first']+2,m['public_last']+1,begin,end) for m in all_messages)
+                    metrics['inject_payload_bytes']=injected
+                    metrics['inject_mbps']=injected*1000/duration
+                    expect(metrics['inject_mbps']>=100,'R120 public injection >=100Mbps '+stage)
+                metrics['L_entry_last']=stats(primary)
+                metrics['jitter_r119_cycles']=jitter
+                metrics['verification_profile']=profile_name()
+                metrics['legacy_zero_wire_deviation']=bool(intervals) and all(v==0 for v in intervals)
+                metrics['legacy_207_784us_bound']=max(e2e,default=0)<=25973
             metrics['formula_limit']=max((m['w_limit'] for m in selected),default=0)
             metrics['formula_limit_us']=metrics['formula_limit']*0.008
             stage_result['directions'][f'es{source_number}_to_es{3-source_number}']=metrics

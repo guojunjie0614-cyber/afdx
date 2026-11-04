@@ -1,0 +1,47 @@
+# vsim -batch -coverage tb_judge_snmp -wlf simulation.wlf -do "do run.do" 
+# Start time: 21:01:02 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_app_rx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_reassembly(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_ntp_fraction(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_buf(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_tx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_rx(fast)".
+# ** Note: (vopt-143) Recognized 2 FSMs in module "afdx_615a_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_parse(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_snmp_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_free(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rtc(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_snmp(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_builder(fast)".
+# ** Note: (vopt-143) Recognized 3 FSMs in module "afdx_rx_reassembly_bank(fast)".
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_judge_snmp(fast)
+# Loading work.AFDX_top(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# 
+# do run.do
+# [SNMP_RESPONSE] request_id=1001 error=0 returned=9029 cfg=9029
+# [SNMP_RESPONSE] request_id=1002 error=0 returned=9029 cfg=9029
+# [SNMP_RESPONSE] request_id=1003 error=0 returned=13398 cfg=13398
+# [SNMP_SUMMARY] Get=1 GetNext=1 Set=1 Trap=1 request_id=PASS error_status=0 register_values=PASS
+# [RESULT] tb_judge_snmp PASS checks=699 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_judge_snmp/20261103_210101_511006/compile_sources/tb/tb_judge_snmp.v(205)
+#    Time: 11212993 ns  Iteration: 0  Instance: /tb_judge_snmp
+# Saving coverage database on exit...
+# End time: 21:03:13 on Nov 03,2026, Elapsed time: 0:02:11
+# Errors: 0, Warnings: 0

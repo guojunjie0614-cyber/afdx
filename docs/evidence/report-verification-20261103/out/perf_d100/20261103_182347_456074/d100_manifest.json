@@ -1,0 +1,300 @@
+{
+  "test": "tb_sys_perf_d100",
+  "stage": "gbe77_d100",
+  "status": "checked_fail",
+  "experiment": "current reconstruction of the 100-clock condition",
+  "historical_reproduction_claim": false,
+  "created": "2026-11-03T18:23:49.004667+08:00",
+  "verification_profile": "fragmentation1030",
+  "binary_identity": {
+    "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_164842_323414\\tb_sys_perf",
+    "build_top": "tb_sys_perf",
+    "parameters": [],
+    "executable": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_164842_323414\\tb_sys_perf\\simulation.exe",
+    "executable_sha256": "6d239394e09b0a2495611e0e22a9619c3ebe5f3a1721665dacb10e3ea36c847e",
+    "dependencies": [
+      {
+        "path": "rtl/AFDX_top.v",
+        "bytes": 4081,
+        "sha256": "986f42b7d24d7c35a015067c2c0981d22f187d2de9038899ef0f2c45b9929273"
+      },
+      {
+        "path": "rtl/afdx_615a.v",
+        "bytes": 34385,
+        "sha256": "5a00250c2100ddf766547388bed4a2f77f0b70f6e4d80f4568e27b75575e1328"
+      },
+      {
+        "path": "rtl/afdx_615a_engine.v",
+        "bytes": 122031,
+        "sha256": "2b738eb758fbcde4ca0b0d2b3c7b92e8a1a57160bc4ec424e8bb2c3aaa336684"
+      },
+      {
+        "path": "rtl/afdx_app_map.v",
+        "bytes": 902,
+        "sha256": "61db60365eb3bfda06732391aba6ae639b5a1e17731d3e7f54d637d62e490619"
+      },
+      {
+        "path": "rtl/afdx_app_payload.v",
+        "bytes": 5711,
+        "sha256": "0ea09a102ce850192b69af4cca480fc7b26bc3572a17e995514df4c0a58be8c6"
+      },
+      {
+        "path": "rtl/afdx_app_read.v",
+        "bytes": 3844,
+        "sha256": "32caab22b87d59ad6d33cd06a5d451772673bb2bdabb78abcdb567965454acba"
+      },
+      {
+        "path": "rtl/afdx_app_rx.v",
+        "bytes": 5328,
+        "sha256": "e1154212ccdc46d9200917f31951b05dd61b75f561b2ab77b1c4f2b12524490b"
+      },
+      {
+        "path": "rtl/afdx_app_tx.v",
+        "bytes": 15435,
+        "sha256": "729bc86fd2598c28e5ebcf293ae180b530ca54c52f6bcabf05eb16dfb8473337"
+      },
+      {
+        "path": "rtl/afdx_cfg.v",
+        "bytes": 37556,
+        "sha256": "ed7c4e5d11d037954ef809ff14bf9c0bd143e79b2998a5b7a92bdf9e7cdfdbca"
+      },
+      {
+        "path": "rtl/afdx_crc32_d8.v",
+        "bytes": 944,
+        "sha256": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614"
+      },
+      {
+        "path": "rtl/afdx_es.v",
+        "bytes": 20979,
+        "sha256": "0bcea4294262de512cbd05f337b3acf6a241ba169d64aa039b12d7790ece61b7"
+      },
+      {
+        "path": "rtl/afdx_mac_rx.v",
+        "bytes": 5483,
+        "sha256": "ee01466b3a4876ad902afe15dd75cd2b6d64b7819548763a57b44b521fd58300"
+      },
+      {
+        "path": "rtl/afdx_mac_tx.v",
+        "bytes": 9656,
+        "sha256": "682a248af47177ee0a771d4369d5c92539e08253ed33472ea9d654882d804180"
+      },
+      {
+        "path": "rtl/afdx_mgmt_tx.v",
+        "bytes": 7214,
+        "sha256": "142580bb28e7b16bc09fefc50f7e6f6d1e36fd7eed5a835937c890145cb40d19"
+      },
+      {
+        "path": "rtl/afdx_ntp_fraction.v",
+        "bytes": 5600,
+        "sha256": "645457c9637fa3cb148624b34b76e2d19868d263957fe5424476685775666cbf"
+      },
+      {
+        "path": "rtl/afdx_ram_sdp.v",
+        "bytes": 2287,
+        "sha256": "13aabc3c48dfbc513e1c555f3d84e79b9bb9405873e6357e11c3d2d4bcaedbdd"
+      },
+      {
+        "path": "rtl/afdx_rtc.v",
+        "bytes": 59427,
+        "sha256": "fbd6dca681c5b8cdef2e5166173eb49d963202c56b276453ecd6524b44156732"
+      },
+      {
+        "path": "rtl/afdx_rx_core.v",
+        "bytes": 21883,
+        "sha256": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1"
+      },
+      {
+        "path": "rtl/afdx_rx_deliver.v",
+        "bytes": 6513,
+        "sha256": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991"
+      },
+      {
+        "path": "rtl/afdx_rx_engine.v",
+        "bytes": 34254,
+        "sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13"
+      },
+      {
+        "path": "rtl/afdx_rx_parse.v",
+        "bytes": 23911,
+        "sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly.v",
+        "bytes": 12110,
+        "sha256": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_bank.v",
+        "bytes": 29474,
+        "sha256": "ca2450e8280779dbd95c03530e29d8d99ccd1edfb48d1f13d7f7f7aa45237703"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_payload.v",
+        "bytes": 3510,
+        "sha256": "45b6a4068a3616b232a5cb787d3a3e6d032178ebd16b22c6f95fc8c64ad42b7e"
+      },
+      {
+        "path": "rtl/afdx_rx_reassembly_ram.v",
+        "bytes": 1387,
+        "sha256": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369"
+      },
+      {
+        "path": "rtl/afdx_snmp.v",
+        "bytes": 28069,
+        "sha256": "416d734a8c3e5c8e76f426ef84c9f691ebfdcad89dcc63376c8291f4badd3b21"
+      },
+      {
+        "path": "rtl/afdx_snmp_engine.v",
+        "bytes": 84930,
+        "sha256": "05f03d3d5ee2775129cf55350c3d8e2bf3d3920f509b1204bb3c026d59bd8392"
+      },
+      {
+        "path": "rtl/afdx_svc.v",
+        "bytes": 11960,
+        "sha256": "8bea777aac38e083c61f1a3d7f59ebba6083a0ffd305231073f8291753ddbf60"
+      },
+      {
+        "path": "rtl/afdx_timebase.v",
+        "bytes": 1390,
+        "sha256": "17c66eadcbd2c11539a6bd0aef6ce4ea5377e04448c2d054a332d9112723769a"
+      },
+      {
+        "path": "rtl/afdx_tx_buf.v",
+        "bytes": 17531,
+        "sha256": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105"
+      },
+      {
+        "path": "rtl/afdx_tx_builder.v",
+        "bytes": 27548,
+        "sha256": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700"
+      },
+      {
+        "path": "rtl/afdx_tx_core.v",
+        "bytes": 17990,
+        "sha256": "4f59495299a1527b86d60a1b06778461b9a6afe620a36be08fa0999d6512b1b9"
+      },
+      {
+        "path": "rtl/afdx_tx_engine.v",
+        "bytes": 38160,
+        "sha256": "17f781f2687f4fd1231821754fe74f481388098f9b1374d00faf5d5a3efdafde"
+      },
+      {
+        "path": "rtl/afdx_tx_free.v",
+        "bytes": 6058,
+        "sha256": "422ddf4b9993b862faaa2b498dd9ac6d976fb6d98f2a877a2121257ecca5cf95"
+      },
+      {
+        "path": "tb/lib/gmii_monitor.v",
+        "bytes": 2236,
+        "sha256": "dd790d72de937779460ab593006c918c31d497b7c778211ebb25c632c6c3c7f9"
+      },
+      {
+        "path": "tb/lib/line_monitor.v",
+        "bytes": 2109,
+        "sha256": "d5a4ad53ccae38a4758738a1c343c7c2ac77543598ef5221b2d84084b50bedff"
+      },
+      {
+        "path": "tb/lib/link_model.v",
+        "bytes": 13714,
+        "sha256": "be426565c159ca3265a858e9f996e19d350dbbe43c75e93aa90011d83fbaec91"
+      },
+      {
+        "path": "tb/lib/sys_endpoint.v",
+        "bytes": 28991,
+        "sha256": "8331e3fd1add9da4dc1dcefb5c094a0dd658df54a55b0539f0e0aca1bfd4c81a"
+      },
+      {
+        "path": "tb/lib/sys_suite.v",
+        "bytes": 13581,
+        "sha256": "76e8f7d537c69674684b79d1fe09e0479ec8d92084538c5b192be1a42260b89e"
+      },
+      {
+        "path": "tb/lib/top_stream_endpoint.v",
+        "bytes": 14793,
+        "sha256": "6a09e4c6f100642b897f87eb34b10df0e031041e1324063052d6cbd3d53af7e5"
+      },
+      {
+        "path": "tb/tb_sys_perf.v",
+        "bytes": 673,
+        "sha256": "93de264fbf37b8962137362f87227ec87c14bece698bcb51a97224d6bfb194d8"
+      }
+    ],
+    "dependency_manifest_sha256": "3f84ebf649cb4e002b52ff12d947b7c963e480b56130fb851a25393ef6486cb4"
+  },
+  "analysis_sources": [
+    {
+      "path": "tools/sys_cases.py",
+      "sha256": "d3c7f63eb72a171fcd3f2523f7ff806f250b2636d866d805b95f888f8ddc7345"
+    },
+    {
+      "path": "tools/afdx_ref.py",
+      "sha256": "b2f0f2010a26f8f4861c7be0f80d6621bfa1afabe6efeec59342fbcf9d212327"
+    },
+    {
+      "path": "tools/tx_ref.py",
+      "sha256": "2cf729b9e4c3f94a7d33f243c0d4f986380d9dc7ffb284b945be2875619f63a8"
+    },
+    {
+      "path": "tools/rx_ref.py",
+      "sha256": "13ee9521942d3c60e612b1c219be4f081ed8e9e9d6c0808b123ac18825b8c46d"
+    },
+    {
+      "path": "tools/rx_checks.py",
+      "sha256": "e5cf1c17831e2822067827834f7efabf7e06b8ffe09b561e86e3979d86a5f15c"
+    },
+    {
+      "path": "tools/sys_ref.py",
+      "sha256": "91be65e208b9da4818a210ac815a8fb156671ff9f3dbeec71076d162251c1992"
+    },
+    {
+      "path": "tools/sys_checks.py",
+      "sha256": "39514229214f91b6907a0a2a214b1f85bf23218a804caafe1ae2bc07e9bb21b2"
+    },
+    {
+      "path": "tools/gmii_ref.py",
+      "sha256": "ecf198920d79012c5d75305d5ac8368b11a538c69eb8f6ac33abac66f589b2af"
+    },
+    {
+      "path": "tools/sys_run_checks.py",
+      "sha256": "bf5af09a8edda8515f2292cf1370c56c9933a9539bfffe829b380dbb5c97d339"
+    },
+    {
+      "path": "tools/verification_profile.py",
+      "sha256": "6c1f42d882f458af0dc950888b9b69c3533bf17ca8b507c31d7ecc65525970cf"
+    },
+    {
+      "path": "tools/perf_d100.py",
+      "sha256": "4a82a8f29c98bf0e2bb1ce8b6c98285b2045371e68a7e014ed63b24465101b65"
+    },
+    {
+      "path": "sim/r97_measure.tcl",
+      "sha256": "e9b5f089fb77c5729e42d2b327818305c5dd94d718abe152f2acbc52b3069a1c"
+    }
+  ],
+  "input_sha256": {
+    "sys_commands.txt": "a3e060e6bd5565da8591457e601a1e72716a3b1b3ed16842999c27f87ff042c9",
+    "sys_payload.count": "57fe679addd933a80b4bc3ef0157dcfc7d9401138260a6950f25b6aa0fe31a2f",
+    "sys_payload.hex": "f03d11511fc20661c84cddfb15503f701e8233659129b5d5ba35d01978bcd9c8"
+  },
+  "offsets": [
+    0,
+    2605141
+  ],
+  "matrix": {
+    "vls": 77,
+    "payload_bytes": 1471,
+    "rounds": 23,
+    "directions": 2,
+    "networks": "AB",
+    "bag_cycles": 125000,
+    "link_delay_cycles": 100,
+    "warmup_rounds": 2,
+    "measured_cycles": 2625000,
+    "measured_ms": 21
+  },
+  "notes": [
+    "Build top remains tb_sys_perf; independent checker name is tb_sys_perf_d100.",
+    "No perf_ref.measure/measure_r97 delay assumptions are used.",
+    "run requires one available HDL execution slot."
+  ]
+}

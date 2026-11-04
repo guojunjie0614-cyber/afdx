@@ -1,0 +1,47 @@
+{
+  "captures": [
+    {
+      "name": "rx_fcs_error_1",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_1.png",
+      "sha256": "99779F06341AC3213D937E3D8900F3045903FE0D13491B41646C6545C0F2CD7F",
+      "requested_pid": 30764,
+      "owned_processes": {
+        "23732": 1793703310.1532393,
+        "31788": 1793703310.1605146,
+        "30764": 1793703310.1794508,
+        "460": 1793703310.238016,
+        "33036": 1793703324.504482
+      },
+      "window": "798620.000ns 799920.000ns"
+    },
+    {
+      "name": "rx_fcs_error_2",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_2.png",
+      "sha256": "7FC55D3B6228CFB56291026F486AAB3FB0360ADB0C60E99B9BE0E4D201CE35EA",
+      "requested_pid": 30764,
+      "owned_processes": {
+        "23732": 1793703310.1532393,
+        "31788": 1793703310.1605146,
+        "30764": 1793703310.1794508,
+        "460": 1793703310.238016,
+        "33036": 1793703324.504482
+      },
+      "window": "799400.000ns 799720.000ns"
+    },
+    {
+      "name": "rx_fcs_error_3",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_3.png",
+      "sha256": "78572D2D5A15F8167A66FBAB6EA8CF2A63BF97AB42BCF19815E9F1213C025A18",
+      "requested_pid": 30764,
+      "owned_processes": {
+        "23732": 1793703310.1532393,
+        "31788": 1793703310.1605146,
+        "30764": 1793703310.1794508,
+        "460": 1793703310.238016,
+        "33036": 1793703324.504482
+      },
+      "window": "973396.000ns 973436.000ns"
+    }
+  ],
+  "failures": []
+}

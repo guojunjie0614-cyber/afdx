@@ -1,0 +1,95 @@
+# vsim -batch -quiet -modelsimini C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/out/modelsim/judge_20261103_185940_14812/modelsim.ini -t 1ps -onfinish stop -wlf simulation.wlf work.tb_sys_rtc -do "run -all; quit -f" 
+# Start time: 19:00:53 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# 
+# run -all
+# [RTC_SYNC] phase=1 slave=2 count=1 difference_ns=0 offset_sec=-7 offset_ns=799980024
+# [RTC_SYNC] phase=1 slave=2 count=2 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=1 slave=2 count=3 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=1 slave=2 count=4 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=1 slave=2 count=5 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=2 slave=2 count=6 difference_ns=0 offset_sec=9 offset_ns=299980024
+# [RTC_SYNC] phase=2 slave=2 count=7 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=2 slave=2 count=8 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=2 slave=2 count=9 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=2 slave=2 count=10 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=11 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=12 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=13 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=14 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=15 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=16 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=17 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=3 slave=2 count=18 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=4 slave=1 count=1 difference_ns=0 offset_sec=-7 offset_ns=799980024
+# [RTC_SYNC] phase=4 slave=1 count=2 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=4 slave=1 count=3 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=4 slave=1 count=4 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=4 slave=1 count=5 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=5 slave=1 count=6 difference_ns=0 offset_sec=9 offset_ns=299980024
+# [RTC_SYNC] phase=5 slave=1 count=7 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=5 slave=1 count=8 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=5 slave=1 count=9 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=5 slave=1 count=10 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=19 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=20 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=21 difference_ns=0 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=22 difference_ns=4 offset_sec=0 offset_ns=4
+# [RTC_SYNC] phase=6 slave=2 count=23 difference_ns=-4 offset_sec=-1 offset_ns=999999992
+# [RTC_SYNC] phase=6 slave=2 count=24 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=25 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=26 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=27 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=28 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=29 difference_ns=-4 offset_sec=-1 offset_ns=999999988
+# [RTC_SYNC] phase=6 slave=2 count=30 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=31 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=32 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=33 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=34 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=35 difference_ns=-4 offset_sec=-1 offset_ns=999999988
+# [RTC_SYNC] phase=6 slave=2 count=36 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=37 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=38 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=39 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=40 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=41 difference_ns=-4 offset_sec=-1 offset_ns=999999988
+# [RTC_SYNC] phase=6 slave=2 count=42 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=43 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=44 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=45 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=46 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=47 difference_ns=-4 offset_sec=-1 offset_ns=999999988
+# [RTC_SYNC] phase=6 slave=2 count=48 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=49 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=50 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=51 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=52 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=53 difference_ns=-4 offset_sec=-1 offset_ns=999999988
+# [RTC_SYNC] phase=6 slave=2 count=54 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=55 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=56 difference_ns=-4 offset_sec=0 offset_ns=0
+# [RTC_SYNC] phase=6 slave=2 count=57 difference_ns=8 offset_sec=0 offset_ns=12
+# [RTC_SYNC] phase=6 slave=2 count=58 difference_ns=8 offset_sec=0 offset_ns=0
+# [RTC_GBE] delivered=1771/1771 max_difference_ns=8
+# [RTC_LOAD] delivered=1811/1811 max_difference_ns=0
+# [RESULT] tb_sys_rtc PASS checks=10675841 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/tb/tb_sys_rtc.v(158)
+#    Time: 45179584 ns  Iteration: 1  Instance: /tb_sys_rtc
+# Break at C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/tb/tb_sys_rtc.v line 158
+# quit -f
+# End time: 19:06:27 on Nov 03,2026, Elapsed time: 0:05:34
+# Errors: 0, Warnings: 0

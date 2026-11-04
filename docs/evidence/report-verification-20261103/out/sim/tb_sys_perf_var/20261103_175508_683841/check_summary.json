@@ -1,0 +1,562 @@
+{
+  "test": "tb_sys_perf_var",
+  "verification_profile": "fragmentation1030",
+  "items": 1680028,
+  "errors": 0,
+  "reports": {
+    "es1_tx": {
+      "test": "tb_sys_perf_var_es1_tx",
+      "items": 254423,
+      "errors": 0,
+      "either": 0,
+      "messages": 10720,
+      "frames_a": 10720,
+      "frames_b": 10720,
+      "sends": 10720,
+      "stages": {
+        "var_fixed_d0": 1200,
+        "var_fixed_d257": 1200,
+        "var_cycle_d0": 1200,
+        "var_cycle_d257": 1200,
+        "var_high_d0": 1760,
+        "var_high_d257": 1760,
+        "var_burst_d0": 1200,
+        "var_burst_d257": 1200
+      },
+      "diagnostics": []
+    },
+    "es2_tx": {
+      "test": "tb_sys_perf_var_es2_tx",
+      "items": 254420,
+      "errors": 0,
+      "either": 0,
+      "messages": 10720,
+      "frames_a": 10720,
+      "frames_b": 10720,
+      "sends": 10720,
+      "stages": {
+        "var_fixed_d0": 1200,
+        "var_fixed_d257": 1200,
+        "var_cycle_d0": 1200,
+        "var_cycle_d257": 1200,
+        "var_high_d0": 1760,
+        "var_high_d257": 1760,
+        "var_burst_d0": 1200,
+        "var_burst_d257": 1200
+      },
+      "diagnostics": []
+    },
+    "es1_rx": {
+      "test": "tb_sys_perf_var_es1_rx",
+      "items": 117921,
+      "errors": 0,
+      "either": 46,
+      "segments": 21440,
+      "segments_a": 10720,
+      "segments_b": 10720,
+      "pulses": {
+        "a_good": 10720,
+        "b_good": 10720,
+        "deliver": 10720,
+        "rm_drop": 10720
+      },
+      "deliveries": 10720,
+      "max_delivery_latency": 1468,
+      "stages": {
+        "var_fixed_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_fixed_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_cycle_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_cycle_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_high_d0": {
+          "segments": 3520,
+          "good": 3520,
+          "deliver": 1760,
+          "rm_drop": 1760
+        },
+        "var_high_d257": {
+          "segments": 3520,
+          "good": 3520,
+          "deliver": 1760,
+          "rm_drop": 1760
+        },
+        "var_burst_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_burst_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        }
+      },
+      "diagnostics": []
+    },
+    "es2_rx": {
+      "test": "tb_sys_perf_var_es2_rx",
+      "items": 117921,
+      "errors": 0,
+      "either": 44,
+      "segments": 21440,
+      "segments_a": 10720,
+      "segments_b": 10720,
+      "pulses": {
+        "a_good": 10720,
+        "b_good": 10720,
+        "deliver": 10720,
+        "rm_drop": 10720
+      },
+      "deliveries": 10720,
+      "max_delivery_latency": 1468,
+      "stages": {
+        "var_fixed_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_fixed_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_cycle_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_cycle_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_high_d0": {
+          "segments": 3520,
+          "good": 3520,
+          "deliver": 1760,
+          "rm_drop": 1760
+        },
+        "var_high_d257": {
+          "segments": 3520,
+          "good": 3520,
+          "deliver": 1760,
+          "rm_drop": 1760
+        },
+        "var_burst_d0": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        },
+        "var_burst_d257": {
+          "segments": 2400,
+          "good": 2400,
+          "deliver": 1200,
+          "rm_drop": 1200
+        }
+      },
+      "diagnostics": []
+    },
+    "system": {
+      "test": "tb_sys_perf_var",
+      "items": 549376,
+      "errors": 0,
+      "either": 0,
+      "w_over": 0,
+      "latency": {
+        "var_burst_d0": {
+          "samples": 2400,
+          "limit_min": 128040,
+          "limit_max": 128040,
+          "W_samples": 2400,
+          "W_max": 2737,
+          "W_mean": 39.88583333333333,
+          "rx_samples": 2400,
+          "rx_max": 1466,
+          "rx_mean": 653.9966666666667,
+          "e2e_samples": 2400,
+          "e2e_max": 4637,
+          "e2e_mean": 2286.002916666667,
+          "w_over": 0
+        },
+        "var_burst_d257": {
+          "samples": 2400,
+          "limit_min": 128040,
+          "limit_max": 128040,
+          "W_samples": 2400,
+          "W_max": 2616,
+          "W_mean": 35.575,
+          "rx_samples": 2400,
+          "rx_max": 1467,
+          "rx_mean": 668.7091666666666,
+          "e2e_samples": 2400,
+          "e2e_max": 4401,
+          "e2e_mean": 2439.2616666666668,
+          "w_over": 0
+        },
+        "var_cycle_d0": {
+          "samples": 2400,
+          "limit_min": 54216,
+          "limit_max": 54216,
+          "W_samples": 2400,
+          "W_max": 111,
+          "W_mean": 5.171666666666667,
+          "rx_samples": 2400,
+          "rx_max": 1227,
+          "rx_mean": 69.90125,
+          "e2e_samples": 2400,
+          "e2e_max": 3136,
+          "e2e_mean": 2317.90875,
+          "w_over": 0
+        },
+        "var_cycle_d257": {
+          "samples": 2400,
+          "limit_min": 54216,
+          "limit_max": 54216,
+          "W_samples": 2400,
+          "W_max": 111,
+          "W_mean": 5.16375,
+          "rx_samples": 2400,
+          "rx_max": 1227,
+          "rx_mean": 69.90125,
+          "e2e_samples": 2400,
+          "e2e_max": 3393,
+          "e2e_mean": 2574.903333333333,
+          "w_over": 0
+        },
+        "var_fixed_d0": {
+          "samples": 2400,
+          "limit_min": 54216,
+          "limit_max": 54216,
+          "W_samples": 2336,
+          "W_max": 2,
+          "W_mean": 0.023544520547945206,
+          "rx_samples": 2400,
+          "rx_max": 1467,
+          "rx_mean": 300.1695833333333,
+          "e2e_samples": 2400,
+          "e2e_max": 2167,
+          "e2e_mean": 977.1741666666667,
+          "w_over": 0
+        },
+        "var_fixed_d257": {
+          "samples": 2400,
+          "limit_min": 54216,
+          "limit_max": 54216,
+          "W_samples": 2400,
+          "W_max": 627,
+          "W_mean": 3.964583333333333,
+          "rx_samples": 2400,
+          "rx_max": 1467,
+          "rx_mean": 300.1695833333333,
+          "e2e_samples": 2400,
+          "e2e_max": 2425,
+          "e2e_mean": 1234.1741666666667,
+          "w_over": 0
+        },
+        "var_high_d0": {
+          "samples": 3520,
+          "limit_min": 128040,
+          "limit_max": 128040,
+          "W_samples": 3424,
+          "W_max": 1563,
+          "W_mean": 2.482768691588785,
+          "rx_samples": 3520,
+          "rx_max": 1466,
+          "rx_mean": 105.43352272727273,
+          "e2e_samples": 3520,
+          "e2e_max": 3103,
+          "e2e_mean": 1647.365909090909,
+          "w_over": 0
+        },
+        "var_high_d257": {
+          "samples": 3520,
+          "limit_min": 128040,
+          "limit_max": 128040,
+          "W_samples": 3520,
+          "W_max": 1563,
+          "W_mean": 3.4238636363636363,
+          "rx_samples": 3520,
+          "rx_max": 1466,
+          "rx_mean": 105.43323863636364,
+          "e2e_samples": 3520,
+          "e2e_max": 3360,
+          "e2e_mean": 1904.3644886363636,
+          "w_over": 0
+        }
+      },
+      "w_over_rows": [],
+      "endpoints": {
+        "es1": {
+          "messages": 10720,
+          "accepted": 10720,
+          "deliveries": 10720,
+          "counter_nonzero": {
+            "accept": 10720,
+            "tx_a": 10720,
+            "tx_b": 10720,
+            "a_good": 10720,
+            "b_good": 10720,
+            "rm_drop": 10720,
+            "deliver": 10720
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "var_fixed_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_fixed_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_cycle_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_cycle_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_high_d0": {
+              "accept": 1760,
+              "tx_a": 1760,
+              "tx_b": 1760,
+              "a_good": 1760,
+              "b_good": 1760,
+              "deliver": 1760,
+              "rm_drop": 1760
+            },
+            "var_high_d257": {
+              "accept": 1760,
+              "tx_a": 1760,
+              "tx_b": 1760,
+              "a_good": 1760,
+              "b_good": 1760,
+              "deliver": 1760,
+              "rm_drop": 1760
+            },
+            "var_burst_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_burst_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            }
+          }
+        },
+        "es2": {
+          "messages": 10720,
+          "accepted": 10720,
+          "deliveries": 10720,
+          "counter_nonzero": {
+            "accept": 10720,
+            "tx_a": 10720,
+            "tx_b": 10720,
+            "a_good": 10720,
+            "b_good": 10720,
+            "rm_drop": 10720,
+            "deliver": 10720
+          },
+          "max_write_wait": 2,
+          "pulse_stages": {
+            "var_fixed_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_fixed_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_cycle_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_cycle_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_high_d0": {
+              "accept": 1760,
+              "tx_a": 1760,
+              "tx_b": 1760,
+              "a_good": 1760,
+              "b_good": 1760,
+              "deliver": 1760,
+              "rm_drop": 1760
+            },
+            "var_high_d257": {
+              "accept": 1760,
+              "tx_a": 1760,
+              "tx_b": 1760,
+              "a_good": 1760,
+              "b_good": 1760,
+              "deliver": 1760,
+              "rm_drop": 1760
+            },
+            "var_burst_d0": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            },
+            "var_burst_d257": {
+              "accept": 1200,
+              "tx_a": 1200,
+              "tx_b": 1200,
+              "a_good": 1200,
+              "b_good": 1200,
+              "deliver": 1200,
+              "rm_drop": 1200
+            }
+          }
+        }
+      },
+      "rewrites": {
+        "tx": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "map": {
+          "count": 0,
+          "max_wait": 0
+        },
+        "cfg": {
+          "count": 0,
+          "max_wait": 0
+        }
+      },
+      "performance": {},
+      "diagnostics": []
+    },
+    "gmii": {
+      "test": "tb_sys_perf_var_gmii",
+      "items": 385967,
+      "errors": 0,
+      "either": 0,
+      "tx_delay": 0,
+      "replay_delay": 0,
+      "capacity": 0,
+      "channels": {
+        "es2_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 10720,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es2_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 10720,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_a": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 10720,
+          "dropped": 0,
+          "self_spaced_input": true
+        },
+        "es1_b": {
+          "max_occupancy": 0,
+          "max_queue_wait": 0,
+          "clean_max_occupancy": 0,
+          "clean_max_queue_wait": 0,
+          "accepted": 10720,
+          "dropped": 0,
+          "self_spaced_input": true
+        }
+      },
+      "diagnostics": []
+    }
+  },
+  "r97_fields": 20576,
+  "r97_requirement_failures": 0
+}

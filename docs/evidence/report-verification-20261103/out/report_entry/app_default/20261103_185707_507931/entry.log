@@ -1,0 +1,9 @@
+APP CE_DIV=2
+APP COMPILE PASS warnings=0
+APP ENTRY SUMMARY checks=10309317 warnings=0
+APP ENTRY PASS run=20261103_185708 messages=84 vls=21 inject_mbps=210.440 max_e2e_us=60.880 jitter_us=15.200 output=out/app/20261103_185708
+# 
+# do sim/run_app.do
+# C:/Users/susu/Desktop/afdx/out/report_entry/app_default/20261103_185707_507931/project
+# 0
+# Errors: 0, Warnings: 0

@@ -1,0 +1,4 @@
+APP METRIC inject_mbps=0.000 raw_short_completion_us=997.592 raw_fragmented_completion_us=1037.224 max_e2e_first_us=1025.440 jitter_r119_us=0.000 delivered=3 frames=4
+APP REQUIREMENT REPORT fragmented_completion=informational jitter_r139=ambiguous
+[RESULT] fragment_integration PASS
+FAQ GLS WAIT existing NET driver pid=16724

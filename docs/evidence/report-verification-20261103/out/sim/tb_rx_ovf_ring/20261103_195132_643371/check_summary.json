@@ -1,0 +1,43 @@
+{
+  "test": "tb_rx_ovf_ring",
+  "items": 99,
+  "errors": 0,
+  "either": 0,
+  "segments": 15,
+  "segments_a": 13,
+  "segments_b": 2,
+  "pulses": {
+    "a_good": 9,
+    "deliver": 11,
+    "a_ovf": 4,
+    "b_good": 2
+  },
+  "deliveries": 11,
+  "max_delivery_latency": 594,
+  "stages": {
+    "fit": {
+      "segments": 2,
+      "good": 2,
+      "deliver": 2
+    },
+    "big": {
+      "segments": 4,
+      "ovf": 2,
+      "good": 2,
+      "deliver": 2
+    },
+    "part": {
+      "segments": 6,
+      "good": 5,
+      "deliver": 5,
+      "ovf": 1
+    },
+    "ic": {
+      "segments": 3,
+      "good": 2,
+      "deliver": 2,
+      "ovf": 1
+    }
+  },
+  "diagnostics": []
+}

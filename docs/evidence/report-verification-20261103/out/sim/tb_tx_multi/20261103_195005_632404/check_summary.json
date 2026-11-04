@@ -1,0 +1,18 @@
+{
+  "test": "tb_tx_multi",
+  "items": 56206,
+  "errors": 0,
+  "either": 0,
+  "messages": 1698,
+  "frames_a": 1698,
+  "frames_b": 1698,
+  "sends": 1698,
+  "stages": {
+    "burst128": 129,
+    "rr3": 61,
+    "late_x": 4,
+    "early_x": 4,
+    "mix": 1500
+  },
+  "diagnostics": []
+}

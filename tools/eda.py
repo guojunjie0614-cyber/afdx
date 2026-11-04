@@ -97,6 +97,8 @@ class Flow:
 def sim(options):
     f=Flow("net" if options.netlist else "sim",options.test,options.deadline)
     try:
+        from verification_profile import selected
+        f.result['verification_profile']=selected()
         MS=modelsim_dir()
         bench=ROOT/"tb"/(options.test+".v")
         if not bench.is_file():raise RuntimeError("Unknown test: "+str(bench))
@@ -152,11 +154,42 @@ def sim(options):
         if options.test=="tb_net_services":
             f.job("vectors",[sys.executable,ROOT/"tools/net_services_ref.py","vectors","--dir",f.folder],30)
             sources.extend(ROOT/"tools"/name for name in ("net_services_ref.py","load_ref.py","download_ref.py","snmp_ref.py","afdx_ref.py"))
+        if options.test=='tb_fragmentation':
+            f.job('vectors',[sys.executable,ROOT/'tools/fragment_integration.py','prepare',f.folder],60)
+            sources.extend(ROOT/'tools'/name for name in ('fragment_integration.py','fragment_ref.py'))
         if options.test.startswith("tb_t65_"):
             sources.append(ROOT/"tools/t65_check.py")
+        sources.extend(ROOT/'tools'/name for name in ('modelsim_compat.py','verification_profile.py'))
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
         snapshot=f.folder/"sources";snapshot.mkdir()
         for i,p in enumerate(sources):(snapshot/(str(i)+"_"+p.name)).write_bytes(p.read_bytes())
+        # ModelSim 2020 requires reviewed module declarations before procedural
+        # references. Keep canonical RTL intact and compile isolated copies.
+        from modelsim_compat import adapt_text
+        compat=f.folder/"compile_sources"
+        changes=[];mapped={}
+        for path in sources:
+            if path.suffix not in ('.v','.vh') or not path.is_relative_to(ROOT):continue
+            rel=path.relative_to(ROOT)
+            if rel.parts[0] not in ('rtl','tb'):continue
+            target=compat/rel;target.parent.mkdir(parents=True,exist_ok=True)
+            text,records=adapt_text(rel.as_posix(),path.read_bytes().decode('utf-8-sig'))
+            text,count=re.subn(r'\$finish_and_return\(1\)','$fatal(1)',text)
+            if count:records.append({'path':rel.as_posix(),'action':'portable_failure_exit','count':count})
+            # Explicit open optional inputs preserve the original unconnected Z.
+            optional={'rtl/afdx_app_tx.v':('.read_data(memory_q));','.read_data(memory_q),.raw_write_data());'),
+                      'rtl/afdx_app_rx.v':('.data(q_data));','.data(q_data),.next_limit());')}
+            if rel.as_posix() in optional:
+                old,new=optional[rel.as_posix()]
+                if text.count(old)!=1:raise ValueError('Optional port adaptation changed: '+str(rel))
+                text=text.replace(old,new)
+                records.append({'path':rel.as_posix(),'action':'explicit_open_optional_input','original':old,'replacement':new})
+            target.write_bytes(text.encode('utf-8'));changes.extend(records);mapped[path]=target
+        compile_sources=[mapped.get(path,path) for path in compile_sources]
+        rtl=[mapped.get(path,path) for path in rtl]
+        include_dir=compat/'tb/lib'
+        save(f.folder/'modelsim_adaptations.json',changes)
+        f.result['modelsim_adaptations']=len(changes)
         run_do="onerror {quit -code 1}\nonbreak {quit -code 1}\n"
         if options.coverage:
             run_do+=f"coverage save -onexit -testname {options.test}_{f.folder.name} coverage.ucdb\n"
@@ -190,9 +223,9 @@ def sim(options):
             # t 记录翻转；测试平台另编译，不把激励与检查器计入 RTL 覆盖率。
             compile_log=f.job("compile_rtl",[MS/"vlog.exe","-vlog01compat","+cover=sbceft",*defines,*rtl],120)
             if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("RTL compile diagnostic; see compile_rtl.log")
-            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources[len(rtl):]],120)
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat","+incdir+"+str(include_dir),*defines,*compile_sources[len(rtl):]],120)
         else:
-            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(ROOT/"tb/lib"),*defines,*compile_sources],120)
+            compile_log=f.job("compile",[MS/"vlog.exe","-vlog01compat", "+incdir+"+str(include_dir),*defines,*compile_sources],120)
         if not re.search(r"Errors: 0, Warnings: 0",compile_log):raise RuntimeError("Compile diagnostic; see compile.log")
         parameters=[]
         for value in options.param:
@@ -210,6 +243,10 @@ def sim(options):
             if not ucdb.is_file() or not ucdb.stat().st_size:raise RuntimeError("Coverage database absent; see simulation.log")
             f.result["code_coverage"]={"metrics":"sbceft","ucdb":str(ucdb),"bytes":ucdb.stat().st_size}
         rows=re.findall(r"\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)[^\r\n]*",log)
+        if not rows and options.test=='tb_fragmentation':
+            rows=[(name,status,'0',errors) for name,status,errors in re.findall(
+                r'\[RESULT\]\s+(tb_fragmentation)\s+(PASS|FAIL)\s+errors=(\d+)',log)]
+            f.result['checks_reported']=False
         if not rows:raise RuntimeError("Test [RESULT] absent")
         name,status,checks,errors=rows[-1]
         good=name==options.test and status=="PASS" and int(errors)==0 and all(row[1]=="PASS" for row in rows)
@@ -251,6 +288,10 @@ def sim(options):
             report=f.job("check",command,60)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
             good=good and f.result["check"]["errors"]==0
+            print(report.strip(),flush=True)
+        if options.test=='tb_fragmentation':
+            report=f.job('check',[sys.executable,ROOT/'tools/fragment_integration.py','check',f.folder],120)
+            f.result['fragment_check']=report.strip()
             print(report.strip(),flush=True)
         if options.test.startswith("tb_t65_"):
             mutant=next((int(value.split("=",1)[1]) for value in reversed(options.param) if value.startswith("T65_MUTANT=")),0)

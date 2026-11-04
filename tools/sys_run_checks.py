@@ -10,6 +10,8 @@ import sys_ref
 import gmii_ref
 
 def run(test,folder):
+    from verification_profile import selected
+    profile=selected()
     reports={}
     for sub,checker in (("es1_tx",tx_ref),("es2_tx",tx_ref),("es1_rx",rx_ref),("es2_rx",rx_ref)):
         result=checker.check(test+"_"+sub,folder/sub)
@@ -18,7 +20,7 @@ def run(test,folder):
     reports['system']=sys_ref.check(test,folder)
     reports['gmii']=reports['system'].pop('gmii')
     gmii_ref.emit(reports['gmii'])
-    result=dict(test=test,items=sum(r['items'] for r in reports.values()),errors=sum(r['errors'] for r in reports.values()),reports=reports)
+    result=dict(test=test,verification_profile=profile,items=sum(r['items'] for r in reports.values()),errors=sum(r['errors'] for r in reports.values()),reports=reports)
     if test in ('tb_sys_perf','tb_sys_perf_var'):
         from perf_ref import measure_r97, check_r97_var
         result['r97_fields']=len(measure_r97(folder))

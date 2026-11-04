@@ -1,0 +1,187 @@
+{
+  "source_case": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\long128",
+  "case": "long128",
+  "source_messages": 312,
+  "messages": 20,
+  "target": 20,
+  "source_message_prefix": true,
+  "source_schedule_rows_preserved_exactly": true,
+  "configuration_rows_preserved": 128,
+  "payload_bank_preserved_bytes": 65536,
+  "first_due": 0,
+  "last_due": 1187500,
+  "last_due_ms": 9.5,
+  "source_vector_sha256": {
+    "config.txt": "f03a20f689c24024850360cca781541e2c9f8ad836b7633806f5fdb7fff52f68",
+    "schedule.txt": "4e31ece0dcf4a1d45e9128f999ddde9e4912e3cdcaea03dad7d512c76e4ac212",
+    "payload.hex": "50b2cf0b502ba0a1ebcc415c40a150f33f133963f91f97eb7c05d22add35afcc",
+    "injection.txt": "043b5ae7334040ef63298adca08912d5287ad37e66f9425316adc50d2c1ab652",
+    "window.txt": "968158752f17e72dfee3b4610fb1fa67171a57c91236b39590e81b64c08a1240"
+  },
+  "source_manifest_sha256": "1ab7208343ec8673885fcfdbeabae00b35312811b3feda432ef5a33c61e1cf5c",
+  "prefix_plan": [
+    {
+      "serial": 1,
+      "due": 0,
+      "vlid": 256,
+      "length": 8192,
+      "offset": 0,
+      "payload_sha256": "5fe6c1635f09743811c51968b33f8c65b29c3f7c49f370b67e04525715c7148d"
+    },
+    {
+      "serial": 2,
+      "due": 62500,
+      "vlid": 257,
+      "length": 8192,
+      "offset": 13007,
+      "payload_sha256": "413549a51dc60913c5117cb9418a699506701dee19f40a8666a60892cd052e81"
+    },
+    {
+      "serial": 3,
+      "due": 125000,
+      "vlid": 258,
+      "length": 8192,
+      "offset": 26014,
+      "payload_sha256": "181caac1a0816425d486a36818874ab35be2bfff33c44b0364d664d2355bdba5"
+    },
+    {
+      "serial": 4,
+      "due": 187500,
+      "vlid": 259,
+      "length": 8192,
+      "offset": 39021,
+      "payload_sha256": "291d4f9808751911de7506cbe20d21f05a92599e72027d28958c720a8455952e"
+    },
+    {
+      "serial": 5,
+      "due": 250000,
+      "vlid": 260,
+      "length": 8192,
+      "offset": 52028,
+      "payload_sha256": "1ecead955cabdbebd3ba92dbacd2cc4bc734fedef1a2b932586f848ec19fc4ec"
+    },
+    {
+      "serial": 6,
+      "due": 312500,
+      "vlid": 261,
+      "length": 8192,
+      "offset": 7690,
+      "payload_sha256": "47e3526586b39735607c3ac95bc75e44dd3617366feee1c272e3d3d29dbd1355"
+    },
+    {
+      "serial": 7,
+      "due": 375000,
+      "vlid": 262,
+      "length": 8192,
+      "offset": 20697,
+      "payload_sha256": "c5199732278cf1a91793051a47e7dbc67bb5cdb9b612fa48a7674f83a4747852"
+    },
+    {
+      "serial": 8,
+      "due": 437500,
+      "vlid": 263,
+      "length": 8192,
+      "offset": 33704,
+      "payload_sha256": "fe6ff17a3ee590a662971457360584757b9e54cbb5b3d8e8fb171254822c4e5f"
+    },
+    {
+      "serial": 9,
+      "due": 500000,
+      "vlid": 264,
+      "length": 8192,
+      "offset": 46711,
+      "payload_sha256": "97ec2489c19e36476099554ccb08bb0bb78c9caa7a9528738f25b89f767f985a"
+    },
+    {
+      "serial": 10,
+      "due": 562500,
+      "vlid": 265,
+      "length": 8192,
+      "offset": 2373,
+      "payload_sha256": "ff03677f75cef4b27c869403347a819b48401e4de4d9d02df973ae18960b8272"
+    },
+    {
+      "serial": 11,
+      "due": 625000,
+      "vlid": 266,
+      "length": 8192,
+      "offset": 15380,
+      "payload_sha256": "80abce193e93b04299c5a46da66ed0ca012a181d078d5d148baf3a329823a0c8"
+    },
+    {
+      "serial": 12,
+      "due": 687500,
+      "vlid": 267,
+      "length": 8192,
+      "offset": 28387,
+      "payload_sha256": "2986477edc332bde09abb2fc282f32ee2225f978c4ea44964ac7d913fb379f0e"
+    },
+    {
+      "serial": 13,
+      "due": 750000,
+      "vlid": 268,
+      "length": 8192,
+      "offset": 41394,
+      "payload_sha256": "18fc0f8f4c58b931d7fee53551f139f54323a52e0c09398fb22b00718bb768e0"
+    },
+    {
+      "serial": 14,
+      "due": 812500,
+      "vlid": 269,
+      "length": 8192,
+      "offset": 54401,
+      "payload_sha256": "c02791b2a26c43a728d73a9022bf0a5f324104a36ddbab9c06bc1dfc8f7139ec"
+    },
+    {
+      "serial": 15,
+      "due": 875000,
+      "vlid": 270,
+      "length": 8192,
+      "offset": 10063,
+      "payload_sha256": "ba6fa5c98a8ffab07786d9fbf91ef7cb29cab52b17c9f07f3b94e37b23abfe46"
+    },
+    {
+      "serial": 16,
+      "due": 937500,
+      "vlid": 271,
+      "length": 8192,
+      "offset": 23070,
+      "payload_sha256": "d8bdb8676f3d39ff13b72869742615a434c783d48f0a1d77fe1354684cb70c43"
+    },
+    {
+      "serial": 17,
+      "due": 1000000,
+      "vlid": 272,
+      "length": 8192,
+      "offset": 36077,
+      "payload_sha256": "0839a5809071898004866b4d4d41da2c6fb0f3f5779d906c073cf547f57655f6"
+    },
+    {
+      "serial": 18,
+      "due": 1062500,
+      "vlid": 273,
+      "length": 8192,
+      "offset": 49084,
+      "payload_sha256": "2d257763afc89399113039cc39b00253e193dea6ca3204381f890c7f5d919da5"
+    },
+    {
+      "serial": 19,
+      "due": 1125000,
+      "vlid": 274,
+      "length": 8192,
+      "offset": 4746,
+      "payload_sha256": "a9cc4da34c37253aaf436ebc7722d430159e25a14f964d2e3901721123019a65"
+    },
+    {
+      "serial": 20,
+      "due": 1187500,
+      "vlid": 275,
+      "length": 8192,
+      "offset": 17753,
+      "payload_sha256": "faf04c529e893e7adcf5f7f83ce3199575ee6c2a38170f052c79435f14d5c5ed"
+    }
+  ],
+  "omitted_source_messages": 292,
+  "full_default_case_acceptance": false,
+  "scope": "Reduced native internal RX event diagnosis only; preserved HDL result is not replaced."
+}

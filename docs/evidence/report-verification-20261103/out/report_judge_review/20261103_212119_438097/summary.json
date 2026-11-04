@@ -1,0 +1,176 @@
+{
+  "passed": true,
+  "cases": 8,
+  "warnings": 0,
+  "results": [
+    {
+      "case": "services",
+      "top": "tb_net_services",
+      "checks": 1123,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\services\\simulation.log",
+      "log_sha256": "D3CCF8DDDC5F309D8F741C831B518DB81BA447C1144606959A0B185CBC23C54C"
+    },
+    {
+      "case": "capacity",
+      "top": "tb_judge_capacity",
+      "checks": 49924,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\capacity\\simulation.log",
+      "log_sha256": "18D7C45366307B88BDE20732728E52FD5ECDC6EFB29C5E7EC6D302524C584F9F"
+    },
+    {
+      "case": "snmp",
+      "top": "tb_judge_snmp",
+      "checks": 699,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\snmp\\simulation.log",
+      "log_sha256": "CCFF8827FC1A485113EE3CBC961B3BF9986B74E687DE8340E8D92296D5567850"
+    },
+    {
+      "case": "burst77",
+      "top": "tb_gbe_burst",
+      "checks": 530802,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\burst77\\simulation.log",
+      "log_sha256": "8205A9A188AE439C10635DF1A388E05DA61281F8809CF79D7FB22B9E37FEDC01"
+    },
+    {
+      "case": "burst81",
+      "top": "tb_gbe_burst",
+      "checks": 554734,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\burst81\\simulation.log",
+      "log_sha256": "FA876273BD0033D025AD7568120358BF0E834AC64C7EC0BC562A0DB980A2C21B"
+    },
+    {
+      "case": "rtc",
+      "top": "tb_sys_rtc",
+      "checks": 10675841,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\rtc\\simulation.log",
+      "log_sha256": "4515972CE8E16B52A657E0212EABF471EF6D4B64A12BBDBF26CEB1A97CAED664"
+    },
+    {
+      "case": "performance",
+      "top": "tb_sys_perf",
+      "checks": 683408635,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\out\\modelsim\\judge_20261103_185940_14812\\performance\\simulation.log",
+      "log_sha256": "1622C5979A6673FD0AE9193170BA1AC0746A7F0EB283ED6A448C7F9C071EC771"
+    },
+    {
+      "case": "perf_var",
+      "top": "tb_sys_perf_var",
+      "checks": 1254291331,
+      "errors": 0,
+      "warnings": 0,
+      "actual_child_log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project\\out\\modelsim\\judge_20261103_202013_26124\\perf_var\\simulation.log",
+      "log_sha256": "83E60EA50A0FE8150795A6A875F273BC7826213E61CD4630668B295B46AE18C3"
+    }
+  ],
+  "source_reviews": [
+    {
+      "run": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479",
+      "explicit_compiled_tb_set": [
+        "tb_gbe_burst",
+        "tb_judge_capacity",
+        "tb_judge_snmp",
+        "tb_net_services",
+        "tb_sys_perf",
+        "tb_sys_perf_var",
+        "tb_sys_rtc"
+      ],
+      "reviewed_changes": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rm_phase.v",
+          "original_sha256": "743573F97E38D1AFB61B2FA8B9B32713D9DA896BAF42DA2DF26685313ED49E5A",
+          "current_sha256": "6849773307C347DFB7E157E5C5C840B7281D9435B1916CA00902DA0830BFA708",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\tb\\tb_rm_phase.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_banked.v",
+          "original_sha256": "1396B1A9298BC3C0650CEC030CAEAAC598A8370CBF5A64D2A40F977DE833E2BA",
+          "current_sha256": "1A38E6FED01EB223761DDD2692EE2D3B558033D7188D24B00B5C6D1DD721192A",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\tb\\tb_rtc_banked.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_originate.v",
+          "original_sha256": "BC88639A676F54665734F2977C06B024A88C858BD0D96816C82E13093AF8B87C",
+          "current_sha256": "784E0FE27576DCB95EBFC2B13B69BC664D47858004E03DD2C3822016F50D9911",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\tb\\tb_rtc_originate.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_recovery.v",
+          "original_sha256": "E70611A6B4455E168268B9D540DF33AE0F9F6FEE9F29C85BE16DE41476B0D6F6",
+          "current_sha256": "BD02B7C99A598DE22D862B264F53CF94C07C553A480D005801CE4E1F5DE88A80",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\tb\\tb_rtc_recovery.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+          "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+          "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479\\project\\tb\\lib\\top_stream_endpoint.v",
+          "reason": "Exact two-edit unused DUT-output connection, no stimulus/logic change"
+        }
+      ]
+    },
+    {
+      "run": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023",
+      "explicit_compiled_tb_set": [
+        "tb_gbe_burst",
+        "tb_judge_capacity",
+        "tb_judge_snmp",
+        "tb_net_services",
+        "tb_sys_perf",
+        "tb_sys_perf_var",
+        "tb_sys_rtc"
+      ],
+      "reviewed_changes": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rm_phase.v",
+          "original_sha256": "743573F97E38D1AFB61B2FA8B9B32713D9DA896BAF42DA2DF26685313ED49E5A",
+          "current_sha256": "6849773307C347DFB7E157E5C5C840B7281D9435B1916CA00902DA0830BFA708",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project\\tb\\tb_rm_phase.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_banked.v",
+          "original_sha256": "1396B1A9298BC3C0650CEC030CAEAAC598A8370CBF5A64D2A40F977DE833E2BA",
+          "current_sha256": "1A38E6FED01EB223761DDD2692EE2D3B558033D7188D24B00B5C6D1DD721192A",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project\\tb\\tb_rtc_banked.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_originate.v",
+          "original_sha256": "BC88639A676F54665734F2977C06B024A88C858BD0D96816C82E13093AF8B87C",
+          "current_sha256": "784E0FE27576DCB95EBFC2B13B69BC664D47858004E03DD2C3822016F50D9911",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project\\tb\\tb_rtc_originate.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_rtc_recovery.v",
+          "original_sha256": "E70611A6B4455E168268B9D540DF33AE0F9F6FEE9F29C85BE16DE41476B0D6F6",
+          "current_sha256": "BD02B7C99A598DE22D862B264F53CF94C07C553A480D005801CE4E1F5DE88A80",
+          "original_snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project\\tb\\tb_rtc_recovery.v",
+          "reason": "One child-module identifier changed in an uncompiled standalone TB; original Tcl compiles only its literal seven business TBs and tb/lib"
+        }
+      ]
+    }
+  ],
+  "original_interrupted_entry": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge\\20261103_185939_744479",
+  "final_raw_failed_summary": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\summary.json",
+  "execution_scope": "Seven completed original Tcl cases plus one original Tcl single-case retry; not an uninterrupted eight-case run",
+  "acceptance": "Separate same-capture review: four changed standalone testbenches are not in either original Tcl compilation set; all compiled business inputs unchanged except exact unused output sink fix"
+}

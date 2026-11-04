@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "command": [
+    "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+    "-I",
+    "-X",
+    "utf8",
+    "C:\\Users\\susu\\Desktop\\afdx\\tools\\collect_report_coverage.py",
+    "--batch",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_native\\20261103_175508_682036",
+    "--extra",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_net_services\\20261103_174256_134605",
+    "--replacement-batch",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_native\\20261103_201510_245810",
+    "--replacement-batch",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_native\\20261103_211446_173660",
+    "--replacement-batch",
+    "C:\\Users\\susu\\Desktop\\afdx\\out\\report_native\\20261103_212918_291324",
+    "--review-unused-output"
+  ],
+  "scope": "Actual completed native UCDB collection; original failed outcomes preserved",
+  "returncode": 0
+}

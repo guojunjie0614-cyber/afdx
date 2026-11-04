@@ -1,0 +1,3528 @@
+{
+  "name": "tb_sys_perf",
+  "started": "2026-11-03T17:55:08.684854+08:00",
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 10.0,
+  "verification_profile": "fragmentation1030",
+  "replaced_modules": [],
+  "inputs": [
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a.v",
+      "sha256": "5A00250C2100DDF766547388BED4A2F77F0B70F6E4D80F4568E27B75575E1328"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a_engine.v",
+      "sha256": "2B738EB758FBCDE4CA0B0D2B3C7B92E8A1A57160BC4EC424E8BB2C3AAA336684"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_map.v",
+      "sha256": "61DB60365EB3BFDA06732391ABA6AE639B5A1E17731D3E7F54D637D62E490619"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_payload.v",
+      "sha256": "0EA09A102CE850192B69AF4CCA480FC7B26BC3572A17E995514DF4C0A58BE8C6"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_read.v",
+      "sha256": "32CAAB22B87D59AD6D33CD06A5D451772673BB2BDABB78ABCDB567965454ACBA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_rx.v",
+      "sha256": "E1154212CCDC46D9200917F31951B05DD61B75F561B2AB77B1C4F2B12524490B"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_tx.v",
+      "sha256": "729BC86FD2598C28E5EBCF293AE180B530CA54C52F6BCABF05EB16DFB8473337"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_cfg.v",
+      "sha256": "ED7C4E5D11D037954EF809FF14BF9C0BD143E79B2998A5B7A92BDF9E7CDFDBCA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_crc32_d8.v",
+      "sha256": "2487ACEDF68DF5AE8E96E90C0C6EB924869F286D2402DF21BC089DA09897E614"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_es.v",
+      "sha256": "0BCEA4294262DE512CBD05F337B3ACF6A241BA169D64AA039B12D7790ECE61B7"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_rx.v",
+      "sha256": "EE01466B3A4876AD902AFE15DD75CD2B6D64B7819548763A57B44B521FD58300"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_tx.v",
+      "sha256": "682A248AF47177EE0A771D4369D5C92539E08253ED33472EA9D654882D804180"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mgmt_tx.v",
+      "sha256": "142580BB28E7B16BC09FEFC50F7E6F6D1E36FD7EED5A835937C890145CB40D19"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ntp_fraction.v",
+      "sha256": "645457C9637FA3CB148624B34B76E2D19868D263957FE5424476685775666CBF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ram_sdp.v",
+      "sha256": "13AABC3C48DFBC513E1C555F3D84E79B9BB9405873E6357E11C3D2D4BCAEDBDD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rtc.v",
+      "sha256": "FBD6DCA681C5B8CDEF2E5166173EB49D963202C56B276453ECD6524B44156732"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_core.v",
+      "sha256": "9334A05B65DB344C5E045A3FBE06D60C2745D1543E9039998E95B86B6B5A40A1"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_deliver.v",
+      "sha256": "107864DC6CB9306E045781D9B786962E7C0296EF251F19438A80F9C290D1F991"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_engine.v",
+      "sha256": "972BBF678B57C47D526E992A9E5F05F8801D406A7500A9DBBD299B81C9B5FC13"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_parse.v",
+      "sha256": "26359BADB56AE3B57910C3FF5FF21B1B143950458787EB68EF94961003F4CE79"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly.v",
+      "sha256": "BE4D8C79A17180A64FCED44F60A997432378BCC2695E823DDBB6031DCE5E9BB8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_bank.v",
+      "sha256": "CA2450E8280779DBD95C03530E29D8D99CCD1EDFB48D1F13D7F7F7AA45237703"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_payload.v",
+      "sha256": "45B6A4068A3616B232A5CB787D3A3E6D032178EBD16B22C6F95FC8C64AD42B7E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_ram.v",
+      "sha256": "5C9BC225F84A9D91AB9B09AA2951739FCED5B31D52A4D3F74F43E388A5802369"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp.v",
+      "sha256": "416D734A8C3E5C8E76F426EF84C9F691EBFDCAD89DCC63376C8291F4BADD3B21"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp_engine.v",
+      "sha256": "05F03D3D5EE2775129CF55350C3D8E2BF3D3920F509B1204BB3C026D59BD8392"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_svc.v",
+      "sha256": "8BEA777AAC38E083C61F1A3D7F59EBBA6083A0FFD305231073F8291753DDBF60"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_timebase.v",
+      "sha256": "17C66EADCBD2C11539A6BD0AEF6CE4EA5377E04448C2D054A332D9112723769A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\AFDX_top.v",
+      "sha256": "986F42B7D24D7C35A015067C2C0981D22F187D2DE9038899EF0F2C45B9929273"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_buf.v",
+      "sha256": "CD75973792BE9667169D3AF822E43BD89DD046190CFECB8F3B1FBC06B040F105"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_builder.v",
+      "sha256": "F42CF080E19C889500198E505E689FF21F293946CF22314C72C6CC0491D01700"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_core.v",
+      "sha256": "4F59495299A1527B86D60A1B06778461B9A6AFE620A36BE08FA0999D6512B1B9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_engine.v",
+      "sha256": "17F781F2687F4FD1231821754FE74F481388098F9B1374D00FAF5D5A3EFDAFDE"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_free.v",
+      "sha256": "422DDF4B9993B862FAAA2B498DD9AC6D976FB6D98F2A877A2121257ECCA5CF95"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v",
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v",
+      "sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v",
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v",
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v",
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v",
+      "sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v",
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v",
+      "sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v",
+      "sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v",
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v",
+      "sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v",
+      "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v",
+      "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+      "sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v",
+      "sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_sys_perf.v",
+      "sha256": "93DE264FBF37B8962137362F87227EC87C14BECE698BCB51A97224D6BFB194D8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh",
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_cases.py",
+      "sha256": "D3C7F63EB72A171FCD3F2523F7FF806F250B2636D866D805B95F888F8DDC7345"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_ref.py",
+      "sha256": "91BE65E208B9DA4818A210AC815A8FB156671FF9F3DBEEC71076D162251C1992"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_checks.py",
+      "sha256": "39514229214F91B6907A0A2A214B1F85BF23218A804CAAFE1AE2BC07E9BB21B2"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_run_checks.py",
+      "sha256": "BF5AF09A8EDDA8515F2292CF1370C56C9933A9539BFFFE829B380DBB5C97D339"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\gmii_ref.py",
+      "sha256": "ECF198920D79012C5D75305D5AC8368B11A538C69EB8F6AC33ABAC66F589B2AF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\tx_ref.py",
+      "sha256": "2CF729B9E4C3F94A7D33F243C0D4F986380D9DC7FFB284B945BE2875619F63A8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\rx_ref.py",
+      "sha256": "13EE9521942D3C60E612B1C219BE4F081ED8E9E9D6C0808B123AC18825B8C46D"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\rx_checks.py",
+      "sha256": "E5CF1C17831E2822067827834F7EFABF7E06B8FFE09B561E86E3979D86A5F15C"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py",
+      "sha256": "B2F0F2010A26F8F4861C7BE0F80D6621BFA1AFABE6EFEEC59342FBCF9D212327"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\perf_ref.py",
+      "sha256": "6EBC7178221FB04B07FCF3D8AACF9BFD80A5AA39A14BEC6D66A0AB166FFA333E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py",
+      "sha256": "2C9ED6A39AA2ECD1760128122244B4E38AFE26CB744F8F1D0BC1EEA1B455A004"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\verification_profile.py",
+      "sha256": "6C1F42D882F458AF0DC950888B9B69C3533BF17CA8B507C31D7ECC65525970CF"
+    }
+  ],
+  "modelsim_adaptations": 27,
+  "ce_div": 2,
+  "parameters": [],
+  "code_coverage": {
+    "metrics": "sbceft",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\coverage.ucdb",
+    "bytes": 352057
+  },
+  "simulation_diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0,
+    "RAMCOLL": 0
+  },
+  "check": {
+    "test": "tb_sys_perf",
+    "verification_profile": "fragmentation1030",
+    "items": 1380208,
+    "errors": 0,
+    "reports": {
+      "es1_tx": {
+        "test": "tb_sys_perf_es1_tx",
+        "items": 193234,
+        "errors": 0,
+        "either": 0,
+        "messages": 8268,
+        "frames_a": 8268,
+        "frames_b": 8268,
+        "sends": 8268,
+        "stages": {
+          "light_d0": 40,
+          "light_d257": 40,
+          "throughput_d0": 230,
+          "duplex_d0": 230,
+          "throughput_d257": 230,
+          "duplex_d257": 230,
+          "gbe77_d0": 1771,
+          "gbe77_d257": 1771,
+          "gbe81_d0": 1863,
+          "gbe81_d257": 1863
+        },
+        "diagnostics": []
+      },
+      "es2_tx": {
+        "test": "tb_sys_perf_es2_tx",
+        "items": 182074,
+        "errors": 0,
+        "either": 0,
+        "messages": 7808,
+        "frames_a": 7808,
+        "frames_b": 7808,
+        "sends": 7808,
+        "stages": {
+          "light_d0": 40,
+          "light_d257": 40,
+          "throughput_d0": 0,
+          "duplex_d0": 230,
+          "throughput_d257": 0,
+          "duplex_d257": 230,
+          "gbe77_d0": 1771,
+          "gbe77_d257": 1771,
+          "gbe81_d0": 1863,
+          "gbe81_d257": 1863
+        },
+        "diagnostics": []
+      },
+      "es1_rx": {
+        "test": "tb_sys_perf_es1_rx",
+        "items": 85889,
+        "errors": 0,
+        "either": 29,
+        "segments": 15616,
+        "segments_a": 7808,
+        "segments_b": 7808,
+        "pulses": {
+          "a_good": 7808,
+          "b_good": 7808,
+          "deliver": 7808,
+          "rm_drop": 7808
+        },
+        "deliveries": 7808,
+        "max_delivery_latency": 69,
+        "stages": {
+          "light_d0": {
+            "segments": 80,
+            "good": 80,
+            "deliver": 40,
+            "rm_drop": 40
+          },
+          "light_d257": {
+            "segments": 80,
+            "good": 80,
+            "deliver": 40,
+            "rm_drop": 40
+          },
+          "duplex_d0": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "duplex_d257": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "gbe77_d0": {
+            "segments": 3542,
+            "good": 3542,
+            "deliver": 1771,
+            "rm_drop": 1771
+          },
+          "gbe77_d257": {
+            "segments": 3542,
+            "good": 3542,
+            "deliver": 1771,
+            "rm_drop": 1771
+          },
+          "gbe81_d0": {
+            "segments": 3726,
+            "good": 3726,
+            "deliver": 1863,
+            "rm_drop": 1863
+          },
+          "gbe81_d257": {
+            "segments": 3726,
+            "good": 3726,
+            "deliver": 1863,
+            "rm_drop": 1863
+          }
+        },
+        "diagnostics": []
+      },
+      "es2_rx": {
+        "test": "tb_sys_perf_es2_rx",
+        "items": 90949,
+        "errors": 0,
+        "either": 27,
+        "segments": 16536,
+        "segments_a": 8268,
+        "segments_b": 8268,
+        "pulses": {
+          "a_good": 8268,
+          "b_good": 8268,
+          "deliver": 8268,
+          "rm_drop": 8268
+        },
+        "deliveries": 8268,
+        "max_delivery_latency": 69,
+        "stages": {
+          "light_d0": {
+            "segments": 80,
+            "good": 80,
+            "deliver": 40,
+            "rm_drop": 40
+          },
+          "light_d257": {
+            "segments": 80,
+            "good": 80,
+            "deliver": 40,
+            "rm_drop": 40
+          },
+          "throughput_d0": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "duplex_d0": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "throughput_d257": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "duplex_d257": {
+            "segments": 460,
+            "good": 460,
+            "deliver": 230,
+            "rm_drop": 230
+          },
+          "gbe77_d0": {
+            "segments": 3542,
+            "good": 3542,
+            "deliver": 1771,
+            "rm_drop": 1771
+          },
+          "gbe77_d257": {
+            "segments": 3542,
+            "good": 3542,
+            "deliver": 1771,
+            "rm_drop": 1771
+          },
+          "gbe81_d0": {
+            "segments": 3726,
+            "good": 3726,
+            "deliver": 1863,
+            "rm_drop": 1863
+          },
+          "gbe81_d257": {
+            "segments": 3726,
+            "good": 3726,
+            "deliver": 1863,
+            "rm_drop": 1863
+          }
+        },
+        "diagnostics": []
+      },
+      "system": {
+        "test": "tb_sys_perf",
+        "items": 538639,
+        "errors": 0,
+        "either": 0,
+        "w_over": 0,
+        "latency": {
+          "duplex_d0": {
+            "samples": 460,
+            "limit_min": 20380,
+            "limit_max": 20380,
+            "W_samples": 451,
+            "W_max": 37,
+            "W_mean": 0.9445676274944568,
+            "rx_samples": 460,
+            "rx_max": 67,
+            "rx_mean": 67.0,
+            "e2e_samples": 460,
+            "e2e_max": 1632,
+            "e2e_mean": 1630.9434782608696,
+            "w_over": 0
+          },
+          "duplex_d257": {
+            "samples": 460,
+            "limit_min": 20380,
+            "limit_max": 20380,
+            "W_samples": 460,
+            "W_max": 37,
+            "W_mean": 1.6521739130434783,
+            "rx_samples": 460,
+            "rx_max": 68,
+            "rx_mean": 67.00434782608696,
+            "e2e_samples": 460,
+            "e2e_max": 1890,
+            "e2e_mean": 1887.9478260869564,
+            "w_over": 0
+          },
+          "gbe77_d0": {
+            "samples": 3542,
+            "limit_min": 123426,
+            "limit_max": 123426,
+            "W_samples": 3408,
+            "W_max": 37,
+            "W_mean": 0.2590962441314554,
+            "rx_samples": 3542,
+            "rx_max": 68,
+            "rx_mean": 67.0016939582157,
+            "e2e_samples": 3542,
+            "e2e_max": 1633,
+            "e2e_mean": 1630.948051948052,
+            "w_over": 0
+          },
+          "gbe77_d257": {
+            "samples": 3542,
+            "limit_min": 123426,
+            "limit_max": 123426,
+            "W_samples": 3542,
+            "W_max": 37,
+            "W_mean": 1.6555618294748728,
+            "rx_samples": 3542,
+            "rx_max": 68,
+            "rx_mean": 67.00141163184641,
+            "e2e_samples": 3542,
+            "e2e_max": 1890,
+            "e2e_mean": 1887.94099378882,
+            "w_over": 0
+          },
+          "gbe81_d0": {
+            "samples": 3726,
+            "limit_min": 129578,
+            "limit_max": 129578,
+            "W_samples": 3718,
+            "W_max": 37,
+            "W_mean": 1.5758472296933836,
+            "rx_samples": 3726,
+            "rx_max": 68,
+            "rx_mean": 67.00026838432636,
+            "e2e_samples": 3726,
+            "e2e_max": 1632,
+            "e2e_mean": 1630.941760601181,
+            "w_over": 0
+          },
+          "gbe81_d257": {
+            "samples": 3726,
+            "limit_min": 129578,
+            "limit_max": 129578,
+            "W_samples": 3726,
+            "W_max": 37,
+            "W_mean": 1.651100375738057,
+            "rx_samples": 3726,
+            "rx_max": 68,
+            "rx_mean": 67.00268384326355,
+            "e2e_samples": 3726,
+            "e2e_max": 1890,
+            "e2e_mean": 1887.946323134729,
+            "w_over": 0
+          },
+          "light_d0": {
+            "samples": 80,
+            "limit_min": 6538,
+            "limit_max": 6538,
+            "W_samples": 78,
+            "W_max": 43,
+            "W_mean": 38.07692307692308,
+            "rx_samples": 80,
+            "rx_max": 67,
+            "rx_mean": 67.0,
+            "e2e_samples": 80,
+            "e2e_max": 1630,
+            "e2e_mean": 567.0,
+            "w_over": 0
+          },
+          "light_d257": {
+            "samples": 80,
+            "limit_min": 6538,
+            "limit_max": 6538,
+            "W_samples": 80,
+            "W_max": 43,
+            "W_mean": 38.2,
+            "rx_samples": 80,
+            "rx_max": 67,
+            "rx_mean": 67.0,
+            "e2e_samples": 80,
+            "e2e_max": 1887,
+            "e2e_mean": 824.0,
+            "w_over": 0
+          },
+          "throughput_d0": {
+            "samples": 230,
+            "limit_min": 20380,
+            "limit_max": 20380,
+            "W_samples": 221,
+            "W_max": 37,
+            "W_mean": 0.2171945701357466,
+            "rx_samples": 230,
+            "rx_max": 67,
+            "rx_mean": 67.0,
+            "e2e_samples": 230,
+            "e2e_max": 1632,
+            "e2e_mean": 1630.9391304347826,
+            "w_over": 0
+          },
+          "throughput_d257": {
+            "samples": 230,
+            "limit_min": 20380,
+            "limit_max": 20380,
+            "W_samples": 230,
+            "W_max": 37,
+            "W_mean": 1.6521739130434783,
+            "rx_samples": 230,
+            "rx_max": 67,
+            "rx_mean": 67.0,
+            "e2e_samples": 230,
+            "e2e_max": 1889,
+            "e2e_mean": 1887.9391304347826,
+            "w_over": 0
+          }
+        },
+        "w_over_rows": [],
+        "endpoints": {
+          "es1": {
+            "messages": 8268,
+            "accepted": 8268,
+            "deliveries": 7808,
+            "counter_nonzero": {
+              "accept": 8268,
+              "tx_a": 8268,
+              "tx_b": 8268,
+              "a_good": 7808,
+              "b_good": 7808,
+              "rm_drop": 7808,
+              "deliver": 7808
+            },
+            "max_write_wait": 2,
+            "pulse_stages": {
+              "light_d0": {
+                "accept": 40,
+                "tx_a": 40,
+                "tx_b": 40,
+                "a_good": 40,
+                "b_good": 40,
+                "deliver": 40,
+                "rm_drop": 40
+              },
+              "light_d257": {
+                "accept": 40,
+                "tx_a": 40,
+                "tx_b": 40,
+                "a_good": 40,
+                "b_good": 40,
+                "deliver": 40,
+                "rm_drop": 40
+              },
+              "throughput_d0": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230
+              },
+              "duplex_d0": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230,
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "throughput_d257": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230
+              },
+              "duplex_d257": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230,
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "gbe77_d0": {
+                "accept": 1771,
+                "tx_a": 1771,
+                "tx_b": 1771,
+                "a_good": 1771,
+                "b_good": 1771,
+                "deliver": 1771,
+                "rm_drop": 1771
+              },
+              "gbe77_d257": {
+                "accept": 1771,
+                "tx_a": 1771,
+                "tx_b": 1771,
+                "a_good": 1771,
+                "b_good": 1771,
+                "deliver": 1771,
+                "rm_drop": 1771
+              },
+              "gbe81_d0": {
+                "accept": 1863,
+                "tx_a": 1863,
+                "tx_b": 1863,
+                "a_good": 1863,
+                "b_good": 1863,
+                "deliver": 1863,
+                "rm_drop": 1863
+              },
+              "gbe81_d257": {
+                "accept": 1863,
+                "tx_a": 1863,
+                "tx_b": 1863,
+                "a_good": 1863,
+                "b_good": 1863,
+                "deliver": 1863,
+                "rm_drop": 1863
+              }
+            }
+          },
+          "es2": {
+            "messages": 7808,
+            "accepted": 7808,
+            "deliveries": 8268,
+            "counter_nonzero": {
+              "accept": 7808,
+              "tx_a": 7808,
+              "tx_b": 7808,
+              "a_good": 8268,
+              "b_good": 8268,
+              "rm_drop": 8268,
+              "deliver": 8268
+            },
+            "max_write_wait": 2,
+            "pulse_stages": {
+              "light_d0": {
+                "accept": 40,
+                "tx_a": 40,
+                "tx_b": 40,
+                "a_good": 40,
+                "b_good": 40,
+                "deliver": 40,
+                "rm_drop": 40
+              },
+              "light_d257": {
+                "accept": 40,
+                "tx_a": 40,
+                "tx_b": 40,
+                "a_good": 40,
+                "b_good": 40,
+                "deliver": 40,
+                "rm_drop": 40
+              },
+              "throughput_d0": {
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "duplex_d0": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230,
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "throughput_d257": {
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "duplex_d257": {
+                "accept": 230,
+                "tx_a": 230,
+                "tx_b": 230,
+                "a_good": 230,
+                "b_good": 230,
+                "deliver": 230,
+                "rm_drop": 230
+              },
+              "gbe77_d0": {
+                "accept": 1771,
+                "tx_a": 1771,
+                "tx_b": 1771,
+                "a_good": 1771,
+                "b_good": 1771,
+                "deliver": 1771,
+                "rm_drop": 1771
+              },
+              "gbe77_d257": {
+                "accept": 1771,
+                "tx_a": 1771,
+                "tx_b": 1771,
+                "a_good": 1771,
+                "b_good": 1771,
+                "deliver": 1771,
+                "rm_drop": 1771
+              },
+              "gbe81_d0": {
+                "accept": 1863,
+                "tx_a": 1863,
+                "tx_b": 1863,
+                "a_good": 1863,
+                "b_good": 1863,
+                "deliver": 1863,
+                "rm_drop": 1863
+              },
+              "gbe81_d257": {
+                "accept": 1863,
+                "tx_a": 1863,
+                "tx_b": 1863,
+                "a_good": 1863,
+                "b_good": 1863,
+                "deliver": 1863,
+                "rm_drop": 1863
+              }
+            }
+          }
+        },
+        "rewrites": {
+          "tx": {
+            "count": 0,
+            "max_wait": 0
+          },
+          "map": {
+            "count": 0,
+            "max_wait": 0
+          },
+          "cfg": {
+            "count": 0,
+            "max_wait": 0
+          }
+        },
+        "performance": {
+          "light_d0": {
+            "window": null,
+            "measured_cycles": null,
+            "measured_ms": null,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 1,
+                "accepted": 40,
+                "delivered": 40,
+                "rm_drop": 40,
+                "abnormal_pulses": 0,
+                "measurement_messages": 40,
+                "gmii": {},
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "T_tx": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_rx": {
+                  "samples": 40,
+                  "max": 1538,
+                  "mean": 470.6,
+                  "max_us": 12.304,
+                  "mean_us": 3.7648
+                },
+                "T_e2e_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "BAG_wait": {
+                  "samples": 40,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "light_groups": {
+                  "1": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 43,
+                      "mean": 43.0,
+                      "max_us": 0.34400000000000003,
+                      "mean_us": 0.34400000000000003
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 182,
+                      "mean": 182.0,
+                      "max_us": 1.456,
+                      "mean_us": 1.456
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "17": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 192,
+                      "mean": 192.0,
+                      "max_us": 1.536,
+                      "mean_us": 1.536
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150004,
+                      "mean": 150003.14285714287,
+                      "max_us": 1200.032,
+                      "mean_us": 1200.0251428571428
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "18": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 194,
+                      "mean": 194.0,
+                      "max_us": 1.552,
+                      "mean_us": 1.552
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150005,
+                      "mean": 150003.2857142857,
+                      "max_us": 1200.04,
+                      "mean_us": 1200.0262857142857
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "511": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 1180,
+                      "mean": 1180.0,
+                      "max_us": 9.44,
+                      "mean_us": 9.44
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "1471": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 3100,
+                      "mean": 3100.0,
+                      "max_us": 24.8,
+                      "mean_us": 24.8
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  }
+                },
+                "tx_jitter_cycles": 0,
+                "e2e_jitter_cycles": 0,
+                "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
+                "average_payload_mbps": 2.6337779410656292,
+                "jitter": {
+                  "max": 0,
+                  "max_us": 0.0,
+                  "samples": 40
+                },
+                "scheduling_interval_error": {
+                  "samples": 35,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 39,
+                  "max": 49159,
+                  "mean": 27255.53846153846,
+                  "max_us": 393.272,
+                  "mean_us": 218.0443076923077
+                },
+                "L_entry_last": {
+                  "samples": 40,
+                  "max": 6072,
+                  "mean": 1796.425,
+                  "max_us": 48.576,
+                  "mean_us": 14.3714
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 6538,
+                "formula_limit_us": 52.304
+              },
+              "es2_to_es1": {
+                "vls": 1,
+                "accepted": 40,
+                "delivered": 40,
+                "rm_drop": 40,
+                "abnormal_pulses": 0,
+                "measurement_messages": 40,
+                "gmii": {},
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "T_tx": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_rx": {
+                  "samples": 40,
+                  "max": 1538,
+                  "mean": 470.6,
+                  "max_us": 12.304,
+                  "mean_us": 3.7648
+                },
+                "T_e2e_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "BAG_wait": {
+                  "samples": 40,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "light_groups": {
+                  "1": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 43,
+                      "mean": 43.0,
+                      "max_us": 0.34400000000000003,
+                      "mean_us": 0.34400000000000003
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 182,
+                      "mean": 182.0,
+                      "max_us": 1.456,
+                      "mean_us": 1.456
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "17": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 192,
+                      "mean": 192.0,
+                      "max_us": 1.536,
+                      "mean_us": 1.536
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150004,
+                      "mean": 150002.7142857143,
+                      "max_us": 1200.032,
+                      "mean_us": 1200.0217142857143
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "18": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 194,
+                      "mean": 194.0,
+                      "max_us": 1.552,
+                      "mean_us": 1.552
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150005,
+                      "mean": 150002.85714285713,
+                      "max_us": 1200.04,
+                      "mean_us": 1200.0228571428572
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "511": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 1180,
+                      "mean": 1180.0,
+                      "max_us": 9.44,
+                      "mean_us": 9.44
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "1471": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 3100,
+                      "mean": 3100.0,
+                      "max_us": 24.8,
+                      "mean_us": 24.8
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  }
+                },
+                "tx_jitter_cycles": 0,
+                "e2e_jitter_cycles": 0,
+                "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
+                "average_payload_mbps": 2.6337779410656292,
+                "jitter": {
+                  "max": 0,
+                  "max_us": 0.0,
+                  "samples": 40
+                },
+                "scheduling_interval_error": {
+                  "samples": 35,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 39,
+                  "max": 49159,
+                  "mean": 27255.53846153846,
+                  "max_us": 393.272,
+                  "mean_us": 218.0443076923077
+                },
+                "L_entry_last": {
+                  "samples": 40,
+                  "max": 6073,
+                  "mean": 1796.975,
+                  "max_us": 48.584,
+                  "mean_us": 14.375800000000002
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 6538,
+                "formula_limit_us": 52.304
+              }
+            }
+          },
+          "light_d257": {
+            "window": null,
+            "measured_cycles": null,
+            "measured_ms": null,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 1,
+                "accepted": 40,
+                "delivered": 40,
+                "rm_drop": 40,
+                "abnormal_pulses": 0,
+                "measurement_messages": 40,
+                "gmii": {},
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "T_tx": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_rx": {
+                  "samples": 40,
+                  "max": 1538,
+                  "mean": 470.6,
+                  "max_us": 12.304,
+                  "mean_us": 3.7648
+                },
+                "T_e2e_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "BAG_wait": {
+                  "samples": 40,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "light_groups": {
+                  "1": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 43,
+                      "mean": 43.0,
+                      "max_us": 0.34400000000000003,
+                      "mean_us": 0.34400000000000003
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 182,
+                      "mean": 182.0,
+                      "max_us": 1.456,
+                      "mean_us": 1.456
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "17": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 192,
+                      "mean": 192.0,
+                      "max_us": 1.536,
+                      "mean_us": 1.536
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150004,
+                      "mean": 150002.7142857143,
+                      "max_us": 1200.032,
+                      "mean_us": 1200.0217142857143
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "18": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 194,
+                      "mean": 194.0,
+                      "max_us": 1.552,
+                      "mean_us": 1.552
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150005,
+                      "mean": 150003.2857142857,
+                      "max_us": 1200.04,
+                      "mean_us": 1200.0262857142857
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "511": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 1180,
+                      "mean": 1180.0,
+                      "max_us": 9.44,
+                      "mean_us": 9.44
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "1471": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 3100,
+                      "mean": 3100.0,
+                      "max_us": 24.8,
+                      "mean_us": 24.8
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  }
+                },
+                "tx_jitter_cycles": 0,
+                "e2e_jitter_cycles": 0,
+                "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
+                "average_payload_mbps": 2.6333766792180517,
+                "jitter": {
+                  "max": 0,
+                  "max_us": 0.0,
+                  "samples": 40
+                },
+                "scheduling_interval_error": {
+                  "samples": 35,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 39,
+                  "max": 49417,
+                  "mean": 27281.923076923078,
+                  "max_us": 395.336,
+                  "mean_us": 218.25538461538463
+                },
+                "L_entry_last": {
+                  "samples": 40,
+                  "max": 6330,
+                  "mean": 2053.8,
+                  "max_us": 50.64,
+                  "mean_us": 16.4304
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 6538,
+                "formula_limit_us": 52.304
+              },
+              "es2_to_es1": {
+                "vls": 1,
+                "accepted": 40,
+                "delivered": 40,
+                "rm_drop": 40,
+                "abnormal_pulses": 0,
+                "measurement_messages": 40,
+                "gmii": {},
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "T_tx": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_rx": {
+                  "samples": 40,
+                  "max": 1538,
+                  "mean": 470.6,
+                  "max_us": 12.304,
+                  "mean_us": 3.7648
+                },
+                "T_e2e_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 40,
+                  "max": 43,
+                  "mean": 38.2,
+                  "max_us": 0.34400000000000003,
+                  "mean_us": 0.3056
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 40,
+                  "max": 3100,
+                  "mean": 969.6,
+                  "max_us": 24.8,
+                  "mean_us": 7.7568
+                },
+                "BAG_wait": {
+                  "samples": 40,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "light_groups": {
+                  "1": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 43,
+                      "mean": 43.0,
+                      "max_us": 0.34400000000000003,
+                      "mean_us": 0.34400000000000003
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 182,
+                      "mean": 182.0,
+                      "max_us": 1.456,
+                      "mean_us": 1.456
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "17": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 192,
+                      "mean": 192.0,
+                      "max_us": 1.536,
+                      "mean_us": 1.536
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150004,
+                      "mean": 150003.14285714287,
+                      "max_us": 1200.032,
+                      "mean_us": 1200.0251428571428
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "18": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 194,
+                      "mean": 194.0,
+                      "max_us": 1.552,
+                      "mean_us": 1.552
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150005,
+                      "mean": 150002.85714285713,
+                      "max_us": 1200.04,
+                      "mean_us": 1200.0228571428572
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "511": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 1180,
+                      "mean": 1180.0,
+                      "max_us": 9.44,
+                      "mean_us": 9.44
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  },
+                  "1471": {
+                    "samples": 8,
+                    "T_tx": {
+                      "samples": 8,
+                      "max": 37,
+                      "mean": 37.0,
+                      "max_us": 0.296,
+                      "mean_us": 0.296
+                    },
+                    "T_e2e": {
+                      "samples": 8,
+                      "max": 3100,
+                      "mean": 3100.0,
+                      "max_us": 24.8,
+                      "mean_us": 24.8
+                    },
+                    "accepted_intervals": {
+                      "samples": 7,
+                      "max": 150003,
+                      "mean": 150003.0,
+                      "max_us": 1200.0240000000001,
+                      "mean_us": 1200.024
+                    },
+                    "tx_jitter_cycles": 0,
+                    "e2e_jitter_cycles": 0
+                  }
+                },
+                "tx_jitter_cycles": 0,
+                "e2e_jitter_cycles": 0,
+                "jitter_definition": "max(T_tx)-min(T_tx), independently for each fixed payload length; max over groups",
+                "average_payload_mbps": 2.6333766792180517,
+                "jitter": {
+                  "max": 0,
+                  "max_us": 0.0,
+                  "samples": 40
+                },
+                "scheduling_interval_error": {
+                  "samples": 35,
+                  "max": 0,
+                  "mean": 0.0,
+                  "max_us": 0.0,
+                  "mean_us": 0.0
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 39,
+                  "max": 49417,
+                  "mean": 27281.923076923078,
+                  "max_us": 395.336,
+                  "mean_us": 218.25538461538463
+                },
+                "L_entry_last": {
+                  "samples": 40,
+                  "max": 6331,
+                  "mean": 2054.35,
+                  "max_us": 50.648,
+                  "mean_us": 16.434800000000003
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 6538,
+                "formula_limit_us": 52.304
+              }
+            }
+          },
+          "throughput_d0": {
+            "window": [
+              12722343,
+              15347343
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1538,
+                  "mean": 1538.0,
+                  "max_us": 12.304,
+                  "mean_us": 12.304
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3102,
+                  "mean": 3101.0,
+                  "max_us": 24.816,
+                  "mean_us": 24.808
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.019047619048,
+                  "max_us": 24.512,
+                  "mean_us": 24.504152380952384
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98095238095238,
+                  "max_us": 0.312,
+                  "mean_us": 0.30384761904761903
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.3142857142857143,
+                  "max_us": 0.016,
+                  "mean_us": 0.010514285714285716
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6074,
+                  "mean": 6073.934782608696,
+                  "max_us": 48.592,
+                  "mean_us": 48.59147826086957
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              }
+            }
+          },
+          "duplex_d0": {
+            "window": [
+              15765575,
+              18390575
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1538,
+                  "mean": 1538.0,
+                  "max_us": 12.304,
+                  "mean_us": 12.304
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3102,
+                  "mean": 3101.0,
+                  "max_us": 24.816,
+                  "mean_us": 24.808
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.0142857142855,
+                  "max_us": 24.512,
+                  "mean_us": 24.504114285714287
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98571428571429,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038857142857143
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.319047619047619,
+                  "max_us": 0.016,
+                  "mean_us": 0.010552380952380954
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6074,
+                  "mean": 6073.94347826087,
+                  "max_us": 48.592,
+                  "mean_us": 48.59154782608696
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              },
+              "es2_to_es1": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1538,
+                  "mean": 1538.0,
+                  "max_us": 12.304,
+                  "mean_us": 12.304
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3102,
+                  "mean": 3101.0,
+                  "max_us": 24.816,
+                  "mean_us": 24.808
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.0142857142855,
+                  "max_us": 24.512,
+                  "mean_us": 24.504114285714287
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98571428571429,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038857142857143
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.319047619047619,
+                  "max_us": 0.016,
+                  "mean_us": 0.010552380952380954
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6074,
+                  "mean": 6073.947826086956,
+                  "max_us": 48.592,
+                  "mean_us": 48.59158260869565
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              }
+            }
+          },
+          "throughput_d257": {
+            "window": [
+              18807227,
+              21432227
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1538,
+                  "mean": 1538.0,
+                  "max_us": 12.304,
+                  "mean_us": 12.304
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3102,
+                  "mean": 3101.0,
+                  "max_us": 24.816,
+                  "mean_us": 24.808
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.0142857142855,
+                  "max_us": 24.512,
+                  "mean_us": 24.504114285714287
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98571428571429,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038857142857143
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.319047619047619,
+                  "max_us": 0.016,
+                  "mean_us": 0.010552380952380954
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6331,
+                  "mean": 6330.94347826087,
+                  "max_us": 50.648,
+                  "mean_us": 50.64754782608696
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              }
+            }
+          },
+          "duplex_d257": {
+            "window": [
+              21850459,
+              24475459
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1539,
+                  "mean": 1538.0047619047618,
+                  "max_us": 12.312,
+                  "mean_us": 12.304038095238095
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3102,
+                  "mean": 3101.004761904762,
+                  "max_us": 24.816,
+                  "mean_us": 24.808038095238096
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.019047619048,
+                  "max_us": 24.512,
+                  "mean_us": 24.504152380952384
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98571428571429,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038857142857143
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.319047619047619,
+                  "max_us": 0.016,
+                  "mean_us": 0.010552380952380954
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.014285714285714285,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011428571428571428
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6332,
+                  "mean": 6330.952173913043,
+                  "max_us": 50.656,
+                  "mean_us": 50.64761739130435
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              },
+              "es2_to_es1": {
+                "vls": 10,
+                "accepted": 230,
+                "delivered": 230,
+                "rm_drop": 230,
+                "abnormal_pulses": 0,
+                "measurement_messages": 210,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  },
+                  "B": {
+                    "frame_bytes": 318780,
+                    "payload_bytes": 308910,
+                    "frame_mbps": 121.44,
+                    "payload_mbps": 117.68
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 308910,
+                "delivered_mbps": 117.68,
+                "window_deliveries": 210,
+                "window_rm_drop": 210,
+                "T_tx": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 210,
+                  "max": 1539,
+                  "mean": 1538.0047619047618,
+                  "max_us": 12.312,
+                  "mean_us": 12.304038095238095
+                },
+                "T_e2e_link_removed": {
+                  "samples": 210,
+                  "max": 3103,
+                  "mean": 3101.004761904762,
+                  "max_us": 24.824,
+                  "mean_us": 24.808038095238096
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 210,
+                  "max": 3064,
+                  "mean": 3063.0238095238096,
+                  "max_us": 24.512,
+                  "mean_us": 24.504190476190477
+                },
+                "BAG_wait": {
+                  "samples": 210,
+                  "max": 39,
+                  "mean": 37.98095238095238,
+                  "max_us": 0.312,
+                  "mean_us": 0.30384761904761903
+                },
+                "jitter": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "scheduling_interval_error": {
+                  "samples": 210,
+                  "max": 2,
+                  "mean": 1.3142857142857143,
+                  "max_us": 0.016,
+                  "mean_us": 0.010514285714285716
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 210,
+                  "max": 1,
+                  "mean": 0.01904761904761905,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001523809523809524
+                },
+                "inject_payload_bytes": 308910,
+                "inject_mbps": 117.68,
+                "L_entry_last": {
+                  "samples": 230,
+                  "max": 6332,
+                  "mean": 6330.939130434783,
+                  "max_us": 50.656,
+                  "mean_us": 50.64751304347826
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 20380,
+                "formula_limit_us": 163.04
+              }
+            }
+          },
+          "gbe77_d0": {
+            "window": [
+              24914863,
+              27539863
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 77,
+                "accepted": 1771,
+                "delivered": 1771,
+                "rm_drop": 1771,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1617,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  },
+                  "B": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2378607,
+                "delivered_mbps": 906.136,
+                "window_deliveries": 1617,
+                "window_rm_drop": 1617,
+                "T_tx": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 1617,
+                  "max": 1539,
+                  "mean": 1538.0012368583798,
+                  "max_us": 12.312,
+                  "mean_us": 12.304009894867036
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1617,
+                  "max": 3103,
+                  "mean": 3101.00123685838,
+                  "max_us": 24.824,
+                  "mean_us": 24.80800989486704
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.011750154607297465,
+                  "max_us": 0.008,
+                  "mean_us": 9.400123685837971e-05
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1617,
+                  "max": 3064,
+                  "mean": 3063.012987012987,
+                  "max_us": 24.512,
+                  "mean_us": 24.504103896103896
+                },
+                "BAG_wait": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 37.9882498453927,
+                  "max_us": 0.312,
+                  "mean_us": 0.3039059987631416
+                },
+                "jitter": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.011750154607297465,
+                  "max_us": 0.008,
+                  "mean_us": 9.400123685837971e-05
+                },
+                "scheduling_interval_error": {
+                  "samples": 1617,
+                  "max": 2,
+                  "mean": 1.321583178726036,
+                  "max_us": 0.016,
+                  "mean_us": 0.010572665429808286
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.011750154607297465,
+                  "max_us": 0.008,
+                  "mean_us": 9.400123685837971e-05
+                },
+                "inject_payload_bytes": 2378607,
+                "inject_mbps": 906.136,
+                "L_entry_last": {
+                  "samples": 1771,
+                  "max": 6075,
+                  "mean": 6073.9548277809145,
+                  "max_us": 48.6,
+                  "mean_us": 48.59163862224732
+                },
+                "jitter_r119_cycles": 3,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 123426,
+                "formula_limit_us": 987.408
+              },
+              "es2_to_es1": {
+                "vls": 77,
+                "accepted": 1771,
+                "delivered": 1771,
+                "rm_drop": 1771,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1617,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  },
+                  "B": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2378606,
+                "delivered_mbps": 906.135619047619,
+                "window_deliveries": 1617,
+                "window_rm_drop": 1617,
+                "T_tx": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 1617,
+                  "max": 1539,
+                  "mean": 1538.0018552875695,
+                  "max_us": 12.312,
+                  "mean_us": 12.304014842300557
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1617,
+                  "max": 3103,
+                  "mean": 3101.0018552875695,
+                  "max_us": 24.824,
+                  "mean_us": 24.808014842300555
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1617,
+                  "max": 3064,
+                  "mean": 3063.0204081632655,
+                  "max_us": 24.512,
+                  "mean_us": 24.504163265306126
+                },
+                "BAG_wait": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 37.98144712430427,
+                  "max_us": 0.312,
+                  "mean_us": 0.30385157699443416
+                },
+                "jitter": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "scheduling_interval_error": {
+                  "samples": 1617,
+                  "max": 2,
+                  "mean": 1.3147804576376005,
+                  "max_us": 0.016,
+                  "mean_us": 0.010518243661100803
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "inject_payload_bytes": 2378607,
+                "inject_mbps": 906.136,
+                "L_entry_last": {
+                  "samples": 1771,
+                  "max": 6075,
+                  "mean": 6073.940711462451,
+                  "max_us": 48.6,
+                  "mean_us": 48.59152569169961
+                },
+                "jitter_r119_cycles": 3,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 123426,
+                "formula_limit_us": 987.408
+              }
+            }
+          },
+          "gbe77_d257": {
+            "window": [
+              27983721,
+              30608721
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 77,
+                "accepted": 1771,
+                "delivered": 1771,
+                "rm_drop": 1771,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1617,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  },
+                  "B": {
+                    "frame_bytes": 2454606,
+                    "payload_bytes": 2378607,
+                    "frame_mbps": 935.088,
+                    "payload_mbps": 906.136
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2378606,
+                "delivered_mbps": 906.135619047619,
+                "window_deliveries": 1617,
+                "window_rm_drop": 1617,
+                "T_tx": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.304
+                },
+                "T_rx": {
+                  "samples": 1617,
+                  "max": 1539,
+                  "mean": 1538.0012368583798,
+                  "max_us": 12.312,
+                  "mean_us": 12.304009894867036
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1617,
+                  "max": 3103,
+                  "mean": 3101.00123685838,
+                  "max_us": 24.824,
+                  "mean_us": 24.80800989486704
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1617,
+                  "max": 3064,
+                  "mean": 3063.0197897340754,
+                  "max_us": 24.512,
+                  "mean_us": 24.504158317872605
+                },
+                "BAG_wait": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 37.98144712430427,
+                  "max_us": 0.312,
+                  "mean_us": 0.30385157699443416
+                },
+                "jitter": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "scheduling_interval_error": {
+                  "samples": 1617,
+                  "max": 2,
+                  "mean": 1.3147804576376005,
+                  "max_us": 0.016,
+                  "mean_us": 0.010518243661100803
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "inject_payload_bytes": 2378607,
+                "inject_mbps": 906.136,
+                "L_entry_last": {
+                  "samples": 1771,
+                  "max": 6332,
+                  "mean": 6330.940146809712,
+                  "max_us": 50.656,
+                  "mean_us": 50.647521174477696
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 123426,
+                "formula_limit_us": 987.408
+              },
+              "es2_to_es1": {
+                "vls": 77,
+                "accepted": 1771,
+                "delivered": 1771,
+                "rm_drop": 1771,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1617,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2454605,
+                    "payload_bytes": 2378606,
+                    "frame_mbps": 935.087619047619,
+                    "payload_mbps": 906.135619047619
+                  },
+                  "B": {
+                    "frame_bytes": 2454605,
+                    "payload_bytes": 2378606,
+                    "frame_mbps": 935.087619047619,
+                    "payload_mbps": 906.135619047619
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2378607,
+                "delivered_mbps": 906.136,
+                "window_deliveries": 1617,
+                "window_rm_drop": 1617,
+                "T_tx": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 37.999381570810144,
+                  "max_us": 0.312,
+                  "mean_us": 0.3039950525664811
+                },
+                "T_rx": {
+                  "samples": 1617,
+                  "max": 1539,
+                  "mean": 1538.0012368583798,
+                  "max_us": 12.312,
+                  "mean_us": 12.304009894867036
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1617,
+                  "max": 3103,
+                  "mean": 3101.0006184291897,
+                  "max_us": 24.824,
+                  "mean_us": 24.80800494743352
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1617,
+                  "max": 3064,
+                  "mean": 3063.0197897340754,
+                  "max_us": 24.512,
+                  "mean_us": 24.504158317872605
+                },
+                "BAG_wait": {
+                  "samples": 1617,
+                  "max": 39,
+                  "mean": 37.98082869511441,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038466295609153
+                },
+                "jitter": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "scheduling_interval_error": {
+                  "samples": 1617,
+                  "max": 2,
+                  "mean": 1.3147804576376005,
+                  "max_us": 0.016,
+                  "mean_us": 0.010518243661100803
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1617,
+                  "max": 1,
+                  "mean": 0.01855287569573284,
+                  "max_us": 0.008,
+                  "mean_us": 0.0001484230055658627
+                },
+                "inject_payload_bytes": 2378607,
+                "inject_mbps": 906.136,
+                "L_entry_last": {
+                  "samples": 1771,
+                  "max": 6332,
+                  "mean": 6330.935629587803,
+                  "max_us": 50.656,
+                  "mean_us": 50.64748503670243
+                },
+                "jitter_r119_cycles": 3,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 123426,
+                "formula_limit_us": 987.408
+              }
+            }
+          },
+          "gbe81_d0": {
+            "window": [
+              31054100,
+              33679100
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 81,
+                "accepted": 1863,
+                "delivered": 1863,
+                "rm_drop": 1863,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1701,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2582118,
+                    "payload_bytes": 2502171,
+                    "frame_mbps": 983.664,
+                    "payload_mbps": 953.208
+                  },
+                  "B": {
+                    "frame_bytes": 2582118,
+                    "payload_bytes": 2502171,
+                    "frame_mbps": 983.664,
+                    "payload_mbps": 953.208
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2502170,
+                "delivered_mbps": 953.207619047619,
+                "window_deliveries": 1701,
+                "window_rm_drop": 1701,
+                "T_tx": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.30400000000000005
+                },
+                "T_rx": {
+                  "samples": 1701,
+                  "max": 1539,
+                  "mean": 1538.0005878894767,
+                  "max_us": 12.312,
+                  "mean_us": 12.304004703115815
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1701,
+                  "max": 3102,
+                  "mean": 3101.0005878894767,
+                  "max_us": 24.816,
+                  "mean_us": 24.808004703115813
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.017048794826572605,
+                  "max_us": 0.008,
+                  "mean_us": 0.00013639035861258083
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1701,
+                  "max": 3064,
+                  "mean": 3063.0176366843034,
+                  "max_us": 24.512,
+                  "mean_us": 24.504141093474427
+                },
+                "BAG_wait": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 37.98295120517343,
+                  "max_us": 0.312,
+                  "mean_us": 0.30386360964138737
+                },
+                "jitter": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.017048794826572605,
+                  "max_us": 0.008,
+                  "mean_us": 0.00013639035861258083
+                },
+                "scheduling_interval_error": {
+                  "samples": 1701,
+                  "max": 2,
+                  "mean": 1.3162845385067607,
+                  "max_us": 0.016,
+                  "mean_us": 0.010530276308054086
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.017048794826572605,
+                  "max_us": 0.008,
+                  "mean_us": 0.00013639035861258083
+                },
+                "inject_payload_bytes": 2502171,
+                "inject_mbps": 953.208,
+                "L_entry_last": {
+                  "samples": 1863,
+                  "max": 6075,
+                  "mean": 6073.9398819108965,
+                  "max_us": 48.6,
+                  "mean_us": 48.59151905528717
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 129578,
+                "formula_limit_us": 1036.624
+              },
+              "es2_to_es1": {
+                "vls": 81,
+                "accepted": 1863,
+                "delivered": 1863,
+                "rm_drop": 1863,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1701,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2582117,
+                    "payload_bytes": 2502170,
+                    "frame_mbps": 983.663619047619,
+                    "payload_mbps": 953.207619047619
+                  },
+                  "B": {
+                    "frame_bytes": 2582117,
+                    "payload_bytes": 2502170,
+                    "frame_mbps": 983.663619047619,
+                    "payload_mbps": 953.207619047619
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2502171,
+                "delivered_mbps": 953.208,
+                "window_deliveries": 1701,
+                "window_rm_drop": 1701,
+                "T_tx": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.30400000000000005
+                },
+                "T_rx": {
+                  "samples": 1701,
+                  "max": 1538,
+                  "mean": 1538.0,
+                  "max_us": 12.304,
+                  "mean_us": 12.304
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1701,
+                  "max": 3102,
+                  "mean": 3101.0,
+                  "max_us": 24.816,
+                  "mean_us": 24.808000000000003
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1701,
+                  "max": 3064,
+                  "mean": 3063.0141093474426,
+                  "max_us": 24.512,
+                  "mean_us": 24.50411287477954
+                },
+                "BAG_wait": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 37.985890652557316,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038871252204586
+                },
+                "jitter": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "scheduling_interval_error": {
+                  "samples": 1701,
+                  "max": 2,
+                  "mean": 1.3192239858906525,
+                  "max_us": 0.016,
+                  "mean_us": 0.010553791887125222
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "inject_payload_bytes": 2502171,
+                "inject_mbps": 953.208,
+                "L_entry_last": {
+                  "samples": 1863,
+                  "max": 6074,
+                  "mean": 6073.946323134729,
+                  "max_us": 48.592,
+                  "mean_us": 48.59157058507783
+                },
+                "jitter_r119_cycles": 2,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 129578,
+                "formula_limit_us": 1036.624
+              }
+            }
+          },
+          "gbe81_d257": {
+            "window": [
+              34124302,
+              36749302
+            ],
+            "measured_cycles": 2625000,
+            "measured_ms": 21.0,
+            "directions": {
+              "es1_to_es2": {
+                "vls": 81,
+                "accepted": 1863,
+                "delivered": 1863,
+                "rm_drop": 1863,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1701,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2582117,
+                    "payload_bytes": 2502170,
+                    "frame_mbps": 983.663619047619,
+                    "payload_mbps": 953.207619047619
+                  },
+                  "B": {
+                    "frame_bytes": 2582117,
+                    "payload_bytes": 2502170,
+                    "frame_mbps": 983.663619047619,
+                    "payload_mbps": 953.207619047619
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2502171,
+                "delivered_mbps": 953.208,
+                "window_deliveries": 1701,
+                "window_rm_drop": 1701,
+                "T_tx": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 38.0,
+                  "max_us": 0.312,
+                  "mean_us": 0.30400000000000005
+                },
+                "T_rx": {
+                  "samples": 1701,
+                  "max": 1539,
+                  "mean": 1538.0035273368608,
+                  "max_us": 12.312,
+                  "mean_us": 12.304028218694887
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1701,
+                  "max": 3103,
+                  "mean": 3101.0035273368608,
+                  "max_us": 24.824,
+                  "mean_us": 24.808028218694883
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1701,
+                  "max": 3064,
+                  "mean": 3063.0176366843034,
+                  "max_us": 24.512,
+                  "mean_us": 24.504141093474427
+                },
+                "BAG_wait": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 37.985890652557316,
+                  "max_us": 0.312,
+                  "mean_us": 0.3038871252204586
+                },
+                "jitter": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "scheduling_interval_error": {
+                  "samples": 1701,
+                  "max": 2,
+                  "mean": 1.3192239858906525,
+                  "max_us": 0.016,
+                  "mean_us": 0.010553791887125222
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.014109347442680775,
+                  "max_us": 0.008,
+                  "mean_us": 0.00011287477954144621
+                },
+                "inject_payload_bytes": 2502171,
+                "inject_mbps": 953.208,
+                "L_entry_last": {
+                  "samples": 1863,
+                  "max": 6332,
+                  "mean": 6330.949543746645,
+                  "max_us": 50.656,
+                  "mean_us": 50.64759634997316
+                },
+                "jitter_r119_cycles": 3,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 129578,
+                "formula_limit_us": 1036.624
+              },
+              "es2_to_es1": {
+                "vls": 81,
+                "accepted": 1863,
+                "delivered": 1863,
+                "rm_drop": 1863,
+                "abnormal_pulses": 0,
+                "measurement_messages": 1701,
+                "gmii": {
+                  "A": {
+                    "frame_bytes": 2582118,
+                    "payload_bytes": 2502171,
+                    "frame_mbps": 983.664,
+                    "payload_mbps": 953.208
+                  },
+                  "B": {
+                    "frame_bytes": 2582118,
+                    "payload_bytes": 2502171,
+                    "frame_mbps": 983.664,
+                    "payload_mbps": 953.208
+                  }
+                },
+                "BAG_wait_definition": "max(P_slow+BAG-M,0)",
+                "delivered_payload_bytes": 2502170,
+                "delivered_mbps": 953.207619047619,
+                "window_deliveries": 1701,
+                "window_rm_drop": 1701,
+                "T_tx": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 37.999412110523224,
+                  "max_us": 0.312,
+                  "mean_us": 0.30399529688418575
+                },
+                "T_rx": {
+                  "samples": 1701,
+                  "max": 1539,
+                  "mean": 1538.0017636684304,
+                  "max_us": 12.312,
+                  "mean_us": 12.304014109347444
+                },
+                "T_e2e_link_removed": {
+                  "samples": 1701,
+                  "max": 3103,
+                  "mean": 3101.0011757789534,
+                  "max_us": 24.824,
+                  "mean_us": 24.808009406231626
+                },
+                "T_tx_BAG_removed": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.01763668430335097,
+                  "max_us": 0.008,
+                  "mean_us": 0.00014109347442680775
+                },
+                "T_e2e_BAG_and_link_removed": {
+                  "samples": 1701,
+                  "max": 3064,
+                  "mean": 3063.0194003527336,
+                  "max_us": 24.512,
+                  "mean_us": 24.50415520282187
+                },
+                "BAG_wait": {
+                  "samples": 1701,
+                  "max": 39,
+                  "mean": 37.98177542621987,
+                  "max_us": 0.312,
+                  "mean_us": 0.30385420340975894
+                },
+                "jitter": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.01763668430335097,
+                  "max_us": 0.008,
+                  "mean_us": 0.00014109347442680775
+                },
+                "scheduling_interval_error": {
+                  "samples": 1701,
+                  "max": 2,
+                  "mean": 1.3156966490299824,
+                  "max_us": 0.016,
+                  "mean_us": 0.01052557319223986
+                },
+                "raw_gap_minus_BAG": {
+                  "samples": 1701,
+                  "max": 1,
+                  "mean": 0.01763668430335097,
+                  "max_us": 0.008,
+                  "mean_us": 0.00014109347442680775
+                },
+                "inject_payload_bytes": 2502171,
+                "inject_mbps": 953.208,
+                "L_entry_last": {
+                  "samples": 1863,
+                  "max": 6332,
+                  "mean": 6330.94256575416,
+                  "max_us": 50.656,
+                  "mean_us": 50.64754052603328
+                },
+                "jitter_r119_cycles": 3,
+                "verification_profile": "fragmentation1030",
+                "legacy_zero_wire_deviation": false,
+                "legacy_207_784us_bound": true,
+                "formula_limit": 129578,
+                "formula_limit_us": 1036.624
+              }
+            }
+          }
+        },
+        "diagnostics": []
+      },
+      "gmii": {
+        "test": "tb_sys_perf_gmii",
+        "items": 289423,
+        "errors": 0,
+        "either": 0,
+        "tx_delay": 0,
+        "replay_delay": 0,
+        "capacity": 0,
+        "channels": {
+          "es2_a": {
+            "max_occupancy": 0,
+            "max_queue_wait": 0,
+            "clean_max_occupancy": 0,
+            "clean_max_queue_wait": 0,
+            "accepted": 8268,
+            "dropped": 0,
+            "self_spaced_input": true
+          },
+          "es2_b": {
+            "max_occupancy": 0,
+            "max_queue_wait": 0,
+            "clean_max_occupancy": 0,
+            "clean_max_queue_wait": 0,
+            "accepted": 8268,
+            "dropped": 0,
+            "self_spaced_input": true
+          },
+          "es1_a": {
+            "max_occupancy": 0,
+            "max_queue_wait": 0,
+            "clean_max_occupancy": 0,
+            "clean_max_queue_wait": 0,
+            "accepted": 7808,
+            "dropped": 0,
+            "self_spaced_input": true
+          },
+          "es1_b": {
+            "max_occupancy": 0,
+            "max_queue_wait": 0,
+            "clean_max_occupancy": 0,
+            "clean_max_queue_wait": 0,
+            "accepted": 7808,
+            "dropped": 0,
+            "self_spaced_input": true
+          }
+        },
+        "diagnostics": []
+      }
+    },
+    "r97_fields": 1784
+  },
+  "passed": true,
+  "checks": 683408635,
+  "errors": 0,
+  "result": "PASS",
+  "coverage": [
+    "[COVERAGE] cycles=36794219"
+  ],
+  "finished": "2026-11-03T19:47:37.391934+08:00",
+  "jobs": [
+    {
+      "name": "vectors",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_cases.py",
+        "--test",
+        "tb_sys_perf",
+        "--seed",
+        "20261007",
+        "--out",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\vectors"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 27944,
+      "created": 1793699708.7009325,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 5.783,
+      "peak_tree_bytes": 1370832896,
+      "budget_seconds": 300,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\vectors.log"
+    },
+    {
+      "name": "vlib",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 26724,
+      "created": 1793699714.58018,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.262,
+      "peak_tree_bytes": 8925184,
+      "budget_seconds": 30,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\vlib.log"
+    },
+    {
+      "name": "compile_rtl",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+cover=sbceft",
+        "+define+AFDX_CE_DIV=2",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_map.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_payload.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_read.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_rx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_cfg.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_crc32_d8.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_es.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_rx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mgmt_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ntp_fraction.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ram_sdp.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rtc.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_core.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_deliver.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_parse.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_bank.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_payload.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_ram.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_svc.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_timebase.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\AFDX_top.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_buf.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_builder.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_core.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_free.v"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 12980,
+      "created": 1793699714.845368,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.532,
+      "peak_tree_bytes": 41590784,
+      "budget_seconds": 120,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_rtl.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib",
+        "+define+AFDX_CE_DIV=2",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\gmii_monitor.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\judge_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_driver.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_monitor.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\link_model.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\load_test_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\mac_tx_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rm_age_probe.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rtc_retry_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rx_core_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\snmp_test_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\top_stream_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\tx_core_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\tb_sys_perf.v"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 2748,
+      "created": 1793699715.3883443,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.274,
+      "peak_tree_bytes": 9834496,
+      "budget_seconds": 120,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-batch",
+        "-coverage",
+        "tb_sys_perf",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 13244,
+      "created": 1793699715.672534,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 6687.477,
+      "peak_tree_bytes": 389693440,
+      "budget_seconds": 9000,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\simulation.log"
+    },
+    {
+      "name": "check",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_run_checks.py",
+        "--test",
+        "tb_sys_perf",
+        "--dir",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+      "pid": 23784,
+      "created": 1793706403.1683245,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 54.208,
+      "peak_tree_bytes": 904347648,
+      "budget_seconds": 300,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\check.log"
+    }
+  ]
+}

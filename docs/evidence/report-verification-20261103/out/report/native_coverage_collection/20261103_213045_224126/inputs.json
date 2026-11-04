@@ -1,0 +1,1077 @@
+[
+  {
+    "case": "tb_sys_perf_var",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf_var\\20261103_175508_683841",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf_var\\20261103_175508_683841\\coverage.ucdb",
+    "sha256": "9B32F86205333E470517D9B621A24F0AA37FAE9BD63F5C54312D9D22D5C1D3CC",
+    "testname": "tb_sys_perf_var_20261103_175508_683841",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": false,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf_var\\20261103_175508_683841\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "same_capture_source_identity_recheck",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_perf",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\coverage.ucdb",
+    "sha256": "BE9A9B1FDCBCB4D7C9575C157393D88C874B2EB59633C971F6D290549FAE2736",
+    "testname": "tb_sys_perf_20261103_175508_684130",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_rx_data",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_194737_395259",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_194737_395259\\coverage.ucdb",
+    "sha256": "933063597235B368621109B43628BF4AD87B15F4F917CABB8F19BADDFA0D1EF0",
+    "testname": "tb_t65_rx_data_20261103_194737_395259",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_data\\20261103_194737_395259\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_drop",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_drop\\20261103_194825_421380",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_drop\\20261103_194825_421380\\coverage.ucdb",
+    "sha256": "9890FF0C95F145C871AAD35FE8902DDDB371C07B85196529295181E7F5349D71",
+    "testname": "tb_tx_drop_20261103_194825_421380",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_drop\\20261103_194825_421380\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_ram_sdp",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_ram_sdp\\20261103_194914_763089",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_ram_sdp\\20261103_194914_763089\\coverage.ucdb",
+    "sha256": "6906D626448AA710A893E2A03BA3EA10E74BDFA961C3D7E4E921DE71B898AC6B",
+    "testname": "tb_ram_sdp_20261103_194914_763089",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_ram_sdp\\20261103_194914_763089\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_mac_tx",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_tx\\20261103_194917_802580",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_tx\\20261103_194917_802580\\coverage.ucdb",
+    "sha256": "5EFF40641708B5B5DBABE665A8F881D3E76D627C8F165E0CD9C9B5D181929EB4",
+    "testname": "tb_mac_tx_20261103_194917_802580",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_tx\\20261103_194917_802580\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_mac_rx",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_rx\\20261103_194921_358137",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_rx\\20261103_194921_358137\\coverage.ucdb",
+    "sha256": "66F6CCB1C85301F420D2139733CF1FFCE44B4F7172349D5725FF108A105E5A0E",
+    "testname": "tb_mac_rx_20261103_194921_358137",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_rx\\20261103_194921_358137\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_mac_loop",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_loop\\20261103_194924_662089",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_loop\\20261103_194924_662089\\coverage.ucdb",
+    "sha256": "69D5B56524F10B265D67E4EBE9F68E74E2DC7F6D97E2BF538555938737E24CBF",
+    "testname": "tb_mac_loop_20261103_194924_662089",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_mac_loop\\20261103_194924_662089\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_basic",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194929_304030",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194929_304030\\coverage.ucdb",
+    "sha256": "62D790D795C0A14F0826D2E49643C0783BD33BD776B0D6F66DB439F1FB3D4CD2",
+    "testname": "tb_tx_basic_20261103_194929_304030",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194929_304030\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_basic|TX_PAGE_AW=5,TX_OFF_AW=11",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194934_706212",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194934_706212\\coverage.ucdb",
+    "sha256": "2221FBA2209BD00377A15A460CC1E89FC9BF456305C70487EA2242F49671046F",
+    "testname": "tb_tx_basic_20261103_194934_706212",
+    "parameters": [
+      "TX_PAGE_AW=5",
+      "TX_OFF_AW=11"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_basic\\20261103_194934_706212\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_bag",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_bag\\20261103_194940_357673",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_bag\\20261103_194940_357673\\coverage.ucdb",
+    "sha256": "E91A617FA7A1213B063C292A9010CAB05E9DD45F98FCF94B7A2DB5B59D1B6EE0",
+    "testname": "tb_tx_bag_20261103_194940_357673",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_bag\\20261103_194940_357673\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_multi",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_multi\\20261103_195005_632404",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_multi\\20261103_195005_632404\\coverage.ucdb",
+    "sha256": "D19DFE6AE4D67C431854FFEBE857AEB80B44ED1E0A5F89FFB54C28CA9DF9DED5",
+    "testname": "tb_tx_multi_20261103_195005_632404",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_multi\\20261103_195005_632404\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_tx_net",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_net\\20261103_195038_096065",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_net\\20261103_195038_096065\\coverage.ucdb",
+    "sha256": "68CBCE8DE3D891A5A838E313D8D3501E2AB942401EC119AF99A1DF4F8923FB67",
+    "testname": "tb_tx_net_20261103_195038_096065",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_tx_net\\20261103_195038_096065\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_basic",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_basic\\20261103_195042_451625",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_basic\\20261103_195042_451625\\coverage.ucdb",
+    "sha256": "0DBA47B32DF12A6F5B15BCCCB4DC44CB9FFB209C69CA2C9E6C19FA72540ED9EF",
+    "testname": "tb_rx_basic_20261103_195042_451625",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_basic\\20261103_195042_451625\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_fault",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_fault\\20261103_195104_228690",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_fault\\20261103_195104_228690\\coverage.ucdb",
+    "sha256": "19A9671558E2E50AED03DFD32A26CA2E2295C4001AAE61B28E781BEFA42E03FA",
+    "testname": "tb_rx_fault_20261103_195104_228690",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_fault\\20261103_195104_228690\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_icrm",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_icrm\\20261103_195109_628884",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_icrm\\20261103_195109_628884\\coverage.ucdb",
+    "sha256": "3132F3A6D64C11BB48D0E8CBC4DA98D1498B6A1FFCE9C1E1CD3976DC876082E0",
+    "testname": "tb_rx_icrm_20261103_195109_628884",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_icrm\\20261103_195109_628884\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_load",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_load\\20261103_195119_435328",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_load\\20261103_195119_435328\\coverage.ucdb",
+    "sha256": "877B390C85B28FE8CB3D28B820AB82A309703958B615D0FF4F5CD1C7E02D95D9",
+    "testname": "tb_rx_load_20261103_195119_435328",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_load\\20261103_195119_435328\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_ovf_ring|RX_RING_AW=9",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_ring\\20261103_195132_643371",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_ring\\20261103_195132_643371\\coverage.ucdb",
+    "sha256": "3A389B6C911005829BAAF1E0B8BEA617378E922B84210796A0BD3E72C0396CD8",
+    "testname": "tb_rx_ovf_ring_20261103_195132_643371",
+    "parameters": [
+      "RX_RING_AW=9"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_ring\\20261103_195132_643371\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_ovf_dq|RX_DQ_AW=1",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_dq\\20261103_195137_777794",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_dq\\20261103_195137_777794\\coverage.ucdb",
+    "sha256": "27A37DCB8700372E24E4D087BD8D458BE2234D8D9E0A1316889AC5C48DC83D57",
+    "testname": "tb_rx_ovf_dq_20261103_195137_777794",
+    "parameters": [
+      "RX_DQ_AW=1"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_ovf_dq\\20261103_195137_777794\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rx_net",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_net\\20261103_195142_913711",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_net\\20261103_195142_913711\\coverage.ucdb",
+    "sha256": "168A8CCD11BCFF323B0D6C3D82DBD97EB1072B2E65FB0E9147A815F4E53E3116",
+    "testname": "tb_rx_net_20261103_195142_913711",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rx_net\\20261103_195142_913711\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_basic",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_basic\\20261103_201510_248153",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_basic\\20261103_201510_248153\\coverage.ucdb",
+    "sha256": "4E0553D304882C7958B390B9A54863BAD60D919552CCC6DBD3DADF85A056C794",
+    "testname": "tb_sys_basic_20261103_201510_248153",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_fault",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_fault\\20261103_195219_967787",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_fault\\20261103_195219_967787\\coverage.ucdb",
+    "sha256": "BA581CA0FFA370C035E4D3C6BFE440F1E2A35ED64491CCBAE1571BDE701C8EBF",
+    "testname": "tb_sys_fault_20261103_195219_967787",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_fault\\20261103_195219_967787\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_delay",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_delay\\20261103_195608_460495",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_delay\\20261103_195608_460495\\coverage.ucdb",
+    "sha256": "0370710738525A60EC9C5F8F27A7F1017C3E435B489F88F512CEA131BA911789",
+    "testname": "tb_sys_delay_20261103_195608_460495",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_delay\\20261103_195608_460495\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_load",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_load\\20261103_195729_032890",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_load\\20261103_195729_032890\\coverage.ucdb",
+    "sha256": "2635E8895C81C4D0277163A82BA2708B90BC13EB0504BAB333B00892BC45BCFD",
+    "testname": "tb_sys_load_20261103_195729_032890",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": false,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_load\\20261103_195729_032890\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "same_capture_source_identity_recheck",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_cfg",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_cfg\\20261103_201831_653429",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_cfg\\20261103_201831_653429\\coverage.ucdb",
+    "sha256": "D02A00B5863255EA8F95600E4466CE1ECC1A500F4F85FA849A8099FFB1BD6A59",
+    "testname": "tb_sys_cfg_20261103_201831_653429",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_reset",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_reset\\20261103_202046_779501",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_reset\\20261103_202046_779501\\coverage.ucdb",
+    "sha256": "69EF73A635C48A30C65E3113DE878C558CC32B6C5A70A514F442B6BA170F6BA8",
+    "testname": "tb_sys_reset_20261103_202046_779501",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_ovf|RX_RING_AW=9",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_ovf\\20261103_202204_547673",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_ovf\\20261103_202204_547673\\coverage.ucdb",
+    "sha256": "95EDD854EBEBE4772B2D293A45C5730D16C76FC2C8A6C6AADAD15CF097BC97BA",
+    "testname": "tb_sys_ovf_20261103_202204_547673",
+    "parameters": [
+      "RX_RING_AW=9"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_net",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_net\\20261103_202317_464476",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_net\\20261103_202317_464476\\coverage.ucdb",
+    "sha256": "BDCD054EA9E81CD755E9F3B1C321612275BFA50A90A3C856EAE5B118EBDBBF40",
+    "testname": "tb_sys_net_20261103_202317_464476",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": 20261007,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_rtc",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_rtc\\20261103_202347_833492",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_rtc\\20261103_202347_833492\\coverage.ucdb",
+    "sha256": "1DB34E823221FAFA7383385DD96E9466B32BF298585949518CFE02B188CF4E42",
+    "testname": "tb_sys_rtc_20261103_202347_833492",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_snmp",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp\\20261103_204509_676691",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp\\20261103_204509_676691\\coverage.ucdb",
+    "sha256": "1798A3D7B6923BB0696405E37D9014EDB30CE46CC51336549F62E85BDCFFEA1B",
+    "testname": "tb_sys_snmp_20261103_204509_676691",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_snmp_settrap",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp_settrap\\20261103_204856_845365",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_snmp_settrap\\20261103_204856_845365\\coverage.ucdb",
+    "sha256": "4C3AC607D6B8425433F3C955F992B5C3AD4FDCDD2B2E0C5F832A240BA099BF69",
+    "testname": "tb_sys_snmp_settrap_20261103_204856_845365",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_sys_615a",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_615a\\20261103_205210_747517",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_615a\\20261103_205210_747517\\coverage.ucdb",
+    "sha256": "CF67C5935A22E8F63F9D6EAC0D99260E4A61DE1E60BA92FB01B9181B0FF431FD",
+    "testname": "tb_sys_615a_20261103_205210_747517",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_gbe_burst|COUNT=77",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205807_517716",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205807_517716\\coverage.ucdb",
+    "sha256": "2768B11F50A1FD1E829EC8F66E72DEFBCB58E21F4246738E29BEF2CFD07F5309",
+    "testname": "tb_gbe_burst_20261103_205807_517716",
+    "parameters": [
+      "COUNT=77"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_gbe_burst|COUNT=81",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205850_995639",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_gbe_burst\\20261103_205850_995639\\coverage.ucdb",
+    "sha256": "02E0D661F8BBD9F627D44A06E5B51A8EBBEC5D53D11E14DDEAB11902E6364A50",
+    "testname": "tb_gbe_burst_20261103_205850_995639",
+    "parameters": [
+      "COUNT=81"
+    ],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rm_phase",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rm_phase\\20261103_212918_293871",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rm_phase\\20261103_212918_293871\\coverage.ucdb",
+    "sha256": "50135083DBAFEA4D0F259E6791B9C82844B0ED16B981B4569733F0E444E0289E",
+    "testname": "tb_rm_phase_20261103_212918_293871",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rtc_recovery",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_recovery\\20261103_211446_175361",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_recovery\\20261103_211446_175361\\coverage.ucdb",
+    "sha256": "B7E5098849F2291E839AA9DC4E757A5CB20C172CFD07B41F08EA866B5B64136C",
+    "testname": "tb_rtc_recovery_20261103_211446_175361",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rtc_originate",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_originate\\20261103_211451_753008",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_originate\\20261103_211451_753008\\coverage.ucdb",
+    "sha256": "2F9417327AF61AEE01455DA0FB9B54026C1037473C7D186BEA45AEF7792C902D",
+    "testname": "tb_rtc_originate_20261103_211451_753008",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_judge_capacity",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_capacity\\20261103_210022_157068",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_capacity\\20261103_210022_157068\\coverage.ucdb",
+    "sha256": "D8CECC2B693561D9AC36014403BB38C3A64867C418816858922E459C18CC9066",
+    "testname": "tb_judge_capacity_20261103_210022_157068",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_judge_snmp",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_snmp\\20261103_210101_511006",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_judge_snmp\\20261103_210101_511006\\coverage.ucdb",
+    "sha256": "FF328C36BA1DC280BDFD47A01C7A9E2447ADCEA4CF76FABECD5EE19A23031360",
+    "testname": "tb_judge_snmp_20261103_210101_511006",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_elinx",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_elinx\\20261103_210313_385898",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_elinx\\20261103_210313_385898\\coverage.ucdb",
+    "sha256": "DFEFFC59A3A567F209028B04BFD4C9B0E22513EBBA689007C46B8746E361AD7F",
+    "testname": "tb_elinx_20261103_210313_385898",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_top_wrap",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_top_wrap\\20261103_210400_029947",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_top_wrap\\20261103_210400_029947\\coverage.ucdb",
+    "sha256": "E387B7F1DFED4852BB172A2114BF64AE98511BF4A174E898F968D6D5563043B0",
+    "testname": "tb_top_wrap_20261103_210400_029947",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_queue_a",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_210430_048892",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_queue_a\\20261103_210430_048892\\coverage.ucdb",
+    "sha256": "9AA8B58126B1F6A758672F9E1D5F892A8B7EA72AF09E555B923486F23E3460A1",
+    "testname": "tb_t65_queue_a_20261103_210430_048892",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_reset_app",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_app\\20261103_210436_702458",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_app\\20261103_210436_702458\\coverage.ucdb",
+    "sha256": "B0A8D43F48EA5F2422E7302D2E3A56BDDCDC2A4786285D7AE05C412AA694701D",
+    "testname": "tb_t65_reset_app_20261103_210436_702458",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_reset_mac",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_210511_959718",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_210511_959718\\coverage.ucdb",
+    "sha256": "6D76967BE0EEB62A5E57C407BCFD2875FEA4B0E8333661FE998970C9430AE7BA",
+    "testname": "tb_t65_reset_mac_20261103_210511_959718",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_reset_rx",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_rx\\20261103_210554_617374",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_rx\\20261103_210554_617374\\coverage.ucdb",
+    "sha256": "D76A8BA589711DBD9357AEEC8E7D93B6407BA135113C64C1066D927307FC0160",
+    "testname": "tb_t65_reset_rx_20261103_210554_617374",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_rx_desc",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_desc\\20261103_210630_169232",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_rx_desc\\20261103_210630_169232\\coverage.ucdb",
+    "sha256": "6B6CEC66CFA60FF22E5AA8FCEC7586079B653B2E9907FEE5EDDB0DA014BD759A",
+    "testname": "tb_t65_rx_desc_20261103_210630_169232",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_desc",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_desc\\20261103_210635_801238",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_desc\\20261103_210635_801238\\coverage.ucdb",
+    "sha256": "0E58E1ADF34533E1E0AC8E2261ADA9AA880CC9727285604B791E439AF8334782",
+    "testname": "tb_t65_tx_desc_20261103_210635_801238",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_hint",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_hint\\20261103_210639_650890",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_hint\\20261103_210639_650890\\coverage.ucdb",
+    "sha256": "074B3AB148CD58B503DEA7BEB994CF6E1AC0C2A7AC5A77C0E49F462973B2DD29",
+    "testname": "tb_t65_tx_hint_20261103_210639_650890",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_init",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_init\\20261103_210648_205600",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_init\\20261103_210648_205600\\coverage.ucdb",
+    "sha256": "21017D85297A941F999EEFB5660DE7849114DE49BA73E831A2E05461B8C11C99",
+    "testname": "tb_t65_tx_init_20261103_210648_205600",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_ready",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_ready\\20261103_210653_701972",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_ready\\20261103_210653_701972\\coverage.ucdb",
+    "sha256": "74EA47C9F4378783D0CFBB185216C5F54608BF42FC6F884C1BA0C9560844C52E",
+    "testname": "tb_t65_tx_ready_20261103_210653_701972",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_short_full",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_full\\20261103_210701_669877",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_full\\20261103_210701_669877\\coverage.ucdb",
+    "sha256": "8CFA69F4788A41F74D8588689F1D6748AA3247A618D9BA7CDCC3DDD84C6ADDBC",
+    "testname": "tb_t65_tx_short_full_20261103_210701_669877",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_short_init",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_init\\20261103_210706_680197",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_init\\20261103_210706_680197\\coverage.ucdb",
+    "sha256": "5E0E842A359C23B4BE83068EDA13F3F38FE9ACD5D93C9B01E789EEDFC342AD1D",
+    "testname": "tb_t65_tx_short_init_20261103_210706_680197",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_short_normal",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_normal\\20261103_210720_231070",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_short_normal\\20261103_210720_231070\\coverage.ucdb",
+    "sha256": "490D45DC57F22CD135732E7CA6F55E53AD992EF440D0B20E164BF58EBA674059",
+    "testname": "tb_t65_tx_short_normal_20261103_210720_231070",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_space",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_210728_098943",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space\\20261103_210728_098943\\coverage.ucdb",
+    "sha256": "34A9D02EAE4BFC0918F96FD2C417A25831748E012B57BE58404FCF5735CDEC9E",
+    "testname": "tb_t65_tx_space_20261103_210728_098943",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_space_edge",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_210741_047681",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_space_edge\\20261103_210741_047681\\coverage.ucdb",
+    "sha256": "EFE2275AAFDA6C24B9160DF90B2B99A79940784456DF4760F32245DDBEDEAFA5",
+    "testname": "tb_t65_tx_space_edge_20261103_210741_047681",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_t65_tx_unmapped",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_unmapped\\20261103_210748_348837",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_tx_unmapped\\20261103_210748_348837\\coverage.ucdb",
+    "sha256": "A64385E7BEDC5FFB822A94349696628A4936A46106A0C71711A38FD89B262924",
+    "testname": "tb_t65_tx_unmapped_20261103_210748_348837",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_rtc_banked",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_banked\\20261103_211455_992015",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_banked\\20261103_211455_992015\\coverage.ucdb",
+    "sha256": "192728332438359DF37AD7B48AE7F362C6603BB9DB644B44872E16D4F0D6EDD1",
+    "testname": "tb_rtc_banked_20261103_211455_992015",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  },
+  {
+    "case": "tb_net_services",
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_net_services\\20261103_174256_134605",
+    "ucdb": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_net_services\\20261103_174256_134605\\coverage.ucdb",
+    "sha256": "6F70D426C08787E744A4EFCA0853CB76E597050DA5F2DE2D268E06869E9E89CD",
+    "testname": "tb_net_services_20261103_174256_134605",
+    "parameters": [],
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "vector_seed": null,
+    "raw_summary_passed": true,
+    "reviewed_nonfunctional_changes": [
+      {
+        "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+        "original_sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+        "current_sha256": "2E1BB4462F4974CB0BC5AB9E5C5D0A7EB63DA4267D718834275D3E7ECDCB7840",
+        "snapshot": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_net_services\\20261103_174256_134605\\sources\\47_top_stream_endpoint.v",
+        "review": "Exact two edits only: connect existing two-bit output to a new otherwise-unused wire in DIRECT_CORE; no DUT, stimulus, checker or behavior change"
+      }
+    ],
+    "acceptance": "raw_positive",
+    "seed_scope": "Verified generator --seed when present; otherwise this case has no seeded vector command"
+  }
+]

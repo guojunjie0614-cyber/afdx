@@ -1,0 +1,38 @@
+# vsim -batch -coverage tb_tx_drop -wlf simulation.wlf -do "do run.do" 
+# Start time: 19:48:26 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_buf(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_tx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_free(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_tx_builder(fast)".
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_tx_drop(fast)
+# Loading work.afdx_tx_core(fast)
+# 
+# do run.do
+# [STAGE] dis cycle=1051
+# [STAGE] long cycle=3564
+# [STAGE] full cycle=18453
+# [STAGE] nopage cycle=2006364
+# [STAGE] refill cycle=6308575
+# [STAGE] reset_refill cycle=10708575
+# [COVERAGE] cycles=15134252 messages=253 outcomes=253 accept=227 drop=26 frames_a=221 frames_b=221
+# [RESULT] tb_tx_drop PASS checks=30285277 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_tx_drop/20261103_194825_421380/compile_sources/tb/lib/tx_core_suite.v(180)
+#    Time: 121074014 ns  Iteration: 0  Instance: /tb_tx_drop/suite
+# Saving coverage database on exit...
+# End time: 19:49:14 on Nov 03,2026, Elapsed time: 0:00:48
+# Errors: 0, Warnings: 0

@@ -1,0 +1,47 @@
+{
+  "captures": [
+    {
+      "name": "tx_bag",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag.png",
+      "sha256": "7B7872BB20F52A10E5D634418F084A5F0D21B87717093C5D8CEDB433F2EAD114",
+      "requested_pid": 8056,
+      "owned_processes": {
+        "13508": 1793702719.965374,
+        "25024": 1793702719.976584,
+        "8056": 1793702720.0020735,
+        "1680": 1793702720.1116924,
+        "29264": 1793702737.8995042
+      },
+      "window": "16132.000ns 819132.000ns"
+    },
+    {
+      "name": "tx_bag_first",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag_first.png",
+      "sha256": "175A8B15C94195ADCE6355C446C50F98DDD82A2E96CBAEE14B300FAEA6A55E4C",
+      "requested_pid": 8056,
+      "owned_processes": {
+        "13508": 1793702719.965374,
+        "25024": 1793702719.976584,
+        "8056": 1793702720.0020735,
+        "1680": 1793702720.1116924,
+        "29264": 1793702737.8995042
+      },
+      "window": "17108.000ns 17772.000ns"
+    },
+    {
+      "name": "tx_bag_second",
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag_second.png",
+      "sha256": "79C3A07B0514987C3CCA55D44B52CAAA13977793C55E91E83F0891D642896C4C",
+      "requested_pid": 8056,
+      "owned_processes": {
+        "13508": 1793702719.965374,
+        "25024": 1793702719.976584,
+        "8056": 1793702720.0020735,
+        "1680": 1793702720.1116924,
+        "29264": 1793702737.8995042
+      },
+      "window": "817108.000ns 817772.000ns"
+    }
+  ],
+  "failures": []
+}

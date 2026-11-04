@@ -1,0 +1,51 @@
+{
+  "items": 25,
+  "errors": 0,
+  "cases": {
+    "0": {
+      "start": 65712,
+      "version": 16692,
+      "port": 59,
+      "name": "DEMC3_1.LCI",
+      "status_before": 0,
+      "status_after": 0,
+      "loaded_before": 0,
+      "loaded_after": 0,
+      "end": 106701
+    },
+    "1": {
+      "start": 106706,
+      "version": 16692,
+      "port": 59,
+      "name": "DEMC3_1.LNO",
+      "status_before": 0,
+      "status_after": 0,
+      "loaded_before": 0,
+      "loaded_after": 0,
+      "end": 147694
+    },
+    "2": {
+      "start": 147699,
+      "version": 16691,
+      "port": 59,
+      "name": "DEMC3_1.LCI",
+      "status_before": 0,
+      "status_after": 0,
+      "loaded_before": 0,
+      "loaded_after": 0,
+      "end": 188684
+    },
+    "3": {
+      "start": 188689,
+      "version": 16691,
+      "port": 59,
+      "name": "DEMC3_1.LNO",
+      "status_before": 0,
+      "status_after": 0,
+      "loaded_before": 0,
+      "loaded_after": 0,
+      "end": 229677
+    }
+  },
+  "pcap_packets": 12
+}

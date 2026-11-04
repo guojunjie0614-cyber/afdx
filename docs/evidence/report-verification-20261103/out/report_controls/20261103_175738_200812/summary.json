@@ -1,0 +1,518 @@
+{
+  "passed": true,
+  "controls": 32,
+  "rows": [
+    {
+      "test": "tb_t65_queue_a",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_queue_a",
+      "line": 5,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 10,
+        "errors": 1,
+        "failures": [
+          "G1 exact accepted messages including recovery"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_queue_a",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_queue_a",
+      "line": 6,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 10,
+        "errors": 1,
+        "failures": [
+          "G1 ring and descriptors idle"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_app",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_app",
+      "line": 40,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 42,
+        "errors": 1,
+        "failures": [
+          "G3 unreset peer exact messages, no partial/old/duplicate"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_app",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_app",
+      "line": 42,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 42,
+        "errors": 1,
+        "failures": [
+          "G3 peer ring/descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_mac",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_mac",
+      "line": 42,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 45,
+        "errors": 1,
+        "failures": [
+          "G3 unreset peer exact messages, no partial/old/duplicate"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_mac",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_mac",
+      "line": 44,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 45,
+        "errors": 1,
+        "failures": [
+          "G3 peer ring/descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_rx",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_rx",
+      "line": 41,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 44,
+        "errors": 1,
+        "failures": [
+          "G3 unreset peer exact messages, no partial/old/duplicate"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_reset_rx",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_reset_rx",
+      "line": 43,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 44,
+        "errors": 1,
+        "failures": [
+          "G3 peer ring/descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_rx_data",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_rx_data",
+      "line": 9866,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 14814,
+        "errors": 1,
+        "failures": [
+          "RX accepted messages exact, rejected messages wholly absent, recovery included"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_rx_data",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_rx_data",
+      "line": 9867,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 14814,
+        "errors": 1,
+        "failures": [
+          "RX resources fully recovered"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_rx_desc",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_rx_desc",
+      "line": 208,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 375,
+        "errors": 1,
+        "failures": [
+          "RX accepted messages exact, rejected messages wholly absent, recovery included"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_rx_desc",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_rx_desc",
+      "line": 209,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 375,
+        "errors": 1,
+        "failures": [
+          "RX resources fully recovered"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_desc",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_desc",
+      "line": 118,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 204,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_desc",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_desc",
+      "line": 120,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 204,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_hint",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_hint",
+      "line": 128,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 269,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_hint",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_hint",
+      "line": 149,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 269,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_init",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_init",
+      "line": 3,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 12,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_init",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_init",
+      "line": 5,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 12,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_ready",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_ready",
+      "line": 149,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 271,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_ready",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_ready",
+      "line": 151,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 271,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_full",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_full",
+      "line": 125,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 16,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_full",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_full",
+      "line": 127,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 16,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_init",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_init",
+      "line": 8,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 15,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_init",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_init",
+      "line": 10,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 15,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_normal",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_normal",
+      "line": 8,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 15,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_short_normal",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_short_normal",
+      "line": 10,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 15,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_space",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_space",
+      "line": 35,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 62,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_space",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_space",
+      "line": 37,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 62,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_space_edge",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_space_edge",
+      "line": 26,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 43,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_space_edge",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_space_edge",
+      "line": 28,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 43,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_unmapped",
+      "kind": "payload",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_unmapped",
+      "line": 3,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 12,
+        "errors": 1,
+        "failures": [
+          "TX exact whole admitted messages including ready-low resource probe"
+        ],
+        "mutant": 0
+      }
+    },
+    {
+      "test": "tb_t65_tx_unmapped",
+      "kind": "resources",
+      "source": "C:\\Users\\susu\\Desktop\\afdx\\out\\open_verilator\\20261103_174916_675781\\tb_t65_tx_unmapped",
+      "line": 5,
+      "rejected": true,
+      "result": {
+        "passed": false,
+        "checks": 12,
+        "errors": 1,
+        "failures": [
+          "TX pointers and descriptors reclaimed"
+        ],
+        "mutant": 0
+      }
+    }
+  ]
+}

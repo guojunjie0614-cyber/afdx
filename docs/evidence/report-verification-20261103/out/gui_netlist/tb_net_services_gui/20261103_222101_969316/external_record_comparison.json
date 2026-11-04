@@ -1,0 +1,37 @@
+{
+  "net_services.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "es1_a.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "es1_b.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "es2_a.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "es2_b.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "es2_rx_a.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  },
+  "download_results.txt": {
+    "netlist_exists": false,
+    "reference_exists": true,
+    "equal": null
+  }
+}

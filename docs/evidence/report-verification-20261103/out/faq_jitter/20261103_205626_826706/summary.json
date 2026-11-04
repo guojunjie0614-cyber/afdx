@@ -1,0 +1,3418 @@
+{
+  "schema": "FAQ-short-offline-v1",
+  "completed": true,
+  "analysis_integrity_passed": true,
+  "generated": "2026-11-03T20:56:26.946535+08:00",
+  "capture": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+  "output": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_jitter\\20261103_205626_826706",
+  "script": {
+    "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_jitter.py",
+    "sha256": "3AB06A31D35967A61C1108E9AE82F0C27E5F38A91F8687263BB743F431E27FDC"
+  },
+  "source_capture": {
+    "passed": true,
+    "checks": 683408635,
+    "errors": 0,
+    "independent_items": 1380208,
+    "independent_errors": 0,
+    "verification_profile": "fragmentation1030",
+    "ce_div": 2,
+    "jobs": [
+      {
+        "name": "vectors",
+        "command": [
+          "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+          "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_cases.py",
+          "--test",
+          "tb_sys_perf",
+          "--seed",
+          "20261007",
+          "--out",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\vectors"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      },
+      {
+        "name": "vlib",
+        "command": [
+          "C:\\modeltech64_2020.4\\win64\\vlib.exe",
+          "work"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      },
+      {
+        "name": "compile_rtl",
+        "command": [
+          "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+          "-vlog01compat",
+          "+cover=sbceft",
+          "+define+AFDX_CE_DIV=2",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a_engine.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_map.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_payload.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_read.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_rx.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_tx.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_cfg.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_crc32_d8.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_es.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_rx.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_tx.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mgmt_tx.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ntp_fraction.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ram_sdp.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rtc.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_core.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_deliver.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_engine.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_parse.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_bank.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_payload.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_ram.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp_engine.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_svc.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_timebase.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\AFDX_top.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_buf.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_builder.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_core.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_engine.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_free.v"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      },
+      {
+        "name": "compile",
+        "command": [
+          "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+          "-vlog01compat",
+          "+incdir+C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib",
+          "+define+AFDX_CE_DIV=2",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\gmii_monitor.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\judge_endpoint.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_driver.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_monitor.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\link_model.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\load_test_endpoint.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\mac_tx_suite.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rm_age_probe.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rtc_retry_suite.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rx_core_suite.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\snmp_test_endpoint.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_endpoint.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_suite.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\top_stream_endpoint.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\tx_core_suite.v",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\tb_sys_perf.v"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      },
+      {
+        "name": "simulation",
+        "command": [
+          "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+          "-batch",
+          "-coverage",
+          "tb_sys_perf",
+          "-wlf",
+          "simulation.wlf",
+          "-do",
+          "do run.do"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      },
+      {
+        "name": "check",
+        "command": [
+          "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+          "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_run_checks.py",
+          "--test",
+          "tb_sys_perf",
+          "--dir",
+          "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130"
+        ],
+        "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130",
+        "exit_code": 0
+      }
+    ]
+  },
+  "clock_ns": 8,
+  "definitions": {
+    "primary": "raw_latency = real public receive_last - independent public A first_valid; no BAG or link subtraction",
+    "true_first": "earliest source message per (source endpoint, real reset epoch, public VLID), across all stages and windows",
+    "repeated_group": "same direction, epoch, public VLID and payload length; per-stage and complete cross-stage populations reported separately",
+    "official": "raw group max-min <100us (strictly <12500 cycles at 8ns)",
+    "project": "raw group max-min <=50us (<=6250 cycles at 8ns)",
+    "due": "previous same-VL internal slow-line TX start + current configured BAG; diagnostic perf_ref.measure anchor",
+    "signed_residuals": "due-core_M and due-public_first are retained with their sign; first has no previous BAG deadline",
+    "waiting": "physical remaining eligibility wait is the positive signed residual, otherwise zero; first has zero BAG wait",
+    "adjusted": "raw minus core wait / raw minus public wait are separate diagnostics; negative adjusted values are retained",
+    "limit": "threshold statements apply to jitter range, not individual raw latency; singleton groups receive no pass verdict",
+    "short_only": "C1561: 既然已经分片，不再受单帧限制。 No long-message latency formula is inferred or tested."
+  },
+  "matching": "independent public A VLID+exact payload -> configured core M; receiver C map -> D VLID+exact payload; both GMII networks TX/RX FCS/header/length/payload and complete counts verified",
+  "counts": {
+    "es1": {
+      "public_A": 8268,
+      "core_M": 8268,
+      "accepted": 8268,
+      "matched_D": 8268,
+      "tx_A": 8268,
+      "tx_B": 8268,
+      "rx_A": 8268,
+      "rx_B": 8268,
+      "core_tx_A": 8268,
+      "core_tx_B": 8268
+    },
+    "es2": {
+      "public_A": 7808,
+      "core_M": 7808,
+      "accepted": 7808,
+      "matched_D": 7808,
+      "tx_A": 7808,
+      "tx_B": 7808,
+      "rx_A": 7808,
+      "rx_B": 7808,
+      "core_tx_A": 7808,
+      "core_tx_B": 7808
+    }
+  },
+  "total_messages": 16076,
+  "true_first_messages": 162,
+  "stage_markers": [
+    {
+      "cycle": 85623,
+      "stage": "light_d0",
+      "line": 13
+    },
+    {
+      "cycle": 6215221,
+      "stage": "light_d257",
+      "line": 144
+    },
+    {
+      "cycle": 12345753,
+      "stage": "throughput_d0",
+      "line": 257
+    },
+    {
+      "cycle": 15387405,
+      "stage": "duplex_d0",
+      "line": 682
+    },
+    {
+      "cycle": 18430637,
+      "stage": "throughput_d257",
+      "line": 1417
+    },
+    {
+      "cycle": 21472289,
+      "stage": "duplex_d257",
+      "line": 1842
+    },
+    {
+      "cycle": 24515521,
+      "stage": "gbe77_d0",
+      "line": 2577
+    },
+    {
+      "cycle": 27584379,
+      "stage": "gbe77_d257",
+      "line": 7466
+    },
+    {
+      "cycle": 30653494,
+      "stage": "gbe81_d0",
+      "line": 12355
+    },
+    {
+      "cycle": 33723696,
+      "stage": "gbe81_d257",
+      "line": 17492
+    }
+  ],
+  "stages": {
+    "duplex_d0": {
+      "messages": 460,
+      "true_first": 9,
+      "subsequent": 451,
+      "waiting_at_public": 440,
+      "window": {
+        "begin": 15765575,
+        "end": 18390575
+      }
+    },
+    "duplex_d257": {
+      "messages": 460,
+      "true_first": 0,
+      "subsequent": 460,
+      "waiting_at_public": 440,
+      "window": {
+        "begin": 21850459,
+        "end": 24475459
+      }
+    },
+    "gbe77_d0": {
+      "messages": 3542,
+      "true_first": 134,
+      "subsequent": 3408,
+      "waiting_at_public": 3388,
+      "window": {
+        "begin": 24914863,
+        "end": 27539863
+      }
+    },
+    "gbe77_d257": {
+      "messages": 3542,
+      "true_first": 0,
+      "subsequent": 3542,
+      "waiting_at_public": 3388,
+      "window": {
+        "begin": 27983721,
+        "end": 30608721
+      }
+    },
+    "gbe81_d0": {
+      "messages": 3726,
+      "true_first": 8,
+      "subsequent": 3718,
+      "waiting_at_public": 3564,
+      "window": {
+        "begin": 31054100,
+        "end": 33679100
+      }
+    },
+    "gbe81_d257": {
+      "messages": 3726,
+      "true_first": 0,
+      "subsequent": 3726,
+      "waiting_at_public": 3564,
+      "window": {
+        "begin": 34124302,
+        "end": 36749302
+      }
+    },
+    "light_d0": {
+      "messages": 80,
+      "true_first": 2,
+      "subsequent": 78,
+      "waiting_at_public": 0,
+      "window": null
+    },
+    "light_d257": {
+      "messages": 80,
+      "true_first": 0,
+      "subsequent": 80,
+      "waiting_at_public": 0,
+      "window": null
+    },
+    "throughput_d0": {
+      "messages": 230,
+      "true_first": 9,
+      "subsequent": 221,
+      "waiting_at_public": 220,
+      "window": {
+        "begin": 12722343,
+        "end": 15347343
+      }
+    },
+    "throughput_d257": {
+      "messages": 230,
+      "true_first": 0,
+      "subsequent": 230,
+      "waiting_at_public": 220,
+      "window": {
+        "begin": 18807227,
+        "end": 21432227
+      }
+    }
+  },
+  "stage_group_count": 712,
+  "cross_stage_group_count": 170,
+  "stage_cohorts": {
+    "all": {
+      "nonempty_groups": 712,
+      "repeated_groups": 712,
+      "insufficient_singleton_groups": 0,
+      "samples": 16076,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 154,
+          "payload_length": 1471,
+          "vl_indices": [
+            54
+          ],
+          "stage": "gbe77_d0",
+          "stages": [
+            "gbe77_d0"
+          ]
+        },
+        "stats": {
+          "samples": 23,
+          "minimum": 6072,
+          "maximum": 6075,
+          "minimum_us": 48.576,
+          "maximum_us": 48.6,
+          "range_cycles": 3,
+          "range_us": 0.024,
+          "min_id": "es1:1055",
+          "max_id": "es1:2364",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:1055",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "gbe77_d0",
+          "vl": 54,
+          "vlid": 154,
+          "n": 1471,
+          "payload_sha256": "c94e85c5f479665b9a032f834a685f81955a0ef65d9237288d996920fcc91447",
+          "public_first": 24752527,
+          "public_last": 24753999,
+          "public_line": 5992,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24755501,
+          "core_line": 5995,
+          "tx": {
+            "A": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "c3f95cef3a374f92bb953a31abfd47401d593c49a9c6789f045c5573d07f7bf9",
+              "line": 1055
+            },
+            "B": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "4c27b6fb94a51b2f5917bfe862685cede537a4745a2534d066289866e13177be",
+              "line": 1055
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "c3f95cef3a374f92bb953a31abfd47401d593c49a9c6789f045c5573d07f7bf9",
+              "line": 1055
+            },
+            "B": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "4c27b6fb94a51b2f5917bfe862685cede537a4745a2534d066289866e13177be",
+              "line": 1055
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "c3f95cef3a374f92bb953a31abfd47401d593c49a9c6789f045c5573d07f7bf9",
+              "line": 1055
+            },
+            "B": {
+              "start": 24755538,
+              "sfd": 24755545,
+              "last": 24757063,
+              "bytes": 1526,
+              "sha256": "4c27b6fb94a51b2f5917bfe862685cede537a4745a2534d066289866e13177be",
+              "line": 1055
+            }
+          },
+          "accept_cycle": 24755513,
+          "rx_public_first": 24757127,
+          "rx_public_last": 24758599,
+          "rx_line": 5524,
+          "rx_index": 54,
+          "winner": "A",
+          "raw_latency": 6072,
+          "first_for_vl_epoch": true,
+          "previous_id": null,
+          "in_window": false,
+          "previous_core_tx_start": null,
+          "eligibility_cycle": null,
+          "core_due_minus_M_signed": null,
+          "public_due_minus_first_signed": null,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 6072,
+          "raw_minus_public_wait": 6072,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:2364",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "gbe77_d0",
+          "vl": 54,
+          "vlid": 154,
+          "n": 1471,
+          "payload_sha256": "adcab5e1bed1730d28b311c220477412f8e86c33f50622eb140230c793c247c5",
+          "public_first": 26877527,
+          "public_last": 26878999,
+          "public_line": 12537,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 26880503,
+          "core_line": 12540,
+          "tx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "accept_cycle": 26880515,
+          "rx_public_first": 26882130,
+          "rx_public_last": 26883602,
+          "rx_line": 12069,
+          "rx_index": 54,
+          "winner": "A",
+          "raw_latency": 6075,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:2287",
+          "in_window": true,
+          "previous_core_tx_start": 26755540,
+          "eligibility_cycle": 26880540,
+          "core_due_minus_M_signed": 37,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 37,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6038,
+          "raw_minus_public_wait": 3062,
+          "winner_observed_link_delay": 0
+        }
+      }
+    },
+    "first": {
+      "nonempty_groups": 162,
+      "repeated_groups": 0,
+      "insufficient_singleton_groups": 162,
+      "samples": 162,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": null
+    },
+    "subsequent": {
+      "nonempty_groups": 712,
+      "repeated_groups": 712,
+      "insufficient_singleton_groups": 0,
+      "samples": 15914,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es2_to_es1",
+          "epoch": 1,
+          "vlid": 2004,
+          "payload_length": 1471,
+          "vl_indices": [
+            4
+          ],
+          "stage": "gbe77_d257",
+          "stages": [
+            "gbe77_d257"
+          ]
+        },
+        "stats": {
+          "samples": 23,
+          "minimum": 6329,
+          "maximum": 6332,
+          "minimum_us": 50.632,
+          "maximum_us": 50.656,
+          "range_cycles": 3,
+          "range_us": 0.024,
+          "min_id": "es2:2316",
+          "max_id": "es2:3702",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es2:2316",
+          "es": 2,
+          "direction": "es2_to_es1",
+          "epoch": 1,
+          "stage": "gbe77_d257",
+          "vl": 4,
+          "vlid": 2004,
+          "n": 1471,
+          "payload_sha256": "4519a87f1a7c23057761fcb8d5594469737ca6b5ccfb4391da01c05f4af60788",
+          "public_first": 27740216,
+          "public_last": 27741688,
+          "public_line": 12640,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 27743190,
+          "core_line": 12643,
+          "tx": {
+            "A": {
+              "start": 27743227,
+              "sfd": 27743234,
+              "last": 27744752,
+              "bytes": 1526,
+              "sha256": "f3506cf6b3bd4a09632d25a5be64b6258239a42dd2d30138dd4a7b82bd9c6d9f",
+              "line": 2316
+            },
+            "B": {
+              "start": 27743227,
+              "sfd": 27743234,
+              "last": 27744752,
+              "bytes": 1526,
+              "sha256": "65fdcd522b0498f62cfd74d5bbb731f79ce708b693fdc18ab5542cdacebb5691",
+              "line": 2316
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 27743484,
+              "sfd": 27743491,
+              "last": 27745009,
+              "bytes": 1526,
+              "sha256": "f3506cf6b3bd4a09632d25a5be64b6258239a42dd2d30138dd4a7b82bd9c6d9f",
+              "line": 2316
+            },
+            "B": {
+              "start": 27743484,
+              "sfd": 27743491,
+              "last": 27745009,
+              "bytes": 1526,
+              "sha256": "65fdcd522b0498f62cfd74d5bbb731f79ce708b693fdc18ab5542cdacebb5691",
+              "line": 2316
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 27743227,
+              "sfd": 27743234,
+              "last": 27744752,
+              "bytes": 1526,
+              "sha256": "f3506cf6b3bd4a09632d25a5be64b6258239a42dd2d30138dd4a7b82bd9c6d9f",
+              "line": 2316
+            },
+            "B": {
+              "start": 27743227,
+              "sfd": 27743234,
+              "last": 27744752,
+              "bytes": 1526,
+              "sha256": "65fdcd522b0498f62cfd74d5bbb731f79ce708b693fdc18ab5542cdacebb5691",
+              "line": 2316
+            }
+          },
+          "accept_cycle": 27743202,
+          "rx_public_first": 27745073,
+          "rx_public_last": 27746545,
+          "rx_line": 11944,
+          "rx_index": 4,
+          "winner": "A",
+          "raw_latency": 6329,
+          "first_for_vl_epoch": false,
+          "previous_id": "es2:2239",
+          "in_window": false,
+          "previous_core_tx_start": 27424371,
+          "eligibility_cycle": 27549371,
+          "core_due_minus_M_signed": -193819,
+          "public_due_minus_first_signed": -190845,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 6329,
+          "raw_minus_public_wait": 6329,
+          "winner_observed_link_delay": 257
+        },
+        "maximum": {
+          "id": "es2:3702",
+          "es": 2,
+          "direction": "es2_to_es1",
+          "epoch": 1,
+          "stage": "gbe77_d257",
+          "vl": 4,
+          "vlid": 2004,
+          "n": 1471,
+          "payload_sha256": "24dfede9e94ecd200e41bfecaf4d370b1a52b3ef904893035b03588932e32450",
+          "public_first": 29990216,
+          "public_last": 29991688,
+          "public_line": 19570,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 29993190,
+          "core_line": 19573,
+          "tx": {
+            "A": {
+              "start": 29993229,
+              "sfd": 29993236,
+              "last": 29994754,
+              "bytes": 1526,
+              "sha256": "44bdd129350f97f5461e54e842ca7e36fa798104ee859096a1d20c16c6cc6b6d",
+              "line": 3702
+            },
+            "B": {
+              "start": 29993229,
+              "sfd": 29993236,
+              "last": 29994754,
+              "bytes": 1526,
+              "sha256": "fa950fd4e4bc57049b4932eb19235d4cc7f3f6edb19f8390dc475e0ace3ad698",
+              "line": 3702
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 29993486,
+              "sfd": 29993493,
+              "last": 29995011,
+              "bytes": 1526,
+              "sha256": "44bdd129350f97f5461e54e842ca7e36fa798104ee859096a1d20c16c6cc6b6d",
+              "line": 3702
+            },
+            "B": {
+              "start": 29993486,
+              "sfd": 29993493,
+              "last": 29995011,
+              "bytes": 1526,
+              "sha256": "fa950fd4e4bc57049b4932eb19235d4cc7f3f6edb19f8390dc475e0ace3ad698",
+              "line": 3702
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 29993229,
+              "sfd": 29993236,
+              "last": 29994754,
+              "bytes": 1526,
+              "sha256": "44bdd129350f97f5461e54e842ca7e36fa798104ee859096a1d20c16c6cc6b6d",
+              "line": 3702
+            },
+            "B": {
+              "start": 29993229,
+              "sfd": 29993236,
+              "last": 29994754,
+              "bytes": 1526,
+              "sha256": "fa950fd4e4bc57049b4932eb19235d4cc7f3f6edb19f8390dc475e0ace3ad698",
+              "line": 3702
+            }
+          },
+          "accept_cycle": 29993202,
+          "rx_public_first": 29995076,
+          "rx_public_last": 29996548,
+          "rx_line": 18874,
+          "rx_index": 4,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es2:3625",
+          "in_window": true,
+          "previous_core_tx_start": 29868229,
+          "eligibility_cycle": 29993229,
+          "core_due_minus_M_signed": 39,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 39,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6293,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    },
+    "subsequent_waiting_at_public": {
+      "nonempty_groups": 692,
+      "repeated_groups": 692,
+      "insufficient_singleton_groups": 0,
+      "samples": 15224,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 154,
+          "payload_length": 1471,
+          "vl_indices": [
+            54
+          ],
+          "stage": "gbe77_d0",
+          "stages": [
+            "gbe77_d0"
+          ]
+        },
+        "stats": {
+          "samples": 22,
+          "minimum": 6073,
+          "maximum": 6075,
+          "minimum_us": 48.584,
+          "maximum_us": 48.6,
+          "range_cycles": 2,
+          "range_us": 0.016,
+          "min_id": "es1:1132",
+          "max_id": "es1:2364",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:1132",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "gbe77_d0",
+          "vl": 54,
+          "vlid": 154,
+          "n": 1471,
+          "payload_sha256": "5bf08ee410238fe3dcb174782e02db5727da3709f80dff49dccf406bc7b8ad91",
+          "public_first": 24877527,
+          "public_last": 24878999,
+          "public_line": 6377,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24880502,
+          "core_line": 6380,
+          "tx": {
+            "A": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "1b032298b1119aaa7b803bafe581600b2e24cb3ff6cf8d237fb7a6720bbbf443",
+              "line": 1132
+            },
+            "B": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "eb214c5a8be044b80022c9282bb47ea3c6c4129d3707c1cbcd5062e323b59166",
+              "line": 1132
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "1b032298b1119aaa7b803bafe581600b2e24cb3ff6cf8d237fb7a6720bbbf443",
+              "line": 1132
+            },
+            "B": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "eb214c5a8be044b80022c9282bb47ea3c6c4129d3707c1cbcd5062e323b59166",
+              "line": 1132
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "1b032298b1119aaa7b803bafe581600b2e24cb3ff6cf8d237fb7a6720bbbf443",
+              "line": 1132
+            },
+            "B": {
+              "start": 24880539,
+              "sfd": 24880546,
+              "last": 24882064,
+              "bytes": 1526,
+              "sha256": "eb214c5a8be044b80022c9282bb47ea3c6c4129d3707c1cbcd5062e323b59166",
+              "line": 1132
+            }
+          },
+          "accept_cycle": 24880514,
+          "rx_public_first": 24882128,
+          "rx_public_last": 24883600,
+          "rx_line": 5909,
+          "rx_index": 54,
+          "winner": "A",
+          "raw_latency": 6073,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:1055",
+          "in_window": false,
+          "previous_core_tx_start": 24755538,
+          "eligibility_cycle": 24880538,
+          "core_due_minus_M_signed": 36,
+          "public_due_minus_first_signed": 3011,
+          "remaining_wait_at_M": 36,
+          "remaining_wait_at_public_first": 3011,
+          "raw_minus_core_wait": 6037,
+          "raw_minus_public_wait": 3062,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:2364",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "gbe77_d0",
+          "vl": 54,
+          "vlid": 154,
+          "n": 1471,
+          "payload_sha256": "adcab5e1bed1730d28b311c220477412f8e86c33f50622eb140230c793c247c5",
+          "public_first": 26877527,
+          "public_last": 26878999,
+          "public_line": 12537,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 26880503,
+          "core_line": 12540,
+          "tx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "b24fe7d3e51be70dbfee336fe4c9c9c56dca9c625f0bcbba141d92c5dd62f58a",
+              "line": 2364
+            },
+            "B": {
+              "start": 26880540,
+              "sfd": 26880547,
+              "last": 26882065,
+              "bytes": 1526,
+              "sha256": "2d39fa8dba6fd11c4fa50b1779f7a3dc5a4db07b2b8ca3f4cac959cb61858932",
+              "line": 2364
+            }
+          },
+          "accept_cycle": 26880515,
+          "rx_public_first": 26882130,
+          "rx_public_last": 26883602,
+          "rx_line": 12069,
+          "rx_index": 54,
+          "winner": "A",
+          "raw_latency": 6075,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:2287",
+          "in_window": true,
+          "previous_core_tx_start": 26755540,
+          "eligibility_cycle": 26880540,
+          "core_due_minus_M_signed": 37,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 37,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6038,
+          "raw_minus_public_wait": 3062,
+          "winner_observed_link_delay": 0
+        }
+      }
+    },
+    "subsequent_no_wait_at_public": {
+      "nonempty_groups": 552,
+      "repeated_groups": 20,
+      "insufficient_singleton_groups": 532,
+      "samples": 690,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 100,
+          "payload_length": 17,
+          "vl_indices": [
+            0
+          ],
+          "stage": "light_d0",
+          "stages": [
+            "light_d0"
+          ]
+        },
+        "stats": {
+          "samples": 8,
+          "minimum": 244,
+          "maximum": 246,
+          "minimum_us": 1.952,
+          "maximum_us": 1.968,
+          "range_cycles": 2,
+          "range_us": 0.016,
+          "min_id": "es1:11",
+          "max_id": "es1:10",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:11",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "light_d0",
+          "vl": 0,
+          "vlid": 100,
+          "n": 17,
+          "payload_sha256": "9877cc72984c53646bea9bf49e5d17bdb6ebd72cb89252133b474f8140a7647c",
+          "public_first": 1606232,
+          "public_last": 1606250,
+          "public_line": 66,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 1606286,
+          "core_line": 67,
+          "tx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "accept_cycle": 1606298,
+          "rx_public_first": 1606458,
+          "rx_public_last": 1606476,
+          "rx_line": 64,
+          "rx_index": 0,
+          "winner": "A",
+          "raw_latency": 244,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:10",
+          "in_window": false,
+          "previous_core_tx_start": 1456322,
+          "eligibility_cycle": 1581322,
+          "core_due_minus_M_signed": -24964,
+          "public_due_minus_first_signed": -24910,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 244,
+          "raw_minus_public_wait": 244,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:10",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "light_d0",
+          "vl": 0,
+          "vlid": 100,
+          "n": 17,
+          "payload_sha256": "3355c5464f40508e986733e6499b4feec5e6acbaeb91af59daefd45ff9309b24",
+          "public_first": 1456229,
+          "public_last": 1456247,
+          "public_line": 61,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 1456285,
+          "core_line": 62,
+          "tx": {
+            "A": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "196eb95697e3e7067cf517149da5e0da94a9aeb24654a6d870d6c952c57c2212",
+              "line": 10
+            },
+            "B": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "49941c42a6a7647611599e62af963955bf7713440b5d51a2e59d3435dcdae5af",
+              "line": 10
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "196eb95697e3e7067cf517149da5e0da94a9aeb24654a6d870d6c952c57c2212",
+              "line": 10
+            },
+            "B": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "49941c42a6a7647611599e62af963955bf7713440b5d51a2e59d3435dcdae5af",
+              "line": 10
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "196eb95697e3e7067cf517149da5e0da94a9aeb24654a6d870d6c952c57c2212",
+              "line": 10
+            },
+            "B": {
+              "start": 1456322,
+              "sfd": 1456329,
+              "last": 1456393,
+              "bytes": 72,
+              "sha256": "49941c42a6a7647611599e62af963955bf7713440b5d51a2e59d3435dcdae5af",
+              "line": 10
+            }
+          },
+          "accept_cycle": 1456297,
+          "rx_public_first": 1456457,
+          "rx_public_last": 1456475,
+          "rx_line": 59,
+          "rx_index": 0,
+          "winner": "A",
+          "raw_latency": 246,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:9",
+          "in_window": false,
+          "previous_core_tx_start": 1306318,
+          "eligibility_cycle": 1431318,
+          "core_due_minus_M_signed": -24967,
+          "public_due_minus_first_signed": -24911,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 246,
+          "raw_minus_public_wait": 246,
+          "winner_observed_link_delay": 0
+        }
+      }
+    },
+    "measurement_window": {
+      "nonempty_groups": 692,
+      "repeated_groups": 692,
+      "insufficient_singleton_groups": 0,
+      "samples": 14532,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 108,
+          "payload_length": 1471,
+          "vl_indices": [
+            8
+          ],
+          "stage": "duplex_d257",
+          "stages": [
+            "duplex_d257"
+          ]
+        },
+        "stats": {
+          "samples": 21,
+          "minimum": 6331,
+          "maximum": 6332,
+          "minimum_us": 50.648,
+          "maximum_us": 50.656,
+          "range_cycles": 1,
+          "range_us": 0.008,
+          "min_id": "es1:799",
+          "max_id": "es1:989",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:799",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "32365ce4a542a0d862a30520741885eeb9d4df7bc2fb9bd28cc237506178f99a",
+          "public_first": 21950461,
+          "public_last": 21951933,
+          "public_line": 4251,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 21953435,
+          "core_line": 4252,
+          "tx": {
+            "A": {
+              "start": 21953474,
+              "sfd": 21953481,
+              "last": 21954999,
+              "bytes": 1526,
+              "sha256": "538d05401ac375f2cef94870bbd15150a408fbb97e6c3490395979b097ff84da",
+              "line": 799
+            },
+            "B": {
+              "start": 21953474,
+              "sfd": 21953481,
+              "last": 21954999,
+              "bytes": 1526,
+              "sha256": "40ea205115dd8a3cf0fcb9dc7f3f25f3b3c29c3fec445fcb06aba3b3856f0054",
+              "line": 799
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 21953731,
+              "sfd": 21953738,
+              "last": 21955256,
+              "bytes": 1526,
+              "sha256": "538d05401ac375f2cef94870bbd15150a408fbb97e6c3490395979b097ff84da",
+              "line": 799
+            },
+            "B": {
+              "start": 21953731,
+              "sfd": 21953738,
+              "last": 21955256,
+              "bytes": 1526,
+              "sha256": "40ea205115dd8a3cf0fcb9dc7f3f25f3b3c29c3fec445fcb06aba3b3856f0054",
+              "line": 799
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 21953474,
+              "sfd": 21953481,
+              "last": 21954999,
+              "bytes": 1526,
+              "sha256": "538d05401ac375f2cef94870bbd15150a408fbb97e6c3490395979b097ff84da",
+              "line": 799
+            },
+            "B": {
+              "start": 21953474,
+              "sfd": 21953481,
+              "last": 21954999,
+              "bytes": 1526,
+              "sha256": "40ea205115dd8a3cf0fcb9dc7f3f25f3b3c29c3fec445fcb06aba3b3856f0054",
+              "line": 799
+            }
+          },
+          "accept_cycle": 21953447,
+          "rx_public_first": 21955320,
+          "rx_public_last": 21956792,
+          "rx_line": 4089,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6331,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:789",
+          "in_window": true,
+          "previous_core_tx_start": 21828474,
+          "eligibility_cycle": 21953474,
+          "core_due_minus_M_signed": 39,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 39,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6292,
+          "raw_minus_public_wait": 3318,
+          "winner_observed_link_delay": 257
+        },
+        "maximum": {
+          "id": "es1:989",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "bdc1ca4cdfe4fdf47206957cf78feaf9a3bf326de5c61fd1ca934eadf07d53d3",
+          "public_first": 24325461,
+          "public_last": 24326933,
+          "public_line": 5201,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24328436,
+          "core_line": 5202,
+          "tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "accept_cycle": 24328448,
+          "rx_public_first": 24330321,
+          "rx_public_last": 24331793,
+          "rx_line": 5039,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:979",
+          "in_window": true,
+          "previous_core_tx_start": 24203474,
+          "eligibility_cycle": 24328474,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6294,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    }
+  },
+  "cross_stage_cohorts": {
+    "all": {
+      "nonempty_groups": 170,
+      "repeated_groups": 170,
+      "insufficient_singleton_groups": 0,
+      "samples": 16076,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 108,
+          "payload_length": 1471,
+          "vl_indices": [
+            8
+          ],
+          "stage": null,
+          "stages": [
+            "duplex_d0",
+            "duplex_d257",
+            "gbe77_d0",
+            "gbe77_d257",
+            "gbe81_d0",
+            "gbe81_d257",
+            "throughput_d0",
+            "throughput_d257"
+          ]
+        },
+        "stats": {
+          "samples": 184,
+          "minimum": 6072,
+          "maximum": 6332,
+          "minimum_us": 48.576,
+          "maximum_us": 50.656,
+          "range_cycles": 260,
+          "range_us": 2.08,
+          "min_id": "es1:319",
+          "max_id": "es1:989",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:319",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d0",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "6c69776d43c6f4a88ee796676fe9661f67d13b38887493a185eab900168b72de",
+          "public_first": 15615577,
+          "public_last": 15617049,
+          "public_line": 1729,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 15618551,
+          "core_line": 1730,
+          "tx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "accept_cycle": 15618563,
+          "rx_public_first": 15620177,
+          "rx_public_last": 15621649,
+          "rx_line": 1647,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6072,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:309",
+          "in_window": false,
+          "previous_core_tx_start": 15325358,
+          "eligibility_cycle": 15450358,
+          "core_due_minus_M_signed": -168193,
+          "public_due_minus_first_signed": -165219,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 6072,
+          "raw_minus_public_wait": 6072,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:989",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "bdc1ca4cdfe4fdf47206957cf78feaf9a3bf326de5c61fd1ca934eadf07d53d3",
+          "public_first": 24325461,
+          "public_last": 24326933,
+          "public_line": 5201,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24328436,
+          "core_line": 5202,
+          "tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "accept_cycle": 24328448,
+          "rx_public_first": 24330321,
+          "rx_public_last": 24331793,
+          "rx_line": 5039,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:979",
+          "in_window": true,
+          "previous_core_tx_start": 24203474,
+          "eligibility_cycle": 24328474,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6294,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    },
+    "first": {
+      "nonempty_groups": 162,
+      "repeated_groups": 0,
+      "insufficient_singleton_groups": 162,
+      "samples": 162,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": null
+    },
+    "subsequent": {
+      "nonempty_groups": 170,
+      "repeated_groups": 170,
+      "insufficient_singleton_groups": 0,
+      "samples": 15914,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 108,
+          "payload_length": 1471,
+          "vl_indices": [
+            8
+          ],
+          "stage": null,
+          "stages": [
+            "duplex_d0",
+            "duplex_d257",
+            "gbe77_d0",
+            "gbe77_d257",
+            "gbe81_d0",
+            "gbe81_d257",
+            "throughput_d0",
+            "throughput_d257"
+          ]
+        },
+        "stats": {
+          "samples": 183,
+          "minimum": 6072,
+          "maximum": 6332,
+          "minimum_us": 48.576,
+          "maximum_us": 50.656,
+          "range_cycles": 260,
+          "range_us": 2.08,
+          "min_id": "es1:319",
+          "max_id": "es1:989",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:319",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d0",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "6c69776d43c6f4a88ee796676fe9661f67d13b38887493a185eab900168b72de",
+          "public_first": 15615577,
+          "public_last": 15617049,
+          "public_line": 1729,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 15618551,
+          "core_line": 1730,
+          "tx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "5e6235b51bd824ca53708d56109d9fd512f492ce6fa7263a84e493d6503b0e49",
+              "line": 319
+            },
+            "B": {
+              "start": 15618588,
+              "sfd": 15618595,
+              "last": 15620113,
+              "bytes": 1526,
+              "sha256": "0b145cecdc7aa8a43d93d21d28fce276bbe955f58d41434eb6f33891d5c127ea",
+              "line": 319
+            }
+          },
+          "accept_cycle": 15618563,
+          "rx_public_first": 15620177,
+          "rx_public_last": 15621649,
+          "rx_line": 1647,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6072,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:309",
+          "in_window": false,
+          "previous_core_tx_start": 15325358,
+          "eligibility_cycle": 15450358,
+          "core_due_minus_M_signed": -168193,
+          "public_due_minus_first_signed": -165219,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 6072,
+          "raw_minus_public_wait": 6072,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:989",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "bdc1ca4cdfe4fdf47206957cf78feaf9a3bf326de5c61fd1ca934eadf07d53d3",
+          "public_first": 24325461,
+          "public_last": 24326933,
+          "public_line": 5201,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24328436,
+          "core_line": 5202,
+          "tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "accept_cycle": 24328448,
+          "rx_public_first": 24330321,
+          "rx_public_last": 24331793,
+          "rx_line": 5039,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:979",
+          "in_window": true,
+          "previous_core_tx_start": 24203474,
+          "eligibility_cycle": 24328474,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6294,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    },
+    "subsequent_waiting_at_public": {
+      "nonempty_groups": 162,
+      "repeated_groups": 162,
+      "insufficient_singleton_groups": 0,
+      "samples": 15224,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 108,
+          "payload_length": 1471,
+          "vl_indices": [
+            8
+          ],
+          "stage": null,
+          "stages": [
+            "duplex_d0",
+            "duplex_d257",
+            "gbe77_d0",
+            "gbe77_d257",
+            "gbe81_d0",
+            "gbe81_d257",
+            "throughput_d0",
+            "throughput_d257"
+          ]
+        },
+        "stats": {
+          "samples": 176,
+          "minimum": 6073,
+          "maximum": 6332,
+          "minimum_us": 48.584,
+          "maximum_us": 50.656,
+          "range_cycles": 259,
+          "range_us": 2.072,
+          "min_id": "es1:329",
+          "max_id": "es1:989",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:329",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d0",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "757340602319ed65e98dc29805d994c2fee40006efbd31ea8535cb1c15141bb5",
+          "public_first": 15740577,
+          "public_last": 15742049,
+          "public_line": 1779,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 15743552,
+          "core_line": 1780,
+          "tx": {
+            "A": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "3b0447bef38d1027ac19e8978c4275820224f3e0fd869a4f2731de4420a15bdd",
+              "line": 329
+            },
+            "B": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "37dc73036b24c3507164b10ffa388fb35eb91b142c5fa897ee0a14af4ca4cc86",
+              "line": 329
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "3b0447bef38d1027ac19e8978c4275820224f3e0fd869a4f2731de4420a15bdd",
+              "line": 329
+            },
+            "B": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "37dc73036b24c3507164b10ffa388fb35eb91b142c5fa897ee0a14af4ca4cc86",
+              "line": 329
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "3b0447bef38d1027ac19e8978c4275820224f3e0fd869a4f2731de4420a15bdd",
+              "line": 329
+            },
+            "B": {
+              "start": 15743589,
+              "sfd": 15743596,
+              "last": 15745114,
+              "bytes": 1526,
+              "sha256": "37dc73036b24c3507164b10ffa388fb35eb91b142c5fa897ee0a14af4ca4cc86",
+              "line": 329
+            }
+          },
+          "accept_cycle": 15743564,
+          "rx_public_first": 15745178,
+          "rx_public_last": 15746650,
+          "rx_line": 1697,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6073,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:319",
+          "in_window": false,
+          "previous_core_tx_start": 15618588,
+          "eligibility_cycle": 15743588,
+          "core_due_minus_M_signed": 36,
+          "public_due_minus_first_signed": 3011,
+          "remaining_wait_at_M": 36,
+          "remaining_wait_at_public_first": 3011,
+          "raw_minus_core_wait": 6037,
+          "raw_minus_public_wait": 3062,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:989",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "bdc1ca4cdfe4fdf47206957cf78feaf9a3bf326de5c61fd1ca934eadf07d53d3",
+          "public_first": 24325461,
+          "public_last": 24326933,
+          "public_line": 5201,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24328436,
+          "core_line": 5202,
+          "tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "accept_cycle": 24328448,
+          "rx_public_first": 24330321,
+          "rx_public_last": 24331793,
+          "rx_line": 5039,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:979",
+          "in_window": true,
+          "previous_core_tx_start": 24203474,
+          "eligibility_cycle": 24328474,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6294,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    },
+    "subsequent_no_wait_at_public": {
+      "nonempty_groups": 170,
+      "repeated_groups": 162,
+      "insufficient_singleton_groups": 8,
+      "samples": 690,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 100,
+          "payload_length": 17,
+          "vl_indices": [
+            0
+          ],
+          "stage": null,
+          "stages": [
+            "light_d0",
+            "light_d257"
+          ]
+        },
+        "stats": {
+          "samples": 16,
+          "minimum": 244,
+          "maximum": 503,
+          "minimum_us": 1.952,
+          "maximum_us": 4.024,
+          "range_cycles": 259,
+          "range_us": 2.072,
+          "min_id": "es1:11",
+          "max_id": "es1:49",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:11",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "light_d0",
+          "vl": 0,
+          "vlid": 100,
+          "n": 17,
+          "payload_sha256": "9877cc72984c53646bea9bf49e5d17bdb6ebd72cb89252133b474f8140a7647c",
+          "public_first": 1606232,
+          "public_last": 1606250,
+          "public_line": 66,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 1606286,
+          "core_line": 67,
+          "tx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "f9488dac8c402e81798fb9af5b74137d3630f70b6123dfa2f35b30295ce1972d",
+              "line": 11
+            },
+            "B": {
+              "start": 1606323,
+              "sfd": 1606330,
+              "last": 1606394,
+              "bytes": 72,
+              "sha256": "a867d5b3bbd50f03e96be3d65aa3c92be5a7f8879cce898d93d38de6e641df9d",
+              "line": 11
+            }
+          },
+          "accept_cycle": 1606298,
+          "rx_public_first": 1606458,
+          "rx_public_last": 1606476,
+          "rx_line": 64,
+          "rx_index": 0,
+          "winner": "A",
+          "raw_latency": 244,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:10",
+          "in_window": false,
+          "previous_core_tx_start": 1456322,
+          "eligibility_cycle": 1581322,
+          "core_due_minus_M_signed": -24964,
+          "public_due_minus_first_signed": -24910,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 244,
+          "raw_minus_public_wait": 244,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:49",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "light_d257",
+          "vl": 0,
+          "vlid": 100,
+          "n": 17,
+          "payload_sha256": "20ac31750c429e8ab164f3c7a5a83ecd6092408a02897aebba065be9260d67d3",
+          "public_first": 7435729,
+          "public_last": 7435747,
+          "public_line": 257,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 7435785,
+          "core_line": 258,
+          "tx": {
+            "A": {
+              "start": 7435822,
+              "sfd": 7435829,
+              "last": 7435893,
+              "bytes": 72,
+              "sha256": "937c3f55752d2e194a0ff42fd51ac390bd350c1ee298b04ebf2aa8eaadb62255",
+              "line": 49
+            },
+            "B": {
+              "start": 7435822,
+              "sfd": 7435829,
+              "last": 7435893,
+              "bytes": 72,
+              "sha256": "5e06898af6ef815132092429bd156b18d8ce0bd8a79f86c6fc6976cd0162863d",
+              "line": 49
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 7436079,
+              "sfd": 7436086,
+              "last": 7436150,
+              "bytes": 72,
+              "sha256": "937c3f55752d2e194a0ff42fd51ac390bd350c1ee298b04ebf2aa8eaadb62255",
+              "line": 49
+            },
+            "B": {
+              "start": 7436079,
+              "sfd": 7436086,
+              "last": 7436150,
+              "bytes": 72,
+              "sha256": "5e06898af6ef815132092429bd156b18d8ce0bd8a79f86c6fc6976cd0162863d",
+              "line": 49
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 7435822,
+              "sfd": 7435829,
+              "last": 7435893,
+              "bytes": 72,
+              "sha256": "937c3f55752d2e194a0ff42fd51ac390bd350c1ee298b04ebf2aa8eaadb62255",
+              "line": 49
+            },
+            "B": {
+              "start": 7435822,
+              "sfd": 7435829,
+              "last": 7435893,
+              "bytes": 72,
+              "sha256": "5e06898af6ef815132092429bd156b18d8ce0bd8a79f86c6fc6976cd0162863d",
+              "line": 49
+            }
+          },
+          "accept_cycle": 7435797,
+          "rx_public_first": 7436214,
+          "rx_public_last": 7436232,
+          "rx_line": 255,
+          "rx_index": 0,
+          "winner": "A",
+          "raw_latency": 503,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:48",
+          "in_window": false,
+          "previous_core_tx_start": 7265313,
+          "eligibility_cycle": 7390313,
+          "core_due_minus_M_signed": -45472,
+          "public_due_minus_first_signed": -45416,
+          "remaining_wait_at_M": 0,
+          "remaining_wait_at_public_first": 0,
+          "raw_minus_core_wait": 503,
+          "raw_minus_public_wait": 503,
+          "winner_observed_link_delay": 257
+        }
+      }
+    },
+    "measurement_window": {
+      "nonempty_groups": 162,
+      "repeated_groups": 162,
+      "insufficient_singleton_groups": 0,
+      "samples": 14532,
+      "official_fail_groups": 0,
+      "project_fail_groups": 0,
+      "worst": {
+        "group": {
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "vlid": 108,
+          "payload_length": 1471,
+          "vl_indices": [
+            8
+          ],
+          "stage": null,
+          "stages": [
+            "duplex_d0",
+            "duplex_d257",
+            "gbe77_d0",
+            "gbe77_d257",
+            "gbe81_d0",
+            "gbe81_d257",
+            "throughput_d0",
+            "throughput_d257"
+          ]
+        },
+        "stats": {
+          "samples": 168,
+          "minimum": 6074,
+          "maximum": 6332,
+          "minimum_us": 48.592,
+          "maximum_us": 50.656,
+          "range_cycles": 258,
+          "range_us": 2.064,
+          "min_id": "es1:109",
+          "max_id": "es1:989",
+          "repeat_group": true,
+          "official_jitter_lt_100us": true,
+          "project_jitter_le_50us": true,
+          "sample_limitation": null
+        },
+        "minimum": {
+          "id": "es1:109",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "throughput_d0",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "c54657a78f3289a1c8bfad3138a0f4397c0d5f2a1490f2a638b98f8e2007b657",
+          "public_first": 12822345,
+          "public_last": 12823817,
+          "public_line": 618,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 12825320,
+          "core_line": 619,
+          "tx": {
+            "A": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "96a2757f61501793808a6910c92feece1378549f0c5ba1822d46adb681b635a5",
+              "line": 109
+            },
+            "B": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "fd571f2fc74b9f879265974744679426606ce027c4ef29d53caeb173e45b85b7",
+              "line": 109
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "96a2757f61501793808a6910c92feece1378549f0c5ba1822d46adb681b635a5",
+              "line": 109
+            },
+            "B": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "fd571f2fc74b9f879265974744679426606ce027c4ef29d53caeb173e45b85b7",
+              "line": 109
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "96a2757f61501793808a6910c92feece1378549f0c5ba1822d46adb681b635a5",
+              "line": 109
+            },
+            "B": {
+              "start": 12825358,
+              "sfd": 12825365,
+              "last": 12826883,
+              "bytes": 1526,
+              "sha256": "fd571f2fc74b9f879265974744679426606ce027c4ef29d53caeb173e45b85b7",
+              "line": 109
+            }
+          },
+          "accept_cycle": 12825332,
+          "rx_public_first": 12826947,
+          "rx_public_last": 12828419,
+          "rx_line": 576,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6074,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:99",
+          "in_window": true,
+          "previous_core_tx_start": 12700358,
+          "eligibility_cycle": 12825358,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6036,
+          "raw_minus_public_wait": 3061,
+          "winner_observed_link_delay": 0
+        },
+        "maximum": {
+          "id": "es1:989",
+          "es": 1,
+          "direction": "es1_to_es2",
+          "epoch": 1,
+          "stage": "duplex_d257",
+          "vl": 8,
+          "vlid": 108,
+          "n": 1471,
+          "payload_sha256": "bdc1ca4cdfe4fdf47206957cf78feaf9a3bf326de5c61fd1ca934eadf07d53d3",
+          "public_first": 24325461,
+          "public_last": 24326933,
+          "public_line": 5201,
+          "stalls": 0,
+          "maxstall": 0,
+          "bag": 125000,
+          "core_M": 24328436,
+          "core_line": 5202,
+          "tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "rx": {
+            "A": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328731,
+              "sfd": 24328738,
+              "last": 24330256,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "core_tx": {
+            "A": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "131b4c5f87eae2ae73d259cc3ff435c1eaffd62a734bf56775a19a152f9c93af",
+              "line": 989
+            },
+            "B": {
+              "start": 24328474,
+              "sfd": 24328481,
+              "last": 24329999,
+              "bytes": 1526,
+              "sha256": "90c17ad8cd9d86f27fc7f23ff153212b8e36e4e921924575634e0af54a2c766e",
+              "line": 989
+            }
+          },
+          "accept_cycle": 24328448,
+          "rx_public_first": 24330321,
+          "rx_public_last": 24331793,
+          "rx_line": 5039,
+          "rx_index": 8,
+          "winner": "A",
+          "raw_latency": 6332,
+          "first_for_vl_epoch": false,
+          "previous_id": "es1:979",
+          "in_window": true,
+          "previous_core_tx_start": 24203474,
+          "eligibility_cycle": 24328474,
+          "core_due_minus_M_signed": 38,
+          "public_due_minus_first_signed": 3013,
+          "remaining_wait_at_M": 38,
+          "remaining_wait_at_public_first": 3013,
+          "raw_minus_core_wait": 6294,
+          "raw_minus_public_wait": 3319,
+          "winner_observed_link_delay": 257
+        }
+      }
+    }
+  },
+  "raw_latency_all": {
+    "samples": 16076,
+    "minimum": 196,
+    "maximum": 6332,
+    "minimum_us": 1.568,
+    "maximum_us": 50.656,
+    "range_cycles": 6136,
+    "range_us": 49.088,
+    "min_id": "es1:1",
+    "max_id": "es2:413",
+    "scope": "heterogeneous descriptive distribution; not a same-(VL,n) jitter verdict"
+  },
+  "raw_latency_first": {
+    "samples": 162,
+    "minimum": 196,
+    "maximum": 6074,
+    "minimum_us": 1.568,
+    "maximum_us": 48.592,
+    "range_cycles": 5878,
+    "range_us": 47.024,
+    "min_id": "es1:1",
+    "max_id": "es1:83",
+    "scope": "heterogeneous descriptive distribution; not a same-(VL,n) jitter verdict"
+  },
+  "diagnostic_negative_adjusted_counts": {
+    "raw_minus_core_wait": 0,
+    "raw_minus_public_wait": 0
+  },
+  "source_identity": [
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\0_afdx_615a.v",
+      "sha256": "5A00250C2100DDF766547388BED4A2F77F0B70F6E4D80F4568E27B75575E1328",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a_engine.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\1_afdx_615a_engine.v",
+      "sha256": "2B738EB758FBCDE4CA0B0D2B3C7B92E8A1A57160BC4EC424E8BB2C3AAA336684",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_map.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\2_afdx_app_map.v",
+      "sha256": "61DB60365EB3BFDA06732391ABA6AE639B5A1E17731D3E7F54D637D62E490619",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_payload.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\3_afdx_app_payload.v",
+      "sha256": "0EA09A102CE850192B69AF4CCA480FC7B26BC3572A17E995514DF4C0A58BE8C6",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_read.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\4_afdx_app_read.v",
+      "sha256": "32CAAB22B87D59AD6D33CD06A5D451772673BB2BDABB78ABCDB567965454ACBA",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_rx.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\5_afdx_app_rx.v",
+      "sha256": "E1154212CCDC46D9200917F31951B05DD61B75F561B2AB77B1C4F2B12524490B",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_tx.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\6_afdx_app_tx.v",
+      "sha256": "729BC86FD2598C28E5EBCF293AE180B530CA54C52F6BCABF05EB16DFB8473337",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_cfg.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\7_afdx_cfg.v",
+      "sha256": "ED7C4E5D11D037954EF809FF14BF9C0BD143E79B2998A5B7A92BDF9E7CDFDBCA",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_crc32_d8.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\8_afdx_crc32_d8.v",
+      "sha256": "2487ACEDF68DF5AE8E96E90C0C6EB924869F286D2402DF21BC089DA09897E614",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_es.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\9_afdx_es.v",
+      "sha256": "0BCEA4294262DE512CBD05F337B3ACF6A241BA169D64AA039B12D7790ECE61B7",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_rx.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\10_afdx_mac_rx.v",
+      "sha256": "EE01466B3A4876AD902AFE15DD75CD2B6D64B7819548763A57B44B521FD58300",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_tx.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\11_afdx_mac_tx.v",
+      "sha256": "682A248AF47177EE0A771D4369D5C92539E08253ED33472EA9D654882D804180",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mgmt_tx.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\12_afdx_mgmt_tx.v",
+      "sha256": "142580BB28E7B16BC09FEFC50F7E6F6D1E36FD7EED5A835937C890145CB40D19",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ntp_fraction.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\13_afdx_ntp_fraction.v",
+      "sha256": "645457C9637FA3CB148624B34B76E2D19868D263957FE5424476685775666CBF",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ram_sdp.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\14_afdx_ram_sdp.v",
+      "sha256": "13AABC3C48DFBC513E1C555F3D84E79B9BB9405873E6357E11C3D2D4BCAEDBDD",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rtc.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\15_afdx_rtc.v",
+      "sha256": "FBD6DCA681C5B8CDEF2E5166173EB49D963202C56B276453ECD6524B44156732",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_core.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\16_afdx_rx_core.v",
+      "sha256": "9334A05B65DB344C5E045A3FBE06D60C2745D1543E9039998E95B86B6B5A40A1",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_deliver.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\17_afdx_rx_deliver.v",
+      "sha256": "107864DC6CB9306E045781D9B786962E7C0296EF251F19438A80F9C290D1F991",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_engine.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\18_afdx_rx_engine.v",
+      "sha256": "972BBF678B57C47D526E992A9E5F05F8801D406A7500A9DBBD299B81C9B5FC13",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_parse.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\19_afdx_rx_parse.v",
+      "sha256": "26359BADB56AE3B57910C3FF5FF21B1B143950458787EB68EF94961003F4CE79",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\20_afdx_rx_reassembly.v",
+      "sha256": "BE4D8C79A17180A64FCED44F60A997432378BCC2695E823DDBB6031DCE5E9BB8",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_bank.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\21_afdx_rx_reassembly_bank.v",
+      "sha256": "CA2450E8280779DBD95C03530E29D8D99CCD1EDFB48D1F13D7F7F7AA45237703",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_payload.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\22_afdx_rx_reassembly_payload.v",
+      "sha256": "45B6A4068A3616B232A5CB787D3A3E6D032178EBD16B22C6F95FC8C64AD42B7E",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_ram.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\23_afdx_rx_reassembly_ram.v",
+      "sha256": "5C9BC225F84A9D91AB9B09AA2951739FCED5B31D52A4D3F74F43E388A5802369",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\24_afdx_snmp.v",
+      "sha256": "416D734A8C3E5C8E76F426EF84C9F691EBFDCAD89DCC63376C8291F4BADD3B21",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp_engine.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\25_afdx_snmp_engine.v",
+      "sha256": "05F03D3D5EE2775129CF55350C3D8E2BF3D3920F509B1204BB3C026D59BD8392",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_svc.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\26_afdx_svc.v",
+      "sha256": "8BEA777AAC38E083C61F1A3D7F59EBBA6083A0FFD305231073F8291753DDBF60",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_timebase.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\27_afdx_timebase.v",
+      "sha256": "17C66EADCBD2C11539A6BD0AEF6CE4EA5377E04448C2D054A332D9112723769A",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\AFDX_top.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\28_AFDX_top.v",
+      "sha256": "986F42B7D24D7C35A015067C2C0981D22F187D2DE9038899EF0F2C45B9929273",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_buf.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\29_afdx_tx_buf.v",
+      "sha256": "CD75973792BE9667169D3AF822E43BD89DD046190CFECB8F3B1FBC06B040F105",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_builder.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\30_afdx_tx_builder.v",
+      "sha256": "F42CF080E19C889500198E505E689FF21F293946CF22314C72C6CC0491D01700",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_core.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\31_afdx_tx_core.v",
+      "sha256": "4F59495299A1527B86D60A1B06778461B9A6AFE620A36BE08FA0999D6512B1B9",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_engine.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\32_afdx_tx_engine.v",
+      "sha256": "17F781F2687F4FD1231821754FE74F481388098F9B1374D00FAF5D5A3EFDAFDE",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_free.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\33_afdx_tx_free.v",
+      "sha256": "422DDF4B9993B862FAAA2B498DD9AC6D976FB6D98F2A877A2121257ECCA5CF95",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\34_gmii_monitor.v",
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\35_judge_endpoint.v",
+      "sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\36_line_driver.v",
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\37_line_monitor.v",
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\38_link_model.v",
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\39_load_test_endpoint.v",
+      "sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\40_mac_tx_suite.v",
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\41_rm_age_probe.v",
+      "sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\42_rtc_retry_suite.v",
+      "sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\43_rx_core_suite.v",
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\44_snmp_test_endpoint.v",
+      "sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\45_sys_endpoint.v",
+      "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\46_sys_suite.v",
+      "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\47_top_stream_endpoint.v",
+      "sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5",
+      "current_matches_archive": false
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\48_tx_core_suite.v",
+      "sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_sys_perf.v",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\49_tb_sys_perf.v",
+      "sha256": "93DE264FBF37B8962137362F87227EC87C14BECE698BCB51A97224D6BFB194D8",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\50_download_test_tasks.vh",
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_cases.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\51_sys_cases.py",
+      "sha256": "D3C7F63EB72A171FCD3F2523F7FF806F250B2636D866D805B95F888F8DDC7345",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\52_sys_ref.py",
+      "sha256": "91BE65E208B9DA4818A210AC815A8FB156671FF9F3DBEEC71076D162251C1992",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_checks.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\53_sys_checks.py",
+      "sha256": "39514229214F91B6907A0A2A214B1F85BF23218A804CAAFE1AE2BC07E9BB21B2",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\sys_run_checks.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\54_sys_run_checks.py",
+      "sha256": "BF5AF09A8EDDA8515F2292CF1370C56C9933A9539BFFFE829B380DBB5C97D339",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\gmii_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\55_gmii_ref.py",
+      "sha256": "ECF198920D79012C5D75305D5AC8368B11A538C69EB8F6AC33ABAC66F589B2AF",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\tx_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\56_tx_ref.py",
+      "sha256": "2CF729B9E4C3F94A7D33F243C0D4F986380D9DC7FFB284B945BE2875619F63A8",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\rx_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\57_rx_ref.py",
+      "sha256": "13EE9521942D3C60E612B1C219BE4F081ED8E9E9D6C0808B123AC18825B8C46D",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\rx_checks.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\58_rx_checks.py",
+      "sha256": "E5CF1C17831E2822067827834F7EFABF7E06B8FFE09B561E86E3979D86A5F15C",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\afdx_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\59_afdx_ref.py",
+      "sha256": "B2F0F2010A26F8F4861C7BE0F80D6621BFA1AFABE6EFEEC59342FBCF9D212327",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\perf_ref.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\60_perf_ref.py",
+      "sha256": "6EBC7178221FB04B07FCF3D8AACF9BFD80A5AA39A14BEC6D66A0AB166FFA333E",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\61_modelsim_compat.py",
+      "sha256": "2C9ED6A39AA2ECD1760128122244B4E38AFE26CB744F8F1D0BC1EEA1B455A004",
+      "current_matches_archive": true
+    },
+    {
+      "original": "C:\\Users\\susu\\Desktop\\afdx\\tools\\verification_profile.py",
+      "archived": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sources\\62_verification_profile.py",
+      "sha256": "6C1F42D882F458AF0DC950888B9B69C3533BF17CA8B507C31D7ECC65525970CF",
+      "current_matches_archive": true
+    }
+  ],
+  "inputs": [
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\summary.json",
+      "bytes": 129373,
+      "sha256": "2AE3C3195B9A9F412E04BB53DF5A8DD0A933C82EA00B70ED66E2B5857760410E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\check_summary.json",
+      "bytes": 100830,
+      "sha256": "5EC0D8D3F794FF5E5462FEFF2E0CDBFB842E5FB4976FBC2D7FD7E9733E58FC7D"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\modelsim_adaptations.json",
+      "bytes": 8727,
+      "sha256": "C10FBCCFA05F654F0C54288449FB250C78EB088184375FBA8503B119D7E94EE5"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\run.do",
+      "bytes": 154,
+      "sha256": "4F724F6C036F7C4781CB7CBE172D1B59043D706C7DAF1CC3DB4263DF4A33CB29"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_rtl.log",
+      "bytes": 5457,
+      "sha256": "C56B70B323E4452BAF7750E1D050D254DA7194B8F0EDD202839BFF305DC9153E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile.log",
+      "bytes": 2836,
+      "sha256": "9BD6E0E5006239CE8A5E5998115BF698865006B17CDFAC685D97F8C1A0566E4F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\simulation.log",
+      "bytes": 2881,
+      "sha256": "6CC082D60F70C3CAD27D4CBC4FC14C2B0DA549B2D4B085357508DEEFB4C701C3"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a.v",
+      "bytes": 34465,
+      "sha256": "C99BCE326D4A2A610CCE902589B73B406A507CDDD3303969351460B6B2414AAE"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_615a_engine.v",
+      "bytes": 122031,
+      "sha256": "2B738EB758FBCDE4CA0B0D2B3C7B92E8A1A57160BC4EC424E8BB2C3AAA336684"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_map.v",
+      "bytes": 902,
+      "sha256": "61DB60365EB3BFDA06732391ABA6AE639B5A1E17731D3E7F54D637D62E490619"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_payload.v",
+      "bytes": 5711,
+      "sha256": "0EA09A102CE850192B69AF4CCA480FC7B26BC3572A17E995514DF4C0A58BE8C6"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_read.v",
+      "bytes": 3844,
+      "sha256": "32CAAB22B87D59AD6D33CD06A5D451772673BB2BDABB78ABCDB567965454ACBA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_rx.v",
+      "bytes": 5342,
+      "sha256": "84F238AC52F8628F8A257B0DBB793FB3703B42CCE30F9FC9F0FA590CA18BC49B"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_app_tx.v",
+      "bytes": 15518,
+      "sha256": "3326AF4F8FE14E65E14FEB9A901B61BDA9C9EE0547A92B18534B32B539B89D8C"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_cfg.v",
+      "bytes": 37556,
+      "sha256": "ED7C4E5D11D037954EF809FF14BF9C0BD143E79B2998A5B7A92BDF9E7CDFDBCA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_crc32_d8.v",
+      "bytes": 944,
+      "sha256": "2487ACEDF68DF5AE8E96E90C0C6EB924869F286D2402DF21BC089DA09897E614"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_es.v",
+      "bytes": 20979,
+      "sha256": "0BCEA4294262DE512CBD05F337B3ACF6A241BA169D64AA039B12D7790ECE61B7"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_rx.v",
+      "bytes": 5483,
+      "sha256": "EE01466B3A4876AD902AFE15DD75CD2B6D64B7819548763A57B44B521FD58300"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mac_tx.v",
+      "bytes": 9656,
+      "sha256": "682A248AF47177EE0A771D4369D5C92539E08253ED33472EA9D654882D804180"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_mgmt_tx.v",
+      "bytes": 7214,
+      "sha256": "142580BB28E7B16BC09FEFC50F7E6F6D1E36FD7EED5A835937C890145CB40D19"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ntp_fraction.v",
+      "bytes": 5600,
+      "sha256": "645457C9637FA3CB148624B34B76E2D19868D263957FE5424476685775666CBF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_ram_sdp.v",
+      "bytes": 2287,
+      "sha256": "13AABC3C48DFBC513E1C555F3D84E79B9BB9405873E6357E11C3D2D4BCAEDBDD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rtc.v",
+      "bytes": 59636,
+      "sha256": "8A1A0C47FCBDDF8AE0A1A1D9022704B4A86DB13317198C60FDC9F3F3355905FB"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_core.v",
+      "bytes": 21883,
+      "sha256": "9334A05B65DB344C5E045A3FBE06D60C2745D1543E9039998E95B86B6B5A40A1"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_deliver.v",
+      "bytes": 6477,
+      "sha256": "B560A461156645708BCCB929C71A5A14064C02A6A0EA32B678E7D503A9B18896"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_engine.v",
+      "bytes": 34365,
+      "sha256": "7E9E55BDB2D3F877771C11BCDA2620627BFA9B576DFD2D0051DD888DB3E3157A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_parse.v",
+      "bytes": 23979,
+      "sha256": "1909B866BBEE87DBBBD4F0B79C11635A011BF1C2C25505D229427F421A2396B5"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly.v",
+      "bytes": 12086,
+      "sha256": "81CA7F4E60C2CF29286C496100AEFA853EC5151CA41A58D25C1C9FE0036EDC0B"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_bank.v",
+      "bytes": 29525,
+      "sha256": "E72A128EC4600DCC230D85D12A8506E2A46D3F8677F8C045DAE7F838F68915AA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_payload.v",
+      "bytes": 3510,
+      "sha256": "45B6A4068A3616B232A5CB787D3A3E6D032178EBD16B22C6F95FC8C64AD42B7E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_rx_reassembly_ram.v",
+      "bytes": 1375,
+      "sha256": "807919668883C571E28A14A3E809E09FF30E0E2B64138BC6CD5532440543F81F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp.v",
+      "bytes": 28069,
+      "sha256": "416D734A8C3E5C8E76F426EF84C9F691EBFDCAD89DCC63376C8291F4BADD3B21"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_snmp_engine.v",
+      "bytes": 84930,
+      "sha256": "05F03D3D5EE2775129CF55350C3D8E2BF3D3920F509B1204BB3C026D59BD8392"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_svc.v",
+      "bytes": 11960,
+      "sha256": "8BEA777AAC38E083C61F1A3D7F59EBBA6083A0FFD305231073F8291753DDBF60"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_timebase.v",
+      "bytes": 1390,
+      "sha256": "17C66EADCBD2C11539A6BD0AEF6CE4EA5377E04448C2D054A332D9112723769A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\AFDX_top.v",
+      "bytes": 4081,
+      "sha256": "986F42B7D24D7C35A015067C2C0981D22F187D2DE9038899EF0F2C45B9929273"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_buf.v",
+      "bytes": 17531,
+      "sha256": "CD75973792BE9667169D3AF822E43BD89DD046190CFECB8F3B1FBC06B040F105"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_builder.v",
+      "bytes": 27548,
+      "sha256": "F42CF080E19C889500198E505E689FF21F293946CF22314C72C6CC0491D01700"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_core.v",
+      "bytes": 17990,
+      "sha256": "4F59495299A1527B86D60A1B06778461B9A6AFE620A36BE08FA0999D6512B1B9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_engine.v",
+      "bytes": 38225,
+      "sha256": "B64C0A512CF4BD8FC92BA880D34B3397CACA8D3FF05F7CA000CF1B8F742BEBE8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\rtl\\afdx_tx_free.v",
+      "bytes": 6058,
+      "sha256": "422DDF4B9993B862FAAA2B498DD9AC6D976FB6D98F2A877A2121257ECCA5CF95"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\download_test_tasks.vh",
+      "bytes": 9891,
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\gmii_monitor.v",
+      "bytes": 2236,
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\judge_endpoint.v",
+      "bytes": 6891,
+      "sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_driver.v",
+      "bytes": 1151,
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\line_monitor.v",
+      "bytes": 2109,
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\link_model.v",
+      "bytes": 13714,
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\load_test_endpoint.v",
+      "bytes": 5525,
+      "sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\mac_tx_suite.v",
+      "bytes": 10456,
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rm_age_probe.v",
+      "bytes": 2772,
+      "sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rtc_retry_suite.v",
+      "bytes": 7676,
+      "sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\rx_core_suite.v",
+      "bytes": 8922,
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\snmp_test_endpoint.v",
+      "bytes": 5972,
+      "sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_endpoint.v",
+      "bytes": 28991,
+      "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\sys_suite.v",
+      "bytes": 13581,
+      "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\top_stream_endpoint.v",
+      "bytes": 14793,
+      "sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\lib\\tx_core_suite.v",
+      "bytes": 11113,
+      "sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\compile_sources\\tb\\tb_sys_perf.v",
+      "bytes": 673,
+      "sha256": "93DE264FBF37B8962137362F87227EC87C14BECE698BCB51A97224D6BFB194D8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\sys_events.txt",
+      "bytes": 748068,
+      "sha256": "E9F19CB62D8876CE3392F28CD9CF6456AAADE0AE6F76D7048E4C9C89F9EAAE4D"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_tx\\events.txt",
+      "bytes": 49549350,
+      "sha256": "D691A22023089EC37BEC24AC981074E7606EF68AB7DC8046D993D5F051722381"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_rx\\events.txt",
+      "bytes": 25236080,
+      "sha256": "6DB57B06F050E6B077B961E211A8BADF4286A5BEE8D57FDE58E03030B567C4D9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_gmii_tx\\dump_a.txt",
+      "bytes": 25212303,
+      "sha256": "E40A34296FDE44D75812ED48EA4F17795708E4EECE16E0A984EB8FF21E34E750"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_gmii_tx\\dump_b.txt",
+      "bytes": 25212303,
+      "sha256": "21D1EBF9A2D70481B756C1BA0C95B4EC345CBA3A8C5F50172051E3C48534E701"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_gmii_rx\\dump_a.txt",
+      "bytes": 25212303,
+      "sha256": "433B76ABEE8A69AC57056FCC0A869BD87DCD8E4A51B5C1DE1C6D3809F3F95185"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_gmii_rx\\dump_b.txt",
+      "bytes": 25212303,
+      "sha256": "900EB062C43765BC66F13126D76FB1D0F666251C73D379A9B558E8BC0EEA052C"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_tx\\dump_a.txt",
+      "bytes": 25212303,
+      "sha256": "E40A34296FDE44D75812ED48EA4F17795708E4EECE16E0A984EB8FF21E34E750"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_tx\\dump_b.txt",
+      "bytes": 25212303,
+      "sha256": "21D1EBF9A2D70481B756C1BA0C95B4EC345CBA3A8C5F50172051E3C48534E701"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_tx\\events.txt",
+      "bytes": 46774334,
+      "sha256": "B2C2491A29D32A6D412F7EE80FC02223A4DE7E093F20357C4C7F327D1DA2D362"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_rx\\events.txt",
+      "bytes": 23823215,
+      "sha256": "BCF22BEF1BC9B43D5EFAE6D124F3C232553F3A6C88E6E67D300F2D4A51A430A4"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_gmii_tx\\dump_a.txt",
+      "bytes": 23800103,
+      "sha256": "877825C51EC0FE69A59FA55D9B91726B9E67B8B23F3FAFBBE712F081725C0734"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_gmii_tx\\dump_b.txt",
+      "bytes": 23800103,
+      "sha256": "84C641D6212A9E8E9FF288A76393D252EF4C075EED6D82969E7F11C38F3B217B"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_gmii_rx\\dump_a.txt",
+      "bytes": 23800103,
+      "sha256": "458169492ED6764DFCE4032AB235877AA0AAE0F8ADD233BECF6914FDD7C8EC05"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es1_gmii_rx\\dump_b.txt",
+      "bytes": 23800103,
+      "sha256": "D27FC07D4D7C13D3FD81EFC5BF7EC8D2AF6C2CF4081362AEE5732CBE03538D1C"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_tx\\dump_a.txt",
+      "bytes": 23800103,
+      "sha256": "877825C51EC0FE69A59FA55D9B91726B9E67B8B23F3FAFBBE712F081725C0734"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_perf\\20261103_175508_684130\\es2_tx\\dump_b.txt",
+      "bytes": 23800103,
+      "sha256": "84C641D6212A9E8E9FF288A76393D252EF4C075EED6D82969E7F11C38F3B217B"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_jitter\\20261103_205626_826706\\cross_stage_groups.json",
+      "bytes": 1218398,
+      "sha256": "D25A9E5E72CFE90909D78913B8BC8D87928A86E40DF5EBE1284BFD83C1318475"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_jitter\\20261103_205626_826706\\first_frames.json",
+      "bytes": 412539,
+      "sha256": "692A2AD764E9C20BAC0726618947E40FFFD9B1056900F9B168183F055AC002ED"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_jitter\\20261103_205626_826706\\samples.tsv",
+      "bytes": 4215665,
+      "sha256": "6A11FC5EFD0960971CB733D8A16C1EFA2DCF2FD280A6CEF20F1D9421A43D4D2F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_jitter\\20261103_205626_826706\\stage_groups.json",
+      "bytes": 4795856,
+      "sha256": "C330D5F27BE6BE11A16FE709499B8704377555736383F5B0AFB047B80EDB7FC7"
+    }
+  ]
+}

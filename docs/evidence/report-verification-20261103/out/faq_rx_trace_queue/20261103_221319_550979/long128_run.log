@@ -1,0 +1,13 @@
+{
+  "collection_success": false,
+  "functional_pass": false,
+  "full_default_case_acceptance": false,
+  "phase": "collection",
+  "original_hdl_outcome": "FAIL",
+  "original_result_lines": [
+    "[RESULT] tb_fragmentation FAIL missing deliveries 18/20"
+  ],
+  "error": "Original or prepared source drift: tb/tb_faq_rx_trace.v",
+  "source_or_input_drift": true,
+  "drift_error": "Original or prepared source drift: tb/tb_faq_rx_trace.v"
+}

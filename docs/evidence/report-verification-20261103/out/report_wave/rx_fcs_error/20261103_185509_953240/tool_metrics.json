@@ -1,0 +1,40 @@
+[
+  {
+    "name": "gui",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-gui",
+      "-do",
+      "do current_wave_entry.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\project",
+    "pid": 23732,
+    "created": 1793703310.1532393,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 45.958,
+    "peak_tree_bytes": 379531264,
+    "budget_seconds": 6600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\gui.log"
+  },
+  {
+    "name": "check",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\project\\tools\\sys_run_checks.py",
+      "--test",
+      "tb_sys_net",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\project\\out\\wave\\rx_fcs_error_20261103_185518_30764"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240",
+    "pid": 30400,
+    "created": 1793703356.1443725,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.273,
+    "peak_tree_bytes": 10174464,
+    "budget_seconds": 300,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\check.log"
+  }
+]

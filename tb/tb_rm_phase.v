@@ -17,7 +17,7 @@ module tb_rm_phase;
     integer busy_arrivals=0,reverse_pairs=0,cross_pairs=0,first_net=-1,seen_a,seen_b;
     reg old_da=0,old_db=0;reg [15:0] arrived_a,arrived_b;
     wire age_done;wire [31:0] age_checks,age_errors;
-    rm_age_probe aging(clk,age_done,age_checks,age_errors);
+    rm_age_current aging(clk,age_done,age_checks,age_errors);
     afdx_rx_core dut(clk,reset,coarse,a,av,b,bv,mwe,cwe,addr,data,
         dv,dd,dl,vl,sp,dp,dnet,ready,ea,eb,rm,delivery,cfg_ok);
     task check;

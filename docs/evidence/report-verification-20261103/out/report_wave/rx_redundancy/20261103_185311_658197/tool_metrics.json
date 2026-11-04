@@ -1,0 +1,40 @@
+[
+  {
+    "name": "gui",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-gui",
+      "-do",
+      "do current_wave_entry.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\project",
+    "pid": 27104,
+    "created": 1793703191.9085543,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 117.511,
+    "peak_tree_bytes": 392335360,
+    "budget_seconds": 6600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\gui.log"
+  },
+  {
+    "name": "check",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\project\\tools\\sys_run_checks.py",
+      "--test",
+      "tb_sys_delay",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\project\\out\\wave\\rx_redundancy_20261103_185323_25024"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197",
+    "pid": 30292,
+    "created": 1793703309.4724123,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.267,
+    "peak_tree_bytes": 8564736,
+    "budget_seconds": 300,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\check.log"
+  }
+]

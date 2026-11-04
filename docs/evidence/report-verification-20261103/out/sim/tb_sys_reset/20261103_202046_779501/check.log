@@ -1,0 +1,6 @@
+[CHECK] tb_sys_reset_es1_tx PASS items=405 errors=0 either=0
+[CHECK] tb_sys_reset_es2_tx PASS items=405 errors=0 either=0
+[CHECK] tb_sys_reset_es1_rx PASS items=100 errors=0 either=0
+[CHECK] tb_sys_reset_es2_rx PASS items=100 errors=0 either=0
+[CHECK] tb_sys_reset PASS items=2259 errors=0 either=0 w_over=0
+[CHECK] tb_sys_reset_gmii PASS items=575 errors=0 either=0

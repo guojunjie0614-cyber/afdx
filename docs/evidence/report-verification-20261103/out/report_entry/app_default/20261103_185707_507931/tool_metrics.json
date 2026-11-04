@@ -1,0 +1,20 @@
+[
+  {
+    "name": "entry",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-batch",
+      "-do",
+      "do sim/run_app.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_default\\20261103_185707_507931\\project",
+    "pid": 18460,
+    "created": 1793703427.7232783,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 27.508,
+    "peak_tree_bytes": 361848832,
+    "budget_seconds": 25200,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\app_default\\20261103_185707_507931\\entry.log"
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "test": "tb_rx_ovf_dq",
+  "items": 57,
+  "errors": 0,
+  "either": 0,
+  "segments": 8,
+  "segments_a": 4,
+  "segments_b": 4,
+  "pulses": {
+    "a_good": 4,
+    "deliver": 5,
+    "b_good": 4,
+    "b_ovf": 1,
+    "rm_drop": 2
+  },
+  "deliveries": 5,
+  "max_delivery_latency": 1468,
+  "stages": {
+    "dq": {
+      "segments": 8,
+      "good": 8,
+      "deliver": 5,
+      "b_ovf": 1,
+      "rm_drop": 2
+    }
+  },
+  "diagnostics": []
+}

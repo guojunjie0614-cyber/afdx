@@ -1,0 +1,236 @@
+{
+  "passed": true,
+  "scenarios": 6,
+  "images": 13,
+  "results": [
+    {
+      "scenario": "tx_bag",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011",
+      "passed": true,
+      "hdl_test": "tb_tx_bag",
+      "hdl_checks": 14054439,
+      "independent_check_items": 14592,
+      "independent_check_scope": "Existing official Python reference checker passed",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag.png",
+          "width": 1520,
+          "height": 709,
+          "window": "16132.000ns 819132.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag_first.png",
+          "width": 1520,
+          "height": 709,
+          "window": "17108.000ns 17772.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_bag\\20261103_184519_654011\\captures\\tx_bag_second.png",
+          "width": 1520,
+          "height": 709,
+          "window": "817108.000ns 817772.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "Overview has 800 us launch spacing; two closeups show A/B pulses and SN advancing from 0 to 1."
+      },
+      "changed_originals": [
+        "sim\\wave\\capture.ps1",
+        "sim\\wave\\common.do",
+        "sim\\wave\\current_report.do",
+        "tools\\collect_report_coverage.py",
+        "tools\\run_report_wave.py"
+      ],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    },
+    {
+      "scenario": "tx_dual",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162",
+      "passed": true,
+      "hdl_test": "tb_sys_net",
+      "hdl_checks": 2793425,
+      "independent_check_items": 1307,
+      "independent_check_scope": "Existing official Python reference checker passed",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\captures\\tx_dual_1.png",
+          "width": 1520,
+          "height": 709,
+          "window": "686272.000ns 689372.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\tx_dual\\20261103_185218_083162\\captures\\tx_dual_2.png",
+          "width": 1520,
+          "height": 709,
+          "window": "688564.000ns 688892.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "Public application input precedes simultaneous A/B frame launch; closeup shows wire bytes."
+      },
+      "changed_originals": [
+        "sim\\wave\\capture.ps1",
+        "sim\\wave\\common.do",
+        "sim\\wave\\current_report.do",
+        "tools\\collect_report_coverage.py",
+        "tools\\run_report_wave.py"
+      ],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    },
+    {
+      "scenario": "rx_redundancy",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197",
+      "passed": true,
+      "hdl_test": "tb_sys_delay",
+      "hdl_checks": 13940507,
+      "independent_check_items": 3915,
+      "independent_check_scope": "Existing official Python reference checker passed",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\captures\\rx_redundancy_1.png",
+          "width": 1520,
+          "height": 709,
+          "window": "3016794.000ns 3017104.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_redundancy\\20261103_185311_658197\\captures\\rx_redundancy_2.png",
+          "width": 1520,
+          "height": 709,
+          "window": "3032408.000ns 3032668.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "A delivery exposes application bytes; later duplicate produces an RM-drop pulse without a second application output."
+      },
+      "changed_originals": [
+        "sim\\wave\\capture.ps1",
+        "sim\\wave\\common.do",
+        "sim\\wave\\current_report.do",
+        "tools\\collect_report_coverage.py",
+        "tools\\run_report_wave.py"
+      ],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    },
+    {
+      "scenario": "rx_fcs_error",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240",
+      "passed": true,
+      "hdl_test": "tb_sys_net",
+      "hdl_checks": 2793425,
+      "independent_check_items": 1307,
+      "independent_check_scope": "Existing official Python reference checker passed",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_1.png",
+          "width": 1520,
+          "height": 709,
+          "window": "798620.000ns 799920.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_2.png",
+          "width": 1520,
+          "height": 709,
+          "window": "799400.000ns 799720.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\rx_fcs_error\\20261103_185509_953240\\captures\\rx_fcs_error_3.png",
+          "width": 1520,
+          "height": 709,
+          "window": "973396.000ns 973436.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "Actual FCS event increments the counter; real public register read is 16 ns/two clocks from request to response."
+      },
+      "changed_originals": [
+        "sim\\wave\\capture.ps1",
+        "sim\\wave\\common.do",
+        "sim\\wave\\current_report.do",
+        "tools\\collect_report_coverage.py",
+        "tools\\run_report_wave.py"
+      ],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    },
+    {
+      "scenario": "snmp_get",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\snmp_get\\20261103_192253_556672",
+      "passed": true,
+      "hdl_test": "tb_judge_snmp",
+      "hdl_checks": 699,
+      "independent_check_items": null,
+      "independent_check_scope": "HDL independently constructs and decodes BER requests/responses",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\snmp_get\\20261103_192253_556672\\captures\\snmp_get_1.png",
+          "width": 1520,
+          "height": 709,
+          "window": "525944.000ns 526284.000ns"
+        },
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\snmp_get\\20261103_192253_556672\\captures\\snmp_get_2.png",
+          "width": 1520,
+          "height": 709,
+          "window": "538604.000ns 538948.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "Request and response GMII frames and byte transitions visible; named cursors retain 12.664 us spacing."
+      },
+      "changed_originals": [
+        "tools\\run_report_wave.py"
+      ],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    },
+    {
+      "scenario": "services",
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201",
+      "passed": true,
+      "hdl_test": "tb_net_services",
+      "hdl_checks": 1123,
+      "independent_check_items": 59,
+      "independent_check_scope": "Existing official Python reference checker passed",
+      "captures": [
+        {
+          "path": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\captures\\services.png",
+          "width": 1496,
+          "height": 709,
+          "window": "0ns 1095014.000ns"
+        }
+      ],
+      "visual_review": {
+        "accepted": true,
+        "observation": "Original service entry completed; flattened real phase/counter/application signals are visible instead of collapsed groups."
+      },
+      "changed_originals": [],
+      "identity_scope": "Canonical RTL, TB and independent references remain byte-identical; later GUI/helper edits are disclosed"
+    }
+  ],
+  "preserved_attempts": [
+    {
+      "folder": "out/report_wave/snmp_get/20261103_185556_741265",
+      "status": "GUI time callback stopped HDL; failed"
+    },
+    {
+      "folder": "out/report_wave/snmp_get/20261103_191358_912250",
+      "status": "HDL passed but caption-only captures rejected by visual review"
+    },
+    {
+      "folder": "out/report_wave/services/20261103_185631_814540",
+      "status": "HDL passed; GUI script time command failed"
+    },
+    {
+      "folder": "out/report_wave/services/20261103_191601_934493",
+      "status": "HDL passed; checker companion missing and original screenshot groups collapsed"
+    },
+    {
+      "folder": "out/report_wave_recheck/services/20261103_192444_919484",
+      "status": "Existing capture independently passed 59 checks after input-verified companion recovery; not final visual closure"
+    }
+  ],
+  "scope": "Six real owned ModelSim GUI scenarios, thirteen directly inspected native screenshots, WLFs and actual HDL results. eLinx launcher integration is separate."
+}

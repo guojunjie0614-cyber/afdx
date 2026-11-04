@@ -143,8 +143,11 @@ def saturation(s):
 def drop(s):
     s.stage('dis');s.cfg(0,en=0);s.cfg(1,nets=0);s.cfg(2,bag=400)
     for vl in (0,1,0,1):s.msg(vl,32);s.msg(2);s.drain()
-    s.stage('long');s.cfg(0,maximum=16);s.cfg(1,bag=400)
-    for n in (17,1472,3000):s.msg(0,n);s.msg(1);s.drain()
+    s.stage('long');s.cfg(1,bag=400)
+    # Short messages obey Lmax; fragmented messages need an 8-byte minimum
+    # Lmax, while the independent application-message bound remains 8192.
+    for n,maximum in ((17,16),(1472,7),(3000,0),(8193,1471)):
+        s.cfg(0,maximum=maximum);s.msg(0,n);s.msg(1);s.drain()
     s.stage('full')
     for maximum in (0,1,2,63):
         s.emit('Z 00000000');s.cfg(0,qmax=maximum,bag=30000);s.cfg(1,bag=400)
@@ -165,7 +168,7 @@ def net(s):
     s.stage('queue');s.cfg(0,bag=20000,qmax=4);s.cfg(1,nets=1,en=0)
     s.msg(0);s.drain()
     for _ in range(5):s.msg(0)
-    s.msg(1);s.msg(0,1472);s.drain()
+    s.msg(1);s.msg(0,8193);s.drain()
 
 
 def generate(test, seed, out):
@@ -175,8 +178,20 @@ def generate(test, seed, out):
     return dict(messages=s.messages,payload_bytes=len(s.payload),commands=len(s.commands))
 
 
+def outcome_deadline(n, off_aw):
+    # Preserve the legacy 96-clock budget, including its fixed arbitration,
+    # ingress and EVENT overhead. Each additional rollback page needs three
+    # clocks: synchronous read issue, return-valid publication, return handshake.
+    size = 1 << off_aw
+    legacy_pages = (1471 + size - 1) // size
+    pages = (min(n, 8192) + size - 1) // size
+    return 96 + 3 * max(0, pages - legacy_pages)
+
+
 def check(test, folder):
     from afdx_ref import build_frame, line_bytes, PREAMBLE, fcs
+    from verification_profile import selected, CURRENT
+    current = selected() == CURRENT
     items = errors = either = 0
     diagnostics = []
     def expect(ok, label):
@@ -228,7 +243,8 @@ def check(test, folder):
                 expect(len(pending)>=1,f'G2 queued M available at E {cycle}')
                 if pending:
                     m=pending.pop(0);m['result']=name;m['event']=cycle
-                    expect(0<cycle-m['cycle']<=96,f'G2 outcome deadline message {m["index"]}')
+                    deadline=outcome_deadline(m['n'],params.get('TX_OFF_AW',8))
+                    expect(0<cycle-m['cycle']<=deadline,f'G2 outcome deadline message {m["index"]}: limit={deadline}')
         elif code!='R':expect(False,'unexpected event '+code)
     expect(not public_inputs,'A no unaccounted public input')
     expect(not pending,'G2 no missing outcome')
@@ -271,6 +287,7 @@ def check(test, folder):
         due=m['cycle'] if previous_vl is None else previous_vl['start']+words[1]
         m['due']=due
         if previous_vl:expect(group['start']-previous_vl['start']>=words[1],f'G6 BAG message {m["index"]}')
+        group['previous_vl']=previous_vl
         group['previous']=previous if previous and previous['epoch']==ep else None
         last_vl[vlkey]=group;previous=group
     for m in messages:
@@ -288,7 +305,7 @@ def check(test, folder):
     pages=1<<params.get('TX_PAGE_AW',8);size=1<<params.get('TX_OFF_AW',8)
     for m in messages:
         if m['result'] is None:continue  # interrupted by reset
-        ep=m['epoch'];cycle=m['cycle'];control=m['words'][0];needed=(min(m['n'],1471)+size-1)//size
+        ep=m['epoch'];cycle=m['cycle'];control=m['words'][0];needed=(min(m['n'],8192)+size-1)//size
         # M 只记末字节；首次取页可以早于它。接收期间可能有旧帧归还页面。
         previous=messages[m['index']-1] if m['index'] else None
         first_possible=previous['cycle']+1 if previous and previous['epoch']==ep else resets[ep-1]
@@ -308,9 +325,9 @@ def check(test, folder):
         options=set()
         if free_min<needed:options.add('drop_nopage')
         if free_max>=needed:
-            if m['n']>1471:options.add('drop_long')
+            if m['n']>8192:options.add('drop_long')
             elif control&1==0 or control&6==0:options.add('drop_dis')
-            elif m['n']>((control>>9)&2047):options.add('drop_long')
+            elif (m['n']<=1471 and m['n']>((control>>9)&2047)) or (m['n']>1471 and ((control>>9)&2047)<8):options.add('drop_long')
             else:
                 maximum=(control>>3)&63
                 if queued_max>=maximum:options.add('drop_full')
@@ -327,7 +344,16 @@ def check(test, folder):
             if other['epoch']!=m['epoch'] or other['vl']==m['vl'] or other['result']!='accept':continue
             of=other['frame'];os=of['start'] if of else 1<<60
             if other['cycle']<S and os>S-2000 and other.get('due',other['cycle'])<S+512:competing.append(other)
-        if not competing:expect(S<=max(L,A+100),f'G7 late message {m["index"]}: S={S} L={L} A={A}')
+        if not competing:
+            upper=max(L,A+100)
+            prior_vl=group.get('previous_vl')
+            if current and prior_vl and A<prior_vl['end']:
+                # Contract rev7 keeps a VL busy until physical completion.
+                # A queued successor can miss the ongoing two-cycle x 128-VL
+                # scan. Budget one complete scan plus the isolated 100-cycle
+                # preparation allowance, from completion/IFG, BAG and arrival.
+                upper=max(L,A)+128*2+100
+            expect(S<=upper,f'G7 late message {m["index"]}: S={S} L={L} A={A} upper={upper}')
         if prev is None or S-prev['end']>1024:
             old=S-1024
             heads={}
@@ -434,7 +460,9 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
             for m in dropped:
                 i=msgs.index(m);expect(i+1<len(msgs) and msgs[i+1]['vl']!=m['vl'] and msgs[i+1]['result']=='accept' and msgs[i+1]['frame'] is not None,stage+' good message after drop')
         expect({(m['words'][0]>>3)&63 for m in ms('full') if m['vl']==0}=={0,1,2,63},'full qmax matrix')
-        expect({17,1472,3000}<={m['n'] for m in ms('long') if m['result']=='drop_long'},'long lengths')
+        long_cases=[m for m in ms('long') if m['vl']==0]
+        expect({(17,16),(1472,7),(3000,0),(8193,1471)}=={(m['n'],(m['words'][0]>>9)&2047) for m in long_cases},'long length/Lmax matrix')
+        expect(len(long_cases)==4 and all(m['result']=='drop_long' for m in long_cases),'long: all invalid messages rejected')
         counts=[]
         for stage in ('nopage','refill','reset_refill'):
             msgs=ms(stage);last_epoch=max((m['epoch'] for m in msgs),default=-1);msgs=[m for m in msgs if m['epoch']==last_epoch]
@@ -450,3 +478,4 @@ def stage_checks(test,stages,groups,resets,now_points,events,expect):
         spacing('queue',20000,5)
         counts=collections.Counter(m['result'] for stage in stages for m in ms(stage))
         expect(all(counts[x]==1 for x in ('drop_full','drop_dis','drop_long')),'netlist drops')
+        expect([m['n'] for m in ms('queue') if m['result']=='drop_long']==[8193],'netlist application-message bound')

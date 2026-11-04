@@ -1,0 +1,33 @@
+Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
+Start time: 21:07:59 on Nov 03,2026
+vlog -vlog01compat "+incdir+C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib" "+define+AFDX_CE_DIV=2" C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\gmii_monitor.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\judge_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\line_driver.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\line_monitor.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\link_model.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\load_test_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\mac_tx_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rm_age_probe.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rx_core_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\snmp_test_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\sys_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\sys_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\top_stream_endpoint.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\tx_core_suite.v C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\tb_rtc_banked.v 
+-- Compiling module gmii_monitor
+-- Compiling module judge_endpoint
+-- Compiling module line_driver
+-- Compiling module line_monitor
+-- Compiling module link_model
+-- Compiling module load_test_endpoint
+-- Compiling module mac_tx_suite
+-- Compiling module rm_age_probe
+-- Compiling module rtc_retry_suite
+-- Compiling module rx_core_suite
+-- Compiling module snmp_test_endpoint
+-- Compiling module sys_endpoint
+-- Compiling module sys_suite
+-- Compiling module top_stream_endpoint
+-- Compiling module tx_core_suite
+-- Compiling module tb_rtc_banked
+
+Top level modules:
+	judge_endpoint
+	line_driver
+	load_test_endpoint
+	mac_tx_suite
+	rm_age_probe
+	rx_core_suite
+	snmp_test_endpoint
+	sys_suite
+	tx_core_suite
+	tb_rtc_banked
+End time: 21:07:59 on Nov 03,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0

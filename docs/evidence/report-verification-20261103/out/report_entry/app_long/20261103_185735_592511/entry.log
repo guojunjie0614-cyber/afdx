@@ -1,0 +1,9 @@
+APP METRIC inject_mbps=0.000 raw_short_completion_us=60.888 raw_fragmented_completion_us=5212.304 max_e2e_first_us=5146.760 jitter_r119_us=27.984 delivered=88 frames=94
+APP REQUIREMENT REPORT fragmented_completion=informational jitter_r139=ambiguous
+[RESULT] fragment_integration PASS
+APP ENTRY PASS run=current_long messages=88 fragmented_metrics=report output=C:/Users/susu/Desktop/afdx/out/report_entry/app_long/20261103_185735_592511/project/out/app/current_long
+# 
+# do sim/run_app.do sim/vectors/app_long/stimulus.txt sim/vectors/app_long/vl_config.txt current_long
+# C:/Users/susu/Desktop/afdx/out/report_entry/app_long/20261103_185735_592511/project
+# 0
+# Errors: 0, Warnings: 0

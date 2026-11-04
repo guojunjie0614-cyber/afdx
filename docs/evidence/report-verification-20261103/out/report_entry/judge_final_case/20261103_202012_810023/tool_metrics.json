@@ -1,0 +1,20 @@
+[
+  {
+    "name": "entry",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-batch",
+      "-do",
+      "do sim/run_judge.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\project",
+    "pid": 31716,
+    "created": 1793708413.0449057,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 3409.068,
+    "peak_tree_bytes": 517013504,
+    "budget_seconds": 25200,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_entry\\judge_final_case\\20261103_202012_810023\\entry.log"
+  }
+]

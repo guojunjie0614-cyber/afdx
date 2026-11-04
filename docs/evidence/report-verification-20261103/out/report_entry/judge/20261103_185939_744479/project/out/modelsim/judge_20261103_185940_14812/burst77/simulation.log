@@ -1,0 +1,103 @@
+# vsim -batch -quiet -modelsimini C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/out/modelsim/judge_20261103_185940_14812/modelsim.ini -t 1ps -onfinish stop -wlf simulation.wlf -gCOUNT=77 work.tb_gbe_burst -do "run -all; quit -f" 
+# Start time: 19:00:29 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# 
+# run -all
+# [BURST_D] vl=0 queue_cycles=6077 raw_m_to_d=4602 wire_last_to_d=1538
+# [BURST_D] vl=1 queue_cycles=7615 raw_m_to_d=4665 wire_last_to_d=1538
+# [BURST_D] vl=2 queue_cycles=9153 raw_m_to_d=4728 wire_last_to_d=1538
+# [BURST_D] vl=3 queue_cycles=10691 raw_m_to_d=4791 wire_last_to_d=1538
+# [BURST_D] vl=4 queue_cycles=12229 raw_m_to_d=4854 wire_last_to_d=1538
+# [BURST_D] vl=5 queue_cycles=13767 raw_m_to_d=4917 wire_last_to_d=1538
+# [BURST_D] vl=6 queue_cycles=15305 raw_m_to_d=4980 wire_last_to_d=1538
+# [BURST_D] vl=7 queue_cycles=16843 raw_m_to_d=5043 wire_last_to_d=1538
+# [BURST_D] vl=8 queue_cycles=18381 raw_m_to_d=5106 wire_last_to_d=1538
+# [BURST_D] vl=9 queue_cycles=19919 raw_m_to_d=5169 wire_last_to_d=1538
+# [BURST_D] vl=10 queue_cycles=21457 raw_m_to_d=5232 wire_last_to_d=1538
+# [BURST_D] vl=11 queue_cycles=22995 raw_m_to_d=5295 wire_last_to_d=1538
+# [BURST_D] vl=12 queue_cycles=24533 raw_m_to_d=5358 wire_last_to_d=1538
+# [BURST_D] vl=13 queue_cycles=26071 raw_m_to_d=5421 wire_last_to_d=1538
+# [BURST_D] vl=14 queue_cycles=27609 raw_m_to_d=5484 wire_last_to_d=1538
+# [BURST_D] vl=15 queue_cycles=29147 raw_m_to_d=5547 wire_last_to_d=1538
+# [BURST_D] vl=16 queue_cycles=30685 raw_m_to_d=5610 wire_last_to_d=1538
+# [BURST_D] vl=17 queue_cycles=32223 raw_m_to_d=5673 wire_last_to_d=1538
+# [BURST_D] vl=18 queue_cycles=33761 raw_m_to_d=5736 wire_last_to_d=1538
+# [BURST_D] vl=19 queue_cycles=35299 raw_m_to_d=5799 wire_last_to_d=1538
+# [BURST_D] vl=20 queue_cycles=36837 raw_m_to_d=5862 wire_last_to_d=1538
+# [BURST_D] vl=21 queue_cycles=38375 raw_m_to_d=5925 wire_last_to_d=1538
+# [BURST_D] vl=22 queue_cycles=39913 raw_m_to_d=5988 wire_last_to_d=1538
+# [BURST_D] vl=23 queue_cycles=41451 raw_m_to_d=6051 wire_last_to_d=1538
+# [BURST_D] vl=24 queue_cycles=42989 raw_m_to_d=6114 wire_last_to_d=1538
+# [BURST_D] vl=25 queue_cycles=44527 raw_m_to_d=6177 wire_last_to_d=1538
+# [BURST_D] vl=26 queue_cycles=46065 raw_m_to_d=6240 wire_last_to_d=1538
+# [BURST_D] vl=27 queue_cycles=47603 raw_m_to_d=6303 wire_last_to_d=1538
+# [BURST_D] vl=28 queue_cycles=49141 raw_m_to_d=6366 wire_last_to_d=1538
+# [BURST_D] vl=29 queue_cycles=50679 raw_m_to_d=6429 wire_last_to_d=1538
+# [BURST_D] vl=30 queue_cycles=52217 raw_m_to_d=6492 wire_last_to_d=1538
+# [BURST_D] vl=31 queue_cycles=53755 raw_m_to_d=6555 wire_last_to_d=1538
+# [BURST_D] vl=32 queue_cycles=55293 raw_m_to_d=6618 wire_last_to_d=1538
+# [BURST_D] vl=33 queue_cycles=56831 raw_m_to_d=6681 wire_last_to_d=1538
+# [BURST_D] vl=34 queue_cycles=58369 raw_m_to_d=6744 wire_last_to_d=1538
+# [BURST_D] vl=35 queue_cycles=59907 raw_m_to_d=6807 wire_last_to_d=1538
+# [BURST_D] vl=36 queue_cycles=61445 raw_m_to_d=6870 wire_last_to_d=1538
+# [BURST_D] vl=37 queue_cycles=62983 raw_m_to_d=6933 wire_last_to_d=1538
+# [BURST_D] vl=38 queue_cycles=64521 raw_m_to_d=6996 wire_last_to_d=1538
+# [BURST_D] vl=39 queue_cycles=66059 raw_m_to_d=7059 wire_last_to_d=1538
+# [BURST_D] vl=40 queue_cycles=67597 raw_m_to_d=7122 wire_last_to_d=1538
+# [BURST_D] vl=41 queue_cycles=69135 raw_m_to_d=7185 wire_last_to_d=1538
+# [BURST_D] vl=42 queue_cycles=70673 raw_m_to_d=7248 wire_last_to_d=1538
+# [BURST_D] vl=43 queue_cycles=72211 raw_m_to_d=7311 wire_last_to_d=1538
+# [BURST_D] vl=44 queue_cycles=73749 raw_m_to_d=7374 wire_last_to_d=1538
+# [BURST_D] vl=45 queue_cycles=75287 raw_m_to_d=7437 wire_last_to_d=1538
+# [BURST_D] vl=46 queue_cycles=76825 raw_m_to_d=7500 wire_last_to_d=1538
+# [BURST_D] vl=47 queue_cycles=78363 raw_m_to_d=7563 wire_last_to_d=1538
+# [BURST_D] vl=48 queue_cycles=79901 raw_m_to_d=7626 wire_last_to_d=1538
+# [BURST_D] vl=49 queue_cycles=81439 raw_m_to_d=7689 wire_last_to_d=1538
+# [BURST_D] vl=50 queue_cycles=82977 raw_m_to_d=7752 wire_last_to_d=1538
+# [BURST_D] vl=51 queue_cycles=84515 raw_m_to_d=7815 wire_last_to_d=1538
+# [BURST_D] vl=52 queue_cycles=86053 raw_m_to_d=7878 wire_last_to_d=1538
+# [BURST_D] vl=53 queue_cycles=87591 raw_m_to_d=7941 wire_last_to_d=1538
+# [BURST_D] vl=54 queue_cycles=89129 raw_m_to_d=8004 wire_last_to_d=1538
+# [BURST_D] vl=55 queue_cycles=90667 raw_m_to_d=8067 wire_last_to_d=1538
+# [BURST_D] vl=56 queue_cycles=92205 raw_m_to_d=8130 wire_last_to_d=1538
+# [BURST_D] vl=57 queue_cycles=93743 raw_m_to_d=8193 wire_last_to_d=1538
+# [BURST_D] vl=58 queue_cycles=95281 raw_m_to_d=8256 wire_last_to_d=1538
+# [BURST_D] vl=59 queue_cycles=96819 raw_m_to_d=8319 wire_last_to_d=1538
+# [BURST_D] vl=60 queue_cycles=98357 raw_m_to_d=8382 wire_last_to_d=1538
+# [BURST_D] vl=61 queue_cycles=99895 raw_m_to_d=8445 wire_last_to_d=1538
+# [BURST_D] vl=62 queue_cycles=101433 raw_m_to_d=8508 wire_last_to_d=1538
+# [BURST_D] vl=63 queue_cycles=102971 raw_m_to_d=8571 wire_last_to_d=1538
+# [BURST_D] vl=64 queue_cycles=104509 raw_m_to_d=8634 wire_last_to_d=1538
+# [BURST_D] vl=65 queue_cycles=106047 raw_m_to_d=8697 wire_last_to_d=1538
+# [BURST_D] vl=66 queue_cycles=107585 raw_m_to_d=8760 wire_last_to_d=1538
+# [BURST_D] vl=67 queue_cycles=109123 raw_m_to_d=8823 wire_last_to_d=1538
+# [BURST_D] vl=68 queue_cycles=110661 raw_m_to_d=8886 wire_last_to_d=1538
+# [BURST_D] vl=69 queue_cycles=112199 raw_m_to_d=8949 wire_last_to_d=1538
+# [BURST_D] vl=70 queue_cycles=113737 raw_m_to_d=9012 wire_last_to_d=1538
+# [BURST_D] vl=71 queue_cycles=115275 raw_m_to_d=9075 wire_last_to_d=1538
+# [BURST_D] vl=72 queue_cycles=116813 raw_m_to_d=9138 wire_last_to_d=1538
+# [BURST_D] vl=73 queue_cycles=118351 raw_m_to_d=9201 wire_last_to_d=1538
+# [BURST_D] vl=74 queue_cycles=119889 raw_m_to_d=9264 wire_last_to_d=1538
+# [BURST_D] vl=75 queue_cycles=121427 raw_m_to_d=9327 wire_last_to_d=1538
+# [BURST_D] vl=76 queue_cycles=122965 raw_m_to_d=9390 wire_last_to_d=1538
+# [BURST_SUMMARY] count=77 release=67855 first_sof=70869 max_queue_cycles=122965 max_raw_m_to_d=9390
+# [RESULT] tb_gbe_burst PASS checks=530802 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/tb/tb_gbe_burst.v(114)
+#    Time: 1526792 ns  Iteration: 1  Instance: /tb_gbe_burst
+# Break at C:/Users/susu/Desktop/afdx/out/report_entry/judge/20261103_185939_744479/project/tb/tb_gbe_burst.v line 114
+# quit -f
+# End time: 19:00:41 on Nov 03,2026, Elapsed time: 0:00:12
+# Errors: 0, Warnings: 0

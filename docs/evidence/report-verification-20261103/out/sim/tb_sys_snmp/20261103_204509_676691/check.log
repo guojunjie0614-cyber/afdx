@@ -1,0 +1,1 @@
+[CHECK] tb_sys_snmp PASS items=926 errors=0 requests=117 responses=115 objects=36 walk=36

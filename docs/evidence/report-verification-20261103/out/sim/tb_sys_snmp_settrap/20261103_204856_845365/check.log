@@ -1,0 +1,1 @@
+[CHECK] tb_sys_snmp_settrap PASS items=188 errors=0 requests=22 responses=18 traps=2

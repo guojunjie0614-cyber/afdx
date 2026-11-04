@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "phase": "complete",
+  "limits": {
+    "process_tree_gib": 1,
+    "minimum_free_gib": 5
+  },
+  "returncode": 0,
+  "results": [
+    "[RESULT] tb_fragmentation PASS errors=0 deliveries=20"
+  ],
+  "check": {
+    "passed": true,
+    "checks": 79,
+    "errors": 0,
+    "failures": [],
+    "expected_deliveries": 20,
+    "observed_deliveries": 20,
+    "healthy_during_fault_deliveries": 12,
+    "max_healthy_gmii_completion_cycles": 2466,
+    "progress_bound_cycles": 50000,
+    "events": {
+      "rm_drop": 2,
+      "a_fcs": 1,
+      "a_ic": 2,
+      "a_ovf": 1
+    },
+    "source_plan_model": {
+      "completed_messages": 19,
+      "events": {
+        "rm_drop": 2,
+        "a_fcs": 1,
+        "a_ic": 2,
+        "a_ovf": 1
+      },
+      "live_contexts": 1,
+      "max_contexts": 2,
+      "final_psn": {
+        "(1280, 1)": 16,
+        "(1280, 2)": 0,
+        "(1281, 1)": 4,
+        "(1282, 1)": 4,
+        "(1283, 1)": 10,
+        "(1283, 2)": 1,
+        "(1284, 1)": 4
+      }
+    },
+    "scope": "public GMII-to-application isolation and bounded progress; no 2ms application-input latency claim",
+    "timing_note": "Injected GMII timing is derived from the frozen public file-driver schedule, with a two-cycle conservative boundary margin; not an application-input latency metric."
+  },
+  "source_and_input_drift": false
+}

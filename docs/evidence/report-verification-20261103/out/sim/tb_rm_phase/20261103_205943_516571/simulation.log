@@ -1,0 +1,76 @@
+# vsim -batch -coverage tb_rm_phase -wlf simulation.wlf -do "do run.do" 
+# Start time: 20:59:44 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'desc_a'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(20).
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'desc_b'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(20).
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'dq_wd'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(42).
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'reassembly_result_valid'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(43).
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'reassembly_ok'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(43).
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\tb\lib\rm_age_probe.v(13): (vopt-2241) Connection width does not match width of port 'reassembly_slot'. The port definition is at: C:\Users\susu\Desktop\afdx\out\sim\tb_rm_phase\20261103_205943_516571\compile_sources\rtl\afdx_rx_engine.v(43).
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_engine(fast__1)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_reassembly(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_rx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_parse(fast)".
+# ** Note: (vopt-143) Recognized 3 FSMs in module "afdx_rx_reassembly_bank(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_engine(fast)".
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=6.
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_rm_phase(fast)
+# Loading work.afdx_timebase(fast)
+# Loading work.afdx_rx_engine(fast)
+# Loading work.afdx_rx_core(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# ** Warning: (vsim-2685) [TFMPC] - Too few port connections for 'dut'.  Expected 53, found 37.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (221) does not match connection size (95) for port 'desc_a'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(20).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (221) does not match connection size (95) for port 'desc_b'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(20).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (73) does not match connection size (68) for port 'dq_wd'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(42).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (1) does not match connection size (6) for port 'reassembly_result_valid'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(43).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (1) does not match connection size (8) for port 'reassembly_ok'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(43).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3015) [PCDPC] - Port size (4) does not match connection size (8) for port 'reassembly_slot'. The port definition is at: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/rtl/afdx_rx_engine.v(43).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_rm_phase/aging/dut File: C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v Line: 13
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_query_bank'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_cancel_bank'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_reserve_bank'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_meta'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_vl'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_length'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_sport'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_dport'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'reassembly_net'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'dq_count'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'ev_a'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'ev_b'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'ev_rm_drop'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'ev_deliver'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'cfg_ok'.
+# ** Warning: (vsim-3722) C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/lib/rm_age_probe.v(13): [TFMPC] - Missing connection for port 'core_enable_next'.
+# 
+# do run.do
+# [AGE_FAIL] initial duplicate record valid
+# [AGE_COVERAGE] busy_ticks=36864 delivered=36866 cycles=4722797
+# [FAIL] pair=5460 phase=33 gap=21 order=2 busy-load aging probe
+# [COVERAGE] pairs=5460 cross=840 reverse=12 busy=10660 cycles=22429908 aging_checks=36867
+# [RESULT] tb_rm_phase FAIL checks=353130 errors=2
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_rm_phase/20261103_205943_516571/compile_sources/tb/tb_rm_phase.v(119)
+#    Time: 179439329 ns  Iteration: 0  Instance: /tb_rm_phase
+# Saving coverage database on exit...
+# End time: 21:00:13 on Nov 03,2026, Elapsed time: 0:00:29
+# Errors: 0, Warnings: 29

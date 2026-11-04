@@ -1,0 +1,5 @@
+GUI NETLIST START tb_net_services mode=rtl output=C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_net_services_rtl\20261103_222054_084009
+GUI NETLIST PASS tb_net_services mode=rtl checks=1123 errors=0 simulation_s=5.845
+GUI NETLIST START tb_net_services mode=gui output=C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_net_services_gui\20261103_222101_969316
+GUI NETLIST FAIL tb_net_services mode=gui: simulation: exit=15 reason=memory_guard; C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_net_services_gui\20261103_222101_969316\simulation.log
+GUI NETLIST ENTRY FAIL: simulation: exit=15 reason=memory_guard; C:\Users\susu\Desktop\afdx\out\gui_netlist\tb_net_services_gui\20261103_222101_969316\simulation.log

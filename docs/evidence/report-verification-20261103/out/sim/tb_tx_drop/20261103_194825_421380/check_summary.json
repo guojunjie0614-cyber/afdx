@@ -1,0 +1,19 @@
+{
+  "test": "tb_tx_drop",
+  "items": 4687,
+  "errors": 0,
+  "either": 2,
+  "messages": 253,
+  "frames_a": 221,
+  "frames_b": 221,
+  "sends": 221,
+  "stages": {
+    "dis": 8,
+    "long": 8,
+    "full": 93,
+    "nopage": 46,
+    "refill": 46,
+    "reset_refill": 52
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,12 @@
+{
+  "cases": [
+    "tb_sys_basic"
+  ],
+  "workers": 1,
+  "seed": 20261007,
+  "profile": "fragmentation1030",
+  "coverage": true,
+  "deadline": "2026-11-04T04:15:10.246359+08:00",
+  "simulator": "C:\\modeltech64_2020.4\\win64",
+  "source_identity": "per-case immutable inputs in summary.json"
+}

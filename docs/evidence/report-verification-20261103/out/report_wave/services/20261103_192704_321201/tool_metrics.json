@@ -1,0 +1,58 @@
+[
+  {
+    "name": "gui",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-gui",
+      "-do",
+      "do current_wave_entry.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\project",
+    "pid": 29988,
+    "created": 1793705224.5248516,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 34.312,
+    "peak_tree_bytes": 365764608,
+    "budget_seconds": 6600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\gui.log"
+  },
+  {
+    "name": "service_reference",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\project\\tools\\net_services_ref.py",
+      "vectors",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\service_reference"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201",
+    "pid": 28576,
+    "created": 1793705258.911949,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.266,
+    "peak_tree_bytes": 8855552,
+    "budget_seconds": 30,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\service_reference.log"
+  },
+  {
+    "name": "check",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\project\\tools\\net_services_ref.py",
+      "check",
+      "--dir",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\project\\out\\modelsim\\20261103_192711_30644"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201",
+    "pid": 25888,
+    "created": 1793705259.18283,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.264,
+    "peak_tree_bytes": 8888320,
+    "budget_seconds": 120,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\report_wave\\services\\20261103_192704_321201\\check.log"
+  }
+]

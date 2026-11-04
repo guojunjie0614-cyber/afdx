@@ -1,0 +1,114 @@
+{
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291",
+  "rows": [
+    {
+      "name": "fault_prepare",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_fault.py",
+        "prepare",
+        "--out",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\fault"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:29:17.740023+08:00",
+      "returncode": 0,
+      "ended": "2026-11-03T21:29:17.958727+08:00"
+    },
+    {
+      "name": "fault_run",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_fault.py",
+        "run",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\fault",
+        "--timeout",
+        "300"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:29:17.959129+08:00",
+      "returncode": 0,
+      "ended": "2026-11-03T21:29:21.554108+08:00"
+    },
+    {
+      "name": "load_prepare",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_load.py",
+        "prepare",
+        "--case",
+        "all",
+        "--out",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:29:21.554438+08:00",
+      "returncode": 0,
+      "ended": "2026-11-03T21:29:23.268106+08:00"
+    },
+    {
+      "name": "short128",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_load.py",
+        "run",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\short128",
+        "--timeout",
+        "1800"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:29:23.268940+08:00",
+      "returncode": 0,
+      "ended": "2026-11-03T21:32:52.092335+08:00"
+    },
+    {
+      "name": "mixed128",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_load.py",
+        "run",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\mixed128",
+        "--timeout",
+        "1800"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:32:52.092852+08:00",
+      "returncode": 1,
+      "ended": "2026-11-03T21:37:03.631503+08:00"
+    },
+    {
+      "name": "long128",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-X",
+        "utf8",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_load.py",
+        "run",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\long128",
+        "--timeout",
+        "1800"
+      ],
+      "status": "finished",
+      "started": "2026-11-03T21:37:03.632760+08:00",
+      "returncode": 1,
+      "ended": "2026-11-03T21:40:25.476979+08:00"
+    }
+  ],
+  "passed": false
+}

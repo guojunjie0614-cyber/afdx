@@ -1,0 +1,22 @@
+{
+  "test": "tb_tx_bag",
+  "items": 14592,
+  "errors": 0,
+  "either": 0,
+  "messages": 2372,
+  "frames_a": 166,
+  "frames_b": 166,
+  "sends": 166,
+  "stages": {
+    "exact": 50,
+    "odd": 10,
+    "short": 66,
+    "late": 12,
+    "queue": 8,
+    "nowwrap": 10,
+    "jump": 2,
+    "flood": 2205,
+    "reset": 9
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,37 @@
+# vsim -batch -coverage tb_rx_ovf_ring -gRX_RING_AW=9 -wlf simulation.wlf -do "do run.do" 
+# Start time: 19:51:34 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_engine(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_reassembly(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_mac_rx(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rx_parse(fast)".
+# ** Note: (vopt-143) Recognized 3 FSMs in module "afdx_rx_reassembly_bank(fast)".
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_rx_ovf_ring(fast)
+# Loading work.afdx_rx_core(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# 
+# do run.do
+# [STAGE] fit cycle=70000
+# [STAGE] big cycle=75652
+# [STAGE] part cycle=82583
+# [STAGE] ic cycle=89301
+# [COVERAGE] cycles=95320 segments_a=13 segments_b=2 deliveries=11
+# [RESULT] tb_rx_ovf_ring PASS checks=422837 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_rx_ovf_ring/20261103_195132_643371/compile_sources/tb/lib/rx_core_suite.v(131)
+#    Time: 762557 ns  Iteration: 0  Instance: /tb_rx_ovf_ring/suite
+# Saving coverage database on exit...
+# End time: 19:51:37 on Nov 03,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 0

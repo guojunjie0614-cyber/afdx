@@ -73,7 +73,22 @@ def stage_checks(test,frames,rows,params,now,ticks,either,expect):
             changed={j for j,(a,b) in enumerate(zip(body,original)) if a!=b}
             allowed=({0},{24,25},{20,24,25})[i]
             expect(changed<=allowed and bool(changed),'dual error isolated header mutation')
-            expect((body[0]!=3,ip_checksum(body[14:34])!=0,bool(body[20]&0x20))[i],'dual error intended rule')
+            flags=int.from_bytes(body[20:22],'big')
+            expect((body[0]!=3,ip_checksum(body[14:34])!=0,bool(flags&0x4000 and flags&0x3fff))[i],'dual error intended rule')
+        # Header rejection must exercise invalid fragment geometry, not reject
+        # supported MF/offset fields merely because the legacy decoder does.
+        fragment_faults=[]
+        for bad,good in zip(stages['hdr'][::2],stages['hdr'][1::2]):
+            body=bad['wire'][bad['prefix']:-4];flags=int.from_bytes(body[20:22],'big')
+            if not flags&0x3fff:continue
+            fragment_faults.append(bad)
+            ip_data=int.from_bytes(body[16:18],'big')-20
+            invalid_df=bool(flags&0x4000 and flags&0x3fff)
+            oversize=(flags&0x1fff)*8+ip_data>8200
+            expect(invalid_df or oversize,'fragment header fault remains malformed')
+            repaired=good['wire'][good['prefix']:-4]
+            expect(int.from_bytes(repaired[20:22],'big')&0x3fff==0,'fragment header repair clears MF/offset')
+        expect(len(fragment_faults)==3,'three malformed fragment header cases')
         for i,bad in enumerate(stages['len'][20::2]):
             body=bad['wire'][8:];expect(len(body)==(63,1519,63)[i] and body[-4:]!=fcs(body[:-4]),'length outranks FCS')
         outcomes('fcs',{'fcs':11,'deliver':11});outcomes('len',{'len':13,'deliver':13})

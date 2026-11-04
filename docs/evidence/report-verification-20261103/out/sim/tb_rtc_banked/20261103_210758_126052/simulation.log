@@ -1,0 +1,42 @@
+# vsim -batch -coverage tb_rtc_banked -wlf simulation.wlf -do "do run.do" 
+# Start time: 21:07:59 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_ntp_fraction(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rtc(fast__1)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "afdx_rtc(fast)".
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(15): (vopt-2685) [TFMPC] - Too few port connections for 'slave'.  Expected 24, found 20.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(15): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_write_request'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(15): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_rx_ack'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(15): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_rx_term'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(15): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_base'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(18): (vopt-2685) [TFMPC] - Too few port connections for 'master'.  Expected 24, found 20.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(18): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_write_request'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(18): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_rx_ack'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(18): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_rx_term'.
+# ** Warning: C:\Users\susu\Desktop\afdx\out\sim\tb_rtc_banked\20261103_210758_126052\compile_sources\tb\lib\rtc_retry_suite.v(18): (vopt-2718) [TFMPC] - Missing connection for port 'cfg_ready_base'.
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=10.
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_rtc_banked(fast)
+# Loading work.afdx_rtc(fast)
+# Loading work.afdx_rtc(fast__1)
+# 
+# do run.do
+# [COVERAGE] phase=5 requests=2 replies=0 sync=1 calculation_deadline_cycles=132 cycles=21746
+# [RESULT] tb_rtc_banked PASS checks=34 errors=0
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_rtc_banked/20261103_210758_126052/compile_sources/tb/lib/rtc_retry_suite.v(125)
+#    Time: 173968 ns  Iteration: 1  Instance: /tb_rtc_banked/test
+# Saving coverage database on exit...
+# End time: 21:08:03 on Nov 03,2026, Elapsed time: 0:00:04
+# Errors: 0, Warnings: 10

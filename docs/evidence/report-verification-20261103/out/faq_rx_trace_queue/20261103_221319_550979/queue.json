@@ -1,0 +1,80 @@
+[
+  {
+    "case": "mixed128",
+    "prefix": 180,
+    "phase": "prepare",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_rx_trace.py",
+      "prepare",
+      "--source-case",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\mixed128",
+      "--messages",
+      "180",
+      "--out",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_rx_trace_queue\\20261103_221319_550979\\mixed128"
+    ],
+    "status": "finished",
+    "returncode": 0
+  },
+  {
+    "case": "mixed128",
+    "prefix": 180,
+    "phase": "run",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_rx_trace.py",
+      "run",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_rx_trace_queue\\20261103_221319_550979\\mixed128",
+      "--timeout",
+      "1200"
+    ],
+    "status": "finished",
+    "returncode": 1
+  },
+  {
+    "case": "long128",
+    "prefix": 20,
+    "phase": "prepare",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_rx_trace.py",
+      "prepare",
+      "--source-case",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_supplement\\20261103_212917_739291\\load\\long128",
+      "--messages",
+      "20",
+      "--out",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_rx_trace_queue\\20261103_221319_550979\\long128"
+    ],
+    "status": "finished",
+    "returncode": 0
+  },
+  {
+    "case": "long128",
+    "prefix": 20,
+    "phase": "run",
+    "command": [
+      "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "C:\\Users\\susu\\Desktop\\afdx\\tools\\faq_rx_trace.py",
+      "run",
+      "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_rx_trace_queue\\20261103_221319_550979\\long128",
+      "--timeout",
+      "1200"
+    ],
+    "status": "finished",
+    "returncode": 1
+  }
+]

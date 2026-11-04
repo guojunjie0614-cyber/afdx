@@ -169,7 +169,7 @@ def fault(s):
     pair('fcs',300,which=1);pair('data',1471,which=1)
     # 两处错误同时存在，分类仍须优先使用 MAC 的 FCS 结论。
     pair('byte',32,0,corrupt_fcs=True);pair('ipcheck',32,corrupt_fcs=True)
-    pair('fragment',32,0x2000,1,corrupt_fcs=True)
+    pair('fragment',32,0x6000,1,corrupt_fcs=True)
     s.stage('len')
     for count in (0,1,4,20,60,63,1519,1600):pair('length',1471 if count>1518 else 1,count)
     pair('length',1,63,1);pair('length',1471,1519,1)
@@ -182,7 +182,9 @@ def fault(s):
     for pos in (0,1,2,3,12,13):pair('byte',32,pos)
     for value in (0x46,0x44,0x65):pair('ihl',32,value)
     for value in (6,1):pair('protocol',32,value)
-    for value in (0x2000,1,0x1fff):pair('fragment',32,value)
+    # Fragment support makes MF/offset alone legal at the parser. Keep these
+    # header-reject cases malformed: DF+MF, DF+offset, and an oversize endpoint.
+    for value in (0x6000,0x4001,0x1fff):pair('fragment',32,value)
     pair('ipcheck',32)
     for value in (8,7):pair('udplen',1,value)
     for value in (1,-1):pair('iplen',32,value)

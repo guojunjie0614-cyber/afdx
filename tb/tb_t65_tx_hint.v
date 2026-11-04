@@ -38,18 +38,28 @@ module tb_t65_tx_hint #(parameter T65_MUTANT=0);
     integer max_used=0,max_desc=0,max_count=0,wire_frames=0;
     integer i,k,wpos=0,wstart=0,start_cycle=0,optional_last=0,observation_mode=0;
     integer two_full=0,two_miss=0;
-    reg [7:0] bytes[0:4095],wbytes[0:2047];reg wav=0;
+    reg [7:0] bytes[0:8191],wbytes[0:2047];reg wav=0,input_was_valid=0;
+    integer expected_frames=0;
+    function integer frame_count;input integer n;integer left;
+        begin frame_count=1;left=n+8;if(n>1471)while(left>1479)begin frame_count=frame_count+1;left=left-1472;end end
+    endfunction
     reg admission_ready;
     // First-byte admission is sampled before the sequential RTL update.
     // policy 1 is the deliberately overlength/space-exhausting input;
     // policy 2 is observation-only input sent after ready has fallen.
     always @(posedge clk)begin
-        admission_ready=dut.initialized && dut.application_tx.used<=2616 && dut.application_tx.descriptors<31;
-        if(!reset && dut.application_tx.vq && !dut.application_tx.active)begin
+        admission_ready=dut.initialized && dut.application_tx.used<=24576 && dut.application_tx.descriptors<31;
+        // I observes the external first byte, before any DUT input pipeline.
+        if(!reset && tv && !input_was_valid)
             $fwrite(fd,"I %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",cycle,current_n,current_id,current_tag,
                 dut.initialized,dut.application_tx.descriptors,dut.application_tx.used,ready,current_policy,sent);
-            if(current_n>=3 && current_policy!=1 && dut.initialized && dut.application_tx.descriptors<32)begin
+        input_was_valid=!reset && tv;
+        if(!reset && dut.application_tx.vq && !dut.application_tx.active)begin
+            // F contains resources at admission, never the DUT accept/drop result.
+            $fwrite(fd,"F %0d %0d %0d %0d %0d\n",cycle,sent,dut.initialized,dut.application_tx.descriptors,dut.application_tx.used);
+            if(current_n>=3 && current_n<=8194 && current_policy!=1 && dut.initialized && dut.application_tx.descriptors<32)begin
                 ns[expected]=current_n-2;tags[expected]=current_tag;ids[expected]=current_id;expected=expected+1;
+                expected_frames=expected_frames+frame_count(current_n-2);
             end
             if(current_n>=2)begin
                 if(current_policy==1 || !dut.initialized || dut.application_tx.descriptors==32)exp_full=exp_full+1;
@@ -143,7 +153,7 @@ module tb_t65_tx_hint #(parameter T65_MUTANT=0);
         integer waited;
         begin
             waited=0;
-            while(((!observation_mode && (got<expected-optional_last || wire_frames<expected-optional_last)) ||
+            while(((!observation_mode && (got<expected-optional_last || wire_frames<expected_frames-optional_last)) ||
                     dut.application_tx.descriptors!=0 || av) && waited<600000)begin
                 @(negedge clk);waited=waited+1;
             end
@@ -151,7 +161,7 @@ module tb_t65_tx_hint #(parameter T65_MUTANT=0);
             // to finish before starting a separately checked recovery message.
             if(observation_mode)repeat(100000)@(negedge clk);
             else repeat(300)@(negedge clk);
-            if(!observation_mode)check(got>=expected-optional_last && got<=expected && wire_frames==got && pos==0,"legal messages emitted; optional ready-low input observed whole or absent");
+            if(!observation_mode)check(got>=expected-optional_last && got<=expected && wire_frames==expected_frames && pos==0,"legal messages emitted; optional ready-low input observed whole or absent");
             check(dut.application_tx.descriptors+(T65_MUTANT==2?1:0)==0 &&
                 dut.application_tx.write_ptr==dut.application_tx.read_ptr,"TX drain releases descriptors and data");
             check(ready,"ready recovers after drain");
@@ -173,7 +183,7 @@ module tb_t65_tx_hint #(parameter T65_MUTANT=0);
         begin
             drain;
             $fwrite(fd,"S recovery %0d\n",cycle);
-            observation_mode=0;got=0;expected=0;wire_frames=0;pos=0;
+            observation_mode=0;got=0;expected=0;wire_frames=0;expected_frames=0;pos=0;
             send(66,16'h4000,8'h90,0);conclude(0);
         end
     endtask
@@ -182,9 +192,15 @@ module tb_t65_tx_hint #(parameter T65_MUTANT=0);
         repeat(5)@(negedge clk);reset=0;
 
         setup;i=0;
-        while(ready && i<200)begin send(3,16'h4000,i,0);i=i+1;end
-        check(!ready && dut.application_tx.descriptors<32 && dut.application_tx.used<4096,"ready low while resources remain");
-        // The additional input's output/drop is reported as an observation.
-        optional_last=1;send(3,16'h4000,8'he1,2);conclude(0);
+        // Stop before the last reserved descriptor is consumed. Waiting for
+        // the registered ready to settle must not submit another legal message.
+        while(dut.application_tx.descriptors<31 && i<200)begin
+            check(ready,"legal fill starts with external ready");send(3,16'h4000,i,0);i=i+1;
+        end
+        repeat(3)@(negedge clk);
+        check(!ready && dut.application_tx.descriptors==31 && dut.application_tx.used<32768,"ready low while resources remain");
+        // Resources remain at ready withdrawal; the independent ledger must
+        // retain this complete message as well as the legal fill burst.
+        send(3,16'h4000,8'he1,2);conclude(1);
     end
 endmodule

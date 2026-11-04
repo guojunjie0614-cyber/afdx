@@ -30,10 +30,16 @@ proc wave_setup {scenario test} {
     set ini [file join $wave_output modelsim.ini]
     vlib [file join $wave_output work]
     vmap -modelsimini $ini work [file join $wave_output work]
-    set sources [concat [lsort [glob [file join $wave_root rtl *.v]]] \
-        [lsort [glob [file join $wave_root tb lib *.v]]] \
-        [list [file join $wave_root tb ${test}.v]]]
-    vlog -modelsimini $ini -work work -vlog01compat +incdir+[file join $wave_root tb lib] {*}$sources
+    if {[info exists ::env(AFDX_PYTHON)]} {
+        set python [list $::env(AFDX_PYTHON)]
+    } else {set python [auto_execok python]}
+    if {![llength $python]} {error "Python is required to prepare isolated ModelSim sources"}
+    set source_root [file join $wave_output source_tree]
+    puts [exec {*}$python -I -X utf8 [file join $wave_root tools prepare_modelsim_sources.py] --out $source_root]
+    set sources [concat [lsort [glob [file join $source_root rtl *.v]]] \
+        [lsort [glob [file join $source_root tb lib *.v]]] \
+        [list [file join $source_root tb ${test}.v]]]
+    vlog -modelsimini $ini -work work -vlog01compat +incdir+[file join $source_root tb lib] {*}$sources
     vsim -modelsimini $ini -t 1ps -voptargs=+acc -onfinish stop \
         -wlf [file join $wave_output simulation.wlf] work.$test
     # 只设置窗口布局，颜色沿用 ModelSim 默认值。
@@ -49,6 +55,22 @@ proc wave_setup {scenario test} {
         -signalnamewidth 0 -timelineunits us
 }
 
+# ModelSim exposes time through Tcl variables, not a `now` command.
+# Numeric $now values use $resolution; formatted values carry their own unit.
+proc wave_now_ns {} {
+    set unit {};set value 0
+    scan $::now {%f %s} value unit
+    if {$unit eq {}} {
+        if {![regexp {^([0-9.]+)\s*(fs|ps|ns|us|ms|sec)$} $::resolution match step unit]} {
+            error "Unsupported simulator resolution: $::resolution"
+        }
+        set value [expr {$value*$step}]
+    }
+    set scales [dict create fs 0.000001 ps 0.001 ns 1 us 1000 ms 1000000 sec 1000000000]
+    if {![dict exists $scales $unit]} {error "Unsupported simulator time unit: $::now"}
+    return [expr {$value*[dict get $scales $unit]}]
+}
+
 proc wave_signal {path label {radix hexadecimal}} {
     log $path
     add wave -label $label -radix $radix $path
@@ -56,6 +78,9 @@ proc wave_signal {path label {radix hexadecimal}} {
 
 proc wave_snapshot {name start end} {
     global wave_output
+    set window [view wave]
+    set top [winfo toplevel $window]
+    wm deiconify $top
     wave zoom range $start $end
     update
     puts "WAVE_WINDOW $name $start $end"

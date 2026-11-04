@@ -1,0 +1,36 @@
+{
+  "test": "tb_rx_net",
+  "items": 110,
+  "errors": 0,
+  "either": 0,
+  "segments": 17,
+  "segments_a": 11,
+  "segments_b": 6,
+  "pulses": {
+    "a_good": 9,
+    "deliver": 7,
+    "b_good": 6,
+    "rm_drop": 5,
+    "a_fcs": 1,
+    "a_hdr": 1,
+    "a_ic": 1,
+    "b_cfg": 1,
+    "a_unk": 1
+  },
+  "deliveries": 7,
+  "max_delivery_latency": 660,
+  "stages": {
+    "net": {
+      "segments": 17,
+      "good": 15,
+      "deliver": 7,
+      "rm_drop": 5,
+      "fcs": 1,
+      "hdr": 1,
+      "a_ic": 1,
+      "b_cfg": 1,
+      "a_unk": 1
+    }
+  },
+  "diagnostics": []
+}

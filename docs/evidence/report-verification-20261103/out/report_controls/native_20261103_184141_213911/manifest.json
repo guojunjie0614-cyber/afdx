@@ -1,0 +1,30 @@
+{
+  "mode": "mutants",
+  "cases": [
+    [
+      "tb_t65_tx_space",
+      1,
+      false
+    ],
+    [
+      "tb_t65_tx_space",
+      2,
+      false
+    ],
+    [
+      "tb_t65_tx_space_edge",
+      1,
+      false
+    ],
+    [
+      "tb_t65_tx_space_edge",
+      2,
+      false
+    ]
+  ],
+  "workers": 1,
+  "coverage": false,
+  "seed": 20261007,
+  "ce_div": "2",
+  "deadline": "2026-11-04T02:41:41.214631+08:00"
+}

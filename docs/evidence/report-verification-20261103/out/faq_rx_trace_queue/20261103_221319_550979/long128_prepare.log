@@ -1,0 +1,10 @@
+{
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\faq_rx_trace_queue\\20261103_221319_550979\\long128",
+  "status": "prepared_not_compiled_or_simulated",
+  "top": "tb_faq_rx_trace",
+  "case": "long128",
+  "messages": 20,
+  "last_due_ms": 9.5,
+  "functional_pass": false,
+  "full_default_case_acceptance": false
+}

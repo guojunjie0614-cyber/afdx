@@ -1,0 +1,82 @@
+[
+  {
+    "name": "library",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vlib.exe",
+      "work"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854",
+    "pid": 26832,
+    "created": 1793699584.4282389,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 0.263,
+    "peak_tree_bytes": 6770688,
+    "budget_seconds": 60,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854\\library.log"
+  },
+  {
+    "name": "compile",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+      "-vlog01compat",
+      "+incdir+compile_sources/tb/lib",
+      "+define+AFDX_CE_DIV=2",
+      "+define+SYS_TOP_NETLIST",
+      "simulation.vqm",
+      "220model.v",
+      "altera_mf.v",
+      "altera_primitives.v",
+      "stratix_atoms.v",
+      "stratixiv_atoms.v",
+      "compile_sources/tb/lib/gmii_monitor.v",
+      "compile_sources/tb/lib/judge_endpoint.v",
+      "compile_sources/tb/lib/line_driver.v",
+      "compile_sources/tb/lib/line_monitor.v",
+      "compile_sources/tb/lib/link_model.v",
+      "compile_sources/tb/lib/load_test_endpoint.v",
+      "compile_sources/tb/lib/mac_tx_suite.v",
+      "compile_sources/tb/lib/rm_age_probe.v",
+      "compile_sources/tb/lib/rtc_retry_suite.v",
+      "compile_sources/tb/lib/rx_core_suite.v",
+      "compile_sources/tb/lib/snmp_test_endpoint.v",
+      "compile_sources/tb/lib/sys_endpoint.v",
+      "compile_sources/tb/lib/sys_suite.v",
+      "compile_sources/tb/lib/top_stream_endpoint.v",
+      "compile_sources/tb/lib/tx_core_suite.v",
+      "compile_sources/tb/tb_elinx.v"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854",
+    "pid": 29172,
+    "created": 1793699584.69284,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 6.748,
+    "peak_tree_bytes": 1056768000,
+    "budget_seconds": 600,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854\\compile.log"
+  },
+  {
+    "name": "simulation",
+    "command": [
+      "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+      "-batch",
+      "-t",
+      "1ps",
+      "work.tb_elinx",
+      "-wlf",
+      "simulation.wlf",
+      "-do",
+      "do run.do"
+    ],
+    "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854",
+    "pid": 28580,
+    "created": 1793699591.449358,
+    "exit_code": 15,
+    "stop_reason": "memory_guard",
+    "seconds": 16062.305,
+    "peak_tree_bytes": 4372938752,
+    "budget_seconds": 18000,
+    "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\gui_netlist\\tb_elinx_gui\\20261103_175259_260854\\simulation.log"
+  }
+]

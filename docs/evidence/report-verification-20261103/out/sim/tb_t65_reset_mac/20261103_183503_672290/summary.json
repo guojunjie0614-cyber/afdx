@@ -1,0 +1,381 @@
+{
+  "name": "tb_t65_reset_mac",
+  "started": "2026-11-03T18:35:03.672607+08:00",
+  "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 5.0,
+  "memory_limit_gib": 1.0,
+  "verification_profile": "fragmentation1030",
+  "replaced_modules": [],
+  "inputs": [
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a.v",
+      "sha256": "5A00250C2100DDF766547388BED4A2F77F0B70F6E4D80F4568E27B75575E1328"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_615a_engine.v",
+      "sha256": "2B738EB758FBCDE4CA0B0D2B3C7B92E8A1A57160BC4EC424E8BB2C3AAA336684"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_map.v",
+      "sha256": "61DB60365EB3BFDA06732391ABA6AE639B5A1E17731D3E7F54D637D62E490619"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_payload.v",
+      "sha256": "0EA09A102CE850192B69AF4CCA480FC7B26BC3572A17E995514DF4C0A58BE8C6"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_read.v",
+      "sha256": "32CAAB22B87D59AD6D33CD06A5D451772673BB2BDABB78ABCDB567965454ACBA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_rx.v",
+      "sha256": "E1154212CCDC46D9200917F31951B05DD61B75F561B2AB77B1C4F2B12524490B"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_app_tx.v",
+      "sha256": "729BC86FD2598C28E5EBCF293AE180B530CA54C52F6BCABF05EB16DFB8473337"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_cfg.v",
+      "sha256": "ED7C4E5D11D037954EF809FF14BF9C0BD143E79B2998A5B7A92BDF9E7CDFDBCA"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_crc32_d8.v",
+      "sha256": "2487ACEDF68DF5AE8E96E90C0C6EB924869F286D2402DF21BC089DA09897E614"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_es.v",
+      "sha256": "0BCEA4294262DE512CBD05F337B3ACF6A241BA169D64AA039B12D7790ECE61B7"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_rx.v",
+      "sha256": "EE01466B3A4876AD902AFE15DD75CD2B6D64B7819548763A57B44B521FD58300"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mac_tx.v",
+      "sha256": "682A248AF47177EE0A771D4369D5C92539E08253ED33472EA9D654882D804180"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_mgmt_tx.v",
+      "sha256": "142580BB28E7B16BC09FEFC50F7E6F6D1E36FD7EED5A835937C890145CB40D19"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ntp_fraction.v",
+      "sha256": "645457C9637FA3CB148624B34B76E2D19868D263957FE5424476685775666CBF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_ram_sdp.v",
+      "sha256": "13AABC3C48DFBC513E1C555F3D84E79B9BB9405873E6357E11C3D2D4BCAEDBDD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rtc.v",
+      "sha256": "FBD6DCA681C5B8CDEF2E5166173EB49D963202C56B276453ECD6524B44156732"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_core.v",
+      "sha256": "9334A05B65DB344C5E045A3FBE06D60C2745D1543E9039998E95B86B6B5A40A1"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_deliver.v",
+      "sha256": "107864DC6CB9306E045781D9B786962E7C0296EF251F19438A80F9C290D1F991"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_engine.v",
+      "sha256": "972BBF678B57C47D526E992A9E5F05F8801D406A7500A9DBBD299B81C9B5FC13"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_parse.v",
+      "sha256": "26359BADB56AE3B57910C3FF5FF21B1B143950458787EB68EF94961003F4CE79"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly.v",
+      "sha256": "BE4D8C79A17180A64FCED44F60A997432378BCC2695E823DDBB6031DCE5E9BB8"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_bank.v",
+      "sha256": "CA2450E8280779DBD95C03530E29D8D99CCD1EDFB48D1F13D7F7F7AA45237703"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_payload.v",
+      "sha256": "45B6A4068A3616B232A5CB787D3A3E6D032178EBD16B22C6F95FC8C64AD42B7E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_rx_reassembly_ram.v",
+      "sha256": "5C9BC225F84A9D91AB9B09AA2951739FCED5B31D52A4D3F74F43E388A5802369"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp.v",
+      "sha256": "416D734A8C3E5C8E76F426EF84C9F691EBFDCAD89DCC63376C8291F4BADD3B21"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_snmp_engine.v",
+      "sha256": "05F03D3D5EE2775129CF55350C3D8E2BF3D3920F509B1204BB3C026D59BD8392"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_svc.v",
+      "sha256": "8BEA777AAC38E083C61F1A3D7F59EBBA6083A0FFD305231073F8291753DDBF60"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_timebase.v",
+      "sha256": "17C66EADCBD2C11539A6BD0AEF6CE4EA5377E04448C2D054A332D9112723769A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\AFDX_top.v",
+      "sha256": "986F42B7D24D7C35A015067C2C0981D22F187D2DE9038899EF0F2C45B9929273"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_buf.v",
+      "sha256": "CD75973792BE9667169D3AF822E43BD89DD046190CFECB8F3B1FBC06B040F105"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_builder.v",
+      "sha256": "F42CF080E19C889500198E505E689FF21F293946CF22314C72C6CC0491D01700"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_core.v",
+      "sha256": "4F59495299A1527B86D60A1B06778461B9A6AFE620A36BE08FA0999D6512B1B9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_engine.v",
+      "sha256": "17F781F2687F4FD1231821754FE74F481388098F9B1374D00FAF5D5A3EFDAFDE"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\rtl\\afdx_tx_free.v",
+      "sha256": "422DDF4B9993B862FAAA2B498DD9AC6D976FB6D98F2A877A2121257ECCA5CF95"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\gmii_monitor.v",
+      "sha256": "DD790D72DE937779460AB593006C918C31D497B7C778211EBB25C632C6C3C7F9"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\judge_endpoint.v",
+      "sha256": "C6CA4E2E8CF7AA7DBB4827582547AB8A75BA50FD68889682E8E0A5551365D9AD"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_driver.v",
+      "sha256": "0DCE6B8A16BAD57EB0A91D1D3A96244FFF0A8E58C7E81173BE6165D0EF15BC6F"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\line_monitor.v",
+      "sha256": "D5A4AD53CCAE38A4758738A1C343C7C2AC77543598EF5221B2D84084B50BEDFF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\link_model.v",
+      "sha256": "BE426565C159CA3265A858E9F996E19D350DBBE43C75E93AA90011D83FBAEC91"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\load_test_endpoint.v",
+      "sha256": "D26039D5E5FBA72D1851E261FC0C510DA295CD4C14DA1916DBD7A37C996370CF"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\mac_tx_suite.v",
+      "sha256": "9584A9130E1DE3564A6C21A231D63F8D352B9A2578A265BCE9D0FD95C1B30537"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rm_age_probe.v",
+      "sha256": "F10439F98E7BD9E7FA0D3A3DB44A3A62FE117CD20D81FAC0FA1F11A084D3EC5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rtc_retry_suite.v",
+      "sha256": "37CE9D0B8FC23B9513AB2AE19B868CC23296F8AFEA724D8160EC799800D42F5A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\rx_core_suite.v",
+      "sha256": "25CD1D73B059F5834CE46FBACA2F8D364E5470787E933DBF4450838F1035EE52"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\snmp_test_endpoint.v",
+      "sha256": "BDBED9E11BF6B41DCC8D889907F36DD0410635841195073043485AA28AD1085E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_endpoint.v",
+      "sha256": "8331E3FD1ADD9DA4DC1DCEFB5C094A0DD658DF54A55B0539F0E0ACA1BFD4C81A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\sys_suite.v",
+      "sha256": "76E8F7D537C69674684B79D1FE09E0479EC8D92084538C5B192BE1A42260B89E"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\top_stream_endpoint.v",
+      "sha256": "6A09E4C6F100642B897F87EB34B10DF0E031041E1324063052D6CBD3D53AF7E5"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\tx_core_suite.v",
+      "sha256": "0369B1BBE3F2DAE7C386D922DD7BA16C9FF3C77814E4ED375581C5D28A44197A"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\tb_t65_reset_mac.v",
+      "sha256": "9CF90487C8C65D59167A917E9ADBB744E81CE74A24A4FF985CA76A03CE5F09E0"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tb\\lib\\download_test_tasks.vh",
+      "sha256": "BD5A06E234A04F362646299B3E96679D4EB5866C9625F96F19DDFF0E6FACEFA3"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\t65_check.py",
+      "sha256": "188D8D8AC6321C3FC8BE0B2E7FD40FE581BCB5D981CC783F3ED3C2CF8D1B35D2"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\modelsim_compat.py",
+      "sha256": "2C9ED6A39AA2ECD1760128122244B4E38AFE26CB744F8F1D0BC1EEA1B455A004"
+    },
+    {
+      "path": "C:\\Users\\susu\\Desktop\\afdx\\tools\\verification_profile.py",
+      "sha256": "6C1F42D882F458AF0DC950888B9B69C3533BF17CA8B507C31D7ECC65525970CF"
+    }
+  ],
+  "modelsim_adaptations": 27,
+  "ce_div": 2,
+  "parameters": [
+    "T65_MUTANT=2"
+  ],
+  "simulation_diagnostics": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 0,
+    "RAMCOLL": 0
+  },
+  "check": {
+    "passed": true,
+    "checks": 45,
+    "errors": 0,
+    "failures": [],
+    "mutant": 2
+  },
+  "passed": false,
+  "checks": 204,
+  "errors": 10,
+  "result": "FAIL",
+  "coverage": [],
+  "finished": "2026-11-03T18:35:12.979608+08:00",
+  "jobs": [
+    {
+      "name": "vlib",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlib.exe",
+        "work"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+      "pid": 33116,
+      "created": 1793702103.781237,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.263,
+      "peak_tree_bytes": 8929280,
+      "budget_seconds": 30,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\vlib.log"
+    },
+    {
+      "name": "compile",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vlog.exe",
+        "-vlog01compat",
+        "+incdir+C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib",
+        "+define+AFDX_CE_DIV=2",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_615a.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_615a_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_app_map.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_app_payload.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_app_read.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_app_rx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_app_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_cfg.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_crc32_d8.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_es.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_mac_rx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_mac_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_mgmt_tx.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_ntp_fraction.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_ram_sdp.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rtc.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_core.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_deliver.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_parse.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_reassembly.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_reassembly_bank.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_reassembly_payload.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_rx_reassembly_ram.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_snmp.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_snmp_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_svc.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_timebase.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\AFDX_top.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_tx_buf.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_tx_builder.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_tx_core.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_tx_engine.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\rtl\\afdx_tx_free.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\gmii_monitor.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\judge_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\line_driver.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\line_monitor.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\link_model.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\load_test_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\mac_tx_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\rm_age_probe.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\rtc_retry_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\rx_core_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\snmp_test_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\sys_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\sys_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\top_stream_endpoint.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\lib\\tx_core_suite.v",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile_sources\\tb\\tb_t65_reset_mac.v"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+      "pid": 27844,
+      "created": 1793702104.0463068,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.792,
+      "peak_tree_bytes": 42442752,
+      "budget_seconds": 120,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\compile.log"
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "C:\\modeltech64_2020.4\\win64\\vsim.exe",
+        "-batch",
+        "tb_t65_reset_mac",
+        "-gT65_MUTANT=2",
+        "-wlf",
+        "simulation.wlf",
+        "-do",
+        "do run.do"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+      "pid": 18956,
+      "created": 1793702104.8461668,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 7.838,
+      "peak_tree_bytes": 272748544,
+      "budget_seconds": 900,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\simulation.log"
+    },
+    {
+      "name": "check",
+      "command": [
+        "C:\\Users\\susu\\Desktop\\afdx\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import sys,json;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from t65_check import check;r=check(sys.argv[2],sys.argv[3],int(sys.argv[4]));s=json.dumps(r,ensure_ascii=False,indent=2);Path(sys.argv[2],'check_summary.json').write_text(s+'\\n',encoding='utf-8');print(s)",
+        "C:\\Users\\susu\\Desktop\\afdx\\tools",
+        "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+        "tb_t65_reset_mac",
+        "2"
+      ],
+      "cwd": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290",
+      "pid": 27524,
+      "created": 1793702112.6984804,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 0.267,
+      "peak_tree_bytes": 8208384,
+      "budget_seconds": 60,
+      "log": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_t65_reset_mac\\20261103_183503_672290\\check.log"
+    }
+  ]
+}

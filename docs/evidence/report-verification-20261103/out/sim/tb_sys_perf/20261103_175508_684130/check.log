@@ -1,0 +1,6 @@
+[CHECK] tb_sys_perf_es1_tx PASS items=193234 errors=0 either=0
+[CHECK] tb_sys_perf_es2_tx PASS items=182074 errors=0 either=0
+[CHECK] tb_sys_perf_es1_rx PASS items=85889 errors=0 either=29
+[CHECK] tb_sys_perf_es2_rx PASS items=90949 errors=0 either=27
+[CHECK] tb_sys_perf PASS items=538639 errors=0 either=0 w_over=0
+[CHECK] tb_sys_perf_gmii PASS items=289423 errors=0 either=0

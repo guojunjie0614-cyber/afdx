@@ -1,0 +1,6 @@
+[CHECK] tb_sys_perf_d100_es1_tx PASS items=41124 errors=0 either=0
+[CHECK] tb_sys_perf_d100_es2_tx PASS items=41124 errors=0 either=0
+[CHECK] tb_sys_perf_d100_es1_rx PASS items=19482 errors=0 either=7
+[CHECK] tb_sys_perf_d100_es2_rx PASS items=19482 errors=0 either=6
+[CHECK] tb_sys_perf_d100 PASS items=92521 errors=0 either=0 w_over=0
+[CHECK] tb_sys_perf_d100_gmii PASS items=63775 errors=0 either=0

@@ -1,0 +1,41 @@
+# vsim -batch tb_t65_reset_mac -gT65_MUTANT=2 -wlf simulation.wlf -do "do run.do" 
+# Start time: 18:35:04 on Nov 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 2020.4 Oct 13 2020
+# //
+# //  Copyright 1991-2020 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.tb_t65_reset_mac(fast)
+# Loading work.afdx_app_tx(fast)
+# Loading work.afdx_615a(fast)
+# Loading work.afdx_snmp(fast)
+# Loading work.afdx_rtc(fast)
+# Loading work.afdx_tx_engine(fast)
+# Loading work.afdx_rx_reassembly_bank(fast)
+# Loading work.afdx_cfg(fast)
+# 
+# do run.do
+# [FAIL] cycle=68050 unreset peer all descriptors reclaimed
+# [FAIL] cycle=70619 unreset peer all descriptors reclaimed
+# [FAIL] cycle=73187 unreset peer all descriptors reclaimed
+# [FAIL] cycle=75260 unreset peer all descriptors reclaimed
+# [FAIL] cycle=142517 unreset peer all descriptors reclaimed
+# [FAIL] cycle=144893 unreset peer all descriptors reclaimed
+# [FAIL] cycle=147462 unreset peer all descriptors reclaimed
+# [FAIL] cycle=150030 unreset peer all descriptors reclaimed
+# [FAIL] cycle=152103 unreset peer all descriptors reclaimed
+# [FAIL] cycle=158237 unreset peer all descriptors reclaimed
+# [RESULT] tb_t65_reset_mac FAIL checks=204 errors=10
+# ** Note: $finish    : C:/Users/susu/Desktop/afdx/out/sim/tb_t65_reset_mac/20261103_183503_672290/compile_sources/tb/tb_t65_reset_mac.v(17)
+#    Time: 1265896 ns  Iteration: 1  Instance: /tb_t65_reset_mac
+# End time: 18:35:12 on Nov 03,2026, Elapsed time: 0:00:08
+# Errors: 0, Warnings: 0

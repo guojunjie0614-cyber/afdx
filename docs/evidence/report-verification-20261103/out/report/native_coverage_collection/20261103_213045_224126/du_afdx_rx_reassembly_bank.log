@@ -1,0 +1,23 @@
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+Start time: 21:33:00 on Nov 03,2026
+vcover report -du=work.afdx_rx_reassembly_bank -code bcesft -showenabledcodecov C:\Users\susu\Desktop\afdx\out\report\native_coverage_collection\20261103_213045_224126\merged.ucdb 
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_rx_reassembly_bank
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                       314       170       144    54.14%
+    Conditions                     152        18       134    11.84%
+    Expressions                    272         0       272     0.00%
+    FSM States                      19         3        16    15.78%
+    FSM Transitions                 39         0        39     0.00%
+    Statements                     676       480       196    71.00%
+    Toggles                       5580       584      4996    10.46%
+
+
+Total Coverage By Design Unit (filtered view): 23.32%
+
+End time: 21:33:04 on Nov 03,2026, Elapsed time: 0:00:04
+Errors: 0, Warnings: 0

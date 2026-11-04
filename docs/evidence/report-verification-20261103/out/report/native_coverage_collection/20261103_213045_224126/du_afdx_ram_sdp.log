@@ -1,0 +1,23 @@
+Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
+Start time: 21:32:25 on Nov 03,2026
+vcover report -du=work.afdx_ram_sdp -code bcesft -showenabledcodecov C:\Users\susu\Desktop\afdx\out\report\native_coverage_collection\20261103_213045_224126\merged.ucdb 
+Coverage Report Summary Data by DU
+
+=================================================================================
+=== Design Unit: work.afdx_ram_sdp
+=================================================================================
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10         6         4    60.00%
+    Conditions                       4         0         4     0.00%
+    Expressions                      0         0         0   100.00%
+    FSM States                       0         0         0   100.00%
+    FSM Transitions                  0         0         0   100.00%
+    Statements                      10         5         5    50.00%
+    Toggles                        288       277        11    96.18%
+
+
+Total Coverage By Design Unit (filtered view): 51.54%
+
+End time: 21:32:30 on Nov 03,2026, Elapsed time: 0:00:05
+Errors: 0, Warnings: 0

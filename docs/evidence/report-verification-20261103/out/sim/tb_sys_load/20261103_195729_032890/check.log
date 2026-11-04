@@ -1,0 +1,6 @@
+[CHECK] tb_sys_load_es1_tx PASS items=23263 errors=0 either=0
+[CHECK] tb_sys_load_es2_tx PASS items=4556 errors=0 either=0
+[CHECK] tb_sys_load_es1_rx PASS items=2135 errors=0 either=1
+[CHECK] tb_sys_load_es2_rx PASS items=10143 errors=0 either=3
+[CHECK] tb_sys_load PASS items=62084 errors=0 either=0 w_over=0
+[CHECK] tb_sys_load_gmii PASS items=20103 errors=0 either=0

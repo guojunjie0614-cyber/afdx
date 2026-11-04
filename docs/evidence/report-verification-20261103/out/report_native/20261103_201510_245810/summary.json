@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "cases": 1,
+  "passed_cases": 1,
+  "results": [
+    {
+      "case": "tb_sys_basic",
+      "exit_code": 0,
+      "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_sys_basic\\20261103_201510_248153",
+      "passed": true
+    }
+  ]
+}

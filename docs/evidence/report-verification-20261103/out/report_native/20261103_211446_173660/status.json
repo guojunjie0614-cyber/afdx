@@ -1,0 +1,20 @@
+[
+  {
+    "case": "tb_rtc_recovery",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_recovery\\20261103_211446_175361",
+    "passed": true
+  },
+  {
+    "case": "tb_rtc_originate",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_originate\\20261103_211451_753008",
+    "passed": true
+  },
+  {
+    "case": "tb_rtc_banked",
+    "exit_code": 0,
+    "folder": "C:\\Users\\susu\\Desktop\\afdx\\out\\sim\\tb_rtc_banked\\20261103_211455_992015",
+    "passed": true
+  }
+]

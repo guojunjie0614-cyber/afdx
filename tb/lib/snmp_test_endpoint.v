@@ -5,7 +5,7 @@
 module snmp_test_endpoint #(parameter ES=1)(
     input wire clk,reset,input wire [7:0] ra,input wire rva,input wire [7:0] rb,input wire rvb,
     output wire [7:0] ta,output wire tva,output wire [7:0] tb,output wire tvb,output wire ready,
-    output reg [31:0] checks=0,errors=0
+    output reg [31:0] checks=0,output reg [31:0] errors=0
 );
     reg m_valid=0,m_last=0;reg [7:0] m_data=0;wire m_ready;
     reg [6:0] m_vl=1;reg [15:0] m_sp=3001,m_dp=4001;

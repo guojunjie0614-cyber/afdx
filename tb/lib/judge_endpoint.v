@@ -9,7 +9,7 @@ module judge_endpoint #(parameter ES = 1) (
     input wire rva, rvb,
     output wire [7:0] ta, tb,
     output wire tva, tvb, ready,
-    output reg [31:0] checks = 0, errors = 0
+    output reg [31:0] checks = 0, output reg [31:0] errors = 0
 );
     reg m_valid = 0, m_last = 0;
     reg [7:0] m_data = 0;

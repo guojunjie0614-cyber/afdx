@@ -1,0 +1,79 @@
+Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
+Start time: 22:20:55 on Nov 03,2026
+vlog -vlog01compat "+incdir+compile_sources/tb/lib" "+define+AFDX_CE_DIV=2" compile_sources/rtl/afdx_615a.v compile_sources/rtl/afdx_615a_engine.v compile_sources/rtl/afdx_app_map.v compile_sources/rtl/afdx_app_payload.v compile_sources/rtl/afdx_app_read.v compile_sources/rtl/afdx_app_rx.v compile_sources/rtl/afdx_app_tx.v compile_sources/rtl/afdx_cfg.v compile_sources/rtl/afdx_crc32_d8.v compile_sources/rtl/afdx_es.v compile_sources/rtl/afdx_mac_rx.v compile_sources/rtl/afdx_mac_tx.v compile_sources/rtl/afdx_mgmt_tx.v compile_sources/rtl/afdx_ntp_fraction.v compile_sources/rtl/afdx_ram_sdp.v compile_sources/rtl/afdx_rtc.v compile_sources/rtl/afdx_rx_core.v compile_sources/rtl/afdx_rx_deliver.v compile_sources/rtl/afdx_rx_engine.v compile_sources/rtl/afdx_rx_parse.v compile_sources/rtl/afdx_rx_reassembly.v compile_sources/rtl/afdx_rx_reassembly_bank.v compile_sources/rtl/afdx_rx_reassembly_payload.v compile_sources/rtl/afdx_rx_reassembly_ram.v compile_sources/rtl/afdx_snmp.v compile_sources/rtl/afdx_snmp_engine.v compile_sources/rtl/afdx_svc.v compile_sources/rtl/afdx_timebase.v compile_sources/rtl/AFDX_top.v compile_sources/rtl/afdx_tx_buf.v compile_sources/rtl/afdx_tx_builder.v compile_sources/rtl/afdx_tx_core.v compile_sources/rtl/afdx_tx_engine.v compile_sources/rtl/afdx_tx_free.v compile_sources/tb/lib/gmii_monitor.v compile_sources/tb/lib/judge_endpoint.v compile_sources/tb/lib/line_driver.v compile_sources/tb/lib/line_monitor.v compile_sources/tb/lib/link_model.v compile_sources/tb/lib/load_test_endpoint.v compile_sources/tb/lib/mac_tx_suite.v compile_sources/tb/lib/rm_age_current.v compile_sources/tb/lib/rm_age_probe.v compile_sources/tb/lib/rtc_retry_current.v compile_sources/tb/lib/rtc_retry_suite.v compile_sources/tb/lib/rx_core_suite.v compile_sources/tb/lib/snmp_test_endpoint.v compile_sources/tb/lib/sys_endpoint.v compile_sources/tb/lib/sys_suite.v compile_sources/tb/lib/top_stream_endpoint.v compile_sources/tb/lib/tx_core_suite.v compile_sources/tb/tb_net_services.v 
+-- Compiling module afdx_615a
+-- Compiling module afdx_615a_engine
+-- Compiling module afdx_app_map
+-- Compiling module afdx_app_payload
+-- Compiling module afdx_app_payload_bank
+-- Compiling module afdx_app_payload_slice
+-- Compiling module afdx_app_read
+-- Compiling module afdx_app_rx
+-- Compiling module afdx_app_tx
+-- Compiling module afdx_cfg
+-- Compiling module afdx_crc32_d8
+-- Compiling module afdx_es
+-- Compiling module afdx_mac_rx
+-- Compiling module afdx_mac_tx
+-- Compiling module afdx_mgmt_tx
+-- Compiling module afdx_ntp_fraction
+-- Compiling module afdx_ram_sdp
+-- Compiling module afdx_rtc
+-- Compiling module afdx_rx_core
+-- Compiling module afdx_rx_table_slice
+-- Compiling module afdx_rx_deliver
+-- Compiling module afdx_rx_engine
+-- Compiling module afdx_rx_parse
+-- Compiling module afdx_rx_reassembly
+-- Compiling module afdx_rx_reassembly_bank
+-- Compiling module afdx_rx_reassembly_payload
+-- Compiling module afdx_rx_reassembly_payload_slot
+-- Compiling module afdx_rx_reassembly_payload_lane
+-- Compiling module afdx_rx_reassembly_ram
+-- Compiling module afdx_snmp
+-- Compiling module afdx_snmp_engine
+-- Compiling module afdx_svc
+-- Compiling module afdx_timebase
+-- Compiling module AFDX_top
+-- Compiling module afdx_tx_buf
+-- Compiling module afdx_tx_ingress_elastic
+-- Compiling module afdx_tx_rollback_ram
+-- Compiling module afdx_tx_builder
+-- Compiling module afdx_tx_core
+-- Compiling module afdx_tx_payload_store
+-- Compiling module afdx_tx_engine
+-- Compiling module afdx_tx_free
+-- Compiling module gmii_monitor
+-- Compiling module judge_endpoint
+-- Compiling module line_driver
+-- Compiling module line_monitor
+-- Compiling module link_model
+-- Compiling module load_test_endpoint
+-- Compiling module mac_tx_suite
+-- Compiling module rm_age_current
+-- Compiling module rm_age_probe
+-- Compiling module rtc_retry_current
+-- Compiling module rtc_retry_suite
+-- Compiling module rx_core_suite
+-- Compiling module snmp_test_endpoint
+-- Compiling module sys_endpoint
+-- Compiling module sys_suite
+-- Compiling module top_stream_endpoint
+-- Compiling module tx_core_suite
+-- Compiling module tb_net_services
+
+Top level modules:
+	judge_endpoint
+	line_driver
+	mac_tx_suite
+	rm_age_current
+	rm_age_probe
+	rtc_retry_current
+	rtc_retry_suite
+	rx_core_suite
+	snmp_test_endpoint
+	sys_suite
+	tx_core_suite
+	tb_net_services
+End time: 22:20:55 on Nov 03,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0
