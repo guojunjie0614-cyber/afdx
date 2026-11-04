@@ -1,0 +1,39 @@
+{
+  "approval": "2026-11-03 21:30",
+  "revision": "Approved prefix scope",
+  "cutoff_cycle": 199578,
+  "full_length_cycles": 897329,
+  "flow": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+  "reference": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_rtl\\20261103_000656_614198",
+  "minimum_complete_lines": {
+    "tx_a.txt": 6,
+    "tx_b.txt": 6,
+    "rx.txt": 4
+  },
+  "full_tx_message_lines": 8,
+  "kernel": {
+    "pid": 33644,
+    "created": 1793693286.312673
+  },
+  "launcher": {
+    "pid": 28808,
+    "created": 1793693286.2756767
+  },
+  "reference_sha256": {
+    "tx_a.txt": "F57187CA3CA754C78C0E811729D28696BD9B5ECB1CE16F6196C33CAA26FCD954",
+    "tx_b.txt": "AF56214E2957C58AE55D64B1641BD5660A00D2AC35613BDDE576F3F87F498671",
+    "rx.txt": "A49808AAA47ECFB806175BBA56F80AFB7F0C779088DFC1C612765F9613AEBE31",
+    "tx_messages.txt": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+    "events.txt": "B07CC99063AA13CD8947C0FC4F3A1AB21E4E741C16BE5F43D27E3D4867112C08"
+  },
+  "vqm_sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+  "result_label": "PASS-PREFIX",
+  "coverage": "1472-byte two-frame fragmentation/reassembly and A/B networks; 8192-byte and recovery VQM coverage deferred to T76",
+  "no_new_netlist_simulations": true,
+  "other_worktree_access": false,
+  "deadline": "2026-11-04T16:06:56.320662+08:00",
+  "source_sha256": {
+    "t75_prefix.py": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
+    "t75_prefix_stop.py": "BD5FE8EE063240A34CC1830DD174970F7F3B9DAB20461DA18375C5D9AD5FD7D6"
+  }
+}
