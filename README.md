@@ -100,7 +100,7 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 下列 PNG 为此前版本的归档截图，表中时间窗口对应这些原图；当前管理响应拍数以本版联测结果为准。
 
 报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
-批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。PNG 在 `sim/wave/png/`；工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
+批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。`sim/wave/png/` 已更新为分片版 11-03 波形截图（来源提交 `12858ddf`），`tb_elinx.png` 为 11-04 eLinx 界面人工验证截图；工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
 
 | 图片 | 时间窗口（us） | 观察内容 |
 |---|---:|---|
@@ -267,7 +267,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
 3. 点击 Flow → Run Behavioral Simulation。ModelSim 会运行两个端系统经双网互发 1、64、1471 字节消息的自检；预期依次看到三条 `[ELINX_MESSAGE] ... both_directions=PASS`，最后是 `[RESULT] tb_elinx PASS checks=9238 errors=0`。测试不需要 Python、输入文件或额外的 include 路径和宏。
 
-F1 版本已于 2026-10-29 在界面复跑通过：`[RESULT] tb_elinx PASS checks=9238 errors=0`，仿真时间 2,557,473 ns；界面截图见 `sim/wave/png/tb_elinx.png`（截图为 2026-10-12 历史版本）。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
+分片版已于 11-04 在界面人工复跑通过：`[RESULT] tb_elinx PASS checks=9238 errors=0`，仿真时间 2,557,777 ns，Elapsed 0:02:18，Errors 0、Warnings 90；界面截图见 `sim/wave/png/tb_elinx.png`。仿真结束时 ModelSim 会弹出 Finish Vsim 对话框，选“否”可保留窗口查看输出。
 
 ## 综合后网表仿真
 
@@ -316,7 +316,7 @@ F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来
 
 F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](docs/evidence/t63_f1_gui_compare.json)；操作步骤见 [F1 界面复跑](docs/T63_F1_GUI.md)。
 
-`sim/wave/png/` 的截图保持归档版本；本轮未更新图形截图。静态时序不等于上板实测，也未覆盖完整外部 I/O 延迟预算。
+`sim/wave/png/` 已更新为来源 `12858ddf` 的分片版 11-03 波形，`tb_elinx.png` 使用 11-04 eLinx 界面截图。静态时序不等于上板实测，也未覆盖完整外部 I/O 延迟预算。
 
 ## 模块一览
 
