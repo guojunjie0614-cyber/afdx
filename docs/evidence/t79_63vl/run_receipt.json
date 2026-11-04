@@ -298,7 +298,44 @@
         "--param",
         "BAG_BURST=0"
       ],
-      "status": "RUNNING"
+      "status": "PASS",
+      "exit_code": null,
+      "exit_code_unavailable": true,
+      "finished": "2026-11-04 11:42:57",
+      "seconds": 1396.251,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191941_710230",
+      "hdl_pass": true,
+      "wrapper_passed": false,
+      "known_warning_count": 84,
+      "integrity_pass": true,
+      "statistics_equal": true,
+      "groups": 126,
+      "formula_invalid": 0,
+      "jitter_failures": 0,
+      "maximum_jitter_us": 0.008,
+      "worst_vlid": "0100",
+      "worst_length": 1024,
+      "worst_source": 0,
+      "maximum_latency_us": 65.984,
+      "latency_pass": true,
+      "page_upper_bounds": [
+        14,
+        14
+      ],
+      "bag_pairs": [
+        0,
+        0
+      ],
+      "bag_pair_failures": [
+        0,
+        0
+      ],
+      "receive_mbps": [
+        516.096,
+        516.096
+      ],
+      "simulation_seconds": 1394.547,
+      "issues": []
     },
     {
       "case": "P1471",
@@ -342,7 +379,14 @@
         "--param",
         "BAG_BURST=0"
       ],
-      "status": "RUNNING"
+      "status": "STOPPED_BY_REPORT_CONDITION",
+      "finished": "2026-11-04 11:47:19",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918",
+      "seconds": 1656.505,
+      "simulation_seconds": 1651.875,
+      "hdl_result_lines": [
+        "# [RESULT] tb_t76_load PASS checks=12600 errors=0"
+      ]
     },
     {
       "case": "B1",
@@ -386,7 +430,44 @@
         "--param",
         "BAG_BURST=1"
       ],
-      "status": "RUNNING"
+      "status": "FAIL",
+      "exit_code": null,
+      "exit_code_unavailable": true,
+      "finished": "2026-11-04 11:47:15",
+      "seconds": 1652.15,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191943_886128",
+      "hdl_pass": true,
+      "wrapper_passed": false,
+      "known_warning_count": 84,
+      "integrity_pass": true,
+      "statistics_equal": true,
+      "groups": 126,
+      "formula_invalid": 122,
+      "jitter_failures": 0,
+      "maximum_jitter_us": 0.984,
+      "worst_vlid": "0115",
+      "worst_length": 1471,
+      "worst_source": 0,
+      "maximum_latency_us": 1079.056,
+      "latency_pass": true,
+      "page_upper_bounds": [
+        144,
+        144
+      ],
+      "bag_pairs": [
+        3150,
+        3150
+      ],
+      "bag_pair_failures": [
+        0,
+        0
+      ],
+      "receive_mbps": [
+        738.70768,
+        738.70768
+      ],
+      "simulation_seconds": 1649.36,
+      "issues": []
     },
     {
       "case": "B2",
@@ -430,10 +511,14 @@
         "--param",
         "BAG_BURST=2"
       ],
-      "status": "RUNNING"
+      "status": "STOPPED_BY_REPORT_CONDITION",
+      "finished": "2026-11-04 11:47:19",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_193648_592064",
+      "seconds": 630.624,
+      "hdl_result_lines": []
     }
   ],
-  "status": "RUNNING",
+  "status": "STOPPED",
   "controller_history": [
     {
       "pid": 35116,
@@ -446,5 +531,9 @@
       "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
     }
   ],
-  "adopted": "2026-11-04 11:36:41"
+  "adopted": "2026-11-04 11:36:41",
+  "report_condition": "Formula invalid or jitter >=100 us: B1",
+  "error": "Formula invalid or jitter >=100 us: B1",
+  "not_started": [],
+  "finished": "2026-11-04 11:47:19"
 }

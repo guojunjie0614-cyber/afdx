@@ -1,0 +1,26 @@
+{
+  "case": "P1471",
+  "status": "STOPPED_BY_REPORT_CONDITION",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918",
+  "started": "2026-11-04 11:19:42",
+  "stopped": "2026-11-04 11:47:19",
+  "seconds": 1656.505,
+  "raw_record_hashes": {
+    "ep0_a.txt": "60e5f4e20caac3a0b8d65557b81c2ffb8190660ea92861fdadda0fec7196841d",
+    "ep0_b.txt": "60ea4d8ef69c1945a3b958ad0d6ef573290fd6ff359c077e67743a4e91c84cc1",
+    "ep0_events.txt": "84c766a79aeee2aa75b089e1e870ca4bc37fbed4c7f033ae227cbc13301cfef0",
+    "ep0_rx.txt": "05bc116133a9d47a233b13f8520b55372ec37a78d66c73fbe9ebea5e49f5e7f8",
+    "ep0_tx.txt": "550eceaa162c2d53bf6161de30951bb936133e8dae263a9413cc3b5cca1fbb47",
+    "ep1_a.txt": "60e5f4e20caac3a0b8d65557b81c2ffb8190660ea92861fdadda0fec7196841d",
+    "ep1_b.txt": "60ea4d8ef69c1945a3b958ad0d6ef573290fd6ff359c077e67743a4e91c84cc1",
+    "ep1_events.txt": "84c766a79aeee2aa75b089e1e870ca4bc37fbed4c7f033ae227cbc13301cfef0",
+    "ep1_rx.txt": "05bc116133a9d47a233b13f8520b55372ec37a78d66c73fbe9ebea5e49f5e7f8",
+    "ep1_tx.txt": "550eceaa162c2d53bf6161de30951bb936133e8dae263a9413cc3b5cca1fbb47",
+    "window.txt": "849ba993a9cf5f804975e262fed97fe91cf6599bedbadcbfd9d8f8c7d867ce09"
+  },
+  "original_wrapper_summary_present": true,
+  "simulation_seconds": 1651.875,
+  "hdl_result_lines": [
+    "# [RESULT] tb_t76_load PASS checks=12600 errors=0"
+  ]
+}
