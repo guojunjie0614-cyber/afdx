@@ -1,0 +1,11 @@
+{
+  "pid": 36444,
+  "created": 1793726554.956117,
+  "command": [
+    "E:\\Tools\\PowerShell\\7.6.6\\pwsh.exe",
+    "-Command",
+    "try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n$guiProjectPath = 'E:/2026_Embedded_FPGA/worktrees/active/c3_t77/out/t77_gui/20261104_011752/source/elinx/AFDX_EndSystem.epr'; $guiProcess = Start-Process -FilePath 'E:/2026_Embedded_FPGA/setup_pack/eLinx3.0.exe' -WorkingDirectory 'E:/2026_Embedded_FPGA/setup_pack' -ArgumentList @($guiProjectPath) -WindowStyle Hidden -PassThru; [pscustomobject]@{ProcessId=$guiProcess.Id;Created=$guiProcess.StartTime;HasExited=$guiProcess.HasExited} | ConvertTo-Json; @'\nfrom pathlib import Path\nimport json\np=Path('docs/evidence/t77_rtl_compat/v2_gui_simulation.json')\nr=json.loads(p.read_text(encoding='utf-8'))\nr['launcher_recovery']=dict(sky_errors=['computer-use request timed out: launch_app','computer-use request timed out: launch_app'],desktop_shortcut_working_directory='E:/2026_Embedded_FPGA/setup_pack',recovery='Native process launch using verified shortcut working directory and isolated project argument; subsequent UI actions use sky only.')\np.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\n'@ | & 'E:/anaconda3/python.exe' -B -X utf8 -"
+  ],
+  "action": "Cancel only the owned blocked native launch controller; no security or peer process touched",
+  "exit_confirmed": true
+}

@@ -1,0 +1,20 @@
+{
+  "name": "export",
+  "command": [
+    "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_cdb.exe",
+    "AFDX_EndSystem",
+    "-c",
+    "AFDX_EndSystem",
+    "--vqm=E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\baseline_original\\20261103_081503_980400\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm"
+  ],
+  "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\baseline_original\\20261103_081503_980400\\project",
+  "pid": 5840,
+  "created": 1793722767.584962,
+  "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\baseline_original\\20261103_081503_980400\\export.log",
+  "budget_seconds": 300,
+  "status": "finished",
+  "exit_code": 0,
+  "stop_reason": null,
+  "seconds": 7.61,
+  "peak_tree_bytes": 378806272
+}

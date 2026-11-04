@@ -1,0 +1,176 @@
+{
+  "started": "2026-11-04 00:33:41",
+  "deadline": "2026-11-04 01:03:41",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790",
+  "completed": true,
+  "route_performed": false,
+  "snapshot_matches_text_proof": {
+    "rtl/afdx_615a.v": true,
+    "rtl/afdx_615a_engine.v": true,
+    "rtl/afdx_app_map.v": true,
+    "rtl/afdx_app_payload.v": true,
+    "rtl/afdx_app_read.v": true,
+    "rtl/afdx_app_rx.v": true,
+    "rtl/afdx_app_tx.v": true,
+    "rtl/afdx_cfg.v": true,
+    "rtl/afdx_crc32_d8.v": true,
+    "rtl/afdx_es.v": true,
+    "rtl/afdx_mac_rx.v": true,
+    "rtl/afdx_mac_tx.v": true,
+    "rtl/afdx_mgmt_tx.v": true,
+    "rtl/afdx_ntp_fraction.v": true,
+    "rtl/afdx_ram_sdp.v": true,
+    "rtl/afdx_rtc.v": true,
+    "rtl/afdx_rx_core.v": true,
+    "rtl/afdx_rx_deliver.v": true,
+    "rtl/afdx_rx_engine.v": true,
+    "rtl/afdx_rx_parse.v": true,
+    "rtl/afdx_rx_reassembly.v": true,
+    "rtl/afdx_rx_reassembly_bank.v": true,
+    "rtl/afdx_rx_reassembly_payload.v": true,
+    "rtl/afdx_rx_reassembly_ram.v": true,
+    "rtl/afdx_snmp.v": true,
+    "rtl/afdx_snmp_engine.v": true,
+    "rtl/afdx_svc.v": true,
+    "rtl/afdx_timebase.v": true,
+    "rtl/AFDX_top.v": true,
+    "rtl/afdx_tx_buf.v": true,
+    "rtl/afdx_tx_builder.v": true,
+    "rtl/afdx_tx_core.v": true,
+    "rtl/afdx_tx_engine.v": true,
+    "rtl/afdx_tx_free.v": true,
+    "elinx/afdx_all.v": true
+  },
+  "ordered_comparison": {
+    "baseline": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\build1030\\AFDX_top_1030\\20261102_212626_064390\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+    "candidate": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+    "baseline_sha256": "3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e",
+    "candidate_sha256": "53cdae1284079171cc3d0554bd32e51a7ad8c7b1f1afaf8e6e6ffafea2affd23",
+    "baseline_bytes": 115027164,
+    "candidate_bytes": 115027164,
+    "byte_equal": false,
+    "ordered_noncomment_lines_equal": false,
+    "sorting_used": false,
+    "baseline_noncomment_lines": 1054470,
+    "candidate_noncomment_lines": 1054470,
+    "baseline_noncomment_sha256": "5fa896e3d967cfbce3389dfba679fd77fcf63d3157ea54901a7d5ada64984410",
+    "candidate_noncomment_sha256": "6465b252d36bf7755065a3e515b22edc9dcb3c08a92d04298c15961384021203",
+    "different_noncomment_line_positions": 2729,
+    "difference_excerpt": [
+      {
+        "noncomment_line": 71695,
+        "baseline_line": 71712,
+        "candidate_line": 71712,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[0].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [1:0] \\afdx_app_tx:application_tx|afdx_app_payload:payload|afdx_app_payload_bank:bank[4].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:decode2|eq_node ;"
+      },
+      {
+        "noncomment_line": 71696,
+        "baseline_line": 71713,
+        "candidate_line": 71713,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[0].storage|afdx_app_payload_slice:slice[2].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[0].storage|afdx_app_payload_slice:slice[1].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:decode2|eq_node ;"
+      },
+      {
+        "noncomment_line": 71697,
+        "baseline_line": 71714,
+        "candidate_line": 71714,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[1].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[0].storage|afdx_app_payload_slice:slice[3].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:decode2|eq_node ;"
+      },
+      {
+        "noncomment_line": 71698,
+        "baseline_line": 71715,
+        "candidate_line": 71715,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[6].storage|afdx_app_payload_slice:slice[2].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[1].storage|afdx_app_payload_slice:slice[1].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:decode2|eq_node ;"
+      },
+      {
+        "noncomment_line": 71699,
+        "baseline_line": 71716,
+        "candidate_line": 71716,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[7].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [0:0] \\afdx_app_tx:application_tx|afdx_app_payload:payload|afdx_app_payload_bank:bank[7].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      },
+      {
+        "noncomment_line": 71700,
+        "baseline_line": 71717,
+        "candidate_line": 71717,
+        "baseline": "wire [1:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[7].storage|afdx_app_payload_slice:slice[2].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [0:0] \\afdx_app_tx:application_tx|afdx_app_payload:payload|afdx_app_payload_bank:bank[7].storage|afdx_app_payload_slice:slice[2].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      },
+      {
+        "noncomment_line": 71701,
+        "baseline_line": 71718,
+        "candidate_line": 71718,
+        "baseline": "wire [0:0] \\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|afdx_rx_reassembly_payload:payload|afdx_rx_reassembly_payload_slot:slots[1].storage|afdx_rx_reassembly_payload_lane:lanes[0].storage|altsyncram:memory_rtl_0|altsyncram_cgf1:auto_generated|address_reg_b ;",
+        "candidate": "wire [0:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[2].storage|afdx_app_payload_slice:slice[3].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      },
+      {
+        "noncomment_line": 71702,
+        "baseline_line": 71719,
+        "candidate_line": 71719,
+        "baseline": "wire [1:0] \\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|afdx_rx_reassembly_payload:payload|afdx_rx_reassembly_payload_slot:slots[2].storage|afdx_rx_reassembly_payload_lane:lanes[0].storage|altsyncram:memory_rtl_0|altsyncram_cgf1:auto_generated|decode_hha:rden_decode|eq_node ;",
+        "candidate": "wire [0:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[5].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      },
+      {
+        "noncomment_line": 71703,
+        "baseline_line": 71720,
+        "candidate_line": 71720,
+        "baseline": "wire [1:0] \\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[1].u_bank|afdx_rx_reassembly_payload:payload|afdx_rx_reassembly_payload_slot:slots[7].storage|afdx_rx_reassembly_payload_lane:lanes[0].storage|altsyncram:memory_rtl_0|altsyncram_cgf1:auto_generated|decode_hha:decode2|eq_node ;",
+        "candidate": "wire [0:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[5].storage|afdx_app_payload_slice:slice[2].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      },
+      {
+        "noncomment_line": 71704,
+        "baseline_line": 71721,
+        "candidate_line": 71721,
+        "baseline": "wire [0:0] \\afdx_es:es|afdx_rx_core:rx_core|afdx_rx_reassembly:reassembly|afdx_rx_reassembly_bank:banks[0].u_bank|afdx_rx_reassembly_payload:payload|afdx_rx_reassembly_payload_slot:slots[7].storage|afdx_rx_reassembly_payload_lane:lanes[1].storage|altsyncram:memory_rtl_0|altsyncram_cgf1:auto_generated|address_reg_b ;",
+        "candidate": "wire [0:0] \\afdx_app_rx:application_rx|afdx_app_payload:payload|afdx_app_payload_bank:bank[6].storage|afdx_app_payload_slice:slice[0].storage|altsyncram:memory_rtl_0|altsyncram_1kd1:auto_generated|altsyncram:ram_block1a0|altsyncram_p273:auto_generated|address_reg_b ;"
+      }
+    ],
+    "passed": false,
+    "comparison": "different"
+  },
+  "netlist": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+  "vqm_sha256": "53cdae1284079171cc3d0554bd32e51a7ad8c7b1f1afaf8e6e6ffafea2affd23",
+  "finished": "2026-11-04 00:38:00",
+  "jobs": [
+    {
+      "name": "analysis",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_map.exe",
+        "--read_settings_files=on",
+        "--write_settings_files=off",
+        "AFDX_EndSystem"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project",
+      "pid": 23200,
+      "created": 1793723622.237046,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 248.156,
+      "peak_tree_bytes": 605814784,
+      "budget_seconds": 1799.459632396698,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\analysis.log"
+    },
+    {
+      "name": "export",
+      "command": [
+        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_cdb.exe",
+        "AFDX_EndSystem",
+        "-c",
+        "AFDX_EndSystem",
+        "--vqm=E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project",
+      "pid": 45688,
+      "created": 1793723870.5843515,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 6.969,
+      "peak_tree_bytes": 378843136,
+      "budget_seconds": 300,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\export.log"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "name": "analysis",
+    "command": [
+      "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_map.exe",
+      "--read_settings_files=on",
+      "--write_settings_files=off",
+      "AFDX_EndSystem"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project",
+    "pid": 23200,
+    "created": 1793723622.237046,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 248.156,
+    "peak_tree_bytes": 605814784,
+    "budget_seconds": 1799.459632396698,
+    "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\analysis.log"
+  },
+  {
+    "name": "export",
+    "command": [
+      "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\Passkey\\bin\\quartus_cdb.exe",
+      "AFDX_EndSystem",
+      "-c",
+      "AFDX_EndSystem",
+      "--vqm=E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project",
+    "pid": 45688,
+    "created": 1793723870.5843515,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 6.969,
+    "peak_tree_bytes": 378843136,
+    "budget_seconds": 300,
+    "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\export.log"
+  }
+]

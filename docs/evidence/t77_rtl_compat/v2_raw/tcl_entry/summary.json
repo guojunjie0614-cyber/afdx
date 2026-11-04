@@ -1,0 +1,30 @@
+{
+  "name": "tcl_direct_default",
+  "started": "2026-11-04T00:37:23.620780+08:00",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_entry\\tcl_direct_default\\20261103_083723_619783",
+  "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
+  "memory_floor_gib": 3.0,
+  "memory_limit_gib": 10.0,
+  "passed": true,
+  "finished": "2026-11-04T00:37:25.239056+08:00",
+  "jobs": [
+    {
+      "name": "tcl_probe",
+      "command": [
+        "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+        "-batch",
+        "-do",
+        "do {E:/2026_Embedded_FPGA/worktrees/active/c3_t77/out/t77_entry/tcl_direct_default/20261103_083723_619783/entry.do}"
+      ],
+      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_entry\\tcl_direct_default\\20261103_083723_619783",
+      "pid": 20796,
+      "created": 1793723843.6253977,
+      "exit_code": 0,
+      "stop_reason": null,
+      "seconds": 1.61,
+      "peak_tree_bytes": 108851200,
+      "budget_seconds": 60,
+      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_entry\\tcl_direct_default\\20261103_083723_619783\\tcl_probe.log"
+    }
+  ]
+}
