@@ -1,10 +1,10 @@
 \chapter{功能测试}\label{ch:func}
 
-本章按赛题规定的五项功能及五项功能联合测试，依次说明各模块的激励构造、边界覆盖与验证结果。正文中的关键信号时序图截取自与 \code{sim/wave/*.do} 相同的观察窗口（对应的 ModelSim 原始波形窗口截图汇集于附录~\ref{app:captures}）；TFTP 与 SNTP 交互图采用压缩时间轴展示协议握手过程，端到端时延与抖动的定量测量见第~\ref{ch:perf}~章。
+本章按赛题规定的五项核心功能、1026/1030 答疑扩展的顶层流包装与 IPv4 分片重组功能，以及五项功能联合测试，依次说明各模块的激励构造、边界覆盖与验证结果。正文中的关键信号时序图截取自与 \code{sim/wave/*.do} 相同的观察窗口（对应的 ModelSim 原始波形窗口截图汇集于附录~\ref{app:captures}）；TFTP 与 SNTP 交互图采用压缩时间轴展示协议握手过程，端到端时延与抖动的定量测量见第~\ref{ch:perf}~章。
 
 \section{ARINC 664 Part 7 通信}\label{sec:f-comm}
 
-ARINC 664 Part 7 通信测试覆盖双口存储原语、以太网 MAC 收发、UDP/IP 协议封装、VL 寻址、发送分页缓存与 BAG 调度、双网发送、接收 VLID 映射与端口分发、配置总线握手以及传输途中复位恢复，完整对应需求测试点 F1-01 至 F1-14，各测试项与核对结果见表~\ref{tab:f-comm}。
+ARINC 664 Part 7 通信测试覆盖双口存储原语、以太网 MAC 收发、UDP/IP 协议封装、VL 寻址、发送分页缓存与 BAG 调度、双网发送、接收 VLID 映射与端口分发、配置总线握手以及传输途中复位恢复，完整对应需求测试点 F1-01 至 F1-14（顶层 2B-VLID 流包装与 1--\MaxMessageBytes{}~B 分片重组详见~\ref{sec:f-frag}~节），各测试项与核对结果见表~\ref{tab:f-comm}。
 
 \begin{items}{ARINC 664 Part 7 通信测试项}{tab:f-comm}
 BAS-01 & 四种宽度和深度的存储器配置；随机写入与同步读取，覆盖最低、最高地址；写使能无效期间改变输入数据 & 读出数据与写入一致；同步读延迟正确；读使能为低时输出保持 & 20764/0\newline 平台自检 & 通过 \\
@@ -12,44 +12,46 @@ MAC-01 & 消息长度 1、17、18、1471 字节及随机长度；网络使能遍
 MAC-02 & 正常帧，以及截短帧、超长帧、前导码错误、FCS 错误；每个异常帧后紧跟一个正常帧 & 正确识别帧边界，去除 FCS 后输出帧数据；异常帧的错误分类正确；随后的正常帧正确接收 & 105303/0\newline 平台自检 & 通过 \\
 MAC-03 & 将发送输出接回接收输入；改变帧长；分别测试 A、B 两网 & 每网接收内容与发送内容一致 & 1385254/0\newline 平台自检 & 通过 \\
 \midrule
-TX-01 & 默认缓存（256 页 × 512 字节）；消息长度 1、16、17、18、255--257、511--513、1025、1470、1471 字节及 32 个随机长度 & 线路帧与参考检查器输出逐字节一致，含 VLID、网络标识、IP/UDP 头、端口、载荷、填充、SN、FCS；SN 复位后首帧为 0，255 后回绕到 1 & 662156/0\newline 7605/0 & 通过 \\
-TX-02 & 缓存改为 32 页 × 2048 字节；激励同 TX-01 & 同 TX-01 & 661736/0\newline 7605/0 & 通过 \\
-TX-03 & 改变 BAG、消息相对允许时刻的提交时间和 BAG 计数初值；覆盖持续排队、晚到消息、计数回绕 & 同一 VL 相邻两帧的起点间隔不小于 BAG；帧内容正确 & 14054199/0\newline 14591/0 & 通过 \\
-TX-04 & 长帧占用线路期间，向全部 128 条 VL 同时提交消息 & 各 VL 队列独立；按轮询顺序发出；网络选择与配置一致；帧内容正确 & 14438572/0\newline 56223/0 & 通过 \\
-TX-05 & 构造 VL 禁用、队列满、消息超长、无空闲页四类拒绝，随后不复位重新填满缓存 & 拒绝类别与计数正确；被拒消息已占用的页全部归还 & 30267272/0\newline 4642/0 & 通过 \\
-TX-06 & 确定性基准激励序列 & 发送记录与参考一致；记录作为网表对照基准 & 219323/0\newline 229/0 & 通过 \\
+TX-01 & 默认缓存（256 页 × 512 字节）；消息长度 1、16、17、18、255--257、511--513、1025、1470、1471 字节及 32 个随机长度 & 线路帧与参考检查器输出逐字节一致，含 VLID、网络标识、IP/UDP 头、端口、载荷、填充、SN、FCS；SN 复位后首帧为 0，255 后回绕到 1 & 662983/0\newline 8008/0 & 通过 \\
+TX-02 & 缓存改为 32 页 × 2048 字节；激励同 TX-01 & 同 TX-01 & 662557/0\newline 8008/0 & 通过 \\
+TX-03 & 改变 BAG、消息相对允许时刻的提交时间和 BAG 计数初值；覆盖持续排队、晚到消息、计数回绕 & 同一 VL 相邻两帧的起点间隔不小于 BAG；帧内容正确 & 14054439/0\newline 14758/0 & 通过 \\
+TX-04 & 长帧占用线路期间，向全部 128 条 VL 同时提交消息 & 各 VL 队列独立；按轮询顺序发出；网络选择与配置一致；帧内容正确 & 14440385/0\newline 57904/0 & 通过 \\
+TX-05 & 构造 VL 禁用、队列满、消息超长、无空闲页四类拒绝，随后不复位重新填满缓存 & 拒绝类别与计数正确；被拒消息已占用的页全部归还 & 30552330/0\newline 7723/0 & 通过 \\
+TX-06 & 确定性基准激励序列 & 发送记录与参考一致；记录作为网表对照基准 & 236158/0\newline 245/0 & 通过 \\
 \midrule
 RX-01 & 改变消息长度、UDP 端口、帧间隔；VLID 取 0 与 65535，接收索引取 0 与 4095；配置全部 4096 条接收 VL，每条接收两对双网副本 & 映射与端口分发正确；交付 8192 条消息、丢弃 8192 个冗余副本，逐条核对一致 & 9960369/0\newline 123855/0 & 通过 \\
 \midrule
-SYS-01 & 每端 4 条 VL，BAG、最大长度、网络选择各不相同；双向互发长短消息 & 每次交付均对应对端接纳的一条消息，内容、VL、端口和顺序正确；事件记录与交付记录一致 & 5156190/0\newline 2896/0 & 通过 \\
-SYS-04 & 分两轮用满 128 条发送 VL；接收端配置 4096 条，抽查含 0、4095 的 256 个索引；构造发送侧四类拒绝 & 交付正确；同一 VL 发送间隔不小于 BAG；拒绝计数正确；各 VL 配置互不影响 & 216848182/0\newline 116677/0 & 通过 \\
-SYS-05 & 读写配置口；业务进行中改写配置；调小 VL 最大长度 & 读结果在请求后第 2 拍返回；计数值为请求前一拍的累计数；写握手完成；调小后拒绝长消息，正常接纳短消息 & 21170726/0\newline 714342/0 & 通过 \\
-SYS-06 & 对端连续发送 8 条最长消息期间复位接收端，重新初始化和配置后继续发送 & 复位前残留的帧不在复位后交付；复位后交付正确 & 10992796/0\newline 3682/0 & 通过 \\
-SYS-09 & 在 eLinx 中运行；两端各发送 1、64、1471 字节消息 & 端口逐字节一致；双网副本只交付一次 & \ElinxChecks/0\newline 平台自检 & 通过 \\
+SYS-01 & 每端 4 条 VL，BAG、最大长度、网络选择各不相同；双向互发长短消息 & 每次交付均对应对端接纳的一条消息，内容、VL、端口和顺序正确；事件记录与交付记录一致 & 5159270/0\newline 2930/0 & 通过 \\
+SYS-04 & 分两轮用满 128 条发送 VL；接收端配置 4096 条，抽查含 0、4095 的 256 个索引；构造发送侧四类拒绝 & 交付正确；同一 VL 发送间隔不小于 BAG；拒绝计数正确；各 VL 配置互不影响 & 193106816/0\newline 123400/0 & 通过 \\
+SYS-05 & 读写配置口；业务进行中改写配置；调小 VL 最大长度 & 读结果在请求后第 2 拍返回；计数值为请求前一拍的累计数；写握手完成；调小后拒绝长消息，正常接纳短消息 & 19044227/0\newline 718303/0 & 通过 \\
+SYS-06 & 对端连续发送 8 条最长消息期间复位接收端，重新初始化和配置后继续发送 & 复位前残留的帧不在复位后交付；复位后交付正确 & 10182209/0\newline 3876/0 & 通过 \\
+SYS-09 & 在 eLinx 中运行；两端经顶层 2B-VLID 流各发送 1、64、1471 字节消息 & 端口逐字节一致；双网副本只交付一次 & \ElinxChecks/0\newline 平台自检 & 通过 \\
 \end{items}
 
 \subsection{eLinx 行为仿真}
 
-图~\ref{fig:welinx} 为 eLinx 调用 ModelSim 运行 \code{tb_elinx}（SYS-09）的结果窗口。日志显示 1、64、1471 字节消息的双向传输均通过，自检 \ElinxChecks{} 次，错误数为 0。
+图~\ref{fig:welinx} 为 eLinx 3.0.7 调用 ModelSim 运行 \code{tb_elinx}（SYS-09）的实测界面截图（归档于 \code{docs/evidence/t79_63vl/elinx_gui_behav_pass.png}）。仿真到达 \code{Time: 2557777 ns}（界面耗时 \code{0:02:18}），日志显示 1、64、1471 字节消息经顶层 2B-VLID 流接口的双向双网传输全部通过，自检 \ElinxChecks{} 次，错误数为 0（编译阶段报告的 90 条警告均为 eLinx/ModelSim 原语库位宽截断提示，详见 \code{warning_policy_proof.json}）。
 
-\begin{figure}[!htbp]\centering
-\pgfmathsetlengthmacro{\zoomunit}{0.96*\linewidth/892}
-\pgfmathsetlengthmacro{\overviewwidth}{0.90*\linewidth}
-\pgfmathsetlengthmacro{\zoomimagewidth}{1920*\zoomunit}
+\begin{figure}[H]\centering
+\pgfmathsetlengthmacro{\zoomunit}{0.96*\linewidth/944}
+\pgfmathsetlengthmacro{\overviewwidth}{0.58*\linewidth}
+\pgfmathsetlengthmacro{\zoomimagewidth}{1309*\zoomunit}
 \begin{tikzpicture}[x=\zoomunit,y=\zoomunit]
-  \node[anchor=south,inner sep=0] at (446,144)
+  \node[anchor=south,inner sep=0] at (472,229)
     {\includegraphics[width=\overviewwidth]{../../sim/wave/png/tb_elinx.png}};
+  \draw[draw={rgb,255:red,197;green,80;blue,72},line width=0.6pt]
+    (197.29,278.67) rectangle (608.59,371.04);
   \draw[draw={rgb,255:red,197;green,80;blue,72},line width=0.5pt]
-    (63.59,206.28) -- (0,116);
+    (197.29,278.67) -- (0,212);
   \draw[draw={rgb,255:red,197;green,80;blue,72},line width=0.5pt]
-    (457.33,206.28) -- (892,116);
+    (608.59,278.67) -- (944,212);
   \begin{scope}[overlay]
-    \clip (0,0) rectangle (892,116);
-    \node[anchor=south west,inner sep=0] at (-88,-146)
+    \clip (0,0) rectangle (944,212);
+    \node[anchor=south west,inner sep=0] at (-24,-114)
       {\includegraphics[width=\zoomimagewidth]{../../sim/wave/png/tb_elinx.png}};
   \end{scope}
   \draw[draw={rgb,255:red,197;green,80;blue,72},line width=0.6pt]
-    (0,0) rectangle (892,116);
+    (0,0) rectangle (944,212);
 \end{tikzpicture}
 \caption[eLinx / ModelSim 行为仿真运行结果]{eLinx / ModelSim 行为仿真运行结果（SYS-09）：上图为运行窗口，下图为红框日志的局部放大。}\label{fig:welinx}
 \end{figure}
@@ -59,7 +61,7 @@ SYS-09 & 在 eLinx 中运行；两端各发送 1、64、1471 字节消息 & 端�
 
 SYS-04 在系统满载背景下专门检验发送侧四类异常拒绝（VL 禁用、队列满、消息超长、无空闲页）的检测与缓存页回收机制，配置总线读回的统计计数值见表~\ref{tab:fault-tx}。
 
-\begin{table}[!htbp]\centering
+\begin{table}[H]\centering
 \caption{发送侧拒绝的注入与读回}\label{tab:fault-tx}
 \begin{tabularx}{\linewidth}{@{}lLl@{}}
 \toprule
@@ -75,7 +77,6 @@ VL 禁用 & 向未启用的 VL 125 提交 1 条消息 & \code{0x41} = 1 \\
 
 其中，“无空闲页”用例重点验证跨页分配失败时的半途页面释放闭环：当空闲页池仅剩 1 页时，首条 1471 字节消息（需 3 页）在写满第 1 页并申请第 2 页时触发无页拒绝，分页缓存立即通过页面回收口 2 将已占用的 1 页退回空闲页池；紧随其后的 512 字节单页消息得以成功复用该页并完成入队发送；而在该页尚未被组帧器读完归还前提交的第 3 条 1 字节消息，则再次因空闲页数为 0 被准确拒绝。三条消息依次呈现“拒绝 $\rightarrow$ 接纳 $\rightarrow$ 拒绝”，证明异常页面释放与回收无泄漏。
 
-\Needspace{23\baselineskip}
 \subsection{仿真波形}
 
 图~\ref{fig:wtx} 为应用消息双网发送的 RTL 信号波形。端系统 1 在 VL 0 连续输入 18、19、20、21 字节消息；子图 (a) 显示应用口握手与调度，首条 18 字节消息于 688.108~µs 从 A、B 两网同步开始输出，线路帧长为 73 字节（含前导码、SFD 与 FCS）；子图 (b) 放大显示两网前导码与帧首数据。
@@ -83,23 +84,22 @@ VL 禁用 & 向未启用的 VL 125 提交 1 条消息 & \code{0x41} = 1 \\
 \figTiming[应用消息与双网同拍发送]{t10_w_tx}{RTL 信号波形：应用消息与双网同拍发送；(a) 应用口写入与发送调度；(b) A、B 两网 GMII 同拍发出前导码与帧首数据}{fig:wtx}
 
 \FloatBarrier
-\Needspace{14\baselineskip}
 \section{高完整性通信}\label{sec:f-ic}
 
 高完整性通信测试覆盖 MAC 与协议头错误过滤、序列号完整性检查（IC）、双网冗余管理（RM）、接收环形缓冲与交付队列溢出回退以及各分类统计计数器核对，对应需求测试点 F2-01 至 F2-08，测试结果见表~\ref{tab:f-ic}。
 
 \begin{items}{高完整性通信测试项}{tab:f-ic}
-RX-02 & 输入 FCS 错误、帧长错误、IP 头错误、UDP 头错误、未知 VL、网络不允许的帧 & 各帧的拒绝原因与参考判决一致；均未交付 & 576923/0\newline 890/0 & 通过 \\
-RX-03 & 序号正常递增、丢一帧、重复、跳号、复位后 0 号帧、回绕；双网到达次序遍历 A 网先到、B 网先到与同拍到达 & 接纳与拒绝符合 IC 规则；先到副本交付，后到副本丢弃 & 4635284/0\newline 1274/0 & 通过 \\
+RX-02 & 输入 FCS 错误、帧长错误、IP 头错误、UDP 头错误、未知 VL、网络不允许的帧 & 各帧的拒绝原因与参考判决一致；均未交付 & 576797/0\newline 888/0 & 通过 \\
+RX-03 & 序号正常递增、丢一帧、重复、跳号、复位后 0 号帧、回绕；双网到达次序遍历 A 网先到、B 网先到与同拍到达 & 接纳与拒绝符合 IC 规则；先到副本交付，后到副本丢弃 & 4635236/0\newline 1274/0 & 通过 \\
 RX-04 & 64 条 VL 混合收发长短消息；IC、RM 四种开关组合 & 各 VL 序号状态互不影响；去重正确 & 6406189/0\newline 19180/0 & 通过 \\
 RX-05 & 接收环形缓冲缩为 512 字节；长消息与短消息交替 & 空间不足时丢弃帧并计数，释放本帧预写入占用的空间；后续帧正常接收 & 422837/0\newline 99/0 & 通过 \\
 RX-06 & 交付队列缩为 2 项；输入 8 帧 & 队列满事件 1 次、冗余丢弃 2 次、交付 5 条；释放空间后正常交付 & 373852/0\newline 57/0 & 通过 \\
 RX-07 & 确定性正常及异常基准激励序列 & 接收记录与参考一致；记录作为网表对照基准 & 374111/0\newline 110/0 & 通过 \\
 RX-08 & 两网间隔 0--20 拍；帧尾位置在计时边界前后各 32 拍；交替让 A、B 网先到；接收引擎处理帧期间更新计时值 & 冗余窗口内只交付一次；过期记录失效后同一序号可再次交付 & 353130/0\newline 平台自检 & 通过 \\
 \midrule
-SYS-02 & 链路模型在线路上改写字节、插入错误帧、重放和延后重放（表~\ref{tab:fault-rx}） & 各类计数器读回与注入数一一对应；正常消息交付不受影响 & 47121898/0\newline 8726/0 & 通过 \\
-SYS-03 & 设置两网延迟相等、A 网晚到、B 网晚到，以及到达差恰好位于冗余窗口边界的场景 & 窗口内只交付一次，窗口外两份各自交付 & 15482172/0\newline 3763/0 & 通过 \\
-SYS-07 & 接收环形缓冲缩为 512 字节；每端发送 513、1000、1471 字节消息，与短消息交替 & 每端溢出计数 3/3；同时正常交付 3 条短消息 & 9681880/0\newline 1488/0 & 通过 \\
+SYS-02 & 链路模型在线路上改写字节、插入错误帧、重放和延后重放（表~\ref{tab:fault-rx}） & 各类计数器读回与注入数一一对应；正常消息交付不受影响 & 42129011/0\newline 9064/0 & 通过 \\
+SYS-03 & 设置两网延迟相等、A 网晚到、B 网晚到，以及到达差恰好位于冗余窗口边界的场景 & 窗口内只交付一次，窗口外两份各自交付 & 13940507/0\newline 3945/0 & 通过 \\
+SYS-07 & 接收环形缓冲缩为 512 字节；每端发送 513、1000、1471 字节消息，与短消息交替 & 每端溢出计数 3/3；同时正常交付 3 条短消息 & 8886303/0\newline 1562/0 & 通过 \\
 \end{items}
 
 \subsection{序号判决与冗余窗口边界}
@@ -117,7 +117,7 @@ SYS-07 & 接收环形缓冲缩为 512 字节；每端发送 513、1000、1471 �
 
 开启 RM 后，接收引擎依据帧尾到达时的粗粒度计时 \code{now_c}（默认每 4096 拍即 32.768~µs 加 1）判定双网副本是否处于冗余窗口 \code{skew_max} 内。为在模块级仿真中密集遍历窗口边界与 16 位计时回绕，RX-03 将输入计时步进加速配置为每 64 拍（512~ns）或 16 拍（128~ns）加 1。表~\ref{tab:rm-edge} 汇总了窗口边界与状态刷新测试结果（表中到达差以 \code{now_c} 计时单位计）。
 
-\begin{table}[!htbp]\centering
+\begin{table}[H]\centering
 \caption{RM 窗口与状态更新检查结果}\label{tab:rm-edge}
 \begin{tabularx}{\linewidth}{@{}lLL@{}}
 \toprule
@@ -131,11 +131,25 @@ SYS-03 & \code{skew_max=2}，系统级双网到达差分别为 2、3 & 差为 2 
 \end{tabularx}
 \end{table}
 
-在此基础上，用例 RX-08 将两网帧尾精确控制在 \code{now_c} 跳变沿前后各 32 拍，遍历两网先后次序与 0--20 拍到达间隔，验证了“引擎忙期间 B 网先完成解析、A 网后完成解析，引擎转入空闲后按 A 网优先仲裁逆序处理”时 16 位时间差取绝对值判据的正确性，同时验证了跨 16 位计时回绕去重以及空闲期后台 \code{AGE} 过期清理后相同序号的重新接纳。此外，在冗余管理与序号完整性专用大流量测试 RM-04（\code{tb_gbe_rm_psn}）中，实测自检次数达到 18,582,812 次、独立参考核对通过 364,230 项（标准回归基准集为 4,635,284 次自检与 1,274 项独立核对），双网到达次序逆序、相同序号去重及跨粗计时单位边界处理全部准确无误。
+在此基础上，用例 RX-08 将两网帧尾精确控制在 \code{now_c} 跳变沿前后各 32 拍，遍历两网先后次序与 0--20 拍到达间隔，验证了“引擎忙期间 B 网先完成解析、A 网后完成解析，引擎转入空闲后按 A 网优先仲裁逆序处理”时 16 位时间差取绝对值判据的正确性，同时验证了跨 16 位计时回绕去重以及空闲期后台 \code{AGE} 过期清理后相同序号的重新接纳。此外，在冗余管理与序号完整性专用大流量测试 RM-04（\code{tb_gbe_rm_psn}）中，实测自检次数达到 18,582,812 次、独立参考核对通过 364,230 项（标准回归基准集为 4,635,236 次自检与 1,274 项独立核对），双网到达次序逆序、相同序号去重及跨粗计时单位边界处理全部准确无误。
+
+图~\ref{fig:wrm} 为双网副本去重的 RTL 信号波形：A 网副本先到，并经应用口交付（子图 a）；B 网副本晚到 2002 拍，被冗余管理（RM）模块丢弃，触发 \code{ev_rm_drop} 脉冲（子图 b）。
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.76\linewidth,keepaspectratio]{fig/pdf/t11_w_rm.pdf}
+\caption[双网副本接收与去重]{RTL 信号波形：两网副本先后到达与冗余去重；(a) A 网副本被接纳并交付；(b) 晚到的 B 网副本触发 \code{ev_rm_drop}}\label{fig:wrm}
+\end{figure}
 
 \subsection{异常注入与计数读回}
 
 用例 SYS-02、SYS-07 与 RX-06 检验接收侧 10 类异常的检测与计数（表~\ref{tab:fault-rx}），与发送侧 4 类拒绝（表~\ref{tab:fault-tx}）合计覆盖 14 类异常。各阶段在通路排空后读取统计寄存器；共用寄存器的子项按阶段增量核对（地址为十六进制，“A/B”指双网计数，“每端”指两端各自的读回值）。
+
+图~\ref{fig:wfault} 为 FCS 错误帧的拒绝与配置口读回波形：A 网 FCS 错误帧到达后触发 \code{ev_a_fcs_error}（对应顶层 \code{ev_a[1]}），该副本不交付应用口；随后到达的 B 网正常副本仍可正常交付，\code{app_rx_net = 1}（子图 a）。后续独立配置读请求访问地址 \code{0x49}，经两拍流水线返回 \code{count_a_fcs = 1}（子图 b）。
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.76\linewidth,keepaspectratio]{fig/pdf/t12_w_fault.pdf}
+\caption[FCS 错误帧的拒绝与计数]{RTL 信号波形：FCS 错误帧的拒绝与计数器读回；(a) A 网报错，B 网正常副本交付；(b) 独立配置读请求经两拍返回 \code{count_a_fcs = 1}}\label{fig:wfault}
+\end{figure}
 
 \begingroup\setlength{\tabcolsep}{5pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}p{5.65cm}>{\raggedright\arraybackslash}p{5.75cm}@{}}
@@ -156,23 +170,6 @@ UDP 头错误 & SYS-02 & 校验和字段非零，每端每网 1 帧，共 4 帧 
 
 同网重放的帧因序号重复而被 IC 拒绝，并计入完整性错误；双网冗余副本通过 IC 后，由 RM 丢弃并计入冗余丢弃。正常冗余场景中，SYS-04 的端系统 2 收到 922 组双网消息共 1844 个副本，冗余丢弃计数 \code{0x58} 与交付计数 \code{0x59} 均为 922。
 
-\clearpage
-\subsection{仿真波形}
-
-图~\ref{fig:wrm} 为双网副本去重的 RTL 信号波形：A 网副本先到，并经应用口交付（子图 a）；B 网副本晚到 2002 拍，被冗余管理（RM）模块丢弃，触发 \code{ev_rm_drop} 脉冲（子图 b）。
-
-\begin{figure}[!htbp]\centering
-\includegraphics[width=0.76\linewidth,keepaspectratio]{fig/pdf/t11_w_rm.pdf}
-\caption[双网副本接收与去重]{RTL 信号波形：两网副本先后到达与冗余去重；(a) A 网副本被接纳并交付；(b) 晚到的 B 网副本触发 \code{ev_rm_drop}}\label{fig:wrm}
-\end{figure}
-
-图~\ref{fig:wfault} 为 FCS 错误帧的拒绝与配置口读回波形：A 网 FCS 错误帧到达后触发 \code{ev_a_fcs_error}（对应顶层 \code{ev_a[1]}），该副本不交付应用口；随后到达的 B 网正常副本仍可正常交付，\code{app_rx_net = 1}（子图 a）。后续独立配置读请求访问地址 \code{0x49}，经两拍流水线返回 \code{count_a_fcs = 1}（子图 b）。
-
-\begin{figure}[!htbp]\centering
-\includegraphics[width=0.76\linewidth,keepaspectratio]{fig/pdf/t12_w_fault.pdf}
-\caption[FCS 错误帧的拒绝与计数]{RTL 信号波形：FCS 错误帧的拒绝与计数器读回；(a) A 网报错，B 网正常副本交付；(b) 独立配置读请求经两拍返回 \code{count_a_fcs = 1}}\label{fig:wfault}
-\end{figure}
-
 \FloatBarrier
 \section{SNMP 网络管理}\label{sec:f-snmp}
 
@@ -190,7 +187,7 @@ SVC-03 & 批量测试；Get、GetNext、Set、Trap 四类报文交互 & 四类�
 
 用例 SVC-02 验证读写对象修改、非法写入拒绝与 Trap 触发机制：先依次通过 v1 Set 和 v2c Set 将读写对象 \code{USER_ID} 改写为 \code{0x3456} 和 \code{0xabcd}，每次改写后经 SNMP Get 与主机配置口读回均确认生效；随后注入只读对象写请求与错误类型写请求，v1/v2c 分别返回表~\ref{tab:snmp-errors} 所示的标准差错状态码（错误索引均为 1），且 \code{USER_ID} 维持 \code{0xabcd} 不变；当注入错误 Community 的 Set 请求时，代理静默丢弃而不回包，同时递增 \code{BAD_COMMUNITY} 计数。
 
-\begin{table}[!htbp]\centering
+\begin{table}[H]\centering
 \caption{SNMP Set 拒绝结果}\label{tab:snmp-errors}
 \begin{tabularx}{\linewidth}{@{}LLL@{}}
 \toprule
@@ -202,11 +199,10 @@ SVC-03 & 批量测试；Get、GetNext、Set、Trap 四类报文交互 & 四类�
 \end{tabularx}
 \end{table}
 
-在 Trap 通知测试中：当 \code{TRAP_ENABLE} 关闭时，使能代理并等待 1,250,000 拍确认无报文发出；置位 \code{TRAP_ENABLE} 并重启代理后，管理端在 UDP 端口 162 准确收到一条 \code{coldStart} 通知，随后注入错误 Community请求又触发一条 \code{authenticationFailure} 通知；再次关闭 \code{TRAP_ENABLE} 后重复上述触发条件，Trap 发送计数稳定保持为 2。经 \code{pyasn1} 解码确认，两条 SNMPv2-Trap（PDU \code{0xA7}）均携带 \code{sysUpTime.0} 与 \code{snmpTrapOID.0} 两个 VarBind，分别指向标准 Trap OID 的尾项 1 和 5。在 22 个 Set/Trap 交互场景穿插进行的双向用户流量中，两端各 29 条用户消息均完整、单次交付，验证了服务通道轮询与端口分发的隔离性。
-
 \figTiming[SNMP Get 请求与响应]{t14_w_snmp}{RTL 信号波形：SNMP Get 请求与响应的帧首窗口；(a) 请求在 525.292~µs 到达 GMII；(b) 代理在 531.676~µs 从 A、B 两网同时开始响应}{fig:wsnmp}
 
-\Needspace{18\baselineskip}
+在 Trap 通知测试中：当 \code{TRAP_ENABLE} 关闭时，使能代理并等待 1,250,000 拍确认无报文发出；置位 \code{TRAP_ENABLE} 并重启代理后，管理端在 UDP 端口 162 准确收到一条 \code{coldStart} 通知，随后注入错误 Community请求又触发一条 \code{authenticationFailure} 通知；再次关闭 \code{TRAP_ENABLE} 后重复上述触发条件，Trap 发送计数稳定保持为 2。经 \code{pyasn1} 解码确认，两条 SNMPv2-Trap（PDU \code{0xA7}）均携带 \code{sysUpTime.0} 与 \code{snmpTrapOID.0} 两个 VarBind，分别指向标准 Trap OID 的尾项 1 和 5。在 22 个 Set/Trap 交互场景穿插进行的双向用户流量中，两端各 29 条用户消息均完整、单次交付，验证了服务通道轮询与端口分发的隔离性。
+
 \section{ARINC 615A 软件数据加载}\label{sec:f-615a}
 
 ARINC 615A 软件数据加载测试覆盖单文件上传（LUI、LUS、LUR、LUH 头文件及数据文件）、介质定义下载（Media-Defined Download, MDD）（LND、LNS、LNR 及 \code{MEMORY.BIN} 回传）、TFTP 512 字节整块与短末块边界、CRC-16 校验失败与丢包超时重传，以及片内 8~KiB 加载区的数据一致性核对，对应需求测试点 F4-01 至 F4-05（表~\ref{tab:f-615a}）。
@@ -247,13 +243,12 @@ SVC-04 对每次数据加载会话同时执行四项闭环核对：
 \figTiming[TFTP 数据块与确认]{t15_w_615a}{TFTP 数据块与确认的协议示意：被测端收到 DATA 块后在两网发出对应 ACK，收到不足 512 字节的数据块后结束传输；时间轴压缩，不按比例}{fig:w615a}
 
 \FloatBarrier
-\Needspace{14\baselineskip}
 \section{RTC 时钟同步}\label{sec:f-rtc}
 
 RTC 时钟同步测试覆盖 SNTPv4 客户端/服务端时钟同步交互、空载与带载同步精度、跨秒进位、纳秒与 32 位 NTP 小数双向无损换算、应答丢失重发以及非法/过期应答过滤，对应需求测试点 F5-01 至 F5-06（表~\ref{tab:f-rtc}）。测试中通过独立解码线路上的 48 字节 SNTP 报文，逐项核对模式字段、时间戳编码及应答帧中回显的 \code{Originate} 时间戳。
 
 \begin{items}{RTC 测试项}{tab:f-rtc}
-SVC-05 & 空载、用户流量带载、77 条 VL 满载三种场景；空载时交换主从角色，Client 时间分别超前和落后；在秒边界附近启动；停止同步后继续运行；纳秒与 NTP 小数换算 72 组向量（含零、秒末和随机值） & 报文字段与时间戳编码正确；回送时间戳与本次请求一致；秒进位正确；停止同步后时钟继续运行；换算双向一致；同步误差见表~\ref{tab:rtc-err} & 10675857/0\newline 1811/0 & 通过 \\
+SVC-05 & 空载、用户流量带载、77 条 VL 满载三种场景；空载时交换主从角色，Client 时间分别超前和落后；在秒边界附近启动；停止同步后继续运行；纳秒与 NTP 小数换算 72 组向量（含零、秒末和随机值） & 报文字段与时间戳编码正确；回送时间戳与本次请求一致；秒进位正确；停止同步后时钟继续运行；换算双向一致；同步误差见表~\ref{tab:rtc-err} & 10675841/0\newline 1811/0 & 通过 \\
 SVC-06 & 丢弃第一个响应；交换 Server/Client 启动顺序 & Client 在下一周期重发请求并完成同步 & 28/0\newline 平台自检 & 通过 \\
 SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响应 & 错误和过期响应不误校准；合法响应仅执行单次同步校准 & 34/0\newline 平台自检 & 通过 \\
 \end{items}
@@ -276,10 +271,32 @@ SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响�
 \figTiming[SNTP 请求与响应]{t16_w_rtc}{SNTP 请求与响应的协议示意：Client 发出时间请求并收到 Server 响应，响应中的 Originate 等于请求的发送时间戳 T1；时间轴压缩，不按比例}{fig:wrtc}
 
 \FloatBarrier
-\section{五项功能联合测试}\label{sec:f-all}
+\section{顶层 2B-VLID 流包装、配置隔离与 1030 分片重组}\label{sec:f-frag}
+
+针对官方 1026 答疑（R119）顶层应用流接口规约与 1030 答疑（R139）1--\MaxMessageBytes{}~B 超长消息 IPv4 分片及双网去重后按序重组需求，测试体系构建了从存储与弹性流水子模块、16 项 \code{tb_t65_*} 包装边界测试、16 槽重组引擎单元测试到端到端分片与配置隔离的专项验证矩阵（对应测试点 F1-15、F1-16、F2-09、F2-10），核心测试项与结果见表~\ref{tab:f-frag}。
+
+\begin{items}{顶层流包装、配置隔离与 1030 分片重组测试项}{tab:f-frag}
+WRAP-01 & \code{tb_top_wrap}、\code{tb_app_payload_pipeline}、\code{tb_tx_ingress_elastic}、\code{tb_tx_buffer_bounds}：覆盖顶层 2B-VLID 头解析/插入、应用载荷分库流水、入口弹性 FIFO 反压及 16 页（8192~B）跨页回滚边界 & 2B 大端 VLID 与消息载荷零字节错位；连续背靠背突发反压无丢拍；超长拒绝时最多 16 页全部无泄漏归还 & 928635/0\newline 平台自检 & 通过 \\
+WRAP-02 & 16 项 \code{tb_t65_*} 与 \code{tb_cfg_local_ready}：覆盖初始化握手机制、未映射 VLID 丢弃、短帧队列满/空间前瞻边界、接收描述符与载荷流解耦、应用/MAC/RX 分域独立复位及本地配置就绪握手 & 17 项专项测试全部 0 错误通过（其中 \code{tb_t65_rx_data} 自检 14,536,729 次、独立核对 9,874 项）；复位边界无残帧泄漏 & 17860656/0\newline 11071/0 & 通过 \\
+FRAG-01 & \code{tb_fragmentation}：端到端双网传输 1、1471、1472（两分片：首片 1464~B 应用载荷 + 8~B UDP 头 = 1472~B IP 载荷，末片 8~B）、3000、\MaxMessageBytes{}~B（6 分片）消息，注入单网丢片与双网时延差 & 全部 IPv4 分片满足 1472~B（184$\times$8~B）对齐、\code{MF/Offset} 与 IP 头校验和正确、每分片独立递增 AFDX SN；双网 IC/RM 去重后按序重组与 \code{fragment_ref.py} 完全一致 & 33/0\newline 9/0 & 通过 \\
+FRAG-02 & \code{tb_reassembly_engine}、\code{tb_reassembly_limits}、\code{tb_reassembly_transactions}、\code{tb_context_pipeline}、\code{tb_service_pipeline}、\code{tb_rtc_banked}：覆盖 2-Bank$\times$8-Slot 共 16 槽并发分配、乱序/缺片中止、总长超 8192~B 拦截、槽满拒绝与超时回收 & 正常按序分片重组 100\% 交付；乱序分片、缺片、超 8192~B 及第 17 条并发分片流准确丢弃并释放槽位，不污染后续正常分片消息 & 531/0\newline 平台自检 & 通过 \\
+CFG-ISO & \code{isolated_default}（84 条消息，38.188~s）与 \code{isolated_small}（2 条消息裁剪参数，15.828~s）：检验配置空间隔离与双端 15 份追踪记录完整性 & 两项配置隔离入口均一次通过，各 15 份 GMII/应用收发与事件记录 SHA-256 校验零异常 & 2/2 组\newline SHA-256 核对 & 通过 \\
+\end{items}
+
+实测验证确认了本设计“先双网 IC/RM 单帧去重、后单流按序 IPv4 重组”架构的两项关键工程性质：(1) 当 A 网某个中间分片因线路误码被 MAC/IC 丢弃时，只要 B 网同序号冗余分片在 \code{skew_max} 窗口内到达，去重输出给重组器的分片流依然严格连续完整，整条 8192~B 消息实现无感零丢包交付；(2) 当双网同一分片同时丢失导致偏移量不连续（乱序/缺片）或分片总长突破 8192~B 时，对应重组槽立即中止当前残缺消息并回收槽位，绝不向应用口输出截断伪包。8192~B 消息 6 分片双网发送与单次重组交付的 ModelSim 原始波形见附录~\ref{app:captures} 图~\ref{fig:capture-frag}。
+
+\FloatBarrier
+\section{五项功能联合测试}\label{sec:f-all}\label{sec:cap-services}
 
 用例 SVC-08 在同一对端系统、同一次仿真运行中联合开启全部五项功能，使应用消息、高完整性异常注入与三项高层服务共享底层的双网收发核心、服务通道仲裁器和主机配置总线（表~\ref{tab:f-all}）。全过程共执行 \SvcChecks{} 次平台自检与 65 项独立参考核对（含 16 字节数据加载文件的 41 项逐字节与状态核对），全部零错误一次性通过。测试验证了在 \code{CE_DIV=2}（2 周期时钟使能解耦）与基于 BRAM 的拒绝状态记录架构（\code{denial_ram}）下，管理协议与用户业务在同一硬件架构下共存时的周期级确定性与协议时序安全性；该用例同时作为综合后门级网表仿真（NET-02，见第~\ref{ch:netlist}~章）的基准激励。多 VL 满载并发传输见第~\ref{ch:perf}~章。
 
 \begin{items}{五项功能联合测试项}{tab:f-all}
 SVC-08 & 依次执行：(1) 两端各发一条用户消息；(2) 向一端注入一个跳号帧；(3) 一次 SNMP Get 读取设备描述；(4) 一次时钟同步；(5) 加载 16 字节文件，读回 RAM 后卸载 & (1) 双网副本去重，各交付一次；(2) 完整性错误计数加 1，交付数不变；(3) 响应经独立 BER 解码后核对正确；(4) 配置口确认同步完成，请求与响应时间戳对应；(5) RAM 与卸载内容均与原文件一致；测试结束时，交付数与错误数均无额外增加 & \SvcChecks/0\newline 65/0 & 通过 \\
 \end{items}
+
+图~\ref{fig:capture-services} 记录了五功能联合测试平台 \code{tb_net_services} 在 ModelSim 中运行的全程实测波形（时间窗口 0--1095.014~µs）。信号 \code{phase} 依次展示测试推进阶段：用户数据收发、完整性异常注入（\code{ic2=1} 坏序号帧拒收）、SNMP 管理查询、RTC 时钟同步（同步后时间差 \code{difference=0} 实现零时差）、ARINC 615A 数据加载（\code{status_value=2} 成功）以及后续的完整卸载。
+
+\begin{figure}[H]\centering
+  \includegraphics[width=\linewidth,keepaspectratio]{../../sim/wave/png/services.png}
+  \caption[五项功能联合测试全程原始波形]{五项功能联合测试 \code{tb_net_services} 全程 ModelSim 原始波形（0--1095.014~µs）：依次通过用户数据、完整性校验、SNMP、RTC（零时差）与 615A 加载/卸载。}\label{fig:capture-services}
+\end{figure}

@@ -4,10 +4,19 @@
 
 \section{官方综合配置与资源分布}
 
-综合采用 eLinx 3.0.7，顶层模块为 \code{AFDX_top}，目标器件选用 EQ6HL130（CSG484\_H 封装），工作主频约束为单一 125~MHz（周期 8.000~ns），顶层配置多周期管理分频参数 \code{CE_DIV=2}。综合流程顺利完成并导出结构化 VQM 网表，整机资源消耗见表~\ref{tab:synth_res}。
+综合与实现采用 eLinx 3.0.7 官方自动化构建入口 \code{tools/build_1030.py --route --pres 1.30}，顶层模块为 \code{AFDX_top}（\RtlFileCount{} 个 RTL 文件、\DesignUnitCount{} 个设计单元），目标器件选用 EQ6HL130（CSG484\_H 封装），工作主频约束为单一 125~MHz（周期 8.000~ns，时钟不确定度 \ClkUncert~ns），顶层配置多周期管理分频参数 \code{CE_DIV=2}，配合 \code{elinx/tiles_1030.edc} 中 \countsep{\LockedClusters} 个 CLB/M4K 物理簇锁定与 \Pins{} 个顶层引脚固定坐标，端到端耗时 \ParElapsedSec~s 完成综合与布局布线，整机资源消耗见表~\ref{tab:synth_res}（源自 \code{docs/evidence/frag1030_delivery/utilization_placed.rpt}）。
 
-\begin{table}[!htbp]\centering
-\caption{总体综合资源占用（EQ6HL130-CSG484\_H）}\label{tab:synth_res}
+图~\ref{fig:elinx-overview} 展示了 1030 分片工程在 eLinx 3.0.7 界面中完成布局布线后的工程总览面板（Project Summary）及底部时序面板（Timing Summary）。
+
+\begin{figure}[H]\centering
+  \includegraphics[width=0.94\linewidth,keepaspectratio]{../../sim/wave/png/elinx_overview.png}
+  \caption{eLinx 3.0.7 官方工程实现总览面板（分片交付版资源与 STA 签核结果）}\label{fig:elinx-overview}
+\end{figure}
+
+关于统计口径说明如下：eLinx 3.0.7 工程总览面板分母采用芯片纯核心逻辑（不含 I/O 单元等效逻辑），故显示 \Lut{} / 136,000 = 45.79\% LUT、\FF{} / 136,000 = 26.17\% FF、\Clb{} / 13,600 = 75.22\% CLB（以及 \Pins{} / 339 = 50.74\% IO、\Mem{} / 1,200 = 67.83\% Memory）；而命令行文本报告 \code{utilization_placed.rpt}（表~\ref{tab:synth_res}）计入了 160 个 I/O 单元等效资源（分母 136,160 LUT/FF、13,616 CLB，对应 \LutPct\% / \FFPct\% / \ClbPct\%），两者分子实际资源用量完全一致。同时，同界面底部 Timing 面板显示的 \code{Setup Worst Slack 0.029 ns}、\code{Hold Worst Slack 0.604 ns} 与 \code{Failing Endpoints 0 / 96142} 与第~\ref{sec:sta}~节时序签核数据完全吻合。
+
+\begin{table}[H]\centering
+\caption{总体综合与布局后资源占用（EQ6HL130-CSG484\_H）}\label{tab:synth_res}
 \begin{tabularx}{\linewidth}{LRRR}
 \toprule
 \thead{硬件资源类别} & \thead{当前官方用量} & \thead{器件总量} & \thead{资源利用率} \\
@@ -15,7 +24,7 @@
 查找表（LUT） & \Lut & 136160 & \LutPct\% \\
 触发器（FF） & \FF & 136160 & \FFPct\% \\
 可配置逻辑块（CLB） & \Clb & 13616 & \ClbPct\% \\
-片上嵌入式存储块（EBR / Memory） & \Mem & 1200 & \MemPct\% \\
+片上嵌入式存储块（EBR / M4K） & \Mem & 1200 & \MemPct\% \\
 数字信号处理单元（DSP） & 0 & 48 & 0.00\% \\
 锁相环（PLL） & 0 & 8 & 0.00\% \\
 用户 I/O 引脚 & \Pins & 339 & \PinPct\% \\
@@ -23,22 +32,23 @@
 \end{tabularx}
 \end{table}
 
-分模块资源分布见表~\ref{tab:synth_entity}。表中各子实体的详细拆解数据取自 2026-10-15 的 21 模块基线综合归档（32,847 LUT / 13,869 FF / 340 EBR）。当前 24 模块版本在此基础上实施了四项架构优化：
-\begin{enumerate}
-  \item \textbf{接收映射分块存储（Banked Storage）（\code{rx_map} 32 子库）：}将 65,536 项接收映射表拆分为 32 个独立的双口 RAM 子库，消除大扇出译码逻辑；
-  \item \textbf{交付队列 BRAM 化（\code{rx_dq}）：}将 32 项交付描述队列由触发器移入专用嵌入式块 RAM；
-  \item \textbf{异常状态硬件缓存（\code{denial_ram}）：}将高频异常拒绝记录由分布式寄存器转为块 RAM 存储；
-  \item \textbf{管理面 \code{CE_DIV=2} 局部使能树复制：}为 SNMP 与 615A 多周期引擎构建专用的时钟使能驱动树。
-\end{enumerate}
-上述优化使全片资源更新为 \Lut{} LUT、\FF{} FF 及 \Mem{} EBR。由于长连线拥塞缓解，物理逻辑打包（Pack）效率提升，全芯片 CLB 占用由 4,620 降至 \textbf{\Clb}（利用率为 \ClbPct\%），提升了布局布线的布通率与时序收敛裕量。
 
-\begin{table}[!htbp]\centering
-\caption{分模块资源分布（基线层次归档明细）}\label{tab:synth_entity}
+
+协议核心子系统（\code{afdx_es} 不含外围流包装与 16 槽重组池的 21 模块基线：32,846 LUT / 13,869 FF / 340 EBR）各模块资源占比见表~\ref{tab:synth_entity}。在此核心基线之上，完整交付的 \RtlFileCount{} 文件 / \DesignUnitCount{} 设计单元顶层架构包含四部分扩展：
+\begin{enumerate}
+  \item \textbf{顶层 1026 答疑 2B-VLID 流包装与弹性流水（\code{afdx_app_tx/rx}）：}顶层引脚收敛至 \textbf{\Pins{} 个}（占 \PinPct\%），配备双侧 8-Bank（$8\times 4$~KiB）应用载荷缓存（\code{afdx_app_payload_bank}）与发送入口两槽弹性缓冲（\code{afdx_tx_ingress_elastic}）；
+  \item \textbf{1030 答疑 16 槽按序 IPv4 重组引擎（\code{afdx_rx_reassembly*}）：}在双网 IC/RM 去重后端配置 2-Bank$\times$8-Slot 分布式重组控制与 128~KiB 四通道载荷 RAM（单槽上限 \MaxMessageBytes{}~B），使全芯片同步 RAM 实例扩展至 250 个（总有效位 4,174,544~bit，映射为 \textbf{\Mem{} 个 M4K/EBR}，占 \MemPct\%）；
+  \item \textbf{接收映射 32 子库分块与队列 BRAM 化：}将 65,536 项 \code{rx_map} 拆分为 32 个子库$\times$2 写分片，并将 32$\times$73~bit 交付队列（\code{rx_dq}）、16$\times$8~bit 发送回滚表与异常拒绝记录（\code{denial_ram}）全部迁入同步块存储（经 \code{tools/audit_1030_storage.py} 核验零寄存器阵列泄漏）；
+  \item \textbf{管理面 \code{CE_DIV=2} 多周期使能树复制与 \countsep{\LockedClusters} 簇物理锁定：}为 SNMP 与 615A 多周期引擎构建局部使能树，并通过 \code{elinx/tiles_1030.edc} 锁定 CLB/M4K 坐标，在整机 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Clb{} CLB（\ClbPct\%）规模下实现 125~MHz 布局布线时序闭环。
+\end{enumerate}
+
+\begin{table}[H]\centering
+\caption{协议核心子系统（\code{afdx_es} 核心基线）子模块资源构成明细}\label{tab:synth_entity}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.8cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.4cm}>{\raggedleft\arraybackslash}X@{}}
 \toprule
 \thead{模块类型与实体} & \thead{实例数} & \thead{逻辑单元} & \thead{触发器（FF）} & \thead{存储有效位数} \\
 \midrule
-\code{AFDX_top}（顶层） & 1 & 32846 & 13869 & 2421632 \\
+\code{afdx_es}（21 模块内核基线合计） & 1 & 32846 & 13869 & 2421632 \\
 \code{afdx_615a} & 1 & 7171 & 1358 & 102400 \\
 \code{afdx_cfg} & 1 & 1954 & 1076 & 0 \\
 \code{afdx_crc32_d8} & 4 & 90 & 0 & 0 \\
@@ -67,7 +77,7 @@
 
 在相同器件 EQ6HL130 下，将自研流式千兆 MAC 与 eLinx 官方 IP 生成器导出的 TripleSpeedEthernet IP 进行单口资源对比（表~\ref{tab:test-mac-res}）。自研 MAC 具备启动发送延迟低（0 拍）、不占块 RAM 的优势，单口 LUT 和 FF 仅为通用 IP 的 39.7\% 和 20.3\%。
 
-\begin{table}[!htbp]\centering
+\begin{table}[H]\centering
 \caption{MAC 单口资源对比}\label{tab:test-mac-res}
 \begin{tabularx}{\linewidth}{LRR}
 \toprule
@@ -83,79 +93,72 @@ CLB 占用 & 69 & 209 \\
 
 \section{布局布线后全量静态时序分析（Post-Route STA）}\label{sec:sta}
 
-为验证时钟树与实际布线延迟下的建立与保持时间，采用 eLinx 官方实现脚本 \code{elinx/impl.ps1}（策略组合 \code{S2d + PRES1.50}，无单元物理坐标约束）执行布局布线，并基于导出的物理时序数据库完成静态时序签核（最终签核证据归档于 \code{docs/evidence/t45_timing.json}，历史时序优化收敛过程记录于 \code{post_route_timing_campaign.md}）。
+为验证时钟树与实际物理布线延迟下的建立与保持时间，采用官方构建流程 \code{tools/build_1030.py --route --pres 1.30} 结合 \code{elinx/tiles_1030.edc}（\countsep{\LockedClusters} 个 CLB/M4K 锁定簇，0 缺失、0 偏移）完成布局布线，全芯片 64,939 条逻辑网络 100\% 布通且布线错误为 0（\code{route_status.rpt}），并基于物理时序数据库（\code{AFDX_EndSystem.tan.pb}）在显式计入 \textbf{\ClkUncert~ns（\ClkUncertPs~ps）时钟不确定度}下完成静态时序签核（证据归档于 \code{docs/evidence/frag1030_delivery/timing.json}、\code{slack.rpt} 及 \code{docs/evidence/t77_rtl_compat/v2_route_R1.json}）。
 
 \subsection{时序签核与多周期约束审计}
 
 静态时序签核全面对比了综合阶段未布线估算模型与布局布线后实测静态时序（表~\ref{tab:sta_summary}）：
 \begin{itemize}
-  \item \textbf{8.000~ns 单周期约束组（主时钟 \code{clk}）：}覆盖全芯片数据通路共 153,342 条路径。布局布线后实测最差建立时间裕量（Worst Setup Slack）为 \textbf{+\RoutedSetup~ns}（数据到达时间 7.775~ns，要求到达时间 7.788~ns），等效最高工作频率达到 \textbf{\RoutedFmax~MHz}，满足 125~MHz 目标工作频率。
-  \item \textbf{16.000~ns 多周期约束组（\code{CE_DIV=2}）：}覆盖 SNMP 引擎（\code{AFDX_top|snmp_u|eng_u|*}）与 615A 引擎（\code{AFDX_top|a615_u|eng_u|*}）共 50,296 条路径。实测最差建立裕量为 \textbf{+\MulticycleSetup~ns}（数据到达 14.847~ns，要求 15.787~ns），时序裕量充足。
-  \item \textbf{保持时间分析（Hold Time）：}在覆盖全设计全部 203,638 条同沿路径的分析中，最差保持裕量为 \textbf{+\RoutedHold~ns}。布线工具通过自动插入缓冲器与连线延迟，消除了综合阶段零连线模型下因时钟偏斜估算产生的 $-\Hold$~ns 名义负裕量。
-  \item \textbf{违例端点数：}在全芯片全部 45,745 个同步终点中，建立时间与保持时间违例端点数均为 \textbf{0 / 45,745}。
-  \item \textbf{多周期使能审计：}通过独立时序审计脚本 \code{tools/check_multicycle.py}，对被测设计中全部 2,755 个多周期引擎寄存器开展使能引脚与时钟连线结构审计，确认非法使能路径 0 条、漏约束路径 0 条。
+  \item \textbf{8.000~ns 单周期约束组（主时钟 \code{clk}）：}覆盖全芯片主数据通路共 269,131 条单周期建立路径。扣除 \ClkUncert~ns 建立不确定度后，布局布线实测最差净建立时间裕量（Worst Setup Slack）为 \textbf{+\RoutedSetup~ns}（+29~ps；未扣不确定度的原始裕量为 +\RoutedSetupRaw~ns，路径总延迟 7.596~ns），等效净最高工作频率达 \textbf{\RoutedFmax~MHz}（原始 \RoutedFmaxRaw~MHz），满足 125~MHz 目标工作频率。
+  \item \textbf{16.000~ns 多周期约束组（\code{CE_DIV=2}）：}共配置 \MulticycleRules{} 条多周期约束规则，覆盖 SNMP 与 615A 多周期引擎共 \countsep{\MulticycleRegs} 个寄存器、50,050 条建立路径。布局布线实测最差建立裕量为 \textbf{+\MulticycleSetup~ns}，裕量充裕。
+  \item \textbf{保持时间分析（Hold Time）：}综合阶段最差保持裕量为 +\Hold~ns（0 违例）；布局布线后在覆盖全设计 319,181 条同沿保持路径的分析中，最差保持裕量提升至 \textbf{+\RoutedHold~ns}（+604~ps）。
+  \item \textbf{违例端点数：}综合阶段 \countsep{\SynthEndpoints} 个时序端点建立/保持违例均为 0；布局布线后在全芯片全部 \textbf{\countsep{\RoutedEndpoints} 个同步时序终点}中，建立时间与保持时间违例端点数均为 \textbf{0 / \countsep{\RoutedEndpoints}}。
+  \item \textbf{多周期使能与存储审计：}通过独立审计脚本 \code{tools/check_multicycle.py} 对全部 \countsep{\MulticycleRegs} 个多周期寄存器开展使能引脚与时钟结构审计，确认非法使能路径 0 条、漏约束路径 0 条；通过 \code{tools/audit_1030_storage.py} 验证全部 250 个同步存储器实例均准确映射至 M4K 硬件块。
 \end{itemize}
 
-\begin{table}[!htbp]\centering
-\caption{综合估算与布局布线后全量静态时序（STA）结果对比}\label{tab:sta_summary}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedleft\arraybackslash}p{3.2cm}>{\raggedleft\arraybackslash}p{3.2cm}L@{}}
+\begin{table}[H]\centering
+\caption{综合估算与布局布线后全量静态时序（STA）结果对比（含 \ClkUncert~ns 时钟不确定度）}\label{tab:sta_summary}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedleft\arraybackslash}p{3.1cm}>{\raggedleft\arraybackslash}p{3.2cm}L@{}}
 \toprule
 \thead{时序分析指标} & \thead{综合阶段（未布线估算）} & \thead{布局布线后实测（签核）} & \thead{工程结论} \\
 \midrule
-单周期最差建立裕量 (Setup) & +\Setup~ns & \textbf{+\RoutedSetup~ns} & 满足 8.000~ns 周期约束 \\
+单周期最差净建立裕量 (Setup) & +\Setup~ns & \textbf{+\RoutedSetup~ns} & 满足 8.000~ns 约束（原始 +\RoutedSetupRaw~ns） \\
 多周期最差建立裕量 (\code{CE_DIV=2}) & --- & \textbf{+\MulticycleSetup~ns} & 满足 16.000~ns 周期约束 \\
-最差保持裕量 (Hold) & $-\Hold$~ns & \textbf{+\RoutedHold~ns} & 布局布线插入延迟后完全闭合 \\
-等效最高工作频率 ($F_\text{max}$) & \Fmax~MHz & \textbf{\RoutedFmax~MHz} & 高于 125~MHz 目标工作主频 \\
-建立违例终点数 (Setup Failed) & 0 / 44,216 & \textbf{0 / 45,745} & 布局布线后 0 建立违例 \\
-保持违例终点数 (Hold Failed) & 538 / 44,216 & \textbf{0 / 45,745} & 布局布线物理优化后全部消除 \\
-分析覆盖终点总数 (Endpoints) & 44,216 个 & 45,745 个 & 覆盖全芯片所有同步时序终点 \\
+最差保持裕量 (Hold) & +\Hold~ns & \textbf{+\RoutedHold~ns} & 全路径保持时间完全闭合 \\
+等效净最高工作频率 ($F_\text{max}$) & \Fmax~MHz & \textbf{\RoutedFmax~MHz} & 高于 125~MHz 主频（原始 \RoutedFmaxRaw~MHz） \\
+建立违例终点数 (Setup Failed) & 0 / \countsep{\SynthEndpoints} & \textbf{0 / \countsep{\RoutedEndpoints}} & 综合与布线后均 0 建立违例 \\
+保持违例终点数 (Hold Failed) & 0 / \countsep{\SynthEndpoints} & \textbf{0 / \countsep{\RoutedEndpoints}} & 综合与布线后均 0 保持违例 \\
+分析覆盖终点总数 (Endpoints) & \countsep{\SynthEndpoints} 个 & \countsep{\RoutedEndpoints} 个 & 覆盖全芯片所有同步时序终点 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\subsection{布局布线后最差时序路径分析}
+\subsection{关键最差时序路径分析}
 
-表~\ref{tab:crit_paths} 列出了 8.000~ns 单周期约束组中布局布线实测的前 10 条最差建立时间路径。
+表~\ref{tab:crit_paths} 列出了综合阶段与布局布线后实测签核数据库中的代表性最差建立时间路径及多周期约束边界路径（源自 \code{v2_route_R1.json} 与 \code{slack.rpt}）。
 
-\begin{table}[!htbp]\centering
-\caption{布局布线后前 10 条最差建立时间路径（8.000~ns 单周期约束组）}\label{tab:crit_paths}
+\begin{table}[H]\centering
+\caption{综合与布局布线后关键建立时间路径明细}\label{tab:crit_paths}
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{8.2cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{7.8cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}X@{}}
 \toprule
-\thead{路径起点 $\to$ 终点} & \thead{逻辑级} & \thead{逻辑 (ns)} & \thead{连线 (ns)} & \thead{裕量 (ns)} \\
+\thead{阶段与路径起点 $\to$ 终点} & \thead{逻辑级} & \thead{逻辑 (ns)} & \thead{连线 (ns)} & \thead{净裕量 (ns)} \\
 \midrule
-\code{\\tx_core|init_done~2_I|ff/Q} $\to$ \code{\\tx_core|cfg_write~I|ff/D} & 2 & 1.132 & 6.780 & \textbf{+0.013} \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[307]~I|ff/ena} & 4 & 1.760 & 6.036 & +0.034 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[292]~I|ff/ena} & 4 & 1.760 & 6.036 & +0.034 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[299]~I|ff/ena} & 4 & 1.760 & 6.036 & +0.034 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[300]~I|ff/ena} & 4 & 1.760 & 6.036 & +0.034 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[308]~I|ff/ena} & 4 & 1.760 & 6.036 & +0.034 \\
-\code{\\rx_core|parse_b|desc_data[93]~I|ff/Q} $\to$ \code{\\rx_core|map_bank_oh[30]~I|ff/D} & 4 & 1.863 & 6.023 & +0.039 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[306]~I|ff/ena} & 4 & 1.760 & 6.016 & +0.054 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[305]~I|ff/ena} & 4 & 1.760 & 6.016 & +0.054 \\
-\code{\\tx_core|builder|header_index[0]~I|ff/Q} $\to$ \code{\\tx_core|builder|header[290]~I|ff/ena} & 4 & 1.760 & 6.016 & +0.054 \\
+\textbf{[布线后 8~ns 最差]} \code{es|tx_core|engine|candidate/Q} $\to$ \code{es|cfg_regs|receive_bus[7].transmit_ack_q/D} & 3 & 1.423 & 6.173 & \textbf{+\RoutedSetup} \\
+\textbf{[综合未布线 8~ns 最差]} \code{...reassembly...ram_block1a2~I|port_b_address_dff[0]/Q} $\to$ \code{...lanes[0].storage|read_result[0]~I|ff/D} & 2 & 3.108 & 0.000 & +\Setup \\
+\textbf{[布线后 16~ns 多周期最差]} \code{snmp_u / a615_u}（\code{CE_DIV=2}，50,050 条路径） & --- & --- & --- & \textbf{+\MulticycleSetup} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-分析表明：单周期约束组的最差路径位于发送核心初始化状态向配置写入使能控制的跨逻辑块长连线，由于连线延迟占比达到 85.7\%（6.780~ns），在 \code{PRES1.50} 扩张布线因子优化下保留了 +0.013~ns 的建立时间裕量（13~ps），成功满足 8.000~ns 单周期硬约束；紧随其后的 8 条路径集中于组帧器内部协议报头寄存器写使能广播树，裕量均在 +0.034~ns 至 +0.054~ns 之间。而在 16.000~ns 多周期约束组中，最差建立路径为 \code{AFDX_top|a615_u|ce_div_rep_reg[8]} 到 \code{eng_u|s_tot_bytes_reg[28]}，裕量为 +0.940~ns，表明多周期使能树复制策略有效缓解了复杂协议引擎的时序压力。
+跨簇布线延迟 6.173~ns，合计 7.596~ns）。在 PRES 1.30 拥塞消解与 \countsep{\LockedClusters} 个物理簇锁定下，该路径扣除 \ClkUncert~ns 时钟不确定度后仍保有 +\RoutedSetup~ns（+29~ps，原始 +\RoutedSetupRaw~ns）的正裕量；同时，16 槽重组分槽 M4K 读出流水寄存器（综合阶段最差路径，逻辑级仅 2 级）与 \code{CE_DIV=2} 多周期服务引擎路径（最差 +\MulticycleSetup~ns）均未成为布线后时序瓶颈，证明分库流水化与局部使能树复制策略有效收敛了全芯片关键路径。
 
 \section{综合后门级网表后仿真验证}\label{sec:net_sim}
 
-综合后功能仿真采用官方导出的结构化 VQM 网表，直接调用中科亿海微原厂单元仿真库（\code{stratix_atoms.v}）。针对 VQM 中原语悬空未绑端口，仿真适配脚本 \code{tools/adapt_gui_vqm.py} 按原厂模型规范显式补齐未用数据输入电平与进位链使能参数，网表内部既有信号连接、参数及 LUT 掩码值 100\% 原样保留。
+综合后功能仿真采用官方导出的结构化 VQM 网表，直接调用中科亿海微原厂单元仿真库（\code{stratix_atoms.v}、\code{stratixiv_atoms.v}、\code{altera_mf.v}、\code{220model.v}）。针对 VQM 中原语悬空未绑端口，仿真适配脚本 \code{tools/adapt_gui_vqm.py} 按原厂模型规范显式补齐未用数据输入电平与进位链使能参数，网表内部全部功能单元连接、参数及 LUT 掩码值 100\% 原样保留。
 
-测试项包含 NET-01 与 NET-02（表~\ref{tab:netlist_sim}）。
+门级网表签核共涵盖 NET-01 至 NET-04 四类测试窗口（表~\ref{tab:netlist_sim}，证据归档于 \code{docs/evidence/frag1030_delivery/t75_official.json}、\code{fragment_prefix.json} 与 \code{vqm_windows.json}）。
 
-\begin{table}[!htbp]\centering
-\caption{综合后门级网表仿真验证结果}\label{tab:netlist_sim}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{4.2cm}L>{\raggedleft\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{1.1cm}@{}}
-\toprule
-\thead{编号} & \thead{网表来源与激励} & \thead{判定准则} & \thead{检查数/错误数} & \thead{结果} \\
-\midrule
-NET-01 & 界面综合导出 VQM 网表；激励同 SYS-09（\code{tb_elinx}） & 双端双网通信自检通过；仿真日志 0 Error、0 Fatal、0 Warning & \ElinxChecks/0\newline 平台自检 & 通过 \\
-NET-02 & 官方综合 VQM 网表；激励同 SVC-08（\code{tb_net_services}） & 自检与独立核对 0 错误；7 份外部端口记录与 RTL 逐拍逐字节相同 & \SvcChecks/0\newline 65/0 & 通过 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{3.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-8.70cm-8\tabcolsep\relax}>{\raggedleft\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{1.2cm}@{}}
+\caption{综合后门级网表仿真验证结果}\label{tab:netlist_sim}\\
+\longtablehead{5}{\thead{编号} & \thead{网表激励与仿真耗时} & \thead{判定准则与覆盖边界} & \thead{检查数/错误数} & \thead{结果}}
+NET-01 & \code{tb_elinx}（SYS-09），耗时 \NetElinxTime~s & 双端双网经顶层 2B-VLID 流互发 1/64/1471~B 消息并去重交付（仿真至 2557.777~µs） & \ElinxChecks/0\newline 平台自检 & 通过 \\
+NET-02 & \code{tb_net_services}（SVC-08），耗时 \NetCliTime~s & 五功能联合自检与独立核对 0 错误；7 份外部端口记录与 RTL 逐拍逐字节 SHA-256 完全一致 & \SvcChecks/0\newline 65/0 & 通过 \\
+NET-03 & \code{tb_frag1030_net}（分片重组窗口），耗时 \NetFragTime~s & 覆盖前 199,578 拍窗口（含复位清零及 \code{VL 0x0102} 1472~B 两分片双网发送与按序重组交付），5 份文件共 32 条记录与 RTL SHA-256 完全一致 & 32/0 记录\newline 5/0 文件 & 通过 \\
+NET-04 & \code{tb_t76_load}（TX-VQM \NetTSixTxTime~s / RX-VQM \NetTSixRxTime~s） & 1026 顶层流包装 81~VL $+$ 1472~B 两分片混合窗口（仿真至 2736.792~µs），两侧各 11 份记录与纯 RTL 逐字节相同，公开端口 X/Z 为 0 & 161/0（TX）\newline 161/0（RX） & 通过 \\
+\end{longtable}
+\endgroup
 
-NET-02（官方综合 VQM 命令行回归）在 ModelSim 下历时 \textbf{\NetCliTime~秒}（8793.406~s）完成全流程网表仿真。在双向用户消息收发、序号跳变异常注入、SNMP 管理查询、RTC 时钟同步以及 16 字节文件加载并卸载的联合激励下，网表通过了全部 \SvcChecks{} 次自检与 65 项独立参考比对，且外部端口记录（含双端应用输入输出、四条单向 GMII 线路字节流及数据加载文件二进制内容）与同激励下的 RTL 仿真记录在时钟周期拍号与字节流上完全一致，验证了门级网表与 RTL 的周期级行为一致性。
+综合四组门级后仿真结果可见：从双端基础通信（NET-01）、五项核心功能联合运行（NET-02，7 份外部端口追踪逐字节一致），到 1030 两分片发送与按序重组窗口（NET-03，5 份记录一致）以及 1026 顶层 2B-VLID 流包装收发双向独立替换窗口（NET-04，共 22 份记录 SHA-256 100\% 吻合），综合导出的 VQM 门级网表在时钟周期拍号、公开端口信号无 X/Z 态及输出字节流上均与 RTL 参考严格一致。

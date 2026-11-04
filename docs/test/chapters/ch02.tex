@@ -1,26 +1,5 @@
 \chapter{验证架构与双重校验机制}\label{ch:env}
 
-\section{测试工具与运行条件}
-
-测试环境与验证工具配置见表~\ref{tab:tools}。测试完全基于官方支持的工具链展开，涵盖 RTL 代码级回归、代码覆盖率分析、综合与布局布线后全量静态时序分析以及门级网表后仿真。
-
-\begin{table}[!htbp]\centering
-\caption{测试工具与运行条件}\label{tab:tools}
-\begin{tabularx}{\linewidth}{@{}lL@{}}
-\toprule
-\thead{项目} & \thead{配置内容与运行约束} \\
-\midrule
-操作系统 & Windows 10/11 64 位，Windows PowerShell 5.1 \\
-FPGA 综合与实现工具 & eLinx 3.0.7（集成逻辑综合、\code{impl.ps1} 布局布线、静态时序分析与网表导出） \\
-仿真与覆盖率工具 & ModelSim SE-64 2020.4（支持 39 项 RTL 自动化回归、\code{sbceft} 插桩与 VQM 门级网表后仿真） \\
-独立参考模型 & Python 3.10 及以上（依赖 \code{psutil}、\code{pyasn1==0.4.8}），脱离 RTL 独立执行协议解码与比对 \\
-工作时钟与接口 & 单一 125~MHz 主时钟（周期 8.000~ns），A、B 两路标准八位 GMII，每拍传输一字节（物理线速 1~Gbps） \\
-双端系统级互连 & 两个完整端系统（ES1、ES2）共用时钟基准，支持配置四条单向链路物理延迟与故障注入 \\
-被测模块规模 & 全系统共 \textbf{24 个 Verilog-2001 模块}，共执行 \textbf{39 项自动化测试平台} \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
 \section{双端双网测试平台架构}
 
 系统级测试平台（图~\ref{fig:platform}）例化两个功能对等的完整端系统实例（ES1 与 ES2），通过 A、B 两网共四条独立的单向 GMII 链路实现全双工交叉互连。
@@ -33,6 +12,27 @@ FPGA 综合与实现工具 & eLinx 3.0.7（集成逻辑综合、\code{impl.ps1} 
   \item \textbf{链路故障注入模型（\code{link_model}）：}位于 GMII 物理接口之间，支持按单帧粒度独立施加固定或可变传输延迟（0--257 拍）、整帧丢弃、指定字节异或翻转（构造 FCS、IP 校验和或协议头错误）以及同网即时/延后重放。
   \item \textbf{高层协议服务端点（\code{snmp_test_endpoint}、\code{load_test_endpoint}）：}独立模拟外部网络管理站和数据加载机，通过 AFDX 虚拟链路通道与被测端系统收发 SNMP v1/v2c 报文、ARINC 615A TFTP 协议块及 SNTP 时钟同步报文。
 \end{itemize}
+
+\section{测试工具与运行条件}
+
+测试环境与验证工具配置见表~\ref{tab:tools}。测试完全基于官方支持的工具链展开，涵盖 RTL 代码级回归、代码覆盖率分析、综合与布局布线后全量静态时序分析以及门级网表后仿真。
+
+\begin{table}[H]\centering
+\caption{测试工具与运行条件}\label{tab:tools}
+\begin{tabularx}{\linewidth}{@{}lL@{}}
+\toprule
+\thead{项目} & \thead{配置内容与运行约束} \\
+\midrule
+操作系统 & Windows 10/11 64 位，Windows PowerShell 5.1 \\
+FPGA 综合与实现工具 & eLinx 3.0.7（\code{tools/build_1030.py} 驱动逻辑综合、\code{PRES 1.30 + elinx/tiles_1030.edc} 布局布线、全量静态时序分析与 VQM 网表导出） \\
+仿真与覆盖率工具 & ModelSim SE-64 2020.4（支持 \RegCount{} 项 RTL 自动化回归、\CovUcdbCount{} 份 UCDB \code{sbceft} 插桩合并与 4 项 VQM 门级网表后仿真；通过 \code{MODEL_TECH} 宏兼容 Verilog-2001 局部声明语法） \\
+独立参考模型 & Python 3.10 及以上（依赖 \code{psutil}、\code{pyasn1==0.4.8}；含 \code{tools/*_ref.py} 与 \code{tools/fragment_ref.py} 分片/重组参考模型），脱离 RTL 独立执行协议解码与比对 \\
+工作时钟与接口 & 单一 125~MHz 主时钟（周期 8.000~ns），顶层 1026 答疑 2B-VLID 应用流接口 + A、B 两路标准八位 GMII（共 \Pins{} 引脚，物理线速 1~Gbps） \\
+双端系统级互连 & 两个完整端系统（ES1、ES2）共用时钟基准，支持配置四条单向链路物理延迟与故障注入 \\
+被测模块规模 & 全系统共 \textbf{\RtlFileCount{} 个 Verilog-2001 源文件（\DesignUnitCount{} 个设计单元）}，共执行 \textbf{\RegCount{} 项 RTL 回归 + 顶层 63-VL 满载套件 + 4 项 VQM 后仿真} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{R95/R97 时间戳探针与时延抖动测量原理}\label{sec:probe_theory}
 
@@ -56,36 +56,36 @@ FPGA 综合与实现工具 & eLinx 3.0.7（集成逻辑综合、\code{impl.ps1} 
     \end{equation}
     该指标反映同一通信信道由于调度状态机交错、短帧填充及接收流水阶段切换带来的确定性时延波动，严禁跨不同 VL 极值相减。
   \item \textbf{发送间隔偏差（\code{tx_interval_jitter}）：}对定周期业务，统计相邻发送起点间隔偏离 BAG 的最大差值：$J_\text{tx} = \max_i |(S_{i} - S_{i-1}) - \text{BAG}|$。稳态下无争用时该偏差严格为 0。
+  \item \textbf{顶层 \code{AFDX_top} 2B-VLID 流公开测点与分片消息口径（R119 / R139）：}在顶层流式接口（63-VL 满载套件与 \code{tb_t76_load}）上，公开测点以发送消息输入 2 字节大端 VLID 首字节握手（\code{tx_valid && tx_ready} 首拍）为起点 $M_\text{sop}$，以接收端输出末字节有效（\code{rx_valid} 末拍）为终点 $D_\text{eop}$，端到端全消息时延为 $L_\text{e2e} = (D_\text{eop} - M_\text{sop})\times 8\text{ ns}$。该口径包含发送侧整包流化写入与接收侧流化输出耗时；对于超过 1471~B 的分片长消息，还包含跨多个 BAG 周期的按片调度传输及接收端按序重组耗时。
 \end{itemize}
 
 \section{独立参考模型（Golden Model）与双重校验机制}\label{sec:criteria}
 
 测试体系遵循“在线硬件断言 + 离线独立参考模型（Golden Model） + 网表逐拍对照”的三重校验机制（图~\ref{fig:criteria}）：
+\begin{figure}[H]\centering
+\includegraphics[width=0.82\linewidth,keepaspectratio]{fig/pdf/t02_criteria.pdf}
+\caption[测试通过判据与多门禁验收流程]{测试通过判据与多门禁验收流程。阶段 1 运行时自检必须 0 错误；阶段 2 独立参考模型核对必须 0 差异；阶段 3 网表仿真必须与 RTL 行为和端口记录一致}\label{fig:criteria}
+\end{figure}
+
 \begin{enumerate}
   \item \textbf{平台运行时自检（Stage 1）：}测试平台例化硬件监视器，实时检查 GMII 帧间隔（IFG $\ge 12$ 拍）、FCS 校验、序列号连续性、去重交付与寄存器读写时序。测试结束时控制台必须输出 \code{[RESULT] PASS errors=0}。
-  \item \textbf{Python 参考模型（Golden Model）比对（Stage 2）：}参考模型（Golden Reference Model）完全独立于 Verilog RTL 实现。它读取测试平台导出的时钟级端口追踪日志，按协议规范重构完整的 IP/UDP 校验和、ARINC 664 冗余窗口与数据加载文件，逐字节比对应用交付数据，确认无丢包、无多余交付与无数据损坏。
-  \item \textbf{RTL / 网表逐字节一致性签核（Stage 3）：}对于综合后门级网表仿真（NET-02），将网表在完全相同外部激励下的 7 份端口记录与 RTL 记录执行包含拍号的二进制逐字节比对，确保门级实现未破坏 RTL 的周期级行为。
+  \item \textbf{Python 参考模型（Golden Model）比对（Stage 2）：}参考模型（Golden Reference Model，含 \code{fragment_ref.py} 分片与重组模型）完全独立于 Verilog RTL 实现。它读取测试平台导出的时钟级端口追踪日志，按协议规范重构完整的 IPv4 分片头、IP/UDP 校验和、ARINC 664 冗余窗口、16 槽按序重组状态机与数据加载文件，逐字节比对应用交付数据，确认无丢包、无多余交付与无数据损坏。
+  \item \textbf{RTL / 网表一致性签核（Stage 3）：}对于综合后 VQM 门级网表仿真（NET-01 至 NET-04），对五功能联合测试（NET-02）将 7 份外部端口记录与 RTL 记录执行含拍号的二进制逐字节比对；对 eLinx 双端仿真（NET-01）、1030 分片重组窗口（NET-03，199,578 拍）与 1026 收发流包装窗口（NET-04）执行在线硬件断言与参考记录一致性核对，确认门级实现与 RTL 周期级行为一致。
 \end{enumerate}
-
-\begin{figure}[!htbp]\centering
-\includegraphics[width=0.82\linewidth,keepaspectratio]{fig/pdf/t02_criteria.pdf}
-\caption[测试通过判据与多门禁验收流程]{测试通过判据与多门禁验收流程。阶段 1 运行时自检必须 0 错误；阶段 2 独立参考模型核对必须 0 差异；阶段 3 网表仿真必须与 RTL 端口记录逐字节完全一致}\label{fig:criteria}
-\end{figure}
 
 \section{测试运行入口与执行方式}\label{sec:entries}
 
-工程提供了表~\ref{tab:entries} 所示的三种运行方式，复现命令详见附录~\ref{app:repro}：
+工程提供了表~\ref{tab:entries} 所示的五类标准运行入口，复现命令详见附录~\ref{app:repro}：
 
-\begin{table}[!htbp]\centering
-\caption{测试运行入口与执行方式}\label{tab:entries}
+\begingroup
 \setlength{\tabcolsep}{5pt}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedleft\arraybackslash}X@{}}
-\toprule
-\thead{方式} & \thead{内容与范围} & \thead{通过判据} & \thead{实测耗时} \\
-\midrule
-eLinx 界面仿真 & 打开 \code{AFDX_EndSystem.epr}，运行 \code{tb_elinx}：双端双网互发 1、64、1471 字节消息并核对去重 & \code{PASS checks=9238 errors=0} & 约 3~min \\
-ModelSim 评审入口 & 执行 \code{do sim/run_judge.do}，批处理运行五功能、容量、SNMP、突发、RTC、性能及变长 8 项用例 & \code{JUDGE ENTRY PASS cases=8 warnings=0} & 8787.198~s \\
-完整 RTL 回归 & 执行 \code{sim/regress.ps1}，运行全部 \RegCount{} 项测试平台并自动调用 Python 参考模型核对 & 全部 \RegCount{} 项均为 PASS，\countsep{\RegChecks} 自检通过 & 约 87~min \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{5.9cm}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-12.90cm-6\tabcolsep\relax}@{}}
+\caption{测试运行入口与执行方式}\label{tab:entries}\\
+\longtablehead{4}{\thead{方式} & \thead{内容与范围} & \thead{通过判据} & \thead{实测耗时}}
+eLinx 界面仿真 & 打开 \code{AFDX_EndSystem.epr}，运行 \code{tb_elinx}：双端双网经顶层 2B-VLID 流互发 1、64、1471~B 消息并核对去重 & \texttt{PASS checks=\ElinxChecks{} errors=0} & 2~min 18~s \\
+顶层包装与分片专项 & 执行 \code{do sim/run_app.do} 与 \code{sim/run_fragmentation.ps1}：覆盖 \code{tb_top_wrap}、16 项 \code{tb_t65_*}、重组引擎单元及端到端分片 & 全部用例 \code{PASS errors=0}，\code{fragment_ref.py} 0 差异 & 约 4~min \\
+ModelSim 评审批处理 & 执行 \code{do sim/run_judge.do}：无需 Python，连续运行五功能、容量、SNMP、77/81 突发、RTC、定长与变长性能 8 项用例 & 8/8 PASS，1,949,512,989 自检 0 错误 & 8322.7~s（约 2.3~h） \\
+快速 RTL 回归 & 执行 \code{powershell -File sim/regress.ps1}：默认批处理 \RegFastCount{} 项快速回归并调用 Python 参考模型核对 & \RegFastCount{} 项 PASS，\countsep{\RegFastChecks} 自检通过 & 813.6~s \\
+全量签核与 63-VL & 快速回归 + \code{tb_sys_load}、\code{tb_sys_rtc}、\code{tb_sys_perf}、\code{tb_sys_perf_var}（共 \RegCount{} 项）及 \code{tb_t76_load}（63-VL 满载套件） & \RegCount{} 项及 63-VL 工况全部 PASS，\countsep{\RegChecks} 自检通过 & 约 3.5~h \\
+\end{longtable}
+\endgroup

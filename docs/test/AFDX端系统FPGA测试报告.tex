@@ -31,6 +31,7 @@
 \usepackage{etoolbox}
 \usepackage{needspace}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -41,7 +42,7 @@
 \usepackage[font=small,labelsep=quad,skip=6pt]{caption}
 \usepackage[hidelinks,bookmarksnumbered]{hyperref}
 
-\linespread{1.2}
+\linespread{1.16}
 \setlength{\parskip}{2pt}
 \emergencystretch=3em
 \raggedbottom
@@ -55,7 +56,7 @@
   \setlength{\abovedisplayshortskip}{3pt plus 2pt}%
   \setlength{\belowdisplayshortskip}{6pt plus 2pt minus 2pt}}
 % 表格统一用 small、紧凑行距；正文和原尺寸插图不变。
-\newcommand{\tablearraystretch}{1.24}
+\newcommand{\tablearraystretch}{1.16}
 \newcommand{\tablestyle}{\small\linespread{1.04}\selectfont
   \renewcommand{\arraystretch}{\tablearraystretch}%
   \setlength{\tabcolsep}{5pt}%
@@ -160,25 +161,25 @@
   \longtablehead{5}{\thead{编号} & \thead{配置与激励} & \thead{判据} & \thead{检查数/\newline 错误数} & \thead{结果}}}{\endlongtable}
 % 插图：#1 文件名（fig/pdf/ 下），#2 宽度系数，#3 图题，#4 标签
 \newcommand{\fig}[4]{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics[width=#2\linewidth]{fig/pdf/#1.pdf}
   \caption{#3}\label{#4}
   \end{figure}}
 % 按印刷尺寸绘制的图：适配版心宽度，保证排版整洁对称
 \NewDocumentCommand{\figN}{o m m m}{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics[width=0.96\linewidth,keepaspectratio]{fig/pdf/#2.pdf}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
   \end{figure}}
 % 与设计报告相同的 450 pt 原尺寸波形，保持信号与总线字号一致。
 \NewDocumentCommand{\figTiming}{o m m m}{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics{fig/pdf/#2.pdf}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
   \end{figure}}
 % ModelSim 原生波形截图：单幅
 \NewDocumentCommand{\figWave}{o m m m}{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics[width=0.96\linewidth]{../../sim/wave/png/#2.png}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
   \end{figure}}
@@ -210,7 +211,7 @@
 \end{tabular}
 \vspace{2cm}
 
-{\zihao{4} 2026 年 10 月\par}
+{\zihao{4} 2026 年 11 月\par}
 \end{titlepage}
 
 \pagenumbering{Roman}
@@ -219,26 +220,27 @@
 % ---------- 摘要 ----------
 \clearpage
 \thispagestyle{plain}
-\vspace*{0.8cm}
+\begingroup\small\linespread{1.06}\selectfont
 \begin{center}
 {\zihao{3}\heiti 摘\quad 要}
 \end{center}
 \vspace{12pt}
 
-本报告针对中科亿海微“基于以太网 MAC 总线实现 AFDX”赛题要求，对基于 EQ6HL130 FPGA 研制的高性能 AFDX 端系统（顶层模块 \code{AFDX_top}）展开全方位仿真验证、代码覆盖率分析、布局布线后静态时序分析（STA）与门级网表后仿真签核。
+本报告针对中科亿海微“基于以太网 MAC 总线实现 AFDX”赛题及官方 1022/1026/1030 答疑要求，对基于 EQ6HL130 FPGA 研制的 AFDX 端系统（顶层模块 \code{AFDX_top}，共 \RtlFileCount{} 个 RTL 源文件、\DesignUnitCount{} 个设计单元）开展仿真验证、代码覆盖率分析、布局布线后静态时序分析（STA）与门级网表后仿真签核。
 
-测试构建了覆盖底层存储原语、收发 MAC、核心引擎、系统级双端互连、高层网络管理与数据加载服务的五级递进验证体系，设计了涵盖常规确定性通信、密集故障注入、队列溢出与跨计时刻度扰动等场景的 \RegCount{} 项自动化回归测试。实测结果表明：
+测试构建了覆盖底层存储原语、收发 MAC、收发与重组核心引擎、顶层 2B-VLID 流包装、系统级双端互连及高层网络管理与数据加载服务的递进验证体系，编排了 \RegCount{} 项 RTL 自动化回归测试（含 \RegFastCount{} 项快速回归、2 项高负载与时钟同步回归及 2 项长时系统性能参考），并配套执行顶层 63-VL 满载规格测试套件与 2 项配置隔离验证。实测结果表明：
 \begin{enumerate}[label=（\arabic*）]
-  \item \textbf{功能与协议一致性：}全面覆盖 ARINC 664 P7 通信、高完整性通信（14 类异常识别分类与双网冗余去重）、SNMP 网络管理（v1/v2c 查询、设置与 Trap 通知）、ARINC 615A 软件数据加载（8~KiB 加载区 RAM 逐字节一致与 MDD 介质定义下载）以及高精度 RTC 时钟同步（空载误差 \RtcIdle{}~ns、带载最大误差 \RtcLoad{}~ns）五项核心功能。\RegCount{} 项回归测试在线自检累计通过 \countsep{\RegChecks} 次、独立 Golden Model 比对通过 \countsep{\RegIndep} 项，本轮测试未检出任何功能错误。
-  \item \textbf{代码覆盖率签核：}在 ModelSim 2020.4 下对全设计 24 个 Verilog RTL 模块启用 \code{sbceft} 全插桩回归，实现语句覆盖率 \CovStmt\%（6981/7083）、分支覆盖率 \CovBranch\%（3844/3985）、条件覆盖率 \CovCond\%、表达式覆盖率 \CovExpr\%、有限状态机（FSM）状态覆盖率 \CovFsmState\%（110/110 个状态全部覆盖）、状态转换覆盖率 \CovFsmTrans\%（138/308）及信号翻转覆盖率 \CovToggle\%。
-  \item \textbf{吞吐率与传输时延：}在 125~MHz 八位 GMII 接口下，77 条定长 VL 双向满载有效载荷吞吐达 \Thru~Mbps（81 条 VL 达 \ThruEightyOne~Mbps），多 VL 混合变长高负载（\code{var_high}）两方向去重有效载荷吞吐率各自均达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps），大幅超越赛题 100~Mbps 指标；定长满载稳态端到端传输时延最大为 \Lat~µs（含 257 拍链路延迟为 26.488~µs），显著优于 1--2~ms 赛题门限；稳态发送间隔抖动为 \Jit~µs，按官方 1022 答疑 R97 口径统计的同 VL 端到端时延极差抖动仅为 \JitSameVl~µs（1 拍，8~ns），变长循环工况同 VL 极差抖动为 \JitVarCycle~µs。
-  \item \textbf{VL 容量与突发承载：}硬件完全支持 128 条发送 VL 与 4096 条接收 VL 的静态配置，77/81 条最长帧同拍突发队列排空时间分别为 \BurstSevSeven~µs 与 \BurstEightOne~µs，突发排空能力满足航电实时约束。
-  \item \textbf{综合、布局布线与门级网表签核：}整机在目标器件 EQ6HL130-CSG484\_H 上综合消耗 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Clb{} CLB（\ClbPct\%）与 \Mem{} EBR（\MemPct\%）。在 eLinx 官方布局布线流程（\code{S2d + PRES1.50}）下，单周期与多周期（\code{CE_DIV=2}）约束全面满足，全芯片 45,745 个时序端点 0 违例，8~ns 建立裕量达 +\RoutedSetup~ns（等效最高工作频率 \RoutedFmax~MHz），保持裕量达 +\RoutedHold~ns。综合后 VQM 门级网表通过五功能联合后仿真，外部端口记录与 RTL 逐拍逐字节完全一致。
+  \item \textbf{功能与协议一致性：}全面覆盖 ARINC 664 P7 通信（含 2 字节大端 VLID 应用流封装与 $1\text{--}\MaxMessageBytes{}$~B 消息 IPv4 分片发送及双网去重后按序重组）、高完整性通信（14 类异常识别分类与双网冗余去重）、SNMP 网络管理（v1/v2c 查询、设置与 Trap 通知）、ARINC 615A 软件数据加载（8~KiB 加载区 RAM 逐字节一致与 MDD 介质定义下载）以及高精度 RTC 时钟同步（空载误差 \RtcIdle{}~ns、评委入口 77~VL 满载误差 8~ns、长时极限包碰撞下最大误差 \RtcLoad{}~ns）五项核心功能。\RegCount{} 项回归测试在线自检累计通过 \countsep{\RegChecks} 次、独立 Golden Model 比对通过 \countsep{\RegIndep} 项，0 错误通过。
+  \item \textbf{代码覆盖率签核：}在 ModelSim 2020.4 下对全设计 \RtlFileCount{} 个 Verilog RTL 文件（\DesignUnitCount{} 个设计单元，合并 \CovUcdbCount{} 份 UCDB）启用 \code{sbceft} 全插桩回归，实现语句覆盖率 \CovStmt\%（\CovStmtCov/\CovStmtTot）、分支覆盖率 \CovBranch\%（\CovBranchCov/\CovBranchTot）、条件覆盖率 \CovCond\%（\CovCondCov/\CovCondTot）、表达式覆盖率 \CovExpr\%（\CovExprCov/\CovExprTot）、有限状态机（FSM）状态覆盖率 \CovFsmState\%（\CovFsmStateCov/\CovFsmStateTot）、状态转换覆盖率 \CovFsmTrans\%（\CovFsmTransCov/\CovFsmTransTot）及信号翻转覆盖率 \CovToggle\%（\CovToggleCov/\CovToggleTot）。
+  \item \textbf{吞吐率与传输时延：}在 125~MHz 八位 GMII 接口下，顶层 \code{AFDX_top} 满载规格为 \textbf{63 条 VL 双向满载}（\code{BAG = 1 ms}，1471~B 载荷），实测单向应用交付有效吞吐达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps，GMII 物理线利用率 \LineUtilSixtyThree\%）。在顶层流式口径下，63~VL 单周期稳态最大时延为 \LatSixtyThreePMax~µs、逐周期同 VL 极差抖动 $\le\JitSixtyThreePer$~µs（1471~B 满载帧仅 0.016~µs），两拍轮换突发（\code{B2}）最大时延为 \LatSixtyThreeBTwo~µs、同 VL 极差抖动为 \JitSixtyThreeBTwo~µs；63~VL 混合单帧与分片长消息（1472/3000/8192~B，累计交付 12,206 条消息）零错误通过。在核心分段口径下，单帧稳态最大时延为 \Lat~µs、同 VL 抖动为 \JitSameVl~µs；超规格压力参考工况下，77/81 条定长 VL 单向有效吞吐达 \Thru{}/\ThruEightyOne~Mbps，多 VL 混合变长高负载（\code{var_high}）单向达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps），满足赛题 $\ge 100$~Mbps 与 $<1\text{--}2$~ms 指标要求。
+  \item \textbf{VL 容量与突发承载：}硬件支持 128 条发送 VL 与 4096 条接收 VL 的静态配置；77/81 条最长帧同拍突发在顶层 2B-VLID 流接口下队列排空时间分别为 \BurstSevSeven~µs 与 \BurstEightOne~µs（内核基线分别为 \BurstSevSevenBase~µs 与 \BurstEightOneBase~µs），满足航电实时约束。
+  \item \textbf{综合、布局布线与门级网表签核：}整机在目标器件 EQ6HL130-CSG484\_H（顶层 \Pins{} 引脚，占 \PinPct\%）上消耗 \Lut{} LUT（\LutPct\%）、\FF{} FF（\FFPct\%）、\Clb{} CLB（\ClbPct\%）与 \Mem{} M4K/EBR（\MemPct\%）。在 \code{tools/build_1030.py --route --pres 1.30} 配合 \countsep{\LockedClusters} 个锁定簇（\code{elinx/tiles_1030.edc}）的官方布局布线流程下，计入 \ClkUncert~ns 时钟不确定度后，全芯片 \countsep{\RoutedEndpoints} 个时序端点 0 违例，8~ns 单周期净建立裕量达 +\RoutedSetup~ns（原始 +\RoutedSetupRaw~ns，等效最高工作频率 \RoutedFmax~MHz），16~ns 多周期（\code{CE_DIV=2}）建立裕量达 +\MulticycleSetup~ns，保持裕量达 +\RoutedHold~ns。综合后 VQM 门级网表通过 4 项后仿真签核（双端基础互发、五功能联合、分片重组窗口及顶层收发流包装窗口），门级输出与 RTL 行为一致。
 \end{enumerate}
 
 \vspace{6pt}
 \noindent{\heiti 关键词：}AFDX 端系统；ARINC 664 P7；FPGA 验证；代码覆盖率；布局布线后时序闭环；门级网表仿真
 
+\endgroup
 \clearpage
 \setcounter{tocdepth}{1}
 \begingroup

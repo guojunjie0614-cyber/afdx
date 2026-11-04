@@ -56,8 +56,8 @@
 <polygon points="358.00,101.00 360.50,106.50 355.50,106.50" fill="#000"/>
 <text x="190.00" y="118.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">enqueue descriptor</text>
 <rect x="209.00" y="134.00" width="106.00" height="27.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
-<text x="262.00" y="146.39" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Header / payload / SN</text>
-<text x="262.00" y="155.45" font-size="7.3" text-anchor="middle" fill="#000000" font-weight="bold">tx_builder</text>
+<text x="262.00" y="146.63" font-size="8.0" text-anchor="middle" fill="#000000" font-weight="bold">Header / payload / SN</text>
+<text x="262.00" y="155.21" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">tx_builder · frag</text>
 <path d="M 262.00 101.00 L 262.00 128.50" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="262.00,134.00 259.50,128.50 264.50,128.50" fill="#008AA6"/>
 <path d="M 390.00 101.00 L 390.00 122.00 L 301.00 122.00 L 301.00 128.50" fill="none" stroke="#000" stroke-width="1.4"/>
@@ -143,10 +143,11 @@
 <text x="385.00" y="215.00" font-size="7.3" text-anchor="middle" fill="#000" font-weight="bold">rx_dq</text>
 <path d="M 301.00 233.00 L 319.50 233.00" fill="none" stroke="#000" stroke-width="1.4"/>
 <polygon points="325.00,233.00 319.50,235.50 319.50,230.50" fill="#000"/>
-<rect x="325.00" y="257.00" width="121.00" height="24.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
-<text x="385.50" y="272.42" font-size="8" text-anchor="middle" fill="#000000" font-weight="bold">Deliver p0…p3 once</text>
-<path d="M 385.00 239.00 L 385.00 251.50" fill="none" stroke="#000" stroke-width="1.4"/>
-<polygon points="385.00,257.00 382.50,251.50 387.50,251.50" fill="#000"/>
+<rect x="325.00" y="256.00" width="121.00" height="26.00" rx="0" fill="#FFFFFF" stroke="#000" stroke-width="1.4"/>
+<text x="385.50" y="268.06" font-size="7.6" text-anchor="middle" fill="#000000" font-weight="bold">Reasm (16) / Deliver</text>
+<text x="385.50" y="276.47" font-size="6.7" text-anchor="middle" fill="#000000" font-weight="bold">deliver p0…p3 once</text>
+<path d="M 385.00 239.00 L 385.00 250.50" fill="none" stroke="#000" stroke-width="1.4"/>
+<polygon points="385.00,256.00 382.50,250.50 387.50,250.50" fill="#000"/>
 <path d="M 78.00 261.00 L 85.00 261.00 L 85.00 289.00 L 313.00 289.00 L 313.00 269.00 L 319.50 269.00" fill="none" stroke="#008AA6" stroke-width="1.6"/>
 <polygon points="325.00,269.00 319.50,271.50 319.50,266.50" fill="#008AA6"/>
 <text x="252.00" y="285.00" font-size="6.7" text-anchor="middle" fill="#000" font-weight="bold">descriptor selects ring</text>

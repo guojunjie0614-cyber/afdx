@@ -2,95 +2,109 @@
 
 \section{统一的设计方法与架构收敛}\label{sec:designmethod}
 
-本设计以纯 RTL 将 AFDX 线速收发、完整性检查、冗余管理以及 RTC、SNMP、615A 三项高层服务收敛到同一套硬件架构中，核心工程方法归纳如下：
+本设计以纯 RTL 将带 2 字节 VLID 前缀的应用流包装、AFDX 线速收发、$1\text{--}\MaxMessageBytes$~B IPv4 分片与 \ReasmContexts{} 路并发重组、完整性检查、冗余管理以及 RTC、SNMP、615A 三项高层服务收敛到同一套硬件架构中，核心工程方法归纳如下：
 
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
-  \item \textbf{单时钟同步数据通路与多周期使能域解耦。}端系统逻辑统一运行于 125~MHz（8~ns 周期）主时钟，字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一时钟基准；对于复杂的管理协议状态机，通过局部使能两分频树（\code{CE_DIV=2}）构建隔拍更新的 16~ns 多周期路径，在消除异步跨时钟域亚稳态风险的同时实现了物理时序的稳固收敛。
-  \item \textbf{状态入表与硬件逻辑分时复用。}52 个 \code{afdx_ram_sdp} 模块封装实例（综合后映射为 366 个 EBR 原语）统一采用简单双端口（SDP）同步读写接口承载载荷、配置、各 VL 独立状态与协议报文。128 条发送 VL 和 4096 条接收 VL 的状态全部按地址检索，字节流水与判定逻辑在全链路间分时复用，使组合逻辑深度与 VL 数量完全解耦。
-  \item \textbf{读写端口独占与无冲突时序仲裁。}每张表的读写端口归属严格唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突；交付队列迁入块 RAM，由微状态机流式读出，消除宽位多路选择树。
-  \item \textbf{全流水寄存切分与精细时延补偿。}所有 RAM 读出数据先打拍再参与算术或比较；发送侧组帧器采用 6 拍提前量精确补偿内部读取流水与流缓冲延迟，保证到期首字节准点送出；RTC 对 5 拍写回流水精确补偿 40~ns，保障时钟同步精度。
+  \item \textbf{单时钟同步数据通路与多周期使能域解耦。}端系统逻辑统一运行于 125~MHz（8~ns 周期）主时钟，字节流传输、BAG 调度计时和 SNTP 时间戳采样共享同一时钟基准；对于复杂的管理协议状态机，通过局部使能两分频树（\code{CE_DIV=2}）构建隔拍更新的 16~ns 多周期路径（覆盖 \MulticycleRegs{} 个触发器），在消除异步跨时钟域亚稳态风险的同时实现物理时序收敛。
+  \item \textbf{状态入表、多 Bank 分片与写数据隔离。}全芯片 250 个同步 RAM 实例（\RamSdpCount{} 个通用 \code{afdx_ram_sdp} 与 160 个专用同步 RAM 模块，综合后映射为 \Mem{} 个 M4K/EBR 原语）承载载荷、配置、各 VL 状态、分片进度与重组上下文。128 条发送 VL、4096 条接收 VL 和 \ReasmContexts{} 个重组槽位均按地址检索，大容量缓冲在物理入口配备显式写数据隔离 LUT（\code{lut_mask="8888"}），使组合逻辑深度与链路规模解耦。
+  \item \textbf{读写端口独占与无冲突时序仲裁。}每张表的读写端口归属唯一：收发引擎独占状态表读写；配置总线对配置表的写入通过许可信号 \code{cfg_ok} 插入引擎空闲拍，从结构上消除同拍同址读写冲突；交付队列迁入块 RAM 并扩展分片槽位索引，消除宽位多路选择树。
+  \item \textbf{全流水寄存切分与精细时延补偿。}所有 RAM 读出数据先经本地寄存器打拍再参与算术或比较；发送侧组帧器采用 12 拍 IPv4 校验和准备与 $-8$ 拍提前量（\code{START_LEAD_REGISTERED = -8}）精确补偿内部读取与输出流缓冲延迟，保证到期首字节准点送出；RTC 对 5 拍写回流水精确补偿 40~ns，保障时钟同步精度。
 \end{enumerate}
 
-\section{工程交付清单与 24 个 RTL 模块}\label{sec:deliveryfiles}
+\section{工程交付清单与 \RtlFileCount{} 个 RTL 源文件}\label{sec:deliveryfiles}
 
-工程完整源码交付于仓库 \code{rtl/} 目录，共包含 24 个 Verilog 文件，职责划分见表~\ref{tab:rtl24}。
+工程完整源码交付于仓库 \code{rtl/} 目录，共包含 \RtlFileCount{} 个 Verilog 文件（合计 \countsep{\RtlLineCount} 行，封装 \DesignUnitCount{} 个设计单元），职责划分见表~\ref{tab:rtl24}。
 
-\begin{table}[htbp]\centering\footnotesize\renewcommand{\arraystretch}{0.95}
-\caption{交付的 24 个 Verilog RTL 源码清单}\label{tab:rtl24}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{2.6cm}L}
-\toprule
-源文件名 & 所属子系统 & 模块核心功能与职责 \\
-\midrule
-\code{AFDX_top.v} & 顶层模块 & 顶层封装，整合双网收发、高层服务、配置总线与时间基准 \\
-\code{afdx_timebase.v} & 时间基准 & 维护 32 位 \code{now} 时基与 16 位 \code{now_c} 冗余粗计时 \\
-\code{afdx_cfg.v} & 配置与统计 & 32 位配置总线译码、27 个计数器两级流水维护与写握手 \\
-\code{afdx_svc.v} & 服务通道 & 4 路整消息轮询发送仲裁（寄存输出）与 UDP 端口接收分发 \\
-\code{afdx_tx_core.v} & 发送核心 & 发送顶层包装，集成分页缓存、引擎、组帧器、MAC 与输出流缓冲 \\
-\code{afdx_tx_buf.v} & 发送核心 & 消息分页写入、写口流水寄存、描述符登记与失败页面释放 \\
-\code{afdx_tx_free.v} & 发送核心 & 256 页空闲页池 FIFO，支持双页面回收端口并发回收 \\
-\code{afdx_tx_engine.v} & 发送核心 & 128 条 VL 的 BAG 轮询调度、入队许可、帧授权与到期发送确认（TX Start Confirm） \\
-\code{afdx_tx_builder.v} & 发送核心 & 帧头组装、IP 校验和准备、载荷流预读与 -6 拍提前补偿 \\
-\code{afdx_mac_tx.v} & 发送核心 & 纯 RTL 自研双网 MAC，单状态机两网同拍起始与发送下溢（TX Underrun）检测 \\
-\code{afdx_crc32_d8.v} & 通用算术 & 8 位并行 CRC-32 组合逻辑生成与校验器 \\
-\code{afdx_rx_core.v} & 接收核心 & 接收顶层包装，集成双 MAC、解析器、多 Bank 分块映射表与交付模块 \\
-\code{afdx_mac_rx.v} & 接收核心 & 接收 MAC，SFD 定界、CRC32 流式累加校验与 FCS 剥离 \\
-\code{afdx_rx_parse.v} & 接收核心 & 帧头检查、UDP 校验和验证、载荷预写入与帧尾分类 \\
-\code{afdx_rx_engine.v} & 接收核心 & VLID 映射、完整性检查（IC）、冗余管理（RM）与老化扫描 \\
-\code{afdx_rx_deliver.v} & 接收核心 & 读取块 RAM 交付队列 \code{rx_dq}，从环形缓冲逐字节流式交付 \\
-\code{afdx_ram_sdp.v} & 存储原语 & 简单双端口（Simple Dual-Port, SDP）同步 RAM 原语封装 \\
-\code{afdx_rtc.v} & 高层服务 & 实时时钟、SNTPv4 纳秒级时钟同步与时间戳收发状态机 \\
-\code{afdx_ntp_fraction.v} & 高层服务 & 本地纳秒时基与 NTP 32 位二进制小数逐位迭代换算器 \\
+\begingroup
+\footnotesize\renewcommand{\arraystretch}{1.02}
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.7cm-6\tabcolsep\relax}}
+\caption{交付的 \RtlFileCount{} 个 Verilog RTL 源码清单（共 \DesignUnitCount{} 个设计单元）}\label{tab:rtl24}\\
+\longtablehead{3}{源文件名 & 所属子系统 & 模块核心功能与职责}
+\code{AFDX_top.v} & 顶层封装 & 172 引脚赛题模板顶层，集成应用流包装器、配置窥探与 \code{afdx_es} \\
+\code{afdx_es.v} & 核心顶层 & 端系统核心顶层，整合双网收发核心、服务仲裁、三项服务与配置时基 \\
+\code{afdx_app_tx.v} & 应用包装层 & 发送 2B VLID 前缀解析、3 级 128 路比较映射、32~KiB 缓存与超长回滚 \\
+\code{afdx_app_rx.v} & 应用包装层 & 接收消息缓存、$\text{idx}\rightarrow\text{VLID}$ 反查、2B VLID 前缀封装与溢出保护 \\
+\code{afdx_app_map.v} & 应用包装层 & $4096\times 16$~bit 接收 VL 索引至 16 位 VLID 专用同步映射 RAM \\
+\code{afdx_app_payload.v} & 应用包装层 & $8\times 4$~KiB 分体包装载荷存储（含 \code{_bank}/\code{_slice} 共 3 个单元，写隔离） \\
+\code{afdx_app_read.v} & 应用包装层 & 8 信用流式同步预取队列，无缝桥接 4 拍块 RAM 读延迟 \\
+\code{afdx_timebase.v} & 时间基准 & 维护 32 位 \code{now} 周期时基、16 位 \code{now_c} 冗余粗计时与 \code{byte_en} \\
+\code{afdx_cfg.v} & 配置与统计 & 18 位字地址配置总线译码、27 个统计计数器两级流水与 \code{cfg_ok} 写握手 \\
+\code{afdx_svc.v} & 服务通道 & 4 路整消息轮询发送仲裁（授权寄存输出）与 UDP 目的端口接收分发 \\
+\code{afdx_tx_core.v} & 发送核心 & 发送核心集成与 $131072\times 8$ 载荷池 \code{afdx_tx_payload_store}（共 2 个单元） \\
+\code{afdx_tx_buf.v} & 发送核心 & $1\text{--}8192$~B 分页写入、两槽入口弹性级与 $16\times 8$ 回滚 RAM（共 3 个单元） \\
+\code{afdx_tx_free.v} & 发送核心 & 256 页空闲页池 FIFO，支持双页面回收端口并发归还 \\
+\code{afdx_tx_engine.v} & 发送核心 & 128 条 VL 的 BAG 调度、单描述符按片授权与 3 张分片状态表管理 \\
+\code{afdx_tx_builder.v} & 发送核心 & 42B/34B 帧头组装、12 拍 IPv4 校验和准备、载荷预读与 $-8$ 拍提前补偿 \\
+\code{afdx_mac_tx.v} & 发送核心 & 纯 RTL 自研双网锁步 MAC，前导码、FCS、IFG 与下溢检测 \\
+\code{afdx_crc32_d8.v} & 通用算术 & 8 位并行以太网 CRC-32 组合逻辑生成与校验器 \\
+\code{afdx_rx_core.v} & 接收核心 & 接收核心集成、32-Bank 双写分片 \code{rx_map} 与 \code{afdx_rx_table_slice}（2 单元） \\
+\code{afdx_mac_rx.v} & 接收核心 & 接收 MAC，SFD 定界、CRC-32 流式累加校验与 FCS 剥离 \\
+\code{afdx_rx_parse.v} & 接收核心 & 单帧/首片（42B）与后续分片（34B）帧头检查、环形预写与帧尾分类 \\
+\code{afdx_rx_engine.v} & 接收核心 & 30 拍 \code{FRAME} 日程：VL 查表、IC、RM、重组槽位查询预约与老化清理 \\
+\code{afdx_rx_deliver.v} & 接收核心 & 读取 $32\times 73$~bit \code{rx_dq}，自双网环形缓冲逐字节流式送往重组/直通 \\
+\code{afdx_rx_reassembly.v} & 分片重组 & 双 Bank $\times 8$ 槽位（\ReasmContexts{} 上下文）顺序 IPv4 分片重组顶层与输出仲裁 \\
+\code{afdx_rx_reassembly_bank.v} & 分片重组 & 单 Bank 8 槽位重组控制、连续偏移检查、整包非零 UDP 校验与 2~s 超时 \\
+\code{afdx_rx_reassembly_payload.v} & 分片重组 & 重组载荷存储池（含 \code{_payload}/\code{_slot}/\code{_lane} 3 单元及写隔离 LUT） \\
+\code{afdx_rx_reassembly_ram.v} & 分片重组 & 重组元数据与接收窄分片表复用的专用同步双端口 RAM 封装 \\
+\code{afdx_ram_sdp.v} & 存储原语 & 通用简单双端口（SDP）同步 RAM 封装（全芯片共例化 \RamSdpCount{} 处） \\
+\code{afdx_rtc.v} & 高层服务 & 64 位实时时钟、SNTPv4 纳秒级同步与 40~ns 流水补偿状态机 \\
+\code{afdx_ntp_fraction.v} & 高层服务 & 本地纳秒时基与 NTP 32 位二进制小数 32 轮逐位迭代换算器 \\
 \code{afdx_snmp.v} & 高层服务 & SNMP 顶层包装、UDP 请求捕获与 \code{CE_DIV=2} 使能复制树 \\
-\code{afdx_snmp_engine.v} & 高层服务 & SNMPv1/v2c ASN.1/BER 解码、MIB 读写与响应生成（16~ns 域） \\
-\code{afdx_615a.v} & 高层服务 & 615A 顶层包装、TFTP 捕获、6 块协议 RAM 接口与使能树 \\
-\code{afdx_615a_engine.v} & 高层服务 & ARINC 615A 数据加载协议状态机与文件 CRC-16 硬件校验（16~ns 域） \\
-\code{afdx_mgmt_tx.v} & 高层服务 & 管理面流式预取发送适配器（8 字节预取队列，125~MHz 主时钟域解耦） \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\code{afdx_snmp_engine.v} & 高层服务 & SNMPv1/v2c ASN.1/BER 编解码、36 项 MIB 读写与 Trap 生成（16~ns 域） \\
+\code{afdx_615a.v} & 高层服务 & 615A 顶层包装、TFTP 捕获、6 块协议 RAM 接口与 \code{CE_DIV=2} 使能树 \\
+\code{afdx_615a_engine.v} & 高层服务 & ARINC 615A 数据加载/介质卸载协议状态机与 CRC-16 硬件校验（16~ns 域） \\
+\code{afdx_mgmt_tx.v} & 高层服务 & 管理面 8 字节流式预取发送适配器（桥接 16~ns 引擎域与 125~MHz 仲裁域） \\
+\end{longtable}
+\endgroup
 
 \section{仿真测试复现指南}\label{sec:simrepro}
 
-全套验证用例均可由纯脚本自动化一键复现，环境要求为 ModelSim SE-64 2020.4 或兼容版本：
+全套验证用例均可由纯脚本自动化一键复现，环境要求为 ModelSim SE-64 2020.4 或兼容版本（加上 Python~3 用于参考模型交叉校验）：
 
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
-  \item \textbf{8 项核心评审用例一键运行：}
-    在 ModelSim 命令行窗口或脚本中进入工程根目录，直接执行：
+  \item \textbf{顶层 \code{AFDX_top} 63~VL 满载规格与应用流验证：}
+    在 ModelSim 或命令行中调用顶层应用流运行脚本（可通过 \code{VL_COUNT}、\code{MODE}、\code{PAYLOAD_BYTES}、\code{DUPLEX} 切换 7 档场景）：
 \begin{runcommand}
-do sim/run_judge.do
+vsim -c -do "set VL_COUNT 63; set DUPLEX 1; set MODE 0; set PAYLOAD_BYTES 1471; do sim/run_app.do"
 \end{runcommand}
-    该入口无需配置 Python 环境，自动连续执行 8 项核心评审用例（\code{services}、\code{capacity}、\code{snmp}、\code{burst77}、\code{burst81}、\code{rtc}、\code{performance}、\code{perf_var}），实测总耗时为 8787.198 秒，判定全部为 PASS。
-  \item \textbf{全量 39 项自动化回归测试：}
-    在 PowerShell 下执行全量回归脚本（可附加 \code{-Coverage} 统计覆盖率）：
+  \item \textbf{1030 IPv4 分片重组专项与签核自检：}
+    一键运行 $1472\text{--}8192$~B 分片边界、\ReasmContexts{} 并发上下文及故障注入专项，以及 1030 交付一致性核验：
 \begin{runcommand}
-powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_fragmentation.ps1
+python3 tools/run_1030_checks.py
 \end{runcommand}
-    自动完成全套 39 项测试平台的编译、仿真与参考模型交叉断言校验。
+  \item \textbf{全量自动化回归测试（\RegFastCount{} 项快速回归 + 4 项长耗时系统参考 = \RegCount{} 项）：}
+    在 PowerShell 下执行回归套件（附加 \code{-IncludeLong} 包含长耗时系统性能用例，附加 \code{-Coverage} 生成 \CovUcdbCount{} 份 UCDB 覆盖率库）：
+\begin{runcommand}
+powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -IncludeLong
+\end{runcommand}
+  \item \textbf{8 项核心评审用例无 Python 独立入口：}
+    在无外部脚本环境的纯净机器上，可在 ModelSim 批处理模式下执行 \code{vsim -batch -do "do sim/run_judge.do; quit -f"}（或 GUI 内 \code{do sim/run_judge.do}）连续运行 8 项核心评审测试平台（11-04 分片交付版实测 \textbf{8/8 PASS}，累计 1,949,513,089 次自检 0 错误，耗时 8322.7~s，完整输出归档于 \code{sim/reference/judge_result_frag1030.txt}）。
 \end{enumerate}
 
 \section{eLinx 物理实现与时序签核四步闭环}\label{sec:elintropro}
 
-工程提供基于中科亿海微官方 eLinx 3.0.7 工具链的完整命令行批处理脚本，支持全流程一键复现与物理签核闭环：
+工程提供基于中科亿海微官方 eLinx 3.0.7 工具链的确定性命令行构建与独立审计脚本，支持全流程一键物理签核闭环：
 
 \begin{enumerate}[leftmargin=2em,itemsep=3pt]
-  \item \textbf{步骤一：官方逻辑综合与 VQM 导出}
+  \item \textbf{步骤一：确定性综合、物理簇锚定与布局布线（\code{PRES 1.30}）}
 \begin{runcommand}
-powershell -ExecutionPolicy Bypass -File elinx/synth.ps1
+python3 tools/build_1030.py --route --pres 1.30
 \end{runcommand}
-    执行 \code{S2d} 综合策略，保持模块层级与时钟使能拓扑，生成门级网表与逻辑打包（Pack）报告。
-  \item \textbf{步骤二：物理布局布线（Place \& Route）}
+    自动加载 \code{elinx/constraints.edc}（8.000~ns 主时钟 + \ClkUncert~ns 建立不确定度 + \MulticycleRules{} 条多周期约束）与 \code{elinx/tiles_1030.edc}（锁定 \LockedClusters{} 个物理簇：\Clb{} 个 CLB + \Mem{} 个 M4K），完成综合、打包、布局布线并导出门级网表 \code{AFDX_top.vqm} 与物理时序库（完整构建耗时约 \ParElapsedSec~s）。
+  \item \textbf{步骤二：分片重组存储分体与写隔离 LUT 物理网表审计}
 \begin{runcommand}
-powershell -ExecutionPolicy Bypass -File elinx/impl.ps1
+python3 tools/audit_1030_storage.py <VQM_PATH>
 \end{runcommand}
-    执行 \code{PRES1.50} 物理优化，完成管脚布局布线并生成物理时序数据库。
-  \item \textbf{步骤三：多周期路径约束合法性审计}
+    静态解析导出的门级网表，确认重组元数据保持双 Bank 独立映射，且 64 条载荷通道的 256 个 M4K 数据引脚全部由 128 个显式 \code{lut_mask="8888"} 写数据隔离 LUT 驱动。
+  \item \textbf{步骤三：多周期路径约束合法性全量审计}
 \begin{runcommand}
 python3 tools/check_multicycle.py <VQM_PATH> --constraints elinx/constraints.edc --output out/multicycle_audit
 \end{runcommand}
-    对全芯片时序约束进行严格审计，核对 2,755 个引擎寄存器的使能引脚与多周期声明，确认 0 非法路径、0 漏约束。
+    逐一核对全芯片 \MulticycleRegs{} 个管理面引擎触发器的时钟使能网络与多周期声明，确认 0 非法单周期穿透、0 漏约束端点。
   \item \textbf{步骤四：布线后静态时序全量导出与签核}
 \begin{runcommand}
 python3 tools/report_routed_timing.py
 \end{runcommand}
-    自动解析布局布线后的真实时序数据库，核验 8~ns 单周期路径（最差建立裕量 $+\RoutedSetup$~ns）、16~ns 多周期路径（最差建立裕量 $+\MulticycleSetup$~ns）以及同沿保持时间裕量（$+\RoutedHold$~ns），输出 45,745 个端点 0 违例的权威签核报告。
+    解析布局布线后的 \code{full_timing.tan.pb} 与 \code{slack.rpt}，核验 269,131 条 8~ns 单周期路径（净建立裕量 $+\RoutedSetup$~ns，物理裸裕量 $+\RoutedSetupRaw$~ns）、50,050 条 16~ns 多周期路径（最差建立裕量 $+\MulticycleSetup$~ns）及 319,181 条保持时间路径（最差裕量 $+\RoutedHold$~ns），输出 \RoutedEndpoints{} 个时序端点 0 违例的签核报告。
 \end{enumerate}

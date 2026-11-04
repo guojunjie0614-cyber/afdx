@@ -1,0 +1,196 @@
+% ======================================================================
+% 第二部分：系统组成及功能说明（前半部分：2.1 整体介绍、2.2.1 硬件整体介绍、
+% 2.2.2 机械设计介绍、2.2.3 电路各模块介绍之顶层包装与发送通路）
+% ======================================================================
+
+\section{系统组成及功能说明}
+
+\subsection{整体介绍}
+
+本系统采用“顶层 2 字节 VLID 应用流式包装器 \code{AFDX_top} + 端系统协议核心 \code{afdx_es}”的两级层次化硬件架构（系统整体框图见第一部分图~\ref{fig:ov_system}，端到端消息数据通路见图~\ref{fig:ov_path}）。全芯片共划分为 \RtlFileCount{} 个 Verilog RTL 源文件（合计 \countsep{\RtlLineCount} 行代码，封装 \DesignUnitCount{} 个 \code{module} 设计单元），各一级子系统与下级模块的层次关系、功能职责及片上同步 RAM 分布如表~\ref{tab:s2_hierarchy} 所示。
+
+\begingroup\tablestyle
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-4.8cm-4\tabcolsep\relax}>{\raggedleft\arraybackslash}p{1.9cm}@{}}
+\caption{全芯片 \RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）层次结构与片上 RAM 分布}\label{tab:s2_hierarchy}\\
+\longtablehead{3}{\thead{一级子系统/模块} & \thead{下级子模块组成、信号互连关系与核心职责} & \thead{同步 RAM\newline (SDP/专用)}}
+\textbf{\code{AFDX_top}} & 172 引脚赛题顶层：例化 \code{afdx_app_tx}、\code{afdx_app_rx} 与 \code{afdx_es}，含配置总线自动窥探（\code{tx_cfg} 字 2 与 \code{rx_map} 写事务同步映射）及交付边界寄存 & --- \\
+\addlinespace[2pt]
+\textbf{\code{afdx_app_tx}} & 顶层发送流包装器：3 级流水 128 路 VLID 比较器、\code{descriptor_ids}（\code{afdx_ram_sdp} $\times 1$）、\code{afdx_app_payload}（$\hookrightarrow$ \code{afdx_app_payload_bank} $\times 8$ $\hookrightarrow$ \code{afdx_app_payload_slice} $\times 32$，$1024\times 9$）、\code{afdx_app_read}（8 信用预取） & 1 / 33 \\
+\addlinespace[2pt]
+\textbf{\code{afdx_app_rx}} & 顶层接收流包装器：\code{afdx_app_map}（$4096\times 16$ $\text{idx}\rightarrow\text{VLID}$ 反查 RAM）、\code{descriptor_ids}（\code{afdx_ram_sdp} $\times 1$）、\code{afdx_app_payload}（$\hookrightarrow$ 8 Bank / 32 Slice）、\code{afdx_app_read} & 1 / 34 \\
+\addlinespace[2pt]
+\textbf{\code{afdx_es}} & 端系统协议核心顶层：集成 \code{afdx_timebase}、\code{afdx_cfg}、\code{afdx_svc}、\code{afdx_tx_core}、\code{afdx_rx_core}、\code{afdx_rtc}、\code{afdx_snmp}、\code{afdx_615a} 八个一级核心模块 & --- \\
+\addlinespace[2pt]
+\textbf{\code{afdx_timebase}}\newline \textbf{\code{afdx_cfg}}\newline \textbf{\code{afdx_svc}} & 32 位周期时基 \code{now[31:0]} 与 16 位粗计时 \code{now_c[15:0]}；18 位字地址配置译码、27 个两级流水统计计数器与 \code{cfg_ok} 写握手；应用与 3 项服务 4 路整包轮询发送仲裁及 UDP 目的端口接收认领分发 & 0 / 0 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_tx_core}} &
+\code{afdx_tx_buf}（含两槽弹性级 \code{afdx_tx_ingress_elastic} 与 16 页回滚表 \code{afdx_tx_rollback_ram}）、\code{afdx_tx_payload_store}（$131072\times 8$，27 位本地写捆绑与 LUT 写隔离）\newline
+\code{afdx_tx_engine}（128 条 VL 的 BAG 调度与 IPv4 分片表 \code{afdx_ram_sdp} $\times 7$）、\code{afdx_tx_builder}（42B/34B 组帧、12 拍 IPv4 校验和与 $-8$ 拍提前补偿）\newline
+\code{afdx_tx_free}（256 页空闲 FIFO）、\code{afdx_mac_tx}（双网锁步 MAC，$\hookrightarrow$ \code{afdx_crc32_d8} $\times 2$）\newline
+核心表 \code{afdx_ram_sdp} $\times 5$：\code{tx_cfg}、\code{tx_state}、\code{tx_desc}（$256\times 47$）、\code{tx_mnext}、\code{tx_pnext} & 13 / 2 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_rx_core}} &
+\code{afdx_mac_rx} $\times 2$（各含 1 个 \code{afdx_crc32_d8}）、\code{afdx_rx_parse} $\times 2$、\code{afdx_rx_engine}（30 拍判定日程）、\code{afdx_rx_deliver}\newline
+\code{rx_map}（32 Bank $\times 2$ 写分片，\code{afdx_ram_sdp} $\times 64$）、\code{rx_dq}（$32\times 73$~bit，\code{afdx_ram_sdp} $\times 1$）、\code{rx_ring_a/b}（$4096\times 8$，$\times 2$）、\code{rx_cfg}（\code{afdx_rx_table_slice} $\times 8$）、\code{rx_state}（\code{afdx_rx_table_slice} $\times 11$）\newline
+\code{afdx_rx_reassembly} $\hookrightarrow$ \code{afdx_rx_reassembly_bank} $\times 2$（每体含 \code{afdx_rx_reassembly_ram} $\times 4$ 元数据表 + \code{afdx_rx_reassembly_payload_slot} $\times 8$ $\hookrightarrow$ \code{afdx_rx_reassembly_payload_lane} $\times 32$，$8192\times 2$） & 67 / 91 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_rtc}} & 64 位本地实时时钟、SNTPv4 四时间戳同步状态机与 \code{afdx_ntp_fraction} $\times 3$（32 轮逐位迭代换算器） & 0 / 0 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_snmp}} & \code{afdx_snmp_engine}（\code{CE_DIV=2} 多周期域，47 态 BER 编解码与 36 项 MIB）、\code{afdx_mgmt_tx}、\code{request_ram} / \code{response_ram}（\code{afdx_ram_sdp} $\times 2$） & 2 / 0 \\
+\addlinespace[3pt]
+\textbf{\code{afdx_615a}} & \code{afdx_615a_engine}（\code{CE_DIV=2} 域，70 态 TFTP 与加载/卸载引擎）、\code{afdx_mgmt_tx}、\code{packet_rx/tx}、\code{lur_ram}、\code{header_ram}、\code{load_ram}（8~KiB）、\code{denial_ram}（\code{afdx_ram_sdp} $\times 6$） & 6 / 0 \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{全芯片合计：\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元），物理映射为 \Mem{} 个 M4K/EBR}} & \textbf{\RamSdpCount{} / 160} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+四条数据与控制通路连接上述模块：
+
+\noindent \textbf{1.\quad 发送数据流：}上层分区应用通过顶层 \code{tx_data[7:0]}/\code{tx_valid}/\code{tx_ready} 送入以 2 字节大端 VLID 为首的连续字节流（支持 $1\text{--}\MaxMessageBytes$~B 载荷）；\code{afdx_app_tx} 提取 VLID 并经 3 级流水 128 路比较器映射为 7 位内部索引 \code{m_vl}，将载荷缓存于 $8\times 4$~KiB 分体 RAM 后由 \code{afdx_app_read} 送入 \code{afdx_es}。
+
+\figDesign[GMII 发送最短帧接口时序]{f31_wgmii}{GMII 发送一帧的接口时序（1 字节消息最短帧：A、B 两网同拍起始，仅第 11 字节网络接口号 \code{0x20}/\code{0x40} 与 FCS 不同）}{fig:s2_wgmii}
+
+经服务仲裁器 \code{afdx_svc}（与应用、RTC、SNMP、615A 四路轮询共享）进入 \code{afdx_tx_core}：先由 \code{afdx_tx_buf} 按 512~B 页写入 128~KiB 载荷池 \code{afdx_tx_payload_store} 并登记描述符；再由 \code{afdx_tx_engine} 按各 VL 的 BAG 与 $L_\text{max}$ 执行 512 拍前瞻扫描与单帧/IPv4 分片授权；\code{afdx_tx_builder} 预读载荷、组装 42B（单帧/首片）或 34B（后续分片）帧头并硬件计算 IPv4 头校验和；最终由 \code{afdx_mac_tx} 添加前导码、SFD、AFDX 序列号（SN）与 CRC-32（FCS），在 A、B 双网 GMII 接口（\code{gmii_txd_a/b}、\code{gmii_tx_en_a/b}）同拍锁步输出，最短帧的双网起始时刻见图~\ref{fig:s2_wgmii}。
+
+\noindent \textbf{2.\quad 接收与重组数据流：}A、B 两网物理字节流经 \code{gmii_rxd_a/b}、\code{gmii_rx_dv_a/b} 进入双路 \code{afdx_mac_rx} 完成 SFD 定界与 FCS 校验剥离；双路 \code{afdx_rx_parse} 流式校验以太网/IPv4/UDP 帧头，同时将载荷预写入各自 4~KiB 环形缓冲（\code{rx_ring_a/b}），帧尾生成 221 位帧描述交由共享接收引擎 \code{afdx_rx_engine}。\code{afdx_rx_engine} 按 30 拍固定日程完成 32-Bank \code{rx_map} 查表、VL 配置校验、每网独立 IC 序号检查、双网 RM 冗余窗口去重及分片槽位预约：校验失败或被判为冗余副本时直接回退环形缓冲预写指针 \code{trial}；获准交付的帧推入 $32\times 73$~bit 交付队列 \code{rx_dq}。
+
+\figDesign[接收核心查表与环形缓冲载荷定位电路]{f11_rx}{接收核心（\code{afdx_rx_core}）32-Bank 映射查表、配置状态读取、交付队列（\code{rx_dq}）入队与环形缓冲载荷定位电路}{fig:s2_rx}
+
+\code{afdx_rx_deliver} 从环形缓冲读出载荷：单帧报文直通输出，IPv4 分片报文送入 \code{afdx_rx_reassembly} 的 \ReasmContexts{} 路并发重组槽位（2-Bank$\times$8 槽位，128~KiB 四通道缓存）按片偏移顺序拼接并校验全包 UDP 校验和。重组/直通完成的消息经 \code{afdx_svc} 按 UDP 目的端口分流：端口匹配 123/161/59 的报文分别由 RTC、SNMP、615A 内部认领消费；其余用户消息经 \code{afdx_app_rx} 反查 $4096\times 16$~bit \code{afdx_app_map} 冠以 2 字节大端 VLID 前缀，自顶层 \code{rx_data[7:0]}/\code{rx_valid} 连续输出。图~\ref{fig:s2_rx} 给出了帧描述、交付队列与载荷存储之间的对应关系。
+
+\noindent \textbf{3.\quad 高层管理与服务闭环流：}\code{afdx_rtc}、\code{afdx_snmp}、\code{afdx_615a} 通过 \code{afdx_svc} 的接收广播总线认领各自 UDP 协议报文，处理生成的应答/请求报文（SNTP 48B 报文、SNMP GetResponse/Trap 报文、615A TFTP RRQ/WRQ/DATA/ACK/ERROR 报文）经 \code{svc_tx_*} 总线仲裁后注入同一发送核心 \code{afdx_tx_core}，绑定各自配置的发送 VL 参与 BAG 调度与双网冗余发送；发送仲裁与接收端口认领见图~\ref{fig:s2_svc}。
+
+\noindent \textbf{4.\quad 配置与统计监控流：}外部主机通过 18 位字地址配置总线（\code{cfg_wr}/\code{cfg_rd}/\code{cfg_addr}/\code{cfg_wdata}）访问 \code{afdx_cfg}，一方面通过 \code{cfg_ok} 无冲突握手初始化或动态更新 \code{tx_cfg}、\code{rx_map}、\code{rx_cfg} 三张核心表（\code{AFDX_top} 硬件同步窥探更新顶层包装映射），另一方面以固定 2 拍读延迟实时读取 27 个 32 位收发/异常/去重计数器及三项服务状态寄存器，读写握手时序见图~\ref{fig:s2_wcfg}。
+
+\figDesign[配置总线读写与许可握手时序]{f33_wcfg}{配置总线时序：连续寄存器读（A，固定 2 拍返回 \code{cfg_rvalid}）、单拍寄存器写（R）与等待 \code{cfg_ok} 许可的配置表写（T）}{fig:s2_wcfg}
+
+\subsection{硬件系统介绍}
+
+\subsubsection{硬件整体介绍}
+
+硬件系统以中科亿海微国产大容量 FPGA \textbf{EQ6HL130（CSG484\_H 封装）}为唯一核心处理器件，无需外部软核或协处理器，全芯片由单一全局主时钟 \code{clk}（125~MHz，周期 8.000~ns）同步驱动。顶层模块 \code{AFDX_top} 共声明 26 组端口信号、合计 \Pins{} 个用户引脚（占器件 339 个可用 I/O 的 \PinPct\%），完整端口定义见表~\ref{tab:s2_ports}。
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{4.8cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.8cm-4\tabcolsep\relax}@{}}
+\caption{\code{AFDX_top} 顶层硬件端口定义（26 组信号，共 \Pins{} 引脚）}\label{tab:s2_ports}\\
+\longtablehead{3}{\thead{端口信号名称} & \thead{方向} & \thead{位宽、协议语义与硬件接口时序说明}}
+\multicolumn{3}{@{}l}{\textit{1. 赛题模板核心端口（带 2 字节大端 VLID 前缀的应用流式接口，共 22 引脚）}} \\*
+\code{clk} / \code{reset} & 入 & 125~MHz 全局主时钟（8.000~ns）；高有效同步复位 \\
+\code{tx_data[7:0]} / \code{tx_valid} & 入 & 应用发送字节流：\code{tx_valid=1} 连续区间为一条消息（前 2B 大端 VLID $+$ $1\text{--}\MaxMessageBytes$~B 载荷），消息间至少空 1 拍 \\
+\code{tx_ready} & 出 & 应用发送就绪：片上表初始化完成（约 524.4~µs）且包装缓存可接纳新消息时为 1 \\
+\code{rx_data[7:0]} / \code{rx_valid} & 出 & 应用接收字节流：\code{rx_valid=1} 连续输出去重/重组后的完整消息（前 2B 大端 VLID $+$ 载荷），消息间至少空 1 拍 \\
+\code{rx_ready} & 入 & 按官方答疑 R62 保留端口兼容，接收侧无反压连续输出 \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{2. A/B 双冗余网络千兆 GMII 物理层接口（共 36 引脚）}} \\*
+\code{gmii_txd_a[7:0]} / \code{gmii_tx_en_a} & 出 & A 网 GMII 发送数据与使能（含 7B 前导码 \code{0x55}、1B SFD \code{0xD5} 与 4B FCS，帧间隔 $\ge 12$ 拍） \\
+\code{gmii_txd_b[7:0]} / \code{gmii_tx_en_b} & 出 & B 网 GMII 发送数据与使能，与 A 网由单状态机锁步同拍输出 \\
+\code{gmii_rxd_a[7:0]} / \code{gmii_rx_dv_a} & 入 & A 网 GMII 接收数据与有效指示（上升沿帧始，下降沿帧末） \\
+\code{gmii_rxd_b[7:0]} / \code{gmii_rx_dv_b} & 入 & B 网 GMII 接收数据与有效指示 \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{3. 主机配置总线与实时硬件事件统计脉冲接口（共 114 引脚）}} \\*
+\code{cfg_wr} / \code{cfg_rd} / \code{cfg_addr[17:0]} / \code{cfg_wdata[31:0]} & 入 & 32 位字寻址配置总线写/读使能、18 位字地址与 32 位写数据 \\
+\code{cfg_rdata[31:0]} / \code{cfg_rvalid} / \code{cfg_ready} & 出 & 配置读返回数据、读有效（固定 2 拍延迟）与写就绪握手 \\
+\code{ev_tx[6:0]} & 出 & 核心发送事件脉冲：\code{accept}、\code{drop_dis}、\code{drop_full}、\code{drop_long}、\code{drop_nopage}、\code{tx_a}、\code{tx_b} \\
+\code{ev_a[7:0]} / \code{ev_b[7:0]} & 出 & A/B 网接收分类脉冲：\code{good}、\code{fcs}、\code{len}、\code{hdr}、\code{uvl}、\code{cfg}、\code{ic}、\code{ovf/reasm_drop} \\
+\code{ev_rm_drop} / \code{ev_deliver} & 出 & 双网冗余管理去重丢弃脉冲、有效消息交付脉冲 \\
+\code{ev_app[2:0]} & 出 & 顶层包装层异常脉冲：\code{[0]} 发送未映射 VLID，\code{[1]} 发送超 $8192$~B 或缓存满回滚，\code{[2]} 接收包装溢出 \\
+\end{longtable}
+
+以下从帧格式、线速、流水时延和存储资源四方面说明硬件预算。
+
+\noindent \textbf{1.\quad 双网 GMII 帧格式与 IPv4 分片规约（图~\ref{fig:s2_wgmii}、图~\ref{fig:s2_frame}）：}A/B 双网 GMII 接口每拍传输 1 字节（物理线速 1~Gbps）。目的 MAC 固定为 \code{03:00:00:00:VLID[15:8]:VLID[7:0]}，源 MAC 为 \code{02:00:00:USER_ID[15:8]:USER_ID[7:0]:NET_ID}（A 网 \code{0x20}，B 网 \code{0x40}）。当应用消息长度 $M\le L_\text{max}$（$L_\text{max}\le 1471$~B）时封装为含 42 字节协议头（14B 以太网 $+$ 20B IPv4 $+$ 8B UDP）、$n$ 字节载荷（$n<17$ 补零至 17B）、1 字节 AFDX SN 和 4 字节 FCS 的单帧（总长 64--1518~B）。
+
+\figDesign[AFDX 单帧与 IPv4 首分片格式]{f06_frame}{AFDX 单帧与 IPv4 首分片字节格式（单帧/首片含 42B 以太网/IPv4/UDP 头，后续分片含 34B 以太网/IPv4 头；帧末携带 1B AFDX SN 与 4B FCS）}{fig:s2_frame}
+
+当 $L_\text{max}<M\le \MaxMessageBytes$~B 时，硬件自动拆分为共享同一 16 位 IPv4 标识（Identification）的多个分片帧：首分片含 42B 头（\code{MF=1}，片偏移 0，UDP 总长填 $M+8$，UDP 校验和按 RFC 768 置 \code{0x0000}）与最多 1464~B 应用数据；后续分片仅含 34B 以太网/IPv4 头（无 8B UDP 头，片偏移以 8B 为单位按 $184, 368, \dots$ 递增）与最多 1472~B 应用数据（末片 \code{MF=0}，不足 25B 补零至 25B），每片独立递增 AFDX SN 并遵守所属 VL 的 BAG 间隔。
+
+\noindent \textbf{2.\quad 线速吞吐率与 63-VL 满载规划预算：}单帧载荷 $n$ 字节在线路上占用 $C(n)=8\text{（前导码）}+47+\max(n,17)+12\text{（IFG）}=67+\max(n,17)$ 拍（$n=1471$ 时 $C=1538$ 拍 $=12.304$~µs，物理极限有效载荷率 $R_\text{max}=1471\times 8/(1538\times 8\text{ ns})=956.44$~Mbps）。按团队声明的 \textbf{63 TX / 63 RX VL 满载规格}（$\text{BAG}=1$~ms $=125,000$ 拍，$L_\text{max}=1471$~B），每毫秒占用线路 $63\times 1538=96,894$ 拍（线路利用率 \LineUtilSixtyThree\%），单向去重有效载荷吞吐率为 $\ThruSixtyThree$~Mbps，双向全双工合计 $\ThruSixtyThreeBi$~Mbps；超规格 77/81~VL 压力基线分别对应 $\Thru$~Mbps（利用率 94.7\%）与 $\ThruEightyOne$~Mbps（利用率 99.66\%）。
+
+\noindent \textbf{3.\quad 端到端流水拍数账本（图~\ref{fig:s2_pipe}、表~\ref{tab:s2_latency}）：}在无排队争用、VL 已到期的基准条件下，1471~B 满载单帧从核心提交末字节（$m_\text{last}$）至首前导码输出（\code{tx_sof}）固定为 32 拍（\TtxSof~µs），计至 SFD 结束（$L_\text{tx}$）为 39 拍（\Ttx~µs）；物理线路传输 1525 拍（12.200~µs）；接收端从 FCS 末字节经 MAC 帧尾检测（3 拍）、解析分类（3 拍）、32-Bank 查表与引擎判定（14 拍基线 / 30 拍分片准入日程）、交付队列与环形缓冲预取（6 拍）至首字节交付为 26 拍（0.208~µs，计自 SFD 的 $L_\text{rx}=\Trx$~µs），再经 1470 拍逐字节交付（11.760~µs），核心端到端总时延为 3053 拍（\LatAvg~µs，遇后台 AGE 扫描让步 1 拍为 3054 拍即 \Lat~µs）。
+
+\figDesign[收发两侧无争用逐拍流水时序]{f20_pipe}{无其他消息争用、VL 已到期时的收发逐拍流水时序：(a) 发送侧 32 拍准备与准点起始；(b) 接收侧帧尾检查与 26 拍首字节交付}{fig:s2_pipe}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-7.5cm-8\tabcolsep\relax}@{}}
+\caption{核心端到端时延流水账本（1471 字节满载单帧基线，1 拍 = 8 ns）}\label{tab:s2_latency}\\
+\longtablehead{5}{\thead{流水阶段与区段} & \thead{典型拍数} & \thead{典型时间\newline (µs)} & \thead{上界时间\newline (µs)} & \thead{硬件流水构成与时序机理说明}}
+发送写缓存与入队请求 & 4 & 0.032 & 0.080 & 载荷写寄存 1 拍，写 47 位 \code{tx_desc} 并置 \code{enq_valid} 3 拍 \\
+调度引擎入队与授权 & 15 & 0.120 & 0.240 & \code{tx_engine} 的 ENQ 状态 6 拍，GRANT 状态 9 拍 \\
+组帧准备与流缓冲锁存 & 12 & 0.096 & 0.168 & \code{tx_builder} 12 拍 IPv4 校验和准备，输出双缓冲流寄存 1 拍 \\
+MAC 起始与前导码至 SFD & 8 & 0.064 & 0.072 & 第 32 拍输出首前导码 \code{tx_sof}（\TtxSof~µs），第 39 拍输出 SFD（$L_\text{tx}=\Ttx$~µs） \\
+以太网帧物理传输 & 1518 & 12.144 & 12.144 & 42B 协议头 $+$ 1471B 载荷 $+$ 1B SN $+$ 4B FCS（含前导码共 1525 拍） \\
+接收 MAC 帧尾与解析分类 & 6 & 0.048 & 0.064 & \code{mac_rx} 帧尾判定 3 拍，\code{rx_parse} FIN 两级分类 3 拍 \\
+32-Bank 查表与引擎判定 & 14 & 0.112 & 0.288 & 单帧基线 14 拍入队；含双 Bank 重组槽位查询预约时为 30 拍固定日程 \\
+交付队列读取与环形预取 & 6 & 0.048 & 0.080 & 块 RAM \code{rx_dq} 队头捕获 2 拍，\code{rx_deliver} 环形缓冲读取与直通 4--6 拍 \\
+接收应用口逐字节交付 & 1470 & 11.760 & 11.760 & 每拍连续交付 1 字节，首字节至末字节共 $n-1=1470$ 拍 \\
+\midrule
+\textbf{无争用硬件流水合计} & \textbf{3053} & \textbf{\LatAvg} & \textbf{24.996} & 遇后台 AGE 老化扫描 1 拍让步时为 3054 拍（\textbf{\Lat~µs}） \\
+\end{longtable}
+
+\noindent \textbf{4.\quad 全芯片块 RAM 分配与双域时钟策略：}全系统 34 组逻辑存储表共封装为 250 个同步 RAM 实例（逻辑总容量 4,174,544~bit $\approx 509.6$~KiB），其中顶层收发包装层占 69 个实例（656,528~bit）、发送核心占 15 个实例（1,131,520~bit）、接收与分片重组核心占 158 个实例（2,279,744~bit）、三项网络服务占 8 个实例（106,752~bit），综合后映射为 \Mem{} 个 M4K/EBR（占器件 1,200 个存储块的 \MemPct\%）。全芯片采用单一 125~MHz 主时钟树，仅对 SNMP 与 615A 协议状态机内部 \countsep{\MulticycleRegs} 个触发器施加 2 分频局部时钟使能（\code{CE_DIV=2}，16~ns 多周期建立路径），数据面收发、RAM 读写、配置总线与 RTC 计时全部保持 8~ns 单周期全速运行。
+
+\subsubsection{机械设计介绍}
+
+本设计基于中科亿海微 \textbf{EQ6HL130-CSG484\_H（484 球 BGA 封装）}实施芯片级物理封装引脚分配与片上版图规划（Floorplanning）：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{顶层 172 个物理 I/O 焊盘固定分配（\code{elinx/constraints.edc}）：}将顶层 \code{AFDX_top} 的全部 \Pins{} 个信号引脚（全局时钟 \code{clk}、同步复位 \code{reset}、应用收发流 \code{tx_*}/\code{rx_*}、A/B 双网 GMII 接口 \code{gmii_*_a/b}、配置总线 \code{cfg_*} 与统计脉冲 \code{ev_*}）绑定至 CSG484\_H 封装的固定物理焊盘（P0 引脚约束），固定片外走线与片内收发核心的物理接口位置。
+  \item \textbf{全芯片 \countsep{\LockedClusters} 个片上逻辑与存储簇坐标锁定（\code{elinx/tiles_1030.edc}）：}全芯片共使用 \Clb{} 个可配置逻辑块（CLB，占 \ClbPct\%）与 \Mem{} 个嵌入式块 RAM（M4K/EBR，占 \MemPct\%）。物理约束文件 \code{elinx/tiles_1030.edc} 将全部 \countsep{\LockedClusters} 个物理簇锁定在发送载荷池、接收 32-Bank 映射表与双 Bank 16 槽位重组缓存对应的局部区域内，配合 \code{PRES 1.30} 布线参数收敛跨区长连线延迟。
+\end{enumerate}
+
+\subsubsection{电路各模块介绍}
+
+以下按照“从顶层包装到核心通路、从总体框图到局部微架构电路”的次序，逐级阐述各硬件模块的具体电路设计、状态转移与关键输入/输出信号线。
+
+\paragraph{（1）顶层应用流包装与核心接口电路（\code{AFDX_top}、\code{afdx_app_tx}、\code{afdx_app_rx}）}
+
+应用层与配置总线的关键信号交互时序如图~\ref{fig:s2_wapp} 与图~\ref{fig:s2_wcfg} 所示。顶层包装电路由发送包装器 \code{afdx_app_tx} 与接收包装器 \code{afdx_app_rx} 组成：
+\textbf{发送流包装电路（\code{afdx_app_tx}）：}输入为 \code{tx_data[7:0]}、\code{tx_valid} 及配置窥探写信号（\code{cfg_tx_we}、\code{cfg_tx_vl[6:0]}、\code{cfg_tx_vlid[15:0]}），输出为核心消息流（\code{m_valid}/\code{m_ready}/\code{m_data[7:0]}/\code{m_last}/\code{m_vl[6:0]}）与异常脉冲 \code{ev_unmapped}/\code{ev_dropped}。
+
+\figDesign[核心应用接口收发握手时序]{f32_wapp}{应用接口消息收发时序：(a) 发送侧消息字节流提交、6 拍跨页分配与 10 拍入队确认握手；(b) 接收侧单帧/重组消息连续无反压字节流交付}{fig:s2_wapp}
+
+当 \code{tx_valid} 拉高时，前 2 拍锁存 16 位大端 VLID 并送入 \textbf{3 级流水 128 路并行比较器}（第 1 级 128 路相等比较 $\rightarrow$ 第 2 级 $16\times 8$ 分组归约 $\rightarrow$ 第 3 级优先编码出 7 位 \code{m_vl}）；第 3 拍起将 $1\text{--}\MaxMessageBytes$~B 载荷写入 $8\times 4$~KiB 分体缓冲 \code{afdx_app_payload}（每个 4~KiB Bank 拆分为 4 块 $1024\times 9$~bit 子片，写口配置显式 \code{lut_mask="8888"} 写数据隔离 LUT），包末将起止地址与 \code{m_vl} 推入 32 项描述符 FIFO，由下游 8 信用流式预取器 \code{afdx_app_read} 屏蔽 4 拍块 RAM 读延迟后连续驱动 \code{afdx_es}。若 VLID 未命中或长度超 $8192$~B，硬件立即回滚写指针并触发 \code{ev_app[0:1]}。
+
+\textbf{接收流包装电路（\code{afdx_app_rx}）：}输入为核心交付流 \code{d_valid}/\code{d_data[7:0]}/\code{d_last}/\code{d_idx[11:0]}（经顶层 \code{delivery_*} 寄存器组打拍隔离）及 \code{rx_map} 窥探写信号，输出为顶层 \code{rx_data[7:0]}/\code{rx_valid} 与溢出脉冲 \code{ev_app[2]}。模块通过 $4096\times 16$~bit 专用同步 RAM（\code{afdx_app_map}）将 12 位接收索引 \code{d_idx} 反查还原为 16 位 VLID，在输出消息首部前置 2 字节大端 VLID 后，以连续 $n+2$ 拍 \code{rx_valid=1} 无反压输出。
+
+\paragraph{（2）发送通路核心电路（\code{afdx_tx_core}）}
+
+发送核心 \code{afdx_tx_core} 集成空闲页池 \code{afdx_tx_free}、分页缓存 \code{afdx_tx_buf}、BAG 与分片调度引擎 \code{afdx_tx_engine}、组帧器 \code{afdx_tx_builder}、双网锁步 MAC \code{afdx_mac_tx} 及 10 组片上存储表，总体电路结构与消息存储关系如图~\ref{fig:s2_tx} 所示。
+
+\figDesign[发送核心电路结构与消息存储映射]{f07_tx}{发送核心（\code{afdx_tx_core}）总体电路框图与消息存储关系（展示 1200B 消息跨页 12/37/84 链式存储、描述符索引、调度授权、双网组帧及页面回收闭环）}{fig:s2_tx}
+
+\noindent \textbf{1.\quad 分页载荷缓存与空闲页池电路（\code{afdx_tx_buf} / \code{afdx_tx_free}，图~\ref{fig:s2_txbuf}）：}
+\code{afdx_tx_buf} 入口设置两槽位 49~bit 弹性寄存器级（\code{afdx_tx_ingress_elastic}）隔离上游 \code{afdx_svc} 的组合反压路径。
+
+\figDesign[分页载荷 RAM、页链与消息队列机制]{f19_txbuf}{分页缓存（\code{afdx_tx_buf}）与空闲页池（\code{afdx_tx_free}）电路机制（展示页链表 \code{tx_pnext}、消息链表 \code{tx_mnext} 与空闲页 FIFO 指针演进）}{fig:s2_txbuf}
+
+128~KiB 载荷池 \code{afdx_tx_payload_store}（$131072\times 8$~bit）划分为 256 页$\times$512 字节；\code{afdx_tx_free} 以 $256\times 8$~bit FIFO 管理空闲页号，提供 1 个取页口（\code{pop_req}/\code{pop_ack}/\code{pop_page[7:0]}，4 拍响应）和 2 个并发回收口（\code{ret1_*} 接组帧器逐页释放，\code{ret2_*} 接分页缓存异常回滚）。
+
+接收消息时，每写满 512~B 发起一次取页并在页链表 \code{tx_pnext}（$256\times 8$）中串联页号，同时将本消息已分配页号记入 $16\times 8$~bit 回滚 RAM（\code{afdx_tx_rollback_ram}）；末字节到达时将 47 位描述符 \texttt{\{len[13:0], port\_en, sport[15:0], dport[15:0]\}} 写入 \code{tx_desc}[\code{enq_head}] 并拉高 \code{enq_valid}。若发生超长（$>8192$~B）、无空闲页或引擎拒绝入队，状态机转入 \code{RETURN} 态，从 \code{afdx_tx_rollback_ram} 逆序读出全部已占页号（最多 16 页）经 \code{ret2_*} 零泄漏归还。
+
+\noindent \textbf{2.\quad BAG 与 IPv4 自动分片调度引擎电路（\code{afdx_tx_engine}，图~\ref{fig:s2_txfsm}、图~\ref{fig:s2_scan}）：}
+引擎独占维护 \code{tx_state}（$128\times 63$~bit：含 \code{timer_active}、32 位 \code{next_time}、8 位 \code{sn}、6 位 \code{q_count}、8 位 \code{q_head}/\code{q_tail}）、消息链表 \code{tx_mnext}（$256\times 8$）以及三张 128 项 IPv4 分片上下文表（\code{fragment_progress} $128\times 27$ 记录剩余字节与下一片 IP 偏移、\code{fragment_pointer} $128\times 17$ 记录下一片起始页号与页内偏移、\code{fragment_meta} $128\times 142$ 记录首片锁存的 IP/UDP 头与共享 16 位 IP 标识）。
+
+引擎采用单主控状态机按“\textbf{发送起始确认（START，3 拍）$>$ 入队（ENQ，5 拍）$>$ 授权（GRANT，9 拍）$>$ 轮询扫描（SCAN，2 拍/VL）}”的严格优先级共享单一状态表写口（图~\ref{fig:s2_txfsm}）。
+
+\figDesign[发送调度引擎优先仲裁与共享写口电路]{f08_txfsm}{发送调度引擎（\code{afdx_tx_engine}）优先仲裁（\code{START > ENQ > GRANT > SCAN}）、\code{phase} 计数器与状态表单一写口电路}{fig:s2_txfsm}
+
+扫描器每 2 拍读取一条 VL 状态并经 5 级流水计算 $d=\text{\code{now}}-\text{\code{next_time}}$：当 \code{q_count}$\neq 0$ 且（\code{timer_active}$=0$ 或 $d+\text{\code{LOOKAHEAD}}(512)\ge 0$）时将该 VL 定为候选（图~\ref{fig:s2_scan}）。
+
+\figDesign[发送资格窗口与期限状态阶梯]{f21_scan}{512 拍前瞻准备窗口（\code{LOOKAHEAD}）、\code{pending} 互斥锁存与基于实际起始时刻 $t_\text{start}+\text{BAG}$ 的期限阶梯更新机制}{fig:s2_scan}
+
+在 GRANT 阶段，若消息总长 $n>L_\text{max}$，引擎按单片最大 IPv4 预算 $B_\text{ip}=\lfloor\min(L_\text{max}+8,1479)/8\rfloor\times 8$（当 $L_\text{max}=1471$~B 时为 1472~B，首片含 8B UDP 头故承载 1464~B 应用数据，后续片承载 1472~B 应用数据）切分本片长度，置位 \code{grant_first}/\code{grant_more(MF)} 并输出 \code{grant_ip_offset[12:0]} 与递增的 \code{grant_sn[7:0]}；非末片发送后队首 \code{q_head} 保持不变，待组帧器回传 \code{fragment_done_*} 更新下一片游标后，在下一 BAG 周期继续调度后续分片，直至末片（\code{MF=0}）发出后弹出 \code{q_head}。
+
+\noindent \textbf{3.\quad 组帧与 12 拍 IPv4 校验和流水电路（\code{afdx_tx_builder}，图~\ref{fig:s2_builder}）：}
+模块接收 \code{grant_*} 授权后，先经 12 拍（\code{prep=0..11}）准备序列以单步 16 位加法器依次累加本片 IP 总长、16 位 IP 标识 \code{p_ident}、分片标志与偏移 \texttt{\{2'b00, MF, offset\}}、源/目的 IP 高低半字，经两级进位折叠与按位取反生成 16 位 IPv4 首部校验和，装入 14 组$\times 24$~bit 分组帧头移位寄存器；同时从起始页地址预读载荷填入 8 字节数据 FIFO，并在跨页末字节读出时将旧页号推入 4 项回收 FIFO 经 \code{ret1_*} 立即释放（首页 \code{active_head} 保留至末分片读毕释放）。
+
+\figDesign[组帧器字节流水与页末回收机制]{f22_builder}{组帧器（\code{afdx_tx_builder}）帧头移位寄存器、8 项载荷预读 FIFO、4 项页面回收 FIFO 与流缓冲输出电路}{fig:s2_builder}
+
+为精确补偿内部计时流水与输出双缓冲流寄存器延迟，组帧器设置 $-8$ 拍提前启动量（\code{START_LEAD_REGISTERED = -8}），使 MAC 在 \code{now}$=T$ 当拍准点发出首前导码字节，并通过 \code{start_valid}/\code{t_start[31:0]} 回报引擎写回 $\text{\code{next_time}}=t_\text{start}+\text{\code{bag}}$。
+
+\noindent \textbf{4.\quad 双网锁步发送 MAC 电路（\code{afdx_mac_tx} / \code{afdx_crc32_d8}，图~\ref{fig:s2_macfsm}a）：}
+采用单一状态机（\code{GAP} $\rightarrow$ \code{PREAMBLE} $\rightarrow$ \code{DATA} $\rightarrow$ \code{FCS} $\rightarrow$ \code{DRAIN}）同步驱动 A、B 两网独立的 8 位并行 CRC-32 计算单元（反射多项式 \code{0xEDB88320}）与 GMII 输出寄存器 \code{gmii_txd_a/b}、\code{gmii_tx_en_a/b}。
+
+\figDesign[双网收发 MAC 字节处理与状态机电路]{f10_macfsm}{双网 MAC 电路机制：(a) 发送 MAC（\code{afdx_mac_tx}）单状态机驱动双网独立 CRC-32 与下溢保护；(b) 接收 MAC（\code{afdx_mac_rx}）4 字节移位寄存与 FCS 剥离}{fig:s2_macfsm}
+
+两网仅第 11 字节网络接口号（\code{0x20}/\code{0x40}）和 FCS 不同，从硬件结构上保证双网冗余帧周期级零偏差同拍起始，且空闲启动延迟为 0 拍、帧间最小间隔严格维持 12 拍（96~ns）。
+

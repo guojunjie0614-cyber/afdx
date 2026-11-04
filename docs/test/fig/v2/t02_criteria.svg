@@ -25,19 +25,19 @@
 <rect x="16" y="16" width="452" height="94" fill="#DCE8F4" stroke="#000000" stroke-width="1.05"/>
 <rect x="16" y="16" width="452" height="28" fill="#B7CFE7" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="36" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 1: TESTBENCH SELF-CHECK</text>
-<text x="242" y="64" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">Runtime protocol and interface checks (all tests)</text>
+<text x="242" y="64" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">Runtime protocol and interface checks (all 67 RTL tests)</text>
 <rect x="25" y="74" width="434" height="27" fill="#FFFFFF" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="93" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: PASS result; errors = 0</text>
 <rect x="16" y="140" width="452" height="94" fill="#F0F0F0" stroke="#000000" stroke-width="1.05"/>
 <rect x="16" y="140" width="452" height="28" fill="#D7D7D7" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="160" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 2: PYTHON REFERENCE CHECK</text>
-<text x="242" y="188" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">For tests with a reference checker</text>
+<text x="242" y="188" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">Independent afdx_ref / fragment_ref / sys_ref checker</text>
 <rect x="25" y="198" width="434" height="27" fill="#FEF0C9" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="217" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: Checker passes; errors = 0</text>
 <rect x="16" y="264" width="452" height="98" fill="#E3EDE4" stroke="#000000" stroke-width="1.05"/>
 <rect x="16" y="264" width="452" height="28" fill="#C2D5C1" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="284" font-size="17" font-weight="bold" fill="#000000" text-anchor="middle">STAGE 3: RTL / NETLIST RECORD COMPARISON</text>
-<text x="242" y="312" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">For netlist tests with RTL record comparison</text>
+<text x="242" y="312" font-size="16" font-weight="normal" fill="#000000" text-anchor="middle">4 post-route VQM netlist categories (NET-01 to NET-04)</text>
 <rect x="25" y="322" width="434" height="27" fill="#E0EDDF" stroke="#000000" stroke-width="1.05"/>
 <text x="242" y="341" font-size="15.5" font-weight="normal" fill="#000000" text-anchor="middle">Criterion: Same stimulus; byte-for-byte record match</text>
 <rect x="531" y="135" width="174" height="80" fill="#B75854" stroke="#000000" stroke-width="1.05"/>

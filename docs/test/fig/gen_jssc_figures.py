@@ -90,15 +90,15 @@ def gen_t02_criteria():
     stages = [
         (16, '#DCE8F4', '#B7CFE7', '#FFFFFF',
          'STAGE 1: TESTBENCH SELF-CHECK',
-         'Runtime protocol and interface checks (all tests)',
+         'Runtime protocol and interface checks (all 67 RTL tests)',
          'Criterion: PASS result; errors = 0'),
         (140, '#F0F0F0', '#D7D7D7', '#FEF0C9',
          'STAGE 2: PYTHON REFERENCE CHECK',
-         'For tests with a reference checker',
+         'Independent afdx_ref / fragment_ref / sys_ref checker',
          'Criterion: Checker passes; errors = 0'),
         (264, '#E3EDE4', '#C2D5C1', '#E0EDDF',
          'STAGE 3: RTL / NETLIST RECORD COMPARISON',
-         'For netlist tests with RTL record comparison',
+         '4 post-route VQM netlist categories (NET-01 to NET-04)',
          'Criterion: Same stimulus; byte-for-byte record match'),
     ]
     for y, body, header, criterion, title, scope, rule in stages:
@@ -152,28 +152,33 @@ def gen_t20_thru():
         svg.append(f'<line x1="{x0 - 5}" y1="{y:.3f}" x2="{x0}" y2="{y:.3f}" stroke="#000000" stroke-width="1"/>')
         svg.append(f'<text x="{x0 - 9}" y="{y + 3.3:.3f}" font-size="10" fill="#000000" text-anchor="end">{mbps}</text>')
 
-    data = [(10, 117.680, 146, "10 VLs"), (77, 906.136, 296, "77 VLs (var: 904.752)"), (81, 953.208, 446, "81 VLs")]
-    bw = 76
-    for vl, val, cx, lbl in data:
+    data = [
+        (10, 117.680, 130, "10 VLs", "#34668B"),
+        (63, 741.384, 244, "63 VLs (Full Spec)", "#2F9688"),
+        (77, 906.136, 358, "77 VLs (Stress)", "#34668B"),
+        (81, 953.208, 468, "81 VLs (Stress)", "#34668B"),
+    ]
+    bw = 56
+    for vl, val, cx, lbl, fill in data:
         bh = val * scale
         by = y0 - bh
-        svg.append(f'<rect x="{cx - bw / 2:.3f}" y="{by:.3f}" width="{bw}" height="{bh:.3f}" fill="#34668B" stroke="#000000" stroke-width="1"/>')
-        svg.append(f'<text x="{cx}" y="{by - 6:.3f}" font-size="10" font-weight="bold" fill="#000000" text-anchor="middle">{val:.3f} Mbps</text>')
+        svg.append(f'<rect x="{cx - bw / 2:.3f}" y="{by:.3f}" width="{bw}" height="{bh:.3f}" fill="{fill}" stroke="#000000" stroke-width="1"/>')
+        svg.append(f'<text x="{cx}" y="{by - 6:.3f}" font-size="9.5" font-weight="bold" fill="#000000" text-anchor="middle">{val:.3f} Mbps</text>')
         svg.append(f'<line x1="{cx}" y1="{y0}" x2="{cx}" y2="{y0 + 5}" stroke="#000000" stroke-width="1"/>')
         svg.append(f'<text x="{cx}" y="{y0 + 18}" font-size="9.5" fill="#000000" text-anchor="middle">{lbl}</text>')
 
     # Draw the requirement across the bars, as in the supplied reference.
     y_spec = y0 - 100 * scale
     svg.append(f'<line x1="{x0}" y1="{y_spec:.3f}" x2="{x0 + gw}" y2="{y_spec:.3f}" stroke="#963C1E" stroke-width="1.1" stroke-dasharray="4 2"/>')
-    svg.append(f'<text x="215" y="{y_spec - 4:.3f}" font-size="8.5" font-weight="bold" fill="#963C1E" text-anchor="middle">Spec: 100 Mbps</text>')
+    svg.append(f'<text x="187" y="{y_spec - 4:.3f}" font-size="8.0" font-weight="bold" fill="#963C1E" text-anchor="middle">Spec: 100 Mbps</text>')
     svg.append(f'<rect x="{x0}" y="{y0 - gh}" width="{gw}" height="{gh}" fill="none" stroke="#000000" stroke-width="1.1"/>')
     svg.append(f'<text x="20" y="{y0 - gh / 2}" transform="rotate(-90 20 {y0 - gh / 2})" font-size="11" fill="#000000" text-anchor="middle">Throughput (Mbps)</text>')
 
     # Bottom annotation strip: Latency & Burst Summary
     svg.append(f'<rect x="{x0}" y="254" width="{gw}" height="46" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="0.8"/>')
-    svg.append(f'<text x="{x0 + 10}" y="268" font-size="8.5" font-weight="bold" fill="#1F2937">Max Steady Latency: 24.432 µs (Link=0) | Same-VL R97 Jitter: 0.008 µs | TX Interval Jitter: 0.000 µs</text>')
-    svg.append(f'<text x="{x0 + 10}" y="281" font-size="8.0" fill="#4B5563">77 VL Burst Drain: 959.288 µs (Last Delivery: 959.376 µs) | 81 VL Burst Drain: 1008.504 µs (Total: 1464.592 µs)</text>')
-    svg.append(f'<text x="{x0 + 10}" y="293" font-size="8.0" fill="#6B7280">Multi-VL var_high: 904.752 Mbps | var_cycle Jitter: 9.992 µs (ΔL_tx=+11.904 µs, ΔL_rx=-1.912 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="268" font-size="8.2" font-weight="bold" fill="#1F2937">63-VL Full Spec: 741.384 Mbps/dir (1482.768 Mbps Bi-Dir, 77.5% Line) | P1 Lat: ≤80.336 µs | P2 Jitter: ≤3.360 µs</text>')
+    svg.append(f'<text x="{x0 + 10}" y="281" font-size="7.9" fill="#4B5563">77/81-VL Stress Burst Drain (Top 2B-VLID / Core): 983.720 / 959.288 µs (77 VL) | 1032.936 / 1008.504 µs (81 VL)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="293" font-size="7.9" fill="#6B7280">63-VL Mixed (1472/3000/8192 B): 12,206 msgs, 0 drops | Multi-VL var_high: 904.752 Mbps (var_cycle jitter: 9.992 µs)</text>')
     svg.append('</svg>')
     return '\n'.join(svg)
 
@@ -213,9 +218,9 @@ def gen_t21_lat():
 
     # Pipeline breakdown box below the plot
     svg.append(f'<rect x="{x0}" y="244" width="{gw}" height="56" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="0.8"/>')
-    svg.append(f'<text x="{x0 + 10}" y="258" font-size="8.5" font-weight="bold" fill="#1F2937">1471 B Full-Load Latency Pipeline Stages (125 MHz, 8 ns/cyc, Link=0 ns):</text>')
-    svg.append(f'<text x="{x0 + 10}" y="271" font-size="8.0" fill="#374151">TX Pipeline: 32 cyc (0.256 µs) [SFD: 39 cyc / 0.312 µs]  |  GMII Wire: 1526 cyc (12.208 µs)</text>')
-    svg.append(f'<text x="{x0 + 10}" y="283" font-size="8.0" fill="#374151">RX Core: 26 cyc (0.208 µs)  |  Deliver (app): 1469 cyc (11.752 µs)  |  Total: 3053 cyc = 24.424 µs (Max: 3054 cyc = 24.432 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="258" font-size="8.5" font-weight="bold" fill="#1F2937">1471 B Core Single-Frame Latency Pipeline (afdx_es R97, 125 MHz, Link=0 ns):</text>')
+    svg.append(f'<text x="{x0 + 10}" y="271" font-size="8.0" fill="#374151">TX Pipeline: 32 cyc (0.256 µs) [SFD: 39 cyc / 0.312 µs]  |  GMII Wire: 1525 cyc (12.200 µs)</text>')
+    svg.append(f'<text x="{x0 + 10}" y="283" font-size="8.0" fill="#374151">RX Core: 26 cyc (0.208 µs)  |  Deliver (app): 1470 cyc (11.760 µs)  |  Total: 3053 cyc = 24.424 µs (Max: 3054 cyc = 24.432 µs)</text>')
     svg.append(f'<text x="{x0 + 10}" y="295" font-size="8.0" font-weight="bold" fill="#059669">Same-VL R97 Jitter: 0.008 µs (1 cyc AGE sweep interleaving)  |  TX Interval Jitter: 0.000 µs</text>')
     svg.append('</svg>')
     return '\n'.join(svg)

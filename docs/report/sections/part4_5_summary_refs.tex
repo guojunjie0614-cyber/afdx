@@ -1,0 +1,48 @@
+% ======================================================================
+% 第四部分：总结 & 第五部分：参考文献
+% 严格遵循模板字数限制：
+%   4.1 可扩展之处 <= 300 字
+%   4.2 心得体会 <= 1000 字
+%   第五部分 参考文献 <= 20 篇
+% ======================================================================
+
+\section{总结}
+
+\subsection{可扩展之处}
+
+本系统在现有硬件架构上可向三个方向扩展：（1）\textbf{多 VL 并发长包共享重组池：}将当前按槽位固定划分的 $16\times 8$~KiB 重组载荷 RAM 改为基于空闲页链表的共享池化存储，配合可配深度的接收环形缓冲，支持多条 VL 同拍并发注入 $8192$~B 分片长包。（2）\textbf{管理与加载协议子集扩展：}在 \code{CE_DIV=2} 多周期引擎框架下，补充 ARINC 615A 信息操作（LCI）、操作员定义卸载（LNO）及多文件列表批量加载，以及 SNMPv2c \code{GetBulk} 与多变量绑定。（3）\textbf{物理层接口与时间敏感网络融合：}在 GMII 外围增加 RGMII/SGMII 千兆 PHY 跨时钟域弹性桥接逻辑，并结合硬件时间戳通路扩展 IEEE 802.1AS（gPTP）同步协议。
+
+\subsection{心得体会}
+
+在本项目的架构设计与物理收敛过程中，我们重点解决了大容量链路状态存储、超长包分片重组与 125~MHz 静态时序闭环之间的工程矛盾，主要体会如下：
+
+\textbf{第一，片上块 RAM 的分块拓扑必须与物理布线扇出协同规划。}
+端系统需同时维护 128 条发送 VL、4096 条接收 VL（含 65,536 项 VLID 映射表）及 16 路 $8192$~B 分片重组上下文。若将 65,536 项 \code{rx_map} 实现为单表，写地址扇出与读出选择树会直接撑破 8.000~ns 时钟周期。我们将 \code{rx_map} 拆分为 32 个子库且每库按高 7 位、低 6 位拆为双写分片（共 64 块 SDP RAM），读侧采用三级寄存或树归并；同时将 \code{rx_cfg} 与 \code{rx_state} 切分为 4~bit/3~bit 窄返回域切片（\code{afdx_rx_table_slice}），将跨阵列长走线转化为固定拍数的短跳流水。
+
+\textbf{第二，大容量 M4K 阵列的保持时间与协议状态机的建立时间需针对性治理。}
+引入 $8192$~B 分片重组与顶层 2B-VLID 流包装后，全芯片 CLB 利用率增至 \ClbPct\%、M4K 增至 \Mem{} 块，且需在 8.000~ns 周期上扣除 \ClkUncert~ns 时钟不确定度。布局布线初期，重组载荷 RAM 的空闲写口曾出现短路径保持时间（Hold）违例；我们在 64 条 $8192\times 2$~bit 重组通道的 256 个 M4K 数据输入端前显式插入 128 个 \code{lut_mask="8888"} 写数据隔离 LUT，使布线后最差保持裕量提升至 $+\RoutedHold$~ns。对于包含数十个状态的 SNMP 与 615A 协议引擎，我们未采用易引入握手延迟的异步双时钟 FIFO，而是在单一 125~MHz 时钟下构建 \code{CE_DIV=2} 低扇出使能复制树，将 \countsep{\MulticycleRegs} 个管理触发器约束为 16~ns 多周期路径，配合 \code{tiles_1030.edc} 的 \countsep{\LockedClusters} 个物理簇锁定与 \code{PRES 1.30} 布线参数，实现全芯片 \countsep{\RoutedEndpoints} 个端点 0 违例（净建立裕量 $+\RoutedSetup$~ns）。
+
+\textbf{第三，细粒度流水补偿与独立参考模型比对是保障确定性指标的关键。}
+发送组帧器在加入 12 拍 IPv4 校验和准备与输出双缓冲流寄存器后，通过设置 $-8$ 拍提前启动量（\code{START_LEAD_REGISTERED = -8}），使到期帧首前导码准点在允许时刻输出；RTC 模块对 5 拍写回流水固定补偿 40~ns，实现了空载 0~ns 的对时精度。配合独立的 Python 参考模型对 \RegCount{} 项 RTL 回归及 4 类 VQM 门级网表仿真做逐字节核对，多次在迭代早期捕获了跨页回滚与分片偏移边界问题，保证了最终交付工程的可靠性。
+
+% ======================================================================
+\section{参考文献}
+
+\begingroup
+\small\linespread{1.12}\selectfont
+\begin{enumerate}[label={[\arabic*]},leftmargin=2.4em,itemsep=2pt,topsep=4pt]
+  \item Aeronautical Radio, Inc. ARINC Specification 664 Part 7: Avionics Full Duplex Switched Ethernet (AFDX) Network[S]. Annapolis: ARINC, 2005.
+  \item Aeronautical Radio, Inc. ARINC Report 615A-2: Software Data Loader Using Ethernet Interface[S]. Annapolis: ARINC, 2002.
+  \item Aeronautical Radio, Inc. ARINC Report 665-1: Loadable Software Standards[S]. Annapolis: ARINC, 2001.
+  \item IEEE Computer Society. IEEE Std 802.3-2018: IEEE Standard for Ethernet[S]. New York: IEEE, 2018.
+  \item Postel J. RFC 768: User Datagram Protocol[S]. IETF, 1980.
+  \item Postel J. RFC 791: Internet Protocol — DARPA Internet Program Protocol Specification[S]. IETF, 1981.
+  \item Sollins K. RFC 1350: The TFTP Protocol (Revision 2)[S]. IETF, 1992.
+  \item Malkin G, Harkin A. RFC 2347: TFTP Option Extension[S]. IETF, 1998.
+  \item Case J, Fedor M, Schoffstall M, et al. RFC 1157: A Simple Network Management Protocol (SNMP)[S]. IETF, 1990.
+  \item Presuhn R. RFC 3416: Version 2 of the Protocol Operations for the Simple Network Management Protocol (SNMP)[S]. IETF, 2002.
+  \item Presuhn R. RFC 3418: Management Information Base (MIB) for the Simple Network Management Protocol (SNMP)[S]. IETF, 2002.
+  \item Mills D. RFC 4330: Simple Network Time Protocol (SNTP) Version 4 for IPv4, IPv6 and OSI[S]. IETF, 2006.
+  \item 全国大学生嵌入式芯片与系统设计竞赛组委会, 中科亿海微电子科技（苏州）有限公司. FPGA 创新设计赛道中科亿海微选题指南（选题一：基于以太网 MAC 总线实现 AFDX）及官方问题汇总（1022/1026/1030 版）[Z]. 2026.
+\end{enumerate}
+\endgroup

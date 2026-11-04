@@ -2,18 +2,13 @@
 
 \code{afdx_cfg} 负责配置总线的地址译码、配置寄存器和 27 个统计计数器的维护、读数据多路选择，并在配置表写入时与收发核心执行许可握手。模块输出全部来自寄存器，结构见图~\ref{fig:cfg}。
 
-\figN[配置模块]{f30_cfg}{配置事务示例：(a) 暂存对 \code{rx_cfg[7]} 的写入，等待许可后写 RAM，并对比 RX/TX 的就绪重武装；(b) 读回 \code{USER_ID}=42 的两拍候选锁存与选择}{fig:cfg}
-
 \section{地址映射}
 
 配置地址为 18 位字地址，映射见表~\ref{tab:addrmap}。各条 VL 通过自己的 \code{en} 位控制启用。对表外地址的写请求予以忽略，读请求返回 0。
 
-\begin{table}\centering\small
-\caption{配置地址映射}\label{tab:addrmap}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.2cm}>{\centering\arraybackslash}p{1.2cm}L}
-\toprule
-地址 & 读写 & 内容 \\
-\midrule
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.2cm}>{\centering\arraybackslash}p{1.2cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.4cm-6\tabcolsep\relax}}
+\caption{配置地址映射}\label{tab:addrmap}\\
+\longtablehead{3}{地址 & 读写 & 内容}
 \code{0x00000} & 只读 & \code{VERSION}，\code{0xC3110000} \\
 \code{0x00001} & 只读 & \code{STATUS}，位 0 为 \code{tx_ready} \\
 \code{0x00002} & 读写 & \code{USER_ID[15:0]}，填入源 MAC 第 9--10 字节 \\
@@ -26,9 +21,7 @@
 \code{0x01000} $+$ VL$\times$8 $+$ 字号 & 只写 & \code{tx_cfg} \\
 \code{0x10000} $+$ VLID & 只写 & \code{rx_map}，数据取位 12:0 \\
 \code{0x20000} $+$ idx & 只写 & \code{rx_cfg}，idx $<$ 4096 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
 
 三张表按地址高位译码：地址位 17:10 为 \code{0000_0100} 时选中 \code{tx_cfg}，位 17:16 为 \code{01} 时选中 \code{rx_map}，位 17:12 为 \code{10_0000} 时选中 \code{rx_cfg}。
 
@@ -36,37 +29,34 @@
 
 三张配置表的字段见表~\ref{tab:cfgfmt}。复位后三张表全部清零，即全部 VL 未启用、全部 VLID 未映射。
 
-\begin{table}\centering\small
-\caption{配置表字段}\label{tab:cfgfmt}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\centering\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{2.6cm}L}
-\toprule
-表与字 & 位 & 字段 & 含义 \\
-\midrule
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.6cm}>{\centering\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-6.6cm-8\tabcolsep\relax}}
+\caption{配置表字段}\label{tab:cfgfmt}\\
+\longtablehead{4}{表与字 & 位 & 字段 & 含义}
 \code{tx_cfg} 字 0 & 0 & \code{en} & VL 启用 \\
  & 1、2 & \code{net_a}、\code{net_b} & 从 A、B 网发送 \\
  & 8:3 & \code{qmax} & 队列最多排队的消息数，0--63 \\
- & 19:9 & \code{max_payload} & 最大消息长度，1--1471 字节 \\
+ & 19:9 & \code{max_payload} & 单帧最大有效载荷 $L_\text{max}$，1--1471 字节（应用消息 $M>L_\text{max}$ 且 $L_\text{max}\ge 8$ 时触发 IPv4 分片，消息总长上限 $\MaxMessageBytes$~B） \\
 \code{tx_cfg} 字 1 & 31:0 & \code{bag} & BAG，单位为拍，$1~\text{ms}=125000$，不超过 $2^{30}$ \\
-\code{tx_cfg} 字 2 & 15:0 & VLID & 目的 MAC 低 16 位 \\
+\code{tx_cfg} 字 2 & 15:0 & VLID & 目的 MAC 低 16 位（顶层 \code{AFDX_top} 自动窥探同步至 \code{afdx_app_tx}） \\
 \code{tx_cfg} 字 3、4 & 31:0 & 源 IP、目的 IP & IPv4 地址 \\
 \code{tx_cfg} 字 5 & 31:16、15:0 & 源端口、目的端口 & 消息不带端口时使用的默认 UDP 端口 \\
 \code{tx_cfg} 字 6、7 & --- & 保留 & 写 0 \\
 \midrule
-\code{rx_map}[VLID] & 12 & \code{valid} & 该 VLID 已映射 \\
+\code{rx_map}[VLID] & 12 & \code{valid} & 该 VLID 已映射（顶层 \code{AFDX_top} 自动窥探同步至 \code{afdx_app_rx}） \\
  & 11:0 & \code{idx} & 接收 VL 索引，0--4095 \\
 \midrule
 \code{rx_cfg}[idx] & 0 & \code{en} & VL 启用 \\
  & 1、2 & \code{net_a}、\code{net_b} & 接收 A、B 网的帧 \\
  & 3、4 & \code{ic_en}、\code{rm_en} & 启用完整性检查、冗余管理 \\
  & 16:5 & \code{skew_max} & 两网最大到达时间差，单位 32.768~µs \\
- & 27:17 & \code{max_payload} & 最大载荷，1--1471 字节 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+ & 27:17 & \code{max_payload} & 单帧最大载荷 $L_\text{max}$，1--1471 字节（后续 IPv4 分片允许 $\le L_\text{max}+8$） \\
+\end{longtable}
 
 \section{配置读写与仲裁}
 
 读数据的多路选择分两拍完成，读延迟固定为 2 拍：第 1 拍按地址低 3 位从四组数据源（全局寄存器、发送计数器、A 网计数器、B 网计数器）及三项服务寄存器中并行预选出候选字并锁存，同时按地址位 17:3 锁存组号；第 2 拍按组号从各路寄存值中选出目标字送至 \code{cfg_rdata}，并拉高 \code{cfg_rvalid}，每拍至多经过一级 8 选 1 逻辑。
+
+\figN[配置模块]{f30_cfg}{配置事务示例：(a) 暂存对 \code{rx_cfg[7]} 的写入，等待许可后写 RAM，并对比 RX/TX 的就绪重武装；(b) 读回 \code{USER_ID}=42 的两拍候选锁存与选择}{fig:cfg}
 
 \code{cfg_ready} 为 1 时，总线在当拍接受 \code{cfg_wr} 写请求：普通寄存器和服务寄存器直接写入；配置表写请求则先装入暂存寄存器并拉低 \code{cfg_ready}，等待对应核心给出 \code{cfg_ok}（第~\ref{sec:intif}~节）。\code{tx_ready} 为 0 时，配置表写暂存寄存器保持清零，\code{cfg_ready} 为 0，不接受表初始化期间的写请求。
 
@@ -117,23 +107,27 @@ u=\min\{\,\tau \ge t+1 : \text{cfg\_ok}(\tau)=1\,\},\\
 \begin{longtable}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{2.8cm}}
 \caption{异常处理汇总}\label{tab:errsum}\\
 \longtablehead{4}{异常 & 检测位置 & 处理 & 统计}
-\multicolumn{4}{l}{\textit{发送}} \\*
-VL 或两网均未启用 & \code{tx_engine} & 拒绝入队，回收已用缓存页 & \code{drop_dis} \\
+\multicolumn{4}{l}{\textit{发送与顶层发送包装}} \\*
+顶层发送 VLID 未映射 & \code{afdx_app_tx} & 整条消息丢弃，不进入核心 & \code{ev_app[0]} \\
+顶层发送超 $\MaxMessageBytes$~B 或包装缓存满 & \code{afdx_app_tx} & 回滚包装写指针，丢弃本条消息 & \code{ev_app[1]} \\
+VL 或两网均未启用 & \code{tx_engine} & 拒绝入队，回滚回收已用缓存页 & \code{drop_dis} \\
 队列已满 & \code{tx_engine} & 同上 & \code{drop_full} \\
-超过 \code{max_payload} 或 1471 字节 & \code{tx_engine}、\code{tx_buf} & 同上；继续接收并丢弃剩余字节 & \code{drop_long} \\
+核心消息超过 $\MaxMessageBytes$~B，或分片时 $L_\text{max}<8$，或单帧超过 $L_\text{max}$（当配置不分片） & \code{tx_engine}、\code{tx_buf} & 从回滚 RAM 回收全部已分配页，继续接收并丢弃剩余字节 & \code{drop_long} \\
 无空闲页 & \code{tx_buf} & 同上 & \code{drop_nopage} \\
 MAC 发送下溢（TX Underrun） & \code{mac_tx} & 发送未取反的 FCS，使对端判为错误帧，继续接收并丢弃本帧剩余字节 & 不计 \code{tx_a}/\code{tx_b} \\
 \midrule
-\multicolumn{4}{l}{\textit{接收（每网独立）}} \\*
+\multicolumn{4}{l}{\textit{接收、分片重组与顶层接收包装}} \\*
 前导码错误、帧长越界 & \code{mac_rx} & 整帧丢弃 & 帧长错误 \\
 FCS 错误 & \code{mac_rx} & 整帧丢弃 & FCS 错误 \\
-固定字段、长度、分片或校验和错误 & \code{rx_parse} & 回退预写入指针 & 帧头错误 \\
-环形缓冲剩余空间不足 & \code{rx_parse} & 不写入本帧 & 溢出 \\
+固定字段、长度、非 8B 对齐分片或校验和错误 & \code{rx_parse} & 回退预写入指针 & 帧头错误 \\
+环形缓冲剩余空间不足 & \code{rx_parse} & 不写入本帧 & 溢出（\code{ev_a/b[7]}） \\
 VLID 未映射 & \code{rx_engine} & 回退预写入指针 & 未知 VL \\
-VL 或本网未启用、超过 \code{max_payload} & \code{rx_engine} & 回退预写入指针 & 配置不允许 \\
+VL 或本网未启用、单帧超 $L_\text{max}$（后续片超 $L_\text{max}+8$） & \code{rx_engine} & 回退预写入指针 & 配置不允许 \\
 SN 不连续 & \code{rx_engine} & 回退预写入指针，PSN 仍更新为本次 SN & 完整性检查丢弃 \\
 另一网已交付的副本 & \code{rx_engine} & 回退预写入指针 & \code{rm_drop} \\
-交付队列已满 & \code{rx_engine} & 回退预写入指针 & 溢出 \\
+交付队列已满，或分片缺首片/乱序/重叠/16 槽全满 & \code{rx_engine}、\code{rx_reasm} & 回退预写入指针，拒绝进入重组槽位 & 溢出/拒绝（\code{ev_a/b[7]}） \\
+末片总长不符、非零全包 UDP 校验错或 2~s 老化超时 & \code{rx_reassembly} & 废弃重组槽位并释放上下文 & 溢出/拒绝（\code{ev_a/b[7]}） \\
+顶层接收包装缓存溢出 & \code{afdx_app_rx} & 整包丢弃，保护已入队消息边界 & \code{ev_app[2]} \\
 表初始化完成前开始的帧 & \code{rx_parse} & 整帧忽略 & 不计 \\
 \midrule
 \multicolumn{4}{l}{\textit{服务与配置}} \\*
@@ -172,15 +166,15 @@ SNTP 响应版本、模式或 Originate 不符 & \code{afdx_rtc} & 丢弃，下�
   \item 615A 忙时，忽略对启用、发送 VL、请求端口、超时、重传上限和文件版本的控制写请求；写 \code{0xB4} 后至少等待 4 拍，且只在非忙状态下读 \code{0xB5}。
 \end{itemize}
 
-\section{配置约束}\label{sec:cfgrule}
+\section{配置约束与网络规划规格}\label{sec:cfgrule}
 
-主机须检查各项配置的组合是否满足带宽、抖动、缓存和交付要求。具体约束及超限处理如下。
+主机须检查各项配置的组合是否满足带宽、抖动、缓存和分片重组并发度要求。结合官方 1030 答疑 R138-3/R139-3，本设计声明的\textbf{端系统满载网络规划规格}为单端 63 条发送 VL / 63 条接收 VL（$\text{BAG}=1$~ms，$L_\text{max}=1471$~B，双网冗余全双工，物理线路占用率 $77.5\%$，留有约 $22.5\%$ 突发排空与管理服务裕量）。具体约束及超限处理如下：
 \begin{itemize}
-  \item \textbf{带宽：}A、B 两网由同一个 MAC 状态机同拍驱动，只发 A 网或只发 B 网的帧同样占用一个发送时隙，所以约束针对全部发送 VL，不分网络：$\sum_v C(n_v)/\text{BAG}_v \le 1$，其中 $n_v$ 为 \code{max_payload}，$C(n_v)$ 为第~\ref{sec:budget}~节式~(3-1) 的线路占用拍数，服务 VL 计入求和。超出该约束时，各帧只能串行发送出，实际发送间隔将大于 BAG。
-  \item \textbf{抖动：}BAG 取 $2^k$~ms；错开各 VL 首条消息的提交时刻，使任一 VL 之前排队发送的帧的线路占用与等待之和按式~(\ref{eq:jitter}) 不超过 5828 拍（50~µs）。
-  \item \textbf{缓存：}缓存页在组帧器读完后才回收，而 \code{q_count} 在授权时已减 1；正在接收的消息也会在入队判定前分配缓存页。因此，除各队列中的消息外，还须计入组帧器持有的两帧（下一帧与正在发送的帧），以及 \code{tx_buf} 正在接收的一条消息，每帧或每条消息至多占 3 页。满足 $\sum_v \text{qmax}_v \times \lceil n_v / 512 \rceil + 9 \le 256$ 时，256 页即可容纳上述消息同时驻留时的最大需求；超出时，因无空闲页而丢弃的消息计入 \code{drop_nopage}。256 页按每条最长消息占 3 页计算，最多驻留 85 条最长消息。
+  \item \textbf{带宽：}A、B 两网由同一个 MAC 状态机同拍驱动，只发 A 网或只发 B 网的帧同样占用一个发送时隙，所以约束针对全部发送 VL，不分网络：$\sum_v C(n_v)/\text{BAG}_v \le 1$，其中 $n_v$ 为单帧最大载荷 $L_\text{max}$，$C(n_v)$ 为第~\ref{sec:budget}~节式~(3-1) 的线路占用拍数，服务 VL 计入求和。长包分片消息在每个 BAG 周期仅调度 1 个分片帧，单周期带宽占用与单帧 VL 一致。
+  \item \textbf{抖动：}BAG 取 $2^k$~ms；周期业务宜错开各 VL 首条消息相位，在 63~VL 满载规格下即使发生旋转三元组背靠背突发（B2），同 VL 最大端到端极差抖动仍保持在 \JitSixtyThreeBTwo~µs（$<100$~µs），而超规格 81~VL 对齐突发将因排队逼近 1~ms 周期而超出百微秒门限。
+  \item \textbf{发送与重组缓存：}发送核心共 256 页（128~KiB），单帧 $1471$~B 占 3 页，$8192$~B 最大长包占 16 页；主机规划在途驻留页数须满足 $\sum_v \text{qmax}_v \times \lceil M_v / 512 \rceil + 9 \le 256$（例如 60 条短包加 $1472/3000/8192$~B 三条长包共占 205 页，安全满足；多条并发 $8192$~B 长包则须受 256 页总预算与顶层 32~KiB 包装缓冲约束）。接收侧配备 \ReasmContexts{} 个并发重组槽位（奇偶 VL 索引各 8 个槽位），同一时刻处于跨 BAG 分片重组中的活跃长包 VL 数在奇偶各 Bank 内均不得超过 8 条，且同 VL 新长包须在前一长包末分片发出后再提交。
   \item \textbf{交付：}交付口每拍一字节。若某条 VL 关闭冗余管理，且同时接收两网数据，则每条消息交付两次。所有接收 VL 的载荷交付总速率须低于 1 字节每拍；两网独立满速且都要交付时，所需交付速率超过该上限，超出部分按溢出计数。
-  \item \textbf{顺序与冗余窗口：}跨 VL 的发送顺序由各 VL 的 BAG 与候选选择共同决定；提前选中的候选可能使后到的小帧等待。接收副本的到达间隔超过 \code{skew_max} 时，冗余记录按过期处理，该副本可能再次交付。
-  \item \textbf{取值范围：}\code{bag} $\le 2^{30}$ 拍；\code{qmax} $\le 63$；\code{max_payload} 为 1--1471；\code{skew_max} 小于过期清理门限 \code{0x4000} 个计时单位（12 位字段自然满足）。
+  \item \textbf{顺序与冗余窗口：}跨 VL 的发送顺序由各 VL 的 BAG 与候选选择共同决定；接收分片必须在同一 VL 内按递增片偏移顺序到达，乱序分片将被拒绝。接收副本的到达间隔超过 \code{skew_max} 时，冗余记录按过期处理。
+  \item \textbf{取值范围：}\code{bag} $\le 2^{30}$ 拍；\code{qmax} $\le 63$；\code{max_payload} 为 1--1471（启用分片时 $\ge 8$）；应用消息总长 $1\le M\le \MaxMessageBytes$~B；\code{skew_max} 小于过期清理门限 \code{0x4000} 个计时单位（12 位字段自然满足）。
 \end{itemize}
 

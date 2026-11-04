@@ -63,8 +63,8 @@
 <rect x="70" y="24" width="452" height="194" fill="none" stroke="#000000" stroke-width="1.1"/>
 <text x="20" y="121.0" transform="rotate(-90 20 121.0)" font-size="11" fill="#000000" text-anchor="middle">Latency (µs)</text>
 <rect x="70" y="244" width="452" height="56" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="0.8"/>
-<text x="80" y="258" font-size="8.5" font-weight="bold" fill="#1F2937">1471 B Full-Load Latency Pipeline Stages (125 MHz, 8 ns/cyc, Link=0 ns):</text>
-<text x="80" y="271" font-size="8.0" fill="#374151">TX Pipeline: 32 cyc (0.256 µs) [SFD: 39 cyc / 0.312 µs]  |  GMII Wire: 1526 cyc (12.208 µs)</text>
-<text x="80" y="283" font-size="8.0" fill="#374151">RX Core: 26 cyc (0.208 µs)  |  Deliver (app): 1469 cyc (11.752 µs)  |  Total: 3053 cyc = 24.424 µs (Max: 3054 cyc = 24.432 µs)</text>
+<text x="80" y="258" font-size="8.5" font-weight="bold" fill="#1F2937">1471 B Core Single-Frame Latency Pipeline (afdx_es R97, 125 MHz, Link=0 ns):</text>
+<text x="80" y="271" font-size="8.0" fill="#374151">TX Pipeline: 32 cyc (0.256 µs) [SFD: 39 cyc / 0.312 µs]  |  GMII Wire: 1525 cyc (12.200 µs)</text>
+<text x="80" y="283" font-size="8.0" fill="#374151">RX Core: 26 cyc (0.208 µs)  |  Deliver (app): 1470 cyc (11.760 µs)  |  Total: 3053 cyc = 24.424 µs (Max: 3054 cyc = 24.432 µs)</text>
 <text x="80" y="295" font-size="8.0" font-weight="bold" fill="#059669">Same-VL R97 Jitter: 0.008 µs (1 cyc AGE sweep interleaving)  |  TX Interval Jitter: 0.000 µs</text>
 </svg>

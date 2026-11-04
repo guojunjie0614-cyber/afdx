@@ -4,52 +4,46 @@
 
 AFDX（ARINC 664 Part 7）端系统是连接机载航空电子主机与确定性交换网络的核心枢纽。在发送方向，端系统将上层应用报文按 UDP/IP/以太网协议栈线速封装，严格依据各虚拟链路（Virtual Link, VL）设定的带宽分配间隔（Bandwidth Allocation Gap, BAG）执行整形调度，并向 A、B 双冗余物理网络锁步并发；在接收方向，端系统对双网到达帧流执行线速协议头解析与完整性检查（Integrity Checking, IC），并在冗余管理（Redundancy Management, RM）窗口内完成去重，确保向上层应用单次交付有效数据。赛题明确要求实现 ARINC 664 P7 基础通信、高完整性通信、SNMP 网络管理、ARINC 615A 软件数据加载（Data Loading）及 RTC 时钟同步五大功能，同时满足线速吞吐 $\ge 100\text{ Mbps}$、端到端时延 $<1\text{--}2\text{ ms}$、抖动数十微秒级以及 128 发送 / 4096 接收 VL 的性能指标。
 
+图~\ref{fig:path} 以四字节消息为例，从应用提交到双网发送，再到接收端的单次交付。
+
+\figN[一条用户消息的端到端路径]{f02_path}{一条四字节消息的端到端表示。ES1 将同一组 p0--p3 加上 42 字节帧头、13 字节补零、SN 与 FCS 后发往两网；ES2 去掉帧封装并交付一次。示例采用 VL 7、SN 17，两帧均正确、IC/RM 启用、处于冗余窗口内且交付队列有空位，A 描述先被处理}{fig:path}
+
 在 FPGA 上实现全硬件化的 AFDX 端系统，核心矛盾在于逐字节线速流水处理与大规模链路状态存储之间的架构平衡。4096 条接收 VL 与 128 条发送 VL 的配置与状态需要较大的片上存储容量；采用分布式寄存器阵列将导致逻辑资源随链路规模线性膨胀，而采用片上块 RAM（BRAM）虽可大幅节约逻辑，但同步读延迟要求引擎显式安排查表、判定和回写流水。此外，大容量映射表还会产生严重的地址扇出与读出选择延迟。为此，设计确立了“32-Bank 分块存储与读出流水、管理面隔拍时钟使能解耦、业务面 125~MHz 单周期全速运行”的系统微架构，在保证高存储密度的同时实现了 125~MHz 严格时序闭环。
 
-本设计采用 Verilog-2001 HDL 构建全硬件化 AFDX 端系统顶层模块 \code{AFDX_top}，以单一 125~MHz（8~ns 周期）主时钟直接驱动八位 GMII 物理接口，实现双网双向 1~Gbps 物理线速（满载净有效载荷吞吐达 953.208~Mbps）。架构包含以下四项关键技术：
+本设计采用 Verilog-2001 HDL 构建全硬件化 AFDX 端系统顶层模块 \code{AFDX_top}（\Pins{} 引脚）与核心模块 \code{afdx_es}，以单一 125~MHz（8~ns 周期）主时钟直接驱动八位 GMII 物理接口，实现双网双向 1~Gbps 物理线速（团队声明的 63~VL 满载规格下双向有效载荷吞吐达 \ThruSixtyThreeBi~Mbps，81~VL 超规格极限单向有效载荷吞吐达 \ThruEightyOne~Mbps）。架构包含以下五项关键技术：
 \begin{enumerate}
-  \item \textbf{基于片上 BRAM 的全表格化状态维护架构：}128 条发送 VL 与 4096 条接收 VL 的配置参数及动态状态全部收敛入片上块 RAM，由专用硬件引擎按定拍流水执行读写更新；字节流水通路与深层控制逻辑由全部链路时分复用，实现每拍处理一字节的高效线速处理。
+  \item \textbf{流式应用边界封装与基于片上 BRAM 的全表格化状态维护架构：}顶层 \code{AFDX_top} 提供 2 字节大端 VLID 前缀的应用流式接口（\code{tx_data}/\code{rx_data}），通过双侧 $8\times 4$~KiB 分体应用缓冲、发送侧 3 级流水 128 路 VLID 比较器与接收侧 $4096\times 16$~bit 映射 RAM 实现应用消息流与核心接口的桥接；128 条发送 VL 与 4096 条接收 VL 的配置参数及动态状态全部收敛入片上块 RAM，由专用硬件引擎按定拍流水执行读写更新，字节流水通路与深层控制逻辑由全部链路时分复用，实现每拍处理一字节的高效线速处理。
+  \item \textbf{$1\text{--}\MaxMessageBytes$~B IPv4 硬件自动分片与 \ReasmContexts{} 路并发顺序分片重组引擎：}发送端对超过单帧最大载荷（$L_\text{max}=1471$~B）的长消息自动拆分为共享同一 IP 标识（Identification）的多个 IPv4 分片（首分片携带 8 字节 UDP 头——按 RFC 768 将 IPv4 UDP 校验和置 \code{0x0000}——及最多 $1464$~B 载荷，后续分片携带最多 $1472$~B 载荷，逐片硬件计算 IPv4 首部校验和，最大 $8192$~B 拆分为 6 个以太网帧），各分片独立分配 AFDX 序列号（SN）并严格按所属 VL 的 BAG 调度发送；接收端在逐帧 IC/RM 去重后，通过双存储体（2-Bank $\times$ 8 槽位）共 \ReasmContexts{} 个并发重组上下文及 128~KiB 四通道重组载荷缓存执行严格按片偏移顺序的分片拼接（拒绝缺首片、乱序及重叠分片），支持 2~s 硬件老化超时清理与非零全报文 UDP 校验和验证。
   \item \textbf{前瞻预取与准点放行调度机制（Lookahead Prefetch \& Scheduled Release）：}发送引擎在 BAG 允许时刻到达前 512 拍提前检索候选 VL 并完成帧头组装。当报文提前排队且无线路冲突时，MAC 在允许发送时刻准点输出首前导码字节，实现稳态零发送抖动。
   \item \textbf{双网锁步自研线速 MAC（Lockstep Dual-MAC）：}采用单主控状态机同步驱动 A、B 双网 CRC-32 累加器与物理输出寄存器，保证双网副本在时钟周期级完全同拍起始；GMII 发送接口直接由 MAC 级寄存器引出，空闲启动延迟严格为 0 拍。
   \item \textbf{服务通道状态折叠与流水时延精密补偿：}SNMP 与 615A 协议引擎通过公共状态序列复用字节解析、字段拼装与响应发送逻辑，大幅收敛 FSM 逻辑面积；RTC 模块采用逐位移位加减流水实现纳秒/NTP 小数定点换算，并对片内 5 拍固定写回流水（40~ns）执行硬件确定性补偿。
 \end{enumerate}
 根据帧长、时钟周期和各级流水拍数，可计算端系统的载荷容量与端到端时延。表~\ref{tab:perf} 汇总相关指标，第~\ref{sec:budget}~节给出预算推导。
 
-\Needspace{16\baselineskip}
 \section{主要成果}
 
 表~\ref{tab:func} 列出赛题五项功能的实现要点，表~\ref{tab:perf} 给出技术指标要求、设计目标与实测结果。
 
-\begin{table}\centering\small
-\caption{赛题功能与实现要点}\label{tab:func}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.4cm}L>{\raggedright\arraybackslash}p{2.0cm}}
-\toprule
-赛题功能 & 实现要点 & 详见 \\
-\midrule
-ARINC 664 P7 通信 & 128 条发送 VL 按 BAG 调度，UDP/IP 封装，A、B 双网同时发送；4096 条接收 VL 按 VLID 直接查表 & 第~\ref{ch:tx}、\ref{ch:rx}~章 \\
-高完整性通信 & FCS、帧长、IP/UDP 头逐帧检查；每网独立的序号完整性检查；冗余管理按处理顺序交付首个有效副本 & 第~\ref{ch:rx}~章 \\
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.4cm-6\tabcolsep\relax}>{\raggedright\arraybackslash}p{2.0cm}}
+\caption{赛题功能与实现要点}\label{tab:func}\\
+\longtablehead{3}{赛题功能 & 实现要点 & 详见}
+ARINC 664 P7 通信 & 128 条发送 VL 按 BAG 调度，支持 $1\text{--}\MaxMessageBytes$~B 应用消息 IPv4 自动分片与 UDP/IP 封装，A、B 双网锁步发送；4096 条接收 VL 按 VLID 直接查表与 \ReasmContexts{} 路并发顺序分片重组 & 第~\ref{ch:tx}、\ref{ch:rx}~章 \\
+高完整性通信 & FCS、帧长、IP/UDP 头逐帧检查（分片报文执行顺序偏移检查与非零全报文 UDP 校验和验证）；每网独立的序号完整性检查（IC）；冗余管理（RM）按处理顺序交付首个有效副本 & 第~\ref{ch:rx}~章 \\
 SNMP 网络管理 & v1/v2c 的 Get、GetNext、Set 和 v2 Trap，36 个管理对象，BER 逐字节编解码，多周期解耦 & 第~\ref{sec:snmp}~节 \\
 615A 软件数据加载 & 基于 TFTP 的单文件上传（LUI、LUS、LUR、LUH、数据文件）与介质定义下载（Media-Defined Download, MDD），8~KiB 加载区，CRC-16 硬件校验 & 第~\ref{sec:a615}~节 \\
 RTC 时钟同步 & SNTPv4 时钟同步，32 位秒加 32 位纳秒，8~ns 硬件时钟分辨率与 40~ns 延迟精确补偿（5 拍流水） & 第~\ref{sec:rtc}~节 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
 
-\begin{table}\centering\small
-\caption{技术指标与实测映射}\label{tab:perf}\label{tab:metrics}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{4.0cm}L}
-\toprule
-指标 & 赛题要求 & 设计目标 & 实测结果 & 依据与说明 \\
-\midrule
-传输速率 & 100~Mbps & 载荷容量 956.44~Mbps & 定长满载 \Thru~Mbps；81~VL 极限 \ThruEightyOne~Mbps；变长高负载 \ThruVarHigh~Mbps & 按接收端去重有效载荷计数，千兆 GMII 每拍一字节（第~\ref{sec:budget}~节、表~\ref{tab:perf-meas}） \\
-端到端时延 & $<$1--2~ms & 无争用时延 24.424~µs；预算上界 26.360~µs & 满载最大时延 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs / 首前导码 \TtxSof~µs；$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs） & 1022 答疑 R95/R96 口径；无排队立即发送从提交至首前导码 32 拍（0.256~µs） \\
-传输抖动 & $\le$ 几十微秒 & 稳态无争用为 0；争用上界 $\le$50~µs & 发送间隔抖动 \Jit~µs；R97 同 VL 极差定长满载 \JitSameVl~µs、变长循环 \JitVarCycle~µs & 1022 答疑 R97 口径，同一 VL 多帧端到端时延最大减最小极差（第~\ref{sec:jitter}~节） \\
-工作时序 & 125~MHz 稳定工作 & 综合建立裕量 $\ge$2~ns；布线后零违例 & 布局布线后（\code{S2d + PRES1.50}）建立裕量 $+\RoutedSetup$~ns、保持裕量 $+\RoutedHold$~ns，最高频率 \RoutedFmax~MHz & 单周期路径 153,342 条，多周期路径 50,296 条（建立裕量 $+\MulticycleSetup$~ns），45,745 端点 0 违例 \\
-帧格式 & VLID、SN 1--255，载荷 $\le$1471~B & 支持以太网帧、IPv4、UDP、SN 及 FCS & 帧长 64--1518 字节，复位首帧 SN 为 0，之后 1--255 循环 & 符合 ARINC 664 P7 与 IEEE 802.3 标准 \\
-VL 容量 & 128 发送 / 4096 接收 & 128 发送 / 4096 接收，VLID 任意直接映射 & 128 发送与 4096 接收全配置抽测 100\% 交付 & 块 RAM 状态表管理，接收映射表 65536 项全覆盖 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\begin{longtable}{>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-11.6cm-10\tabcolsep\relax}}
+\caption{技术指标与实测映射}\label{tab:perf}\label{tab:metrics}\\
+\longtablehead{5}{指标 & 赛题要求 & 设计目标 & 实测结果 & 依据与说明}
+传输速率 & $\ge 100$~Mbps & 63~VL 规划满载 741.384~Mbps；物理线速上限 956.44~Mbps & 63~VL 满载单向 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps）；77/81~VL 压力达 \Thru{} / \ThruEightyOne~Mbps & 按接收端去重有效载荷计数，63~VL 线路占用率 \LineUtilSixtyThree\%（第~\ref{sec:budget}~节、表~\ref{tab:perf-meas}） \\
+端到端时延 & $<$1--2~ms & 核心单帧 24.424~µs；顶层满载 $<2$~ms & 顶层流口径：63~VL 周期最大 \LatSixtyThreePMax~µs，B2 突发最大 \LatSixtyThreeBTwo~µs；核心流水口径：满载最大 \Lat~µs（$L_\text{tx}$ \Ttx~µs，$L_\text{rx}$ \TrxLast~µs） & 顶层流口径含整包串行输入与输出；单条 $8192$~B（6 分片）跨 5 个 BAG 完成时延 $5.212$~ms \\
+传输抖动 & $\le$ 几十微秒 & 定长无争用为 0；63~VL 周期 $\le 5$~µs、突发 $< 100$~µs & 顶层流口径：63~VL 周期 $1471$~B 为 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 突发最大 \JitSixtyThreeBTwo~µs；核心同 VL 极差 \JitSameVl~µs & 同 VL 多帧端到端时延极差（第~\ref{sec:jitter}~节、第~\ref{sec:perfmeas}~节） \\
+工作时序 & 125~MHz 稳定工作 & 施加 $\ClkUncert$~ns 时钟偏移后布线零违例 & 布局布线后（\code{PRES 1.30}）扣除 $\ClkUncert$~ns 时钟不确定度后净建立裕量 $+\RoutedSetup$~ns（原始物理裕量 $+\RoutedSetupRaw$~ns）、保持裕量 $+\RoutedHold$~ns & 125~MHz（8.000~ns）主时钟 + $0.30$~ns（300~ps）时钟不确定度约束，\RoutedEndpoints{} 端点 0 违例，等效频率 \RoutedFmax~MHz \\
+帧与消息格式 & VLID、SN 1--255，单帧载荷 $\le$1471~B，长包分片 & 单帧 $1\text{--}1471$~B；应用消息 $1\text{--}\MaxMessageBytes$~B IPv4 分片与顺序重组 & 帧长 64--1518 字节，复位首帧 SN 为 0，之后 1--255 循环；$1472\text{--}8192$~B 自动 2--6 分片与 \ReasmContexts{} 路并发顺序重组 & 符合 ARINC 664 P7、IEEE 802.3 及官方 1026/1030 答疑 R120/R138 规范 \\
+VL 容量 & 128 发送 / 4096 接收 & 硬件表满配 128 发送 / 4096 接收；声明满载规格 63 发送 / 63 接收 & 128 发送与 4096 接收全配置抽测 100\% 交付；63~VL 双向满载 + 混合分片 0 丢包 & 块 RAM 状态表管理，接收映射表 65536 项全覆盖 \\
+\end{longtable}
 
 \section{文档结构}
 

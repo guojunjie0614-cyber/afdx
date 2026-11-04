@@ -14,7 +14,7 @@ RTC、SNMP 和 615A 均通过 UDP 报文通信，经服务通道 \code{afdx_svc}
 
 为切断四个服务源发送状态机到发送核心 \code{afdx_tx_core} 注入多路器之间的跨模块组合长路径，\code{afdx_svc} 对仲裁授权向量进行了\textbf{一级寄存}（\code{served[3:0]}），实现仲裁决策与多路数据选通的时序解耦。发送仲裁器由状态寄存器构成：\code{busy} 指示当前消息传输忙，\code{owner} 锁存当前来源，\code{turn} 指示下一轮轮询起点；末字节握手时，仲裁器清零 \code{busy}，并将 \code{turn} 更新为下一个来源。因此，任一来源提出请求后，至多等待其余三个来源各传完一条消息。
 
-接收核心的交付数据同时广播给应用和三个服务（图~\ref{fig:svc}(b)）。三个服务使用互不冲突的 UDP 端口，均不对交付口施加反压。首字节到达当拍，各服务根据 \code{d_dport} 经组合逻辑译码产生端口匹配信号，一方面直接门控首字节的应用口 \code{valid}，另一方面锁存至 \code{rx_claimed} 并在后续字节期间（\code{rx_active}$=1$）持续保持。因此，匹配服务端口的消息由对应服务接收，应用口的 \code{valid} 和 \code{last} 全程保持为 0；其余消息原样交付应用。
+接收核心的交付数据同时广播给应用和三个服务（图~\ref{fig:svc}(b)）。三个服务使用互不冲突的 UDP 端口，均不对交付口施加反压。首字节到达当拍，各服务根据 \code{d_dport} 经组合逻辑译码产生端口匹配信号，一方面直接门控首字节的应用口 \code{valid}，另一方面锁存至 \code{rx_claimed} 并在后续字节期间（\code{rx_active}$=1$）持续保持。因此，匹配服务端口的消息由对应服务接收，应用口的 \code{valid} 和 \code{last} 全程保持为 0；其余消息原样交付应用，并在顶层 \code{AFDX_top} 入口经专用边界寄存器组（\code{delivery_*}）打拍隔离后再驱动接收包装器 \code{afdx_app_rx} 的片上 RAM。
 
 \section{RTC 时钟同步}\label{sec:rtc}
 

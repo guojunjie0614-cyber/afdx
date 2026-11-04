@@ -1,26 +1,32 @@
 \chapter{接收通路}\label{ch:rx}
 
-接收核心 \code{afdx_rx_core} 为 A、B 两路网络各配置一套接收 MAC 和帧头解析器，两网共用同一接收引擎与交付模块。MAC 在接收过程中逐字节校验 CRC，解析器同步检查帧头并将载荷预写入本网的环形缓冲。对于通过解析器检查的帧，接收引擎根据帧描述依次执行 VL 查表、完整性检查和冗余管理，再通知解析器提交数据或回退写指针；已提交的消息最终由交付模块逐字节送往应用口。
+接收通路由接收核心 \code{afdx_rx_core}（含双网 MAC、帧与分片解析器、共享接收引擎、环形缓存交付模块与 \ReasmContexts{} 路并发顺序分片重组引擎 \code{afdx_rx_reassembly}）以及顶层接收应用流包装器 \code{afdx_app_rx} 组成。MAC 在接收过程中逐字节校验 CRC，解析器同步检查以太网/IPv4/UDP（或后续 IPv4 分片）协议头并将载荷预写入本网环形缓冲。对于通过解析器检查的帧，接收引擎依次执行多 Bank VL 查表、配置检查、完整性检查（IC）、冗余管理（RM）以及分片重组槽位预约，再通知解析器提交数据或回退写指针；已提交的单帧由交付模块直通送出，分片帧则搬移至专用重组槽位完成顺序拼接与全报文校验，最终经 \code{afdx_app_rx} 加上 2 字节大端 VLID 前缀连续输出至 \code{rx_data}。
 
 \section{接收核心与配置表}\label{sec:rxtables}
 
-\figN[接收查表与载荷定位]{f11_rx}{接收查表与载荷定位示例。A 网的 VLID 7 选择映射表 bank 0 的第 7 行，得到索引 3，随后读取该项配置和状态。接纳后，交付队列只保存元数据，通过网络、起点和长度定位 ring A 中的四个载荷字节；图中仅列出本例使用的字段}{fig:rx}
+\figN[接收查表与载荷定位]{f11_rx}{接收查表与载荷定位示例。A 网的 VLID 7 选择映射表 bank 0 的第 7 行，得到索引 3，随后读取该项配置和状态。接纳后，交付队列保存元数据（分片帧同时记录预约重组槽位号），通过网络、起点和长度定位 ring A 中的载荷字节；图中仅列出本例使用的字段}{fig:rx}
 
-接收侧的片上表见表~\ref{tab:rxtables}。
-
-为了降低大容量存储表在大扇出布线上的时序延迟，\code{rx_map}（逻辑规模 65536$\times$13~bit）在物理实现上划分为\textbf{32 个 $2048\times 13$~bit 的 \code{afdx_ram_sdp} 子库（bank）}。写侧与接收描述表共享 16 路局部配置总线副本（参数 \code{RX_CONFIG_BANKS=16}），读侧采用两级寄存器多路复用流水；查表时由高 5 位地址选中目标子库，读出延迟由原单级 1 拍调整为 2 拍读回流水。
+接收侧的片上存储表见表~\ref{tab:rxtables}。为消除大容量存储表在大扇出布线与短路径写保持上的时序瓶颈，设计在物理结构上实施了三项精细拆分：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{\code{rx_map} 32-Bank 双写分片与三级或树归并：}逻辑规模 $65536\times 13$~bit 物理划分为 32 个 $2048\times 13$~bit 子库，每个子库进一步按写口拆分为 $7$~bit 与 $6$~bit 两块 \code{afdx_ram_sdp}（共 64 个实例），将单个写控制寄存器的物理 RAM 负载减半；写侧共享 16 路局部配置总线副本（\code{RX_CONFIG_BANKS=16}），读侧经“2-Bank $\rightarrow$ 4-Group $\rightarrow$ 最终 4-Group”三级寄存或树（OR-tree）归并，在 \code{FRAME} 第 5 拍稳定锁存映射结果。
+  \item \textbf{\code{rx_cfg} 与 \code{rx_state} 窄位分片封装：}\code{rx_cfg}（$4096\times 32$）拆分为 8 个 4 位 \code{afdx_rx_table_slice}，\code{rx_state}（$4096\times 43$）拆分为 10 个 4 位加 1 个 3 位 \code{afdx_rx_table_slice}（内部调用 \code{afdx_rx_reassembly_ram}，采用“E0 读命令寄存 $\rightarrow$ E1 同步 RAM $\rightarrow$ E2 本地返回寄存”窄返回域结构）。
+  \item \textbf{扩展交付队列与双 Bank 重组存储：}\code{rx_dq} 扩展为 $32\times 73$~bit（在原 68 位基础上新增 1 位分片标志与 4 位预约重组槽位号）；\code{afdx_rx_reassembly} 划分为 2 个独立 Bank（各 8 槽位），每 Bank 含 4 张专用元数据 RAM 与 $8\times 4$ 条 $8192\times 2$~bit 载荷通道 RAM（总计 128~KiB）。
+\end{enumerate}
 
 \begin{table}\centering\small
-\caption{接收侧配置与状态表}\label{tab:rxtables}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.9cm}L}
+\caption{接收侧核心与分片重组存储表}\label{tab:rxtables}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedleft\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{1.9cm}L}
 \toprule
 表 & 深度$\times$位宽 & 写口 & 读口 & 内容 \\
 \midrule
-\code{rx_map} & $65536\times 13$ & 配置总线 & \code{rx_engine} & \code{valid}[12]、\code{idx}[11:0]，物理划分为 32 个 $2048\times 13$ 子库 \\
-\code{rx_cfg} & $4096\times 32$ & 配置总线 & \code{rx_engine} & \code{en}、\code{net_a}、\code{net_b}、\code{ic_en}、\code{rm_en}、\code{skew_max}[16:5]、\code{max_payload}[27:17] \\
-\code{rx_state} & $4096\times 44$ & \code{rx_engine} & \code{rx_engine} & 每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
-\code{rx_ring_a/b} & $4096\times 8$ & 本网 \code{rx_parse} & \code{rx_deliver} & 每网一个环形缓冲，按到达顺序存载荷 \\
-\code{rx_dq} & $32\times 68$ & \code{rx_engine} & \code{rx_deliver} & \code{afdx_ram_sdp} 块 RAM：来源网、起点、长度、\code{idx}、UDP 端口 \\
+\code{rx_map} & $65536\times 13$ & 配置总线 & \code{rx_engine} & \code{valid}[12]、\code{idx}[11:0]，32 Bank $\times 2$ 写分片（64 块 SDP） \\
+\code{rx_cfg} & $4096\times 32$ & 配置总线 & \code{rx_engine} & 8 组 4 位分片：\code{en}、\code{net_a/b}、\code{ic_en}、\code{rm_en}、\code{skew_max}、\code{max_payload} \\
+\code{rx_state} & $4096\times 43$ & \code{rx_engine} & \code{rx_engine} & 11 组窄分片：每网 PSN 及有效位；\code{rm_last}、\code{rm_time} 及有效位 \\
+\code{rx_ring_a/b} & $4096\times 8$ & 本网 \code{rx_parse} & \code{rx_deliver} & A/B 网各 4~KiB 环形缓冲，按到达顺序暂存单帧/分片载荷 \\
+\code{rx_dq} & $32\times 73$ & \code{rx_engine} & \code{rx_deliver} & 已准入帧描述：分片标志、4 位重组槽位、来源网、环形起点、长度、\code{idx}、UDP 端口 \\
+\code{reasm_meta} & $2\times 8\times 258$ & \code{reassembly} & \code{reassembly} & 每 Bank 4 张 8 项表：\code{key}(92b)、\code{header}(92b)、\code{admission}(28b)、\code{progress}(46b) \\
+\code{reasm_payload} & $16\times 8192\times 8$ & \code{reassembly} & \code{reassembly} & 16 槽位 $\times 4$ 通道 $8192\times 2$~bit 重组载荷池（128~KiB，带 128 个写隔离 LUT） \\
+\code{afdx_app_map} & $4096\times 16$ & 配置窥探 & \code{afdx_app_rx} & 顶层接收包装器 $\text{VL\_idx}\rightarrow\text{VLID}$ 反查表（另配 32~KiB 接收包装缓冲） \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -48,16 +54,14 @@
 
 帧头必须满足以下条件，任一条件不满足均判为“帧头错”：
 \begin{itemize}
-  \item 第 0--3 字节为 \code{03 00 00 00}；第 12--13 字节为 \code{08 00}；第 14 字节为 \code{0x45}；第 23 字节为 \code{0x11}；
-  \item IP 不分片（MF 为 0、片偏移为 0）；IP 头 10 个 16 位字的反码和为 \code{0xFFFF}；
-  \item 记 $n$ 为 UDP 长度减 8，要求 $1\le n\le 1471$，IP 总长等于 $n+28$，且含 FCS 的帧长等于 $47+\max(n,17)$；
-  \item UDP 校验和非 0 时，伪头、UDP 头与 $n$ 字节数据的反码和为 \code{0xFFFF}。
+  \item 第 0--3 字节为 \code{03 00 00 00}；第 12--13 字节为 \code{08 00}；第 14 字节为 \code{0x45}；第 23 字节为 \code{0x11}；IP 头 10 个 16 位字的反码和为 \code{0xFFFF}；IPv4 标志保留位为 0；
+  \item \textbf{不分片单帧（\code{MF=0} 且片偏移 $=0$）：}记 $n$ 为 UDP 长度减 8，要求 $1\le n\le 1471$，IP 总长等于 $n+28$，含 FCS 帧长等于 $47+\max(n,17)$；UDP 校验和非 0 时，伪头、UDP 头与 $n$ 字节数据的反码和须为 \code{0xFFFF}；
+  \item \textbf{IPv4 首分片（\code{MF=1} 且片偏移 $=0$）：}第 34--41 字节为 8 字节 UDP 头，记整包应用消息总长 $M = \text{UDP 长度}-8$（要求 $1\le M\le \MaxMessageBytes$），本片 IPv4 数据长 $d_\text{ip} = \text{IP 总长}-20$ 须为非零 8 字节整数倍（本片应用载荷 $n = d_\text{ip}-8$），含 FCS 帧长等于 $47+\max(n,17)$；
+  \item \textbf{IPv4 后续分片（片偏移 $\ne 0$）：}无 UDP 头，本片应用载荷 $n = \text{IP 总长}-20$（$1\le n\le 1472$）；若 \code{MF=1}（中间分片），$n$ 须为 8 字节整数倍；片偏移字节数加 $n$ 不得越界，且含 FCS 帧长须等于 $39+\max(n,25)$。
 \end{itemize}
-补零字节的值不检查。解析器同时记录 VLID、源/目的端口、$n$ 和 SN。
+补零字节的值不检查。解析器同时提取 VLID、IP 源/目的地址、16 位 IP 标识、分片标志与片偏移、UDP 头部字段（首片/单帧）、本帧有效载荷长度 $n$ 和帧尾 SN。
 
-在第 39 字节收到 UDP 长度低字节后，\code{length_phase} 控制长度计算分两拍完成：先在 LEN\_SIZES 步计算 $n$、检查长度是否合法，并求出期望 IP 总长；再在 LEN\_LIMITS 步计算载荷末位置、SN 位置、期望帧长和环形缓冲所需空间。第 42 字节到来时，上述结果均已就绪。
-
-IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字节累加一次：前者累加 IP 头的 10 个 16 位字，后者累加 UDP 伪头、UDP 头及载荷。进位折叠采用两级寄存器流水，与累加过程并行；到帧尾后第 1 拍（FIN\_SETTLE），UDP 校验和结果最终稳定。
+单帧与首分片自第 42 字节起预写入本网环形缓冲，后续分片自第 34 字节起预写入本网环形缓冲。IP 校验和与单帧 UDP 校验和分别使用流水累加器每两字节累加一次；进位折叠采用两级寄存器流水，到帧尾后第 1 拍（FIN\_SETTLE）稳定。
 
 \subsection{载荷预写入与提交}
 
@@ -73,7 +77,7 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 解析器在帧尾完成错误帧的分类与计数，并将预写入指针 \code{wr_trial} 回退至已提交写指针 \code{wr_commit}；正确帧则生成帧描述字交由接收引擎处理（表~\ref{tab:ifdesc}）。两网在同一拍结束的正确帧，其帧描述也在同一拍给出。
 
-同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎处理一份描述至多需要 15 拍，两网各一份描述的服务时间合计至多 30 拍；加上中断 AGE 的至多 1 拍，仍短于同一网相邻描述的到达间隔。若数据帧的首个前导字节在表初始化完成前到达，解析器将忽略整帧，不生成帧描述，也不计入统计。
+同一网相邻两帧的 \code{f_end} 至少相隔 73 拍（最短帧 64 字节加前导码 8 字节和 1 拍间隔）。引擎完整处理一份帧描述（含分片重组查询与原子预约）日程为 30 拍（未知 VL 与配置不符路径提前结束），两网各一份描述的服务时间合计至多约 62 拍，仍短于同一网相邻描述的最小到达间隔（73 拍）。若数据帧的首个前导字节在表初始化完成前到达，解析器将忽略整帧，不生成帧描述，也不计入统计。
 
 \section{完整性检查与冗余管理}
 
@@ -81,42 +85,37 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 \subsection{帧描述处理流程}
 
-双网副本从预写入到一次交付的机制见图~\ref{fig:decide}。引擎先查询 \code{rx_map}，再读取 \code{rx_cfg} 和 \code{rx_state}，随后依次执行配置检查、完整性检查、冗余管理和交付入队。任一步未通过，均按对应原因计数，并通知解析器回退预写入指针。
+双网副本从预写入到一次交付的机制见图~\ref{fig:decide}。引擎先查询 32-Bank \code{rx_map}，再并行读取窄分片 \code{rx_cfg}/\code{rx_state} 并向 \code{afdx_rx_reassembly} 发起槽位准入查询，随后依次执行配置检查（单帧/首片 $n \le \text{max\_payload}$，后续分片 $n \le \text{max\_payload}+8$）、逐帧完整性检查（IC）和双网冗余管理（RM），待重组槽位查询返回后原子提交 \code{rx_state}、\code{rx_dq} 与重组槽位预约。任一步未通过，均按对应原因计数并通知解析器回退预写入指针。
 
 \figN[双网副本的一次交付机制]{f13_decide}{双网副本的一次交付机制。示例中 VL 7 的两份 SN 17 副本同时待处理，各网 PSN 和初始 RM 记录均为 16；配置有效、IC/RM 已启用、到达间隔在冗余窗口内，且交付队列有空位。A 网先通过并入队，B 网通过独立 IC 后被共享 RM 判为重复，回退其预写指针；地址仅为示例}{fig:decide}
 
-引擎有 INIT、IDLE、FRAME、AGE 四个操作态，FRAME 按 \code{phase} 0--13 逐拍推进，每拍至多一级比较，见图~\ref{fig:rxeng} 和表~\ref{tab:rxphase}。对于未通过检查的帧，引擎提前跳转至写回或报告步骤，因此一份描述的处理时间为 8--15 拍（未知 VL 丢弃路径 8 拍，常规完整处理为 15 拍，含 IDLE 取描述的 1 拍）。图中的 \code{desc} 为 \code{desc_a_valid} 或 \code{desc_b_valid}；AGE 的任一步收到新描述时均返回 IDLE。
+引擎有 INIT、IDLE、FRAME、AGE 四个操作态。为适配 32-Bank 三级归并、窄分片状态表返回及双 Bank 分片重组 19 拍查询往返，FRAME 采用固定 30 拍日程（\code{phase} 0--30，每拍至多一级算术或比较逻辑，见图~\ref{fig:rxeng} 和表~\ref{tab:rxphase}）。未知 VL（第 7 拍跳至 30）、配置拒绝（第 12 拍跳至 30）与 IC 序号拒绝（第 14 拍跳至 29 写回 PSN）均支持提前结束；AGE 任一步收到新描述时立即让出并返回 IDLE。
 
-\figN[接收引擎的判定与状态变化]{f24_rxeng}{一份 SN 17 描述的比较与写使能通路。IC/RM 均启用且状态有效，本例 SN 恰好匹配 PSN 的一步后继；RM 以模 255 序号距离和到达时间差判新，窗口过期时由 MUX 直接放行。门控结果使能 RM 记录和交付队列写入；本网 PSN 的更新独立于最终接纳结果。上方标尺给出相关 FRAME 阶段}{fig:rxeng}
-
-\begin{table}\centering\small
-\caption{接收引擎 FRAME 各步}\label{tab:rxphase}
-\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.2cm}L}
-\toprule
-\code{phase} & 动作 \\
-\midrule
-（IDLE） & 取走帧描述（\code{take}），以 VLID 读多 Bank \code{rx_map} \\
-0--2 & 等待多 Bank \code{rx_map} 2 级流水线读出 \\
-3 & 分 bank 接口在表内锁存映射结果 \code{selected_map} \\
-4 & 有效映射以 \code{selected_map[11:0]} 触发 \code{rx_cfg} 与 \code{rx_state} 读取；无效映射撤销读使能 \\
-5--6 & 等待同步读出，保存配置和状态（无效映射在 5 拍跳转至 13 报告未知 VL） \\
-7 & 寄存网络使能与最大载荷长度的检查结果；计算 PSN 一步后继、到达时间差与序号距离 \\
-8 & 配置检查不符则转 13 报告配置不允许；否则到达时间差取绝对值，计算 PSN 两步后继序号，距离折算到 1--255 环上 \\
-9 & 寄存完整性检查（IC）结果并更新本网 PSN；并行寄存冗余窗口和序号比较结果 \\
-10 & IC 不通过则转 12；否则冗余管理（RM）判定 \code{deliver_allowed} \\
-11 & 检查交付队列容量；若可交付且有空位则写入 \code{rx_dq}，并更新 \code{rm_last}、\code{rm_time} \\
-12 & 状态有变化则写回 \code{rx_state} \\
-13 & 给出 \code{resolve} 与 \code{commit} 脉冲，按处理结果产生统计事件，返回 IDLE \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\begin{longtable}{>{\centering\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-1.5cm-4\tabcolsep\relax}}
+\caption{接收引擎 FRAME 各阶段日程（30 拍流水）}\label{tab:rxphase}\\
+\longtablehead{2}{\code{phase} & 动作}
+（IDLE）/ 0 & 按 A 网优先取走帧描述（\code{take}），向 32-Bank \code{rx_map} 发出并行读请求 \\
+1--5 & 等待 32-Bank 三级或树读回流水，第 5 拍锁存映射结果 \code{selected_map} \\
+6--7 & 有效映射触发 \code{rx_cfg}/\code{rx_state} 窄分片读取，并向 \code{afdx_rx_reassembly} 发出寄存查询（Q0=7）；无效映射在第 7 拍直接跳至 30 报告未知 VL \\
+8--10 & 等待 \code{afdx_rx_table_slice} 本地返回（第 10 拍锁存配置字与本网 PSN 状态） \\
+11--12 & 检查网络使能与载荷上限（后续分片允许 $\text{max\_payload}+8$），计算到达时间差绝对值、PSN 一/二步后继与模 255 序号距离；配置不符在第 12 拍跳至 30 \\
+13--14 & 第 13 拍完成完整性检查（IC）判定；第 14 拍若 IC 失败则跳至 29 仅更新 PSN，否则完成冗余管理（RM）判定 \code{deliver_allowed} \\
+15--26 & 等待分片重组模块完成双 Bank 8 槽位匹配/空闲槽位搜索与准入校验（第 26 拍锁存 \code{result_valid}、\code{reserve_ok} 与 \code{reserve_slot}；单帧恒为可放行） \\
+27--28 & 综合 \code{deliver_allowed}、\code{rx_dq} 余量与 \code{reserve_ok} 生成原子准入决策，若接纳分片帧则向目标重组 Bank 发出 \code{reserve} 预约命令 \\
+29 & 原子写回 \code{rx_state}（PSN 与 RM 记录）及 $32\times 73$~bit 交付队列 \code{rx_dq} \\
+30 & 输出 \code{resolve} 与 \code{commit} 脉冲，产生对应统计事件（\code{ev_deliver}/\code{ev_rm_drop}/\code{ev_a/b}），返回 IDLE \\
+\end{longtable}
 
 \FloatBarrier
 \subsection{配置与完整性判定}
 
-\code{rx_map} 映射无效时，引擎将该帧计为“未知 VL”；VL 未启用、本网未启用或 $n$ 大于 \code{max_payload} 时，计为“配置不允许”。
+\code{rx_map} 映射无效时，引擎将该帧计为“未知 VL”；VL 未启用、本网未启用，或单帧/首片 $n > \text{\code{max_payload}}$（后续分片因省去 8 字节 UDP 头允许 $n \le \text{\code{max_payload}}+8$）时，计为“配置不允许”。
 
 完整性检查（\code{ic_en}$=1$ 时）每网独立进行。记本网上一帧的序号为 PSN，满足以下任一条件即可通过检查：表初始化后本网首次收到该 VL；SN 为 0（对端复位）；SN 为 PSN 在 1--255 环上递增 1 步或 2 步的后继序号，后者允许丢一帧。PSN 为 0 时，后继序号分别为 1 和 2。
+
+图~\ref{fig:rxeng} 中，本网 PSN、共享 RM 记录和交付队列各有独立的写使能。
+
+\figN[接收引擎的判定与状态变化]{f24_rxeng}{一份 SN 17 描述的比较与写使能通路。IC/RM 均启用且状态有效，本例 SN 恰好匹配 PSN 的一步后继；RM 以模 255 序号距离和到达时间差判新，窗口过期时由 MUX 直接放行。门控结果使能 RM 记录和交付队列写入；本网 PSN 的更新独立于最终接纳结果。上方标尺给出核心判定逻辑段}{fig:rxeng}
 
 启用完整性检查时，通过映射与配置检查的帧均以当前 SN 更新本网 PSN，包括序号检查失败的帧；后续序号连续时可恢复同步。未通过序号检查的帧计为“完整性检查丢弃”。
 
@@ -124,59 +123,54 @@ IP 校验和与 UDP 校验和分别使用 20 位和 26 位累加器，每两字�
 
 \subsection{冗余窗口与过期清理}
 
-冗余管理（\code{rm_en}$=1$ 时）按处理顺序交付首个有效副本；两网描述同拍待处理时先处理 A 网。副本到达间隔在 \code{skew_max} 内时，同一消息只交付一次，判据如下：
+冗余管理（\code{rm_en}$=1$ 时）按处理顺序交付首个有效副本；两网描述同拍待处理时先处理 A 网。副本到达间隔在 \code{skew_max} 内时，同一单帧或分片只交付一次，判据如下：
 \begin{itemize}
   \item 尚无记录，或到达时刻与 \code{rm_time} 之差超过 \code{skew_max}：交付；当两份副本的处理顺序与到达顺序相反时（如引擎忙期间 B 网先完成解析、A 网后完成解析，引擎转入空闲时按 A 网优先仲裁先处理了 A 网），对 16 位时间差取绝对值。
   \item 否则 SN 等于 \code{rm_last}：另一网的重复帧，丢弃并计“冗余管理丢弃”。
   \item 否则 SN 为 0 或 \code{rm_last} 为 0：交付。
   \item 否则在 1--255 环上，SN 领先 \code{rm_last} 1--127 步则交付，其余丢弃。
 \end{itemize}
-对于判定可交付的帧，若 \code{rx_dq} 已满，则计为“溢出”并回退预写入指针；否则提交环形缓冲中的载荷，将帧描述写入 \code{rx_dq}，并更新 \code{rm_last} 和 \code{rm_time}。两网描述同拍到达时，从描述有效到引擎完成判定，后处理的一份不超过 31 拍（两份描述各 15 拍，加上 AGE 被中断后返回 IDLE 的至多 1 拍；设计约束取 64 拍）。
+对于判定可交付的帧，若 \code{rx_dq} 已满或分片重组准入拒绝（如缺首片、片偏移不连续、IP/UDP 长度矛盾或 \ReasmContexts{} 个槽位全满），则计入本网 \code{ev_a/b[7]} 异常/溢出脉冲并回退环形缓冲预写入指针；否则提交环形缓冲中的载荷，将 73 位交付项写入 \code{rx_dq}，并更新 \code{rm_last} 和 \code{rm_time}。因此，\textbf{逐帧 FCS/IPv4 校验、独立 IC 与双网 RM 去重均在进入分片重组前完成}，同一分片的冗余副本不会重复进入重组槽位。
 
-\code{now_c} 每变化一次，引擎在空闲时通过 AGE 状态的 4 个步骤检查下一条 VL；有帧描述到来时立即返回 IDLE 处理帧，之后重试该项过期清理检查。判据为：若记录已超过 \code{0x4000} 个计时单位（约 0.537~s），清除 \code{rm_time_valid}。
+\code{now_c} 每变化一次，引擎在空闲时通过 AGE 状态的 5 个步骤检查下一条 VL；有帧描述到来时立即返回 IDLE 处理帧，之后重试该项过期清理检查。判据为：若记录已超过 \code{0x4000} 个计时单位（约 0.537~s），清除 \code{rm_time_valid}。
 
 帧描述处理优先于过期清理，清理被打断后会重新检查同一项。4096 项约需 0.134~s 检查一遍，记录在约 0.671~s 内失效，早于 16 位时间差的半圈时间 1.074~s。
 
-\section{交付}\label{sec:rxdeliver}
+\section{交付与 \ReasmContexts{} 路并发顺序分片重组}\label{sec:rxdeliver}
 
-\code{afdx_rx_deliver} 按入队顺序从 \code{rx_dq} 取出帧描述，再从对应环形缓冲每拍读出并输出一个字节，同时释放已读空间，结构见图~\ref{fig:deliver}。
-
-为降低 32 项大位宽寄存器多路复用树（原 8 选 1 + 4 选 1 结构）的组合逻辑级数，交付队列 \code{rx_dq} 由寄存器阵列重构为 \code{afdx_ram_sdp} 双端口块 RAM（32 项 $\times$ 68~bit）。
+接收后端由环形缓存读出模块 \code{afdx_rx_deliver}、双存储体分片重组引擎 \code{afdx_rx_reassembly} 与顶层接收流包装器 \code{afdx_app_rx} 串联构成：
+\begin{enumerate}[leftmargin=2em,itemsep=1pt]
+  \item \textbf{环形缓存读出（\code{afdx_rx_deliver}）：}按入队顺序从 $32\times 73$~bit 块 RAM 队列 \code{rx_dq} 取出帧描述（图~\ref{fig:deliver}），在下游 \code{afdx_rx_reassembly} 就绪时以每拍 1 字节从 \code{rx_ring_a} 或 \code{rx_ring_b} 连续读出载荷并立即推进读指针释放 4~KiB 环形缓冲空间。
+  \item \textbf{双存储体 \ReasmContexts{} 路顺序分片重组（\code{afdx_rx_reassembly}）：}按接收 VL 索引最低位划分为 2 个独立存储体（\code{afdx_rx_reassembly_bank} $\times 2$），每体含 8 个并发重组上下文槽位（全芯片共 \ReasmContexts{} 路并发上下文）。每个存储体维护 4 张 8 项专用同步 RAM 元数据表（\code{key} $8\times 92$：\{VL, 源/目的 IP, 16 位 IP 标识\}；\code{header} $8\times 92$：首片锁存的 UDP 端口、期望总长 $M$ 与校验和种子；\code{admission} $8\times 28$：准入期望偏移；\code{progress} $8\times 46$：写进度、运行 UDP 校验和与 2~s 老化时间戳），并配备 8 个载荷槽位（\code{afdx_rx_reassembly_payload_slot}，每槽位由 4 条 $8192\times 2$~bit 通道 RAM 交织构成 8~KiB 容量，全芯片共 128~KiB，所有 256 个 RAM 数据输入端均经 128 个 \code{lut_mask="8888"} 组合隔离 LUT 门控以消除短路径保持时间违例）。
+  \item \textbf{严格顺序拼接、校验与老化清理：}不分片单帧直接透传输出至 \code{d_valid}/\code{d_data}/\code{d_last}。对于 IPv4 分片帧，首分片（\code{offset=0, MF=1}）分配空闲槽位（若同 VL 同标识已有残缺旧上下文则先覆盖重置），后续分片严格要求当前片偏移等于槽位期望偏移（\code{offset == expected}，\textbf{拒绝缺首片、乱序、重叠或总长不符的分片}）；载荷逐拍写入对应槽位并流式累加 UDP 伪头与数据反码和。当末分片（\code{MF=0}）写完且累计长度恰等于首片声明的 $M$、同时（若首片携带非零 UDP 校验和）全报文校验和等于 \code{0xFFFF} 时，状态机按每拍 1 字节连续输出完整重组消息并释放槽位；若末片总长或非零 UDP 校验和不符，或驻留超过 \code{TIMEOUT_CYCLES = 250,000,000} 拍（125~MHz 下为 $2.0$~s）仍未收齐，硬件立即废弃该槽位并在对应来源网上输出 \code{reassembly_reject}（映射至 \code{ev_a/b[7]}）。
+  \item \textbf{顶层接收应用流包装器（\code{afdx_app_rx}）：}核心交付的非服务应用消息经顶层一级寄存器（\code{delivery_*}）打拍后写入 32~KiB 分体缓冲（结构同 \code{afdx_app_payload}），同时以 12 位接收 VL 索引查询 \code{afdx_app_map}（$4096\times 16$~bit）还原 16 位大端 VLID，在 \code{rx_valid} 连续高电平区间前置 2 字节 VLID 后无反压输出整条消息（消息间至少空 1 拍）。
+\end{enumerate}
 
 \figN[交付模块]{f25_deliver}{四字节消息的交付时空图。每条斜线跟踪同一字节从读请求经同步 RAM、数据寄存到输出的逐拍传播；总线值段标出各拍的读地址或字节，行首图元表示真实 RAM 或寄存器。队列计数在第 0 拍变为 1，第 6 拍出现首字节，随后每拍连续输出一个字节；有效、末字节和读指针波形共用同一时间轴，区分启动延迟与稳态吞吐}{fig:deliver}
 
-如图~\ref{fig:deliver} 所示，交付模块采用轻量化头部微状态机推进：队列读地址持续由 \code{rd_ptr} 给出；在 \code{HEAD_IDLE} 态，取头请求 \code{dq_req} 和非零队列计数触发状态转移。在 \code{HEAD_SELECT} 态锁存同步 RAM 输出 \code{dq_q}，给出 \code{dq_valid} 与出队脉冲，并推进 \code{rd_ptr}；\code{HEAD_RELEASE} 等待请求撤销后回到空闲。读控制接纳描述后锁存元数据，以起始地址发起第一次读取，随后由 \code{issuing} 和剩余字节计数 \code{left} 控制地址逐拍加 1，直至全部载荷读出。
-
-读请求、同步 RAM、数据寄存流水由 \code{valid_pipe}、\code{last_pipe} 对齐，第一个 \code{d_valid} 在 \code{dq_count} 变为非零后的第 6 拍有效。\code{d_last} 有效的当拍，模块重新允许取下一个队头。
-
-一条消息的 $n$ 个字节在连续 $n$ 拍内送出，\code{d_last} 与末字节同拍；VL 索引、端口和来源网络在整条消息期间不变。交付口不带反压。
-
-线路空闲时，从帧尾 FCS 结束到首个 \code{d_valid} 的典型延迟为 26 拍（0.208~µs），设计上界为 200 拍（图~\ref{fig:pipe}）。若前一消息尚未交付完，当前消息需等待；取队头与读流水共约 6 拍，可在前一消息末字节之后的 16 拍内开始交付。32 项描述队列用于暂存长载荷交付期间到达的短帧描述（第~\ref{sec:budget}~节）。
+核心单帧无争用时，从帧尾 FCS 结束到核心交付口首个 \code{d_valid} 典型延迟仍保持低延迟流水，设计上界为 200 拍；多片长消息则在末分片写入完成并校验通过后连续每拍 1 字节输出整包（最长 $8192$~B 连续输出 8192 拍）。
 
 \FloatBarrier
-\Needspace{22\baselineskip}
 \section{统计分类}\label{sec:rxclass}
 
-对于表初始化完成后开始接收的每一帧（一段 \code{rx_valid} 连续为 1 的字节流），解析器均在帧尾离开线路后的 32 拍内，在对应网络上输出且仅输出一个类别脉冲。对于分类为正确的帧，接收引擎还输出且仅输出一个处理结果脉冲；该脉冲在引擎完成判定后的 8 拍内有效，且不晚于帧尾后的 150 拍。每网的 \code{ev} 位定义见表~\ref{tab:rxev}。
+对于表初始化完成后开始接收的每一帧（一段 GMII \code{rx_dv} 连续为 1 的字节流），解析器均在帧尾离开线路后的 32 拍内，在对应网络上输出且仅输出一个类别脉冲。对于分类为正确的帧，接收引擎还输出一个处理结果脉冲；重组引擎在老化超时或末片全包校验拒绝时在对应来源网上补充输出拒绝脉冲。每网的 \code{ev} 位定义见表~\ref{tab:rxev}。
 
 \begin{table}\centering\small
 \caption{接收统计脉冲 \texttt{ev\_a}、\texttt{ev\_b}}\label{tab:rxev}
-\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{2.2cm}L}
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{2.6cm}L}
 \toprule
 位 & 名称 & 产生模块 & 含义 \\
 \midrule
-0 & 正确帧 & \code{rx_parse} & 通过 MAC 和帧头检查 \\
-1 & FCS 错误 & \code{rx_parse} & CRC 校验不符 \\
-2 & 帧长错误 & \code{rx_parse} & 帧长越界、超长或前导码错误 \\
-3 & 帧头错误 & \code{rx_parse} & 固定字段、IP/UDP 长度或校验和错误 \\
-4 & 未知 VL & \code{rx_engine} & \code{rx_map} 无效 \\
-5 & 配置不允许 & \code{rx_engine} & VL 或本网未启用，或超过 \code{max_payload} \\
+0 & 正确帧 & \code{rx_parse} & 通过 MAC 和单帧/分片帧头检查 \\
+1 & FCS 错误 & \code{mac_rx}/\code{rx_parse} & CRC32 校验不符 \\
+2 & 帧长错误 & \code{mac_rx}/\code{rx_parse} & 帧长越界（$<64$ 或 $>1518$~B）或前导码错误 \\
+3 & 帧头错误 & \code{rx_parse} & 固定字段、IP/UDP 长度、8 字节对齐或校验和错误 \\
+4 & 未知 VL & \code{rx_engine} & \code{rx_map} 未映射 \\
+5 & 配置不允许 & \code{rx_engine} & VL 或本网未启用，或单帧超过 \code{max_payload}（后续分片超过 $\text{max\_payload}+8$） \\
 6 & 完整性检查丢弃 & \code{rx_engine} & SN 不连续 \\
-7 & 溢出 & 两处相或 & 环形缓冲剩余空间不足，或 \code{rx_dq} 已满 \\
+7 & 溢出 / 重组拒绝 & 三处相或（\code{0x80}） & 环形缓冲满、\code{rx_dq} 满，或分片重组准入拒绝（缺首片、乱序、重叠、槽位满、末片全包长度/UDP 校验和错误、2~s 老化超时） \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-位 7 由两处溢出脉冲相或产生：解析器报告环形缓冲剩余空间不足，引擎报告 \code{rx_dq} 已满。同一网上，相邻帧尾至少相隔 73 拍，引擎判定至多 31 拍，解析器的第 $k$ 帧类别脉冲与引擎的第 $k-1$ 帧结果脉冲分时到达，可相或合并。
-
-两网合计另有 \code{ev_rm_drop}（冗余管理丢弃）和 \code{ev_deliver}（交付）。这些脉冲与第~\ref{ch:cfg}~章的计数器一一对应，记录每类接收结果。
+位 7（掩码 \code{0x80}）由解析器环形缓冲溢出、接收引擎 \code{rx_dq}/重组准入拒绝以及 \code{afdx_rx_reassembly} 后端校验/超时拒绝三路脉冲相或产生。两网合计另有 \code{ev_rm_drop}（冗余管理丢弃）、\code{ev_deliver}（引擎准入交付）及顶层包装器 \code{ev_app[2]}（接收包装缓冲溢出）。

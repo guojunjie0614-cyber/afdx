@@ -28,7 +28,8 @@
 \usepackage{multirow}
 \usepackage{etoolbox}
 \usepackage{needspace}
-\usepackage[section]{placeins}
+\usepackage{placeins}
+\usepackage{float}
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -39,7 +40,7 @@
 \usepackage[font=small,labelsep=quad,skip=6pt]{caption}
 \usepackage[hidelinks,bookmarksnumbered,bookmarksdepth=2]{hyperref}
 
-\linespread{1.2}
+\linespread{1.16}
 \setlength{\parskip}{3pt}
 \emergencystretch=3em
 \raggedbottom
@@ -54,7 +55,7 @@
   \setlength{\belowdisplayshortskip}{6pt plus 2pt minus 2pt}}
 % 表格统一字号与行距；正文保留小四字号，插图按原尺寸插入。
 \newcommand{\tablestyle}{\small\linespread{1.08}\selectfont
-  \renewcommand{\arraystretch}{1.16}}
+  \setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.13}}
 \AtBeginEnvironment{table}{\tablestyle}
 \BeforeBeginEnvironment{longtable}{\FloatBarrier\begingroup\tablestyle}
 \AfterEndEnvironment{longtable}{\endgroup}
@@ -64,7 +65,7 @@
 \captionsetup{font={small,stretch=1.08},skip=5pt,format=hang,justification=raggedright,
   singlelinecheck=true}
 \captionsetup[table]{position=top}
-% 图表贴近引文，在节边界和长表前清空浮动队列。
+% 机制图在解释段落处按原尺寸排版；短表允许就近浮动，长表可续页。
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\bottomfraction}{0.8}
 \renewcommand{\textfraction}{0.1}
@@ -123,6 +124,14 @@
 \ExplSyntaxOn
 \NewDocumentCommand{\code}{m}{\texttt{\hyphenchar\font=-1\relax
   \str_map_inline:nn {#1} { ##1 \str_if_in:nnT {_/} {##1} { \penalty 200 \relax } }}}
+\NewDocumentCommand{\countsep}{m}{\group_begin:
+  \tl_set:Nx \l_tmpa_tl {#1}
+  \int_set:Nn \l_tmpa_int {\tl_count:N \l_tmpa_tl}
+  \tl_map_inline:Nn \l_tmpa_tl {##1
+    \int_decr:N \l_tmpa_int
+    \int_compare:nNnT {\l_tmpa_int} > {0}
+      {\int_compare:nNnT {\int_mod:nn {\l_tmpa_int}{3}} = {0} {,}}}
+  \group_end:}
 \ExplSyntaxOff
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
@@ -135,13 +144,13 @@
   \bottomrule \endlastfoot}
 % 插图：#1 文件名（fig/pdf/ 下），#2 宽度系数，#3 图题，#4 标签
 \newcommand{\fig}[4]{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics[width=#2\linewidth]{fig/pdf/#1.pdf}
   \caption{#3}\label{#4}
   \end{figure}}
 % 按印刷尺寸绘制的图：原尺寸插入，不缩放，保证全文字号一致
 \NewDocumentCommand{\figN}{o m m m}{%
-  \begin{figure}[!htbp]\centering
+  \begin{figure}[H]\centering
   \includegraphics{fig/pdf/#2.pdf}
   \IfValueTF{#1}{\caption[#1]{#3}}{\caption{#3}}\label{#4}
   \end{figure}}
@@ -173,7 +182,7 @@
 \end{tabular}
 \vspace{2cm}
 
-{\zihao{4} 2026 年 10 月\par}
+{\zihao{4} 2026 年 11 月\par}
 \end{titlepage}
 
 \pagenumbering{Roman}
@@ -182,16 +191,17 @@
 \chapter*{摘要}
 \addcontentsline{toc}{chapter}{摘要}
 
-本设计针对全国大学生嵌入式芯片与系统设计竞赛“基于以太网 MAC 总线实现 AFDX”赛题要求，基于中科亿海微 EQ6HL130 FPGA 研制了高完整性、双网冗余的 \mbox{ARINC} 664 Part 7 航电端系统。端系统逻辑由单一 125~MHz（8~ns 周期）主时钟驱动，以纯 Verilog HDL 实现了 128 条发送虚拟链路（VL）与 4096 条接收虚拟链路的线速硬件处理，并集成 \mbox{ARINC} 615A 软件数据加载（Data Loading）、SNMPv1/v2c 网络管理与高精度 SNTP/RTC 时钟同步服务。
+本设计针对全国大学生嵌入式芯片与系统设计竞赛“基于以太网 MAC 总线实现 AFDX”赛题要求，基于中科亿海微 EQ6HL130 FPGA 设计并实现了双网冗余的 \mbox{ARINC} 664 Part 7 航电端系统。端系统逻辑由单一 125~MHz（8~ns 周期）主时钟驱动，以 Verilog HDL 实现了 128 条发送虚拟链路（VL）与 4096 条接收虚拟链路的线速硬件处理，支持 $1\text{--}\MaxMessageBytes$~B 应用层消息的 IPv4 自动分片发送与 \ReasmContexts{} 路并发顺序硬件分片重组，并集成 \mbox{ARINC} 615A 软件数据加载（Data Loading）、SNMPv1/v2c 网络管理与 SNTPv4/RTC 时钟同步服务。
 
-面对大规模虚拟链路状态维护与 125~MHz 物理时序收敛的双重挑战，系统确立了“片上 BRAM 表格化管理与单主控状态机”的核心架构，全芯片划分为 24 个 RTL 模块：接收映射表采用 32-Bank 分块存储与双级读回流水，切断大扇出长连线延迟；管理面协议引擎（ASN.1/BER 与 TFTP）引入 2 分频局部时钟使能（$\text{CE\_DIV}=2$），将复杂状态转移约束在 16~ns 多周期路径中；报文线速收发、RAM 访问与配置总线维持 125~MHz 单周期全速运行，兼顾复杂协议处理与周期级实时响应。
+针对大规模虚拟链路状态维护、长报文硬件分片重组与 125~MHz 物理时序收敛的要求，系统采用“顶层流式边界封装 + 片上块 RAM 表格化管理 + 单主控状态机”架构，全芯片划分为 \RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）。顶层 \code{AFDX_top}（\Pins{} 引脚）封装带 2 字节大端 VLID 前缀的应用流式接口（\code{tx_data}/\code{rx_data}），内部例化端系统核心 \code{afdx_es}；接收映射表采用 32-Bank 双写分片与三级或树读回流水，分片重组引擎采用双存储体（2-Bank $\times$ 8 槽位）\ReasmContexts{} 路并发上下文与 4 通道 128~KiB 载荷缓存，并通过写数据与写使能 LUT 门控消除短路径保持时间违例；管理面协议引擎（ASN.1/BER 与 TFTP）引入 2 分频局部时钟使能（$\text{CE\_DIV}=2$），将复杂状态转移约束在 16~ns 多周期路径中；报文线速收发、RAM 访问与配置总线维持 125~MHz 单周期运行。
 
-经系统级全功能仿真验证与官方工具链物理签核，设计达成以下核心指标：
+经系统级仿真验证与官方工具链物理签核，设计达成以下指标：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{吞吐率与确定性时延：}定长满载（77 VL）有效载荷吞吐率达 \Thru~Mbps（81 VL 达 \ThruEightyOne~Mbps），多 VL 混合变长高负载（\code{var_high}）两方向单向吞吐率均达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps）；单帧端到端硬件流水时延典型值为 24.424~µs，满载稳态最大时延为 \Lat~µs（其中发送段 $L_\text{tx}$ 典型为 \Ttx~µs、至首前导码 \TtxSof~µs，接收段 $L_\text{rx}$ 首字节为 \Trx~µs、末字节为 \TrxLast~µs），显著优于赛题 1--2~ms 的指标要求。
-  \item \textbf{传输抖动控制：}稳态发送间隔抖动实测为 \Jit~µs；严格按官方 1022 答疑 R97 口径，定长满载同 VL 端到端时延极差抖动仅为 \JitSameVl~µs（1 拍，8~ns），多 VL 变长循环工况下为 \JitVarCycle~µs，实测极差源于串行线路上前序在途帧排队深度的动态变化。
-  \item \textbf{硬件资源与物理时序收敛：}逻辑综合消耗查找表（LUT）\Lut{} 个（占比 \LutPct\%）、触发器（FF）\FF{} 个（占比 \FFPct\%）、嵌入式存储块 \Mem{} 个 EBR（占比 \MemPct\%）；在 eLinx 官方工具链（\code{S2d + PRES1.50}）下实现 125~MHz 布局布线后静态时序完全收敛，单周期路径最差建立裕量为 $+\RoutedSetup$~ns、保持裕量为 $+\RoutedHold$~ns，多周期路径建立裕量为 $+\MulticycleSetup$~ns，全设计 45,745 个时序端点 0 违例，最高等效工作频率达 \RoutedFmax~MHz。
-  \item \textbf{全流程验证覆盖：}构建包含 \RegCount{} 项自动化回归用例的验证平台，累计通过 \RegChecks{} 次硬件断言自检与 \RegIndep{} 项独立参考模型（Golden Model）逐字节比对；FSM 状态覆盖率达 \CovFsmState\%、语句覆盖率达 \CovStmt\%、分支覆盖率达 \CovBranch\%；综合后 VQM 门级网表后仿真完全通过五功能联合测试。
+  \item \textbf{吞吐率与确定性时延：}按单端 63 条发送 / 63 条接收 VL 双向全双工满载规格（$\text{BAG}=1$~ms，$L_\text{max}=1471$~B，双网冗余，线路占用率 \LineUtilSixtyThree\%），单向去重交付有效载荷吞吐率达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps）；在 77~VL 与 81~VL 压力工况下，单向吞吐分别达 \Thru~Mbps 与 \ThruEightyOne~Mbps，多 VL 混合变长高负载（\code{var_high}）双向合计达 1809.504~Mbps；63~VL 结合 $1472$~B（2 分片）、$3000$~B（3 分片）与 $8192$~B（6 分片）的混合满载工况下，双向 $12,206$ 条消息 100\% 无损重组交付。在顶层流式接口口径下，63~VL 周期稳态最大端到端时延为 \LatSixtyThreePMax~µs，旋转突发（B2）最大时延为 \LatSixtyThreeBTwo~µs；在核心分段口径下，单帧硬件流水时延典型值为 \LatAvg~µs、满载最大为 \Lat~µs（发送段 $L_\text{tx}$ 最大 \Ttx~µs、至首前导码 \TtxSof~µs，接收段 $L_\text{rx}$ 首字节 \Trx~µs、末字节 \TrxLast~µs），满足赛题 1--2~ms 的时延要求。
+  \pagebreak
+  \item \textbf{传输抖动控制：}稳态发送间隔抖动实测为 \Jit~µs。在顶层流式接口下，63~VL 满载周期激励同 VL 端到端时延极差抖动在 $1471$~B 满载帧下为 $0.016$~µs、跨 $1\text{--}1471$~B 全包长最大为 \JitSixtyThreePer~µs，旋转三元组背靠背突发（B2）下为 \JitSixtyThreeBTwo~µs（$<100$~µs）；核心 77~VL 定长满载同 VL 极差为 \JitSameVl~µs（1 拍，8~ns），多 VL 变长循环工况下为 \JitVarCycle~µs。
+  \item \textbf{硬件资源与物理时序收敛：}逻辑综合消耗查找表（LUT）\Lut{} 个（占比 \LutPct\%）、触发器（FF）\FF{} 个（占比 \FFPct\%）、逻辑簇（CLB）\Clb{} 个（占比 \ClbPct\%）、嵌入式存储块 \Mem{} 个 M4K/EBR（占比 \MemPct\%）、引脚 \Pins{} 个（占比 \PinPct\%）。在 eLinx 3.0.7 官方流程（\code{tools/build_1030.py} + \code{PRES 1.30} + \LockedClusters{} 个物理簇坐标锁定）下，计入 $\ClkUncert$~ns（300~ps）建立时间时钟不确定度后，布局布线后全芯片 \RoutedEndpoints{} 个时序端点实现 0 违例收敛，净建立时间裕量（Worst Setup Slack）为 $+\RoutedSetup$~ns（未扣不确定度的原始物理建立裕量为 $+\RoutedSetupRaw$~ns）、最差保持时间裕量（Worst Hold Slack）为 $+\RoutedHold$~ns，等效工作频率达 \RoutedFmax~MHz（原始物理频率 \RoutedFmaxRaw~MHz）。
+  \item \textbf{全流程验证覆盖：}验证平台包含 \RegCount{} 项自动化回归用例（\RegFastCount{} 项快速回归 + 4 项长时系统回归），累计通过 \RegChecks{} 次硬件断言自检与 \RegIndep{} 项独立参考模型（Golden Model）逐字节比对；\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）语句覆盖率达 \CovStmt\%（\CovStmtCov/\CovStmtTot）、分支覆盖率达 \CovBranch\%（\CovBranchCov/\CovBranchTot）、FSM 状态覆盖率达 \CovFsmState\%（\CovFsmStateCov/\CovFsmStateTot）；综合后 VQM 门级网表后仿真通过核心自检、五功能联合测试、分片重组窗口及顶层流包装窗口比对。
 \end{enumerate}
 
 \vspace{0.8em}
