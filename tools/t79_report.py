@@ -42,7 +42,7 @@ def main():
         if 'groups' in row:
             text.append(f"| {name} | {row['groups']} | {row['formula_invalid']} | {row['jitter_failures']} | {row['page_upper_bounds']} / 256 | {row['bag_pairs']} / {row['bag_pair_failures']} |")
     text+=['','完整性包含逐消息序号、长度、计划周期覆盖、应用载荷逐字节相同、A/B 逐帧时戳/载荷一致、FCS/IP 校验、BAG 间隔、页池保守上界≤256。HDL 另核对交付与去重计数及公开端口 X/Z。BAG 场景逐对证明第二条输入完成早于第一帧+BAG，实际第二帧不早于 BAG 到期。',
-        '', '## 原始输出与运行收据','', '[run_receipt.json](run_receipt.json) 保留命令、PID/创建时刻、截止、退出状态、原始目录、仿真用时和场景用时；各场景 tool_metrics.json 保留内核身份和峰值内存。前六项先启动，第七项等待空位；所有子进程继承最多六个逻辑 CPU 的亲和性。每项从首次启动起上限 10800 s，无重试、heartbeat、定时任务或续接。']
+        '', '## 原始输出与运行收据','', '[run_receipt.json](run_receipt.json) 保留命令、PID/创建时刻、截止、退出状态、原始目录、仿真用时和场景用时；各场景 tool_metrics.json 保留内核身份和峰值内存。前六项先启动，第七项等待空位；所有子进程继承最多六个逻辑 CPU 的亲和性。每次授权运行上限 10800 s；P1471/B2 按后续明确授权在新目录补跑一次，初次记录保留。没有隐式重试、heartbeat、定时任务或续接。']
     for name,_ in CASES:
         row=rows.get(name,{})
         if 'folder' in row:text.append(f"- {name}：`{row['folder']}`")
@@ -90,12 +90,16 @@ def main():
         extra=json.loads(long_receipt.read_text(encoding='utf-8'))
         text+=['','## 多条 VL 同时发送 8192 B 的边界测试','',
             '追加授权测试 MIXED=3、VL_COUNT=63、GROUP_LENGTH=1471、DUPLEX=1。末 LONG_COUNT 条 VL 在 sequence>0 后发送 8192 B，其余发送 1471 B；首轮全部 VL 先发送一次 1471 B。每条 8192 B 消息占六帧发送机会，同 VL 到期时刻至少间隔 6 ms，沿用既有按片计费调度。公开接口依次串行注入，同一批 VL 的计划到期时刻相同。',
-            '', '先跑 N=2/3/4 的 20 ms 窗口，各 1 小时；若 N=4 通过，最多再加 N=6/8 一轮 20 ms。选择这些测试中通过的最大 N 跑一次 100 ms 确认，上限 2 小时，不作未测试 N 的穷举边界承诺。失败不影响七个基础场景，不修改 RTL。',
-            '', f"边界队列：**{extra['status']}**；100 ms 确认值 N：**{extra.get('confirmed_limit','待确认')}**。完整运行身份、截止、原始路径与失败事件见 [边界收据](long_concurrent/run_receipt.json)。",
+            '', '该项已按最终指令暂停，不再启动新作业。暂停前 N=2/3/4 的 20 ms 局部试验结果原样保留；100 ms 任务此前已取消，仅保留前缀，6/8 未运行。三项 20 ms 实际用时均低于 30 分钟，无超时，但不据此完成专项验收或写并发规格限制。失败不影响基础七场景，不修改 RTL。',
+            '', f"边界队列：**已暂停、未完成（{extra['status']}）**。**已验证单条 VL 发 8192 B（63 VL 混合场景）；多条 VL 并发长消息未验证**。以下仅归档暂停前的局部试验，不作规格限制。运行身份与暂停核对见 [边界收据](long_concurrent/run_receipt.json)、[暂停收据](long_concurrent/pause_receipt.json)。",
             '', '| N | 窗口 ms | 结果 | HDL/完整性 | 双统计 | 短消息最大抖动 µs / VLID | 短消息最大端到端 µs | 8192 B 最大完成时延 µs | 仿真用时 s |',
             '|---|---|---|---|---|---|---|---|---|']
         long_metrics=['case\tsource\tvlid\tlength\tsamples\tmaximum_completion_us\tjitter_us\tformula_valid']
+        failure_notes=[]
         for row in extra['runs']:
+            if row['window_ms']!=20:
+                failure_notes.append(f"{row['case']}：{row['status']}，按范围压缩指令中止，经过 {row.get('seconds','—')} s，不作 100 ms 验收；前缀及进程取消收据见 long_concurrent/{row['case']}/cancellation.json。")
+                continue
             short=f"{row['maximum_short_jitter_us']:.3f} / 0x{row['worst_short_vlid']}" if 'maximum_short_jitter_us' in row else '—'
             latency=f"{row['maximum_short_latency_us']:.3f}" if 'maximum_short_latency_us' in row else '—'
             completion=f"{row['maximum_long_completion_us']:.3f}" if 'maximum_long_completion_us' in row else '—'
@@ -104,12 +108,13 @@ def main():
             equal='一致' if row.get('statistics_equal') else '—'
             text.append(f"| {row['long_count']} | {row['window_ms']} | {row['status']} | {hdl}/{integrity} | {equal} | {short} | {latency} | {completion} | {row.get('simulation_seconds','—')} |")
             if row.get('first_failure'):
-                f=row['first_failure'];text+=['',f"首次失败 {row['case']}：端点 {f['source']}、第 {f['cycle']} 拍、仿真 {f['simulation_ns']} ns；ev_a={f['ev_a']}、ev_b={f['ev_b']}、ev_app={f['ev_app']}。",'']
+                f=row['first_failure'];failure_notes.append(f"首次失败 {row['case']}：端点 {f['source']}、第 {f['cycle']} 拍、仿真 {f['simulation_ns']} ns；ev_a={f['ev_a']}、ev_b={f['ev_b']}、ev_app={f['ev_app']}。")
             stats_file=E/'long_concurrent'/row['case']/'t76_stats.json'
             if stats_file.exists():
                 for g in json.loads(stats_file.read_text(encoding='utf-8'))['groups']:
                     long_metrics.append('\t'.join(map(str,[row['case'],g['source'],g['vlid'],g['length'],g['samples'],g['maximum']*.008,g['official_jitter_us'],int(g['formula_precondition'])])))
         (E/'long_per_vl_metrics.tsv').write_text('\n'.join(long_metrics)+'\n',encoding='utf-8')
+        for note in failure_notes:text+=['',note]
         text+=['','验收核对 HDL、逐字节完整性交付、Python/Tcl 逐字段一致、短消息分组抖动 <100 µs、短消息原 2 ms 门槛和页池上界。8192 B 只单列整条消息完成时延，不套单帧抖动或 2 ms 门槛。原始失败保留，未重试或修 RTL。新模式的旧路径不变证明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)。']
     (E/'summary.md').write_text('\n'.join(text)+'\n',encoding='utf-8')
 

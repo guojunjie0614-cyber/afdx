@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING",
+  "status": "PAUSED_INCOMPLETE",
   "started": "2026-11-04 12:07:56",
   "pid": 2200,
   "created": 1793765276.2194605,
@@ -99,7 +99,8 @@
         "ep1_rx.txt": "eddb6a641064dd1fc499836d79c7e85f05b3761b9fb6064f41d6eb9f81e54e93",
         "ep1_tx.txt": "84e448531aef685a196ec59c11c3ec7d6f8e1e63055ceda19bea735db5dc5e46",
         "window.txt": "88d40fb3a9ce9e460d9dccdb0191dac753c6b199c385d80c1c7d2044d61a2335"
-      }
+      },
+      "authorized_limit_seconds_final": 1800
     },
     {
       "case": "N3_20ms",
@@ -192,7 +193,8 @@
         "ep1_rx.txt": "872b3617746336476815c0c706262e92452419272fbf89a5e156713a101685fa",
         "ep1_tx.txt": "37fe1ecf886772fa1125d0e0d30e2a1bb128e7a6ba29d8da4b6517716b727db9",
         "window.txt": "6b0927e1345cea7a341134b287b1da3dde26db853b3435a2a3f3d08a109a3576"
-      }
+      },
+      "authorized_limit_seconds_final": 1800
     },
     {
       "case": "N4_20ms",
@@ -285,7 +287,8 @@
         "ep1_rx.txt": "b8c3ac74e0e1a0cdfb2645a3785840c98ca836af6e38d43788ab582dbc4d6f09",
         "ep1_tx.txt": "47fd7315586b58c058a8b2a76da59443f9a4d00a7ef8fca244b5a8a8cdb866b8",
         "window.txt": "9c10743ad9fbb4e01fb6276475b7d43767d359ebf107887fe41eca170688413d"
-      }
+      },
+      "authorized_limit_seconds_final": 1800
     },
     {
       "case": "N2_100ms",
@@ -335,7 +338,11 @@
         "--param",
         "LONG_COUNT=2"
       ],
-      "status": "RUNNING"
+      "status": "CANCELLED_BY_SCOPE_REDUCTION",
+      "finished": "2026-11-04 12:28:54",
+      "seconds": 920.423,
+      "reason": "Explicit scope reduction: only N=2/3/4 at 20 ms, no 100 ms or 6/8 round",
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t79_long_source\\out\\t76_sim\\tb_t76_load\\20261103_201334_497219"
     }
   ],
   "source_tree": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t79_long_source",
@@ -343,5 +350,10 @@
   "global_kernel_limit": 6,
   "own_parallel_limit": 3,
   "extra_round_limit": 1,
-  "selected_for_100ms": 2
+  "finished": "2026-11-04 12:28:54",
+  "confirmed_window_ms": 20,
+  "confirmed_limit": null,
+  "scope": "Paused by explicit instruction. Existing results retained as unfinished investigation; no concurrency specification inferred. No new jobs.",
+  "paused": "2026-11-04 12:31:06",
+  "specification_adoption": false
 }

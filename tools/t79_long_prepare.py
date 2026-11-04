@@ -2,7 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
-import shutil
+import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
 DEST=ROOT/'out/t79_long_source'
@@ -16,7 +16,8 @@ def main():
     base={}
     for p in files:
         rel=p.relative_to(ROOT);target=DEST/rel;target.parent.mkdir(parents=True,exist_ok=True)
-        shutil.copyfile(p,target);base[rel.as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
+        data=subprocess.check_output(['git','show','468a5e6:'+rel.as_posix()],cwd=ROOT)
+        target.write_bytes(data);base[rel.as_posix()]=hashlib.sha256(data).hexdigest()
     replacements={
         'tb/lib/t76_load_endpoint.v':[
             ('MIXED=0,NET_RX=0','MIXED=0,NET_RX=0,LONG_COUNT=1'),

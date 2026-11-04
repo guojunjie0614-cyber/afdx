@@ -1,0 +1,19 @@
+{
+  "all_records_identical": true,
+  "records": {
+    "ep0_a.txt": true,
+    "ep0_b.txt": true,
+    "ep0_events.txt": true,
+    "ep0_rx.txt": true,
+    "ep0_tx.txt": true,
+    "ep1_a.txt": true,
+    "ep1_b.txt": true,
+    "ep1_events.txt": true,
+    "ep1_rx.txt": true,
+    "ep1_tx.txt": true,
+    "window.txt": true
+  },
+  "original_folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918",
+  "accepted_folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_195038_790879",
+  "note": "Original full HDL output and explicitly authorized rerun match byte-for-byte; final acceptance uses rerun statistics."
+}
