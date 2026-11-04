@@ -12,7 +12,7 @@ import psutil
 
 ROOT = Path(__file__).resolve().parents[2]
 SCENES = {"tx_dual": 2, "rx_redundancy": 2, "rx_fcs_error": 3,
-          "tx_bag": 1, "snmp_get": 2}
+          "tx_bag": 1, "snmp_get": 2, "frag": 3}
 
 
 def tcl_path(path):
