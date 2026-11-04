@@ -99,23 +99,28 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 
 运行结果在 `out/app/<运行名>/`：`rx.txt` 每行 `<交付首字节拍> <交付末字节拍> <VLID> <载荷十六进制>`；`summary.txt` 给出第 2 节定义的三项指标和判定；`es1_tx/`、`es2_rx/`、`es1_gmii_*/` 等目录保存原始记录。入口自检每条消息恰好交付一次、逐字节一致、A/B 冗余副本不重复交付，成功打印 `APP ENTRY PASS`，失败打印 `APP ENTRY FAIL`。默认第 3 个参数可给运行名，便于固定输出目录。
 
-下列 PNG 为此前版本的归档截图，表中时间窗口对应这些原图；当前管理响应拍数以本版联测结果为准。
+`sim/wave/png/` 中下表 13 张波形截图来自分片版 RTL 的 11-03 运行：由提交 `12858ddf` 的 `sim/wave/current_report.do` 和 `tools/run_report_wave.py` 生成，窗口和光标按该次仿真记录的实际事件计算，逐文件哈希见 [wave_provenance.json](docs/evidence/t79_63vl/wave_provenance.json)。本仓库的五个场景脚本仍按 F1 时的固定时刻设置窗口和光标，在分片版上重跑时会与下表略有偏差，例如 `tx_bag.do` 的光标在 17.092 us，分片版实际帧起点为 17.132 us。分片场景 `frag.do` 按本次记录计算窗口，见下一节。
 
 报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
-批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。`sim/wave/png/` 已更新为分片版 11-03 波形截图（来源提交 `12858ddf`），`tb_elinx.png` 为 11-04 eLinx 界面人工验证截图；工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
+批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
 
 | 图片 | 时间窗口（us） | 观察内容 |
 |---|---:|---|
-| `tx_dual_1.png` | 686.020–689.020 | 应用输入与 A、B 双网发送的时序总览 |
-| `tx_dual_2.png` | 688.220–688.540 | 放大双网帧起点和部分帧头字节 |
-| `rx_redundancy_1.png` | 3014.186–3014.446 | A 网交付事件及交付给应用的字节 |
-| `rx_redundancy_2.png` | 3030.026–3030.286 | B 网帧尾字节与副本丢弃事件，光标间隔 16.016 us |
-| `rx_fcs_error_1.png` | 798.446–799.696 | A 网 FCS 错误计数从 0 变为 1，B 网正常交付 |
-| `rx_fcs_error_2.png` | 798.780–799.100 | 放大错误帧的部分字节 |
-| `rx_fcs_error_3.png` | 972.991–973.039 | 独立读地址 0x49，一拍请求经两级流水后有效返回 1 |
-| `tx_bag.png` | 10.000–830.000 | 两个帧起点的光标间隔为 800 us |
-| `snmp_get_1.png` | 525.400–525.720 | Get 请求的双网帧起点及部分帧头字节 |
-| `snmp_get_2.png` | 537.804–538.124 | Response 的双网帧起点及部分帧头字节 |
+| `tx_dual_1.png` | 686.272–689.372 | 应用输入与 A、B 双网发送的时序总览；光标 GMII_start 688.572 us 处两网同拍开始发送 |
+| `tx_dual_2.png` | 688.564–688.892 | 放大双网帧起点（前导码 `55`）和部分帧头字节；两网帧头只有源 MAC 中的网络号不同（A 网 `20`、B 网 `40`） |
+| `rx_redundancy_1.png` | 3016.794–3017.104 | 先到的 A 网副本交付应用（`app_rx_net`=0 表示 A 网）；光标 A_delivered 3016.844 us |
+| `rx_redundancy_2.png` | 3032.408–3032.668 | 晚到的 B 网副本被冗余管理丢弃（`ev_rm_drop` 脉冲）；光标 B_duplicate 3032.628 us，与 A 网交付相隔 15.784 us |
+| `rx_fcs_error_1.png` | 798.620–799.920 | A、B 两网同时收到一帧，A 网副本 FCS 错误被拒收，`count_a_fcs` 由 0 变 1；光标 FCS_error 799.620 us |
+| `rx_fcs_error_2.png` | 799.400–799.720 | 放大帧尾字节：帧结束后 `ev_a`=02（A 网 FCS 错误），随后 `count_a_fcs` 加 1 |
+| `rx_fcs_error_3.png` | 973.396–973.436 | 测试平台对地址 0x49 的真实读请求（973.404 us）两拍后返回 1（973.420 us） |
+| `tx_bag.png` | 16.132–819.132 | 同一 VL 两帧起点 Frame_1_start 17.132 us、Frame_2_start 817.132 us，间隔 800 us（100000 拍） |
+| `tx_bag_first.png` | 17.108–17.772 | 第一帧起点放大：A、B 两网同拍发出前导码 `55`，该帧 SN=0（复位后首帧） |
+| `tx_bag_second.png` | 817.108–817.772 | 第二帧起点放大：两网同拍发送，SN=1 |
+| `snmp_get_1.png` | 525.944–526.284 | SNMP Get 请求经双网到达代理；光标 Get_request 525.964 us |
+| `snmp_get_2.png` | 538.604–538.948 | 代理经双网发出 Response；光标 Get_response 538.628 us，距请求 12.664 us |
+| `services.png` | 0–1095.014 | 五功能联测 `tb_net_services` 全程：`phase` 依次经过用户数据、完整性、SNMP、RTC、615A 加载与卸载；`ic2`=1 为坏 SN 帧被拒收，`difference`=0 为 RTC 同步后两端时间差（ns），`status_value`=2 为加载成功，`rm1`/`rm2` 为两端丢弃的冗余副本数 |
+
+另有两张界面截图：`tb_elinx.png` 为 11-04 在 eLinx 中点击 Run Behavioral Simulation 的 ModelSim 结果（`[RESULT] tb_elinx PASS checks=9238 errors=0`）；`elinx_overview.png` 为分片版工程实现后的总览（LUT 62,274 / 45.79%，IO 172，96,142 个端点 0 失败，setup +0.029 ns 已含 0.30 ns 时钟不确定度，hold +0.604 ns）。
 
 分片重组波形：`do sim/wave/frag.do`（或 `python sim/wave/export.py --scene frag`）。场景为 VL 0x0103 的一条 8192 字节消息，只经公开应用口和 GMII，不注入错误帧，不需要 Python。脚本先核对本次记录再截图：6 个分片的 IP 片偏移依次为 0、1472、2944、4416、5888、7360 字节，前 5 片 MF=1、末片 MF=0；相邻分片间隔不小于 1 ms BAG；A、B 两网同拍发送且 IP 头起的内容相同；末片结束后接收端一次交付 8194 字节（2 字节 VLID + 8192 字节载荷），与输入逐字节相同。任一项不符即报错，不截图。
 
