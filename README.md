@@ -46,14 +46,14 @@
 
 ## 快速上手
 
-命令行参考模型使用 `AFDX_PYTHON=E:/anaconda3/python.exe`。保持 `AFDX_MODELSIM_DECL_ORDER=0`（默认值），再运行步骤 1、2；ModelSim Transcript 中可执行 `set ::env(AFDX_MODELSIM_DECL_ORDER) 0`。测试会自动建立工作库和输入文件，不必先做综合。T77 的双工具编译、五项直接 RTL 仿真及综合输入文本等价证据见 [T77 执行报告](docs/evidence/t77_rtl_compat/summary.md)；下面 F1 界面走查结果保留为历史记录。
+命令行参考模型需要 Python 3，下文用 `$env:AFDX_PYTHON` 表示解释器路径，请先设置为本机路径。保持 `AFDX_MODELSIM_DECL_ORDER=0`（默认值），再运行步骤 1、2；ModelSim Transcript 中可执行 `set ::env(AFDX_MODELSIM_DECL_ORDER) 0`。测试会自动建立工作库和输入文件，不必先做综合。T77 的双工具编译、五项直接 RTL 仿真及综合输入文本等价证据见 [T77 执行报告](docs/evidence/t77_rtl_compat/summary.md)；下面 F1 界面走查结果保留为历史记录。
 
 单独编译整顶层可在 ModelSim 的可写输出目录中执行 `vlib work`，然后 `vlog -vlog01compat <工程路径>/rtl/*.v`；无需显式 `+define+MODEL_TECH`。命令行自检示例：
 
 ```powershell
 $env:AFDX_MODELSIM_DECL_ORDER='0'
 $env:AFDX_CE_DIV='2'
-& 'E:/anaconda3/python.exe' -B -X utf8 tools/eda.py sim --test tb_elinx
+& $env:AFDX_PYTHON -B -X utf8 tools/eda.py sim --test tb_elinx
 ```
 
 `$fatal`、`$finish_and_return` 保持原样。当前 ModelSim 会对未定义的 `$finish_and_return` 和两个未连接的可选输入端口发出警告，入口完整保留这些已知警告；其他警告、Error、Fatal、`RX_ASSERT` 与 RAM 冲突仍判失败。
@@ -156,7 +156,7 @@ JUDGE CASE PASS performance checks=683408635 errors=0 warnings=84 elapsed_s=3099
 JUDGE CASE PASS perf_var checks=1254291331 errors=0 warnings=84 elapsed_s=4638.304
 ```
 
-[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，用作满负载规格之外的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 逐项验收](docs/evidence/t65b_regress/acceptance.txt)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
+[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，用作满负载规格之外的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。分片版 63 项回归见 [T78 回归证据](docs/evidence/frag1030_delivery/regression.json)；F1 版 56 项标准回归的结果见 [T65b 逐项验收](docs/evidence/t65b_regress/acceptance.txt)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -363,7 +363,7 @@ F1 的 `elinx/constraints.edc` 包含 PRES 1.30、172 条 P0 管脚语句和 5,5
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 只新增测试，RTL 与约束保持不变。当前覆盖率引用 58 份 UCDB、42 单元的分片版数据；T64 的 40 项与 T65 新增 16 项合并统计、T57 旧记录均作为 F1 历史基线保留。
+F1 的标准 CE2 回归扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 只新增测试，RTL 与约束保持不变。当前覆盖率引用 58 份 UCDB、42 单元的分片版数据；T64 的 40 项与 T65 新增 16 项合并统计、T57 旧记录均作为 F1 历史基线保留。
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
@@ -448,9 +448,9 @@ R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接�
 在工程根目录运行；软件安装及许可证见前文。先设置：
 
 ```powershell
-$env:AFDX_PYTHON='E:/anaconda3/python.exe'
-$env:MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64'
-$env:ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack'
+$env:AFDX_PYTHON='Python 3 解释器路径'
+$env:MODELSIM_HOME='ModelSim 安装目录下的 win64 目录'
+$env:ELINX_HOME='eLinx 安装根目录'
 $env:AFDX_CE_DIV='2'
 $env:AFDX_MEM_FLOOR_GB='3'
 $env:AFDX_MODELSIM_DECL_ORDER='0'
