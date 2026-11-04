@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "items": 5,
+  "errors": 0,
+  "comparisons": [
+    {
+      "file": "tx_a.txt",
+      "equal": true,
+      "actual_sha256": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+      "reference_sha256": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+      "actual_bytes": 12503,
+      "reference_bytes": 12503,
+      "records": 6,
+      "first_difference_byte": null
+    },
+    {
+      "file": "tx_b.txt",
+      "equal": true,
+      "actual_sha256": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+      "reference_sha256": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+      "actual_bytes": 12503,
+      "reference_bytes": 12503,
+      "records": 6,
+      "first_difference_byte": null
+    },
+    {
+      "file": "rx.txt",
+      "equal": true,
+      "actual_sha256": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+      "reference_sha256": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+      "actual_bytes": 8926,
+      "reference_bytes": 8926,
+      "records": 4,
+      "first_difference_byte": null
+    },
+    {
+      "file": "tx_messages.txt",
+      "equal": true,
+      "actual_sha256": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+      "reference_sha256": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+      "actual_bytes": 159,
+      "reference_bytes": 159,
+      "records": 8,
+      "first_difference_byte": null
+    },
+    {
+      "file": "events.txt",
+      "equal": true,
+      "actual_sha256": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5",
+      "reference_sha256": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5",
+      "actual_bytes": 169,
+      "reference_bytes": 169,
+      "records": 8,
+      "first_difference_byte": null
+    }
+  ],
+  "compared_records": 32,
+  "coverage": {
+    "cutoff_cycle": 199578,
+    "vlid": "0x0102",
+    "reassembled_payload_bytes": 1472,
+    "rx_record": 4,
+    "second_fragment_tx_record": 6,
+    "second_fragment_tx_start": 197940,
+    "networks": [
+      "A",
+      "B"
+    ],
+    "full_tx_message_lines": 8,
+    "events_through_cutoff": 8
+  },
+  "Status": "PASS-PREFIX",
+  "checked": "2026-11-04T01:46:54.027050+08:00",
+  "flow": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+  "reference": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_rtl\\20261103_000656_614198",
+  "cutoff_cycle": 199578,
+  "complete_simulation": false,
+  "hdl_result_reached": false,
+  "vqm_sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+  "kernel": {
+    "pid": 33644,
+    "created": 1793693286.312673
+  },
+  "stop_record": "out\\t75\\fragment_prefix\\stop_record.json",
+  "source_sha256": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
+  "raw_sha256": {
+    "tx_a.txt": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",
+    "tx_b.txt": "2404C00F478B42F4C4AEE1C4612416C1B0F10B379509117830094CF8D3B970EA",
+    "rx.txt": "055824897EDCF875DFBA925CC2C953EF3A9328D6C793EF9F796D9516F7836AFA",
+    "tx_messages.txt": "874E5370DD164C33C6F8CEA8CA4B1A6A11B62E1CD357C5D20CFCA98E4040703E",
+    "events.txt": "E8993BD740E766E70DD9FA0A16A828FBC6A1D686168BC141F3747DCAB9EEBDD5"
+  },
+  "deferred_vqm_coverage": [
+    "8192-byte complete message",
+    "fault recovery"
+  ]
+}

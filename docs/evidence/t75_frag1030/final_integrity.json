@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "checked": "2026-11-04T06:17:10.400397+08:00",
+  "protected_files": 300,
+  "final_case_coverage_exact": true,
+  "final_standard_cases": 56,
+  "final_branch_cases": 11,
+  "protected_changes": [],
+  "frozen_final_source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\t75\\candidate2_source",
+  "frozen_final_files": 203,
+  "frozen_source_files": 201,
+  "frozen_cache_files": [
+    "tools/__pycache__/afdx_ref.cpython-312.pyc",
+    "tools/__pycache__/t65_check.cpython-312.pyc"
+  ],
+  "source_differences": [],
+  "root_libraries_restored": true,
+  "post_snapshot_tool_differences": [
+    "tools/eda.py",
+    "tools/gui_netlist.py",
+    "tools/par_regress.py"
+  ],
+  "tool_difference_reason": "Final capsule has an explicit eight-hour RTL budget. Later changes improve resource admission, the unused default GUI deadline and reporting. All official runs used explicit deadlines. HDL, vectors and checkers are unchanged; admission has thirteen separate boundary checks.",
+  "gui_difference_is_default_deadline_only": true,
+  "official_deadlines_explicit": true,
+  "post_snapshot_tool_delta": "out/t75/tool_delta_after_freeze.patch",
+  "approved_scope_revision": "2026-11-03 21:30",
+  "prefix_source_sha256": {
+    "t75_prefix.py": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
+    "t75_prefix_stop.py": "BD5FE8EE063240A34CC1830DD174970F7F3B9DAB20461DA18375C5D9AD5FD7D6"
+  },
+  "prefix_status": "PASS-PREFIX",
+  "prefix_controller_exited": true,
+  "new_netlist_workers_after_revision": [],
+  "task_rtl_elinx_diff_empty": true,
+  "card5_literal_empty": false,
+  "inherited_delta_unchanged": true,
+  "inherited_stat": " elinx/physical_only.edc | 16584 ++++++++++++++++++++++++++++++----------------\n 1 file changed, 11044 insertions(+), 5540 deletions(-)\n",
+  "vqm_sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+  "vqm_copies": [
+    {
+      "path": "out\\build1030\\AFDX_top_1030\\20261102_212626_064390\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+      "matches_routed": true
+    },
+    {
+      "path": "out\\t75\\routed_input.vqm",
+      "sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+      "matches_routed": true
+    },
+    {
+      "path": "out\\gui_netlist\\tb_elinx_gui\\20261102_233351_107710\\original.vqm",
+      "sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+      "matches_routed": true
+    },
+    {
+      "path": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882\\original.vqm",
+      "sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+      "matches_routed": true
+    },
+    {
+      "path": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_net_services_gui\\20261103_000708_762471\\original.vqm",
+      "sha256": "3CD8F5F8456C9881D083FE67DD7A60ED9C6779909EE1CB10DBF9367DC9729B6E",
+      "matches_routed": true
+    }
+  ],
+  "head_before_final_evidence_commit": "2264b9e403d249f7326093b440d02eeef87da126"
+}
