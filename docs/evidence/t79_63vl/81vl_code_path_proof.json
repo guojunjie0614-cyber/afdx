@@ -1,0 +1,13 @@
+{
+  "method": "unchanged code path at VL_COUNT=81; only argument rejection guard changed",
+  "base_commit": "f4632d5c",
+  "only_change_is_guard": true,
+  "all_81_burst_modes_accept_identically": true,
+  "unchanged_files": {
+    "tb/tb_t76_load.v": "1e79defc37f51d44289f3ec85cfbf70f7e2af46344e0df69931aff5219bff465",
+    "tb/lib/t76_load_endpoint.v": "2d24a694b17b97588d2976fee4e6ff75da8e96a9b8da26ec4902be1bbc9af60f",
+    "tools/t76_stats.py": "cddbab339638175e70a12ebd7877adaa07cc8ecd9f3d8f85a40d7e17e537d493",
+    "sim/t76_stats.tcl": "2a8a046ee9f8c9b98b1c5918ea28e38a86850ae53635cbcd072c7727a1f456b1"
+  },
+  "all_rtl_unchanged": true
+}
