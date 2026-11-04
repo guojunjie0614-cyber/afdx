@@ -21,7 +21,7 @@
 
 超规格不承诺无损或时延。禁用/未知 VL、过长消息、队列满或无页按现有事件拒收；`ev_tx[1:4]` 分别为 drop_dis/drop_full/drop_long/drop_nopage，`ev_app[0]` 为未知 VL、`ev_app[1]` 为应用消息回退（含过长、封装空间不足）、`ev_app[2]` 为接收封装溢出。RX 环/描述队列溢出、重组无上下文或格式/超时错误按现有 RX 事件和配置计数记录，部分消息不算成功交付。不以超规格输入结果替代上述正常运行边界。
 
-数值依据：`rtl/AFDX_top.v` 默认参数、`rtl/afdx_app_tx.v` / `afdx_app_rx.v` 环与描述槽、`rtl/afdx_tx_buf.v` 页池、`rtl/afdx_tx_engine.v` 分片预算与逐片 BAG、`rtl/afdx_rx_core.v` / `afdx_rx_reassembly.v` 16 上下文、`sim/vectors/app/vl_config.txt` 默认 21 VL；`tools/sys_cases.py::perf` 已有 77 和 81 VL 功能场景。T75 的 81 VL 功能自检及外部字节检查通过，但旧性能检查器整体 FAIL；本节不据此声称 81 VL 已通过新口径性能验收。
+数值依据：`rtl/AFDX_top.v` 默认参数、`rtl/afdx_app_tx.v` / `afdx_app_rx.v` 环与描述槽、`rtl/afdx_tx_buf.v` 页池、`rtl/afdx_tx_engine.v` 分片预算与逐片 BAG、`rtl/afdx_rx_core.v` / `afdx_rx_reassembly.v` 16 上下文、`sim/vectors/app/vl_config.txt` 默认 21 VL；`tools/sys_cases.py::perf` 已有 77 和 81 VL 超出当前声明的压力测试场景。T75 的 81 VL 功能自检及外部字节检查通过，但旧性能检查器整体 FAIL；本节不据此声称 81 VL 已通过新口径性能验收。
 
 超出声明的压力测试（T76 历史）：每个 1、17、256、1024、1471 字节载荷组均覆盖 81 VL、每组连续至少 100 ms，1471 字节组覆盖全部 VL 的 Lmax。原 81 VL 短/长混合场景已出现 RX 溢出，作为限制保留；按覆盖决定以独立 63 VL 声明完成 100 ms 混合确认。统计只用公开 tx_data/rx_data 测点，首帧时延、全程最大时延、BAG 扣除分支及 8 ns 线上残差均保留。两种统计协议见下节，81 VL 周期最大抖动 3.368 µs；BAG 对齐撞车最大 107.7 µs 超门槛，混合溢出。当前 63 VL 七场景及复用混合结果见 [T79 证据](evidence/t79_63vl/summary.md)。
 
