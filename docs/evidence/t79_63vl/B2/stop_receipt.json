@@ -1,0 +1,22 @@
+{
+  "case": "B2",
+  "status": "STOPPED_BY_REPORT_CONDITION",
+  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_193648_592064",
+  "started": "2026-11-04 11:36:48",
+  "stopped": "2026-11-04 11:47:19",
+  "seconds": 630.624,
+  "raw_record_hashes": {
+    "ep0_a.txt": "d1218f8ebc2d5d2d5c018bdaef46ade93481bb1dc49b0823407f123d4eec9c21",
+    "ep0_b.txt": "4c5a5a3163cd53441ef4976d257a9c3bf9e03aa89682077c88ff37c75dc2d232",
+    "ep0_events.txt": "21ad05734a8814a2bc92bccf1bf0cb520c811fe4fe7499273572fd2e5d409a5f",
+    "ep0_rx.txt": "76ad9956e154539660b5e947f00d1001e4b0205165270f9697d9fc57ce2bf306",
+    "ep0_tx.txt": "56d08218ae2c9134db3aab1a8f68515b3e81bcee8c78c3d28d038e4a687f944d",
+    "ep1_a.txt": "d1218f8ebc2d5d2d5c018bdaef46ade93481bb1dc49b0823407f123d4eec9c21",
+    "ep1_b.txt": "4c5a5a3163cd53441ef4976d257a9c3bf9e03aa89682077c88ff37c75dc2d232",
+    "ep1_events.txt": "21ad05734a8814a2bc92bccf1bf0cb520c811fe4fe7499273572fd2e5d409a5f",
+    "ep1_rx.txt": "76ad9956e154539660b5e947f00d1001e4b0205165270f9697d9fc57ce2bf306",
+    "ep1_tx.txt": "56d08218ae2c9134db3aab1a8f68515b3e81bcee8c78c3d28d038e4a687f944d",
+    "window.txt": "9758762360753b28b9b5de905716ddd49c825f00d46cd73887ddadb8057a375d"
+  },
+  "hdl_result_lines": []
+}

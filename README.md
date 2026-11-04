@@ -1,6 +1,6 @@
 # AFDX 端系统 FPGA 工程
 
-T79 已统一声明满负载每端 **63 TX / 63 RX VL**，每 VL BAG=1 ms / Lmax=1471，线路占用约 77.5%，单向计划载荷 741.384 Mbit/s；配置规模仍为发送 128 / 接收 4096 条 VL。单消息上限 8192 字节，TX 256 页、RX 16 重组上下文，默认 21 VL 子集不变。63 VL 七场景性能验证正在运行，结果见 [T79 证据](docs/evidence/t79_63vl/summary.md)。81 VL 保留为超出声明的压力测试：周期最大抖动 3.368 µs；BAG 对齐撞车最大 107.7 µs 超门槛；混合溢出。**声明、RTL 性能与官方网表分别验收。** 交付边界见 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)。
+T79 已统一声明满负载每端 **63 TX / 63 RX VL**，每 VL BAG=1 ms / Lmax=1471，线路占用约 77.5%，单向计划载荷 741.384 Mbit/s；配置规模仍为发送 128 / 接收 4096 条 VL。单消息上限 8192 字节，TX 256 页、RX 16 重组上下文，默认 21 VL 子集不变。63 VL 验证已按停止条件结束：4 项周期场景通过，B1 的 122/126 组公式不成立，P1471/B2 未完成性能验收，结果见 [T79 证据](docs/evidence/t79_63vl/summary.md)。81 VL 保留为超出声明的压力测试：周期最大抖动 3.368 µs；BAG 对齐撞车最大 107.7 µs 超门槛；混合溢出。**声明、RTL 性能与官方网表分别验收。** 交付边界见 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)。
 
 > 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在不放宽约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
@@ -242,7 +242,7 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
 | 定长与混合帧长性能 | gbe77 / var_high 每方向最小注入 906.136/904.752 Mbps。gbe77 的主时延最大 48.288/50.344 µs（链路 0/257 拍），20 个窗口的最大值为 63.576 µs。R119-2 抖动最大 19.536 µs，位于 var_cycle_d0、es1_to_es2、VL25、256 字节，帧 2666→3266。var_burst 的计划释放→首/末字节最大 185.760/185.888 µs，释放口径抖动最大 0.008 µs。释放口径包含主机串行注入排队，与从首字节 valid 起算的主口径分开报告。逐方向原值见 [性能证据](docs/evidence/perf_r97.json)。 |
-| 77/81 条虚拟链路同时提交消息后，队列全部发完的时间 | 本轮 `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 983.424/1032.640 µs；81 条用例覆盖超过 1 ms 的边界。 |
+| 超出声明的历史压力测试：77/81 条 VL 同时提交后的队列排空时间 | 本轮 `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 983.424/1032.640 µs；81 条用例覆盖超过 1 ms 的边界。 |
 | 时钟同步误差 | 空载最大 0 ns，普通用户流量最大 0 ns，77 条 VL 满载最大 0 ns；共用理想时钟和对称链路，经公开配置口读回比较，未测试晶振漂移或硬件误差。 |
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
 | 虚拟链路容量 | `capacity` 每端配置 4096 条接收虚拟链路，并逐字节验证索引 0、4095 和中间 126 项。每端全部 128 条发送虚拟链路都发出消息，对端每条只交付一次。 |
@@ -403,7 +403,7 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
 
    预期 `[RESULT] tb_elinx PASS checks=9238 errors=0`；直接编译原样 RTL。
 
-2. 综合后仿真：按答疑第 155 条，用 `synth_1/AFDX_EndSystem.vqm` 替换实现仿真 `.do` 中的 `.vo`，厂商库保持原样。下列脚本准备运行目录、唯一官方 VQM、参数及 `official_inputs.tcl`，并调用 `sim/run_t76_post_synth.do`：
+2. 综合后仿真：按答疑第 155 条，用 `synth_1/AFDX_EndSystem.vqm` 替换实现仿真 `.do` 中的 `.vo`，厂商库保持原样。下列脚本保留超出当前声明的 81 VL 历史压力测试复现，准备运行目录、唯一官方 VQM、参数及 `official_inputs.tcl`，并调用 `sim/run_t76_post_synth.do`：
 
    ```powershell
    & $env:AFDX_PYTHON -B -X utf8 tools/t76_sim.py --help

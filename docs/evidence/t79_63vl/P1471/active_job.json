@@ -1,0 +1,32 @@
+{
+  "name": "simulation",
+  "command": [
+    "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
+    "-batch",
+    "-t",
+    "1ps",
+    "work.tb_t76_load",
+    "-gVL_COUNT=63",
+    "-gGROUP_LENGTH=1471",
+    "-gMIXED=0",
+    "-gDUPLEX=1",
+    "-gDURATION=12500000",
+    "-gSMOKE=0",
+    "-gSWAP=0",
+    "-gBAG_BURST=0",
+    "-wlf",
+    "simulation.wlf",
+    "-do",
+    "do run.do"
+  ],
+  "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918",
+  "pid": 27948,
+  "created": 1793762383.9915571,
+  "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918\\simulation.log",
+  "budget_seconds": 10798.493301868439,
+  "status": "finished",
+  "exit_code": 0,
+  "stop_reason": null,
+  "seconds": 1651.875,
+  "peak_tree_bytes": 254332928
+}

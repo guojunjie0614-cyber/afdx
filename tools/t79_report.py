@@ -20,7 +20,9 @@ def main():
     for name,length in CASES:
         row=rows.get(name,{})
         if 'groups' not in row:
-            text.append(f"| {name}/{length} | {row.get('status','未启动')} | — | — | — | — | — | — |")
+            elapsed=f"{row.get('simulation_seconds','未完成')} / {row['seconds']:.3f}" if 'seconds' in row else '—'
+            hdl='PASS/未独立核对' if row.get('hdl_result_lines') else '—'
+            text.append(f"| {name}/{length} | {row.get('status','未启动')} | {hdl} | 未完成 | — | — | — | {elapsed} |")
             continue
         jitter=f"{row['maximum_jitter_us']:.3f}" if row['formula_invalid']==0 else 'NA（存在公式无效组）'
         text.append(f"| {name}/{length} | {row['status']} | {'PASS' if row['hdl_pass'] else 'FAIL'}/{'PASS' if row['integrity_pass'] else 'FAIL'} | {'一致' if row['statistics_equal'] else '不一致'} | {jitter} / 0x{row['worst_vlid']} / {row['worst_source']} | {row['maximum_latency_us']:.3f} | {sum(row['receive_mbps']):.6f} | {row['simulation_seconds']:.3f} / {row['seconds']:.3f} |")
@@ -31,7 +33,7 @@ def main():
                 g['official_jitter_cycles'],int(g['formula_precondition']),
                 f"{g['official_jitter_us']:.3f}" if g['formula_precondition'] else 'NA',g['under_100us']])))
     (E/'per_vl_metrics.tsv').write_text('\n'.join(metrics)+'\n',encoding='utf-8')
-    text+=['','逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式与 Python/Tcl 源码均保持 T76 原样。',
+    text+=['','逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式与 Python/Tcl 源码均保持 T76 原样。场景用时为启动至控制器确认结束，含接管识别延迟；实际仿真用时以 tool_metrics.json 为准。',
         '', '## 完整性、公式与预算','', '| 场景 | 分组数 | 公式无效组 | ≥100 µs 组 | 页池上界（两方向） | BAG 等待对/失败对（两方向） |',
         '|---|---|---|---|---|---|']
     for name,_ in CASES:
@@ -65,7 +67,23 @@ def main():
         '', '## 文档与验收边界','',
         '本轮更新 README.md、docs/ARCH.md、docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/summary.md，并新建本证据目录。docs/design/、docs/test/、rtl/、elinx/、sim/wave/png/、submission/、setup_pack/ 未改。不跑网表、不综合、不布线、不 push、不合并、不 amend。',
         '', '任一场景公式不成立或抖动≥100 µs 时停止本轮并保留其他场景已完成/中止边界；不能把声明下调、部分场景或 GUI PASS 当成七场景性能验收。']
-    if receipt.get('error'):text+=['',f"本轮停止原因：**{receipt['error']}**。"]
+    if receipt.get('error'):
+        text+=['',f"本轮停止原因：**{receipt['error']}**。"]
+        if (E/'B1/t76_stats.json').exists():
+            stats=json.loads((E/'B1/t76_stats.json').read_text(encoding='utf-8'))
+            bad=[g for g in stats['groups'] if not g['formula_precondition']]
+            if bad:
+                g=bad[0]
+                invalid=['source\tvlid\tlength\tfirst_cycles\tmaximum_cycles\tspread_cycles\tbag_cycles\tsigned_jitter_us']
+                for x in bad:
+                    invalid.append('\t'.join(map(str,[x['source'],x['vlid'],x['length'],x['first_frame_minimum'],
+                        x['maximum'],x['raw_spread_cycles'],x['bag_deduction'],x['official_jitter_us']])))
+                (E/'formula_invalid_groups.tsv').write_text('\n'.join(invalid)+'\n',encoding='utf-8')
+                text+=['','### B1 停止现象与原因','',
+                    f"B1 的 HDL/完整性通过、Python/Tcl 一致，但 **{len(bad)}/126 组公式不成立**，详见 [无效组原值](formula_invalid_groups.tsv)。只有 VLID 0x0114、0x0115 的两个方向共 4 组满足前提，有效组中最大为 0.984 µs（0x0115）；不能把该子集最大值作为 B1 整体抖动通过。",
+                    '', f"例：方向 {g['source']}、VLID 0x{g['vlid']}、1471 字节：首帧 {g['first_frame_minimum']} 拍（{g['first_frame_minimum']*.008:.3f} µs），全程最大 {g['maximum']} 拍（{g['maximum']*.008:.3f} µs）；最大−首帧={g['raw_spread_cycles']} 拍（{g['raw_spread_cycles']*.008:.3f} µs）≤125000 拍 BAG，减 BAG 后原值 {g['official_jitter_us']:.3f} µs，故该组记 NA。",
+                    '', '该现象与“第二条确实等待 BAG”不矛盾：线上 BAG 从前一帧起点计时，而每条消息的端到端时延各从自己的输入首字节计时；背靠背第二条输入晚于首条，等待的是剩余 BAG，固定输入顺序也未保证全程最大与首帧的差值超过完整 BAG。统计前提额外要求最大−首帧>BAG，本次未满足；没有改公式、钳零或转用其他抖动口径。两方向各 3150 对均通过等待证明，页池上界均 144/256，最大端到端时延 1079.056 µs。',
+                    '', '按停止指令未继续统计 P1471 或运行 B2：P1471 已留下 HDL PASS checks=12600 errors=0，但未完成 Python/Tcl 性能验收；B2 仅为中止前缀，无 HDL 终态。原始目录、输出哈希及中止身份见对应 stop_receipt.json；[停止确认](stop_confirmation.json)核对所有本任务进程已结束。']
     (E/'summary.md').write_text('\n'.join(text)+'\n',encoding='utf-8')
 
 if __name__=='__main__':main()
