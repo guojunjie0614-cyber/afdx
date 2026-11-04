@@ -67,11 +67,11 @@ T76 周期注入最大抖动 3.368 µs；BAG 对齐撞车 case 16 的 10/162 组
 
 [原始截图](elinx_gui_behav_pass.png) · [截图收据](elinx_gui_receipt.json)。界面 Loading... 的本机 socket 排障与备用 batch 命令已写入 README。
 
-## 待队友同步
+## 设计文档同步（已完成）
 
-docs/design/ 保持只读；以下五处已由上游转告，发现它们不再触发停止（按后续明确指令）。
+以下五处 81 VL 表述已在设计文档中改为 63 VL 规格，81 VL 保留为超规格压力测试。
 
-| 文件 | 行号 | 待同步内容 |
+| 文件 | 原行号 | 原内容 |
 |---|---:|---|
 | docs/design/chapters/ch03.tex | 226 | 77/81 VL 双向满载基准及“完全覆盖满载无损调度需求” |
 | docs/design/chapters/ch03.tex | 143 | 最大可调度数 81、载荷率 953.208 Mbps |
