@@ -1,0 +1,96 @@
+{
+  "measured_commit": "8a9a4e07fb0f8e4772c3ed11fe245f0005eb4d52",
+  "archive_bytes": 25221085,
+  "archive_sha256": "3be4fde163bf1109fb3ebda7a887fbe51bd3182a227262bfe856c4268f1e0328",
+  "tracked_bytes": 76534822,
+  "file_count": 1434,
+  "top20": [
+    {
+      "path": "docs/evidence/t65_gap_tests/raw/all_units_summary_command.txt",
+      "bytes": 5094514
+    },
+    {
+      "path": "docs/evidence/t63_f1_synthesis_hierarchy.rpt",
+      "bytes": 2957979
+    },
+    {
+      "path": "sim/reference/coverage/merged.ucdb",
+      "bytes": 2916591
+    },
+    {
+      "path": "docs/evidence/gui_hierarchy.rpt",
+      "bytes": 2591980
+    },
+    {
+      "path": "docs/test/AFDX端系统FPGA测试报告.pdf",
+      "bytes": 2176883
+    },
+    {
+      "path": "docs/evidence/frag1030_delivery/regression_native.json",
+      "bytes": 1626523
+    },
+    {
+      "path": "docs/evidence/t65_gap_tests/runs/tb_t65_rx_data/t65_trace.txt",
+      "bytes": 1581562
+    },
+    {
+      "path": "docs/design/AFDX端系统FPGA设计文档.pdf",
+      "bytes": 1555449
+    },
+    {
+      "path": "docs/evidence/gui_synthesis_timing.pb",
+      "bytes": 1482752
+    },
+    {
+      "path": "docs/evidence/t76_frag1030/case_16/t76_budget_0.json",
+      "bytes": 1222396
+    },
+    {
+      "path": "docs/evidence/t76_frag1030/case_16/t76_budget_1.json",
+      "bytes": 1222396
+    },
+    {
+      "path": "docs/evidence/t76_frag1030/case_14/t76_budget_0.json",
+      "bytes": 1222388
+    },
+    {
+      "path": "docs/evidence/t76_frag1030/case_14/t76_budget_1.json",
+      "bytes": 1222388
+    },
+    {
+      "path": "docs/evidence/history/gui_hierarchy_20261015.rpt",
+      "bytes": 842063
+    },
+    {
+      "path": "docs/design/fig/配图审阅.pdf",
+      "bytes": 756441
+    },
+    {
+      "path": "docs/design/fig/html/f13_decide.html",
+      "bytes": 711850
+    },
+    {
+      "path": "docs/design/fig/html/f01_system.html",
+      "bytes": 711741
+    },
+    {
+      "path": "docs/design/fig/html/f02_path.html",
+      "bytes": 711170
+    },
+    {
+      "path": "docs/design/fig/html/f07_tx.html",
+      "bytes": 710972
+    },
+    {
+      "path": "docs/design/fig/html/f11_rx.html",
+      "bytes": 709220
+    }
+  ],
+  "over_5MB": [
+    {
+      "path": "docs/evidence/t65_gap_tests/raw/all_units_summary_command.txt",
+      "bytes": 5094514
+    }
+  ],
+  "note": "Decimal 5 MB=5000000 bytes; existing large files retained. Final HEAD archive re-exported after report commit; its exact receipt is out/t78/package_final.json."
+}
