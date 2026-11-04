@@ -1,10 +1,10 @@
 # AFDX 端系统 FPGA 工程
 
-T79 已统一声明满负载每端 **63 TX / 63 RX VL**，每 VL BAG=1 ms / Lmax=1471，线路占用约 77.5%，单向计划载荷 741.384 Mbit/s；配置规模仍为发送 128 / 接收 4096 条 VL。单消息上限 8192 字节，TX 256 页、RX 16 重组上下文，默认 21 VL 子集不变。63 VL 基础七场景已按最新裁定验收：五项周期场景最大抖动 3.360 µs，B2 最大 96.752 µs（0x0114、1471 B），全部判据组 <100 µs；B1 的 HDL/完整性/双统计 PASS，122/126 组公式不成立、不作抖动判据。已验证单条 VL 发 8192 B（63 VL 混合场景）；多条 VL 并发长消息未验证；专项已暂停、未完成，已有局部结果不作规格依据，结果见 [T79 证据](docs/evidence/t79_63vl/summary.md)。81 VL 保留为超出声明的压力测试：周期最大抖动 3.368 µs；BAG 对齐撞车最大 107.7 µs 超门槛；混合溢出。**声明、RTL 性能与官方网表分别验收。** 交付边界见 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)。
+满负载规格为每端 **63 TX / 63 RX VL** 同时运行（每 VL BAG=1 ms、Lmax=1471 字节，A/B 冗余，可双向），线路占用约 77.5%，单向载荷 741.384 Mbit/s；可配置发送 128 条、接收 4096 条 VL。单条消息最长 8192 字节，发送端 IPv4 分片、接收端 16 个上下文重组；TX 页池 256 页；默认配置为 21 条 VL。
 
-**已验证单条 VL 发 8192 B（63 VL 混合场景）；多条 VL 并发长消息未验证**。多条 VL 边界专项已暂停、未完成；已有局部结果仅保存在 T79 证据，不作为并发规格限制。
+63 VL 满负载七场景各连续 100 ms、双向运行，全部通过：五种载荷周期注入最大抖动 3.360 µs；BAG 等待场景 B2 最大抖动 96.752 µs（VLID 0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格、网络规划要求和压力测试见 [ARCH](docs/ARCH.md#系统规格与网络规划)，原始记录见 [T79 证据](docs/evidence/t79_63vl/summary.md)和 [T78 交付总表](docs/evidence/frag1030_delivery/summary.md)。
 
-> 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在不放宽约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
+> 2026-11-03 `feature/fragmentation-timing-1030` 分支已按 [1030 答疑](docs/sources/FPGA创新大赛问题汇总1030.xlsx) R138/R139 完成单消息 8192 字节 IPv4 分片与 16 上下文重组，并在原约束（EQ6HL130/CSG484_H、125 MHz / 8.000 ns、0.30 ns setup uncertainty、CE_DIV=2、172 引脚、253 组合法 CE 多周期）下实现综合与布线后时序全闭合：官方综合 setup `+4.148 ns` / hold `+0.192 ns`（`0 / 164,745` 失败），配合 `PRES 1.30` 与固定簇布局 `elinx/tiles_1030.edc`（`11,044` 簇：`62,274` LUT、`35,597` FF、`10,230` CLB、`814` Memory）布线后 setup `+0.029 ns` / hold `+0.604 ns`（`0 / 96,142` 失败）。下文正文中 F1/T65 的旧资源与 `+0.016 / +0.229 ns` 保留为分片前历史基线；新版本集中构建与验证入口为 `tools/build_1030.py --route`、`tools/run_1030_checks.py` 和 `sim/run_fragmentation.ps1`，完整记录见 [1030 实现记录](docs/1030_IMPLEMENTATION.md)。
 
 当前 F1 的 RTL 与 r5 A `18d1606c` 零差异；原 V1/V2 验证提交为 `t63@92ab7d7e`，F1b 在 `67d2e618` 基础上仅修正宏内测试观测。**V1 功能终验通过**：模块及整顶层网表清单 8/8 PASS，`tb_sys_net` 自检与独立核对通过；V2 时序复核通过；界面复跑通过（与 CLI 产物逐项比对 PASS，`.place`、`.route` 逐字节相同）。器件 EQ6HL130、封装 CSG484_H，主时钟 125 MHz（8.000 ns），CE_DIV=2。采用 PRES 1.30 和固定布局后，全部 53,882 个端点 setup/hold 均为 0 失败，最差余量为 +0.016 / +0.229 ns；setup 已含 0.30 ns 时钟不确定度。原始精度为 +16 / +229 ps，门槛按原始精度判定。
 
@@ -31,7 +31,7 @@ T79 已统一声明满负载每端 **63 TX / 63 RX VL**，每 VL BAG=1 ms / Lmax
 
 基本工具为 Windows 版 eLinx 3.0.7、ModelSim SE-64 2020.4 和 Windows PowerShell 5.1，不需要 PowerShell 7。本分支的 7 份 RTL 使用 `MODEL_TECH` 条件分支处理 21 处声明顺序：ModelSim 自动定义该宏，编译提前声明；其他工具保留原位置声明及表达式。不要在综合命令中定义 `MODEL_TECH`。本分支仿真入口默认直接编译 `rtl/`，使用 `AFDX_MODELSIM_DECL_ORDER=0` 关闭 T75 兼容副本。
 完整 56 项回归（原有 40 项 + T65 新增 16 项）、独立报文检查器及命令行综合/网表脚本另需 Python 3.10 或更新版本（验证版本为 3.12.7），以及 `psutil`、`pyasn1==0.4.8`。在实际选用的 Python 环境执行 `python -m pip install psutil pyasn1==0.4.8`。
-软件不随工程分发，ModelSim、eLinx 的许可证需自行配置。脚本不主动提权，需要工作目录可写；当前脚本使用 Windows 可执行文件和进程接口，未适配 Linux/macOS。
+软件不随工程分发，ModelSim、eLinx 的许可证需自行配置。脚本以普通用户权限运行，需要工作目录可写；脚本面向 Windows 可执行文件和进程接口。
 
 | 环境变量 | 设置方式；不设置时的查找规则 |
 |---|---|
@@ -55,11 +55,11 @@ $env:AFDX_CE_DIV='2'
 & 'E:/anaconda3/python.exe' -B -X utf8 tools/eda.py sim --test tb_elinx
 ```
 
-`$fatal`、`$finish_and_return` 保持原样。当前 ModelSim 会对未定义的 `$finish_and_return` 和两个未连接的可选输入端口发出警告，入口完整保留这些已知警告；其他警告、Error、Fatal、`RX_ASSERT` 与 RAM 冲突仍判失败。该兼容验收不证明 `$finish_and_return` 被触发时可以终止仿真。
+`$fatal`、`$finish_and_return` 保持原样。当前 ModelSim 会对未定义的 `$finish_and_return` 和两个未连接的可选输入端口发出警告，入口完整保留这些已知警告；其他警告、Error、Fatal、`RX_ASSERT` 与 RAM 冲突仍判失败。
 
-T77 已通过五项直接 RTL 自检及改动后源码的完整 `build_1030.py --route --pres 1.30` 流程：默认 11,044 个锁定簇、172 个 P0 管脚不变，布线 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点。原样重综合网表 `e9e1734c…` 从官方 VQM 导入入口重新打包、锁定布线，也复现相同数值。旧基准 VQM `3cd8f5f8…` 和本次新 VQM `96d14e2f…` 分别绑定各自的布线证据；不要仅凭文本等价或结构等价混用网表、检查点与时序报告。
+T77 已通过五项直接 RTL 自检及改动后源码的完整 `build_1030.py --route --pres 1.30` 流程：默认 11,044 个锁定簇、172 个 P0 管脚不变，布线 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点。原样重综合网表 `e9e1734c…` 从官方 VQM 导入入口重新打包、锁定布线，也复现相同数值。旧基准 VQM `3cd8f5f8…` 和本次新 VQM `96d14e2f…` 分别绑定各自的布线证据；网表、检查点与时序报告按 SHA256 一一对应使用。
 
-官方综合导出的 VQM 存在排列不确定性；本轮比较的五份 VQM 名称和功能结构相同，保序文本不同。将运行副本的 `NUM_PARALLEL_PROCESSORS` 设为 1 已验证生效，但没有恢复基准顺序，也未证明输出固定。界面 Run Behavioral Simulation 已于 11-04 人工验证 PASS：checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；[截图](docs/evidence/t79_63vl/elinx_gui_behav_pass.png)及警告边界见 [T79 证据](docs/evidence/t79_63vl/summary.md)。
+官方综合每次导出的 VQM 文本排列可能不同；本轮比较的五份 VQM 名称和功能结构相同，保序文本不同。运行副本的 `NUM_PARALLEL_PROCESSORS` 设为 1 后，排列仍与基准不同。界面 Run Behavioral Simulation 已于 11-04 人工验证 PASS：checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；[截图](docs/evidence/t79_63vl/elinx_gui_behav_pass.png)及警告边界见 [T79 证据](docs/evidence/t79_63vl/summary.md)。
 工程路径不要含中文或空格。实测 ModelSim 2020.4 在中文路径下无法创建工作库，在带空格的路径下无法载入仿真；入口会提前提示更换目录。
 
 1. 在 ModelSim 的 Transcript 窗口进入工程根目录，把下面的占位文字换成实际目录。
@@ -99,9 +99,9 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 
 运行结果在 `out/app/<运行名>/`：`rx.txt` 每行 `<交付首字节拍> <交付末字节拍> <VLID> <载荷十六进制>`；`summary.txt` 给出第 2 节定义的三项指标和判定；`es1_tx/`、`es2_rx/`、`es1_gmii_*/` 等目录保存原始记录。入口自检每条消息恰好交付一次、逐字节一致、A/B 冗余副本不重复交付，成功打印 `APP ENTRY PASS`，失败打印 `APP ENTRY FAIL`。默认第 3 个参数可给运行名，便于固定输出目录。
 
-`sim/wave/png/` 中下表 13 张波形截图来自分片版 RTL 的 11-03 运行：由提交 `12858ddf` 的 `sim/wave/current_report.do` 和 `tools/run_report_wave.py` 生成，窗口和光标按该次仿真记录的实际事件计算，逐文件哈希见 [wave_provenance.json](docs/evidence/t79_63vl/wave_provenance.json)。本仓库的五个场景脚本仍按 F1 时的固定时刻设置窗口和光标，在分片版上重跑时会与下表略有偏差，例如 `tx_bag.do` 的光标在 17.092 us，分片版实际帧起点为 17.132 us。分片场景 `frag.do` 按本次记录计算窗口，见下一节。
+`sim/wave/png/` 中下表 13 张波形截图来自分片版 RTL 的 11-03 运行：由提交 `12858ddf` 的 `sim/wave/current_report.do` 和 `tools/run_report_wave.py` 生成，窗口和光标按该次仿真记录的实际事件计算，逐文件哈希见 [wave_provenance.json](docs/evidence/t79_63vl/wave_provenance.json)。分片场景 `frag.do` 按本次仿真记录计算窗口，见下一节。
 
-报告波形：在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
+单场景脚本按 F1 版本 RTL 的信号路径和事件时刻编写，适配分片版的更新版另行合入。在仓库根目录执行 `do sim/wave/tx_dual.do`；另外四个脚本是 `rx_redundancy.do`、`rx_fcs_error.do`、`tx_bag.do`、`snmp_get.do`，均自行编译、运行并显示真实 ModelSim Wave 窗口，采用默认黑底配色。生成输入向量时需要上述 Python 环境。切换场景前执行 `quit -sim`，再切回根目录。
 批量截图用 `python sim/wave/export.py`，单个场景可追加 `--scene tx_bag`。脚本通过 Windows 的 `PrintWindow` 捕获本次 ModelSim 会话的 Wave 窗口，保留菜单、信号名、数值、时间轴和光标读数。工作库、WLF、原始窗口截图和日志保存在 `out/wave/`。
 
 | 图片 | 时间窗口（us） | 观察内容 |
@@ -130,7 +130,7 @@ do sim/run_app.do sim/vectors/app/small_stimulus.txt
 | `frag_2.png` | 5654.028–5741.076 | 末片到达后接收端开始交付，`rx_bytes` 计到 8194 |
 | `frag_3.png` | 657.188–657.380 | 首片 IP 头字节，光标处标志/片偏移为 `20 00`（MF=1，偏移 0） |
 
-分片交付版（11-04）评委入口八项均通过，errors 均为 0，Error/FAIL/RAMCOLL 为 0。前六项为对 `f4632d5c`（与 `t79` 的 rtl/tb 相同）的完整入口运行；performance 首次运行时性能门槛 REQUIREMENT PASS，但与 `sim/judge_perf.tcl` 中写死的 F1 历史基准比对不一致（分片版最大端到端时延 48.600 µs，F1 为 48.288 µs，多 39 拍即 0.312 µs，远低于 2000 µs 门槛），因此把基准更新为分片版实测值后，用 `AFDX_JUDGE_CASE` 重跑 performance 与 perf_var，四组基准全部 PASS。每项 84 条警告是 T77/T78 已登记的 `$finish_and_return` 未定义（vsim-PLI-3003）与可选端口未连接两类，不是错误。耗时含当时机器负载。
+分片交付版（11-04）评委入口八项均通过，errors 均为 0，Error/FAIL/RAMCOLL 为 0。前六项为对 `f4632d5c`（与 `t79` 的 rtl/tb 相同）的完整入口运行；performance 首次运行时性能门槛 REQUIREMENT PASS，但与 `sim/judge_perf.tcl` 中写死的 F1 历史基准比对不一致（分片版最大端到端时延 48.600 µs，F1 为 48.288 µs，多 39 拍即 0.312 µs，远低于 2000 µs 门槛），因此把基准更新为分片版实测值后，用 `AFDX_JUDGE_CASE` 重跑 performance 与 perf_var，四组基准全部 PASS。每项 84 条警告是 T77/T78 已登记的 `$finish_and_return` 未定义（vsim-PLI-3003）与可选端口未连接两类，均为警告级诊断。耗时含当时机器负载。
 
 | 用例 | 检查数 | 实测耗时（秒） |
 |---|---:|---:|
@@ -155,7 +155,7 @@ JUDGE CASE PASS performance checks=683408635 errors=0 warnings=84 elapsed_s=3099
 JUDGE CASE PASS perf_var checks=1254291331 errors=0 warnings=84 elapsed_s=4638.304
 ```
 
-[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，属于超出 63 VL 满负载声明的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
+[分片版评委入口参考输出](sim/reference/judge_result_frag1030.txt)（含全部 METRIC/REQUIREMENT/BASELINE 行）。burst81 为 81 VL 突发功能用例，用作满负载规格之外的压力测试。F1 历史结果保留在 [F1 评委入口参考输出](sim/reference/judge_result.txt) 和 [原 40 项回归参考汇总](sim/reference/regression.json)，验证提交为 `92ab7d7e`。当前 56 项标准回归的结果见 [T65b 合并验收](docs/T65b_REGRESS.md)及[完整汇总](docs/evidence/t65b_regress/regression_summary.txt)。性能来自同一版本的完整窗口记录，见[性能证据](docs/evidence/perf_r97.json)。耗时、时间戳和输出目录随运行变化。
 
 下面两步需要先按“软件准备”安装 Python 依赖，并在 PowerShell 中进入同一工程根目录。
 
@@ -165,7 +165,7 @@ JUDGE CASE PASS perf_var checks=1254291331 errors=0 warnings=84 elapsed_s=4638.3
    powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1
    ```
 
-   预期：末尾表格中的 56 项都为 `PASS`；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。T65b 在 CE_DIV=2 下实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0，耗时 6038.613 秒（1 小时 40 分 39 秒）；原 40 项检查数与 F1/T64 一致，新增 16 项与 T65 一致。本次未运行 56 项 CE1 回归。
+   预期：末尾表格中的 56 项都为 `PASS`；汇总位于 `out/regress/`，每项日志位于 `out/sim/`。T65b 在 CE_DIV=2 下实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0，耗时 6038.613 秒（1 小时 40 分 39 秒）；原 40 项检查数与 F1/T64 一致，新增 16 项与 T65 一致。回归配置为 CE_DIV=2。
 
 管理协议引擎使用同一个 125 MHz 时钟，通过时钟使能（Clock Enable，CE）每两拍更新；接收捕获、发送输出、配置口、RAM 端口和 RTC 计时保持全速。顶层参数 `CE_DIV` 可取 1 或 2，默认 2。两种配置的完整回归和评委入口可分别运行：
 
@@ -201,7 +201,7 @@ ModelSim 静态检查：在仓库根目录执行 `vlib out/lint_work`，再执�
 | 翻转 | 59358 / 82546 | 23188 | 71.9% |
 | FSM 跳转 | 141 / 375 | 234 | 37.6% |
 
-按原始计数汇总后四舍五入到一位小数。原始数据、SHA256、58 个测试运行名和源码绑定见 [分片版覆盖率来源](docs/evidence/t79_63vl/coverage_source.md)及 [原始 JSON](docs/evidence/t79_63vl/coverage_frag1030.json)。T79 新增满负载测试未计入这批覆盖率。
+按原始计数汇总后四舍五入到一位小数。原始数据、SHA256、58 个测试运行名和源码绑定见 [分片版覆盖率来源](docs/evidence/t79_63vl/coverage_source.md)及 [原始 JSON](docs/evidence/t79_63vl/coverage_frag1030.json)。统计范围为上述 58 次运行。
 
 ### F1 历史基线：T65 合并覆盖率与定向补测
 
@@ -219,9 +219,9 @@ F1 历史合并统计复用 T64 的 40 份成功 UCDB，加入 T65 的 16 份正
 | 已识别转换 | 159 / 338 | 47.04% |
 | 翻转 | 46008 / 59950 | 76.74% |
 
-**合并统计与 T64 有 9 组设计单元/指标的分母不同，根因尚未证明；接受该结果作为当前集合的统计，不计算同口径增幅，也不据百分比下降判定功能退化。** 原始分母保留，未增加排除项，差异见 [分母核对](docs/evidence/t65_gap_tests/denominators.json)。状态 100% 仅限工具识别集合；接收封装压力为模块级，复位只覆盖登记的三个精确状态，1 字节输入仅观察，不代表全部资源组合或复位边均已覆盖。
+合并统计与 T64 有 9 组设计单元/指标的分母不同，两次百分比按各自分母分别报告。原始分母保留，全部 bin 计入、无排除项，差异见 [分母核对](docs/evidence/t65_gap_tests/denominators.json)。状态 100% 指工具识别的状态集合；接收封装压力为模块级测试，复位恢复覆盖登记的三个状态，1 字节输入为观察项。
 
-新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](docs/T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，当前 56 项清单会触发其预期集合校验失败；保留该工具及历史证据，不把此失败计为功能失败。
+新增 16 项已由 T65b 并入 `sim/tests.txt`，独立检查器纳入正式入口，验收见 [T65b 报告](docs/T65b_REGRESS.md)。`tools/t64_coverage.py` 专用于原 40 项冻结集合，只接受该 40 项清单，用于复现历史基线。
 
 ### F1 历史基线：T64 冻结覆盖率基线
 
@@ -238,9 +238,9 @@ T64 冻结覆盖率基线：冻结提交 `e5cd8150`，CE_DIV=2，40 项完整 RT
 | 已识别转换 | 155 / 338 | 45.85% |
 | 翻转 | 44903 / 57890 | 77.56% |
 
-百分比按各设计单元已覆盖项数／总项数汇总并截断到两位。状态 100% 仅限工具识别集合，两个服务引擎的主 `state` 未被识别，不能据此宣称全部状态机控制路径已验证。完整未覆盖索引包含 13,806 个 bin，其中 10,578 个尚不能判断原因或可达性；未增加排除项。原始报告、逐模块统计和缺口分析见 [T64 证据](docs/evidence/t64_f1_coverage/coverage.json)及 [未覆盖项分析](docs/evidence/t64_f1_coverage/gap_analysis.md)。
+百分比按各设计单元已覆盖项数／总项数汇总并截断到两位。状态 100% 指工具识别出的状态集合，两个服务引擎的主 `state` 不在识别集合内。完整未覆盖索引包含 13,806 个 bin，其中 10,578 个待分析原因与可达性；全部 bin 计入、无排除项。原始报告、逐模块统计和缺口分析见 [T64 证据](docs/evidence/t64_f1_coverage/coverage.json)及 [未覆盖项分析](docs/evidence/t64_f1_coverage/gap_analysis.md)。
 
-T64 串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，不能将两次总百分比差直接解释为验证进退。
+T64 串行覆盖率回归实际耗时 17,896.286 秒（约 4 小时 58 分），含冻结、对照和合并报告的原生批次耗时 18,093.625 秒（约 5 小时 2 分）。历史 T57 的 39 项、24 模块覆盖率保留在 `sim/reference/coverage/`，源码与统计分母不同，两次结果分别对照各自版本。
 
 4. 综合完整顶层，并检查 8 ns 时钟约束下的估算时序。
 
@@ -272,26 +272,26 @@ python tools/check_multicycle.py <本次VQM路径> --constraints elinx/constrain
 | 测量内容 | 从哪里看结果，预期是什么 |
 |---|---|
 | 定长与混合帧长性能 | gbe77 / var_high 每方向最小注入 906.136/904.752 Mbps。gbe77 的主时延最大 48.288/50.344 µs（链路 0/257 拍），20 个窗口的最大值为 63.576 µs。R119-2 抖动最大 19.536 µs，位于 var_cycle_d0、es1_to_es2、VL25、256 字节，帧 2666→3266。var_burst 的计划释放→首/末字节最大 185.760/185.888 µs，释放口径抖动最大 0.008 µs。释放口径包含主机串行注入排队，与从首字节 valid 起算的主口径分开报告。逐方向原值见 [性能证据](docs/evidence/perf_r97.json)。 |
-| 超出声明的历史压力测试：77/81 条 VL 同时提交后的队列排空时间 | 本轮 `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 983.424/1032.640 µs；81 条用例覆盖超过 1 ms 的边界。 |
-| 时钟同步误差 | 空载最大 0 ns，普通用户流量最大 0 ns，77 条 VL 满载最大 0 ns；共用理想时钟和对称链路，经公开配置口读回比较，未测试晶振漂移或硬件误差。 |
+| 压力测试（历史）：77/81 条 VL 同时提交后的队列排空时间 | 本轮 `JUDGE METRIC burst_vls=... queue_clear_us=...` 分别为 983.424/1032.640 µs；81 条用例覆盖超过 1 ms 的边界。 |
+| 时钟同步误差 | 空载最大 0 ns，普通用户流量最大 0 ns，77 条 VL 满载最大 0 ns；测量条件为共用理想时钟和对称链路，经公开配置口读回比较。 |
 | 赛题五功能 | `tb_net_services` 的 `[FUNCTION]` 行检查用户收发、网络管理、时钟同步、加载和卸载，最后须为 `[RESULT] ... PASS ... errors=0`。 |
 | 虚拟链路容量 | `capacity` 每端配置 4096 条接收虚拟链路，并逐字节验证索引 0、4095 和中间 126 项。每端全部 128 条发送虚拟链路都发出消息，对端每条只交付一次。 |
 | 网络管理（SNMP，Simple Network Management Protocol） | `snmp` 检查 Get、GetNext、Set 的请求号回显、错误码为 0、返回值与配置口寄存器一致；Trap 检查错误码为 0、启动通知类型和运行时间寄存器。 |
 
 按[1026答疑](docs/sources/FPGA创新大赛问题汇总1026.xlsx) R119/R120，端到端时延取消息首字节在应用发送口第一次 `valid` 为高到接收应用口交付该消息末字节（L_entry_last），同时报告到首字节（L_entry_first）；GMII SFD→SFD 的旧 R97-1 口径和“应用末字节提交”口径（L_gmii、L_app 等）只作兼容字段，不再作为主指标。R119-2 抖动按同一 VL、同一帧长分组取极差再取最大，并给出所在 VL、帧长和两帧编号；旧“同一 VL 不区分帧长”的口径已被取代。R120-1 吞吐在发送注入口按握手成功的有效载荷字节数统计，并报告反压拍数、最长连续反压和相对计划释放的落后拍数。
 
-新变长工况只对 var_high 检查注入 ≥100 Mbps；var_fixed/var_cycle/var_burst 的给定负载较低，实测 57.794/70.403/57.794 Mbps，只报告。所有工况所有帧 L_entry_last ≤2000 µs，丢帧、重复和溢出均为 0；R119-2 抖动逐项报告，并按项目检查线 50 µs 核对；该检查线不是官方上限。当前 `JUDGE BASELINE` 的 gbe77 L_entry_last 为 48.288/50.344 µs（链路 0/257 拍），旧 L_app 兼容字段见[性能证据](docs/evidence/perf_r97.json)的 `policy`、`main_table`。
+新变长工况只对 var_high 检查注入 ≥100 Mbps；var_fixed/var_cycle/var_burst 的给定负载较低，实测 57.794/70.403/57.794 Mbps，只报告。所有工况所有帧 L_entry_last ≤2000 µs，丢帧、重复和溢出均为 0；R119-2 抖动逐项报告，并按项目内部检查线 50 µs 核对。当前 `JUDGE BASELINE` 的 gbe77 L_entry_last 为 48.288/50.344 µs（链路 0/257 拍），旧 L_app 兼容字段见[性能证据](docs/evidence/perf_r97.json)的 `policy`、`main_table`。
 
 变长多VL测试：`powershell -NoProfile -ExecutionPolicy Bypass -File sim/run.ps1 -Test tb_sys_perf_var`；纯ModelSim在仓库根目录执行 `set ::env(AFDX_JUDGE_CASE) perf_var`、`do sim/run_judge.do`。取消筛选用 `unset ::env(AFDX_JUDGE_CASE)`。五种载荷、VL/BAG与窗口见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
 
 `tb_gbe_burst` 的突发指标在发送核心的消息输入口和接收核心的消息交付口之间测量。该专项按核心消息边界统计；应用封装首字节到对端交付的 R119 指标另行记录。
-队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上吞吐和周期指标是 RTL 仿真测量；布线后静态时序另见“综合与布线结果”，不能当作上板实测。
+队列全部发完的时间从同时提交所有消息时起算，与单条消息的时延不同。以上吞吐和周期指标是 RTL 仿真测量；布线后静态时序另见“综合与布线结果”。
 
 ## 从 eLinx 界面运行自检
 
 当前源码的 Run Behavioral Simulation 已于 11-04 人工点击验证通过：`[RESULT] tb_elinx PASS checks=9238 errors=0`，Errors 0、Warnings 90、Elapsed 0:02:18，[截图](docs/evidence/t79_63vl/elinx_gui_behav_pass.png)。Warnings 为既有 ModelSim 系统任务/可选端口诊断，完整说明见 [T79 证据](docs/evidence/t79_63vl/summary.md)。官方网表复现见 [T76 复现说明](docs/evidence/t76_frag1030/official_reproduction.md)。
 
-若界面卡在 “Loading...”，已定位的原因是 vish 与仿真内核的本机连接失败（`couldn't open socket: invalid argument`），可关闭代理/VPN 后重试；也可在 `elinx/AFDX_EndSystem.sim/sim_1/behav` 下执行 `vsim -batch -t 1ps work.tb_elinx -do "run -all; quit -f"`。该备用入口已有 15 s、9238 检查 PASS 记录（任务卡提供，本轮未重跑）。
+若界面卡在 “Loading...”，已定位的原因是 vish 与仿真内核的本机连接失败（`couldn't open socket: invalid argument`），可关闭代理/VPN 后重试；也可在 `elinx/AFDX_EndSystem.sim/sim_1/behav` 下执行 `vsim -batch -t 1ps work.tb_elinx -do "run -all; quit -f"`。该备用入口有 15 s、9238 项检查 PASS 的运行记录。
 
 1. 用 eLinx 打开 `elinx/AFDX_EndSystem.epr`，在 Settings → Tool Settings → 3rd Party Simulators 设置 ModelSim 的安装目录。该目录应包含 `modelsim.exe`。
 2. 在 Sources → Simulation Sources → `sim_1` 中确认目标仿真文件是 `tb_elinx.v`、仿真顶层是 `tb_elinx`，并且有 `judge_endpoint.v`。这些设置已写入工程，综合顶层仍是 `AFDX_top`。
@@ -314,7 +314,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 使用界面产物时省略 `-Netlist`，默认读取 `elinx/AFDX_EndSystem.runs/synth_1/AFDX_EndSystem.vqm`。两种入口都不重新综合；每次仿真的网表副本、日志、独立检查和 `summary.json` 放在 `out/gui_netlist/` 下的新目录。出错时打印 `GUI NETLIST FAIL` 或 `GUI NETLIST ENTRY FAIL` 并返回非零退出码，总时限为五小时。
 
-较长的双端双网互发自检可用 `sim/run_gui_netlist.ps1 -Test tb_elinx -Netlist $net`。此前界面网表已通过 9238 项检查、0 错误，仿真约 130 分钟；本轮只重跑新网表的五功能测试。
+较长的双端双网互发自检可用 `sim/run_gui_netlist.ps1 -Test tb_elinx -Netlist $net`。此前界面网表已通过 9238 项检查、0 错误，仿真约 130 分钟；本轮新网表验证为五功能测试。
 
 官方导出的网表省略了取默认值的输入和参数，而配套单元仿真模型没有给这些输入和参数设默认值，直接仿真时寄存器不会更新。`tools/adapt_gui_vqm.py` 仅在仿真副本上补齐：省略输入按组件声明和单元模型的默认上拉、下拉取值；原有进位连接补上 `cin_used="true"`。原有连接、功能参数、查找表内容以及厂商模型均不改。复制寄存器的 `created_from` 仅记录综合来源，厂商仿真模型没有该参数；仿真副本将这项元数据转存审计报告。补全数量和来源记录保存在 `summary.json` 的 `adaptation` 中。
 
@@ -340,13 +340,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 约束审查覆盖 2755 个引擎寄存器、51992 条内部寄存器连接，invalid/uncovered 均为 0。资源、原始时序和前十路径见 [F1 时序证据](docs/evidence/t63_f1_timing.json)，功能终验及输入绑定见 [F1 终验记录](docs/evidence/t63_f1_final.json)。
 
-当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 未改 RTL 或约束，也未重跑这些入口。当前覆盖率引用 58 份 UCDB、42 单元的分片版数据；T64 的 40 项与 T65 新增 16 项合并统计、T57 旧记录均作为 F1 历史基线保留。
+当前标准 CE2 回归已扩展为 56 项，T65b 实跑 56/56 PASS，Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。原 F1 的评委 8/8、默认及小激励、wrapper、官方 VQM 五功能，以及 F1b 补验后的模块及整顶层网表 8/8 结果继续沿用原证据；T65/T65b 只新增测试，RTL 与约束保持不变。当前覆盖率引用 58 份 UCDB、42 单元的分片版数据；T64 的 40 项与 T65 新增 16 项合并统计、T57 旧记录均作为 F1 历史基线保留。
 
 F1b 已修正 `SYS_TOP_NETLIST` 下的公开输入消息观测和双网接收来源观测。RTL＋宏及同一 F1 V2 官方 VQM 的 `tb_sys_net` 均通过 2,792,645 项自检、0 错误，独立核对 88/88（含 16 项固定检查和 72 项帧级检查）；Error/Fatal/Warning/FAIL/RAMCOLL 均为 0。仅宏内显式跳过以私有核心末次握手为起点的两项 96 拍时限检查，保留结果对应、容量、顺序、原主机/排空期限和外部逐字节核对。无宏 CE1/CE2 的有效预处理 HDL 逐字节一致；原始预处理输出的行号指令和空白行单独保留。原始失败、超时和控制脚本错误保留于 [前序失败证据](docs/evidence/t63_f1_sys_net_failure.json)，本次通过证据及边界见 [F1b 补验](docs/evidence/t63_f1b_sys_net_pass.json)。
 
 F1 的界面复跑已完成，产物比对 PASS，记录见 [界面比对](docs/evidence/t63_f1_gui_compare.json)；操作步骤见 [F1 界面复跑](docs/T63_F1_GUI.md)。
 
-`sim/wave/png/` 已更新为来源 `12858ddf` 的分片版 11-03 波形，`tb_elinx.png` 使用 11-04 eLinx 界面截图。静态时序不等于上板实测，也未覆盖完整外部 I/O 延迟预算。
+`sim/wave/png/` 已更新为来源 `12858ddf` 的分片版 11-03 波形，`tb_elinx.png` 使用 11-04 eLinx 界面截图。
 
 ## 模块一览
 
@@ -390,27 +390,35 @@ R120-3 说明 `tx_data` 是送进端系统发送端的数据、`rx_data` 是接�
 
 ## 实现范围
 
-- 用户收发：UDP/IPv4/Ethernet 组帧，组播目的 IP 为 224.224 加虚拟链路号；每端 128 条发送虚拟链路、4096 条接收虚拟链路；按带宽间隔调度；接收端做序号完整性检查和双网冗余去重。
+- 用户收发：UDP/IPv4/Ethernet 组帧，组播目的 IP 为 224.224 加虚拟链路号；每端 128 条发送虚拟链路、4096 条接收虚拟链路；按带宽间隔调度；接收端做序号完整性检查和双网冗余去重；单条消息最长 8192 字节，发送端 IPv4 分片、接收端 16 个上下文重组。
 - SNMP：v1/v2c 的 Get、GetNext、Set 和 v2c Trap，一次一个变量绑定。
 - RTC：标准 48 字节 SNTP 报文的双向对时，回应丢失时超时重发。
 - 615A：目标端经 TFTP 完成上传（单头文件、单数据文件，写入 8 KiB RAM）和介质定义卸载（`MEMORY.BIN`），支持 A3/A4（默认 A4），请求端口默认 59；信息操作和操作员定义卸载的初始化请求返回状态 1002。
 
-没有实现：615A 的信息操作、操作员定义卸载的后续传输、FIND/WAIT/ABORT 和整文件重试，TFTP 可选项协商，SNMP 的 GetBulk、多变量绑定和 v1 Trap，IP 分片重组。
+本版本范围之外的协议功能：615A 的信息操作、操作员定义卸载的后续传输、FIND/WAIT/ABORT 和整文件重试，TFTP 可选项协商，SNMP 的 GetBulk、多变量绑定和 v1 Trap。
 
-## 测量条件和限制
+## 测量与使用条件
 
+- 满负载使用条件（网络规划要求）：每条 VL 每个 BAG 最多注入一条消息；长消息按分片数占用发送机会；满负载时同时发送长消息的 VL 不超过 3 条，其中发送 8192 字节消息的不超过 1 条；A/B 两网传送同一业务的冗余副本。完整条款见 [ARCH 网络规划要求](docs/ARCH.md#网络规划要求)。
 - 性能是 RTL 仿真测量，R120-1 的注入有效载荷不重复计算 A/B 副本。gbe77 定长 1471 字节注入 906.136 Mbps；混合 1、17、256、1024、1471 字节的 var_high 注入 904.752 Mbps。四类工况均有 0/257 拍延迟、双向和 A/B 两网，详情见[工况表](docs/FACTS.md#变长帧与多虚拟链路工况)。
 - gbe77 的主时延最大 48.288/50.344 µs（链路 0/257 拍），20 个窗口的最大值为 63.576 µs。R119-2 抖动最大 19.536 µs，位于 var_cycle_d0、es1_to_es2、VL25、256 字节，帧 2666→3266。var_burst 的计划释放→首/末字节最大 185.760/185.888 µs，释放口径抖动最大 0.008 µs。释放口径包含主机串行注入排队，与从首字节 valid 起算的主口径分开报告。逐方向原值见 [性能证据](docs/evidence/perf_r97.json)。
-- 时钟同步误差：空载最大 0 ns，普通用户流量最大 0 ns，77 条 VL 满载最大 0 ns；共用理想时钟和对称链路，经公开配置口读回比较，未测试晶振漂移或硬件误差。
-- R95-2建议调用并两次例化 `Tri_Mode_Ethernet_Mac`；R111说明无强制使用要求。本设计保留自研MAC，未集成官方MAC IP，理由及配置范围见[对照](docs/FACTS.md#九附录设计取舍依据的专项实验)。
-- 综合后网表仿真使用官方流程导出的 VQM，不含布局布线延迟；吞吐等性能指标没有在网表上重测。本轮没有进行含布线延迟的网表仿真；历史 `.vo` 的 RAM 位序不匹配记录不能作为本轮 VQM 结果。
-- 已采用 PRES1.30 和 5,540 条簇位置约束完成官方布局布线，时序见“综合与布线结果”；尚未做硬件实测，未覆盖外部 I/O 时序预算。
+- 时钟同步误差：空载最大 0 ns，普通用户流量最大 0 ns，77 条 VL 满载最大 0 ns；测量条件为共用理想时钟和对称链路，经公开配置口读回比较。
+- R95-2建议调用并两次例化 `Tri_Mode_Ethernet_Mac`；R111说明无强制使用要求。本设计采用自研MAC，理由及对照配置见[对照](docs/FACTS.md#九附录设计取舍依据的专项实验)。
+- 综合后网表仿真使用官方流程导出的 VQM（零延迟功能仿真），覆盖五功能及分片负载对照；吞吐、时延等性能指标为 RTL 仿真测量。
+- 已采用 PRES1.30 和 5,540 条簇位置约束完成官方布局布线，静态时序覆盖全部内部路径，见“综合与布线结果”；外部 I/O 时序随板级设计约束。按 R112 以仿真截图和演示视频代替开发板实测。
 
-## T76 混合负载声明
+## 满负载规格的确定与压力测试
 
-混合最大声明为 **63 TX / 63 RX VL**；T79 已将纯短消息同步下调为 63 TX / 63 RX VL，81 VL 保留为超出声明的压力测试。固定激励的二分相邻边界为 70 VL 通过 20 ms、71 VL 失败，取 63 VL 留出 10.0% 余量，随后 100 ms 功能与逐字节交付通过，两套统计一致，TX 页上界不超过 256。此边界是按既定二分法、固定激励及其单调性假设得到，不冒称穷举所有 VL 数。性能门槛另见统计表，原 81 VL 混合溢出继续列为限制。
+满负载规格 **63 TX / 63 RX VL** 由长短消息混合负载的固定激励二分搜索确定：70 VL 连续 20 ms 通过、71 VL 出现接收溢出，取 63 VL 留出 10.0% 余量；63 VL 随后连续 100 ms 功能与逐字节交付通过，两套统计一致，TX 页上界不超过 256。纯短消息配置采用同一规格。
 
-[完整规格](docs/ARCH.md#t76-混合负载声明搜索确认)；[证据与各门槛](docs/evidence/t76_frag1030/summary.md)。
+| 压力测试（超出满负载规格） | 结果 |
+|---|---|
+| 81 VL 周期注入，五种载荷各连续 100 ms | 全部交付，最大抖动 3.368 µs |
+| 81 VL BAG 对齐撞车 | 完整交付；10/162 组抖动 ≥100 µs，最大 107.7 µs |
+| 81 VL 长短消息混合 | 接收溢出 |
+| 63 VL 下多条 VL 同时发送 8192 B（20 ms） | 2 条零丢失；3 条、4 条时接收载荷环溢出，出现丢失 |
+
+[完整规格与压力测试](docs/ARCH.md#系统规格与网络规划)；[T76 证据](docs/evidence/t76_frag1030/summary.md)、[T79 证据](docs/evidence/t79_63vl/summary.md)。
 
 ## frag1030 复现步骤（T78）
 
@@ -433,7 +441,7 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
 
    预期 `[RESULT] tb_elinx PASS checks=9238 errors=0`；直接编译原样 RTL。
 
-2. 综合后仿真：按答疑第 155 条，用 `synth_1/AFDX_EndSystem.vqm` 替换实现仿真 `.do` 中的 `.vo`，厂商库保持原样。下列脚本保留超出当前声明的 81 VL 历史压力测试复现，准备运行目录、唯一官方 VQM、参数及 `official_inputs.tcl`，并调用 `sim/run_t76_post_synth.do`：
+2. 综合后仿真：按答疑第 155 条，用 `synth_1/AFDX_EndSystem.vqm` 替换实现仿真 `.do` 中的 `.vo`，厂商库保持原样。下列脚本复现 81 VL 压力测试的网表对照，准备运行目录、唯一官方 VQM、参数及 `official_inputs.tcl`，并调用 `sim/run_t76_post_synth.do`：
 
    ```powershell
    & $env:AFDX_PYTHON -B -X utf8 tools/t76_sim.py --help
@@ -441,7 +449,7 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
    & $env:AFDX_PYTHON -B -X utf8 tools/t76_sim.py --netlist '<synth_1/AFDX_EndSystem.vqm>' --reference '<同参数RTL运行目录>' --deadline '<本轮ISO截止>' --param VL_COUNT=81 --param GROUP_LENGTH=1471 --param MIXED=2 --param DUPLEX=0 --param DURATION=125001 --param SMOKE=0 --param SWAP=0
    ```
 
-   同参数 RTL 参考先用相同命令去掉 `--netlist` 和 `--reference` 生成；反方向用 `SWAP=1`。预期 `[RESULT] tb_t76_load PASS checks=161 errors=0`、`T76 OFFICIAL .VO TO .VQM ENTRY PASS`，且 11 份公开输出与显式 RTL 参考逐字节相同。现存准备目录可用 `vsim -batch -do "do sim/run_t76_post_synth.do <PREPARED_RUN_FOLDER>"` 重放。此命令会运行耗时网表仿真，T78 没有重跑；历史两窗口各约 7.5 小时，不能用 RTL 的四小时上限替代。
+   同参数 RTL 参考先用相同命令去掉 `--netlist` 和 `--reference` 生成；反方向用 `SWAP=1`。预期 `[RESULT] tb_t76_load PASS checks=161 errors=0`、`T76 OFFICIAL .VO TO .VQM ENTRY PASS`，且 11 份公开输出与显式 RTL 参考逐字节相同。现存准备目录可用 `vsim -batch -do "do sim/run_t76_post_synth.do <PREPARED_RUN_FOLDER>"` 重放。此命令运行网表仿真，历史两窗口各约 7.5 小时，时间上限按此设置。
 
 3. 最终快速回归：输出目录必须不存在；52 项基础及 11 项分支用例，最多 6 个 ModelSim，原样 RTL：
 
@@ -452,7 +460,7 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
    & $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --small --deadline '<本轮ISO截止>'
    ```
 
-   预期 `PAR PASS` 63 项、`PAR FINISHED`；两个配置隔离入口均 `T76 APPLICATION ENTRY PASS`。各项 HDL/独立检查数见 [T78 回归证据](docs/evidence/frag1030_delivery/regression.json)。四个长用例不纳入快速版，其中 `tb_sys_perf` 引用 T76 修正检查器结果：HDL 683408635，独立项 1357450；其余引用 T75。T77 证明 MODEL_TECH 分支对 ModelSim 与兼容副本等价、对综合逐 token 保序相同。目标 30 分钟、上限 1 小时；已启动的原长用例保持原进程和原截止，收尾不等待。`tools/t78_run.py` 保留原全量启动历史；`tools/t78_fast.py` 是本轮快速收尾接管记录，无重试。
+   预期 `PAR PASS` 63 项、`PAR FINISHED`；两个配置隔离入口均 `T76 APPLICATION ENTRY PASS`。各项 HDL/独立检查数见 [T78 回归证据](docs/evidence/frag1030_delivery/regression.json)。四个长用例单独引用：`tb_sys_perf` 引用 T76 修正检查器结果：HDL 683408635，独立项 1357450；其余引用 T75。T77 证明 MODEL_TECH 分支对 ModelSim 与兼容副本等价、对综合逐 token 保序相同。目标 30 分钟、上限 1 小时。`tools/t78_run.py` 为全量启动脚本，`tools/t78_fast.py` 为快速回归脚本。
 
 4. 实现：eLinx 工程中按综合、实现顺序执行，或命令行：
 
@@ -460,6 +468,6 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
    & $env:AFDX_PYTHON -B -X utf8 tools/build_1030.py --route --pres 1.30 --deadline '<本轮ISO截止>'
    ```
 
-   预期 routed setup `+0.029 ns`、hold `+0.604 ns`，setup/hold 各 `0/96142` 失败端点；核对全部 11044 个锁定簇和 172 个 P0 管脚。新输出须绑定自身 VQM SHA256；T77 已验证文本排列不同但结构和锁定布线时序相同，不保证任意安装的普遍确定性。
+   预期 routed setup `+0.029 ns`、hold `+0.604 ns`，setup/hold 各 `0/96142` 失败端点；核对全部 11044 个锁定簇和 172 个 P0 管脚。新输出须绑定自身 VQM SHA256；T77 已验证文本排列不同但结构和锁定布线时序相同。
 
-当前 63 VL 统一声明、81 VL 压力测试、GUI 人工验收及工程基准差异见 [交付总表](docs/evidence/frag1030_delivery/summary.md)。
+当前 63 VL 满负载规格、81 VL 压力测试、GUI 人工验收及工程基准差异见 [交付总表](docs/evidence/frag1030_delivery/summary.md)。
