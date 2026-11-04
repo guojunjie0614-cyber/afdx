@@ -1,0 +1,258 @@
+{
+  "status": "GUI_NOT_VERIFIED",
+  "report_time": "2026-11-04 01:39:02",
+  "branch": "t77",
+  "parent_commit": "d3cffda5afe894393d59bd605955f95a2d70d846",
+  "compatibility_passed": true,
+  "text_equivalence_passed": true,
+  "official_input_audit_passed": true,
+  "original_source_binding_passed": true,
+  "vqm_structure_passed": true,
+  "compiled_both_tools": true,
+  "five_direct_rtl_simulations_passed": true,
+  "checks_and_independent_items_equal_to_t75": true,
+  "end_to_end_accepted": true,
+  "gui_behavioral_simulation_passed": false,
+  "fixed_vqm_r2_cancelled": true,
+  "route_tests_authorized_by_appendix": true,
+  "route_tests": {
+    "R1": {
+      "completed": true,
+      "matches_delivery": true,
+      "timing_closed": true,
+      "exact_cluster_locks": true,
+      "exact_delivery_timing": true,
+      "expected_vqm_sha256": "e9e1734c570b8344c3666e02ebf1152dd45bd7a74e801d93c73de3a1126839b4",
+      "error": null,
+      "route_wrapper_error": null
+    },
+    "E2E": {
+      "completed": true,
+      "matches_delivery": true,
+      "timing_closed": true,
+      "exact_cluster_locks": true,
+      "exact_delivery_timing": null,
+      "expected_vqm_sha256": "96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4",
+      "error": null,
+      "route_wrapper_error": null
+    }
+  },
+  "min_launch_free_memory_gib": 8.637428283691406,
+  "min_launch_e_free_gib": 36.13147735595703,
+  "remaining_owned_tool_processes": [],
+  "peer_process_presence_at_closeout": [
+    {
+      "pid": 32,
+      "created": 1793718453.4228623,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 32756,
+      "created": 1793718453.5946639,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 20412,
+      "created": 1793718470.5292137,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 13220,
+      "created": 1793718470.5451767,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 41280,
+      "created": 1793718470.7067096,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 10648,
+      "created": 1793718147.4924896,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 14768,
+      "created": 1793718147.5025513,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 28684,
+      "created": 1793718147.5331435,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 12320,
+      "created": 1793718147.675295,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 7104,
+      "created": 1793718161.510272,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 33200,
+      "created": 1793718161.5274813,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 3228,
+      "created": 1793718161.684955,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 14068,
+      "created": 1793718422.719312,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 29292,
+      "created": 1793718422.7278354,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 31428,
+      "created": 1793718453.37267,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 21128,
+      "created": 1793718453.3859944,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 21340,
+      "created": 1793720800.0898364,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 42924,
+      "created": 1793720800.1019394,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 24460,
+      "created": 1793691230.8852773,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 2272,
+      "created": 1793691230.8939965,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 12456,
+      "created": 1793691255.5005205,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 15556,
+      "created": 1793691255.5080996,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 42016,
+      "created": 1793691255.5790815,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 44600,
+      "created": 1793691255.8058045,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 32848,
+      "created": 1793718121.7620716,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 43288,
+      "created": 1793718121.7756555,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 43804,
+      "created": 1793714237.0192025,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 22348,
+      "created": 1793714237.0275218,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 47712,
+      "created": 1793693216.3226552,
+      "name": "python.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 17148,
+      "created": 1793693216.3333397,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 28808,
+      "created": 1793693286.2756767,
+      "name": "vsim.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 27216,
+      "created": 1793693286.2815485,
+      "name": "conhost.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 33644,
+      "created": 1793693286.312673,
+      "name": "vsimk.exe",
+      "same_process_still_running": true
+    },
+    {
+      "pid": 23196,
+      "created": 1793693286.4739552,
+      "name": "vlm.exe",
+      "same_process_still_running": true
+    }
+  ],
+  "no_subagents": true,
+  "no_heartbeat": true,
+  "no_scheduled_tasks": true,
+  "no_push": true,
+  "no_merge": true,
+  "no_amend": true,
+  "no_lock_edits": true,
+  "no_optimization": true,
+  "total_deadline": "2026-11-04 05:26:50"
+}

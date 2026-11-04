@@ -58,6 +58,13 @@ module afdx_rx_engine #(
     // Core-only prediction of the post-edge init_done. It stays low through
     // this engine's INIT exit edge; default standalone enable stays immediate.
     input wire core_enable_next);
+`ifdef MODEL_TECH
+    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
+    reg dq_room;
+    wire fragmented;
+    wire age_tick;
+    reg dq_commit;
+`endif
 
     wire [15:0] now_c_value = now_c[15:0];
 
@@ -173,7 +180,9 @@ module afdx_rx_engine #(
     reg map_missing, config_reject, sequence_reject;
     reg [RX_RING_AW + 208:0] current_desc;
     (* preserve=1, dont_merge=1 *) reg [RX_RING_AW + 208:0] descriptor_snapshot_a, descriptor_snapshot_b;
+`ifndef MODEL_TECH
     (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
+`endif
     reg [15:0] age_time_snapshot;
     reg [11:0] age_pointer_snapshot;
     wire start_age=op[1] && !frame_start_q && !age_start_q && enable && desc_quiet
@@ -323,9 +332,15 @@ module afdx_rx_engine #(
         end
     end
     // dq_room 随计数同步寄存，队列满的常数比较不再进入交付写使能锥。
+`ifndef MODEL_TECH
     reg dq_room;
+`endif
     wire [125:0] frag_meta = current_desc[RX_RING_AW + 208:RX_RING_AW + 83];
+`ifndef MODEL_TECH
     wire fragmented = frame_fragmented;
+`else
+    assign fragmented = frame_fragmented;
+`endif
     // FRAME6 registers query; external Q0 is FRAME7. Query19 returns at
     // FRAME26, decision registers at 27, atomic acceptance28/write29/finish30.
     assign reassembly_meta = frag_meta;
@@ -351,7 +366,9 @@ module afdx_rx_engine #(
         end
     end
 
+`ifndef MODEL_TECH
     wire age_tick;
+`endif
     generate
         if (REGISTERED_TIME_TICK) begin : registered_age_tick
             assign age_tick = now_c[16];
@@ -378,7 +395,9 @@ module afdx_rx_engine #(
     end
 
     localparam DQ_WRITE_SLICES = (DQ_WIDTH + 23) / 24;
+`ifndef MODEL_TECH
     reg dq_commit;
+`endif
     genvar dq_write_copy;
     generate
         if (LOCAL_QUEUE_WRITE) begin : queue_write_banks

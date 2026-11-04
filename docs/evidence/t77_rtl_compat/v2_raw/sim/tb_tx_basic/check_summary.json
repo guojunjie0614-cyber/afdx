@@ -1,0 +1,19 @@
+{
+  "test": "tb_tx_basic",
+  "items": 8008,
+  "errors": 0,
+  "either": 0,
+  "messages": 402,
+  "frames_a": 399,
+  "frames_b": 383,
+  "sends": 402,
+  "stages": {
+    "len": 45,
+    "nets": 9,
+    "ports": 12,
+    "pause": 20,
+    "wrap": 310,
+    "userid": 6
+  },
+  "diagnostics": []
+}

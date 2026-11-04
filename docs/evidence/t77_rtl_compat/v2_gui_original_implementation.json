@@ -1,0 +1,46 @@
+{
+  "resources": {
+    "lut": 62274,
+    "ff": 35597,
+    "clb": 10230,
+    "memory": 814,
+    "pins": 172,
+    "dsp": 0,
+    "pll": 0
+  },
+  "clocks": [
+    {
+      "clock_summary_id": 1,
+      "src_clk": 0,
+      "det_clk": 0,
+      "name": "clk",
+      "waveform": "{0,4}",
+      "period": 8000,
+      "fmax": 0,
+      "setup_worst_slack": 29,
+      "setup_total_violation": 0,
+      "setup_fail_ends": 0,
+      "setup_total_ends": 96142,
+      "hold_worst_slack": 604,
+      "hold_total_violation": 0,
+      "hold_fail_ends": 0,
+      "hold_total_ends": 96142,
+      "recovery_worst_slack": 0,
+      "recovery_total_violation": 0,
+      "recovery_fail_ends": 0,
+      "recovery_total_ends": 0,
+      "removal_worst_slack": 0,
+      "removal_total_violation": 0,
+      "removal_fail_ends": 0,
+      "removal_total_ends": 0,
+      "master_clock": -1,
+      "setup_cnt": 100,
+      "hold_cnt": 100,
+      "recovery_cnt": 0,
+      "removal_cnt": 0
+    }
+  ],
+  "native_errors": [],
+  "place_sha256": "1edfbb50f973240732a073899bc45d9c92ad91f8358bac5c05733a082aeb6acd",
+  "baseline_place_sha256": "1edfbb50f973240732a073899bc45d9c92ad91f8358bac5c05733a082aeb6acd"
+}

@@ -1,0 +1,126 @@
+2026-11-03 09:12:07,811 [INFO] Copyright (C) 2017-2024 eHiWAY Corporation
+2026-11-03 09:12:07,811 [INFO] Your use of eHiWAY Corporation's design tools, logic functions 
+2026-11-03 09:12:07,811 [INFO] and other software and tools, and its EMPP partner logic 
+2026-11-03 09:12:07,811 [INFO] functions, and any output files from any of the foregoing 
+2026-11-03 09:12:07,811 [INFO] (including device programming or simulation files), and any 
+2026-11-03 09:12:07,811 [INFO] associated documentation or information are expressly subject 
+2026-11-03 09:12:07,811 [INFO] to the terms and conditions of the eHiWAY Program License 
+2026-11-03 09:12:07,811 [INFO] Subscription Agreement, or other applicable license agreement, including, 
+2026-11-03 09:12:07,811 [INFO] without limitation, that your use is for the sole purpose of 
+2026-11-03 09:12:07,811 [INFO] programming logic devices manufactured by eHiWAY and sold by 
+2026-11-03 09:12:07,811 [INFO] eHiWAY or its authorized distributors.  Please refer to the 
+2026-11-03 09:12:07,811 [INFO] applicable agreement for further details.
+2026-11-03 09:12:07,811 [INFO] VENDOR "eHiWAY"
+
+2026-11-03 09:12:07,811 [INFO] PROGRAM "eLinx 64-Bit"
+2026-11-03 09:12:07,811 [INFO] VERSION "Version 3.0.7 Build 1/22/2025 Full Version"
+2026-11-03 09:12:10,852 [INFO] [UDM_Load_0]:Load eLinx design check point(.ecp) complete.
+2026-11-03 09:12:11,066 [INFO] [ARC_Proc_5]:Deserialize device ends.
+2026-11-03 09:12:11,197 [INFO] [ARC_Proc_1]:Deserialize tiles ends.
+2026-11-03 09:12:14,207 [INFO] PrePlace design rule check  start record
+
+2026-11-03 09:12:14,208 [INFO] start ucm drc.....
+
+2026-11-03 09:12:14,208 [INFO] start udm drc.....
+
+2026-11-03 09:12:14,208 [INFO] PrePlace design rule check  run times:0.00 s
+
+2026-11-03 09:12:28,401 [INFO] [Placer]:Launched Placer...
+2026-11-03 09:12:28,401 [DEBUG] [Placer]:Read in placement constraints...
+
+2026-11-03 09:12:28,403 [DEBUG] [Placer]:Read in PlaceOpts from UCM...
+
+2026-11-03 09:12:28,406 [DEBUG] [Placer]:there is no add_cells_to_pblock/add_insts_to_pblock in UCM.
+
+2026-11-03 09:12:28,424 [DEBUG] [Placer]:there is no create_pblock/resize_pblock in UCM.
+
+2026-11-03 09:12:28,482 [DEBUG] [Placer]:NetVec=52924
+
+2026-11-03 09:12:28,482 [DEBUG] [Placer]:vccNum=2
+
+2026-11-03 09:12:28,482 [DEBUG] [Placer]:globalNum=1
+
+2026-11-03 09:12:28,482 [DEBUG] [Placer]:internalNetNum=18740
+
+2026-11-03 09:12:28,482 [DEBUG] [Placer]:emptyNum=49
+
+2026-11-03 09:12:28,484 [DEBUG] [Placer]:there is no set_instance_assignment in UCM.
+
+2026-11-03 09:12:28,600 [DEBUG] [Placer]:blkConnectedNets = 148949
+
+2026-11-03 09:12:30,349 [DEBUG] [Placer]:there is no INCREMENTAL_IMPLEMENTATION settings in UCM.
+
+2026-11-03 09:12:40,368 [DEBUG] [Placer]:Clk sig num is 0
+
+2026-11-03 09:12:40,382 [DEBUG] [Placer]:Interface run-time is 11.98 seconds
+
+2026-11-03 09:12:40,439 [DEBUG] [Placer]: Completed placement consistency check successfully.
+
+2026-11-03 09:12:40,444 [DEBUG] [Placer]:Place run-time is 0.062 seconds
+
+2026-11-03 09:12:40,477 [DEBUG] [Placer]:WriteUDM run-time is 0.033 seconds
+
+2026-11-03 09:12:40,477 [INFO] [Placer]:Placer time consumed 12.075 second<s>.
+2026-11-03 09:12:40,478 [INFO] [Placer]:Placer process is complete.
+2026-11-03 09:12:40,478 [INFO] [Placer]:Start clear place data...
+
+2026-11-03 09:12:40,483 [INFO] [Placer]:Complete clear place successfully...
+
+2026-11-03 09:12:40,583 [INFO] [Router_G_0]:Initializing Arc is completed
+2026-11-03 09:12:40,583 [INFO] [Router_Proc_0]:Launched Router...
+2026-11-03 09:12:40,586 [INFO] [Router_Proc_0]:Processing ucm is completed
+2026-11-03 09:12:43,399 [INFO] [Router_Proc_0]:Processing udm is completed
+2026-11-03 09:12:43,402 [INFO] [Router_C_2]:Initializing ThreadPool is completed
+2026-11-03 09:12:43,702 [INFO] [Router_C_9]:Start try routing vcc and gnd nets.
+2026-11-03 09:12:44,871 [INFO] [Router_C_9]:Start try routing clk nets.
+2026-11-03 09:13:29,546 [INFO] [Router_C_10]:Try routing clk nets is successful.
+2026-11-03 09:13:48,091 [INFO] [Router_C_0]:  routed itry: 1
+2026-11-03 09:13:59,447 [INFO] [Router_C_0]:  routed itry: 2
+2026-11-03 09:14:11,672 [INFO] [Router_C_0]:  routed itry: 3
+2026-11-03 09:14:24,107 [INFO] [Router_C_0]:  routed itry: 4
+2026-11-03 09:14:36,183 [INFO] [Router_C_0]:  routed itry: 5
+2026-11-03 09:14:47,650 [INFO] [Router_C_0]:  routed itry: 6
+2026-11-03 09:14:57,681 [INFO] [Router_C_0]:  routed itry: 7
+2026-11-03 09:15:06,462 [INFO] [Router_C_0]:  routed itry: 8
+2026-11-03 09:15:14,352 [INFO] [Router_C_0]:  routed itry: 9
+2026-11-03 09:15:21,665 [INFO] [Router_C_0]:  routed itry: 10
+2026-11-03 09:15:27,434 [INFO] [Router_C_0]:  routed itry: 11
+2026-11-03 09:15:33,384 [INFO] [Router_C_0]:  routed itry: 12
+2026-11-03 09:15:33,641 [INFO] [Router_C_5]:Start fixing setup violation connections.
+2026-11-03 09:15:35,906 [INFO] [Router_C_5]:Incrementally routing for all setup violation connections.
+2026-11-03 09:15:36,053 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63714 isink:0.
+2026-11-03 09:15:36,054 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:63714 isink:0 is successful.
+2026-11-03 09:15:38,387 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63710 isink:0.
+2026-11-03 09:15:38,387 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:63710 isink:0 is successful.
+2026-11-03 09:15:40,611 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:64155 isink:0.
+2026-11-03 09:15:41,446 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:64155 isink:0 is successful.
+2026-11-03 09:15:43,694 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:34497 isink:3.
+2026-11-03 09:15:45,683 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:34497 isink:3 is successful.
+2026-11-03 09:15:47,988 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63710 isink:0.
+2026-11-03 09:15:47,988 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63711 isink:0.
+2026-11-03 09:15:48,006 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:63711 isink:0 is successful.
+2026-11-03 09:15:50,347 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63710 isink:0.
+2026-11-03 09:15:50,347 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63711 isink:0.
+2026-11-03 09:15:50,366 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63714 isink:0.
+2026-11-03 09:15:50,366 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63715 isink:0.
+2026-11-03 09:15:50,384 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63727 isink:1.
+2026-11-03 09:15:50,385 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63727 isink:2.
+2026-11-03 09:15:50,385 [INFO] [Router_C_5]:start Incrementally routing for one setup violation connection inet:63739 isink:6.
+2026-11-03 09:15:51,106 [INFO] [Router_C_5]:Incrementally routing for one setup violation connection inet:63739 isink:6 is successful.
+2026-11-03 09:15:53,387 [INFO] [Router_C_5]:Incrementally negotiation routing for setup violation connections.
+2026-11-03 09:15:53,387 [INFO] [Router_C_5]:Finish fixing setup violation connections.
+2026-11-03 09:15:53,416 [INFO] [Router_C_4]:Route:fix hold violation begin...
+2026-11-03 09:15:57,673 [INFO] [Router_C_5]:Route:fix hold violation end.
+2026-11-03 09:15:57,677 [INFO] Channel routing is completed
+2026-11-03 09:16:00,947 [INFO] Internal routing is completed
+2026-11-03 09:16:00,998 [INFO] [BitGen_Proc_6]:Launched bram extraction...
+2026-11-03 09:16:01,091 [INFO] [BitGen_Proc_7]:Bram extraction success.
+2026-11-03 09:16:01,092 [INFO] [BitGen_Proc_8]:Launched bram configuration...
+2026-11-03 09:16:01,098 [INFO] [BitGen_Proc_9]:Bram configuration success.
+2026-11-03 09:16:01,098 [INFO] [BitGen_Proc_10]:Bram processing total time consumed 0.094 second(s).
+2026-11-03 09:16:23,487 [INFO] WNS: 0.000 ns WHS: 0.000 ns TNS:0.000 ns THS:0.000 ns
+2026-11-03 09:16:31,488 [INFO] [Router_Proc_2]:Write routing to file is completed.Router time consumed 170.13 second(s).
+2026-11-03 09:16:32,896 [INFO] [Router_Proc_2]:Write routing to udm is completed.Router time consumed 170.13 second(s).
+2026-11-03 09:16:32,934 [INFO] Writing statistical info to file is completed
+2026-11-03 09:16:33,078 [INFO] Delete Interface is completed
+2026-11-03 09:16:39,706 [INFO] [UDM_Save_0]:Save eLinx design check point(.ecp) complete.

@@ -1,0 +1,17 @@
+{
+  "task_card": "E:\\2026_Embedded_FPGA\\cards\\T77_rtl_modelsim_compat.md",
+  "task_card_sha256": "fe822a090f61c3a32dd33c2dc1adc3dd11b205eb417228e2e99c61769afa7dc2",
+  "initial_head": "d3cffda5afe894393d59bd605955f95a2d70d846",
+  "report_time": "2026-11-04 01:39:02",
+  "total_deadline": "2026-11-04 05:26:50",
+  "configured_behavioral_simulator": {
+    "settings_source": "$APPDATA/eLinx3/elinx.xml",
+    "ModelSimInstallPath": "E:/Verilog/ModelSim/setup_pack/win64",
+    "gui_execution_tested": false
+  },
+  "direct_source_environment": "AFDX_MODELSIM_DECL_ORDER=0",
+  "maximum_owned_elinx": 1,
+  "maximum_owned_modelsim": 1,
+  "route_tests": "R1 existing original VQM, then modified RTL full build_1030 --route --pres 1.30. R2 cancelled. Route budgets <=3600 seconds.",
+  "native_logs": "Unmodified native timestamps; report tables use converted timestamps"
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "name": "pack",
+    "command": [
+      "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+      "-f",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\pack.tcl"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+    "pid": 45140,
+    "created": 1793724388.069418,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 230.532,
+    "peak_tree_bytes": 1001058304,
+    "budget_seconds": 1200,
+    "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\pack.log"
+  },
+  {
+    "name": "timing",
+    "command": [
+      "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+      "-f",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\timing.tcl"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+    "pid": 44516,
+    "created": 1793724618.659914,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 103.39,
+    "peak_tree_bytes": 649920512,
+    "budget_seconds": 1200,
+    "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\timing.log"
+  },
+  {
+    "name": "route",
+    "command": [
+      "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+      "-f",
+      "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\route.tcl"
+    ],
+    "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+    "pid": 30480,
+    "created": 1793724722.245094,
+    "exit_code": 0,
+    "stop_reason": null,
+    "seconds": 274.968,
+    "peak_tree_bytes": 1050890240,
+    "budget_seconds": 3264.8227083683014,
+    "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_route\\R1\\20261103_084627_065250\\route.log"
+  }
+]

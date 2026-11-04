@@ -1,0 +1,530 @@
+{
+  "finished": "2026-11-04 00:42:05",
+  "revision": "d3cffda5afe894393d59bd605955f95a2d70d846",
+  "passed": true,
+  "defined_on_command_line": [],
+  "method": "Icarus -g2001 -E, no -D macros; MODEL_TECH absent; native Icarus builtins retained. Ordered lexical token comparison, plus exact nonblank-line byte comparison.",
+  "source_files": {
+    "rtl/afdx_615a.v": {
+      "before_sha256": "5a00250c2100ddf766547388bed4a2f77f0b70f6e4d80f4568e27b75575e1328",
+      "after_sha256": "f309a4e17f82ed43dab64310775e6aa4c6791423704ba3039637c6fadfa7dd1f",
+      "byte_equal": false
+    },
+    "rtl/afdx_615a_engine.v": {
+      "before_sha256": "2b738eb758fbcde4ca0b0d2b3c7b92e8a1a57160bc4ec424e8bb2c3aaa336684",
+      "after_sha256": "2b738eb758fbcde4ca0b0d2b3c7b92e8a1a57160bc4ec424e8bb2c3aaa336684",
+      "byte_equal": true
+    },
+    "rtl/afdx_app_map.v": {
+      "before_sha256": "61db60365eb3bfda06732391aba6ae639b5a1e17731d3e7f54d637d62e490619",
+      "after_sha256": "61db60365eb3bfda06732391aba6ae639b5a1e17731d3e7f54d637d62e490619",
+      "byte_equal": true
+    },
+    "rtl/afdx_app_payload.v": {
+      "before_sha256": "0ea09a102ce850192b69af4cca480fc7b26bc3572a17e995514df4c0a58be8c6",
+      "after_sha256": "0ea09a102ce850192b69af4cca480fc7b26bc3572a17e995514df4c0a58be8c6",
+      "byte_equal": true
+    },
+    "rtl/afdx_app_read.v": {
+      "before_sha256": "32caab22b87d59ad6d33cd06a5d451772673bb2bdabb78abcdb567965454acba",
+      "after_sha256": "32caab22b87d59ad6d33cd06a5d451772673bb2bdabb78abcdb567965454acba",
+      "byte_equal": true
+    },
+    "rtl/afdx_app_rx.v": {
+      "before_sha256": "e1154212ccdc46d9200917f31951b05dd61b75f561b2ab77b1c4f2b12524490b",
+      "after_sha256": "e1154212ccdc46d9200917f31951b05dd61b75f561b2ab77b1c4f2b12524490b",
+      "byte_equal": true
+    },
+    "rtl/afdx_app_tx.v": {
+      "before_sha256": "729bc86fd2598c28e5ebcf293ae180b530ca54c52f6bcabf05eb16dfb8473337",
+      "after_sha256": "c54979b88b60184d1fa81dae9facff006c21573c6196d97938d6a00f6262d3f8",
+      "byte_equal": false
+    },
+    "rtl/afdx_cfg.v": {
+      "before_sha256": "ed7c4e5d11d037954ef809ff14bf9c0bd143e79b2998a5b7a92bdf9e7cdfdbca",
+      "after_sha256": "ed7c4e5d11d037954ef809ff14bf9c0bd143e79b2998a5b7a92bdf9e7cdfdbca",
+      "byte_equal": true
+    },
+    "rtl/afdx_crc32_d8.v": {
+      "before_sha256": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+      "after_sha256": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+      "byte_equal": true
+    },
+    "rtl/afdx_es.v": {
+      "before_sha256": "0bcea4294262de512cbd05f337b3acf6a241ba169d64aa039b12d7790ece61b7",
+      "after_sha256": "0bcea4294262de512cbd05f337b3acf6a241ba169d64aa039b12d7790ece61b7",
+      "byte_equal": true
+    },
+    "rtl/afdx_mac_rx.v": {
+      "before_sha256": "ee01466b3a4876ad902afe15dd75cd2b6d64b7819548763a57b44b521fd58300",
+      "after_sha256": "ee01466b3a4876ad902afe15dd75cd2b6d64b7819548763a57b44b521fd58300",
+      "byte_equal": true
+    },
+    "rtl/afdx_mac_tx.v": {
+      "before_sha256": "682a248af47177ee0a771d4369d5c92539e08253ed33472ea9d654882d804180",
+      "after_sha256": "682a248af47177ee0a771d4369d5c92539e08253ed33472ea9d654882d804180",
+      "byte_equal": true
+    },
+    "rtl/afdx_mgmt_tx.v": {
+      "before_sha256": "142580bb28e7b16bc09fefc50f7e6f6d1e36fd7eed5a835937c890145cb40d19",
+      "after_sha256": "142580bb28e7b16bc09fefc50f7e6f6d1e36fd7eed5a835937c890145cb40d19",
+      "byte_equal": true
+    },
+    "rtl/afdx_ntp_fraction.v": {
+      "before_sha256": "645457c9637fa3cb148624b34b76e2d19868d263957fe5424476685775666cbf",
+      "after_sha256": "645457c9637fa3cb148624b34b76e2d19868d263957fe5424476685775666cbf",
+      "byte_equal": true
+    },
+    "rtl/afdx_ram_sdp.v": {
+      "before_sha256": "13aabc3c48dfbc513e1c555f3d84e79b9bb9405873e6357e11c3d2d4bcaedbdd",
+      "after_sha256": "13aabc3c48dfbc513e1c555f3d84e79b9bb9405873e6357e11c3d2d4bcaedbdd",
+      "byte_equal": true
+    },
+    "rtl/afdx_rtc.v": {
+      "before_sha256": "fbd6dca681c5b8cdef2e5166173eb49d963202c56b276453ecd6524b44156732",
+      "after_sha256": "0924df92f31b78545803c2e9ae58ccaa2cc4f693a9683b10b661c7ea1ca6cc75",
+      "byte_equal": false
+    },
+    "rtl/afdx_rx_core.v": {
+      "before_sha256": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1",
+      "after_sha256": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1",
+      "byte_equal": true
+    },
+    "rtl/afdx_rx_deliver.v": {
+      "before_sha256": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991",
+      "after_sha256": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991",
+      "byte_equal": true
+    },
+    "rtl/afdx_rx_engine.v": {
+      "before_sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13",
+      "after_sha256": "c73dbdae341be08652d2f6a555f6c579513798f282091f9e15cca5347612e0be",
+      "byte_equal": false
+    },
+    "rtl/afdx_rx_parse.v": {
+      "before_sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79",
+      "after_sha256": "de39eb7bf6963ea14e87bb498962145b052800aecf96179373dad84b9059d1cd",
+      "byte_equal": false
+    },
+    "rtl/afdx_rx_reassembly.v": {
+      "before_sha256": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8",
+      "after_sha256": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8",
+      "byte_equal": true
+    },
+    "rtl/afdx_rx_reassembly_bank.v": {
+      "before_sha256": "ca2450e8280779dbd95c03530e29d8d99ccd1edfb48d1f13d7f7f7aa45237703",
+      "after_sha256": "d1cf70af2a87ab1ad65564990c179065ffdb76bf130f58d17d667bbeff834436",
+      "byte_equal": false
+    },
+    "rtl/afdx_rx_reassembly_payload.v": {
+      "before_sha256": "45b6a4068a3616b232a5cb787d3a3e6d032178ebd16b22c6f95fc8c64ad42b7e",
+      "after_sha256": "45b6a4068a3616b232a5cb787d3a3e6d032178ebd16b22c6f95fc8c64ad42b7e",
+      "byte_equal": true
+    },
+    "rtl/afdx_rx_reassembly_ram.v": {
+      "before_sha256": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369",
+      "after_sha256": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369",
+      "byte_equal": true
+    },
+    "rtl/afdx_snmp.v": {
+      "before_sha256": "416d734a8c3e5c8e76f426ef84c9f691ebfdcad89dcc63376c8291f4badd3b21",
+      "after_sha256": "416d734a8c3e5c8e76f426ef84c9f691ebfdcad89dcc63376c8291f4badd3b21",
+      "byte_equal": true
+    },
+    "rtl/afdx_snmp_engine.v": {
+      "before_sha256": "05f03d3d5ee2775129cf55350c3d8e2bf3d3920f509b1204bb3c026d59bd8392",
+      "after_sha256": "05f03d3d5ee2775129cf55350c3d8e2bf3d3920f509b1204bb3c026d59bd8392",
+      "byte_equal": true
+    },
+    "rtl/afdx_svc.v": {
+      "before_sha256": "8bea777aac38e083c61f1a3d7f59ebba6083a0ffd305231073f8291753ddbf60",
+      "after_sha256": "8bea777aac38e083c61f1a3d7f59ebba6083a0ffd305231073f8291753ddbf60",
+      "byte_equal": true
+    },
+    "rtl/afdx_timebase.v": {
+      "before_sha256": "17c66eadcbd2c11539a6bd0aef6ce4ea5377e04448c2d054a332d9112723769a",
+      "after_sha256": "17c66eadcbd2c11539a6bd0aef6ce4ea5377e04448c2d054a332d9112723769a",
+      "byte_equal": true
+    },
+    "rtl/AFDX_top.v": {
+      "before_sha256": "986f42b7d24d7c35a015067c2c0981d22f187d2de9038899ef0f2c45b9929273",
+      "after_sha256": "986f42b7d24d7c35a015067c2c0981d22f187d2de9038899ef0f2c45b9929273",
+      "byte_equal": true
+    },
+    "rtl/afdx_tx_buf.v": {
+      "before_sha256": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105",
+      "after_sha256": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105",
+      "byte_equal": true
+    },
+    "rtl/afdx_tx_builder.v": {
+      "before_sha256": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700",
+      "after_sha256": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700",
+      "byte_equal": true
+    },
+    "rtl/afdx_tx_core.v": {
+      "before_sha256": "4f59495299a1527b86d60a1b06778461b9a6afe620a36be08fa0999d6512b1b9",
+      "after_sha256": "4f59495299a1527b86d60a1b06778461b9a6afe620a36be08fa0999d6512b1b9",
+      "byte_equal": true
+    },
+    "rtl/afdx_tx_engine.v": {
+      "before_sha256": "17f781f2687f4fd1231821754fe74f481388098f9b1374d00faf5d5a3efdafde",
+      "after_sha256": "0da6591d68da8105932a58ccd201934b540e49f0e15706d83e955817228bb7f3",
+      "byte_equal": false
+    },
+    "rtl/afdx_tx_free.v": {
+      "before_sha256": "422ddf4b9993b862faaa2b498dd9ac6d976fb6d98f2a877a2121257ecca5cf95",
+      "after_sha256": "422ddf4b9993b862faaa2b498dd9ac6d976fb6d98f2a877a2121257ecca5cf95",
+      "byte_equal": true
+    },
+    "elinx/afdx_all.v": {
+      "before_sha256": "5db88f1c9922ddf75892895e30c0068fe50606120a94938fc458c0c864ccdae1",
+      "after_sha256": "5db88f1c9922ddf75892895e30c0068fe50606120a94938fc458c0c864ccdae1",
+      "byte_equal": true
+    }
+  },
+  "proofs": [
+    {
+      "file": "rtl/afdx_615a.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_615a.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_615a.v"
+          ],
+          "pid": 31792,
+          "started": "2026-11-04 00:42:02",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_615a.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_615a.v"
+          ],
+          "pid": 4140,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 5707,
+      "tokens_modified": 5707,
+      "token_sha256_original": "bc555581d452e027c377218ecc719db0de76147097e3b1a94cdc10e7320774fe",
+      "token_sha256_modified": "bc555581d452e027c377218ecc719db0de76147097e3b1a94cdc10e7320774fe",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "a2bbd9aa9bf4139471b7a1a0f1aaf255e80c6ab6d27ad3ce779dfc2798a2f7b2",
+      "preprocessed_modified_sha256": "8fa3c052fb9c788171a6a0d4e9cb92cfdea89acc5fb7d2321a9b4beb44e7384e"
+    },
+    {
+      "file": "rtl/afdx_app_tx.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_app_tx.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_app_tx.v"
+          ],
+          "pid": 34524,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_app_tx.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_app_tx.v"
+          ],
+          "pid": 3284,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 2722,
+      "tokens_modified": 2722,
+      "token_sha256_original": "c7b367634a6dda1b422ac873507721afbecdc952fd98d48e3912e79a924f1502",
+      "token_sha256_modified": "c7b367634a6dda1b422ac873507721afbecdc952fd98d48e3912e79a924f1502",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "e3b06086fe005969c0070109a332c8c38d0e15926444f1ac9b4a63492c66342f",
+      "preprocessed_modified_sha256": "b68e9242ee5d343e19c76ee0d17b35058dcc480979d0d1da689b96da13ef5f83"
+    },
+    {
+      "file": "rtl/afdx_rtc.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_rtc.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_rtc.v"
+          ],
+          "pid": 37796,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_rtc.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_rtc.v"
+          ],
+          "pid": 25372,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 7658,
+      "tokens_modified": 7658,
+      "token_sha256_original": "661a870cc85d5f99fbbdc51a991d22f7d0f49f6d2e6c12d285011e17b434faa4",
+      "token_sha256_modified": "661a870cc85d5f99fbbdc51a991d22f7d0f49f6d2e6c12d285011e17b434faa4",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "64acb8f6416db74e10592785a43b913185f7ddde96cd77dacca108c755075ca8",
+      "preprocessed_modified_sha256": "42893544f49496933b18a61430cd64523c1edbd678857c7a76711817578fdf07"
+    },
+    {
+      "file": "rtl/afdx_rx_engine.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_rx_engine.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_rx_engine.v"
+          ],
+          "pid": 47076,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_rx_engine.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_rx_engine.v"
+          ],
+          "pid": 43568,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 4591,
+      "tokens_modified": 4591,
+      "token_sha256_original": "98bb48bc90d6415b1b070038c0fba51a0d3ed2df0733a605d75331f7ff874130",
+      "token_sha256_modified": "98bb48bc90d6415b1b070038c0fba51a0d3ed2df0733a605d75331f7ff874130",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "972bbf678b57c47d526e992a9e5f05f8801d406a7500a9dbbd299b81c9b5fc13",
+      "preprocessed_modified_sha256": "f68275a5563a46b3748cef9d5a60613749c25276aa0866e7b9bcb2b2d47686b8"
+    },
+    {
+      "file": "rtl/afdx_rx_parse.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_rx_parse.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_rx_parse.v"
+          ],
+          "pid": 20532,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_rx_parse.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_rx_parse.v"
+          ],
+          "pid": 31812,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:03",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 2861,
+      "tokens_modified": 2861,
+      "token_sha256_original": "f1e6776ad8fd6c6e1e9af52f90cf77a7acee41f23b28f63f9ba7611cd7a62ab7",
+      "token_sha256_modified": "f1e6776ad8fd6c6e1e9af52f90cf77a7acee41f23b28f63f9ba7611cd7a62ab7",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "26359badb56ae3b57910c3ff5ff21b1b143950458787eb68ef94961003f4ce79",
+      "preprocessed_modified_sha256": "e397bd35bbeb9110210dd66d5d4e0d677d14187d47a5d74a61ec8d6b10b32144"
+    },
+    {
+      "file": "rtl/afdx_rx_reassembly_bank.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_rx_reassembly_bank.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_rx_reassembly_bank.v"
+          ],
+          "pid": 29776,
+          "started": "2026-11-04 00:42:03",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_rx_reassembly_bank.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_rx_reassembly_bank.v"
+          ],
+          "pid": 46292,
+          "started": "2026-11-04 00:42:04",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 5427,
+      "tokens_modified": 5427,
+      "token_sha256_original": "1eddfcd714d039616291a6733122c7c379e3441aa1ecd0d1f26cdc0b9816a208",
+      "token_sha256_modified": "1eddfcd714d039616291a6733122c7c379e3441aa1ecd0d1f26cdc0b9816a208",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "db7daa889884cafae175b6e350afd0918bd5908b69609ad56f85f560cb5eeb87",
+      "preprocessed_modified_sha256": "e58c7b78699ef8e0fef77f0d282db296073982ea691fecd8ae1aa9c48b95e2e1"
+    },
+    {
+      "file": "rtl/afdx_tx_engine.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_tx_engine.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\rtl\\afdx_tx_engine.v"
+          ],
+          "pid": 40376,
+          "started": "2026-11-04 00:42:04",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_tx_engine.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\rtl\\afdx_tx_engine.v"
+          ],
+          "pid": 23592,
+          "started": "2026-11-04 00:42:04",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 5004,
+      "tokens_modified": 5004,
+      "token_sha256_original": "33dc54dbfdd90790e26ec529ea467e1a2b0651bf13caf31c5e4f98130424eafa",
+      "token_sha256_modified": "33dc54dbfdd90790e26ec529ea467e1a2b0651bf13caf31c5e4f98130424eafa",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "90edd76bfbadfc18510325a3cdb52e6e5d8a667190ee01054d9370d4ff67ee1f",
+      "preprocessed_modified_sha256": "9c6b0a54c44256f6aa661ca9a478475215142a114e46f6f9f245fe37da0dbd49"
+    },
+    {
+      "file": "elinx/afdx_all.v",
+      "jobs": [
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\original\\afdx_all.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\original\\elinx\\afdx_all.v"
+          ],
+          "pid": 38244,
+          "started": "2026-11-04 00:42:04",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        },
+        {
+          "command": [
+            "E:\\Verilog\\iverilog_setup_pack\\iverilog\\bin\\iverilog.EXE",
+            "-g2001",
+            "-E",
+            "-o",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\preprocessed\\modified\\afdx_all.v",
+            "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_v2\\modified\\elinx\\afdx_all.v"
+          ],
+          "pid": 41180,
+          "started": "2026-11-04 00:42:04",
+          "finished": "2026-11-04 00:42:04",
+          "exit_code": 0,
+          "diagnostics": ""
+        }
+      ],
+      "tokens_original": 99689,
+      "tokens_modified": 99689,
+      "token_sha256_original": "8373ba58f2552a58d34145c0f42bc7558028c2c5637c89e96ff2f6bf911d13f1",
+      "token_sha256_modified": "8373ba58f2552a58d34145c0f42bc7558028c2c5637c89e96ff2f6bf911d13f1",
+      "token_equal": true,
+      "nonblank_lines_byte_equal": true,
+      "preprocessed_original_sha256": "53cdfa4c8bba091ec0922b670ced67dc6f164dac6c9540d7a186d7a26b3e4d2b",
+      "preprocessed_modified_sha256": "38c7b2f35b5f093e42e94b545a2ad407369d61dafc3f9d8dd8ce3ec9fc8e696d"
+    }
+  ]
+}

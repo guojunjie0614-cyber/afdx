@@ -1,0 +1,286 @@
+{
+  "finished": "2026-11-04 01:18:42",
+  "passed": true,
+  "input_audit_passed": true,
+  "files": {
+    "baseline": {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\out\\build1030\\AFDX_top_1030\\20261102_212626_064390\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "bytes": 115027164,
+      "sha256": "3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e",
+      "noncomment_lines": 1054470,
+      "sorted_noncomment_sha256": "d8f27a1f1f6305c08ee09e9d355ab072185e1ae3afabb0fa65f99023c623e625"
+    },
+    "v1_original": {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\baseline_original\\20261103_081503_980400\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "bytes": 115027164,
+      "sha256": "e9e1734c570b8344c3666e02ebf1152dd45bd7a74e801d93c73de3a1126839b4",
+      "noncomment_lines": 1054470,
+      "sorted_noncomment_sha256": "d8f27a1f1f6305c08ee09e9d355ab072185e1ae3afabb0fa65f99023c623e625"
+    },
+    "v2_guarded": {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\t77_synth\\v2_modeltech\\20261103_083341_694790\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "bytes": 115027164,
+      "sha256": "53cdae1284079171cc3d0554bd32e51a7ad8c7b1f1afaf8e6e6ffafea2affd23",
+      "noncomment_lines": 1054470,
+      "sorted_noncomment_sha256": "d8f27a1f1f6305c08ee09e9d355ab072185e1ae3afabb0fa65f99023c623e625"
+    },
+    "gui_original": {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_frag1030\\elinx\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "bytes": 115027164,
+      "sha256": "0219980118e6d6932f9a56c065840cc1bd4c5ba2209f0b607ea4719fd45e1a4f",
+      "noncomment_lines": 1054470,
+      "sorted_noncomment_sha256": "d8f27a1f1f6305c08ee09e9d355ab072185e1ae3afabb0fa65f99023c623e625"
+    },
+    "e2e_processors_1": {
+      "path": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t77\\out\\build1030\\AFDX_top_1030\\20261103_090142_492090\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
+      "bytes": 115027164,
+      "sha256": "96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4",
+      "noncomment_lines": 1054470,
+      "sorted_noncomment_sha256": "d8f27a1f1f6305c08ee09e9d355ab072185e1ae3afabb0fa65f99023c623e625"
+    }
+  },
+  "comparisons": [
+    {
+      "left": "baseline",
+      "right": "v1_original",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "baseline",
+      "right": "v2_guarded",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "baseline",
+      "right": "gui_original",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2739,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "baseline",
+      "right": "e2e_processors_1",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "v1_original",
+      "right": "v2_guarded",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "v1_original",
+      "right": "gui_original",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2739,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "v1_original",
+      "right": "e2e_processors_1",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "v2_guarded",
+      "right": "gui_original",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2739,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "v2_guarded",
+      "right": "e2e_processors_1",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2729,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    },
+    {
+      "left": "gui_original",
+      "right": "e2e_processors_1",
+      "byte_equal": false,
+      "ordered_noncomment_different_positions": 2739,
+      "sorted_noncomment_lines_equal": true,
+      "primitive_counts_left": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "primitive_counts_right": {
+        "stratix_lcell": 62274,
+        "stratix_ram_block": 2981
+      },
+      "identical_named_functional_cells": 65255,
+      "functional_cell_records": 65255,
+      "assignment_count_left": 134,
+      "assignment_count_right": 134,
+      "assignment_multisets_equal": true,
+      "top_ports_equal": true,
+      "name_bijection": "identity",
+      "mapped_structure_equal": true,
+      "classification": "ORDER_ONLY"
+    }
+  ],
+  "method": "T76 parser: compare each named primitive kind, all functional parameters and ordered port tokens; created_from metadata excluded. All names map to themselves. Also compare assignment multisets, top declarations, ordered noncomment positions and sorted noncomment line hashes.",
+  "timing_binding": "Baseline historical timing, R1 imported-original-VQM timing and the final modified-RTL end-to-end timing have separate VQM/result bindings; see v2_route_R1.json and v2_end_to_end.json. This comparison itself launches no EDA tools."
+}

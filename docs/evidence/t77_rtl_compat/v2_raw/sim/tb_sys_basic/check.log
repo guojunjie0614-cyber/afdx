@@ -1,0 +1,6 @@
+[CHECK] tb_sys_basic_es1_tx PASS items=293 errors=0 either=0
+[CHECK] tb_sys_basic_es2_tx PASS items=293 errors=0 either=0
+[CHECK] tb_sys_basic_es1_rx PASS items=145 errors=0 either=0
+[CHECK] tb_sys_basic_es2_rx PASS items=145 errors=0 either=1
+[CHECK] tb_sys_basic PASS items=1607 errors=0 either=0 w_over=0
+[CHECK] tb_sys_basic_gmii PASS items=447 errors=0 either=0

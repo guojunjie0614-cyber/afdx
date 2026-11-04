@@ -1,7 +1,6 @@
-# T76 step-0 fallback: original RTL remains unchanged. All compatibility
-# transformations and the exact inverse proof are recorded in this run folder.
+# T77 guarded RTL compiles directly. The legacy copy adapter is opt-in only.
 proc afdx_modelsim_rtl {root folder} {
-    if {[info exists ::env(AFDX_MODELSIM_DECL_ORDER)] && $::env(AFDX_MODELSIM_DECL_ORDER) eq "0"} {
+    if {![info exists ::env(AFDX_MODELSIM_DECL_ORDER)] || $::env(AFDX_MODELSIM_DECL_ORDER) ne "1"} {
         return [lsort [glob [file join $root rtl *.v]]]
     }
     if {![info exists ::env(AFDX_PYTHON)] || ![file isfile $::env(AFDX_PYTHON)]} {
