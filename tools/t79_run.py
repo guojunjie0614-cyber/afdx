@@ -97,7 +97,7 @@ def main():
     os.environ.update(AFDX_PYTHON=sys.executable,MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
         ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack',AFDX_CE_DIV='2',AFDX_MEM_FLOOR_GB='3',
         AFDX_MODELSIM_DECL_ORDER='0',AFDX_T76_SPEC_CONFIRMED='1')
-    own=psutil.Process();cpus=own.cpu_affinity()[:6];own.cpu_affinity(cpus)
+    own=psutil.Process();cpus=own.cpu_affinity()[::2][:6];own.cpu_affinity(cpus)
     receipt=dict(started=now(),pid=own.pid,created=own.create_time(),cpu_affinity=cpus,
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         per_case_limit_seconds=10800,runs=[],status='RUNNING')
@@ -111,12 +111,20 @@ def main():
         pending=[c for c in CASES if c[0] not in {r['case'] for r in receipt['runs']}]
         class Adopted:
             def __init__(self,row):
-                self.pid=row['pid'];self.p=psutil.Process(self.pid)
-                assert self.p.create_time()==row['created']
+                self.pid=row['pid']
+                try:
+                    self.p=psutil.Process(self.pid)
+                    assert self.p.create_time()==row['created']
+                except psutil.NoSuchProcess:
+                    self.p=None
                 self.returncode=None
             def poll(self):
+                if self.p is None or not self.p.is_running():
+                    self.returncode=-999  # Original exit code unavailable after orphan exit.
+                    return self.returncode
                 try:self.returncode=self.p.wait(timeout=0)
                 except psutil.TimeoutExpired:return None
+                if self.returncode is None:self.returncode=-999
                 return self.returncode
             def wait(self):return self.p.wait()
         for row in receipt['runs']:
@@ -131,7 +139,8 @@ def main():
                 process,row,stream=item
                 if process.poll() is None:continue
                 active.remove(item);stream.close()
-                row.update(exit_code=process.returncode,finished=now(),seconds=round(time.time()-row['launch_epoch'],3))
+                row.update(exit_code=None if process.returncode==-999 else process.returncode,
+                    exit_code_unavailable=process.returncode==-999,finished=now(),seconds=round(time.time()-row['launch_epoch'],3))
                 folders=set((ROOT/'out/t76_sim/tb_t76_load').glob('*/summary.json'))
                 matches=[p for p in folders if json.loads(p.read_text()).get('parameters')==row['parameters']]
                 if len(matches)!=1:raise RuntimeError('Expected one unique result for '+row['case'])
