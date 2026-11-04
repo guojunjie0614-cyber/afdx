@@ -1,16 +1,16 @@
 {
-  "started": "2026-11-04 11:19:38",
-  "pid": 11116,
-  "created": 1793763401.0618613,
+  "started": "2026-11-04 11:50:38",
+  "pid": 45284,
+  "created": 1793764274.069939,
   "cpu_affinity": [
     0,
-    1,
     2,
-    3,
     4,
-    5
+    6,
+    8,
+    10
   ],
-  "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358",
+  "source_commit": "c5e3c35d43ece2e893bb695291ba3aba31d40252",
   "per_case_limit_seconds": 10800,
   "runs": [
     {
@@ -92,7 +92,8 @@
         0.504
       ],
       "simulation_seconds": 740.265,
-      "issues": []
+      "issues": [],
+      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
     },
     {
       "case": "P17",
@@ -173,7 +174,8 @@
         8.568
       ],
       "simulation_seconds": 751.485,
-      "issues": []
+      "issues": [],
+      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
     },
     {
       "case": "P256",
@@ -254,7 +256,8 @@
         129.024
       ],
       "simulation_seconds": 905.047,
-      "issues": []
+      "issues": [],
+      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
     },
     {
       "case": "P1024",
@@ -335,58 +338,8 @@
         516.096
       ],
       "simulation_seconds": 1394.547,
-      "issues": []
-    },
-    {
-      "case": "P1471",
-      "parameters": {
-        "VL_COUNT": 63,
-        "GROUP_LENGTH": 1471,
-        "MIXED": 0,
-        "DUPLEX": 1,
-        "DURATION": 12500000,
-        "SMOKE": 0,
-        "SWAP": 0,
-        "BAG_BURST": 0
-      },
-      "pid": 30920,
-      "created": 1793762382.4872265,
-      "started": "2026-11-04 11:19:42",
-      "launch_epoch": 1793762382.4950366,
-      "deadline": "2026-11-04 14:19:42",
-      "command": [
-        "E:\\anaconda3\\python.exe",
-        "-B",
-        "-X",
-        "utf8",
-        "tools/t76_sim.py",
-        "--deadline",
-        "2026-11-04T14:19:42.482510+08:00",
-        "--param",
-        "VL_COUNT=63",
-        "--param",
-        "GROUP_LENGTH=1471",
-        "--param",
-        "MIXED=0",
-        "--param",
-        "DUPLEX=1",
-        "--param",
-        "DURATION=12500000",
-        "--param",
-        "SMOKE=0",
-        "--param",
-        "SWAP=0",
-        "--param",
-        "BAG_BURST=0"
-      ],
-      "status": "STOPPED_BY_REPORT_CONDITION",
-      "finished": "2026-11-04 11:47:19",
-      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_191942_783918",
-      "seconds": 1656.505,
-      "simulation_seconds": 1651.875,
-      "hdl_result_lines": [
-        "# [RESULT] tb_t76_load PASS checks=12600 errors=0"
-      ]
+      "issues": [],
+      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
     },
     {
       "case": "B1",
@@ -430,7 +383,7 @@
         "--param",
         "BAG_BURST=1"
       ],
-      "status": "FAIL",
+      "status": "PASS_NONCRITERION",
       "exit_code": null,
       "exit_code_unavailable": true,
       "finished": "2026-11-04 11:47:15",
@@ -467,7 +420,55 @@
         738.70768
       ],
       "simulation_seconds": 1649.36,
-      "issues": []
+      "issues": [],
+      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358",
+      "jitter_criterion": false,
+      "disposition": "HDL/integrity/independent statistics PASS; 122/126 formula-invalid groups retained, not a jitter criterion"
+    },
+    {
+      "case": "P1471",
+      "parameters": {
+        "VL_COUNT": 63,
+        "GROUP_LENGTH": 1471,
+        "MIXED": 0,
+        "DUPLEX": 1,
+        "DURATION": 12500000,
+        "SMOKE": 0,
+        "SWAP": 0,
+        "BAG_BURST": 0
+      },
+      "source_commit": "c5e3c35d43ece2e893bb695291ba3aba31d40252",
+      "pid": 40548,
+      "created": 1793764238.5881147,
+      "started": "2026-11-04 11:50:38",
+      "launch_epoch": 1793764238.593961,
+      "deadline": "2026-11-04 14:50:38",
+      "command": [
+        "E:\\anaconda3\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/t76_sim.py",
+        "--deadline",
+        "2026-11-04T14:50:38.586962+08:00",
+        "--param",
+        "VL_COUNT=63",
+        "--param",
+        "GROUP_LENGTH=1471",
+        "--param",
+        "MIXED=0",
+        "--param",
+        "DUPLEX=1",
+        "--param",
+        "DURATION=12500000",
+        "--param",
+        "SMOKE=0",
+        "--param",
+        "SWAP=0",
+        "--param",
+        "BAG_BURST=0"
+      ],
+      "status": "RUNNING"
     },
     {
       "case": "B2",
@@ -481,11 +482,12 @@
         "SWAP": 0,
         "BAG_BURST": 2
       },
-      "pid": 6148,
-      "created": 1793763408.3712037,
-      "started": "2026-11-04 11:36:48",
-      "launch_epoch": 1793763408.3761482,
-      "deadline": "2026-11-04 14:36:48",
+      "source_commit": "c5e3c35d43ece2e893bb695291ba3aba31d40252",
+      "pid": 28808,
+      "created": 1793764239.620489,
+      "started": "2026-11-04 11:50:39",
+      "launch_epoch": 1793764239.6264555,
+      "deadline": "2026-11-04 14:50:39",
       "command": [
         "E:\\anaconda3\\python.exe",
         "-B",
@@ -493,7 +495,7 @@
         "utf8",
         "tools/t76_sim.py",
         "--deadline",
-        "2026-11-04T14:36:48.369108+08:00",
+        "2026-11-04T14:50:39.618454+08:00",
         "--param",
         "VL_COUNT=63",
         "--param",
@@ -511,29 +513,19 @@
         "--param",
         "BAG_BURST=2"
       ],
-      "status": "STOPPED_BY_REPORT_CONDITION",
-      "finished": "2026-11-04 11:47:19",
-      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_193648_592064",
-      "seconds": 630.624,
-      "hdl_result_lines": []
+      "status": "RUNNING"
     }
   ],
-  "status": "STOPPED",
+  "status": "RUNNING",
+  "initial_started": "2026-11-04 11:19:38",
+  "previous_attempt_receipt": "initial_run_receipt.json",
+  "authorization": "Explicit rerun of P1471 and B2; B1 is not a jitter criterion",
   "controller_history": [
     {
-      "pid": 35116,
-      "created": 1793762377.7791507,
-      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
-    },
-    {
-      "pid": 40860,
-      "created": 1793762458.8628316,
-      "source_commit": "468a5e6e21dc95dd13f4ec3d0fbfbedc11b64358"
+      "pid": 26588,
+      "created": 1793764238.304447,
+      "source_commit": "c5e3c35d43ece2e893bb695291ba3aba31d40252"
     }
   ],
-  "adopted": "2026-11-04 11:36:41",
-  "report_condition": "Formula invalid or jitter >=100 us: B1",
-  "error": "Formula invalid or jitter >=100 us: B1",
-  "not_started": [],
-  "finished": "2026-11-04 11:47:19"
+  "adopted": "2026-11-04 11:51:14"
 }
