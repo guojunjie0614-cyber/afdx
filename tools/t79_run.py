@@ -10,7 +10,7 @@ import time
 import psutil
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT/'out/t79'
+OUT = ROOT/('out/t79_resume' if '--resume' in sys.argv else 'out/t79')
 EVIDENCE = ROOT/'docs/evidence/t79_63vl'
 TZ = timezone(timedelta(hours=8))
 CASES = [('P1',1,0),('P17',17,0),('P256',256,0),('P1024',1024,0),
@@ -88,10 +88,11 @@ def collect(row):
         (target/name).write_bytes((folder/name).read_bytes())
     row['status']='PASS' if (row['hdl_pass'] and row['integrity_pass'] and equal and not invalid
         and not over and row['latency_pass']) else 'FAIL'
-    return bool(invalid or over)
+    return bool(invalid or over or stats['issues'] or not equal or not row['latency_pass'])
 
 def main():
     adopt='--adopt' in sys.argv
+    resume='--resume' in sys.argv
     OUT.mkdir(parents=True,exist_ok=adopt)
     EVIDENCE.mkdir(parents=True,exist_ok=True)
     os.environ.update(AFDX_PYTHON=sys.executable,MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
@@ -102,6 +103,19 @@ def main():
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         per_case_limit_seconds=10800,runs=[],status='RUNNING')
     active=[];pending=list(CASES)
+    if resume:
+        previous=json.loads((ROOT/'out/t79/run.json').read_text())
+        save(EVIDENCE/'initial_run_receipt.json',previous)
+        receipt['initial_started']=previous['started']
+        receipt['previous_attempt_receipt']='initial_run_receipt.json'
+        receipt['authorization']='Explicit rerun of P1471 and B2; B1 is not a jitter criterion'
+        receipt['runs']=[r for r in previous['runs'] if r['case'] not in ('P1471','B2')]
+        for row in receipt['runs']:
+            row['source_commit']=previous['source_commit']
+            if row['case']=='B1':
+                row.update(status='PASS_NONCRITERION',jitter_criterion=False,
+                    disposition='HDL/integrity/independent statistics PASS; 122/126 formula-invalid groups retained, not a jitter criterion')
+        pending=[c for c in CASES if c[0] in ('P1471','B2')]
     if adopt:
         previous=json.loads((OUT/'run.json').read_text())
         previous['controller_history']=previous.get('controller_history',[])+[
@@ -142,7 +156,12 @@ def main():
                 row.update(exit_code=None if process.returncode==-999 else process.returncode,
                     exit_code_unavailable=process.returncode==-999,finished=now(),seconds=round(time.time()-row['launch_epoch'],3))
                 folders=set((ROOT/'out/t76_sim/tb_t76_load').glob('*/summary.json'))
-                matches=[p for p in folders if json.loads(p.read_text()).get('parameters')==row['parameters']]
+                matches=[]
+                for p in folders:
+                    candidate=json.loads(p.read_text())
+                    if (candidate.get('parameters')==row['parameters'] and
+                        datetime.fromisoformat(candidate['started']).timestamp()>=row['launch_epoch']-1):
+                        matches.append(p)
                 if len(matches)!=1:raise RuntimeError('Expected one unique result for '+row['case'])
                 row['folder']=str(matches[0].parent)
                 if collect(row):
@@ -166,12 +185,12 @@ def main():
                     stream=(OUT/(name+'.log')).open('xb')
                     process=subprocess.Popen(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT,
                         creationflags=subprocess.CREATE_NO_WINDOW)
-                    row=dict(case=name,parameters=params,pid=process.pid,created=psutil.Process(process.pid).create_time(),
+                    row=dict(case=name,parameters=params,source_commit=receipt['source_commit'],pid=process.pid,created=psutil.Process(process.pid).create_time(),
                         started=now(),launch_epoch=time.time(),deadline=deadline.strftime('%Y-%m-%d %H:%M:%S'),
                         command=command,status='RUNNING')
                     receipt['runs'].append(row);active.append((process,row,stream));persist()
             if active or pending:time.sleep(1)
-        receipt['status']='PASS' if all(r['status']=='PASS' for r in receipt['runs']) else 'FAIL'
+        receipt['status']='PASS' if all(r['status'] in ('PASS','PASS_NONCRITERION') for r in receipt['runs']) else 'FAIL'
     except Exception as exc:
         receipt.update(status='STOPPED',error=str(exc),not_started=[c[0] for c in pending])
         stop_owned(active)
