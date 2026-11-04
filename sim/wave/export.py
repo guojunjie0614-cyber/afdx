@@ -41,7 +41,8 @@ def run_gui(scene, exe):
         "do " + tcl_path(ROOT / "sim" / "wave" / (scene + ".do")) + "\n"
         "set output_file [open " + tcl_path(result) + " w]\n"
         "puts $output_file $wave_output\nclose $output_file\n"
-        "array set PrefWave $wave_preferences\n"
+        # 场景删除过光标时，恢复偏好会碰到已销毁的光标控件；截图已完成，忽略即可。
+        "catch {array set PrefWave $wave_preferences}\n"
         "catch {view wave -dock}\nupdate\nquit -f -code 0\n",
         encoding="utf-8")
     environment = dict(os.environ, AFDX_WAVE_CAPTURE_DIR=str(driver_dir))
