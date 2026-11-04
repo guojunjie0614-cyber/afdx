@@ -1,0 +1,10 @@
+{
+  "source_attachment": "a5cb5f91-5e90-4675-bc21-fd7c2094867b-cc10c0dd-143c-41e5-b148-f38e7d860f7d.png",
+  "sha256": "48c1ff0b4d8a3798a2a83aa7300123f6cb7aaccd016748785d5c21dda344f652",
+  "checks": 9238,
+  "errors": 0,
+  "warnings": 90,
+  "elapsed_seconds": 138,
+  "simulation_ns": 2557777,
+  "evidence_kind": "task-card supplied manual GUI screenshot, visually checked; not rerun in T79"
+}
