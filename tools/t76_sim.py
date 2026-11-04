@@ -32,8 +32,8 @@ def main():
         parser.error('VL count or payload outside declared range')
     if params['BAG_BURST'] and (params['MIXED'] or params['GROUP_LENGTH']!=1471):
         parser.error('The confirmed BAG-wait protocol uses maximum single frames only')
-    if params['BAG_BURST']==2 and params['VL_COUNT']!=81:
-        parser.error('The rotating equal-due BAG protocol covers the full 81-VL declaration')
+    if params['BAG_BURST']==2 and params['VL_COUNT']%3!=0:
+        parser.error('The rotating equal-due BAG protocol requires complete groups of three VLs')
     if params['DURATION'] >= 12500000 and os.environ.get('AFDX_T76_SPEC_CONFIRMED') != '1':
         parser.error('Line-1 specification confirmation required for long RTL scenarios')
     flow = eda.Flow('t76_sim', 'tb_t76_load', args.deadline)
