@@ -2,7 +2,7 @@
 // No DUT internals are used. NET_RX selects a separately compiled RTL receiver.
 `timescale 1ns/1ps
 module t76_load_endpoint #(
-    parameter ID=0,VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,NET_RX=0
+    parameter ID=0,VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,NET_RX=0,LONG_COUNT=1
 )(input wire clk,reset,input wire [7:0] ra,rb,input wire rva,rvb,
    output wire [7:0] ta,tb,output wire tva,tvb,output reg configured=0);
     reg [7:0] data=0;
@@ -54,6 +54,7 @@ module t76_load_endpoint #(
                 if(vl==VL_COUNT-1)message_length=8192;
             end
             if(MIXED==2 && vl==VL_COUNT-1)message_length=1472;
+            if(MIXED==3 && sequence>0 && vl>=VL_COUNT-LONG_COUNT)message_length=8192;
         end
     endfunction
     function [7:0] payload_byte;

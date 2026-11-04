@@ -1,0 +1,12 @@
+{
+  "base_queue_status": "PASS",
+  "base_queue_finished": "2026-11-04 12:14:22",
+  "adopted_files": {
+    "tb/lib/t76_load_endpoint.v": "248dad82e570b30ec199f0b44e78c262a6a8cc2ec52e028e1cd7925e3c20875b",
+    "tb/tb_t76_load.v": "77111be64c0ad73163214bf42cd41d2d33b830b705b5d27ac50362b08912e58e",
+    "tools/t76_sim.py": "db3fb6889bea298441b1c89dd0ab1af81fc91ec7963defbc826f29b726922437",
+    "tools/t76_stats.py": "ed81d28db95afc6051b1e17e0057c5bb3c310bbddfa3c20d94b9ed7fa88cd3ea"
+  },
+  "rtl_unchanged": true,
+  "note": "Long tests continue against their unchanged isolated source tree; no running base input was changed."
+}

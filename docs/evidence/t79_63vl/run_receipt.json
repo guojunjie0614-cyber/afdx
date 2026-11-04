@@ -468,7 +468,44 @@
         "--param",
         "BAG_BURST=0"
       ],
-      "status": "RUNNING"
+      "status": "PASS",
+      "exit_code": null,
+      "exit_code_unavailable": true,
+      "finished": "2026-11-04 12:14:19",
+      "seconds": 1420.489,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_195038_790879",
+      "hdl_pass": true,
+      "wrapper_passed": false,
+      "known_warning_count": 84,
+      "integrity_pass": true,
+      "statistics_equal": true,
+      "groups": 126,
+      "formula_invalid": 0,
+      "jitter_failures": 0,
+      "maximum_jitter_us": 0.016,
+      "worst_vlid": "0100",
+      "worst_length": 1471,
+      "worst_source": 0,
+      "maximum_latency_us": 80.336,
+      "latency_pass": true,
+      "page_upper_bounds": [
+        18,
+        18
+      ],
+      "bag_pairs": [
+        0,
+        0
+      ],
+      "bag_pair_failures": [
+        0,
+        0
+      ],
+      "receive_mbps": [
+        741.384,
+        741.384
+      ],
+      "simulation_seconds": 1418.594,
+      "issues": []
     },
     {
       "case": "B2",
@@ -513,10 +550,47 @@
         "--param",
         "BAG_BURST=2"
       ],
-      "status": "RUNNING"
+      "status": "PASS",
+      "exit_code": null,
+      "exit_code_unavailable": true,
+      "finished": "2026-11-04 12:14:12",
+      "seconds": 1412.867,
+      "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t76_sim\\tb_t76_load\\20261103_195039_803119",
+      "hdl_pass": true,
+      "wrapper_passed": false,
+      "known_warning_count": 84,
+      "integrity_pass": true,
+      "statistics_equal": true,
+      "groups": 126,
+      "formula_invalid": 0,
+      "jitter_failures": 0,
+      "maximum_jitter_us": 96.752,
+      "worst_vlid": "0114",
+      "worst_length": 1471,
+      "worst_source": 0,
+      "maximum_latency_us": 1175.432,
+      "latency_pass": true,
+      "page_upper_bounds": [
+        156,
+        156
+      ],
+      "bag_pairs": [
+        3150,
+        3150
+      ],
+      "bag_pair_failures": [
+        0,
+        0
+      ],
+      "receive_mbps": [
+        738.55968,
+        738.55968
+      ],
+      "simulation_seconds": 1411.61,
+      "issues": []
     }
   ],
-  "status": "RUNNING",
+  "status": "PASS",
   "initial_started": "2026-11-04 11:19:38",
   "previous_attempt_receipt": "initial_run_receipt.json",
   "authorization": "Explicit rerun of P1471 and B2; B1 is not a jitter criterion",
@@ -527,5 +601,6 @@
       "source_commit": "c5e3c35d43ece2e893bb695291ba3aba31d40252"
     }
   ],
-  "adopted": "2026-11-04 11:51:14"
+  "adopted": "2026-11-04 11:51:14",
+  "finished": "2026-11-04 12:14:22"
 }

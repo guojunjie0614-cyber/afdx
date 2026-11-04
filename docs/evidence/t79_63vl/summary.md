@@ -1,6 +1,6 @@
 # T79：63 VL 满负载声明与验证
 
-运行状态：**RUNNING**。开始：2026-11-04 11:50:38；最近终态：尚未结束。
+运行状态：**PASS**。开始：2026-11-04 11:50:38；最近终态：2026-11-04 12:14:22。
 
 统一声明 **63 TX / 63 RX VL**，每 VL BAG=1 ms、Lmax=1471，A/B 冗余、双向同时运行；配置规模仍为 TX 128 / RX 4096。计划单向载荷 741.384 Mbit/s，含额外 VLID 输入为 742.392 Mbit/s；线路占用 63×1538/125000=77.5152%（约 77.5%）。声明变更不修改 RTL、VQM、约束或布局。
 
@@ -14,11 +14,11 @@
 | P17/17 | PASS | PASS/PASS | 一致 | 3.360 / 0x0104 / 0 | 34.600 | 17.136000 | 751.485 / 1024.570 |
 | P256/256 | PASS | PASS/PASS | 一致 | 0.016 / 0x010E / 0 | 41.360 | 258.048000 | 905.047 / 1025.585 |
 | P1024/1024 | PASS | PASS/PASS | 一致 | 0.008 / 0x0100 / 0 | 65.984 | 1032.192000 | 1394.547 / 1396.251 |
-| P1471/1471 | RUNNING | — | 未完成 | — | — | — | — |
-| B1/1471 | PASS_NONCRITERION | PASS/PASS | 一致 | NA（存在公式无效组） / 0x0115 / 0 | 1079.056 | 1477.415360 | 1649.360 / 1652.150 |
-| B2/1471 | RUNNING | — | 未完成 | — | — | — | — |
+| P1471/1471 | PASS | PASS/PASS | 一致 | 0.016 / 0x0100 / 0 | 80.336 | 1482.768000 | 1418.594 / 1420.489 |
+| B1/1471 | PASS（不作抖动判据） | PASS/PASS | 一致 | NA（存在公式无效组） / 0x0115 / 0 | 1079.056 | 1477.415360 | 1649.360 / 1652.150 |
+| B2/1471 | PASS | PASS/PASS | 一致 | 96.752 / 0x0114 / 0 | 1175.432 | 1477.119360 | 1411.610 / 1412.867 |
 
-逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式与 Python/Tcl 源码均保持 T76 原样。场景用时为启动至控制器确认结束，含接管识别延迟；实际仿真用时以 tool_metrics.json 为准。
+逐 VL 原值见 [per_vl_metrics.tsv](per_vl_metrics.tsv)；独立统计输出、HDL 日志、页池/BAG 消息对见对应场景目录。统计公式保持 T76 原样；Python 仅为 MIXED=3 扩展预期序列检查，Tcl 源码保持原样。场景用时为启动至控制器确认结束，含接管识别延迟；实际仿真用时以 tool_metrics.json 为准。
 
 ## 完整性、公式与预算
 
@@ -28,7 +28,9 @@
 | P17 | 126 | 0 | 0 | [51, 51] / 256 | [0, 0] / [0, 0] |
 | P256 | 126 | 0 | 0 | [16, 16] / 256 | [0, 0] / [0, 0] |
 | P1024 | 126 | 0 | 0 | [14, 14] / 256 | [0, 0] / [0, 0] |
+| P1471 | 126 | 0 | 0 | [18, 18] / 256 | [0, 0] / [0, 0] |
 | B1 | 126 | 122 | 0 | [144, 144] / 256 | [3150, 3150] / [0, 0] |
+| B2 | 126 | 0 | 0 | [156, 156] / 256 | [3150, 3150] / [0, 0] |
 
 完整性包含逐消息序号、长度、计划周期覆盖、应用载荷逐字节相同、A/B 逐帧时戳/载荷一致、FCS/IP 校验、BAG 间隔、页池保守上界≤256。HDL 另核对交付与去重计数及公开端口 X/Z。BAG 场景逐对证明第二条输入完成早于第一帧+BAG，实际第二帧不早于 BAG 到期。
 
@@ -39,7 +41,9 @@
 - P17：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191939_542797`
 - P256：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191940_599960`
 - P1024：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191941_710230`
+- P1471：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_195038_790879`
 - B1：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_191943_886128`
+- B2：`E:\2026_Embedded_FPGA\worktrees\active\c3_t79\out\t76_sim\tb_t76_load\20261103_195039_803119`
 
 ### 原样 RTL 的 ModelSim 诊断边界
 
@@ -47,7 +51,7 @@ T77/T78 原样 RTL 在 ModelSim 下存在 `$finish_and_return` 未定义和可�
 
 ## 81 VL 行为不变的证明
 
-选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。相对起点 f4632d5c，tools/t76_sim.py 仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝。其余运行代码逐字相同；tb_t76_load.v、t76_load_endpoint.v、全部 RTL、Python/Tcl 统计均逐字节未改。轮换函数 base=(vl/3)*3、rank=base+(vl-base+round)%3 原本就参数化，消息长度/到期时刻/相位/顺序算法均未改。哈希与自动核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。T79 独立诊断不改变 HDL 激励或公开端口记录。
+选择任务卡允许的“代码路径不变”方法，未额外跑 81 VL smoke。基础七场景的运行版本相对起点 f4632d5c，仅把 BAG_BURST=2 的拒绝条件由 VL_COUNT!=81 改为 VL_COUNT%3!=0；81 在 BAG_BURST=0/1/2 下均与原来一样不触发拒绝，其余运行代码及测试台原样。初次核对见 [81vl_code_path_proof.json](81vl_code_path_proof.json)。随后追加 MIXED=3：新消息长度分支只在 MIXED=3 生效，LONG_COUNT 在 MIXED=0/1/2 下未使用，原七字段 window.txt 输出和全部到期/序号/相位/轮换逻辑不变；Python 新的预期覆盖分支也仅对 MIXED=3 生效，统计公式和 Tcl 未改。新改动逐项精确逆变换核对及旧路径不变说明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)，正式文件接纳见 [mixed3_adoption.json](mixed3_adoption.json)。全部 RTL 始终逐字节不变，独立诊断不改变激励或公开端口记录。
 
 ## 混合场景复用
 
@@ -77,7 +81,7 @@ docs/design/ 保持只读；以下五处已由上游转告，发现它们不再�
 
 ## 文档与验收边界
 
-本轮更新 README.md、docs/ARCH.md、docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/summary.md，并新建本证据目录。docs/design/、docs/test/、rtl/、elinx/、sim/wave/png/、submission/、setup_pack/ 未改。不跑网表、不综合、不布线、不 push、不合并、不 amend。
+本轮更新 README.md、docs/ARCH.md、docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/summary.md，并新建本证据目录。docs/design/、docs/test/、rtl/、elinx/、submission/、setup_pack/ 未改。sim/wave/png/ 的 14 张 PNG 按追加授权更新并单独提交 686aeed，来源 12858ddf，提交正文列出逐文件 SHA256；tb_elinx.png 为 11-04 界面截图。不跑网表、不综合、不布线、不 push、不合并、不 amend。
 
 按最新裁定：B1 的 HDL/完整性/双统计为 PASS，公式前提不成立的组保留带符号值，不作抖动判据，BAG 等待抖动由 B2 承担。仅在 B2 或周期场景出现≥100 µs 组、B2 公式不成立、或 HDL/完整性失败时停止回报。
 
@@ -87,6 +91,29 @@ B1 的 HDL/完整性/双统计 **PASS**；按最新裁定不作抖动判据， *
 
 例：方向 0、VLID 0x0100、1471 字节：首帧 6073 拍（48.584 µs），全程最大 129600 拍（1036.800 µs）；最大−首帧=123527 拍（988.216 µs）≤125000 拍 BAG，减 BAG 后原值 -11.784 µs，故该组记 NA。
 
-该现象与“第二条确实等待 BAG”不矛盾：线上 BAG 从前一帧起点计时，而每条消息的端到端时延各从自己的输入首字节计时；背靠背第二条输入晚于首条，等待的是剩余 BAG，固定输入顺序也未保证全程最大与首帧的差值超过完整 BAG。统计前提额外要求最大−首帧>BAG，本次未满足；没有改公式、钳零或转用其他抖动口径。两方向各 3150 对均通过等待证明，页池上界均 144/256，最大端到端时延 1079.056 µs。
+该现象与“第二条确实等待 BAG”不矛盾：线上 BAG 从前一帧起点计时，而每条消息的端到端时延各从自己的输入首字节计时；背靠背第二条输入晚于首条，等待的是剩余 BAG，固定输入顺序也未保证全程最大与首帧的差值超过完整 BAG。这是与 T76 case 14 相同的固定顺序测量现象；带符号值为负不代表抖动超标。按最新裁定 B1 不作抖动判据，B2 承担该判据；没有改公式、钳零或转用其他抖动口径。两方向各 3150 对均通过等待证明，页池上界均 144/256，最大端到端时延 1079.056 µs。
 
 此前按旧停止条件结束的 P1471/B2 记录保存在 stopped_initial/，初次队列见 initial_run_receipt.json。随后按明确授权，同参数、新目录重新启动 P1471/B2，各 3 小时上限；当前结果以上表和 run_receipt.json 为准。旧停止记录不覆盖新运行状态。
+
+## 多条 VL 同时发送 8192 B 的边界测试
+
+追加授权测试 MIXED=3、VL_COUNT=63、GROUP_LENGTH=1471、DUPLEX=1。末 LONG_COUNT 条 VL 在 sequence>0 后发送 8192 B，其余发送 1471 B；首轮全部 VL 先发送一次 1471 B。每条 8192 B 消息占六帧发送机会，同 VL 到期时刻至少间隔 6 ms，沿用既有按片计费调度。公开接口依次串行注入，同一批 VL 的计划到期时刻相同。
+
+先跑 N=2/3/4 的 20 ms 窗口，各 1 小时；若 N=4 通过，最多再加 N=6/8 一轮 20 ms。选择这些测试中通过的最大 N 跑一次 100 ms 确认，上限 2 小时，不作未测试 N 的穷举边界承诺。失败不影响七个基础场景，不修改 RTL。
+
+边界队列：**RUNNING**；100 ms 确认值 N：**待确认**。完整运行身份、截止、原始路径与失败事件见 [边界收据](long_concurrent/run_receipt.json)。
+
+| N | 窗口 ms | 结果 | HDL/完整性 | 双统计 | 短消息最大抖动 µs / VLID | 短消息最大端到端 µs | 8192 B 最大完成时延 µs | 仿真用时 s |
+|---|---|---|---|---|---|---|---|---|
+| 2 | 20 | PASS | PASS/PASS | 一致 | 0.016 / 0x0119 | 80.328 | 5219.288 | 334.281 |
+| 3 | 20 | HDL_FAIL | FAIL/FAIL | — | — | — | — | 121.312 |
+
+首次失败 N3_20ms：端点 1、第 950089 拍、仿真 7600708 ns；ev_a=0x80、ev_b=0x01、ev_app=0x0。
+
+| 4 | 20 | HDL_FAIL | FAIL/FAIL | — | — | — | — | 121.563 |
+
+首次失败 N4_20ms：端点 1、第 952002 拍、仿真 7616012 ns；ev_a=0x80、ev_b=0x01、ev_app=0x0。
+
+| 2 | 100 | RUNNING | —/— | — | — | — | — | — |
+
+验收核对 HDL、逐字节完整性交付、Python/Tcl 逐字段一致、短消息分组抖动 <100 µs、短消息原 2 ms 门槛和页池上界。8192 B 只单列整条消息完成时延，不套单帧抖动或 2 ms 门槛。原始失败保留，未重试或修 RTL。新模式的旧路径不变证明见 [mixed3_code_path_proof.json](mixed3_code_path_proof.json)。

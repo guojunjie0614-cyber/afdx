@@ -1,0 +1,124 @@
+{
+  "source_tree": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t79\\out\\t79_long_source",
+  "changes": {
+    "tb/lib/t76_load_endpoint.v": {
+      "base_sha256": "2d24a694b17b97588d2976fee4e6ff75da8e96a9b8da26ec4902be1bbc9af60f",
+      "new_sha256": "248dad82e570b30ec199f0b44e78c262a6a8cc2ec52e028e1cd7925e3c20875b",
+      "exact_inverse_verified": true,
+      "edits": [
+        [
+          "MIXED=0,NET_RX=0",
+          "MIXED=0,NET_RX=0,LONG_COUNT=1"
+        ],
+        [
+          "            if(MIXED==2 && vl==VL_COUNT-1)message_length=1472;",
+          "            if(MIXED==2 && vl==VL_COUNT-1)message_length=1472;\n            if(MIXED==3 && sequence>0 && vl>=VL_COUNT-LONG_COUNT)message_length=8192;"
+        ]
+      ]
+    },
+    "tb/tb_t76_load.v": {
+      "base_sha256": "1e79defc37f51d44289f3ec85cfbf70f7e2af46344e0df69931aff5219bff465",
+      "new_sha256": "77111be64c0ad73163214bf42cd41d2d33b830b705b5d27ac50362b08912e58e",
+      "exact_inverse_verified": true,
+      "edits": [
+        [
+          "SMOKE=0,SWAP=0,BAG_BURST=0",
+          "SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1"
+        ],
+        [
+          "GROUP_LENGTH,MIXED,SWAP)",
+          "GROUP_LENGTH,MIXED,SWAP,LONG_COUNT)"
+        ],
+        [
+          "GROUP_LENGTH,MIXED,!SWAP)",
+          "GROUP_LENGTH,MIXED,!SWAP,LONG_COUNT)"
+        ],
+        [
+          "$fwrite(fd,\"%0d %0d %0d %0d %0d %0d %0d\\n\",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST);",
+          "if(MIXED==3)$fwrite(fd,\"%0d %0d %0d %0d %0d %0d %0d %0d\\n\",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST,LONG_COUNT);\n        else $fwrite(fd,\"%0d %0d %0d %0d %0d %0d %0d\\n\",epoch,epoch+DURATION,VL_COUNT,GROUP_LENGTH,MIXED,DUPLEX,BAG_BURST);"
+        ]
+      ]
+    },
+    "tools/t76_sim.py": {
+      "base_sha256": "81faaaf5a54db99b0b4dc1554313feb3bba7565b7d3146ce82edf46f71d52f5d",
+      "new_sha256": "db3fb6889bea298441b1c89dd0ab1af81fc91ec7963defbc826f29b726922437",
+      "exact_inverse_verified": true,
+      "edits": [
+        [
+          "SMOKE=0,SWAP=0,BAG_BURST=0)",
+          "SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1)"
+        ],
+        [
+          "    flow = eda.Flow('t76_sim'",
+          "    if params['MIXED']==3 and (params['GROUP_LENGTH']!=1471 or params['BAG_BURST'] or not 1<=params['LONG_COUNT']<=params['VL_COUNT']):\n        parser.error('Mode 3 requires 1..VL_COUNT long VLs, 1471-byte short messages and no BAG burst')\n    flow = eda.Flow('t76_sim'"
+        ]
+      ]
+    },
+    "tools/t76_stats.py": {
+      "base_sha256": "cddbab339638175e70a12ebd7877adaa07cc8ecd9f3d8f85a40d7e17e537d493",
+      "new_sha256": "ed81d28db95afc6051b1e17e0057c5bb3c310bbddfa3c20d94b9ed7fa88cd3ea",
+      "exact_inverse_verified": true,
+      "edits": [
+        [
+          "    burst=window[6] if len(window)>6 else 0",
+          "    burst=window[6] if len(window)>6 else 0\n    long_count=window[7] if len(window)>7 else 1"
+        ],
+        [
+          "                    length=1472 if mixed==2",
+          "                    length=8192 if mixed==3 and sequence>0 and vl>=vls-long_count else 1472 if mixed==2"
+        ],
+        [
+          "    (folder/'t76_samples.json').write_text",
+          "    if mixed==3:result['long_count']=long_count\n    (folder/'t76_samples.json').write_text"
+        ]
+      ]
+    }
+  },
+  "baseline_hashes": {
+    "rtl/afdx_615a.v": "f309a4e17f82ed43dab64310775e6aa4c6791423704ba3039637c6fadfa7dd1f",
+    "rtl/afdx_615a_engine.v": "2b738eb758fbcde4ca0b0d2b3c7b92e8a1a57160bc4ec424e8bb2c3aaa336684",
+    "rtl/afdx_app_map.v": "61db60365eb3bfda06732391aba6ae639b5a1e17731d3e7f54d637d62e490619",
+    "rtl/afdx_app_payload.v": "0ea09a102ce850192b69af4cca480fc7b26bc3572a17e995514df4c0a58be8c6",
+    "rtl/afdx_app_read.v": "32caab22b87d59ad6d33cd06a5d451772673bb2bdabb78abcdb567965454acba",
+    "rtl/afdx_app_rx.v": "e1154212ccdc46d9200917f31951b05dd61b75f561b2ab77b1c4f2b12524490b",
+    "rtl/afdx_app_tx.v": "c54979b88b60184d1fa81dae9facff006c21573c6196d97938d6a00f6262d3f8",
+    "rtl/afdx_cfg.v": "ed7c4e5d11d037954ef809ff14bf9c0bd143e79b2998a5b7a92bdf9e7cdfdbca",
+    "rtl/afdx_crc32_d8.v": "2487acedf68df5ae8e96e90c0c6eb924869f286d2402df21bc089da09897e614",
+    "rtl/afdx_es.v": "0bcea4294262de512cbd05f337b3acf6a241ba169d64aa039b12d7790ece61b7",
+    "rtl/afdx_mac_rx.v": "ee01466b3a4876ad902afe15dd75cd2b6d64b7819548763a57b44b521fd58300",
+    "rtl/afdx_mac_tx.v": "682a248af47177ee0a771d4369d5c92539e08253ed33472ea9d654882d804180",
+    "rtl/afdx_mgmt_tx.v": "142580bb28e7b16bc09fefc50f7e6f6d1e36fd7eed5a835937c890145cb40d19",
+    "rtl/afdx_ntp_fraction.v": "645457c9637fa3cb148624b34b76e2d19868d263957fe5424476685775666cbf",
+    "rtl/afdx_ram_sdp.v": "13aabc3c48dfbc513e1c555f3d84e79b9bb9405873e6357e11c3d2d4bcaedbdd",
+    "rtl/afdx_rtc.v": "0924df92f31b78545803c2e9ae58ccaa2cc4f693a9683b10b661c7ea1ca6cc75",
+    "rtl/afdx_rx_core.v": "9334a05b65db344c5e045a3fbe06d60c2745d1543e9039998e95b86b6b5a40a1",
+    "rtl/afdx_rx_deliver.v": "107864dc6cb9306e045781d9b786962e7c0296ef251f19438a80f9c290d1f991",
+    "rtl/afdx_rx_engine.v": "c73dbdae341be08652d2f6a555f6c579513798f282091f9e15cca5347612e0be",
+    "rtl/afdx_rx_parse.v": "de39eb7bf6963ea14e87bb498962145b052800aecf96179373dad84b9059d1cd",
+    "rtl/afdx_rx_reassembly.v": "be4d8c79a17180a64fced44f60a997432378bcc2695e823ddbb6031dce5e9bb8",
+    "rtl/afdx_rx_reassembly_bank.v": "d1cf70af2a87ab1ad65564990c179065ffdb76bf130f58d17d667bbeff834436",
+    "rtl/afdx_rx_reassembly_payload.v": "45b6a4068a3616b232a5cb787d3a3e6d032178ebd16b22c6f95fc8c64ad42b7e",
+    "rtl/afdx_rx_reassembly_ram.v": "5c9bc225f84a9d91ab9b09aa2951739fced5b31d52a4d3f74f43e388a5802369",
+    "rtl/afdx_snmp.v": "416d734a8c3e5c8e76f426ef84c9f691ebfdcad89dcc63376c8291f4badd3b21",
+    "rtl/afdx_snmp_engine.v": "05f03d3d5ee2775129cf55350c3d8e2bf3d3920f509b1204bb3c026d59bd8392",
+    "rtl/afdx_svc.v": "8bea777aac38e083c61f1a3d7f59ebba6083a0ffd305231073f8291753ddbf60",
+    "rtl/afdx_timebase.v": "17c66eadcbd2c11539a6bd0aef6ce4ea5377e04448c2d054a332d9112723769a",
+    "rtl/AFDX_top.v": "986f42b7d24d7c35a015067c2c0981d22f187d2de9038899ef0f2c45b9929273",
+    "rtl/afdx_tx_buf.v": "cd75973792be9667169d3af822e43bd89dd046190cfecb8f3b1fbc06b040f105",
+    "rtl/afdx_tx_builder.v": "f42cf080e19c889500198e505e689ff21f293946cf22314c72c6cc0491d01700",
+    "rtl/afdx_tx_core.v": "4f59495299a1527b86d60a1b06778461b9a6afe620a36be08fa0999d6512b1b9",
+    "rtl/afdx_tx_engine.v": "0da6591d68da8105932a58ccd201934b540e49f0e15706d83e955817228bb7f3",
+    "rtl/afdx_tx_free.v": "422ddf4b9993b862faaa2b498dd9ac6d976fb6d98f2a877a2121257ecca5cf95",
+    "tb/tb_t76_load.v": "1e79defc37f51d44289f3ec85cfbf70f7e2af46344e0df69931aff5219bff465",
+    "tb/lib/t76_load_endpoint.v": "2d24a694b17b97588d2976fee4e6ff75da8e96a9b8da26ec4902be1bbc9af60f",
+    "tb/lib/afdx_x_monitor.v": "559eba7b7f83ff1c3e9406b30614e1e47d47016918b7e243a34df134163fb424",
+    "tools/t76_sim.py": "81faaaf5a54db99b0b4dc1554313feb3bba7565b7d3146ce82edf46f71d52f5d",
+    "tools/t76_stats.py": "cddbab339638175e70a12ebd7877adaa07cc8ecd9f3d8f85a40d7e17e537d493",
+    "tools/eda.py": "3ce6ea311b46de9a2365629bff270ac5f066e294e00edb30792b8490ac9ac97d",
+    "tools/adapt_gui_vqm.py": "9a2feb26b192a8010270e3ea337032b27aa231bc3fabc9b609b323710c53c0c4",
+    "tools/modelsim_sources.py": "ea575929d4c72371c91df46c551f034f13f01f53374914315d42df8f931e8bf6",
+    "sim/t76_stats.tcl": "2a8a046ee9f8c9b98b1c5918ea28e38a86850ae53635cbcd072c7727a1f456b1"
+  },
+  "reasoning": "MIXED=0/1/2: added length branch is false; original branches and all due/sequence scheduling remain byte-identical. LONG_COUNT defaults to 1 and is unused in old modes. Existing seven-field window output is unchanged. Python coverage extra branch is false, Tcl is byte-identical. All RTL is copied unchanged.",
+  "fragment_billing": "First seq=0 message is 1471 B; subsequent long seqs are 8192 B, six frames, next due +=6*125000 cycles. No phase or statistics formula change."
+}
