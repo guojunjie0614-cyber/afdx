@@ -16,9 +16,9 @@ def main():
     OUT.mkdir(parents=True, exist_ok=False)
     started = time.time()
     deadline = datetime.now(timezone(timedelta(hours=8))) + timedelta(hours=4)
-    os.environ.update(AFDX_PYTHON=sys.executable,
-        MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
-        ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack', AFDX_CE_DIV='2',
+    os.environ.setdefault('MODELSIM_HOME', 'E:/Verilog/ModelSim/setup_pack/win64')
+    os.environ.setdefault('ELINX_HOME', 'E:/2026_Embedded_FPGA/setup_pack')
+    os.environ.update(AFDX_PYTHON=sys.executable, AFDX_CE_DIV='2',
         AFDX_MEM_FLOOR_GB='3', AFDX_MODELSIM_DECL_ORDER='0',
         AFDX_SIM_TIMEOUT_SECONDS='14400')
     receipt = dict(pid=os.getpid(), created=psutil.Process().create_time(),

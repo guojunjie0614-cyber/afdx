@@ -24,8 +24,9 @@ def main():
         if not any(r['test'] not in LONG for r in q['Active']+q['Pending']):break
         if datetime.now(deadline.tzinfo)>=deadline:raise TimeoutError('Quick subset deadline; original jobs retained')
         time.sleep(1)
-    os.environ.update(AFDX_PYTHON=sys.executable,MODELSIM_HOME='E:/Verilog/ModelSim/setup_pack/win64',
-        ELINX_HOME='E:/2026_Embedded_FPGA/setup_pack',AFDX_CE_DIV='2',AFDX_MEM_FLOOR_GB='3',AFDX_MODELSIM_DECL_ORDER='0')
+    os.environ.setdefault('MODELSIM_HOME','E:/Verilog/ModelSim/setup_pack/win64')
+    os.environ.setdefault('ELINX_HOME','E:/2026_Embedded_FPGA/setup_pack')
+    os.environ.update(AFDX_PYTHON=sys.executable,AFDX_CE_DIV='2',AFDX_MEM_FLOOR_GB='3',AFDX_MODELSIM_DECL_ORDER='0')
     for extra in ([],['--small']):
         command=[sys.executable,'-B','-X','utf8','tools/t76_app.py','--deadline',deadline.isoformat()]+extra
         with (ROOT/'out/t78'/('app_small.log' if extra else 'app_default.log')).open('xb') as log:
