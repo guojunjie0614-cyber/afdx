@@ -38,6 +38,7 @@ def main():
         parser.error('Line-1 specification confirmation required for long RTL scenarios')
     if params['MIXED']==3 and (params['GROUP_LENGTH']!=1471 or params['BAG_BURST'] or not 1<=params['LONG_COUNT']<=params['VL_COUNT']):
         parser.error('Mode 3 requires 1..VL_COUNT long VLs, 1471-byte short messages and no BAG burst')
+    if params['MIXED']!=3:params.pop('LONG_COUNT')
     flow = eda.Flow('t76_sim', 'tb_t76_load', args.deadline)
     flow.result.update(parameters=params,kind='official_vqm' if args.netlist else 'RTL',passed=False)
     originals = sorted((ROOT/'rtl').glob('*.v')) + [ROOT/'tb/tb_t76_load.v',

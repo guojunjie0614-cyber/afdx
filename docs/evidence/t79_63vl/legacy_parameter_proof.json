@@ -1,0 +1,8 @@
+{
+  "frozen_mode3_source_sha256": "db3fb6889bea298441b1c89dd0ab1af81fc91ec7963defbc826f29b726922437",
+  "canonical_sha256": "871b368f3d32e5f006c275e5803b8826dd97d91d1b14f3473c66aff16310fad4",
+  "only_added_statement": "if params['MIXED']!=3:params.pop('LONG_COUNT')",
+  "old_modes_parameter_sets_exactly_equal": true,
+  "mode3_path_unchanged": true,
+  "reason": "For MIXED=0/1/2 remove the new unused default from params before Flow/command/reference comparison, preserving legacy exact metadata and commands. Frozen MIXED=3 run sources are retained unmodified."
+}

@@ -34,6 +34,7 @@ def main():
             ('SMOKE=0,SWAP=0,BAG_BURST=0)','SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1)'),
             ("    flow = eda.Flow('t76_sim'", "    if params['MIXED']==3 and (params['GROUP_LENGTH']!=1471 or params['BAG_BURST'] or not 1<=params['LONG_COUNT']<=params['VL_COUNT']):\n"
              "        parser.error('Mode 3 requires 1..VL_COUNT long VLs, 1471-byte short messages and no BAG burst')\n"
+             "    if params['MIXED']!=3:params.pop('LONG_COUNT')\n"
              "    flow = eda.Flow('t76_sim'")],
         'tools/t76_stats.py':[
             ("    burst=window[6] if len(window)>6 else 0", "    burst=window[6] if len(window)>6 else 0\n    long_count=window[7] if len(window)>7 else 1"),
