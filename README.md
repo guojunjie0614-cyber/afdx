@@ -6,9 +6,9 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 ```text
 器件    EQ6HL130-CSG484_H · 125 MHz（8.000 ns）· 172 用户引脚
-时序    布线后 setup +0.029 ns / hold +0.604 ns，0 / 96,142 端点失败
+时序    布线后 setup +0.029 ns / hold +0.604 ns，0 / 96,142 失败端点
 吞吐    63 TX / 63 RX VL 满载 741.384 Mbps/方向，0 丢包
-时延    1471 B 单帧 24.424 µs；1 B 帧 1.056 µs
+时延    Lmax=1471 B 帧 24.424 µs；载荷 1 B 帧 1.056 µs
 验证    评委 8/8 · 回归 63/63 · 语句覆盖 96.8% · 分支覆盖 94.6%
 ```
 
@@ -21,11 +21,11 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 ## 1. 项目定位与核心架构
 
-顶层模块 `AFDX_top` 面向中科亿海微 eHiChip6 `EQ6HL130-CSG484_H` 器件，在单一 125 MHz（8.000 ns）时钟域下实现 ARINC 664 Part 7 确定性虚拟链路收发与三大机载网络协议栈，不使用外部软核 CPU 或第三方商业以太网 IP 核。交付物为可综合 Verilog-2001 源码、ModelSim 验证平台与 Python 黄金参考模型工具链。
+顶层模块 `AFDX_top` 面向中科亿海微 eHiChip6 `EQ6HL130-CSG484_H` 器件，在单一 125 MHz（8.000 ns）时钟域下实现 ARINC 664 Part 7 确定性虚拟链路收发与三大机载网络协议栈，不使用外部软核 CPU 或第三方商业以太网 IP 核。交付物为可综合 Verilog-2001 源码、ModelSim 验证平台与 Python 参考模型工具链。
 
 ### 核心架构
 
-1. 自研双网千兆 MAC，8192 B 长报文 IPv4 分片与 16 上下文并发重组
+1. 自研双网千兆 MAC，8192 B 长消息 IPv4 分片与 16 上下文并发重组
    - 自研流式 `afdx_mac_tx` / `afdx_mac_rx` 引擎（双网同拍前导码发送、独立 CRC-32 生成与 4 字节移位尾部剥离），支持用户数据发送、用户数据接收（VL 映射、BAG 整形、IC 序号完整性与 RM 双网冗余去重）、SNTPv4 (RTC) 时钟同步、SNMP v1/v2c 网络管理（Get/GetNext/Set/Trap）及 ARINC 615A（TFTP A3/A4）数据加载与卸载五项赛题功能。
    - 支持单条应用消息 1～8192 字节传输：发送侧按 `Lmax` 自动执行 IPv4 分片（首片携带 UDP 头，每片独立遵守 VL BAG 并递增 AFDX 序号 SN）；接收侧在逐帧 FCS/IP 校验与 IC/RM 裁决后，通过 16 个并发重组上下文（128 KiB 重组载荷 RAM）完成分片重组与整包非零 UDP 校验和验证。
 
@@ -35,26 +35,26 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 3. 单时钟域架构 + 协议引擎 `CE_DIV=2` 多周期约束，96,142 端点 0 违例
    - 全系统共用单一 `125 MHz` 时钟，不存在跨时钟域（CDC）路径；数据面（GMII 收发、应用流、配置口、RAM 读写、RTC 纳秒计时）保持每拍 1 字节（1000 Mbps 线速）全速运行。
-   - 控制面复杂协议状态机（`afdx_snmp_engine` / `afdx_615a_engine`）采用经形式化网表审计的 `CE_DIV=2` 时钟使能（253 组合法 16 ns 多周期约束，覆盖 2,755 个寄存器与 51,992 条内部路径，0 未覆盖/0 非法锥）。在 eLinx 3.0.7 官方布局布线后 96,142 个时序端点 0 违例（Setup WNS `+0.029 ns` 已扣除 `0.30 ns` 时钟不确定度，Hold WHS `+0.604 ns`）。
+   - 控制面复杂协议状态机（`afdx_snmp_engine` / `afdx_615a_engine`）采用经形式化网表审计的 `CE_DIV=2` 时钟使能（253 组合法 16 ns 多周期约束，覆盖 2,755 个寄存器与 51,992 条内部路径，0 未覆盖/0 个非法逻辑锥）。在 eLinx 3.0.7 官方布局布线后 96,142 个时序端点 0 违例（Setup 最差裕量 `+0.029 ns` 已扣除 `0.30 ns` 时钟不确定度，Hold 最差裕量 `+0.604 ns`）。
 
-4. 三级门禁验证：双端闭环故障注入 + Python 黄金参考模型 + 综合后 `.vqm` 网表逐字节签核
-   - 构建双端系统（`ES1` ↔ `ES2`）+ 四通道可编程损伤网络模型（固定/非对称延迟、偏斜、FCS 误码、丢包、乱序重放）+ 独立 Python 黄金参考模型（`afdx_ref.py` / `fragment_ref.py`）与综合后 `.vqm` 门级网表比对闭环。
-   - 评委验收 8 大套件累计 1,949,513,089 次硬件检查与独立检查点，0 错误；63 项回归测试 63/63 PASS；RTL 语句覆盖率 96.8%、分支覆盖率 94.6%。
+4. 三级签核：双端闭环故障注入 + Python 参考模型 + 综合后 `.vqm` 网表逐字节比对
+   - 构建双端系统（`ES1` ↔ `ES2`）+ 四通道可编程损伤网络模型（固定/非对称延迟、偏斜、FCS 误码、丢包、乱序重放）+ 独立 Python 参考模型（`afdx_ref.py` / `fragment_ref.py`）与综合后 `.vqm` 门级网表比对闭环。
+   - 评委验收 8 个用例累计 1,949,513,089 次硬件检查与独立检查点，0 错误；63 项回归测试 63/63 PASS；RTL 语句覆盖率 96.8%、分支覆盖率 94.6%。
 
 ---
 
 ### 核心技术指标与实测结果
 
-| 指标维度 | 赛题 / 答疑要求 | 实测（分片交付版 `AFDX_top`） |
+| 指标维度 | 赛题 / 答疑要求 | 实测（分片版 `AFDX_top`） |
 | :--- | :--- | :--- |
 | 目标器件与主时钟 | 中科亿海微 FPGA，千兆 GMII 125 MHz | `EQ6HL130-CSG484_H`，单时钟 125 MHz（8.000 ns），172 用户引脚 |
-| 布线后静态时序 (Post-Route STA) | 125 MHz 时序收敛（含 0.30 ns uncertainty） | Setup WNS `+0.029 ns` / Hold WHS `+0.604 ns`，`0 / 96,142` 端点失败 |
-| 综合后静态时序 (Post-Synth STA) | 8.000 ns 周期约束 | Setup WNS `+4.148 ns` / Hold WHS `+0.192 ns`，`0 / 164,745` 端点失败 |
+| 布线后静态时序 (Post-Route STA) | 125 MHz 时序收敛（含 0.30 ns uncertainty） | Setup 最差裕量 `+0.029 ns` / Hold 最差裕量 `+0.604 ns`，`0 / 96,142` 失败端点 |
+| 综合后静态时序 (Post-Synth STA) | 8.000 ns 周期约束 | Setup 最差裕量 `+4.148 ns` / Hold 最差裕量 `+0.192 ns`，`0 / 164,745` 失败端点 |
 | FPGA 资源占用（EQ6HL130） | 正常综合即可（R122 不限资源评分） | LUT 62,274（45.74%）· FF 35,597（26.14%）· CLB 10,230（75.13%）· M4K 814（67.83%）· DSP/PLL 0 |
 | 虚拟链路 (VL) 配置容量 | 多虚拟链路并发映射与整形 | 每端 128 条 TX VL + 4096 条 RX VL（32 Bank × 2048 项同步查找表） |
-| 单消息长度与 IPv4 分片重组 | 支持超 MTU 长报文分片与接收重组（R138/R139） | 单消息 1～8192 B，TX 自动 IPv4 分片，RX 16 个并发上下文（128 KiB RAM）顺序重组，逐字节一致 |
-| 单向有效载荷吞吐率 | 去重后有效载荷吞吐 ≥ 100 Mbps（R95-1/R120-1） | 63 VL 满载规格 741.384 Mbps/方向（双向 1.483 Gbps）；77 VL 定长满载 906.136 Mbps；81 VL 超规格 953.208 Mbps（后者为历史补充口径，见 [`performance.json`](docs/evidence/performance.json)） |
-| 端到端传输时延 | 单帧时延 ≤ 2000 µs（2 ms）（R96-1/R119） | 1471 B 满载帧核心流水 24.424 µs（3053 拍）；轻载 1 B 帧 1.056 µs；77 VL 满载最大 `L_entry_last` 48.600 µs（20 窗口最大 63.576 µs） |
+| 单消息长度与 IPv4 分片重组 | 支持超 MTU 长消息分片与接收重组（R138/R139） | 单消息 1～8192 B，TX 自动 IPv4 分片，RX 16 个并发上下文（128 KiB RAM）顺序重组，逐字节一致 |
+| 单向有效载荷吞吐率 | 去重后有效载荷吞吐 ≥ 100 Mbps（R95-1/R120-1） | 63 VL 满载规格 741.384 Mbps/方向（双向 1482.768 Mbps）；77 VL 定长满载 906.136 Mbps；81 VL 超规格 953.208 Mbps（后者为历史补充口径，见 [`performance.json`](docs/evidence/performance.json)） |
+| 端到端传输时延 | 单帧时延 ≤ 2000 µs（2 ms）（R96-1/R119） | `Lmax=1471 B` 帧核心流水线时延 24.424 µs（3053 拍）；载荷 1 B 帧 1.056 µs；77 VL 满载最大 `L_entry_last` 48.600 µs（20 窗口最大 63.576 µs） |
 | BAG 调度与接收抖动 | 同 VL 同帧长抖动受控（< 100 µs） | 63 VL 周期注入最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（全部分组 < 100 µs）；变长多 VL 最大 19.536 µs |
 | RTC (SNTPv4) 时钟同步精度 | 双向报文时间戳对时与偏差补偿 | 空载 / 普通流量 / 77 VL 满载下稳态同步误差均为 0 ns（测量条件：共用理想时钟、对称链路，经配置口读回比较） |
 | SNMP & ARINC 615A 服务 | SNMP 代理 + 615A 上传/下载 | SNMP v1/v2c `Get`/`GetNext`/`Set`/`Trap` 响应时间 12.664 µs；615A TFTP（A3/A4）8 KiB 镜像上传与 `MEMORY.BIN` 卸载 CRC-16 逐字节匹配 |
@@ -106,11 +106,11 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 </table>
 
 - 应用流预缓冲与跨页链式存储（`afdx_app_tx` / `afdx_app_payload` / `afdx_tx_buf` / `afdx_tx_free`）：
-  - 应用发送封装配有 32 KiB 弹性切片缓存（8 Bank × 4×1 KiB），支持最大 8192 B 超长报文无阻塞流式写入。
+  - 应用发送封装配有 32 KiB 弹性切片缓存（8 Bank × 4×1 KiB），支持最大 8192 B 超长消息无阻塞流式写入。
   - 核心发送缓冲采用 256 页 × 512 B（128 KiB）共享页 RAM，通过页链表 `tx_pnext` 与消息链表 `tx_mnext` 动态串联跨页报文；组帧器每读完一页立即通过 4 项回收 FIFO 将页号归还空闲池，消除静态大包分区带来的内存碎片。
-- 四级优先仲裁与 Lookahead 带宽整形（`afdx_tx_engine` / `afdx_tx_builder` / `afdx_mac_tx`）：
+- 四级优先仲裁与 Lookahead BAG 整形（`afdx_tx_engine` / `afdx_tx_builder` / `afdx_mac_tx`）：
   - 调度器围绕单一状态表写口执行 `START > ENQ > GRANT > SCAN` 确定性状态机，利用 512 拍前瞻准备窗口（Lookahead） 提前完成跨页预取，并在真实 GMII 帧起始时刻按 `t_start + BAG` 精确更新下次发送期限。
-  - 针对超过 `Lmax`（最高 8192 B）的长消息，发送控制将 128 个分片上下文拆分为三张同步 SDP 表（142 位不变元信息、27 位剩余长度/片偏移、页号/页内偏移），每片独立遵守 VL BAG 整形并递增 AFDX 序号，经双网 MAC 同拍输出。
+  - 针对超过 `Lmax`（最高 8192 B）的长消息，发送控制将 128 条 TX VL 的分片状态拆分为三张同步 SDP 表（142 位不变元信息、27 位剩余长度/片偏移、页号/页内偏移），每片独立遵守 VL BAG 整形并递增 AFDX 序号，经双网 MAC 同拍输出。
 
 ---
 
@@ -123,14 +123,14 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
       <br/><sub>图 6：接收 VLID 分组映射与载荷环寻址（<code>f11_rx</code>）</sub>
     </td>
     <td width="50%" align="center">
-      <img src="docs/design/fig/v2/f13_decide.png" width="100%" alt="双网接收 IC/RM 裁决与坏帧回滚"/>
-      <br/><sub>图 7：双网并发预写、IC/RM 裁决与试探指针回滚（<code>f13_decide</code>）</sub>
+      <img src="docs/design/fig/v2/f13_decide.png" width="100%" alt="双网接收 IC/RM 裁决与坏帧回退"/>
+      <br/><sub>图 7：双网并发预写、IC/RM 裁决与试写指针回退（<code>f13_decide</code>）</sub>
     </td>
   </tr>
 </table>
 
-- 边收边写与坏帧零残留回滚（`afdx_mac_rx` / `afdx_rx_parse`）：
-  - A、B 两网拥有各自独立的 `afdx_mac_rx` 与 `afdx_rx_parse` 及 4 KiB 接收载荷环形缓存。字节流到达时先按试探写指针 `trial_ptr` 实时写入环形 RAM；帧尾一旦检出 FCS 错误、长度不符、IP/UDP 头部异常或环满，立即将 `trial_ptr` 回退至已提交指针 `commit_ptr`，坏帧不在缓存中留下任何脏字节，仅完好帧生成轻量描述符送入后端。
+- 边收边写与坏帧零残留回退（`afdx_mac_rx` / `afdx_rx_parse`）：
+  - A、B 两网拥有各自独立的 `afdx_mac_rx` 与 `afdx_rx_parse` 及 4 KiB 接收载荷环形缓存。字节流到达时先按试写指针 `trial_ptr` 实时写入环形 RAM；帧尾一旦检出 FCS 错误、长度不符、IP/UDP 首部异常或环满，立即将 `trial_ptr` 回退至已提交指针 `commit_ptr`，坏帧不在缓存中留下任何脏字节，仅完好帧生成轻量描述符送入后端。
 - 4096 VL 映射与共享 IC/RM 裁决（`afdx_rx_engine`）：
   - 4096 条接收 VL 映射表（`rx_map`）划分为 32 Bank × 2048×13 bit 同步 RAM，将 16 位线上 VLID 快速索引至紧凑配置表 `rx_cfg` 与状态表 `rx_state`。
   - 共享接收引擎对双网描述符执行完整性检查（IC，支持复位/初态同步、连续号及丢 1 帧容忍）与 冗余管理（RM，基于配置 Skew 时间窗滤除晚到重复副本），确保同一业务帧无论哪路先到均恰好交付一次。
@@ -180,7 +180,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 | | `rtl/afdx_crc32_d8.v` | 单字节 8 位并行 Ethernet CRC-32 组合逻辑更新单元，供双网收发 MAC 复用。 |
 | | `rtl/afdx_svc.v` | 消息级仲裁与分发器：按整包粒度仲裁应用与服务发送，将接收到的 SNTP/SNMP/615A 报文路由至对应服务引擎。 |
 | 应用流封装层<br>*(5 个模块)* | `rtl/afdx_app_tx.v` | 应用发送适配：解析首 2 字节 VLID，反查发送 VL 配置，将最多 8192 B 应用消息写入应用载荷 RAM 并向核心提交。 |
-| | `rtl/afdx_app_payload.v` | 应用层 32 KiB 弹性切片存储（8 Bank × 4×1 KiB 切片流水），支撑 8192 B 长报文高速读写与跨时钟拍流水返回。 |
+| | `rtl/afdx_app_payload.v` | 应用层 32 KiB 弹性切片存储（8 Bank × 4×1 KiB 切片流水），支撑 8192 B 长消息高速读写与跨时钟拍流水返回。 |
 | | `rtl/afdx_app_read.v` | 应用发送预取器：从 `afdx_app_payload` 连续预取字节流并按握手时序送入核心发送缓冲。 |
 | | `rtl/afdx_app_rx.v` | 应用接收适配：接收核心交付的有效载荷，反查对应 16 位 VLID 并拼接在载荷首部连续输出至 `rx_data`。 |
 | | `rtl/afdx_app_map.v` | 同步保存接收 VL 索引与 16 位 VLID 的反向映射 RAM。 |
@@ -190,16 +190,16 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 | | `rtl/afdx_tx_engine.v` | 发送调度与分片控制引擎：轮询 128 条 TX VL，按 BAG 与 512 拍 Lookahead 窗口授权发送，维护分片进度与 AFDX SN。 |
 | | `rtl/afdx_tx_builder.v` | 协议组帧与分片器：按授权读取页池载荷，组装 Ethernet/IPv4/UDP 首片与后续分片帧头、短帧补零及帧尾 SN 字节流。 |
 | | `rtl/afdx_mac_tx.v` | 自研千兆发送 MAC：每拍输出 1 字节 GMII 流，同拍驱动 A/B 网前导码与 SFD，独立计算双网 FCS 并強制执行 12 拍帧间隔（IFG）。 |
-| | `rtl/afdx_mac_rx.v` | 自研千兆接收 MAC：校验前导码、帧长与 FCS，通过 4 字节滑动窗口剥离 FCS 并输出净荷字节流与帧状态脉冲。 |
+| | `rtl/afdx_mac_rx.v` | 自研千兆接收 MAC：校验前导码、帧长与 FCS，通过 4 字节滑动窗口剥离 FCS 并输出载荷字节流与帧状态脉冲。 |
 | 接收核心与分片重组<br>*(8 个模块)* | `rtl/afdx_rx_core.v` | 接收子系统顶层：连接双网接收 MAC、双路并发解析器、共享裁决引擎、16 上下文重组器与交付模块。 |
-| | `rtl/afdx_rx_parse.v` | 帧头解析与预写回滚器：校验 MAC/IPv4/UDP 帧头并将载荷预写入 4 KiB 接收环；坏帧回退写指针，完好帧输出描述符。 |
+| | `rtl/afdx_rx_parse.v` | 帧头解析与预写回退器：校验 MAC/IPv4/UDP 帧头并将载荷预写入 4 KiB 接收环；坏帧回退写指针，完好帧输出描述符。 |
 | | `rtl/afdx_rx_engine.v` | 共享接收裁决引擎：查询 4096 项 VL 映射表，执行 IC 序号完整性检查与 RM 双网冗余去重，协调分片重组准入与单帧交付。 |
 | | `rtl/afdx_rx_reassembly.v` | 16 上下文 IPv4 分片重组顶层：协调两个独立 8 行重组 Bank，完成分片槽位预留、环形缓存复制、超时老化与整包 UDP 校验。 |
 | | `rtl/afdx_rx_reassembly_bank.v` | 8 行重组上下文状态控制器：维护单 Bank 内 8 个重组上下文的匹配键、期待片偏移、总长、UDP 校验和累加与超时状态。 |
 | | `rtl/afdx_rx_reassembly_payload.v` | 重组载荷大容量存储器：管理 8 个 8192 B 槽位（单 Bank 64 KiB，双 Bank 共 128 KiB），采用四路双位切片限制 RAM 扇出。 |
 | | `rtl/afdx_rx_reassembly_ram.v` | 重组上下文专用同步 SDP M4K 存储器封装（支持写地址提前一拍本地寄存以优化布线时序）。 |
 | | `rtl/afdx_rx_deliver.v` | 接收交付读取器：根据已接纳描述符从 A/B 接收环或重组槽位预取有效载荷，向应用层或服务层连续无反压交付并释放空间。 |
-| 片上机载网络服务<br>*(7 个模块)* | `rtl/afdx_rtc.v` | RTC 硬件时钟与 SNTPv4 引擎：维护秒/纳秒计数器，收发首字节拍硬件打标，按字节偏移采集字段完成双向对时与超时重传。 |
+| 片上机载网络服务<br>*(7 个模块)* | `rtl/afdx_rtc.v` | RTC 硬件时钟与 SNTPv4 引擎：维护秒/纳秒计数器，收发首字节拍硬件打时间戳，按字节偏移采集字段完成双向对时与超时重传。 |
 | | `rtl/afdx_ntp_fraction.v` | 纳秒与 NTP 32 位二进制小数双向迭代换算器（移位加减架构，零 DSP 占用）。 |
 | | `rtl/afdx_snmp.v` | SNMP 全速接口壳：全速捕获 UDP 161 请求报文、桥接配置总线与 MIB 寄存器、缓存响应报文并驱动发送。 |
 | | `rtl/afdx_snmp_engine.v` | SNMP 协议处理引擎（`CE_DIV=2`）：ASN.1 BER 编解码，处理 v1/v2c 单变量 `Get`、`GetNext`、`Set` 与 `v2c Trap`。 |
@@ -230,7 +230,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 ---
 
-### 3.2 双端闭环验证平台、三级签核门禁与实测协议波形
+### 3.2 双端闭环验证平台、三级签核流程与实测协议波形
 
 <table>
   <tr>
@@ -239,8 +239,8 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
       <br/><sub>图 13：双端系统（ES1 ↔ ES2）四通道可编程损伤网络与 Golden 协同验证平台（<code>f18_tb</code>）</sub>
     </td>
     <td width="48%" align="center">
-      <img src="docs/test/fig/v2/t02_criteria.png" width="100%" alt="三级门禁验证与签核流程"/>
-      <br/><sub>图 14：三级验证签核门禁（硬件在线自检 → Python 黄金模型核对 → VQM 门级网表逐字节比对，<code>t02_criteria</code>）</sub>
+      <img src="docs/test/fig/v2/t02_criteria.png" width="100%" alt="三级签核流程"/>
+      <br/><sub>图 14：三级签核流程（硬件在线自检 → Python 参考模型核对 → VQM 门级网表逐字节比对，<code>t02_criteria</code>）</sub>
     </td>
   </tr>
 </table>
@@ -255,7 +255,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
     </td>
     <td width="50%" align="center">
       <img src="sim/wave/png/frag_1.png" width="100%" alt="8192 B 六分片发送与重组交付全景"/>
-      <br/><sub>图 16：8192 B 长报文 6 分片发送与重组一次交付（<code>frag_1.png</code>，474.8–5787.1 µs）。VL <code>0x0103</code> 单次输入 8192 B，A/B 网各按 1 ms BAG 发出 6 个分片帧（片偏移 0/1472/2944/4416/5888/7360 B），末片到达后接收端一次性完整交付 <code>rx_bytes=8194</code>（2 B VLID + 8192 B 载荷）。</sub>
+      <br/><sub>图 16：8192 B 长消息 6 分片发送与重组一次交付（<code>frag_1.png</code>，474.8–5787.1 µs）。VL <code>0x0103</code> 单次输入 8192 B，A/B 网各按 1 ms BAG 发出 6 个分片帧（片偏移 0/1472/2944/4416/5888/7360 B），末片到达后接收端一次性完整交付 <code>rx_bytes=8194</code>（2 B VLID + 8192 B 载荷）。</sub>
     </td>
   </tr>
   <tr>
@@ -270,7 +270,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="sim/wave/png/tx_bag.png" width="100%" alt="BAG 带宽间隔调度波形"/>
+      <img src="sim/wave/png/tx_bag.png" width="100%" alt="BAG 带宽分配间隔调度波形"/>
       <br/><sub>图 19：同一 VL 严格按 800 µs（100,000 拍）BAG 间隔发送并递增 SN（<code>tx_bag.png</code>，17.132 µs → 817.132 µs）</sub>
     </td>
     <td width="50%" align="center">
@@ -293,7 +293,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 | [`tx_dual_2.png`](sim/wave/png/tx_dual_2.png) | `688.564 – 688.892` | 放大双网帧起点（前导码 `55`）与帧头字节；两网仅源 MAC 接口标识不同（A 网 `20`、B 网 `40`）。 |
 | [`rx_redundancy_1.png`](sim/wave/png/rx_redundancy_1.png) | `3016.794 – 3017.104` | 先到达的 A 网副本通过 IC/RM 裁决并交付应用（`app_rx_net = 0`）；光标 `A_delivered` `3016.844 µs`。 |
 | [`rx_redundancy_2.png`](sim/wave/png/rx_redundancy_2.png) | `3032.408 – 3032.668` | 晚到的 B 网副本被冗余管理丢弃（产生 `ev_rm_drop` 脉冲）；光标 `B_duplicate` `3032.628 µs`，与 A 网相隔 `15.784 µs`。 |
-| [`rx_fcs_error_1.png`](sim/wave/png/rx_fcs_error_1.png) | `798.620 – 799.920` | A、B 两网同时收到一帧，A 网副本因 FCS 误码被拒收并回滚，错误计数 `count_a_fcs` 由 `0` 加为 `1`（光标 `799.620 µs`）。 |
+| [`rx_fcs_error_1.png`](sim/wave/png/rx_fcs_error_1.png) | `798.620 – 799.920` | A、B 两网同时收到一帧，A 网副本因 FCS 误码被拒收并回退，错误计数 `count_a_fcs` 由 `0` 加为 `1`（光标 `799.620 µs`）。 |
 | [`rx_fcs_error_2.png`](sim/wave/png/rx_fcs_error_2.png) | `799.400 – 799.720` | 放大受损帧尾部：帧结束后产生 `ev_a = 02`（A 网 FCS 错误脉冲），紧随其后 `count_a_fcs` 递增为 `1`。 |
 | [`rx_fcs_error_3.png`](sim/wave/png/rx_fcs_error_3.png) | `973.396 – 973.436` | 主机配置总线对寄存器地址 `0x49` 发起读请求（`973.404 µs`），两拍后（`973.420 µs`）准确读回计数值 `1`。 |
 | [`tx_bag.png`](sim/wave/png/tx_bag.png) | `16.132 – 819.132` | 同一 VL 连续两帧起点 `Frame_1_start = 17.132 µs`、`Frame_2_start = 817.132 µs`，严格间隔 `800 µs`（`100,000` 拍）。 |
@@ -310,7 +310,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 ---
 
-### 3.3 评委验收 8 大套件与 63 VL 满载 / 压力边界实测
+### 3.3 评委验收 8 个用例与 63 VL 满载 / 压力边界实测
 
 <table>
   <tr>
@@ -320,14 +320,14 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
     </td>
     <td width="50%" align="center">
       <img src="docs/test/fig/v2/t21_lat.png" width="100%" alt="不同帧长下的端到端时延与流水拆解"/>
-      <br/><sub>图 22：不同帧长端到端时延及 1471 B 满载帧 3053 拍（24.424 µs）流水拆解（<code>t21_lat</code>）</sub>
+      <br/><sub>图 22：不同帧长端到端时延及 `Lmax=1471 B` 帧 3053 拍（24.424 µs）流水线拆解（<code>t21_lat</code>）</sub>
     </td>
   </tr>
 </table>
 
-#### 评委一键验收入口 (`do sim/run_judge.do`) 8 大套件实测汇总
+#### 评委一键验收入口 (`do sim/run_judge.do`) 8 个验收用例实测汇总
 
-分片交付版运行 `sim/run_judge.do` 全部 8 个验收套件 100% PASS（累计 1,949,513,089 次硬件检查，0 错误，0 RAM 冲突）。完整 METRIC / REQUIREMENT / BASELINE 输出记录于 [`sim/reference/judge_result_frag1030.txt`](sim/reference/judge_result_frag1030.txt)，63 项并行回归证据见 [`docs/evidence/frag1030_delivery/regression.json`](docs/evidence/frag1030_delivery/regression.json)。
+分片版运行 `sim/run_judge.do` 全部 8 个验收用例 100% PASS（累计 1,949,513,089 次硬件检查，0 错误，0 RAM 冲突）。完整 METRIC / REQUIREMENT / BASELINE 输出记录于 [`sim/reference/judge_result_frag1030.txt`](sim/reference/judge_result_frag1030.txt)，63 项并行回归证据见 [`docs/evidence/frag1030_delivery/regression.json`](docs/evidence/frag1030_delivery/regression.json)。
 
 | 评委验收用例 | 硬件检查点数 (Checks) | 实测耗时 (s) | 核心考核内容与实测结论 | 状态 |
 | :--- | ---: | ---: | :--- | :---: |
@@ -361,7 +361,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 | 覆盖率维度 (Category) | 已命中 / 总计 (Hit / Total) | 未覆盖数 | 实测覆盖率 | 说明 |
 | :--- | :---: | :---: | :---: | :--- |
 | 语句覆盖率 (Statement) | `12,416 / 12,824` | `408` | 96.8% | 主数据通路、分片重组与三大服务引擎核心语句全覆盖 |
-| 分支覆盖率 (Branch) | `7,230 / 7,642` | `412` | 94.6% | 含正常协议分支、故障注入、回滚、超时与边界反例 |
+| 分支覆盖率 (Branch) | `7,230 / 7,642` | `412` | 94.6% | 含正常协议分支、故障注入、回退、超时与边界反例 |
 | FSM 状态覆盖率 (State) | `115 / 137` | `22` | 83.9% | 覆盖全部正常协议状态与已登记异常恢复状态 |
 | 表达式覆盖率 (Expression) | `3,242 / 3,987` | `745` | 81.3% | 组合逻辑子项真值覆盖 |
 | 条件覆盖率 (Condition) | `1,306 / 1,766` | `460` | 74.0% | 多条件分支独立布尔分量覆盖 |
@@ -374,7 +374,7 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 时序数字与网表按 SHA256 绑定：分片版布线网表与 F1 历史基线网表（`3cd8f5f8…`、`96d14e2f…`）分别对照各自的时序报告，完整摘要见 [`docs/FACTS.md`](docs/FACTS.md)。
 
-| 评估项目 | 官方实测数值（分片交付版） | 器件总容量 / 约束 | 占用率 / 判定 |
+| 评估项目 | 官方实测数值（分片版） | 器件总容量 / 约束 | 占用率 / 判定 |
 | :--- | ---: | ---: | :---: |
 | 查找表 (LUT) | `62,274` | `136,160` | 45.74% |
 | 触发器 (FF) | `35,597` | `136,160` | 26.14% |
@@ -442,11 +442,11 @@ ARINC 664 Part 7 机载确定性网络端系统，单器件、单时钟域实现
 
 在 ModelSim 的 `Transcript` 窗口先切换至工程根目录：`cd {你的工程根目录路径}`，随后可任选以下入口运行：
 
-#### 1) 运行评委 8 大验收套件 (`sim/run_judge.do`)
+#### 1) 运行评委 8 个验收用例 (`sim/run_judge.do`)
 ```tcl
 do sim/run_judge.do
 ```
-- 预期结果：依次运行 `services`、`capacity`、`snmp`、`burst77`、`burst81`、`rtc`、`performance`、`perf_var` 八个套件，每项打印 `JUDGE CASE PASS`，末尾打印 `JUDGE ENTRY PASS cases=8`，汇总写入 `out/modelsim/judge_<时间>_<进程>/result.txt`。
+- 预期结果：依次运行 `services`、`capacity`、`snmp`、`burst77`、`burst81`、`rtc`、`performance`、`perf_var` 八个用例，每项打印 `JUDGE CASE PASS`，末尾打印 `JUDGE ENTRY PASS cases=8`，汇总写入 `out/modelsim/judge_<时间>_<进程>/result.txt`。
 - 单项快速筛选：若只需单独跑某一项（如变长性能 `perf_var`），可在 ModelSim 中执行：
   ```tcl
   set ::env(AFDX_JUDGE_CASE) perf_var
@@ -570,7 +570,7 @@ afdx/
 │   ├── afdx_app_*.v            #   ├── 应用层流封装、VLID 映射与 32 KiB 弹性切片缓存（5 个文件）
 │   ├── afdx_tx_*.v             #   ├── 发送核心：128 KiB 共享页池、Lookahead BAG 调度与分片组帧（5 个文件）
 │   ├── afdx_mac_tx.v / rx.v    #   ├── 自研 A/B 双网千兆 GMII 发送与接收 MAC（2 个文件）
-│   ├── afdx_rx_*.v             #   ├── 接收核心：双网预写回滚环、IC/RM 裁决与 16 上下文 IPv4 重组（8 个文件）
+│   ├── afdx_rx_*.v             #   ├── 接收核心：双网预写回退环、IC/RM 裁决与 16 上下文 IPv4 重组（8 个文件）
 │   ├── afdx_rtc.v / ntp_*.v    #   ├── SNTPv4 硬件时间戳对时与纳秒-NTP 小数迭代换算（2 个文件）
 │   ├── afdx_snmp*.v            #   ├── SNMP v1/v2c 代理与 ASN.1 BER 编解码引擎（2 个文件）
 │   ├── afdx_615a*.v            #   ├── ARINC 615A (TFTP A3/A4) 数据加载与卸载引擎（2 个文件）
@@ -578,21 +578,21 @@ afdx/
 ├── tb/                         # 自检测试平台（共 58 个顶层 Testbench 与 20 个公共 VIP 组件）
 │   ├── tb_elinx.v              #   ├── eLinx GUI 一键双端互发自检平台（9,238 checks）
 │   ├── tb_net_services.v       #   ├── 赛题五功能全流程联测平台
-│   ├── tb_fragmentation.v      #   ├── 8192 B 长报文 IPv4 分片、乱序/丢失拒收与 16 上下文重组专项平台
+│   ├── tb_fragmentation.v      #   ├── 8192 B 长消息 IPv4 分片、乱序/丢失拒收与 16 上下文重组专项平台
 │   ├── tb_sys_perf*.v          #   ├── 千兆定长满载（gbe77）与变长多 VL（perf_var）吞吐/时延/抖动测试平台
 │   └── lib/                    #   └── 四通道可编程损伤链路（link_model.v）、端系统激励与在线监视器
 ├── sim/                        # ModelSim 仿真脚本、测试清单、固定向量与实测波形库
-│   ├── run_judge.do            #   ├── 评委 8 大验收套件一键运行脚本
+│   ├── run_judge.do            #   ├── 评委 8 个验收用例一键运行脚本
 │   ├── run_app.do              #   ├── 应用层纯载荷（VLID + 数据）激励自检脚本
 │   ├── regress.ps1             #   ├── PowerShell 批量回归与覆盖率采集入口
 │   ├── vectors/                #   ├── 固定测试向量与默认应用层激励（vl_config.txt / stimulus.txt）
 │   ├── reference/              #   ├── 评委入口标准参考输出（judge_result_frag1030.txt）与基线记录
 │   └── wave/                   #   └── 交互式波形重放脚本（*.do）与 18 张实测 PNG 截图（wave/png/）
-├── tools/                      # Python 黄金参考模型、EDA 自动化构建与独立签核工具链
+├── tools/                      # Python 参考模型、EDA 自动化构建与独立签核工具链
 │   ├── build_1030.py           #   ├── 分片版一键官方综合与固定簇布局布线脚本
 │   ├── par_regress.py          #   ├── 多进程 ModelSim 并行回归调度器（支持 63 项快速回归）
-│   ├── afdx_ref.py             #   ├── 端到端 AFDX 协议栈黄金参考模型（含 tx_ref / rx_ref / net_services_ref）
-│   ├── fragment_ref.py         #   ├── IPv4 分片与 16 上下文重组独立黄金参考模型与检查器
+│   ├── afdx_ref.py             #   ├── 端到端 AFDX 协议栈参考模型（含 tx_ref / rx_ref / net_services_ref）
+│   ├── fragment_ref.py         #   ├── IPv4 分片与 16 上下文重组独立参考模型与检查器
 │   ├── check_multicycle.py     #   ├── CE_DIV=2 多周期约束形式化网表逻辑锥与真值表审计工具
 │   └── report_routed_timing.py #   └── 布线后全端点（96,142 端点 / 31.9 万路径）静态时序独立复核脚本
 ├── elinx/                      # 中科亿海微 eLinx 3.0.7 工程与物理/时序约束
