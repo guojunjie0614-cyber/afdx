@@ -1,26 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330">
-<rect width="1200" height="330" fill="#FFFFFF"/>
-<text x="32.0" y="36.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="14" font-weight="400" fill="#667085" text-anchor="start">占器件总容量 / %</text>
-<text x="240.0" y="66.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="13" font-weight="400" fill="#667085" text-anchor="middle">0</text>
-<text x="1000.0" y="66.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="13" font-weight="400" fill="#667085" text-anchor="middle">100</text>
-<text x="206.0" y="106.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="400" fill="#17202A" text-anchor="end">查找表  LUT</text>
-<rect x="240" y="94" width="760" height="12" fill="#E9EDF2"/>
-<rect x="240" y="94" width="347.62" height="12" fill="#2457A6"/>
-<text x="1028.0" y="106.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" fill="#17202A" text-anchor="start">45.74%</text>
-<text x="206.0" y="150.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="400" fill="#17202A" text-anchor="end">触发器  FF</text>
-<rect x="240" y="138" width="760" height="12" fill="#E9EDF2"/>
-<rect x="240" y="138" width="198.66" height="12" fill="#2457A6"/>
-<text x="1028.0" y="150.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" fill="#17202A" text-anchor="start">26.14%</text>
-<text x="206.0" y="194.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="400" fill="#17202A" text-anchor="end">逻辑块  CLB</text>
-<rect x="240" y="182" width="760" height="12" fill="#E9EDF2"/>
-<rect x="240" y="182" width="570.99" height="12" fill="#2457A6"/>
-<text x="1028.0" y="194.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" fill="#17202A" text-anchor="start">75.13%</text>
-<text x="206.0" y="238.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="400" fill="#17202A" text-anchor="end">片上存储  M4K</text>
-<rect x="240" y="226" width="760" height="12" fill="#E9EDF2"/>
-<rect x="240" y="226" width="515.51" height="12" fill="#2457A6"/>
-<text x="1028.0" y="238.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" fill="#17202A" text-anchor="start">67.83%</text>
-<text x="206.0" y="282.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="400" fill="#17202A" text-anchor="end">用户 I/O</text>
-<rect x="240" y="270" width="760" height="12" fill="#E9EDF2"/>
-<rect x="240" y="270" width="385.62" height="12" fill="#2457A6"/>
-<text x="1028.0" y="282.0" font-family="Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" fill="#17202A" text-anchor="start">50.74%</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="346" viewBox="0 0 1200 346">
+<rect width="1200" height="346" fill="#FFFFFF"/>
+<rect x="0.75" y="0.75" width="1198.5" height="344.5" rx="8" fill="none" stroke="#E2E8F0" stroke-width="1.5"/>
+<text x="32.0" y="38.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="17" font-weight="700" fill="#17202A" text-anchor="start">EQ6HL130-CSG484_H 布线后资源占用</text>
+<text x="1168.0" y="38.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="500" fill="#64748B" text-anchor="end">专用 DSP：0 / 48 (0.00%) · PLL：0 / 8 (0.00%)</text>
+<line x1="32" y1="54" x2="1168" y2="54" stroke="#E2E8F0" stroke-width="1"/>
+<text x="228.0" y="80.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#64748B" text-anchor="middle">0%</text>
+<text x="554.0" y="80.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#64748B" text-anchor="middle">50%</text>
+<text x="880.0" y="80.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#64748B" text-anchor="middle">100%</text>
+<line x1="554.0" y1="88" x2="554.0" y2="316" stroke="#E2E6EA" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="204.0" y="117.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#17202A" text-anchor="end">查找表  LUT</text>
+<rect x="228" y="104" width="652" height="14" rx="3" fill="#EEF2F6"/>
+<rect x="228" y="104" width="298.22" height="14" rx="3" fill="#1D4ED8"/>
+<text x="904.0" y="117.0" font-family="Menlo, Consolas, Monaco, monospace" font-size="14.5" font-weight="600" fill="#17202A" text-anchor="start">62,274 / 136,160  (45.74%)</text>
+<text x="204.0" y="161.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#17202A" text-anchor="end">触发器  FF</text>
+<rect x="228" y="148" width="652" height="14" rx="3" fill="#EEF2F6"/>
+<rect x="228" y="148" width="170.43" height="14" rx="3" fill="#1D4ED8"/>
+<text x="904.0" y="161.0" font-family="Menlo, Consolas, Monaco, monospace" font-size="14.5" font-weight="600" fill="#17202A" text-anchor="start">35,597 / 136,160  (26.14%)</text>
+<text x="204.0" y="205.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#17202A" text-anchor="end">逻辑块  CLB</text>
+<rect x="228" y="192" width="652" height="14" rx="3" fill="#EEF2F6"/>
+<rect x="228" y="192" width="489.85" height="14" rx="3" fill="#1E40AF"/>
+<text x="904.0" y="205.0" font-family="Menlo, Consolas, Monaco, monospace" font-size="14.5" font-weight="600" fill="#17202A" text-anchor="start">10,230 / 13,616  (75.13%)</text>
+<text x="204.0" y="249.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#17202A" text-anchor="end">片上存储  M4K</text>
+<rect x="228" y="236" width="652" height="14" rx="3" fill="#EEF2F6"/>
+<rect x="228" y="236" width="442.25" height="14" rx="3" fill="#1D4ED8"/>
+<text x="904.0" y="249.0" font-family="Menlo, Consolas, Monaco, monospace" font-size="14.5" font-weight="600" fill="#17202A" text-anchor="start">814 / 1,200  (67.83%)</text>
+<text x="204.0" y="293.0" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#17202A" text-anchor="end">用户引脚  I/O</text>
+<rect x="228" y="280" width="652" height="14" rx="3" fill="#EEF2F6"/>
+<rect x="228" y="280" width="330.82" height="14" rx="3" fill="#1D4ED8"/>
+<text x="904.0" y="293.0" font-family="Menlo, Consolas, Monaco, monospace" font-size="14.5" font-weight="600" fill="#17202A" text-anchor="start">172 / 339  (50.74%)</text>
 </svg>
