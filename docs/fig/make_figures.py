@@ -1,7 +1,6 @@
-"""Generate the README overview, resource, and latency figures as SVG.
+"""Generate the README resource and latency figures as SVG.
 
 Render PNGs at 2x with:
-    rsvg-convert -z 2 -b white overview.svg -o overview.png
     rsvg-convert -z 2 -b white resource.svg -o resource.png
     rsvg-convert -z 2 -b white latency.svg -o latency.png
 """
@@ -12,7 +11,6 @@ from pathlib import Path
 INK = "#17202A"
 SLATE = "#334155"
 MUTED = "#64748B"
-BORDER = "#CBD5E1"
 OUTER_BORDER = "#E2E8F0"
 GRID = "#E2E6EA"
 TRACK = "#EEF2F6"
@@ -20,13 +18,6 @@ AXIS = "#94A3B8"
 ACCENT = "#1D4ED8"
 ACCENT_SOFT = "#EFF6FF"
 ACCENT_BORDER = "#93C5FD"
-TEAL = "#0F766E"
-TEAL_SOFT = "#F0FDFA"
-TEAL_BORDER = "#5EEAD4"
-AMBER = "#B45309"
-AMBER_SOFT = "#FFFBEB"
-AMBER_BORDER = "#FCD34D"
-CARD_BG = "#F8FAFC"
 FONT = "PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif"
 MONO = "Menlo, Consolas, Monaco, monospace"
 OUT = Path(__file__).resolve().parent
@@ -41,24 +32,11 @@ def text(x, y, value, size=14, color=INK, anchor="start", weight=400, mono=False
     )
 
 
-def box(x, y, w, h, fill="#FFFFFF", stroke=BORDER, sw=1.5, rx=8):
+def box(x, y, w, h, fill="#FFFFFF", stroke=ACCENT_BORDER, sw=1.5, rx=8):
     return (
         f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
         f'rx="{rx}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>'
     )
-
-
-def arrow_h(x1, y, x2, color=SLATE, sw=2.0, bidir=False):
-    parts = [f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{x2:.1f}" y2="{y:.1f}" stroke="{color}" stroke-width="{sw}"/>']
-    if x2 >= x1:
-        parts.append(f'<polygon points="{x2:.1f},{y:.1f} {x2-8:.1f},{y-4.5:.1f} {x2-8:.1f},{y+4.5:.1f}" fill="{color}"/>')
-        if bidir:
-            parts.append(f'<polygon points="{x1:.1f},{y:.1f} {x1+8:.1f},{y-4.5:.1f} {x1+8:.1f},{y+4.5:.1f}" fill="{color}"/>')
-    else:
-        parts.append(f'<polygon points="{x2:.1f},{y:.1f} {x2+8:.1f},{y-4.5:.1f} {x2+8:.1f},{y+4.5:.1f}" fill="{color}"/>')
-        if bidir:
-            parts.append(f'<polygon points="{x1:.1f},{y:.1f} {x1-8:.1f},{y-4.5:.1f} {x1-8:.1f},{y+4.5:.1f}" fill="{color}"/>')
-    return "\n".join(parts)
 
 
 def document(width, height, body):
@@ -71,112 +49,6 @@ def document(width, height, body):
         + "\n".join(body)
         + "\n</svg>\n"
     )
-
-
-def overview():
-    width, height = 1200, 504
-    parts = [
-        text(32, 40, "AFDX_top 端系统硬件边界与核心架构总览", 20, INK, "start", 700),
-        text(1168, 40, "EQ6HL130-CSG484_H · 单 125 MHz 时钟域 (8.000 ns) · 172 用户引脚", 13, MUTED, "end", 500),
-        f'<line x1="32" y1="56" x2="1168" y2="56" stroke="{OUTER_BORDER}" stroke-width="1.2"/>',
-    ]
-
-    # Left column: User & Host interfaces (x=28..312, width=284)
-    parts += [
-        box(28, 82, 284, 118, ACCENT_SOFT, ACCENT_BORDER, 1.5, 8),
-        text(44, 108, "应用发送流 (tx_*)", 15, ACCENT, "start", 700),
-        text(44, 134, "tx_data[7:0] / tx_valid / tx_ready", 11.2, SLATE, "start", 500, True),
-        text(44, 158, "• 格式: [2 B 大端 VLID] + [1~8192 B]", 12.2, INK),
-        text(44, 180, "• 契约: 帧内连续，帧间至少空 1 拍", 12.2, MUTED),
-
-        box(28, 218, 284, 118, TEAL_SOFT, TEAL_BORDER, 1.5, 8),
-        text(44, 244, "应用接收流 (rx_*)", 15, TEAL, "start", 700),
-        text(44, 270, "rx_data[7:0] / rx_valid（无反压）", 11.2, SLATE, "start", 500, True),
-        text(44, 294, "• 格式: [2 B 大端 VLID] + [完整载荷]", 12.2, INK),
-        text(44, 316, "• 保证: 冗余去重、重组后恰好交付一次", 12.2, MUTED),
-
-        box(28, 354, 284, 118, CARD_BG, BORDER, 1.5, 8),
-        text(44, 380, "主机配置与监控口", 15, INK, "start", 700),
-        text(44, 406, "cfg_wr/rd · addr[17:0] · 32b data", 11.2, SLATE, "start", 500, True),
-        text(44, 430, "• 读写 TX/RX VL 表与 MIB 统计", 12.2, INK),
-        text(44, 452, "ev_tx/a/b · rm_drop/deliver/app", 11.2, MUTED, "start", 400, True),
-    ]
-
-    # Center container: AFDX_top (x=352..896, width=544)
-    parts += [
-        box(352, 74, 544, 406, "#FFFFFF", SLATE, 2.0, 10),
-        text(372, 102, "AFDX_top（可综合 Verilog-2001 · 34 模块 · 无外部 CPU / 商业 IP）", 14.2, INK, "start", 700),
-
-        # App adaptation layer
-        box(372, 118, 504, 52, CARD_BG, BORDER, 1.2, 6),
-        text(624, 140, "应用流适配层 (afdx_app_tx / afdx_app_rx)", 13.5, INK, "middle", 700),
-        text(624, 159, "32 KiB 弹性切片缓存 · 128 TX VLID 并行反查 · 4096 RX VLID 反向映射", 12, MUTED, "middle"),
-
-        # TX core
-        box(372, 184, 244, 126, ACCENT_SOFT, ACCENT_BORDER, 1.4, 8),
-        text(494, 208, "发送核心 (afdx_tx_core)", 13.8, ACCENT, "middle", 700),
-        text(384, 232, "• 128 条 TX VL · Lookahead BAG", 11.8, INK),
-        text(384, 254, "• 256×512 B (128 KiB) 链式页池", 11.8, INK),
-        text(384, 276, "• 自动 IPv4 分片 (至 8192 B) + SN", 11.8, INK),
-        text(384, 298, "• 仲裁: START > ENQ > GRANT > SCAN", 11.2, MUTED),
-
-        # RX core
-        box(632, 184, 244, 126, TEAL_SOFT, TEAL_BORDER, 1.4, 8),
-        text(754, 208, "接收核心 (afdx_rx_core)", 13.8, TEAL, "middle", 700),
-        text(644, 232, "• 4096 VL 映射 (32 Bank 同步 RAM)", 11.8, INK),
-        text(644, 254, "• 双 4 KiB 试写环 · 坏帧零残留回退", 11.8, INK),
-        text(644, 276, "• 共享 IC 序号检查 + RM Skew 去重", 11.8, INK),
-        text(644, 298, "• 16 上下文 (128 KiB) IPv4 重组", 11.2, MUTED),
-
-        # On-chip network services
-        box(372, 324, 504, 86, AMBER_SOFT, AMBER_BORDER, 1.4, 8),
-        text(384, 345, "片上机载网络服务 (afdx_svc 整包仲裁 · 控制面引擎 CE_DIV=2 16 ns 多周期)", 12.5, AMBER, "start", 700),
-
-        box(384, 356, 152, 44, "#FFFFFF", AMBER_BORDER, 1.0, 5),
-        text(460, 375, "RTC (SNTPv4)", 12.2, INK, "middle", 700),
-        text(460, 392, "硬件打标 · 0 ns 误差", 11.2, MUTED, "middle"),
-
-        box(548, 356, 152, 44, "#FFFFFF", AMBER_BORDER, 1.0, 5),
-        text(624, 375, "SNMP v1/v2c", 12.2, INK, "middle", 700),
-        text(624, 392, "BER 编解码 · MIB/Trap", 11.2, MUTED, "middle"),
-
-        box(712, 356, 152, 44, "#FFFFFF", AMBER_BORDER, 1.0, 5),
-        text(788, 375, "ARINC 615A", 12.2, INK, "middle", 700),
-        text(788, 392, "TFTP A3/A4 · 8 KiB", 11.2, MUTED, "middle"),
-
-        # Dual MAC bottom strip
-        box(372, 422, 504, 44, CARD_BG, SLATE, 1.4, 6),
-        text(624, 441, "自研双网千兆 MAC (afdx_mac_tx / afdx_mac_rx)", 13, INK, "middle", 700),
-        text(624, 458, "同拍前导码发送 · 独立 CRC-32 校验 · 4 字节滑动剥离 · 12 拍 IFG", 11.8, MUTED, "middle"),
-    ]
-
-    # Right column: Dual GMII (x=936..1172, width=236)
-    parts += [
-        box(936, 118, 236, 148, ACCENT_SOFT, ACCENT_BORDER, 1.5, 8),
-        text(952, 146, "A 网千兆接口 (GMII A)", 14.5, ACCENT, "start", 700),
-        text(952, 174, "TX: gmii_txd_a / tx_en_a", 11.2, SLATE, "start", 500, True),
-        text(952, 196, "RX: gmii_rxd_a / rx_dv_a", 11.2, SLATE, "start", 500, True),
-        text(952, 224, "• 1000 Mbps（每拍 1 字节）", 12.2, INK),
-        text(952, 246, "• 独立源 MAC 标识与 FCS", 12.2, MUTED),
-
-        box(936, 290, 236, 148, TEAL_SOFT, TEAL_BORDER, 1.5, 8),
-        text(952, 318, "B 网千兆接口 (GMII B)", 14.5, TEAL, "start", 700),
-        text(952, 346, "TX: gmii_txd_b / tx_en_b", 11.2, SLATE, "start", 500, True),
-        text(952, 368, "RX: gmii_rxd_b / rx_dv_b", 11.2, SLATE, "start", 500, True),
-        text(952, 396, "• 双网同时冗余收发", 12.2, INK),
-        text(952, 418, "• 先到交付，晚到副本去重", 12.2, MUTED),
-    ]
-
-    # Connecting arrows
-    parts += [
-        arrow_h(312, 141, 352, ACCENT, 2.2),
-        arrow_h(352, 277, 312, TEAL, 2.2),
-        arrow_h(312, 413, 352, SLATE, 2.0, bidir=True),
-        arrow_h(896, 192, 936, ACCENT, 2.2, bidir=True),
-        arrow_h(896, 364, 936, TEAL, 2.2, bidir=True),
-    ]
-
-    return document(width, height, parts)
 
 
 def resource():
@@ -245,7 +117,6 @@ def latency():
         )
         parts.append(text(x0 - 14, y + 5, str(tick), 13, MUTED, "end"))
 
-    # Callout highlighting 17 B -> 18 B minimum 64B Ethernet padding boundary
     parts += [
         box(248, 126, 440, 68, ACCENT_SOFT, ACCENT_BORDER, 1.2, 6),
         text(468, 152, "17 B → 18 B 为以太网 64 B 最小帧补零边界", 13.5, ACCENT, "middle", 700),
@@ -268,7 +139,7 @@ def latency():
     return document(width, height, parts)
 
 
-for name, figure in (("overview", overview), ("resource", resource), ("latency", latency)):
+for name, figure in (("resource", resource), ("latency", latency)):
     path = OUT / f"{name}.svg"
     path.write_text(figure(), encoding="utf-8")
     print(path)
