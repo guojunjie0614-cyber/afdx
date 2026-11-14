@@ -1,3 +1,5 @@
+> 当前状态：本记录中的分片版 RTL 与官方 VQM 验证已用于交付；旧性能检查器的失败后来由按公开应用口时戳统计的检查结果通过，见 [交付长用例收据](../frag1030_delivery/long_references.json)及 [性能差异说明](performance_difference.md)。当前满负载规格为 63 VL，见 [交付汇总](../frag1030_delivery/summary.md)。下文保留 11-03 至 11-04 的原始记录。
+
 # T75 frag1030 验证结果
 
 更新：2026-11-04 06:18:32。执行：COMPLETE；验收：REVISED_SCOPE_COMPLETE_WITH_LIMITATIONS。

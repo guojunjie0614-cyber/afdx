@@ -6,34 +6,41 @@
     "sha256": "8d8b28919b7b0c77eb56a081af5ca643dfc08c9f2d600a1f5920f1e14f59604b",
     "operation": "Copy the T59 tb_sys_perf independent check summary",
     "source_commit": "286fa1b6",
-    "historical": true
+    "historical": true,
+    "note": "分片前结果（2026-10-26；提交 286fa1b6）；测试报告附录仍引用，保留。"
   },
   {
     "file": "rtc.json",
     "source": "out/sim/tb_sys_rtc/20261028_225507_719296_aded6cb476de/check_summary.json",
     "source_sha256": "3508D510B7C1113DBC8B2D8BD8764223C52314EE53B505D29D0EED2811B65936",
     "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
+    "operation": "Copy T63-F1 evidence",
     "bytes": 2641,
-    "sha256": "3508D510B7C1113DBC8B2D8BD8764223C52314EE53B505D29D0EED2811B65936"
+    "sha256": "3508D510B7C1113DBC8B2D8BD8764223C52314EE53B505D29D0EED2811B65936",
+    "historical": true,
+    "note": "分片前结果（2026-10-28；提交 92ab7d7e）；测试报告附录仍引用，保留。"
   },
   {
     "file": "capacity.log",
     "source": "out/sim/tb_judge_capacity/20261028_231836_469909_20ebfc0a53fd/simulation.log",
     "source_sha256": "187CB38DA729FA2FC681EF21BABAC5EFAD7C32A3EBE02A2FEC110B999224BE75",
     "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
+    "operation": "Copy T63-F1 evidence",
     "bytes": 8662,
-    "sha256": "187CB38DA729FA2FC681EF21BABAC5EFAD7C32A3EBE02A2FEC110B999224BE75"
+    "sha256": "187CB38DA729FA2FC681EF21BABAC5EFAD7C32A3EBE02A2FEC110B999224BE75",
+    "historical": true,
+    "note": "分片前结果（2026-10-28；提交 92ab7d7e）；测试报告附录仍引用，保留。"
   },
   {
     "file": "snmp.log",
     "source": "out/sim/tb_judge_snmp/20261028_225507_689265_bdd84b28db10/simulation.log",
     "source_sha256": "18D25049986D5C55D1648CACBD27D839BFDC9451760C14A1CB7AACA3AE56CAA0",
     "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
+    "operation": "Copy T63-F1 evidence",
     "bytes": 1436,
-    "sha256": "18D25049986D5C55D1648CACBD27D839BFDC9451760C14A1CB7AACA3AE56CAA0"
+    "sha256": "18D25049986D5C55D1648CACBD27D839BFDC9451760C14A1CB7AACA3AE56CAA0",
+    "historical": true,
+    "note": "分片前结果（2026-10-28；提交 92ab7d7e）；测试报告附录仍引用，保留。"
   },
   {
     "file": "vo_functional.json",
@@ -110,8 +117,10 @@
     "source": "out/t63/F1_final_v2/jobs/judge/result.json",
     "source_sha256": "F13071CC0F40BECA608830220D1EAD0C6024638177EB957F57C8D31B0DA6D5C2",
     "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Recompute Python against fresh same-folder Tcl results; all current performance windows",
+    "operation": "Recompute Python against fresh same-folder Tcl results; all performance windows",
     "bytes": 71530,
-    "sha256": "8DE6987E6FDCB1815F467D3A8E7A39D640ACA46495AE1B1770C161F3C9767380"
+    "sha256": "8DE6987E6FDCB1815F467D3A8E7A39D640ACA46495AE1B1770C161F3C9767380",
+    "historical": true,
+    "note": "分片前结果（2026-10-28；提交 92ab7d7e）；测试报告附录仍引用，保留。"
   }
 ]

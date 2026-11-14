@@ -3,5 +3,5 @@
 - 81 VL 背靠背 BAG 等待场景（case 16）：10/162 组抖动 ≥ 100 µs，最大 107.7 µs（VL 0x0126，两个方向）。周期注入场景最大 3.368 µs。满负载声明已统一下调为 63 TX / 63 RX VL，81 VL 结果保留为超出声明的压力测试。
 - 81 VL 长短消息混合会溢出；混合场景的声明是 63 VL（70 通过、71 溢出）。
 - 8192 字节分片和故障恢复只在 RTL 上验证；分片网表证据是截断到第 199,578 拍的比对（含 1472 字节两帧重组）。
-- eLinx 界面里点 Run Behavioral Simulation 还没有人工验证；命令行 ModelSim 已通过。
+- eLinx 界面 Run Behavioral Simulation 已于 11-04 人工验证：PASS checks=9238 errors=0；[原始截图](../t79_63vl/elinx_gui_behav_pass.png)，[检查说明](../t79_63vl/summary.md#elinx-界面人工验证)。
 - eLinx 每次综合的 VQM 文本排列不同，但结构相同，锁定布线的时序相同（T77 实测）。

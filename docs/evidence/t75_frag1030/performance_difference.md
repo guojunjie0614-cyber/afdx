@@ -1,3 +1,5 @@
+> 当前状态：本文件记录 11-03 旧检查器下的失败分类；之后使用修正后的检查器在分片版上通过，当前结果见 [分片版评委入口](../../../sim/reference/judge_result_frag1030.txt)的 `JUDGE CASE PASS performance` 和 `JUDGE BASELINE PASS`。下文保留原始记录。
+
 # 旧性能门槛差异
 
 本项保持原始 FAIL，不改抖动统计，不据此宣称 R139 验收通过。
