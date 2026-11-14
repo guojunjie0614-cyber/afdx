@@ -1,3 +1,5 @@
+> 历史引用说明（2026-11-14）：正文引用的 F1 证据及 `参考/judge_result.txt` 已在本次整理中移出 `master`。已核实标签 `archive/f1` 含 `docs/evidence/t63_f1_timing.json` 与 `docs/evidence/t63_f1_gui_compare.json`，可从该标签查阅；该标签不含 `参考/judge_result.txt`，但保留了 `sim/reference/judge_result.txt`。当前分片版评委结果见 [judge_result_frag1030.txt](../../../sim/reference/judge_result_frag1030.txt)。以下正文作为历史检索收据原样保留，链接路径及行号按当时被引用文档记录。
+
 # 声明检索收据
 
 满负载声明统一为 63 TX / 63 RX VL，配置规模 128/4096 不变。已验证单条 VL 发 8192 B（63 VL 混合场景）；多条 VL 并发长消息未验证，专项已暂停、未完成，局部结果不作规格限制。以下保留的 81 VL 内容属于超出声明的压力测试、历史基线或其复现命令。docs/design 五处已在设计文档中同步更新。
