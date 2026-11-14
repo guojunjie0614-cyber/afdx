@@ -7,7 +7,7 @@
 | 目标器件与时钟 | `EQ6HL130-CSG484_H`，单 125 MHz 时钟域（8.000 ns），172 用户引脚，0 DSP / 0 PLL |
 | 布线后时序（STA） | Setup 最差裕量 `+0.029 ns` / Hold `+0.604 ns`，**失败端点 0 / 96,142** |
 | 满载有效载荷吞吐 | **741.384 Mbps / 方向**（63 TX + 63 RX VL 满载，双向 1482.768 Mbps，0 丢包） |
-| 端到端传输时延 | **24.424 µs**（`Lmax = 1471 B` 核心流水线）；`1.056 µs`（载荷 1 B 轻载单帧） |
+| 端到端传输时延 | 63 VL 满载：**80.336 µs**（P1471 周期注入最大）、**1175.432 µs**（B2 最大，含 BAG 等待），均从输入 VLID 首字节至输出末字节；轻载单帧 `48.592 µs`（1471 B）/ `1.576 µs`（1 B） |
 
 <img src="docs/design/fig/v2/f01_system.png" width="100%" alt="AFDX_top 端系统微架构：发送侧共享页池与 BAG 调度、A/B 双网 MAC、接收侧 16 上下文重组"/>
 <p><sub>图 1：<code>AFDX_top</code> 端系统微架构——发送侧共享页池与调度（a）及接收侧双环预写与单一交付（b）；各子系统细节见第 4 节。</sub></p>
@@ -20,7 +20,7 @@
 
 - **全自研流式双网千兆 MAC 与长消息分片重组**：`afdx_mac_tx` / `afdx_mac_rx` 支持 A/B 双网同拍发送前导码、独立 CRC-32 校验与 4 字节移位尾部剥离；应用消息（1～8192 B）按 VL 的 `Lmax` 自动 IPv4 分片（首片携 UDP 首部，逐片按 BAG 发送并递增 AFDX 序号），接收端通过 16 个并发重组上下文（128 KiB RAM）完成整包 UDP 校验并顺序交付。
 - **共享页池调度与坏帧无损回退**：发送侧采用 256 页 × 512 B（128 KiB）链式共享页池与 512 拍前瞻窗口（Lookahead）轮询 128 条 TX VL；接收侧支持 4096 条 RX VL（32 Bank 同步映射），双网各自拥有 4 KiB 试写环，坏帧或错包立即回退写指针，在缓存中零脏字节残留。
-- **单时钟域 + `CE_DIV=2` 多周期控制面**：全系统共用单一 125 MHz 时钟，无跨时钟域（CDC）路径；数据面每拍 1 字节全速运行，SNMP / 615A 复杂状态机运行在经形式化网表逻辑锥审计的 `CE_DIV=2`（16 ns）多周期使能域（253 组约束覆盖 2,755 个寄存器与 51,992 条路径，0 未覆盖 / 0 非法逻辑锥）。
+- **单时钟域 + `CE_DIV=2` 多周期控制面**：全系统共用单一 125 MHz 时钟，无跨时钟域（CDC）路径；数据面每拍 1 字节全速运行，SNMP / 615A 复杂状态机运行在经形式化网表逻辑锥审计的 `CE_DIV=2`（16 ns）多周期使能域（253 组合法 CE 多周期约束，2,747 个有效受约束寄存器、0 无效、0 遗漏内部弧；全端点复核含 50,050 条已证明的 16 ns CE 多周期路径）。
 - **三项片上机载网络服务**：`afdx_svc` 按整包粒度仲裁并路由 SNTPv4（RTC 硬件四时间戳对时，0 ns 稳态误差）、SNMP v1/v2c 代理（ASN.1 BER 编解码，`Get`/`GetNext`/`Set`/`Trap`）以及 ARINC 615A（TFTP A3/A4 协议，8 KiB 镜像上传与 `MEMORY.BIN` 卸载）。
 
 **满载约束与边界**：
@@ -101,7 +101,7 @@ do sim/wave/frag.do
 
 ### 路径三：命令行综合布线、门级网表比对与全量回归
 
-需 Python 3.10+（实测 3.12.7）及依赖 `python -m pip install psutil pyasn1==0.4.8`。在 PowerShell 中先设置工具路径后按需执行：
+需 Python 3.10+（实测 3.12.7）及依赖 `python -m pip install psutil pyasn1==0.4.8`。Icarus 检查入口 `sim/run_fragmentation.ps1` 与 `tools/run_1030_checks.py` 可用 `$env:IVERILOG_HOME='D:\Icarus'` 指定安装根目录（工具位于其 `bin/` 下），未找到时依次查找 `PATH`、`C:/iverilog/bin`。在 PowerShell 中先设置工具路径后按需执行：
 
 ```powershell
 $env:AFDX_PYTHON='C:\Path\To\python.exe'
@@ -111,15 +111,15 @@ $env:AFDX_CE_DIV='2'
 $env:AFDX_MEM_FLOOR_GB='3'
 $env:AFDX_MODELSIM_DECL_ORDER='0'
 
-# 1) 一键官方综合与固定簇布局布线（约 27 分钟）+ 全端点时序独立核对
+# 1) 一键官方综合与固定簇布局布线（约 27 分钟，含布线后时序分析）
 & $env:AFDX_PYTHON -B -X utf8 tools/build_1030.py --route --pres 1.30
-& $env:AFDX_PYTHON tools/report_routed_timing.py
+# 布线后结果保存在 out/latest_AFDX_top_1030.json 的 routed_timing 等字段
 
 # 2) 一键 63 项并行回归（6 路并行，约 30～50 分钟）与双配置隔离入口
 $env:AFDX_SIM_TIMEOUT_SECONDS='3600'
 & $env:AFDX_PYTHON -B -X utf8 tools/par_regress.py --output out/reproduce_t78 --list sim/t78_quick_tests.txt --branch-tests --raw-sources --max-sims 6 --max-owned-sims 6 --rtl-hours 1
-& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py
-& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --small
+& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --deadline (Get-Date).AddHours(2).ToString('o')
+& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --small --deadline (Get-Date).AddHours(2).ToString('o')
 
 # 3) 综合后 .vqm 门级网表与同激励 RTL 逐字节比对
 $net = (Get-Content out/latest_AFDX_top_1030.json -Raw | ConvertFrom-Json).netlist
@@ -312,7 +312,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [总吞吐表](docs/evidence/t76_frag1030/total_throughput.tsv)（case 0） |
 
 <img src="docs/fig/latency.png" width="100%" alt="端到端传输时延柱状图（1 B 至 1471 B）"/>
-<p><sub>图 14：不同载荷长度的端到端传输时延及 64 B 最小帧填充边界。</sub></p>
+<p><sub>图 14：分片版轻载单帧端到端时延（1 B 至 1471 B，数据见 [`performance_actual_check_summary.json`](docs/evidence/t76_frag1030/performance_actual_check_summary.json) 的 `light_d0` / `light_d257`）。</sub></p>
 
 - **63 VL 双向 100 ms 七工况全过**（详表见 [`t79_63vl/summary.md`](docs/evidence/t79_63vl/summary.md)）：
   - **5 种典型载荷（1 / 17 / 256 / 1024 / 1471 B）周期注入**：连续 100 ms 零丢失，最大抖动 `3.360 µs`。
@@ -348,7 +348,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <p><sub>图 16：8192 B 长消息 6 分片发送与重组一次交付实测波形（末片到达后输出 <code>rx_bytes = 8194</code>）。</sub></p>
 
 <details>
-<summary>展开查看：三级签核流程图、其余 5 组核心波形与 16 组完整波形窗口索引表</summary>
+<summary>展开查看：三级签核流程图、其余 5 组核心波形与 16 张（7 组）完整波形窗口索引表</summary>
 
 <img src="docs/test/fig/v2/t02_criteria.png" width="100%" alt="三级签核流程"/>
 <p><sub>图 17：三级签核流程（硬件在线自检、Python 参考模型核对、VQM 门级网表逐字节比对）。</sub></p>
@@ -368,7 +368,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <img src="docs/fig/wave/snmp_get_2.png" width="100%" alt="SNMP Get 请求与响应波形"/>
 <p><sub>图 22：SNMP `Get` 请求到达后 `12.664 µs` 内双网发出 `GetResponse`。</sub></p>
 
-所有 16 组完整原始截图与 SHA256 校验记录位于 `sim/wave/png/` 与 [`wave_provenance.json`](docs/evidence/t79_63vl/wave_provenance.json)，可通过 `do sim/wave/<场景>.do` 复现：
+全部 16 张（7 组）原始波形截图与 SHA256 校验记录位于 `sim/wave/png/` 与 [`wave_provenance.json`](docs/evidence/t79_63vl/wave_provenance.json)，可通过 `do sim/wave/<场景>.do` 复现：
 
 | 原始波形截图 | 时间窗口 (µs) | 关键事件与观测点 |
 | :--- | :---: | :--- |
@@ -390,7 +390,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 afdx/
 ├── rtl/       # 34 个可综合 Verilog-2001 硬件模块（AFDX_top 为工程顶层）
 ├── tb/        # 58 个自检 Testbench 与四通道可编程损伤链路（tb/lib/）
-├── sim/       # ModelSim 验收脚本（run_judge.do / run_app.do）、向量与 18 张原始波形截图
+├── sim/       # ModelSim 验收脚本（run_judge.do / run_app.do）、向量、16 张波形截图与 2 张 eLinx 界面截图
 ├── tools/     # 综合构建（build_1030.py）、并行回归（par_regress.py）、Python 参考模型与时序/多周期审计
 ├── elinx/     # eLinx 3.0.7 工程（AFDX_EndSystem.epr）、聚合入口 afdx_all.v 与 .sdc/.edc 约束
 └── docs/      # 正式竞赛 PDF 报告、ARCH.md、1030_IMPLEMENTATION.md、FACTS.md 与全部可溯源实验证据
