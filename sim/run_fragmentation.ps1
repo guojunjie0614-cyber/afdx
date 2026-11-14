@@ -4,8 +4,22 @@ $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $out=Join-Path $root ('out/fragmentation/'+(Get-Date -Format 'yyyyMMdd_HHmmss'))
 New-Item -ItemType Directory -Force $out | Out-Null
 Write-Host "Fragmentation outputs: $out"
-$iv='C:/iverilog/bin/iverilog.exe'; $vvp='C:/iverilog/bin/vvp.exe'
-if (!(Test-Path $iv) -or !(Test-Path $vvp)) { throw 'Icarus executable not found at C:/iverilog/bin' }
+function Find-Icarus([string]$Name) {
+ if ($env:IVERILOG_HOME) {
+  foreach ($leaf in @($Name,($Name+'.exe'))) {
+   $candidate=Join-Path (Join-Path $env:IVERILOG_HOME 'bin') $leaf
+   if (Test-Path -LiteralPath $candidate -PathType Leaf) { return (Resolve-Path -LiteralPath $candidate).Path }
+  }
+ }
+ $command=Get-Command $Name -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+ if ($command) { return $command.Source }
+ foreach ($leaf in @(($Name+'.exe'),$Name)) {
+  $candidate=Join-Path 'C:/iverilog/bin' $leaf
+  if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
+ }
+ throw "Icarus $Name not found: checked IVERILOG_HOME/bin, PATH, and C:/iverilog/bin"
+}
+$iv=Find-Icarus 'iverilog'; $vvp=Find-Icarus 'vvp'
 $python=(Get-Command python -ErrorAction Stop).Source
 # Start-Process timeout avoids a hung simulator; exit status and log sentinel are both mandatory.
 function Invoke-Bounded([string]$Exe,[string[]]$Arguments,[string]$Log,[int]$Limit) {

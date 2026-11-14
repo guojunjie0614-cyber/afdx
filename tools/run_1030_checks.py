@@ -3,8 +3,10 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import json
+import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 
@@ -12,6 +14,24 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT = ['tb_tx_basic', 'tb_tx_bag', 'tb_tx_multi', 'tb_context_pipeline', 'tb_cfg_local_ready', 'tb_sys_cfg',
            'tb_rtc_originate', 'tb_rtc_recovery', 'tb_rtc_banked', 'tb_sys_rtc', 'tb_reassembly_limits',
            'tb_reassembly_transactions', 'tb_reassembly_engine', 'tb_app_payload_pipeline']
+
+
+def find_icarus(name):
+    home = os.environ.get('IVERILOG_HOME')
+    if home:
+        for executable in (name, name + '.exe'):
+            candidate = Path(home) / 'bin' / executable
+            if candidate.is_file():
+                return str(candidate.resolve())
+    found = shutil.which(name)
+    if found:
+        return found
+    for executable in (name + '.exe', name):
+        candidate = Path('C:/iverilog/bin') / executable
+        if candidate.is_file():
+            return str(candidate)
+    raise FileNotFoundError(
+        f'Icarus {name} not found: checked IVERILOG_HOME/bin, PATH, and C:/iverilog/bin')
 
 
 def run_case(case, output):
@@ -45,10 +65,10 @@ def run_case(case, output):
             legacy = folder/'afdx_cfg_legacy.v'
             legacy.write_text(baseline.replace('module afdx_cfg', 'module afdx_cfg_legacy', 1), encoding='utf-8')
             sources.append(legacy)
-        job('compile', ['C:/iverilog/bin/iverilog.exe', '-g2012', '-DAFDX_CE_DIV=2',
+        job('compile', [find_icarus('iverilog'), '-g2012', '-DAFDX_CE_DIV=2',
                         '-I', ROOT/'tb/lib', '-y', ROOT/'tb/lib', '-s', case,
                         '-o', folder/'test.vvp', *sources])
-        log = job('simulation', ['C:/iverilog/bin/vvp.exe', folder/'test.vvp'])
+        log = job('simulation', [find_icarus('vvp'), folder/'test.vvp'])
         result = re.findall(r'\[RESULT\]\s+(\w+)\s+(PASS|FAIL)\s+checks=(\d+)\s+errors=(\d+)', log)
         if not result or result[-1][0] != case or any(r[1] != 'PASS' or int(r[3]) for r in result):
             raise RuntimeError(f'Simulation failed; {folder / "simulation.log"}')
