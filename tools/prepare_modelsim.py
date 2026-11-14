@@ -1,4 +1,4 @@
-"""CLI for the T75 compatibility-copy fallback; never edit original RTL."""
+"""CLI for the ModelSim declaration-order compatibility-copy fallback; never edit original RTL."""
 import argparse
 import json
 from pathlib import Path

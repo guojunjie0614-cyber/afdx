@@ -1,8 +1,8 @@
 {
   "name": "self_netlist_n4",
   "started": "2026-10-11T21:06:34.065958+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
-  "scope": "T22b isolated official MAC experiment; original IP and tracked sources unchanged",
+  "folder": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+  "scope": "Isolated official MAC experiment; original IP and tracked sources unchanged",
   "memory_floor_gib": 5.0,
   "memory_limit_gib": 10.0,
   "completed": true,
@@ -2865,7 +2865,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-c"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 28724,
       "created": 1791723994.108018,
       "exit_code": 0,
@@ -2873,7 +2873,7 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8507392,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\ini.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\ini.log"
     },
     {
       "name": "work",
@@ -2881,7 +2881,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "work"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 31324,
       "created": 1791723994.3784187,
       "exit_code": 0,
@@ -2889,18 +2889,18 @@
       "seconds": 0.265,
       "peak_tree_bytes": 8245248,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\work.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\work.log"
     },
     {
       "name": "vendor_map",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-modelsimini",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\modelsim.ini",
+        "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\modelsim.ini",
         "ip_vendor",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\vendor\\ip_vendor"
+        "out\\b\\vendor\\ip_vendor"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 6612,
       "created": 1791723994.6478088,
       "exit_code": 0,
@@ -2908,18 +2908,18 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8564736,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\vendor_map.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\vendor_map.log"
     },
     {
       "name": "adapt",
       "command": [
         "E:\\anaconda3\\python.exe",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\tools\\fix_lut_mask.py",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\netlist.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\netlist_sim.v",
+        "tools\\fix_lut_mask.py",
+        "out\\b\\jobs\\resources_self\\20261011_205135_203945\\netlist.v",
+        "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\netlist_sim.v",
         "--allow-no-ram"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 30984,
       "created": 1791723994.9319384,
       "exit_code": 0,
@@ -2927,17 +2927,17 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8609792,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\adapt.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\adapt.log"
     },
     {
       "name": "compile",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
         "-vlog01compat",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\netlist_sim.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\tb_mac_baseline.v"
+        "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\netlist_sim.v",
+        "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\tb_mac_baseline.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 32796,
       "created": 1791723995.2070303,
       "exit_code": 0,
@@ -2945,7 +2945,7 @@
       "seconds": 0.265,
       "peak_tree_bytes": 8572928,
       "budget_seconds": 120,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\compile.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\compile.log"
     },
     {
       "name": "simulation",
@@ -2963,7 +2963,7 @@
         "-do",
         "do run.do"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
+      "cwd": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382",
       "pid": 9136,
       "created": 1791723995.4877143,
       "exit_code": 0,
@@ -2971,7 +2971,7 @@
       "seconds": 195.703,
       "peak_tree_bytes": 246386688,
       "budget_seconds": 600,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\simulation.log"
+      "log": "out\\b\\jobs\\self_netlist_n4\\20261011_210634_065382\\simulation.log"
     }
   ]
 }

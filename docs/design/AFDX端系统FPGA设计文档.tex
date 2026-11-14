@@ -6,7 +6,7 @@
 \setmainfont{Times New Roman}
 \setsansfont{Helvetica}
 \setmonofont{Menlo}[Scale=0.82]
-% Kaiti SC 是按需下载字体，部分沙箱环境读不到，读不到时退回宋体
+% Kaiti SC 是按需下载字体，部分环境读不到时退回宋体
 \IfFontExistsTF{Kaiti SC}{\def\kaifont{Kaiti SC}}{\def\kaifont{Songti SC}}
 \setCJKmainfont{Songti SC}[BoldFont=Heiti SC, ItalicFont=\kaifont]
 \setCJKsansfont{Heiti SC}
@@ -200,7 +200,7 @@
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
   \item \textbf{吞吐率与确定性时延：}按单端 63 条发送 / 63 条接收 VL 双向全双工满载规格（$\text{BAG}=1$~ms，$L_\text{max}=1471$~B，双网冗余，线路占用率 \LineUtilSixtyThree\%），单向去重交付有效载荷吞吐率达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps）；在 77~VL 与 81~VL 压力工况下，单向吞吐分别达 \Thru~Mbps 与 \ThruEightyOne~Mbps，多 VL 混合变长高负载（\code{var_high}）双向合计达 1809.504~Mbps；63~VL 结合 $1472$~B（2 分片）、$3000$~B（3 分片）与 $8192$~B（6 分片）的混合满载工况下，双向 $12,206$ 条消息 100\% 无损重组交付。在顶层流式接口口径下，63~VL 周期稳态最大端到端时延为 \LatSixtyThreePMax~µs，旋转突发（B2）最大时延为 \LatSixtyThreeBTwo~µs；在核心分段口径下，单帧硬件流水时延典型值为 \LatAvg~µs、满载最大为 \Lat~µs（发送段 $L_\text{tx}$ 最大 \Ttx~µs、至首前导码 \TtxSof~µs，接收段 $L_\text{rx}$ 首字节 \Trx~µs、末字节 \TrxLast~µs），满足赛题 1--2~ms 的时延要求。
   \pagebreak
-  \item \textbf{传输抖动控制：}稳态发送间隔抖动实测为 \Jit~µs。在顶层流式接口下，63~VL 满载周期激励同 VL 端到端时延极差抖动在 $1471$~B 满载帧下为 $0.016$~µs、跨 $1\text{--}1471$~B 全包长最大为 \JitSixtyThreePer~µs，旋转三元组背靠背突发（B2）下为 \JitSixtyThreeBTwo~µs（$<100$~µs）；核心 77~VL 定长满载同 VL 极差为 \JitSameVl~µs（1 拍，8~ns），多 VL 变长循环工况下为 \JitVarCycle~µs。
+  \item \textbf{传输抖动控制：}稳态发送间隔抖动实测为 \Jit~µs。在顶层流式接口下，63~VL 满载周期激励同 VL 端到端时延极差抖动在 $1471$~B 满载帧下为 $0.016$~µs、跨 $1\text{--}1471$~B 全包长最大为 \JitSixtyThreePer~µs，旋转三元组背靠背突发（B2）下为 \JitSixtyThreeBTwo~µs（$<100$~µs）；77~VL 定长满载同 VL 极差为 \JitSameVl~µs（1 拍，8~ns），多 VL 变长循环工况下核心 \code{afdx_es} R97 口径为 \JitVarCycle~µs、顶层 \code{AFDX_top} R119 口径为 \JitVarCycleTop~µs。
   \item \textbf{硬件资源与物理时序收敛：}逻辑综合消耗查找表（LUT）\Lut{} 个（占比 \LutPct\%）、触发器（FF）\FF{} 个（占比 \FFPct\%）、逻辑簇（CLB）\Clb{} 个（占比 \ClbPct\%）、嵌入式存储块 \Mem{} 个 M4K/EBR（占比 \MemPct\%）、引脚 \Pins{} 个（占比 \PinPct\%）。在 eLinx 3.0.7 官方流程（\code{tools/build_1030.py} + \code{PRES 1.30} + \LockedClusters{} 个物理簇坐标锁定）下，计入 $\ClkUncert$~ns（300~ps）建立时间时钟不确定度后，布局布线后全芯片 \RoutedEndpoints{} 个时序端点实现 0 违例收敛，净建立时间裕量（Worst Setup Slack）为 $+\RoutedSetup$~ns（未扣不确定度的原始物理建立裕量为 $+\RoutedSetupRaw$~ns）、最差保持时间裕量（Worst Hold Slack）为 $+\RoutedHold$~ns，等效工作频率达 \RoutedFmax~MHz（原始物理频率 \RoutedFmaxRaw~MHz）。
   \item \textbf{全流程验证覆盖：}验证平台包含 \RegCount{} 项自动化回归用例（\RegFastCount{} 项快速回归 + 4 项长时系统回归），累计通过 \RegChecks{} 次硬件断言自检与 \RegIndep{} 项独立参考模型（Golden Model）逐字节比对；\RtlFileCount{} 个 RTL 文件（\DesignUnitCount{} 个设计单元）语句覆盖率达 \CovStmt\%（\CovStmtCov/\CovStmtTot）、分支覆盖率达 \CovBranch\%（\CovBranchCov/\CovBranchTot）、FSM 状态覆盖率达 \CovFsmState\%（\CovFsmStateCov/\CovFsmStateTot）；综合后 VQM 门级网表后仿真通过核心自检、五功能联合测试、分片重组窗口及顶层流包装窗口比对。
 \end{enumerate}

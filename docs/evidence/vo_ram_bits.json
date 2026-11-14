@@ -1,7 +1,7 @@
 [
   {
     "width": 8,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w8\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w8\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 213,
     "input_bit_to_source_bit": [
       0,
@@ -18,7 +18,7 @@
   },
   {
     "width": 9,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w9\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w9\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 222,
     "input_bit_to_source_bit": [
       0,
@@ -36,7 +36,7 @@
   },
   {
     "width": 16,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w16\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w16\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 285,
     "input_bit_to_source_bit": [
       0,
@@ -61,7 +61,7 @@
   },
   {
     "width": 18,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w18\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w18\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 303,
     "input_bit_to_source_bit": [
       0,
@@ -88,7 +88,7 @@
   },
   {
     "width": 32,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w32\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w32\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 429,
     "input_bit_to_source_bit": [
       0,
@@ -129,7 +129,7 @@
   },
   {
     "width": 36,
-    "vo": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\projects\\ram_w36\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
+    "vo": "out\\projects\\ram_w36\\elinx\\RAMProbe.runs\\imple_1\\RAMProbe.vo",
     "portadatain_line": 465,
     "input_bit_to_source_bit": [
       0,

@@ -1,4 +1,4 @@
-"""Task-card coverage and stage assertions, using reconstructed capture/event facts only."""
+"""Stage coverage and assertions, using reconstructed capture/event facts only."""
 from collections import Counter,defaultdict
 
 

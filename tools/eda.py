@@ -73,19 +73,18 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest().upper()
 
 class Flow:
-    def __init__(self,kind,name,deadline):
+    def __init__(self,kind,name,deadline=None):
         stamp=datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         self.folder=ROOT/"out"/kind/name/stamp
         self.folder.mkdir(parents=True,exist_ok=False)
-        self.deadline=datetime.fromisoformat(deadline).timestamp() if deadline else time.time()+3600
+        self.deadline=datetime.fromisoformat(deadline).timestamp() if deadline else time.time()+14400
         self.jobs=[]
         self.result={"name":name,"started":datetime.now(REPORT_TZ).isoformat(),
                      "folder":str(self.folder),"scope":"EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
                      "memory_floor_gib":MEMORY_FLOOR/1024**3,"memory_limit_gib":MEMORY_LIMIT/1024**3}
     def job(self,name,command,budget=900,cwd=None):
         command=list(map(str,command))
-        # The parallel card requires queuing below the launch floors. Existing
-        # jobs and unrelated processes are never stopped by this launch gate.
+        # Parallel runs queue below host resource floors without affecting external jobs.
         if os.environ.get("AFDX_PAR_RESOURCE_GATES")=="1":
             while True:
                 slots=len(modelsim_slot_pids())
@@ -216,12 +215,12 @@ def sim(options):
             sources.extend(ROOT/"tools"/name for name in ("net_services_ref.py","load_ref.py","download_ref.py","snmp_ref.py","afdx_ref.py"))
         if options.test in ("tb_fragmentation","tb_frag1030_net"):
             f.job("vectors",[sys.executable,"-B",ROOT/"tools/fragment_integration.py","prepare",f.folder],60)
-            sources.extend(ROOT/"tools"/name for name in ("fragment_integration.py","fragment_ref.py","t75_fragment_check.py"))
+            sources.extend(ROOT/"tools"/name for name in ("fragment_integration.py","fragment_ref.py","frag_netlist_check.py"))
             if options.test=="tb_frag1030_net":
                 sources.append(ROOT/"tb/tb_fragmentation.v")
                 compile_sources.append(ROOT/"tb/tb_fragmentation.v")
         if options.test.startswith("tb_t65_"):
-            sources.append(ROOT/"tools/t65_check.py")
+            sources.append(ROOT/"tools/wrap_check.py")
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
         snapshot=f.folder/"sources";snapshot.mkdir()
         for i,p in enumerate(sources):(snapshot/(str(i)+"_"+p.name)).write_bytes(p.read_bytes())
@@ -310,7 +309,7 @@ def sim(options):
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
         if options.test in ("tb_fragmentation","tb_frag1030_net"):
-            report=f.job("check",[sys.executable,"-B",ROOT/"tools/t75_fragment_check.py","--dir",f.folder],180)
+            report=f.job("check",[sys.executable,"-B",ROOT/"tools/frag_netlist_check.py","--dir",f.folder],180)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
@@ -345,7 +344,7 @@ def sim(options):
             print(report.strip(),flush=True)
         if options.test.startswith("tb_t65_"):
             mutant=next((int(value.split("=",1)[1]) for value in reversed(options.param) if value.startswith("T65_MUTANT=")),0)
-            command="import sys,json;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from t65_check import check;r=check(sys.argv[2],sys.argv[3],int(sys.argv[4]));s=json.dumps(r,ensure_ascii=False,indent=2);Path(sys.argv[2],'check_summary.json').write_text(s+'\\n',encoding='utf-8');print(s)"
+            command="import sys,json;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from wrap_check import check;r=check(sys.argv[2],sys.argv[3],int(sys.argv[4]));s=json.dumps(r,ensure_ascii=False,indent=2);Path(sys.argv[2],'check_summary.json').write_text(s+'\\n',encoding='utf-8');print(s)"
             report=f.job("check",[sys.executable,"-c",command,ROOT/"tools",f.folder,options.test,str(mutant)],60)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))
             good=good and f.result["check"]["errors"]==0
@@ -539,12 +538,12 @@ def implement(options):
         script=template.read_text(encoding="utf-8").replace("@RUN@",f.folder.as_posix()).replace("@TOP@",options.top).replace("@BASE@",BIN.parent.as_posix())
         (f.folder/"implement.tcl").write_text(script,encoding="utf-8")
         log=f.job("implementation",[BIN/"Implementation.exe","-f",f.folder/"implement.tcl"],3600,cwd=BIN)
-        f.result["completed"]="C3_IMPL_STAGE completed" in log and "C3_IMPL_FAILED" not in log
+        f.result["completed"]="ELINX_IMPL_STAGE completed" in log and "ELINX_IMPL_FAILED" not in log
     except Exception as error:
         f.result.update(completed=False,error=str(error))
     finally:
         logs="\n".join(p.read_text(encoding="utf-8-sig",errors="replace") for p in f.folder.glob("*.log"))
-        f.result["stages"]=re.findall(r"C3_IMPL_STAGE (\w+)",logs)
+        f.result["stages"]=re.findall(r"ELINX_IMPL_STAGE (\w+)",logs)
         f.result["resources"]={}
         for name in ("utilization_packed.rpt","utilization_routed.rpt"):
             path=f.folder/name
@@ -576,7 +575,7 @@ def main():
     p.add_argument("--param",action="append",default=[])
     p.add_argument("--coverage",action="store_true",help="Instrument RTL only and save coverage.ucdb after simulation")
     p=sub.add_parser("synth");p.add_argument("--top",required=True);p.add_argument("--sta",action="store_true");p.add_argument("--deadline")
-    p=sub.add_parser("impl");p.add_argument("--top",default="AFDX_top");p.add_argument("--deadline",required=True)
+    p=sub.add_parser("impl");p.add_argument("--top",default="AFDX_top");p.add_argument("--deadline")
     args=parser.parse_args()
     identity=args.test if args.action=="sim" else args.top
     if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*",identity):parser.error("Invalid Verilog identifier")

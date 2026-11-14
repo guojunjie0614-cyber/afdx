@@ -1,9 +1,0 @@
-Model Technology ModelSim SE-64 vlog 2020.4 Compiler 2020.10 Oct 13 2020
-Start time: 08:16:59 on Nov 03,2026
-vlog -vlog01compat E:\2026_Embedded_FPGA\worktrees\active\c3_t77\out\t77_compile\original_probes\20261103_081659_645428\automatic_macro.v 
--- Compiling module automatic_macro
-
-Top level modules:
-	automatic_macro
-End time: 08:17:00 on Nov 03,2026, Elapsed time: 0:00:01
-Errors: 0, Warnings: 0

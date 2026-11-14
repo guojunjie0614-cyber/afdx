@@ -136,7 +136,7 @@ eLinx 官方 TripleSpeedEthernet IP & 1,400（100\%） & 975（100\%） & 24（1
 NET-01 & \code{tb_elinx}（耗时 \NetElinxTime~s） & 双端双网经顶层 2B-VLID 流互发 1/64/1471~B 消息并去重交付 & \ElinxChecks/0 & 通过 \\
 NET-02 & \code{tb_net_services}（耗时 \NetCliTime~s） & 五项核心功能联合运行，7 份外部端口记录与 RTL 逐字节 SHA-256 完全一致 & \SvcChecks/0（自检）\newline 65/0（独立） & 通过 \\
 NET-03 & \code{tb_frag1030_net}（耗时 \NetFragTime~s） & 分片与按序重组前 199,578 拍窗口（含复位初始化与 \code{VL 0x0102} 1472~B 两分片双网发送及重组），5 份文件 32 条记录与 RTL 一致 & 32/0 记录\newline 5/0 文件 & 通过 \\
-NET-04 & \code{tb_t76_load}（TX \NetTSixTxTime~s / RX \NetTSixRxTime~s） & 顶层流包装 81~VL $+$ 1472~B 两分片混合窗口，收发两侧各 11 份记录与纯 RTL 逐字节相同，公开端口无 X/Z 态 & 161/0（TX）\newline 161/0（RX） & 通过 \\
+NET-04 & \code{tb_t76_load}（TX \NetLoadTxTime~s / RX \NetLoadRxTime~s） & 顶层流包装 81~VL $+$ 1472~B 两分片混合窗口，收发两侧各 11 份记录与纯 RTL 逐字节相同，公开端口无 X/Z 态 & 161/0（TX）\newline 161/0（RX） & 通过 \\
 \end{longtable}
 \endgroup
 
@@ -168,12 +168,12 @@ NET-04 & \code{tb_t76_load}（TX \NetTSixTxTime~s / RX \NetTSixRxTime~s） & 顶
 \caption{eLinx 3.0.7 调用 ModelSim SE-64 2020.4 运行 \code{tb_elinx} 界面截图及底部 Transcript 日志放大图（\code{checks=9238 errors=0}）}\label{fig:s3_welinx}
 \end{figure}
 
-\textbf{评委一键入口 8 项全通过与五功能联合波形成果。}在最新分片交付版 RTL 上运行无 Python 依赖的评委入口 \code{do sim/run_judge.do}（归档于 \code{sim/reference/judge_result_frag1030.txt}），8 个标准评审用例全部输出 \code{JUDGE CASE PASS}，累计完成 \textbf{1,949,512,989 次在线检查、0 错误}。评审用例与逐项检查数见表~\ref{tab:s3_judge}。
+\textbf{评委一键入口 8 项全通过与五功能联合波形成果。}在分片交付版 RTL 上运行无 Python 依赖的评委入口 \code{do sim/run_judge.do}（归档于 \code{sim/reference/judge_result_frag1030.txt}），8 个系统级/性能评审用例全部输出 \code{JUDGE CASE PASS}（总运行时间约 2.3~h，累计完成 \textbf{1,949,513,089 次逐拍/逐字节在线断言检查、0 错误}）。评审用例与逐项检查数见表~\ref{tab:s3_judge}。
 
 \begingroup
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{5.5cm}>{\raggedleft\arraybackslash}p{2.5cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\centering\arraybackslash}p{\dimexpr\linewidth-12.0cm-8\tabcolsep\relax}@{}}
 \caption{分片交付版评委入口（\code{sim/run_judge.do}）8 项核心评审用例实测汇总表}\label{tab:s3_judge}\\
-\longtablehead{5}{\thead{评委用例名} & \thead{考核功能与核心实测指标（\code{judge_result_frag1030.txt}）} & \thead{在线自检次数} & \thead{实测耗时 (s)} & \thead{结论}}
+\longtablehead{5}{\thead{评委用例名} & \thead{考核功能与核心实测指标（\code{judge_result_frag1030.txt}）} & \thead{逐拍/逐字节\newline 断言检查数} & \thead{实测耗时 (s)} & \thead{结论}}
 \code{services} & 五项功能（用户收发、IC/RM、SNMP、RTC、615A 加载/卸载）联合自检 & 1,123 & 9.472 & PASS \\
 \code{capacity} & 两端各配满 128 TX VL 与 4096 RX VL，抽样验证 0..4095 索引单次去重交付 & 49,924 & 13.669 & PASS \\
 \code{snmp} & SNMPv1/v2c 的 Get、GetNext、Set 回写读回及 v2c Trap 启动通知 & 699 & 52.593 & PASS \\
@@ -183,7 +183,7 @@ NET-04 & \code{tb_t76_load}（TX \NetTSixTxTime~s / RX \NetTSixRxTime~s） & 顶
 \code{performance} & 77~VL 定长满载双向吞吐 \code{906.136 Mbps/方向}，全消息最大时延 \code{48.600 µs}（d257 为 \code{50.656 µs}），R119 同 VL 抖动 \code{0.008 µs} & 683,408,635 & 3,099.543 & PASS \\
 \code{perf_var} & 多 VL 变长（\code{var_fixed/cycle/burst/high}）：\code{var_high} 双向各 \code{904.752 Mbps}、抖动 \code{0.008 µs}；\code{var_cycle} 最大抖动 \code{19.544 µs}（$<50$~µs） & 1,254,291,331 & 4,638.304 & PASS \\
 \midrule
-\textbf{8 项合计} & \textbf{\code{JUDGE ENTRY PASS cases=8}（Error=0, FAIL=0, RAMCOLL=0）} & \textbf{1,949,512,989} & \textbf{8,322.663} & \textbf{8/8 PASS} \\
+\textbf{8 项合计} & \textbf{\code{JUDGE ENTRY PASS cases=8}（Error=0, FAIL=0, RAMCOLL=0）} & \textbf{1,949,513,089} & \textbf{8,322.663} & \textbf{8/8 PASS} \\
 \end{longtable}
 \endgroup
 
@@ -379,7 +379,7 @@ IC 同网序号乱序 & SYS-02 & 四条单向链路各延后重放旧 SN 报文 
 \tablestyle
 \setlength{\tabcolsep}{3.2pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-12cm-12\tabcolsep\relax}@{}}
-\caption{内核多工况分段时延、全消息时延（11-04 分片版评委基准）与抖动实测汇总表}\label{tab:s3_perf_core}\\
+\caption{内核多工况分段时延、全消息时延（分片版评委基准）与抖动实测汇总表}\label{tab:s3_perf_core}\\
 \longtablehead{7}{\thead{测试工况} & \thead{单向吞吐\newline (Mbps)} & \thead{$L_\text{tx}$ 基线\newline (µs)} & \thead{$L_\text{rx}$ 首/末\newline (µs)} & \thead{$L_\text{app}$ 基线 / 全消息\newline 最大时延 (µs)} & \thead{R97 / R119\newline 抖动 (µs)} & \thead{发送间隔\newline 偏差 (µs)}}
 \code{gbe77_d0} & \textbf{906.136} & 0.312 & 12.360 / 24.120 & 24.432 / \textbf{48.600} & \textbf{0.008} & 0.000 \\
 \code{gbe77_d257} & \textbf{906.136} & 0.312 & 12.360 / 24.120 & 26.488 / \textbf{50.656} & \textbf{0.008} & 0.000 \\

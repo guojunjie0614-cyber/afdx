@@ -1,4 +1,0 @@
-APP METRIC inject_mbps=0.000 raw_short_completion_us=84.936 raw_fragmented_completion_us=5212.304 max_e2e_first_us=5146.760 jitter_r119_us=0.000 delivered=5 frames=11
-APP REQUIREMENT REPORT fragmented_completion=informational jitter_r139=ambiguous
-[RESULT] fragment_integration PASS
-{"errors": 0, "items": 9, "coverage_checks": ["complete_delivery_1464", "complete_delivery_1472", "complete_delivery_8192", "recovery_vl_0300", "recovery_vl_0301", "recovery_vl_0302", "recovery_vl_0303", "recovery_vl_0304", "recovery_vl_0305"], "independent_fragment_checker": "PASS", "complete_deliveries": 11, "tx_messages": 7, "tx_target": 5, "tx_frames": {"a": 11, "b": 11}}

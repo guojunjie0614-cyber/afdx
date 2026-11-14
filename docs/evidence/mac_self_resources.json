@@ -1,8 +1,8 @@
 {
   "name": "resources_self",
   "started": "2026-10-11T20:51:35.204948+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945",
-  "scope": "T22b isolated official MAC experiment; original IP and tracked sources unchanged",
+  "folder": "out\\b\\jobs\\resources_self\\20261011_205135_203945",
+  "scope": "Isolated official MAC experiment; original IP and tracked sources unchanged",
   "memory_floor_gib": 5.0,
   "memory_limit_gib": 10.0,
   "utilization": "Synthesis Status : Successful\neLinx Version : 3.0 \nTop-level Entity Name : self_mac\nTotal LUTs : 556\nTotal FFs : 198\nTotal CLBs : 0\nTotal Memorys : 0\nTotal DSPs : 0\nTotal PLLs : 0\nTotal Pins : 0\n",
@@ -13,11 +13,11 @@
     {
       "name": "mapping",
       "command": [
-        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\eLinx_synthesis.exe",
+        "<ELINX_ROOT>\\bin\\shell\\bin\\eLinx_synthesis.exe",
         "-s",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\mapping.ys"
+        "out\\b\\jobs\\resources_self\\20261011_205135_203945\\mapping.ys"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945",
+      "cwd": "out\\b\\jobs\\resources_self\\20261011_205135_203945",
       "pid": 45620,
       "created": 1791723095.2095933,
       "exit_code": 0,
@@ -25,16 +25,16 @@
       "seconds": 1.843,
       "peak_tree_bytes": 31559680,
       "budget_seconds": 300,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\mapping.log"
+      "log": "out\\b\\jobs\\resources_self\\20261011_205135_203945\\mapping.log"
     },
     {
       "name": "export",
       "command": [
-        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\eLinx_synthesis.exe",
+        "<ELINX_ROOT>\\bin\\shell\\bin\\eLinx_synthesis.exe",
         "-s",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\export.ys"
+        "out\\b\\jobs\\resources_self\\20261011_205135_203945\\export.ys"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945",
+      "cwd": "out\\b\\jobs\\resources_self\\20261011_205135_203945",
       "pid": 24312,
       "created": 1791723097.0789063,
       "exit_code": 0,
@@ -42,16 +42,16 @@
       "seconds": 0.266,
       "peak_tree_bytes": 9928704,
       "budget_seconds": 60,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\export.log"
+      "log": "out\\b\\jobs\\resources_self\\20261011_205135_203945\\export.log"
     },
     {
       "name": "statistics",
       "command": [
-        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+        "<ELINX_ROOT>\\bin\\shell\\bin\\Implementation.exe",
         "-f",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\stats.tcl"
+        "out\\b\\jobs\\resources_self\\20261011_205135_203945\\stats.tcl"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+      "cwd": "<ELINX_ROOT>\\bin\\shell\\bin",
       "pid": 41584,
       "created": 1791723097.3632264,
       "exit_code": 0,
@@ -59,16 +59,16 @@
       "seconds": 0.531,
       "peak_tree_bytes": 23846912,
       "budget_seconds": 300,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\statistics.log"
+      "log": "out\\b\\jobs\\resources_self\\20261011_205135_203945\\statistics.log"
     },
     {
       "name": "pack",
       "command": [
-        "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin\\Implementation.exe",
+        "<ELINX_ROOT>\\bin\\shell\\bin\\Implementation.exe",
         "-f",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\pack.tcl"
+        "out\\b\\jobs\\resources_self\\20261011_205135_203945\\pack.tcl"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\setup_pack\\bin\\shell\\bin",
+      "cwd": "<ELINX_ROOT>\\bin\\shell\\bin",
       "pid": 45980,
       "created": 1791723097.910249,
       "exit_code": 0,
@@ -76,7 +76,7 @@
       "seconds": 6.828,
       "peak_tree_bytes": 56209408,
       "budget_seconds": 600,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\resources_self\\20261011_205135_203945\\pack.log"
+      "log": "out\\b\\jobs\\resources_self\\20261011_205135_203945\\pack.log"
     }
   ]
 }

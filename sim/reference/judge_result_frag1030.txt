@@ -1,7 +1,7 @@
 # frag1030 delivery judge entry (sim/run_judge.do, CE_DIV=2, AFDX_MODELSIM_DECL_ORDER=0), 2026-11-04.
-# Cases 1-6: full entry run at f4632d5c (rtl/tb identical to t79); performance and perf_var: AFDX_JUDGE_CASE reruns
+# Cases 1-6: full entry run at f4632d5c; performance and perf_var: AFDX_JUDGE_CASE reruns
 # after the judge_perf.tcl baseline update to fragmentation-RTL values (+0.312 us vs F1).
-# 84 warnings per case are the known vsim-PLI-3003 $finish_and_return and optional-port warnings (T77/T78).
+# 84 warnings per case are the known vsim-PLI-3003 $finish_and_return and optional-port warnings.
 JUDGE CE_DIV=2
 JUDGE WARNINGS compile count=0
 JUDGE COMPILE PASS warnings=0

@@ -80,7 +80,7 @@
 在 ModelSim Transcript 窗口进入工程根目录 `cd {工程路径}` 后运行：
 
 ```tcl
-# 1) 一键运行全部 8 个系统级验收用例（约 1,949,513,089 次检查）
+# 1) 一键运行全部 8 个系统级验收用例（合计 2.3 h，累计 1,949,513,089 次逐拍/逐字节断言检查）
 do sim/run_judge.do
 
 # 2) 按环境变量单独筛选某一项用例（例如变长多 VL 性能测试）
@@ -117,9 +117,9 @@ $env:AFDX_MODELSIM_DECL_ORDER='0'
 
 # 2) 一键 63 项并行回归（6 路并行，约 30～50 分钟）与双配置隔离入口
 $env:AFDX_SIM_TIMEOUT_SECONDS='3600'
-& $env:AFDX_PYTHON -B -X utf8 tools/par_regress.py --output out/reproduce_t78 --list sim/t78_quick_tests.txt --branch-tests --raw-sources --max-sims 6 --max-owned-sims 6 --rtl-hours 1
-& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --deadline (Get-Date).AddHours(2).ToString('o')
-& $env:AFDX_PYTHON -B -X utf8 tools/t76_app.py --small --deadline (Get-Date).AddHours(2).ToString('o')
+& $env:AFDX_PYTHON -B -X utf8 tools/par_regress.py --output out/reproduce_quick --list sim/quick_tests.txt --branch-tests --raw-sources --max-sims 6 --max-owned-sims 6 --rtl-hours 1
+& $env:AFDX_PYTHON -B -X utf8 tools/run_app_sim.py
+& $env:AFDX_PYTHON -B -X utf8 tools/run_app_sim.py --small
 
 # 3) 综合后 .vqm 门级网表与同激励 RTL 逐字节比对
 $net = (Get-Content out/latest_AFDX_top_1030.json -Raw | ConvertFrom-Json).netlist
@@ -309,12 +309,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | :--- | :---: | ---: | :--- |
 | 满载交付规格 | 63 TX / 63 RX | **`741.384 Mbps`** | 双向合计 1482.768 Mbps（线速占用 77.5%），7 大场景各连续 100 ms 零丢包 |
 | 定长满载压测 | 77 TX / 77 RX | `906.136 Mbps` | 全固定 1471 B 帧连续注入千兆压测 |
-| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [总吞吐表](docs/evidence/t76_frag1030/total_throughput.tsv)（case 0） |
+| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [总吞吐表](docs/evidence/frag_load/total_throughput.tsv)（case 0） |
 
 <img src="docs/fig/latency.png" width="100%" alt="端到端传输时延柱状图（1 B 至 1471 B）"/>
-<p><sub>图 14：分片版轻载单帧端到端时延（1 B 至 1471 B，数据见 [`performance_actual_check_summary.json`](docs/evidence/t76_frag1030/performance_actual_check_summary.json) 的 `light_d0` / `light_d257`）。</sub></p>
+<p><sub>图 14：分片版轻载单帧端到端时延（1 B 至 1471 B，数据见 [`performance_actual_check_summary.json`](docs/evidence/frag_load/performance_actual_check_summary.json) 的 `light_d0` / `light_d257`）。</sub></p>
 
-- **63 VL 双向 100 ms 七工况全过**（详表见 [`t79_63vl/summary.md`](docs/evidence/t79_63vl/summary.md)）：
+- **63 VL 双向 100 ms 七工况全过**（详表见 [`vl63_full_load/summary.md`](docs/evidence/vl63_full_load/summary.md)）：
   - **5 种典型载荷（1 / 17 / 256 / 1024 / 1471 B）周期注入**：连续 100 ms 零丢失，最大抖动 `3.360 µs`。
   - **BAG 等待场景（`BAG_BURST`）**：轮换输入顺序场景下全部分组抖动 `< 100 µs`（最大 `96.752 µs`）；固定顺序完整性与双统计 100% 通过。
   - **长短消息混合满载（60×1471 B + 3 条分片 1472/3000/8192 B）**：连续 100 ms 交付 12,206 条消息零丢包、逐字节一致，TX 页池峰值严格 ≤ 256 页。
@@ -322,7 +322,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 
 ### 5.3 三级签核验收、覆盖率与协议实测波形
 
-构建双端系统（`ES1 ↔ ES2`）+ 四通道损伤网络（延迟、偏斜、FCS 误码、丢包、乱序重放）+ 独立 Python 参考模型（[`afdx_ref.py`](tools/afdx_ref.py) / [`fragment_ref.py`](tools/fragment_ref.py)）与 VQM 门级网表比对闭环，累计完成 **1,949,513,089** 次硬件检查（0 错误、0 RAM 冲突），63 项并行回归 **63/63 PASS**（证据见 [`judge_result_frag1030.txt`](sim/reference/judge_result_frag1030.txt) 与 [`regression.json`](docs/evidence/frag1030_delivery/regression.json)）。
+构建双端系统（`ES1 ↔ ES2`）+ 四通道损伤网络（延迟、偏斜、FCS 误码、丢包、乱序重放）+ 独立 Python 参考模型（[`afdx_ref.py`](tools/afdx_ref.py) / [`fragment_ref.py`](tools/fragment_ref.py)）与 VQM 门级网表比对闭环，8 项系统级/性能用例累计运行 **2.3 h**，完成 **1,949,513,089** 次逐拍/逐字节在线断言检查（0 错误、0 RAM 冲突），63 项并行回归 **63/63 PASS**（证据见 [`judge_result_frag1030.txt`](sim/reference/judge_result_frag1030.txt) 与 [`regression.json`](docs/evidence/frag1030_delivery/regression.json)）。
 
 <img src="docs/design/fig/v2/f18_tb.png" width="100%" alt="双端闭环验证平台架构图"/>
 <p><sub>图 15：双端系统、四通道可编程损伤网络与参考模型协同验证平台。</sub></p>
@@ -336,12 +336,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | `burst81` | `554,734` | `17.325` | 81 VL 超规格突发，排空时间 `1032.936 µs`，零丢包 | PASS |
 | `rtc` | `10,675,841` | `475.577` | SNTPv4 同步误差：空载、普通流量均为 `0 ns`，77 VL 满载 `8 ns`（一拍） | PASS |
 | `performance` | `683,408,635` | `3099.543` | 定长千兆满载（77 VL）：注入 `906.136 Mbps`，最大时延 `48.600 µs` | PASS |
-| `perf_var` | `1,254,291,331` | `4638.304` | 变长多 VL 四工况（高载 `904.752 Mbps`，同长最大抖动 `19.544 µs`） | PASS |
+| `perf_var` | `1,254,291,331` | `4638.304` | 变长多 VL 四工况（高载 `904.752 Mbps`；`AFDX_top` 封装层同长最大抖动 `19.544 µs`，核心 `afdx_es` R97 口径 `9.992 µs`） | PASS |
 
 | RTL 代码覆盖率维度（58 份 UCDB · 42 设计单元 · 零排除项） | 命中 / 总计 | 实测覆盖率 | 证据文件 |
 | :--- | :---: | :---: | :--- |
-| 语句覆盖率 (Statement) | `12,416 / 12,824` | **96.8%** | [`coverage_source.md`](docs/evidence/t79_63vl/coverage_source.md) |
-| 分支覆盖率 (Branch) | `7,230 / 7,642` | **94.6%** | [`coverage_frag1030.json`](docs/evidence/t79_63vl/coverage_frag1030.json) |
+| 语句覆盖率 (Statement) | `12,416 / 12,824` | **96.8%** | [`coverage_source.md`](docs/evidence/vl63_full_load/coverage_source.md) |
+| 分支覆盖率 (Branch) | `7,230 / 7,642` | **94.6%** | [`coverage_frag1030.json`](docs/evidence/vl63_full_load/coverage_frag1030.json) |
 | FSM 状态 / 表达式 / 条件 / 翻转 / 跳转 | `115/137` 等 | `83.9%` / `81.3%` / `74.0%` / `71.9%` / `37.6%` | 同上 |
 
 <img src="docs/fig/wave/frag_1.png" width="100%" alt="8192 B 消息 6 分片发送与重组一次交付波形"/>
@@ -368,7 +368,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <img src="docs/fig/wave/snmp_get_2.png" width="100%" alt="SNMP Get 请求与响应波形"/>
 <p><sub>图 22：SNMP `Get` 请求到达后 `12.664 µs` 内双网发出 `GetResponse`。</sub></p>
 
-全部 16 张（7 组）原始波形截图与 SHA256 校验记录位于 `sim/wave/png/` 与 [`wave_provenance.json`](docs/evidence/t79_63vl/wave_provenance.json)，可通过 `do sim/wave/<场景>.do` 复现：
+全部 16 张（7 组）原始波形截图与 SHA256 校验记录位于 `sim/wave/png/` 与 [`wave_provenance.json`](docs/evidence/vl63_full_load/wave_provenance.json)，可通过 `do sim/wave/<场景>.do` 复现：
 
 | 原始波形截图 | 时间窗口 (µs) | 关键事件与观测点 |
 | :--- | :---: | :--- |
@@ -389,7 +389,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 ```text
 afdx/
 ├── rtl/       # 34 个可综合 Verilog-2001 硬件模块（AFDX_top 为工程顶层）
-├── tb/        # 58 个自检 Testbench 与四通道可编程损伤链路（tb/lib/）
+├── tb/        # 71 个自检 Testbench（其中 58 项参与代码覆盖率合并）与四通道可编程损伤链路（tb/lib/）
 ├── sim/       # ModelSim 验收脚本（run_judge.do / run_app.do）、向量、16 张波形截图与 2 张 eLinx 界面截图
 ├── tools/     # 综合构建（build_1030.py）、并行回归（par_regress.py）、Python 参考模型与时序/多周期审计
 ├── elinx/     # eLinx 3.0.7 工程（AFDX_EndSystem.epr）、聚合入口 afdx_all.v 与 .sdc/.edc 约束

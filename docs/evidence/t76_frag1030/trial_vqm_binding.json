@@ -1,8 +1,0 @@
-{
-  "classified_vqm": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\build1030\\AFDX_top_1030\\20261103_053601_914659\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
-  "classified_sha256": "ec9a6c192f4da72507e3b921872a9a0751001961df6cb302c49df351c572273d",
-  "trial_vqm": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\build1030\\AFDX_top_1030\\20261103_063746_648234\\project\\AFDX_EndSystem.runs\\synth_1\\AFDX_EndSystem.vqm",
-  "trial_sha256": "ac2c8955ec261eeb73c9b20260e423fd02554d5b8260f984347e469274662e75",
-  "noncomment_sorted_identical": true,
-  "graph_proof": "out/t76/vqm_structure.json"
-}

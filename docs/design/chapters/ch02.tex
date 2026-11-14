@@ -54,7 +54,7 @@ F4 & 615A 软件数据加载 & 基于 TFTP 的单文件上传与介质定义下�
 F5 & RTC 时钟同步 & SNTPv4 纳秒级时钟同步；32 位秒加 32 位纳秒时间戳；应答报文回显客户端 Transmit 时间戳 \\
 P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（63~VL 规划满载实测单向 \ThruSixtyThree~Mbps、双向 \ThruSixtyThreeBi~Mbps；77/81~VL 超规格压力实测 \Thru{} / \ThruEightyOne~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
 P2 & 端到端时延 & 单帧不超过 2000~µs（核心满载最大实测 \Lat~µs；63~VL 顶层周期激励最大 \LatSixtyThreePMax~µs，B2 背靠背突发最大 \LatSixtyThreeBTwo~µs；分片长包按 $(F-1)\times\text{BAG}$ 确定性完成） \\
-P3 & 传输抖动 & 63~VL 满载周期激励下 $1471$~B 抖动 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 背靠背突发最大 \JitSixtyThreeBTwo~µs；核心定长满载同 VL 极差仅 \JitSameVl~µs、变长循环为 \JitVarCycle~µs \\
+P3 & 传输抖动 & 63~VL 满载周期激励下 $1471$~B 抖动 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 背靠背突发最大 \JitSixtyThreeBTwo~µs；定长满载同 VL 极差仅 \JitSameVl~µs，变长循环核心 \code{afdx_es} R97 为 \JitVarCycle~µs（顶层 \code{AFDX_top} R119 为 \JitVarCycleTop~µs） \\
 P4 & 帧格式 & 以太网帧长 64--1518 字节（含 FCS）；复位后首帧 SN 为 0，之后按 1--255 循环 \\
 P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用；团队声明单端满载网络规划规格为 63 发送 / 63 接收 VL \\
 I1 & 官方顶层端口 & \code{AFDX_top} 的 8 个模板端口名称、方向和位宽保持完全兼容，承载带 2 字节大端 VLID 前缀的应用层流式收发报文 \\

@@ -1,8 +1,8 @@
 \chapter{原始仿真截图}\label{app:captures}
 
-本附录汇集 ModelSim SE-64 2020.4 原始波形窗口截图（归档于 \code{sim/wave/png/}，当前共归档 18 幅原始截图，包含 11-03 基于分片版提交 \code{12858ddf} 生成的 13 幅核心/服务波形、新增的 3 幅 8192~B 分片与按序重组波形 \code{frag_1.png}--\code{frag_3.png}，以及第~\ref{ch:func}~章与第~\ref{ch:netlist}~章已引用的 \code{tb_elinx.png}、\code{elinx_overview.png} 两幅 eLinx 界面截图；前 14 幅截图 SHA-256 溯源记录归档于 \code{docs/evidence/t79_63vl/wave_provenance.json}），与正文中的时序图配合阅读。五项功能联合运行的全程波形见正文图~\ref{fig:capture-services}。
+本附录汇集 ModelSim SE-64 2020.4 原始波形窗口截图（归档于 \code{sim/wave/png/}，当前共归档 18 幅原始截图，包含 13 幅核心/服务波形、3 幅 8192~B 分片与按序重组波形 \code{frag_1.png}--\code{frag_3.png}，以及第~\ref{ch:func}~章与第~\ref{ch:netlist}~章已引用的 \code{tb_elinx.png}、\code{elinx_overview.png} 两幅 eLinx 界面截图；溯源校验记录归档于 \code{docs/evidence/vl63_full_load/wave_provenance.json}），与正文中的时序图配合阅读。五项功能联合运行的全程波形见正文图~\ref{fig:capture-services}。
 
-图中被观测的 \code{app_tx_*}、\code{app_rx_*} 及 \code{ev_*} 为内核 \code{afdx_es} 与收发核心边界信号（外部激励经顶层 \code{AFDX_top} 2B-VLID 流包装层驱动）。需要特别说明的是：第~\ref{ch:func}~章矢量时序图基于早期内核跟踪记录（\code{CE_DIV=1}）绘制，而本附录原始截图捕获自 11-03 分片版 RTL（\code{CE_DIV=2}），故绝对时间轴起点平移约 0.46~µs（SNMP 响应因二分频时钟使能间隔为 12.664~µs），各协议交互顺序与 800.000~µs BAG 帧间隔完全一致。
+图中被观测的 \code{app_tx_*}、\code{app_rx_*} 及 \code{ev_*} 为内核 \code{afdx_es} 与收发核心边界信号（外部激励经顶层 \code{AFDX_top} 2B-VLID 流包装层驱动）。需要特别说明的是：第~\ref{ch:func}~章矢量时序图基于早期内核跟踪记录（\code{CE_DIV=1}）绘制，而本附录原始截图捕获自 \code{CE_DIV=2} 分片交付版 RTL，故绝对时间轴起点平移约 0.46~µs（SNMP 响应因二分频时钟使能间隔为 12.664~µs），各协议交互顺序与 800.000~µs BAG 帧间隔完全一致。
 
 \section{同一 VL 的发送间隔}
 

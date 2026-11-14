@@ -71,8 +71,8 @@
   },
   "Status": "PASS-PREFIX",
   "checked": "2026-11-04T01:46:54.027050+08:00",
-  "flow": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
-  "reference": "out\\t75\\candidate1_source\\out\\gui_netlist\\tb_frag1030_net_rtl\\20261103_000656_614198",
+  "flow": "out\\gui_netlist\\tb_frag1030_net_gui\\20261103_000741_186882",
+  "reference": "out\\gui_netlist\\tb_frag1030_net_rtl\\20261103_000656_614198",
   "cutoff_cycle": 199578,
   "complete_simulation": false,
   "hdl_result_reached": false,
@@ -81,7 +81,7 @@
     "pid": 33644,
     "created": 1793693286.312673
   },
-  "stop_record": "out\\t75\\fragment_prefix\\stop_record.json",
+  "stop_record": "out\\fragment_prefix\\stop_record.json",
   "source_sha256": "277D251F123F724BEBD679774596E367E32C997604BC7CD941697B00FE20361D",
   "raw_sha256": {
     "tx_a.txt": "E5741D5691CDA81AB0C0BBBE3635152DF7EA127DBD0C57B6DD45B81CA7EBEE04",

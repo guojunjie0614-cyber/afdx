@@ -1,4 +1,4 @@
-# ModelSim batch entry for the T60 synthesizable VLID application stream top.
+# ModelSim batch entry for the synthesizable VLID application stream top.
 # Run from the repository root: do sim/run_app.do [stimulus] [vl_config] [run_name]
 # The judge edits stimulus.txt; tb/lib/afdx_sys_config.v owns configuration.
 # Original VLID bytes are injected without conversion to a transmit index.

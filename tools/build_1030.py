@@ -106,7 +106,7 @@ def prepare(flow, pres):
     timing = (ROOT / 'elinx/timing_only.sdc').read_text(encoding='utf-8-sig')
     if '-period 8.000' not in timing or '-setup 0.30' not in timing:
         raise RuntimeError('Expected 8 ns clock and 0.30 ns uncertainty')
-    spec = json.loads((ROOT / 'elinx/constraints_t62.json').read_text(encoding='utf-8-sig'))
+    spec = json.loads((ROOT / 'elinx/multicycle_spec.json').read_text(encoding='utf-8-sig'))
     pins = spec['pins']
     if len(pins) != 172 or len({x['port'] for x in pins}) != 172 or len({x['pin'] for x in pins}) != 172:
         raise RuntimeError('Pin assignment is incomplete or colliding')

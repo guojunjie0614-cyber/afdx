@@ -18,7 +18,7 @@ ENABLE_FIX_HOLD_VIOLATE 1 FIX_SETUP_SLACK 1 MAX_ROUTER_ITERATION 150 PROCESS_NAM
 set_global_assignment -name TOP_LEVEL_ENTITY $top
 set_global_assignment -name DESIGN_PATH $run
 set_global_assignment -name PROJECT_NAME $top
-set_global_assignment -name IMPLE_NAME c3_t6
+set_global_assignment -name IMPLE_NAME afdx_impl
 set_global_assignment -name ProjectName $top
 set_global_assignment -name ProjectDirectory "$run/"
 set_global_assignment -name PackArchFileName [file join $lib pack_guide.xml]
@@ -26,13 +26,13 @@ source [file join $lib arc_guide.tcl]
 set_arc_ucm_parameter TILE_DAT_PATH [file join $lib tile]
 set_arc_ucm_parameter STRUCTURE_PATH [file join $device CSG484_H structure.dat]
 set_arc_ucm_parameter TILE_TIMING_DAT_PATH [file join $device timing_info.dat]
-puts "C3_IMPL_STAGE architecture"
+puts "ELINX_IMPL_STAGE architecture"
 flush stdout
 arc_deserialize_device_info
 arc_deserialize_tile_info
 read_port_info -f [file join $lib place_route_guide.xml]
 udm_parse_vqm [file join $run design.vqm]
-# C3 mapped netlist; tool inputs and logs stay in this private output directory.
+# Mapped netlist; tool inputs and logs stay in this private output directory.
 set model [file nativename $device]
 append model "\\"
 load_time_model $model
@@ -40,7 +40,7 @@ load_time_model $model
 read_sdc [file join $run constraints.sdc]
 read_drc_config_file [file join $device elinx_drc.dat]
 excute_check_prepack
-puts "C3_IMPL_STAGE pack"
+puts "ELINX_IMPL_STAGE pack"
 flush stdout
 create_timing_group
 DoReadPackData
@@ -52,14 +52,14 @@ write_statistical_info $top -pack -f [file join $run utilization_packed.rpt]
 udm_save_checkpoint [file join $run packed.ecp]
 udm_write_cluster [file join $run packed_cluster.xml]
 excute_check_preplace
-puts "C3_IMPL_STAGE place"
+puts "ELINX_IMPL_STAGE place"
 flush stdout
 create_timing_group
 serialize_timing_delay [file join $run pack.dly.pb]
 try_place -f [file join $run design.place]
 place_clear
 serialize_timing_delay [file join $run place.dly.pb]
-puts "C3_IMPL_STAGE route"
+puts "ELINX_IMPL_STAGE route"
 flush stdout
 route_init_arc
 route_pro_ucm
@@ -86,8 +86,8 @@ show_fmax 1
 compute_clock_fmax
 print_timing_report [file join $run routed_timing.rpt]
 free_timing_graph
-} timing_message]} {puts "C3_ROUTED_TIMING_UNAVAILABLE $timing_message"}
+} timing_message]} {puts "ELINX_ROUTED_TIMING_UNAVAILABLE $timing_message"}
 route_delete_interface
-puts "C3_IMPL_STAGE completed"
-} message options]} {puts "C3_IMPL_FAILED $message";puts [dict get $options -errorinfo];exit 1}
+puts "ELINX_IMPL_STAGE completed"
+} message options]} {puts "ELINX_IMPL_FAILED $message";puts [dict get $options -errorinfo];exit 1}
 exit 0

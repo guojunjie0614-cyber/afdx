@@ -1,7 +1,7 @@
 \addtocontents{toc}{\protect\newpage}
 \chapter{系统性能、压力与时钟同步测试}\label{ch:perf}
 
-本章围绕有效载荷吞吐率、帧格式与 IPv4 分片边界、顶层 \code{AFDX_top} 63-VL 声明满载规格、内核定长与多 VL 变长分段时延与 R95/R97 传输抖动、最坏同拍突发排空以及 128 发送/4096 接收虚拟链路容量展开定量测试与物理机理解析。所有数据直接源于实测基准归档（\code{docs/evidence/t79_63vl/}、\code{docs/evidence/frag1030_delivery/}、\code{docs/evidence/perf_r97.json} 及 \code{docs/evidence/t75_frag1030/performance_difference.md}）。
+本章围绕有效载荷吞吐率、帧格式与 IPv4 分片边界、顶层 \code{AFDX_top} 63-VL 声明满载规格、内核定长与多 VL 变长分段时延与 R95/R97 传输抖动、最坏同拍突发排空以及 128 发送/4096 接收虚拟链路容量展开定量测试与物理机理解析。所有数据直接源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/}、\code{docs/evidence/perf_r97.json} 及 \code{docs/evidence/vqm_compat/performance_difference.md}）。
 
 \section{测量定义与测试工况配置}\label{sec:p-def}
 
@@ -63,7 +63,7 @@
 
 \section{内核单帧分段时延、超规格压力基线与 R97 抖动机理}\label{sec:p-res}
 
-表~\ref{tab:perf_res} 给出了内核级性能参考测试（\code{tb_sys_perf} 与 \code{tb_sys_perf_var}）在链路 0 拍直连（\code{d0}）及 100/257 拍线缆延迟下的分段时延与抖动数据（注：1030 分片版本中发送引擎调度提前量由 $-9$ 调整为 $-8$ 拍以容纳分片计算流水，使极少数边界帧实测间隔出现 $\text{BAG}+1$ 拍即 $+8\text{ ns}$ 的良性量化台阶，详见 \code{docs/evidence/t75_frag1030/performance_difference.md}）。
+表~\ref{tab:perf_res} 给出了内核级性能参考测试（\code{tb_sys_perf} 与 \code{tb_sys_perf_var}）在链路 0 拍直连（\code{d0}）及 100/257 拍线缆延迟下的分段时延与抖动数据（注：1030 分片版本中发送引擎调度提前量由 $-9$ 调整为 $-8$ 拍以容纳分片计算流水，使极少数边界帧实测间隔出现 $\text{BAG}+1$ 拍即 $+8\text{ ns}$ 的良性量化台阶，详见 \code{docs/evidence/vqm_compat/performance_difference.md}）。
 
 \begingroup
 \setlength{\tabcolsep}{3.5pt}
@@ -115,7 +115,7 @@
     \begin{equation}
       \Delta L_\text{app} = \Delta L_\text{tx} + \Delta L_\text{rx} = +11.904\,\text{µs} - 1.912\,\text{µs} = +9.992\,\text{µs}\ (1249\text{ 拍}),
     \end{equation}
-    两项代数和与实测极差抖动 9.992~µs 严密吻合。这从物理层面揭示：变长循环下的抖动主要源于发送端在物理串行线路上排队深度的动态变化（+11.904~µs），该延迟差超过了短帧在接收交付端节省的排空时间（$-1.912$~µs）。
+    两项代数和与实测极差抖动 9.992~µs 严密吻合。这从物理层面揭示：变长循环下的抖动主要源于发送端在物理串行线路上排队深度的动态变化（+11.904~µs），该延迟差超过了短帧在接收交付端节省的排空时间（$-1.912$~µs）。注：上述 9.992~µs 为端系统核心 \code{afdx_es} 按 R97-2 口径测得的极差；若从顶层 \code{AFDX_top} 2B-VLID 应用流口按 R119 口径统计，\code{tb_sys_perf_var} 实测 \code{var_cycle} 最大同长抖动为 \JitVarCycleTop~µs（见 \code{judge_result_frag1030.txt}）。
 \end{itemize}
 
 

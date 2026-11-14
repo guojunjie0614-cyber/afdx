@@ -93,7 +93,7 @@ CLB 占用 & 69 & 209 \\
 
 \section{布局布线后全量静态时序分析（Post-Route STA）}\label{sec:sta}
 
-为验证时钟树与实际物理布线延迟下的建立与保持时间，采用官方构建流程 \code{tools/build_1030.py --route --pres 1.30} 结合 \code{elinx/tiles_1030.edc}（\countsep{\LockedClusters} 个 CLB/M4K 锁定簇，0 缺失、0 偏移）完成布局布线，全芯片 64,939 条逻辑网络 100\% 布通且布线错误为 0（\code{route_status.rpt}），并基于物理时序数据库（\code{AFDX_EndSystem.tan.pb}）在显式计入 \textbf{\ClkUncert~ns（\ClkUncertPs~ps）时钟不确定度}下完成静态时序签核（证据归档于 \code{docs/evidence/frag1030_delivery/timing.json}、\code{slack.rpt} 及 \code{docs/evidence/t77_rtl_compat/v2_route_R1.json}）。
+为验证时钟树与实际物理布线延迟下的建立与保持时间，采用官方构建流程 \code{tools/build_1030.py --route --pres 1.30} 结合 \code{elinx/tiles_1030.edc}（\countsep{\LockedClusters} 个 CLB/M4K 锁定簇，0 缺失、0 偏移）完成布局布线，全芯片 64,939 条逻辑网络 100\% 布通且布线错误为 0（\code{route_status.rpt}），并基于物理时序数据库（\code{AFDX_EndSystem.tan.pb}）在显式计入 \textbf{\ClkUncert~ns（\ClkUncertPs~ps）时钟不确定度}下完成静态时序签核（证据归档于 \code{docs/evidence/frag1030_delivery/timing.json}、\code{slack.rpt} 及 \code{docs/evidence/route_sta/route_R1.json}）。
 
 \subsection{时序签核与多周期约束审计}
 
@@ -125,7 +125,7 @@ CLB 占用 & 69 & 209 \\
 
 \subsection{关键最差时序路径分析}
 
-表~\ref{tab:crit_paths} 列出了综合阶段与布局布线后实测签核数据库中的代表性最差建立时间路径及多周期约束边界路径（源自 \code{v2_route_R1.json} 与 \code{slack.rpt}）。
+表~\ref{tab:crit_paths} 列出了综合阶段与布局布线后实测签核数据库中的代表性最差建立时间路径及多周期约束边界路径（源自 \code{route_R1.json} 与 \code{slack.rpt}）。
 
 \begin{table}[H]\centering
 \caption{综合与布局布线后关键建立时间路径明细}\label{tab:crit_paths}
@@ -147,7 +147,7 @@ CLB 占用 & 69 & 209 \\
 
 综合后功能仿真采用官方导出的结构化 VQM 网表，直接调用中科亿海微原厂单元仿真库（\code{stratix_atoms.v}、\code{stratixiv_atoms.v}、\code{altera_mf.v}、\code{220model.v}）。针对 VQM 中原语悬空未绑端口，仿真适配脚本 \code{tools/adapt_gui_vqm.py} 按原厂模型规范显式补齐未用数据输入电平与进位链使能参数，网表内部全部功能单元连接、参数及 LUT 掩码值 100\% 原样保留。
 
-门级网表签核共涵盖 NET-01 至 NET-04 四类测试窗口（表~\ref{tab:netlist_sim}，证据归档于 \code{docs/evidence/frag1030_delivery/t75_official.json}、\code{fragment_prefix.json} 与 \code{vqm_windows.json}）。
+门级网表签核共涵盖 NET-01 至 NET-04 四类测试窗口（表~\ref{tab:netlist_sim}，证据归档于 \code{docs/evidence/frag1030_delivery/vqm_official.json}、\code{fragment_prefix.json} 与 \code{vqm_windows.json}）。
 
 \begingroup
 \setlength{\tabcolsep}{4pt}
@@ -157,7 +157,7 @@ CLB 占用 & 69 & 209 \\
 NET-01 & \code{tb_elinx}（SYS-09），耗时 \NetElinxTime~s & 双端双网经顶层 2B-VLID 流互发 1/64/1471~B 消息并去重交付（仿真至 2557.777~µs） & \ElinxChecks/0\newline 平台自检 & 通过 \\
 NET-02 & \code{tb_net_services}（SVC-08），耗时 \NetCliTime~s & 五功能联合自检与独立核对 0 错误；7 份外部端口记录与 RTL 逐拍逐字节 SHA-256 完全一致 & \SvcChecks/0\newline 65/0 & 通过 \\
 NET-03 & \code{tb_frag1030_net}（分片重组窗口），耗时 \NetFragTime~s & 覆盖前 199,578 拍窗口（含复位清零及 \code{VL 0x0102} 1472~B 两分片双网发送与按序重组交付），5 份文件共 32 条记录与 RTL SHA-256 完全一致 & 32/0 记录\newline 5/0 文件 & 通过 \\
-NET-04 & \code{tb_t76_load}（TX-VQM \NetTSixTxTime~s / RX-VQM \NetTSixRxTime~s） & 1026 顶层流包装 81~VL $+$ 1472~B 两分片混合窗口（仿真至 2736.792~µs），两侧各 11 份记录与纯 RTL 逐字节相同，公开端口 X/Z 为 0 & 161/0（TX）\newline 161/0（RX） & 通过 \\
+NET-04 & \code{tb_t76_load}（TX-VQM \NetLoadTxTime~s / RX-VQM \NetLoadRxTime~s） & 1026 顶层流包装 81~VL $+$ 1472~B 两分片混合窗口（仿真至 2736.792~µs），两侧各 11 份记录与纯 RTL 逐字节相同，公开端口 X/Z 为 0 & 161/0（TX）\newline 161/0（RX） & 通过 \\
 \end{longtable}
 \endgroup
 

@@ -2,10 +2,10 @@
 
 \section{顶层端口}
 
-按官方 1026/1030 答疑澄清（R110、R120-3、R124、R126），顶层模块 \code{AFDX_top} 完整保留选题模板的 8 个核心端口（名称、方向和位宽不变，其中 \code{tx_data}/\code{rx_data} 直接承载带 2 字节大端 VLID 前缀的应用层流式消息），并显式引出 A、B 双网千兆 GMII 物理端口、32 位配置总线及硬件统计事件脉冲。顶层共声明 26 个端口信号，总位宽为 \Pins{} 位（占 EQ6HL130-CSG484\_H 可用 339 个用户 I/O 的 \PinPct\%）。顶层端口定义见表~\ref{tab:ports}；内部协议核心 \code{afdx_es} 同时保留显式的核心应用端口 \code{app_tx_*}/\code{app_rx_*}（第~\ref{sec:intif}~节）。
+按官方 1026/1030 答疑澄清（R110、R120-3、R124、R126），顶层模块 \code{AFDX_top} 完整保留选题模板的 8 个核心端口（名称、方向和位宽不变，其中 \code{tx_data}/\code{rx_data} 直接承载带 2 字节大端 VLID 前缀的应用层流式消息），并显式引出 A、B 双网千兆 GMII 物理端口、32 位配置总线及硬件统计事件脉冲。顶层共声明 29 个独立端口信号，总位宽为 \Pins{} 位（占 EQ6HL130-CSG484\_H 可用 339 个用户 I/O 的 \PinPct\%）。顶层端口定义见表~\ref{tab:ports}；内部协议核心 \code{afdx_es} 同时保留显式的核心应用端口 \code{app_tx_*}/\code{app_rx_*}（第~\ref{sec:intif}~节）。
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{5.2cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{7.6cm}}
-\caption{\code{AFDX_top} 顶层端口定义（26 组信号，共 \Pins{} 引脚）}\label{tab:ports}\\
+\caption{\code{AFDX_top} 顶层端口定义（29 个独立端口信号，共 \Pins{} 引脚）}\label{tab:ports}\\
 \longtablehead{3}{端口 & 方向 & 含义}
 \multicolumn{3}{l}{\textit{选题模板端口（2 字节 VLID 前缀应用流接口）}} \\*
 \code{clk} & 入 & 125~MHz 全局主时钟 \\

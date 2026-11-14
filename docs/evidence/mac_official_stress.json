@@ -1,12 +1,12 @@
 {
   "name": "stress_crc_n4",
   "started": "2026-10-11T20:56:00.604349+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
-  "scope": "T22b isolated official MAC experiment; original IP and tracked sources unchanged",
+  "folder": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+  "scope": "Isolated official MAC experiment; original IP and tracked sources unchanged",
   "memory_floor_gib": 5.0,
   "memory_limit_gib": 10.0,
   "completed": true,
-  "tail": "# [WIRE] frame=107 cycle=85412\n# [WIRE] frame=108 cycle=86952\n# [WIRE] frame=109 cycle=88492\n# [WIRE] frame=110 cycle=90032\n# [WIRE] frame=111 cycle=91572\n# [WIRE] frame=112 cycle=93112\n# [WIRE] frame=113 cycle=94652\n# [WIRE] frame=114 cycle=96192\n# [WIRE] frame=115 cycle=97732\n# [WIRE] frame=116 cycle=99272\n# [WIRE] frame=117 cycle=100812\n# [WIRE] frame=118 cycle=102352\n# [CAPTURE_DONE] frames=118 wire=118 rxends=118 cycles=111380 stalls=1908 instances=4 shadow_errors=0\n# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v(82)\n#    Time: 891040 ns  Iteration: 1  Instance: /tb_official\n# Break at E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v line 82\n# Stopped at E:/2026_Embedded_FPGA/worktrees/active/c3_github/out/t22/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v line 82\nT22B_RUN_MS 562151\n# End time: 21:05:34 on Oct 11,2026, Elapsed time: 0:09:31\n# Errors: 0, Warnings: 0",
+  "tail": "# [WIRE] frame=107 cycle=85412\n# [WIRE] frame=108 cycle=86952\n# [WIRE] frame=109 cycle=88492\n# [WIRE] frame=110 cycle=90032\n# [WIRE] frame=111 cycle=91572\n# [WIRE] frame=112 cycle=93112\n# [WIRE] frame=113 cycle=94652\n# [WIRE] frame=114 cycle=96192\n# [WIRE] frame=115 cycle=97732\n# [WIRE] frame=116 cycle=99272\n# [WIRE] frame=117 cycle=100812\n# [WIRE] frame=118 cycle=102352\n# [CAPTURE_DONE] frames=118 wire=118 rxends=118 cycles=111380 stalls=1908 instances=4 shadow_errors=0\n# ** Note: $finish    : out/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v(82)\n#    Time: 891040 ns  Iteration: 1  Instance: /tb_official\n# Break at out/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v line 82\n# Stopped at out/b/jobs/stress_crc_n4/20261011_205600_603351/tb_official.v line 82\nMAC_RUN_MS 562151\n# End time: 21:05:34 on Oct 11,2026, Elapsed time: 0:09:31\n# Errors: 0, Warnings: 0",
   "analysis": {
     "summary": {
       "inputs": 118,
@@ -2866,7 +2866,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-c"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+      "cwd": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
       "pid": 8584,
       "created": 1791723360.6570296,
       "exit_code": 0,
@@ -2874,7 +2874,7 @@
       "seconds": 0.281,
       "peak_tree_bytes": 7458816,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\ini.log"
+      "log": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\ini.log"
     },
     {
       "name": "work",
@@ -2882,7 +2882,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "work"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+      "cwd": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
       "pid": 14844,
       "created": 1791723360.9357915,
       "exit_code": 0,
@@ -2890,18 +2890,18 @@
       "seconds": 0.282,
       "peak_tree_bytes": 7348224,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\work.log"
+      "log": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\work.log"
     },
     {
       "name": "vendor_map",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-modelsimini",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\modelsim.ini",
+        "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\modelsim.ini",
         "ip_vendor",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\vendor\\ip_vendor"
+        "out\\b\\vendor\\ip_vendor"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+      "cwd": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
       "pid": 9696,
       "created": 1791723361.211795,
       "exit_code": 0,
@@ -2909,18 +2909,18 @@
       "seconds": 0.281,
       "peak_tree_bytes": 8159232,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\vendor_map.log"
+      "log": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\vendor_map.log"
     },
     {
       "name": "compile",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
         "-vlog01compat",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\t22_official_mac.vo",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\phy_status.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\tb_official.v"
+        "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\official_mac.vo",
+        "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\phy_status.v",
+        "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\tb_official.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+      "cwd": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
       "pid": 6360,
       "created": 1791723361.507774,
       "exit_code": 0,
@@ -2928,7 +2928,7 @@
       "seconds": 0.546,
       "peak_tree_bytes": 45731840,
       "budget_seconds": 180,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\compile.log"
+      "log": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\compile.log"
     },
     {
       "name": "simulation",
@@ -2946,7 +2946,7 @@
         "-do",
         "do run.do"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
+      "cwd": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351",
       "pid": 37944,
       "created": 1791723362.0609448,
       "exit_code": 0,
@@ -2954,7 +2954,7 @@
       "seconds": 572.969,
       "peak_tree_bytes": 303833088,
       "budget_seconds": 600,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\simulation.log"
+      "log": "out\\b\\jobs\\stress_crc_n4\\20261011_205600_603351\\simulation.log"
     }
   ]
 }

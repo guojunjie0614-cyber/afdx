@@ -81,7 +81,7 @@ proc judge_perf::vectors {folder} {
 proc judge_perf::require {condition message} {if {!$condition} {error "Performance check: $message"}}
 proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)-max($start,$begin))}}
 
-# R119/R120 baseline for the frag1030 delivery RTL (fragmentation + T77), measured 2026-11-04
+# R119/R120 baseline for the frag1030 delivery RTL, measured 2026-11-04
 # by the judge entry. The fragmentation path adds 39 cycles (0.312 us) to both latency
 # fields relative to the F1 baseline (48.288/36.512 and 50.344/38.568 us).
 # fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles

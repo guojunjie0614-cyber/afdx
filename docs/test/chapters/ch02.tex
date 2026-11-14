@@ -84,7 +84,7 @@ FPGA 综合与实现工具 & eLinx 3.0.7（\code{tools/build_1030.py} 驱动逻�
 \longtablehead{4}{\thead{方式} & \thead{内容与范围} & \thead{通过判据} & \thead{实测耗时}}
 eLinx 界面仿真 & 打开 \code{AFDX_EndSystem.epr}，运行 \code{tb_elinx}：双端双网经顶层 2B-VLID 流互发 1、64、1471~B 消息并核对去重 & \texttt{PASS checks=\ElinxChecks{} errors=0} & 2~min 18~s \\
 顶层包装与分片专项 & 执行 \code{do sim/run_app.do} 与 \code{sim/run_fragmentation.ps1}：覆盖 \code{tb_top_wrap}、16 项 \code{tb_t65_*}、重组引擎单元及端到端分片 & 全部用例 \code{PASS errors=0}，\code{fragment_ref.py} 0 差异 & 约 4~min \\
-ModelSim 评审批处理 & 执行 \code{do sim/run_judge.do}：无需 Python，连续运行五功能、容量、SNMP、77/81 突发、RTC、定长与变长性能 8 项用例 & 8/8 PASS，1,949,512,989 自检 0 错误 & 8322.7~s（约 2.3~h） \\
+ModelSim 评审批处理 & 执行 \code{do sim/run_judge.do}：无需 Python，连续运行五功能、容量、SNMP、77/81 突发、RTC、定长与变长性能 8 项用例 & 8/8 PASS，1,949,513,089 次逐拍/逐字节断言检查 0 错误 & 8322.7~s（约 2.3~h） \\
 快速 RTL 回归 & 执行 \code{powershell -File sim/regress.ps1}：默认批处理 \RegFastCount{} 项快速回归并调用 Python 参考模型核对 & \RegFastCount{} 项 PASS，\countsep{\RegFastChecks} 自检通过 & 813.6~s \\
 全量签核与 63-VL & 快速回归 + \code{tb_sys_load}、\code{tb_sys_rtc}、\code{tb_sys_perf}、\code{tb_sys_perf_var}（共 \RegCount{} 项）及 \code{tb_t76_load}（63-VL 满载套件） & \RegCount{} 项及 63-VL 工况全部 PASS，\countsep{\RegChecks} 自检通过 & 约 3.5~h \\
 \end{longtable}

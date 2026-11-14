@@ -23,9 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / 'tools') not in sys.path:
     sys.path.insert(0, str(ROOT / 'tools'))
 
-from t63_eco import normalize_cell
-from t63_merge import read_owner
-from t63_move import valid_tiles
+from eco_place import normalize_cell
+from eco_merge import read_owner
+from eco_move import valid_tiles
 
 GAIN_PS_PER_TILE = 55.0     # Conservative credit when shortening a path
 PENALTY_PS_PER_TILE = 90.0  # Pessimistic penalty when lengthening a path

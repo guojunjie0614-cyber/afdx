@@ -2,17 +2,17 @@
 
 ## 当前交付状态
 
-11-04 交付收尾的最终源码快速回归 63/63 PASS（52 项基础 + 11 项分支）；配置隔离 2/2 PASS，源码 `360cd0294e9ae129eef97fe37ae325187e13650c`。四个长用例引用分片版既有运行：tb_sys_perf 引用 11-03 满负载与分片负载验证中按公开应用口时戳统计的检查结果，其余引用 11-03 分片版 RTL 与官方 VQM 网表验证；与最终源码的关系由 11-04 ModelSim 兼容修正的 MODEL_TECH/兼容副本 ModelSim 等价及综合逐 token 保序相同证据绑定。11-03 满负载与分片负载验证的官方 VQM TX/RX 各 161 检查通过，与同激励 RTL 的 11 份记录各自逐字节相同。11-04 ModelSim 兼容修正后的端到端布线 setup +29 ps / hold +604 ps，setup/hold 各 0/96142 失败端点。旧 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与兼容修正后新 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 分开绑定。
+分片交付版最终源码快速回归 `63/63 PASS`（52 项基础 + 11 项分支），配置隔离 `2/2 PASS`。四项系统级长用例中，`tb_sys_perf` 采用按公开应用口时戳统计的检查结果，其余引用分片版 RTL 与官方 VQM 网表验证，ModelSim `MODEL_TECH` 兼容分支与综合入口逐 token 保序等价并经 5 项直接 RTL 复核。官方 VQM TX/RX 负载窗口各 `161` 检查通过，与同激励 RTL 的 11 份记录逐字节一致。锁定布线后 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点；基准 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与端到端兼容布线 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 各自独立绑定。
 
-满负载规格为每端 63 TX / 63 RX VL（BAG=1 ms、Lmax=1471，线路占用约 77.5%）；可配置 TX 128 / RX 4096 条 VL。63 VL 七场景各连续 100 ms 通过：五项周期场景最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景 HDL、完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格与网络规划要求见 [ARCH](ARCH.md#系统规格与网络规划)，原始记录见 [11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md)；elinx 工程相对 a6181267 的一行源文件登记差异，以及检查数、耗时、输入哈希及体积见 [交付证据](evidence/frag1030_delivery/summary.md)。
+满负载规格为每端 63 TX / 63 RX VL（BAG=1 ms、Lmax=1471，线路占用约 77.5%）；可配置 TX 128 / RX 4096 条 VL。63 VL 七场景各连续 100 ms 通过：五项周期场景最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景 HDL、完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格与网络规划要求见 [ARCH](ARCH.md#系统规格与网络规划)，原始记录见 [63 VL 满负载规格验证](evidence/vl63_full_load/summary.md)，汇总证据、检查数、耗时与覆盖边界见 [交付证据](evidence/frag1030_delivery/summary.md)。
 
 ### 压力测试与使用条件
 
 - 压力测试（超出满负载规格）：81 VL 周期注入最大抖动 3.368 µs；81 VL 背靠背 BAG 等待场景（case 16）10/162 组抖动 ≥100 µs，最大 107.7 µs（VL 0x0126，两个方向）；81 VL 长短消息混合出现接收溢出，固定激励二分为 70 VL 通过 20 ms、71 VL 溢出，据此取 63 VL 规格（10% 余量）。
 - 压力测试：63 VL 满负载下多条 VL 同时发送 8192 B（20 ms 窗口），2 条零丢失；3 条、4 条时接收载荷环溢出（ev_a[7]），出现丢失。网络规划要求同时发送 8192 B 消息的 VL 不超过 1 条。
 - 8192 字节分片和故障恢复在 RTL 上验证；分片网表对照覆盖前 199,578 拍（含 1472 字节两帧重组），与 RTL 逐字节一致。
-- eLinx Run Behavioral Simulation 于 11-04 人工验证：PASS checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；截图与已知警告说明见 [11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md#elinx-界面人工验证)。
-- eLinx 每次综合的 VQM 文本排列不同、功能结构相同，锁定布线后的时序相同（11-04 ModelSim 兼容修正后实测）。
+- eLinx Run Behavioral Simulation 实测验证：PASS checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；截图与已知警告说明见 [63 VL 满负载规格验证](evidence/vl63_full_load/summary.md#elinx-界面仿真验证)。
+- eLinx 每次综合的 VQM 文本排列不同、功能结构相同，锁定布线后的时序相同。
 
 ## 来源与约定
 
@@ -47,11 +47,11 @@ R119-1 把端到端时延改为“任意 VL 的首个 `tx_data` 数据输入到 
 | L_release_app / L_release_app_last（legacy） | 主机计划释放拍 | 交付首/末字节 | 含单应用口串行注入排队 |
 
 R97 原文使用“发送端 GMII 输入”“接收端 GMII 输出”；本直连仿真按上表 TX/RX 边界测量，L_gmii 等于链路模型延迟 0.000 或 2.056 µs，反映的是链路模型本身。这些 GMII 与末字节口径作为兼容字段保留，主指标为 L_entry_last。
-R119-2 的抖动是同一 VL、**帧长相同**的多帧 L_entry_last 最大值减最小值，再取所有组的最大值，并给出所在 VL、帧长和两帧编号；它包含 ARINC 664 的 BAG 抖动。旧 R97-2 的“同一 VL 多帧”不区分帧长，已被 R119-2 取代；原“相邻发送起点间隔偏离 BAG”称为发送间隔偏差（`tx_interval_jitter`），与 R119-2 抖动分开报告。来源：R119-2、[perf_r97.json](evidence/perf_r97.json)的 `definitions`（分片前 10-28 的输出，测量定义与当前代码一致）；定义代码为 [perf_ref.py](../tools/perf_ref.py)的 `measure_r97()` / `stats_len()`。[分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)分别输出 `jitter_r119_us`、`jitter_vl`、`jitter_len` 和发送间隔偏差。63 VL 满负载按 R139 的测量分组与结果见 [满负载验证](evidence/t79_63vl/summary.md)。
+R119-2 的抖动是同一 VL、**帧长相同**的多帧 L_entry_last 最大值减最小值，再取所有组的最大值，并给出所在 VL、帧长和两帧编号；它包含 ARINC 664 的 BAG 抖动。旧 R97-2 的“同一 VL 多帧”不区分帧长，已被 R119-2 取代；原“相邻发送起点间隔偏离 BAG”称为发送间隔偏差（`tx_interval_jitter`），与 R119-2 抖动分开报告。来源：R119-2、[perf_r97.json](evidence/perf_r97.json)的 `definitions`（分片前基线输出，核心 `afdx_es` 测量为 `9.992 µs`，定义与当前代码一致）；定义代码为 [perf_ref.py](../tools/perf_ref.py)的 `measure_r97()` / `stats_len()`。[分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)分别输出 `AFDX_top` 封装层 `jitter_r119_us = 19.544 µs`、`jitter_vl`、`jitter_len` 和发送间隔偏差。63 VL 满负载按 R139 的测量分组与结果见 [满负载验证](evidence/vl63_full_load/summary.md)。
 
 R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷字节数除以窗口时长，A/B 副本不叠加。注入落后门限为 1471 拍。仅 var_burst 按 max(计划释放拍，上一条消息最后输入字节后 1 拍) 起算，排除主机串行注入排队；其他工况按计划释放拍起算。原始计划释放偏差另存 raw_lag_max_cycles。窗口与原始偏差定义见 [当前测量代码](../tools/perf_ref.py)的 `measure_r97()`；反压、丢帧和重复计数见 [分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)的 `stall_cycles`、`stall_maxrun`、`dropped`、`duplicate`、`overflow`。
 
-各工况的实测数值见 [README](../README.md) 第 5 节、[11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md) 和 [交付证据](evidence/frag1030_delivery/summary.md)。
+各工况的实测数值见 [README](../README.md) 第 5 节、[63 VL 满负载规格验证](evidence/vl63_full_load/summary.md) 和 [交付证据](evidence/frag1030_delivery/summary.md)。
 
 ### 变长帧与多虚拟链路工况
 
@@ -71,13 +71,13 @@ R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷�
 
 ## 四、仿真入口与已跑结果
 
-逐项回归结果见 `证据/frag1030_delivery/regression.json`，评委入口 8/8 的完整输出见 `参考/judge_result_frag1030.txt`，官方 VQM 网表对照见 `证据/frag1030_delivery/t75_official.json`。
+逐项回归结果见 `证据/frag1030_delivery/regression.json`，评委入口 8/8 的完整输出见 `参考/judge_result_frag1030.txt`，官方 VQM 网表对照见 `证据/frag1030_delivery/vqm_official.json`。
 
 ### 代码覆盖率
 
-#### 当前分片版覆盖率（11-04 交付引用）
+#### 当前分片交付版覆盖率
 
-11-03 在分片版 RTL `b3a60639` 上采集，58 份 UCDB、42 个 RTL 设计单元。交付 RTL = `b3a60639` + 11-04 ModelSim 兼容修正的 `MODEL_TECH` 声明前移分支，ModelSim 编译的电路等价；覆盖率直接引用、未重跑。
+在分片交付版 RTL 上采集，共 58 份 UCDB、42 个 RTL 设计单元；其中 7 份文件的 `MODEL_TECH` 条件声明前移分支与非 ModelSim 综合入口逐 token 等价，电路逻辑保持一致，见 [综合等价与布线复现](evidence/route_sta/summary.md)。
 
 | 覆盖类别 | 已覆盖 / 总数 | 未覆盖 | 汇总覆盖率 |
 |---|---|---|---|
@@ -89,7 +89,7 @@ R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷�
 | 翻转 | 59358 / 82546 | 23188 | 71.9% |
 | FSM 跳转 | 141 / 375 | 234 | 37.6% |
 
-按原始计数汇总后四舍五入到一位小数。原始数据、SHA256、58 个测试运行名和源码绑定见 [分片版覆盖率来源](evidence/t79_63vl/coverage_source.md)及 [原始 JSON](evidence/t79_63vl/coverage_frag1030.json)。统计范围为上述 58 次运行。
+按原始计数汇总后四舍五入到一位小数。原始数据、SHA256、58 个测试运行名和源码绑定见 [分片版覆盖率来源](evidence/vl63_full_load/coverage_source.md)及 [原始 JSON](evidence/vl63_full_load/coverage_frag1030.json)。统计范围为上述 58 次运行。
 
 ## 五、测量与使用条件
 

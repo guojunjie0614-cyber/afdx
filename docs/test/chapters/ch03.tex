@@ -2,7 +2,7 @@
 
 \section{赛题指标符合性总表}
 
-表~\ref{tab:compliance} 汇集了赛题 5 项核心功能、4 项技术指标、1026/1030 答疑扩展功能以及门级网表综合实现的实测符合性结论。数据源于实测基准归档（\code{docs/evidence/t79_63vl/}、\code{docs/evidence/frag1030_delivery/} 与 \code{docs/evidence/perf_r97.json}）。
+表~\ref{tab:compliance} 汇集了赛题 5 项核心功能、4 项技术指标、1026/1030 答疑扩展功能以及门级网表综合实现的实测符合性结论。数据源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/} 与 \code{docs/evidence/perf_r97.json}）。
 
 \begin{table}[H]\centering
 \caption{赛题指标符合性总表}\label{tab:compliance}
@@ -12,7 +12,7 @@
 \midrule
 传输速率 & $\ge 100\text{ Mbps}$（R95-1 规定去重有效载荷，千兆 GMII） & 顶层 \code{AFDX_top} 63 条 VL 声明满载单向有效吞吐达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps，GMII 线利用率 \LineUtilSixtyThree\%）；超规格压力工况 77/81 条 VL 达 \Thru/\ThruEightyOne~Mbps，多 VL 变长高负载（\code{var_high}）单向达 \ThruVarHigh~Mbps & 符合 \\
 传输时延 & 端到端 $<1\sim 2\text{ ms}$（R96 单帧时延 $\le 2\text{ ms}$） & 顶层 63 条 VL 稳态末字节最大时延 \LatSixtyThreePMax~µs，两拍突发（\code{B2}）最大时延 \LatSixtyThreeBTwo~µs；单帧内核基线最大 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs，$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs，含 257 拍线缆最大 26.488~µs） & 符合 \\
-传输抖动 & 不超过几十微秒（R97-2 同 VL 时延极差口径） & 定长满载发送间隔抖动为 \Jit~µs；R97 同 VL 极差抖动在顶层 63 条 VL 稳态下为 \JitSixtyThreePer~µs（\code{B2} 两拍突发为 \JitSixtyThreeBTwo~µs），内核定长基线为 \JitSameVl~µs，变长循环为 \JitVarCycle~µs & 符合 \\
+传输抖动 & 不超过几十微秒（R97-2 同 VL 时延极差口径） & 定长满载发送间隔抖动为 \Jit~µs；R97 同 VL 极差抖动在顶层 63 条 VL 稳态下为 \JitSixtyThreePer~µs（\code{B2} 两拍突发为 \JitSixtyThreeBTwo~µs），定长基线为 \JitSameVl~µs，变长循环核心 \code{afdx_es} R97 口径为 \JitVarCycle~µs、顶层 \code{AFDX_top} R119 口径为 \JitVarCycleTop~µs & 符合 \\
 帧格式与分片 & 单帧载荷 $\le 1471\text{ B}$、帧长 $\le 1518\text{ B}$；R119/R139 支持 2B-VLID 流与 1--8192~B 分片 & 单帧 1--1471~B 载荷、64--1518~B 以太网封装正确；1472--\MaxMessageBytes~B 消息按 1472~B IPv4 分片并在双网去重后按序重组；VLID 映射及 1--255 序号独立回绕正确 & 符合 \\
 虚拟链路容量 & 128 条发送 VL / 4096 条接收 VL & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表独立配置并完成双网去重；接收侧具备 \ReasmContexts{} 路并发按序重组槽 & 符合 \\
 时钟同步 & 支持网络时间报文同步 & 空载最大误差 \RtcIdle~ns，77 条 VL 满载并发下最大误差 \RtcLoad~ns（10.788~µs），且具备重发恢复与防误校能力 & 符合 \\
@@ -176,7 +176,7 @@ NET-04 & 官方综合 VQM，\code{tb_t76_load} & 1026 顶层流包装 TX-VQM 与
 
 \section{全设计 \DesignUnitCount{} 个设计单元代码覆盖率分析}\label{sec:coverage}
 
-在 ModelSim SE-64 2020.4 下，对全设计 \textbf{\RtlFileCount{} 个 Verilog RTL 源文件（共 \DesignUnitCount{} 个设计单元）}启用 \code{sbceft}（语句、分支、条件、表达式、有限状态机状态与转移、信号翻转）全插桩编译，合并 \CovUcdbCount{} 份回归 UCDB 数据库生成签核覆盖率报告（测试平台本身不计入统计）。各设计单元代码覆盖率明细严格取自 \code{docs/evidence/t79_63vl/coverage_frag1030.json}，汇总于表~\ref{tab:coverage}。
+在 ModelSim SE-64 2020.4 下，对全设计 \textbf{\RtlFileCount{} 个 Verilog RTL 源文件（共 \DesignUnitCount{} 个设计单元）}启用 \code{sbceft}（语句、分支、条件、表达式、有限状态机状态与转移、信号翻转）全插桩编译，合并 \CovUcdbCount{} 份回归 UCDB 数据库生成签核覆盖率报告（测试平台本身不计入统计）。各设计单元代码覆盖率明细严格取自 \code{docs/evidence/vl63_full_load/coverage_frag1030.json}，汇总于表~\ref{tab:coverage}。
 
 \begingroup
 \tablestyle

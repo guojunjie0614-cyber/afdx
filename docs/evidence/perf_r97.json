@@ -3068,7 +3068,7 @@
       "only_python": [],
       "differences": 0,
       "detail": [],
-      "folder": "out/app/t63_f1_app_default_20261028_225507_726837_1ad7bba07fcb",
+      "folder": "out/app/app_default_20261028_225507_726837_1ad7bba07fcb",
       "tcl_sha256": "DC9702849D5BA8CEDEE21B15612A7910B4D8D4A5EBB6DE0B404E0AE2CF3D8E7C",
       "python_sha256": "DC9702849D5BA8CEDEE21B15612A7910B4D8D4A5EBB6DE0B404E0AE2CF3D8E7C"
     }
@@ -3079,8 +3079,8 @@
     "source_unchanged": true,
     "tb_sys_perf_folder": "out/modelsim/judge_20261028_225509_8540/performance",
     "tb_sys_perf_var_folder": "out/modelsim/judge_20261028_225509_8540/perf_var",
-    "app_folder": "out/app/t63_f1_app_default_20261028_225507_726837_1ad7bba07fcb",
-    "source_summary": "out/t63/F1_final_v2/summary.json",
+    "app_folder": "out/app/app_default_20261028_225507_726837_1ad7bba07fcb",
+    "source_summary": "out/final/summary.json",
     "source_summary_sha256": "90A05E9FBA3D5B42CBA2C33C3A7C310EE9EF04FFB6355FC8237267ECEC32D48A"
   },
   "measurement_started": "2026-10-28T22:55:06.955489-07:00",

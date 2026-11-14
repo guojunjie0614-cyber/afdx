@@ -1,4 +1,0 @@
-{
-  "sha256": "f11371390624e12ff1457e5dc2d2642cfa7a654d3ccebc86880aaeb925c4a252",
-  "note": "Exact runner source loaded by the active serial R1/R2 process; final collector separately excludes I/O pads from CLB/M4K lock counts."
-}

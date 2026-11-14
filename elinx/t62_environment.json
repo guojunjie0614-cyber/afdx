@@ -1,8 +1,0 @@
-{
-  "round_id": "round_02",
-  "quartus_ini": "${USERPROFILE}/quartus2.ini",
-  "quartus_ini_sha256": "7E422BFDEFF00251F622B24EE3B1A2E9C1B54CBD52E4BD3CEE31E9B74783C5AD",
-  "expected_license_file": "${ELINX_HOME}/bin/Passkey/bin/license.dat",
-  "gui_forbidden": true,
-  "policy": "Read-only hash check before every job and at final audit. A mismatch blocks all new jobs. No GUI, INI write or license configuration change is authorized."
-}

@@ -9,7 +9,7 @@ import time
 import xml.etree.ElementTree as ET
 
 import eda
-import t62_constraints
+import constraints_mgr
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -52,10 +52,10 @@ def project_settings(flow, requested_top):
     for path in sources + constraints:
         if not path.is_file():
             raise RuntimeError('Missing project input: ' + path.name)
-    t62_constraints.check_project_files(constraints)
+    constraints_mgr.check_project_files(constraints)
     # The full EDC is generated from the same approved source as a GUI pair.
     constraint = ROOT / 'elinx/constraints.edc'
-    t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    constraints_mgr.split(constraint.read_text(encoding='utf-8-sig'))
     closure = set()
     def include(path):
         if path in closure:
@@ -83,7 +83,7 @@ def prepare_project(folder, project, run, options, sources, constraint):
     defaults = project.with_name(name + '_assignment_defaults.qdf')
     shutil.copy2(defaults, directory / defaults.name)
     constraint_copy = directory / constraint.name
-    split = t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    split = constraints_mgr.split(constraint.read_text(encoding='utf-8-sig'))
     constraint_copy.write_text(split['full'], encoding='utf-8')
     timing_copy = directory / 'timing_only.sdc'
     timing_copy.write_text(split['timing'], encoding='utf-8')
@@ -205,8 +205,6 @@ def reports(output, name):
 
 
 def main():
-    import t62_runtime
-    t62_runtime.install()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--top', help='兼容参数，必须与工程综合顶层相同')
     parser.add_argument('--deadline')
@@ -217,7 +215,7 @@ def main():
         home = installation()
         project, run, options, sources, constraint = project_settings(flow, args.top)
         directory, output = prepare_project(flow.folder, project, run, options, sources, constraint)
-        settings = [project, constraint, t62_constraints.SPEC,
+        settings = [project, constraint, constraints_mgr.SPEC,
                     project.with_name(project.stem + '_assignment_defaults.qdf')]
         settings += [ROOT / p for p in flow.result['constraint_project_files'] if ROOT / p not in settings]
         if project.with_suffix('.qsf').is_file():
