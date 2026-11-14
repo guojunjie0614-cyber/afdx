@@ -1,22 +1,26 @@
 # AFDX 端系统事实清单
 
-## T78 当前交付状态
+## 当前交付状态
 
-最终源码快速回归 63/63 PASS（52 项基础 + 11 项分支）；配置隔离 2/2 PASS，源码 `360cd0294e9ae129eef97fe37ae325187e13650c`。四个长用例按批准的快速范围引用历史：tb_sys_perf 引用 T76 修正检查器，其余引用 T75；与最终源码的关系由 T77 MODEL_TECH/兼容副本 ModelSim 等价及综合逐 token 保序相同证据绑定。T76 官方 VQM TX/RX 各 161 检查通过，与同激励 RTL 的 11 份记录各自逐字节相同。T77 端到端布线 setup +29 ps / hold +604 ps，setup/hold 各 0/96142 失败端点。旧 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与 T77 新 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 分开绑定。
+11-04 交付收尾的最终源码快速回归 63/63 PASS（52 项基础 + 11 项分支）；配置隔离 2/2 PASS，源码 `360cd0294e9ae129eef97fe37ae325187e13650c`。四个长用例引用分片版既有运行：tb_sys_perf 引用 11-03 满负载与分片负载验证中按公开应用口时戳统计的检查结果，其余引用 11-03 分片版 RTL 与官方 VQM 网表验证；与最终源码的关系由 11-04 ModelSim 兼容修正的 MODEL_TECH/兼容副本 ModelSim 等价及综合逐 token 保序相同证据绑定。11-03 满负载与分片负载验证的官方 VQM TX/RX 各 161 检查通过，与同激励 RTL 的 11 份记录各自逐字节相同。11-04 ModelSim 兼容修正后的端到端布线 setup +29 ps / hold +604 ps，setup/hold 各 0/96142 失败端点。旧 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与兼容修正后新 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 分开绑定。
 
-满负载规格为每端 63 TX / 63 RX VL（BAG=1 ms、Lmax=1471，线路占用约 77.5%）；可配置 TX 128 / RX 4096 条 VL。63 VL 七场景各连续 100 ms 通过：五项周期场景最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景 HDL、完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格与网络规划要求见 [ARCH](ARCH.md#系统规格与网络规划)，原始记录见 [T79 证据](evidence/t79_63vl/summary.md)；elinx 工程相对 a6181267 的一行源文件登记差异，以及检查数、耗时、输入哈希及体积见 [交付证据](evidence/frag1030_delivery/summary.md)。
+满负载规格为每端 63 TX / 63 RX VL（BAG=1 ms、Lmax=1471，线路占用约 77.5%）；可配置 TX 128 / RX 4096 条 VL。63 VL 七场景各连续 100 ms 通过：五项周期场景最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景 HDL、完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格与网络规划要求见 [ARCH](ARCH.md#系统规格与网络规划)，原始记录见 [11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md)；elinx 工程相对 a6181267 的一行源文件登记差异，以及检查数、耗时、输入哈希及体积见 [交付证据](evidence/frag1030_delivery/summary.md)。
 
 ### 压力测试与使用条件
 
 - 压力测试（超出满负载规格）：81 VL 周期注入最大抖动 3.368 µs；81 VL 背靠背 BAG 等待场景（case 16）10/162 组抖动 ≥100 µs，最大 107.7 µs（VL 0x0126，两个方向）；81 VL 长短消息混合出现接收溢出，固定激励二分为 70 VL 通过 20 ms、71 VL 溢出，据此取 63 VL 规格（10% 余量）。
 - 压力测试：63 VL 满负载下多条 VL 同时发送 8192 B（20 ms 窗口），2 条零丢失；3 条、4 条时接收载荷环溢出（ev_a[7]），出现丢失。网络规划要求同时发送 8192 B 消息的 VL 不超过 1 条。
 - 8192 字节分片和故障恢复在 RTL 上验证；分片网表对照覆盖前 199,578 拍（含 1472 字节两帧重组），与 RTL 逐字节一致。
-- eLinx Run Behavioral Simulation 于 11-04 人工验证：PASS checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；截图与已知警告说明见 T79 证据。
-- eLinx 每次综合的 VQM 文本排列不同、功能结构相同，锁定布线后的时序相同（T77 实测）。
+- eLinx Run Behavioral Simulation 于 11-04 人工验证：PASS checks=9238 errors=0，Elapsed 0:02:18，Warnings 90；截图与已知警告说明见 [11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md#elinx-界面人工验证)。
+- eLinx 每次综合的 VQM 文本排列不同、功能结构相同，锁定布线后的时序相同（11-04 ModelSim 兼容修正后实测）。
 
 ## 来源与约定
 
-赛题来源：[选题指南](sources/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总 1026 版](sources/FPGA创新大赛问题汇总1026.xlsx)的 Sheet1，R 表示工作表行号。1026 版在 1022 版之后新增 R113–R126：其中 R119/R123/R125 改时延口径，R119-2 改抖动口径，R120 规定 100 Mbps 测法、128 条 VL 和 `tx_data`/`rx_data` 数据含义，R122 说明资源不计分，R124/R126 说明顶层激励只需注入 VLID 和应用数据。
+赛题来源：[选题指南](sources/中科亿海微.pdf)正文第 2–4 页（PDF 第 4–6 页）；答疑来源：[问题汇总 1030 版](sources/FPGA创新大赛问题汇总1030.xlsx)的 Sheet1，R 表示工作表行号。该版保留 R113–R126：其中 R119/R123/R125 改时延口径，R119-2 改抖动口径，R120 规定 100 Mbps 测法、128 条 VL 和 `tx_data`/`rx_data` 数据含义，R122 说明资源不计分，R124/R126 说明顶层激励只需注入 VLID 和应用数据。
+
+1030 版新增条目中，R138 允许自定义激励格式并说明规则，要求支持分片；系统配置须在非顶层激励文件中完成，顶层激励只注入应用数据。R139 给出抖动≈最大时延−最小时延−BAG 配置值，满负载下不出现三位数（µs）以上的抖动即可；吞吐测试在系统正常规格配置下完成，不统一指定组合；通过 eLinx 调用 ModelSim，需要综合后仿真，器件综合即可，测试报告应包含完整仿真测试记录。R140 说明其余功能在演示和测试报告中给出结果，评测结合代码、仿真和报告综合评估，不需要为此额外引出端口。R141 说明其他文档随代码打包上传。
+
+当前交付依据与历史记录的区分见 [证据目录索引](evidence/README.md)。
 本页的 `参考/` 指 [`sim/reference/`](../sim/reference/)，`证据/` 指 [`docs/evidence/`](evidence/)。测试清单与覆盖率见 [补充数据](FACTS_DETAIL.md)。
 
 ## 一、需求对照
@@ -26,15 +30,15 @@
 
 ## 二、性能数字与测量方法
 
-性能仿真共用理想 125 MHz 时钟，一拍 8 ns；GMII 每拍一字节。R95-1 要求千兆 GMII；R120-1 规定吞吐在发送注入口（`tx_data` 一侧）按单位时间内多 VL 注入的有效载荷字节数统计，A/B 副本与头部不计（`证据/perf_r97.json:main_table`）。
+性能仿真共用理想 125 MHz 时钟，一拍 8 ns；GMII 每拍一字节。R95-1 要求千兆 GMII；R120-1 规定吞吐在发送注入口（`tx_data` 一侧）按单位时间内多 VL 注入的有效载荷字节数统计，A/B 副本与头部不计（[分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)的 `JUDGE METRIC` 中 `inject_mbps`）。
 
 ### 时延与抖动定义（R119、R120）
 
-R119-1 把端到端时延改为“任意 VL 的首个 `tx_data` 数据输入到 `rx_data` 接收该数据的时长”，R123、R125 给出相同表述。本设计在应用发送口记录消息首字节第一次 `valid` 为高的拍 S，在接收应用口记录交付首字节拍 D 和末字节拍 D+n−1；主指标 L_entry_last = D+n−1−S，同时报告 L_entry_first = D−S。首字节握手前的反压和 BAG 等待都计入。来源：R119-1、`证据/perf_r97.json:definitions`。
+R119-1 把端到端时延改为“任意 VL 的首个 `tx_data` 数据输入到 `rx_data` 接收该数据的时长”，R123、R125 给出相同表述。本设计在应用发送口记录消息首字节第一次 `valid` 为高的拍 S，在接收应用口记录交付首字节拍 D 和末字节拍 D+n−1；主指标 L_entry_last = D+n−1−S，同时报告 L_entry_first = D−S。首字节握手前的反压和 BAG 等待都计入。来源：R119-1、[perf_r97.json](evidence/perf_r97.json)的 `definitions`（分片前 10-28 的输出，测量定义与当前代码一致）；定义代码为 [perf_ref.py](../tools/perf_ref.py)的 `measure_r97()`（含 VLID 首字节与载荷起点的换算）。
 
 | 名称 | 起点 | 终点 | 说明 |
 |---|---|---|---|
-| L_entry_last | 应用发送口消息首字节第一次 `valid` | 接收应用口交付该消息末字节 | 本卡主指标，门限 2000 µs |
+| L_entry_last | 应用发送口消息首字节第一次 `valid` | 接收应用口交付该消息末字节 | 端到端时延主指标，门限 2000 µs |
 | L_entry_first | 同上 | 接收应用口交付首字节 | 同时报告的对照口径 |
 | L_gmii（legacy） | 发送端 GMII TX 同帧 SFD | 接收端 GMII RX 同帧 SFD | R97-1 旧定义，**已被 R119 取代** |
 | L_tx（legacy） | 应用末字节握手 M | 发送端 GMII TX 同帧 SFD | 兼容字段 |
@@ -43,11 +47,11 @@ R119-1 把端到端时延改为“任意 VL 的首个 `tx_data` 数据输入到 
 | L_release_app / L_release_app_last（legacy） | 主机计划释放拍 | 交付首/末字节 | 含单应用口串行注入排队 |
 
 R97 原文使用“发送端 GMII 输入”“接收端 GMII 输出”；本直连仿真按上表 TX/RX 边界测量，L_gmii 等于链路模型延迟 0.000 或 2.056 µs，反映的是链路模型本身。这些 GMII 与末字节口径作为兼容字段保留，主指标为 L_entry_last。
-R119-2 的抖动是同一 VL、**帧长相同**的多帧 L_entry_last 最大值减最小值，再取所有组的最大值，并给出所在 VL、帧长和两帧编号；它包含 ARINC 664 的 BAG 抖动。旧 R97-2 的“同一 VL 多帧”不区分帧长，已被 R119-2 取代；原“相邻发送起点间隔偏离 BAG”称为发送间隔偏差（`tx_interval_jitter`），与 R119-2 抖动分开报告。来源：R119-2、`证据/perf_r97.json:definitions`、`jitter_r119_top`。
+R119-2 的抖动是同一 VL、**帧长相同**的多帧 L_entry_last 最大值减最小值，再取所有组的最大值，并给出所在 VL、帧长和两帧编号；它包含 ARINC 664 的 BAG 抖动。旧 R97-2 的“同一 VL 多帧”不区分帧长，已被 R119-2 取代；原“相邻发送起点间隔偏离 BAG”称为发送间隔偏差（`tx_interval_jitter`），与 R119-2 抖动分开报告。来源：R119-2、[perf_r97.json](evidence/perf_r97.json)的 `definitions`（分片前 10-28 的输出，测量定义与当前代码一致）；定义代码为 [perf_ref.py](../tools/perf_ref.py)的 `measure_r97()` / `stats_len()`。[分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)分别输出 `jitter_r119_us`、`jitter_vl`、`jitter_len` 和发送间隔偏差。63 VL 满负载按 R139 的测量分组与结果见 [满负载验证](evidence/t79_63vl/summary.md)。
 
-R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷字节数除以窗口时长，A/B 副本不叠加。注入落后门限为 1471 拍。仅 var_burst 按 max(计划释放拍，上一条消息最后输入字节后 1 拍) 起算，排除主机串行注入排队；其他工况按计划释放拍起算。原始计划释放偏差另存 raw_lag_max_cycles。窗口、反压、丢帧和重复计数见 `证据/perf_r97.json`。
+R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷字节数除以窗口时长，A/B 副本不叠加。注入落后门限为 1471 拍。仅 var_burst 按 max(计划释放拍，上一条消息最后输入字节后 1 拍) 起算，排除主机串行注入排队；其他工况按计划释放拍起算。原始计划释放偏差另存 raw_lag_max_cycles。窗口与原始偏差定义见 [当前测量代码](../tools/perf_ref.py)的 `measure_r97()`；反压、丢帧和重复计数见 [分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)的 `stall_cycles`、`stall_maxrun`、`dropped`、`duplicate`、`overflow`。
 
-各工况的实测数值见 [README](../README.md) 第 5 节、[T79 证据](evidence/t79_63vl/summary.md) 和 [交付证据](evidence/frag1030_delivery/summary.md)。
+各工况的实测数值见 [README](../README.md) 第 5 节、[11-04 63 VL 满负载规格验证](evidence/t79_63vl/summary.md) 和 [交付证据](evidence/frag1030_delivery/summary.md)。
 
 ### 变长帧与多虚拟链路工况
 
@@ -71,9 +75,9 @@ R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷�
 
 ### 代码覆盖率
 
-#### 当前分片版覆盖率（T79 引用）
+#### 当前分片版覆盖率（11-04 交付引用）
 
-11-03 在分片版 RTL `b3a60639` 上采集，58 份 UCDB、42 个 RTL 设计单元。交付 RTL = `b3a60639` + T77 `MODEL_TECH` 声明前移分支，ModelSim 编译的电路等价；覆盖率直接引用、未重跑。
+11-03 在分片版 RTL `b3a60639` 上采集，58 份 UCDB、42 个 RTL 设计单元。交付 RTL = `b3a60639` + 11-04 ModelSim 兼容修正的 `MODEL_TECH` 声明前移分支，ModelSim 编译的电路等价；覆盖率直接引用、未重跑。
 
 | 覆盖类别 | 已覆盖 / 总数 | 未覆盖 | 汇总覆盖率 |
 |---|---|---|---|
@@ -89,8 +93,8 @@ R120-1 的吞吐在发送注入口统计：窗口内握手成功的有效载荷�
 
 ## 五、测量与使用条件
 
-- 吞吐与赛题：R120-1 规定在 `tx_data` 接口上单位时间内多 VL 注入的有效载荷字节数达到 100 Mbps、系统稳定且不丢帧/不溢出；A/B 副本在接收端只计一次，需要千兆 GMII。R59 要求时钟匹配接口速率，R61 说明 GMII 是 PHY 接口。本设计采用八位 GMII 和 125 MHz；gbe77 注入 906.136 Mbps 为单份业务载荷（A/B 副本不叠加），在 RTL 仿真中测得。
-- 时延口径：R119-1 把端到端时延改为从首字节应用输入到对端交付该数据，本设计主指标 L_entry_last 已包含首字节握手前的反压和 BAG 等待；旧 GMII SFD→SFD（R97-1）和“应用末字节提交”口径作为兼容字段，与主指标分别报告（`证据/perf_r97.json:definitions`）。
+- 吞吐与赛题：R120-1 规定在 `tx_data` 接口上单位时间内多 VL 注入的有效载荷字节数达到 100 Mbps、系统稳定且不丢帧/不溢出；A/B 副本在接收端只计一次，需要千兆 GMII。R59 要求时钟匹配接口速率，R61 说明 GMII 是 PHY 接口。本设计采用八位 GMII 和 125 MHz；gbe77 注入 906.136 Mbps 为单份业务载荷（A/B 副本不叠加），在 RTL 仿真中测得，见 [分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)的 `inject_mbps`。
+- 时延口径：R119-1 把端到端时延改为从首字节应用输入到对端交付该数据，本设计主指标 L_entry_last 已包含首字节握手前的反压和 BAG 等待；旧 GMII SFD→SFD（R97-1）和“应用末字节提交”口径作为兼容字段，与主指标分别报告（[perf_r97.json](evidence/perf_r97.json)的 `definitions`：分片前 10-28 的输出，测量定义与当前代码一致；当前 [perf_ref.py](../tools/perf_ref.py)的 `measure_r97()`）。
 
 顶层按 R120-3、R124、R126 提供“VLID 高字节、低字节、载荷”的应用输入与输出；PDF 模板 tx_data 的方向与 R120-3 相反，当前设计按后者。A/B GMII 单独引出，保留 cfg/ev，并新增整条丢弃事件 ev_app；不再引出 app_*。R110、R49、R95-2、R62、R120-2 的接口与配置依据见 [ARCH](ARCH.md#13-顶层端口与消息接口)。rx_ready 不使用，tx_ready 是最大消息开始许可；R122 说明资源占用不作为评分项。按 R112 以仿真截图和演示视频代替开发板实测。
 

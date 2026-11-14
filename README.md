@@ -309,7 +309,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | :--- | :---: | ---: | :--- |
 | 满载交付规格 | 63 TX / 63 RX | **`741.384 Mbps`** | 双向合计 1482.768 Mbps（线速占用 77.5%），7 大场景各连续 100 ms 零丢包 |
 | 定长满载压测 | 77 TX / 77 RX | `906.136 Mbps` | 全固定 1471 B 帧连续注入千兆压测 |
-| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [`performance.json`](docs/evidence/performance.json) |
+| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [总吞吐表](docs/evidence/t76_frag1030/total_throughput.tsv)（case 0） |
 
 <img src="docs/fig/latency.png" width="100%" alt="端到端传输时延柱状图（1 B 至 1471 B）"/>
 <p><sub>图 14：不同载荷长度的端到端传输时延及 64 B 最小帧填充边界。</sub></p>
@@ -332,11 +332,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | `services` | `1,123` | `9.472` | 用户收发、IC/RM、SNMP、RTC 对时、615A 上传卸载全闭环 | PASS |
 | `capacity` | `49,924` | `13.669` | 每端 4096 条 RX VL（抽检 0/4095 及中间 126 项）与 128 条 TX VL 全量收发 | PASS |
 | `snmp` | `699` | `52.593` | `Get`/`GetNext`/`Set` 回显、MIB 寄存器一致性与启动 `Trap` | PASS |
-| `burst77` | `530,802` | `16.180` | 77 VL 满长帧同时突发，排空时间 `983.424 µs`（< 1 ms），零丢包 | PASS |
-| `burst81` | `554,734` | `17.325` | 81 VL 超规格突发，排空时间 `1032.640 µs`，零丢包 | PASS |
-| `rtc` | `10,675,841` | `475.577` | 空载、普通流量、77 VL 满载三工况 SNTPv4 稳态误差均为 `0 ns` | PASS |
+| `burst77` | `530,802` | `16.180` | 77 VL 满长帧同时突发，排空时间 `983.720 µs`（< 1 ms），零丢包 | PASS |
+| `burst81` | `554,734` | `17.325` | 81 VL 超规格突发，排空时间 `1032.936 µs`，零丢包 | PASS |
+| `rtc` | `10,675,841` | `475.577` | SNTPv4 同步误差：空载、普通流量均为 `0 ns`，77 VL 满载 `8 ns`（一拍） | PASS |
 | `performance` | `683,408,635` | `3099.543` | 定长千兆满载（77 VL）：注入 `906.136 Mbps`，最大时延 `48.600 µs` | PASS |
-| `perf_var` | `1,254,291,331` | `4638.304` | 变长多 VL 四工况（高载 `904.752 Mbps`，同长最大抖动 `19.536 µs`） | PASS |
+| `perf_var` | `1,254,291,331` | `4638.304` | 变长多 VL 四工况（高载 `904.752 Mbps`，同长最大抖动 `19.544 µs`） | PASS |
 
 | RTL 代码覆盖率维度（58 份 UCDB · 42 设计单元 · 零排除项） | 命中 / 总计 | 实测覆盖率 | 证据文件 |
 | :--- | :---: | :---: | :--- |
