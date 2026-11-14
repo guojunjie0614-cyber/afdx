@@ -22,9 +22,9 @@ tectonic --keep-logs docs/test/AFDX端系统FPGA测试报告.tex
 
 ## macOS 执行环境
 
-Inkscape 导出会初始化 macOS 图形会话。该 Mac 上已确认：在 Codex 的 seatbelt 沙箱内启动会于应用注册阶段触发 SIGABRT，并弹出“意外退出”；正常系统环境导出成功。
+Inkscape 导出会初始化 macOS 图形会话，需要在正常系统环境中运行；在受限沙箱内启动会于应用注册阶段触发 SIGABRT。
 
-自动化调用 Inkscape 时，直接使用已批准的沙箱外执行方式（`exec_command` 的 `sandbox_permissions: "require_escalated"`）。设计图导出入口 `mk2.sh` 和 `svg2pdf.sh` 共用 `inkscape_env.sh` 检查环境；遇到 `CODEX_SANDBOX=seatbelt` 时，在生成文件和启动 Inkscape 前以状态码 2 退出，提示使用正确环境。导出错误保留在标准错误输出中。
+设计图导出入口 `mk2.sh` 和 `svg2pdf.sh` 共用 `inkscape_env.sh` 检查环境；检测到受限沙箱时，在生成文件和启动 Inkscape 前以状态码 2 退出并给出提示。导出错误保留在标准错误输出中。
 
 ## 重建设计报告配图
 
