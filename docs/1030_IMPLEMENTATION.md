@@ -87,6 +87,12 @@ $env:ELINX_HOME='C:\Program Files (x86)\eHiWay\eLinx3.0'
 
 ## 最新答疑的测量解释
 
-R139 的抖动描述为“最大时延－最小时延－BAG 配置值”，适用分组和多片消息口径仍有歧义。本轮保留原始完整消息时延、首字节时延、逐片发帧时间和 BAG 间隔，不把长消息多次等待 BAG 的时间擅自扣除后宣称合格。参考模型输出中的旧 R119 极差统计仅作兼容字段，不代表已完成 R139 验收。
+R139-1 给出抖动≈最大时延−最小时延−BAG 配置值；R139-2 说明系统满负载下不出现三位数（µs）以上的抖动即可。本设计在 63 VL 满负载七场景上按此验证：周期场景取同 VL、同载荷的最大−最小，BAG 等待场景取最大−首帧−BAG。B2 最大 96.752 µs，全部分组 <100 µs；B1 为固定输入顺序，存在公式前提不成立的组，不作抖动判据。完整性、逐组公式前提及结果见 [63 VL 满负载验证](evidence/t79_63vl/summary.md)。长消息整条完成时延单列，不套用单帧抖动判据。
 
-完整性能负载、全文设计/测试报告、ModelSim 综合后仿真、完整外部 I/O 延迟预算仍需各自的实际证据。实现或局部仿真通过不等于全部要求验收完成。
+当前交付已有以下记录，覆盖范围分别列示：
+
+- 性能负载：[63 VL 七场景](evidence/t79_63vl/summary.md)及 [63 VL 长短消息混合](evidence/t76_frag1030/summary.md)，包含逐字节交付与独立统计；[分片版评委入口结果](../sim/reference/judge_result_frag1030.txt)保留定长、变长性能检查。
+- 三份报告：[技术文档报告](report/AFDX端系统FPGA技术文档报告.pdf)、[设计文档](design/AFDX端系统FPGA设计文档.pdf)、[测试报告](test/AFDX端系统FPGA测试报告.pdf)已在仓库发布。
+- 综合后功能验证：官方 VQM 零延迟网表仿真，[完整窗口与分片前缀](evidence/frag1030_delivery/t75_official.json)、[TX/RX 配对窗口](evidence/frag1030_delivery/vqm_windows.json)分别记录检查结果和 RTL 对照；8192 字节分片和故障恢复在 RTL 上验证，分片网表对照覆盖前 199,578 拍（含 1472 字节两帧重组）。
+- eLinx 界面仿真：11-04 人工运行 Run Behavioral Simulation，PASS checks=9238 errors=0，见 [截图与说明](evidence/t79_63vl/summary.md#elinx-界面人工验证)及 [原始截图](evidence/t79_63vl/elinx_gui_behav_pass.png)。
+- 时序：[布线后 STA](evidence/frag1030_delivery/timing.json)覆盖全部内部路径，setup/hold 均 0 失败；外部 I/O 时序随板级约束指定，见 [验证方式与使用条件](FACTS.md#七功能范围与使用条件)。
