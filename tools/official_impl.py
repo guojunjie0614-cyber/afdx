@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 import eda
 import official_synth
-import t62_constraints
+import constraints_mgr
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,7 +23,7 @@ def check_inputs(synthesis):
     if eda.sha(netlist) != synthesis['netlist_sha256']:
         raise RuntimeError('Synthesis netlist changed; run synth.ps1 again')
     constraint = ROOT / 'elinx/constraints.edc'
-    parts = t62_constraints.split(constraint.read_text(encoding='utf-8-sig'))
+    parts = constraints_mgr.split(constraint.read_text(encoding='utf-8-sig'))
     directory = Path(synthesis['folder']) / 'project'
     if (directory / 'constraints.edc').read_text(encoding='utf-8-sig') != parts['full']:
         raise RuntimeError('Run-copy EDC differs from the approved program')
@@ -69,8 +69,6 @@ def reports(output, name):
 
 
 def main():
-    import t62_runtime
-    t62_runtime.install()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--deadline')
     parser.add_argument('--synthesis',type=Path,default=ROOT/'out/latest_AFDX_top.json')

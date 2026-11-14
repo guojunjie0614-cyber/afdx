@@ -1,5 +1,5 @@
 % 全文引用的实测数字。最终版本重跑回归和综合后只改这里。
-% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/、docs/evidence/t79_63vl/。
+% 出处：docs/FACTS.md、docs/FACTS_DETAIL.md、docs/evidence/frag1030_delivery/、docs/evidence/vl63_full_load/。
 % 设计规模与架构常量（34 个 RTL 文件 / 15856 行 / 42 个设计单元）
 \newcommand{\MaxMessageBytes}{8192}
 \newcommand{\RtlFileCount}{34}
@@ -7,7 +7,7 @@
 \newcommand{\DesignUnitCount}{42}
 \newcommand{\ReasmContexts}{16}
 \newcommand{\RamSdpCount}{90}
-% 性能（T79 63 条 VL 满载规格 + 77/81 条 VL 压力基线，BAG = 1 ms，双向）
+% 性能（63 条 VL 满载规格 + 77/81 条 VL 压力基线，BAG = 1 ms，双向）
 \newcommand{\Thru}{906.136}
 \newcommand{\ThruSixtyThree}{741.384}
 \newcommand{\ThruSixtyThreeBi}{1482.768}
@@ -27,6 +27,7 @@
 \newcommand{\Jit}{0}
 \newcommand{\JitSameVl}{0.008}
 \newcommand{\JitVarCycle}{9.992}
+\newcommand{\JitVarCycleTop}{19.544}
 \newcommand{\JitSixtyThreePer}{3.360}
 \newcommand{\JitSixtyThreeBTwo}{96.752}
 \newcommand{\Ttx}{0.312}
@@ -79,13 +80,13 @@
 \newcommand{\MulticycleRules}{253}
 \newcommand{\MulticycleRegs}{2747}
 \newcommand{\MulticycleSetup}{0.720}
-% 命令行官方综合（历史基线耗时 233.062 s；T78 完整综合+布线耗时 898.5 s）
+% 命令行官方综合（历史基线耗时 233.062 s；最终端到端综合+布线耗时 898.5 s）
 \newcommand{\CliSynthSec}{233.062}
 \newcommand{\ParElapsedSec}{898.5}
 % 验证（63 项快速回归 + 4 项长耗时系统参考 = 67 项）
 \newcommand{\RegCount}{67}
 \newcommand{\RegFastCount}{63}
-\newcommand{\RegTSevEightCount}{65}
+\newcommand{\RegDirectCount}{65}
 \newcommand{\RegChecks}{2348850504}
 \newcommand{\RegIndep}{4180179}
 \newcommand{\RegFastChecks}{207367881}
@@ -131,6 +132,6 @@
 \newcommand{\NetGuiTime}{23614.453}
 \newcommand{\NetElinxTime}{52312.469}
 \newcommand{\NetFragTime}{34727.859}
-\newcommand{\NetTSixTxTime}{26897.997}
-\newcommand{\NetTSixRxTime}{27020.430}
+\newcommand{\NetLoadTxTime}{26897.997}
+\newcommand{\NetLoadRxTime}{27020.430}
 

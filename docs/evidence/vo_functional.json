@@ -1,26 +1,26 @@
 {
   "name": "functional",
   "started": "2026-10-10T21:46:06.267147+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+  "folder": "out\\sim\\functional\\20261010_214606_267147",
   "scope": "Whole post-route AFDX_top.vo, 125 MHz, unchanged tb_net_services",
   "memory_floor_gib": 2.0,
   "memory_limit_gib": 10.0,
-  "rtl_reference": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\out\\sim\\tb_net_services\\20261010_214134_782482",
+  "rtl_reference": "out\\projects\\baseline\\out\\sim\\tb_net_services\\20261010_214134_782482",
   "sdf": false,
   "original_vo_sha256": "CA15C7F0AFD10AC16F5BFA1248E58CC9440F9FF7B919BB73016C9A9CF870E8A4",
   "simulation_vo_sha256": "0399C08B7B8EC47F3376AA33ADF837993CED7B07C97C8CC8382FFFC0DF903009",
   "annotation": "initial $sdf_annotate(\"AFDX_EndSystem.sdo\");",
   "vendor_sources": [
     {
-      "path": "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\220model.v",
+      "path": "<ELINX_ROOT>\\Simulation\\verilog\\220model.v",
       "sha256": "C90560EBF7B2572FB4B08FC11EFF2B9E2B32632F809A30A32428B79AA27F7C35"
     },
     {
-      "path": "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\elinx_atoms.v",
+      "path": "<ELINX_ROOT>\\Simulation\\verilog\\elinx_atoms.v",
       "sha256": "98CC07982E9F3F4F5C2CD0584F34EE6584CFAC610C93A0C4312D93D7916E892F"
     },
     {
-      "path": "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\elinx_mf.v",
+      "path": "<ELINX_ROOT>\\Simulation\\verilog\\elinx_mf.v",
       "sha256": "0F65149DD63F98FF29F7763203B67B0AFDFC491D06C4F86B76ED0FE3E58316C8"
     }
   ],
@@ -52,12 +52,12 @@
       "name": "vectors",
       "command": [
         "E:\\anaconda3\\python.exe",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tools\\net_services_ref.py",
+        "out\\projects\\baseline\\tools\\net_services_ref.py",
         "vectors",
         "--dir",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147"
+        "out\\sim\\functional\\20261010_214606_267147"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 39968,
       "created": 1791639966.5352497,
       "exit_code": 0,
@@ -65,7 +65,7 @@
       "seconds": 0.265,
       "peak_tree_bytes": 11800576,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\vectors.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\vectors.log"
     },
     {
       "name": "local_ini",
@@ -73,7 +73,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-c"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 12040,
       "created": 1791639966.8149111,
       "exit_code": 0,
@@ -81,7 +81,7 @@
       "seconds": 0.265,
       "peak_tree_bytes": 12898304,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\local_ini.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\local_ini.log"
     },
     {
       "name": "vlib_work",
@@ -89,7 +89,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "work"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 46540,
       "created": 1791639967.095075,
       "exit_code": 0,
@@ -97,7 +97,7 @@
       "seconds": 0.282,
       "peak_tree_bytes": 9502720,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\vlib_work.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\vlib_work.log"
     },
     {
       "name": "vlib_vendor",
@@ -105,7 +105,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "elinx_local"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 33148,
       "created": 1791639967.3705363,
       "exit_code": 0,
@@ -113,18 +113,18 @@
       "seconds": 0.281,
       "peak_tree_bytes": 10870784,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\vlib_vendor.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\vlib_vendor.log"
     },
     {
       "name": "vmap_vendor",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-modelsimini",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\modelsim.ini",
+        "out\\sim\\functional\\20261010_214606_267147\\modelsim.ini",
         "elinx_local",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\elinx_local"
+        "out\\sim\\functional\\20261010_214606_267147\\elinx_local"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 45096,
       "created": 1791639967.6456127,
       "exit_code": 0,
@@ -132,7 +132,7 @@
       "seconds": 0.266,
       "peak_tree_bytes": 10813440,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\vmap_vendor.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\vmap_vendor.log"
     },
     {
       "name": "compile_vendor",
@@ -141,11 +141,11 @@
         "-work",
         "elinx_local",
         "-vlog01compat",
-        "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\220model.v",
-        "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\elinx_atoms.v",
-        "E:\\2026_Embedded_FPGA\\setup_pack\\Simulation\\verilog\\elinx_mf.v"
+        "<ELINX_ROOT>\\Simulation\\verilog\\220model.v",
+        "<ELINX_ROOT>\\Simulation\\verilog\\elinx_atoms.v",
+        "<ELINX_ROOT>\\Simulation\\verilog\\elinx_mf.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 13424,
       "created": 1791639967.927079,
       "exit_code": 0,
@@ -153,7 +153,7 @@
       "seconds": 0.797,
       "peak_tree_bytes": 61210624,
       "budget_seconds": 180,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\compile_vendor.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\compile_vendor.log"
     },
     {
       "name": "compile",
@@ -161,24 +161,24 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
         "-vlog01compat",
         "+define+SYS_TOP_NETLIST",
-        "+incdir+E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\AFDX_top.vo",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\gmii_monitor.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\line_driver.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\line_monitor.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\link_model.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\load_test_endpoint.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\mac_tx_suite.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\rm_age_probe.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\rtc_retry_suite.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\rx_core_suite.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\snmp_test_endpoint.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\sys_endpoint.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\sys_suite.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\lib\\tx_core_suite.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\projects\\baseline\\tb\\tb_net_services.v"
+        "+incdir+out\\projects\\baseline\\tb\\lib",
+        "out\\sim\\functional\\20261010_214606_267147\\AFDX_top.vo",
+        "out\\projects\\baseline\\tb\\lib\\gmii_monitor.v",
+        "out\\projects\\baseline\\tb\\lib\\line_driver.v",
+        "out\\projects\\baseline\\tb\\lib\\line_monitor.v",
+        "out\\projects\\baseline\\tb\\lib\\link_model.v",
+        "out\\projects\\baseline\\tb\\lib\\load_test_endpoint.v",
+        "out\\projects\\baseline\\tb\\lib\\mac_tx_suite.v",
+        "out\\projects\\baseline\\tb\\lib\\rm_age_probe.v",
+        "out\\projects\\baseline\\tb\\lib\\rtc_retry_suite.v",
+        "out\\projects\\baseline\\tb\\lib\\rx_core_suite.v",
+        "out\\projects\\baseline\\tb\\lib\\snmp_test_endpoint.v",
+        "out\\projects\\baseline\\tb\\lib\\sys_endpoint.v",
+        "out\\projects\\baseline\\tb\\lib\\sys_suite.v",
+        "out\\projects\\baseline\\tb\\lib\\tx_core_suite.v",
+        "out\\projects\\baseline\\tb\\tb_net_services.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 47940,
       "created": 1791639968.74779,
       "exit_code": 0,
@@ -186,7 +186,7 @@
       "seconds": 4.031,
       "peak_tree_bytes": 250224640,
       "budget_seconds": 180,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\compile.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\compile.log"
     },
     {
       "name": "simulation",
@@ -203,7 +203,7 @@
         "-do",
         "do run.do"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147",
+      "cwd": "out\\sim\\functional\\20261010_214606_267147",
       "pid": 1016,
       "created": 1791639972.789526,
       "exit_code": 0,
@@ -211,7 +211,7 @@
       "seconds": 1129.078,
       "peak_tree_bytes": 1755271168,
       "budget_seconds": 14400,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t21\\sim\\functional\\20261010_214606_267147\\simulation.log"
+      "log": "out\\sim\\functional\\20261010_214606_267147\\simulation.log"
     }
   ]
 }

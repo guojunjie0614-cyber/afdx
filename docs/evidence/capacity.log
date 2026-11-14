@@ -148,7 +148,7 @@
 # [CAPACITY] tx_vl=127 rx_index=4095 both_directions=PASS
 # [CAPACITY_SUMMARY] tx_vls_each=128 rx_configured_each=4096 rx_sampled_each=128 first=0 last=4095
 # [RESULT] tb_judge_capacity PASS checks=49924 errors=0
-# ** Note: $finish    : E:/2026_Embedded_FPGA/worktrees/active/c3_t63/tb/tb_judge_capacity.v(65)
+# ** Note: $finish    : tb/tb_judge_capacity.v(65)
 #    Time: 1244073 ns  Iteration: 0  Instance: /tb_judge_capacity
 # End time: 23:21:09 on Oct 28,2026, Elapsed time: 0:00:13
 # Errors: 0, Warnings: 0

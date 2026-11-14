@@ -15,8 +15,8 @@
       "Seconds": 1134.016,
       "Started": "2026-11-03T17:05:25.609363+08:00",
       "Finished": "2026-11-03T17:24:18.287299+08:00",
-      "Folder": "out/t75/candidate2_source/out/sim/tb_sys_load/20261103_010525_607641",
-      "Summary": "out/t75/candidate2_source/out/par_baseline_run_256_latest_tb_sys_load.json",
+      "Folder": "out/sim/tb_sys_load/20261103_010525_607641",
+      "Summary": "out/par_baseline_run_256_latest_tb_sys_load.json",
       "Error": null,
       "PeakTreeBytes": 291741696,
       "Process": {
@@ -28,14 +28,14 @@
       "ExactExternalRecords": null
     },
     "evidence_commit": "451b91c4",
-    "relation": "Historical simulation portability copy. T77 MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
+    "relation": "Historical simulation portability copy. MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
     "final_source_completed": [
       {
         "Test": "tb_sys_load",
         "Param": "",
         "Status": "PASS",
         "Exit": 0,
-        "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\sim\\tb_sys_load\\20261103_164122_770017",
+        "Folder": "out\\sim\\tb_sys_load\\20261103_164122_770017",
         "Checks": 193106816,
         "CheckItems": 123400,
         "Kind": "RTL",
@@ -49,8 +49,8 @@
           "deadline": "2026-11-04T12:41:22.592176+08:00"
         },
         "PeakTreeBytes": 275058688,
-        "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\par_t78_regression_20_latest_tb_sys_load.json",
-        "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t78_regression\\20_tb_sys_load.log",
+        "Summary": "out\\par_regression_20_latest_tb_sys_load.json",
+        "Log": "out\\regression\\20_tb_sys_load.log",
         "Error": null
       }
     ],
@@ -63,7 +63,7 @@
       "Param": "",
       "Status": "PASS",
       "Exit": 0,
-      "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\perf_source\\out\\sim\\tb_sys_perf\\20261103_060548_028885",
+      "Folder": "out\\sim\\tb_sys_perf\\20261103_060548_028885",
       "Checks": 683408635,
       "CheckItems": 1357450,
       "Kind": "RTL",
@@ -77,21 +77,21 @@
         "deadline": "2026-11-04T22:05:47.632634+08:00"
       },
       "PeakTreeBytes": 897974272,
-      "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76\\perf_source\\out\\par_t76_fallback_parallel_13_latest_tb_sys_perf.json",
-      "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t76\\out\\t76_fallback_parallel\\13_tb_sys_perf.log",
+      "Summary": "out\\par_load_parallel_13_latest_tb_sys_perf.json",
+      "Log": "out\\load_parallel\\13_tb_sys_perf.log",
       "Error": null
     },
     "evidence_commit": "afd47721",
-    "relation": "Historical simulation portability copy. T77 MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
+    "relation": "Historical simulation portability copy. MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
     "final_source_completed": [],
     "final_source_active": [
       {
         "test": "tb_sys_perf",
         "kind": "RTL",
         "params": "",
-        "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78",
+        "root": ".",
         "id": 25,
-        "prefix": "par_t78_regression_25_",
+        "prefix": "par_regression_25_",
         "Process": {
           "pid": 30196,
           "created": 1793752881.5012949,
@@ -116,8 +116,8 @@
       "Seconds": 6473.734,
       "Started": "2026-11-03T17:05:22.875502+08:00",
       "Finished": "2026-11-03T18:53:15.871571+08:00",
-      "Folder": "out/t75/candidate2_source/out/sim/tb_sys_perf_var/20261103_010522_873463",
-      "Summary": "out/t75/candidate2_source/out/par_baseline_run_274_latest_tb_sys_perf_var.json",
+      "Folder": "out/sim/tb_sys_perf_var/20261103_010522_873463",
+      "Summary": "out/par_baseline_run_274_latest_tb_sys_perf_var.json",
       "Error": null,
       "PeakTreeBytes": 308342784,
       "Process": {
@@ -129,16 +129,16 @@
       "ExactExternalRecords": null
     },
     "evidence_commit": "451b91c4",
-    "relation": "Historical simulation portability copy. T77 MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
+    "relation": "Historical simulation portability copy. MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
     "final_source_completed": [],
     "final_source_active": [
       {
         "test": "tb_sys_perf_var",
         "kind": "RTL",
         "params": "",
-        "root": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78",
+        "root": ".",
         "id": 38,
-        "prefix": "par_t78_regression_38_",
+        "prefix": "par_regression_38_",
         "Process": {
           "pid": 41124,
           "created": 1793752880.4214275,
@@ -163,8 +163,8 @@
       "Seconds": 941.922,
       "Started": "2026-11-03T17:05:27.379059+08:00",
       "Finished": "2026-11-03T17:21:08.558754+08:00",
-      "Folder": "out/t75/candidate2_source/out/sim/tb_sys_rtc/20261103_010527_366422",
-      "Summary": "out/t75/candidate2_source/out/par_baseline_run_262_latest_tb_sys_rtc.json",
+      "Folder": "out/sim/tb_sys_rtc/20261103_010527_366422",
+      "Summary": "out/par_baseline_run_262_latest_tb_sys_rtc.json",
       "Error": null,
       "PeakTreeBytes": 291086336,
       "Process": {
@@ -176,14 +176,14 @@
       "ExactExternalRecords": null
     },
     "evidence_commit": "451b91c4",
-    "relation": "Historical simulation portability copy. T77 MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
+    "relation": "Historical simulation portability copy. MODEL_TECH ModelSim branch equivalence and non-ModelSim ordered synthesis token identity bind final RTL; not a rerun on final HEAD.",
     "final_source_completed": [
       {
         "Test": "tb_sys_rtc",
         "Param": "",
         "Status": "PASS",
         "Exit": 0,
-        "Folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\sim\\tb_sys_rtc\\20261103_164123_889566",
+        "Folder": "out\\sim\\tb_sys_rtc\\20261103_164123_889566",
         "Checks": 10675841,
         "CheckItems": 1811,
         "Kind": "RTL",
@@ -197,8 +197,8 @@
           "deadline": "2026-11-04T12:41:23.710859+08:00"
         },
         "PeakTreeBytes": 277475328,
-        "Summary": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\par_t78_regression_26_latest_tb_sys_rtc.json",
-        "Log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t78_regression\\26_tb_sys_rtc.log",
+        "Summary": "out\\par_regression_26_latest_tb_sys_rtc.json",
+        "Log": "out\\regression\\26_tb_sys_rtc.log",
         "Error": null
       }
     ],

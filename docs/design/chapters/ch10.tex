@@ -48,7 +48,7 @@
 \end{tabularx}
 \end{table}
 
-实测表明：在声明 63~VL 满载规格下，单向净吞吐达 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps，超规格 77/81~VL 单向达 \Thru/\ThruEightyOne~Mbps），稳态周期最大时延 \LatSixtyThreePMax~µs、旋转突发最大时延 \LatSixtyThreeBTwo~µs、抖动 \JitSixtyThreeBTwo~µs，全面满足 $\ge 100$~Mbps 吞吐、$<2$~ms 时延与 $<100$~µs 抖动指标。
+实测表明：在声明 63~VL 满载规格下，单向净吞吐达 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps，超规格 77/81~VL 单向达 \Thru/\ThruEightyOne~Mbps），稳态周期最大时延 \LatSixtyThreePMax~µs、旋转突发最大时延 \LatSixtyThreeBTwo~µs、抖动 \JitSixtyThreeBTwo~µs（注：上表 \JitVarCycle~µs 为核心 \code{afdx_es} R97 口径，顶层 \code{AFDX_top} 变长循环 R119 实测为 \JitVarCycleTop~µs），全面满足 $\ge 100$~Mbps 吞吐、$<2$~ms 时延与 $<100$~µs 抖动指标。
 
 \section{代码覆盖率签核}\label{sec:coverage}
 
@@ -80,7 +80,7 @@
   \item \textbf{顶层门级烟雾回归（\code{tb_elinx}）：}命令行门级网表回归通过 \textbf{\ElinxChecks{} 项自检断言}（0 错误，耗时 \NetElinxTime~s），并在 eLinx IDE 图形界面完成行为级联动核验（耗时 \code{0:02:18}）。
   \item \textbf{五功能综合门级对照（\code{tb_net_services}）：}验证用户流收发、双网冗余去重、SNMP、ARINC 615A 与 SNTP/RTC 联合运行，通过 \textbf{\SvcChecks{} 项自检断言}与 65 项独立核对（0 错误，耗时 \NetCliTime~s），导出的 7 份外部记录文件与 RTL 逐字节一致。
   \item \textbf{1030 IPv4 分片重组门级窗口（\code{tb_frag1030_net}）：}覆盖复位清零及 \code{1472}~B 两分片长包双端发送与顺序重组交付（前 199,578 拍门级窗口，耗时 \NetFragTime~s），导出的 5 份记录（32 条记录项）与同周期 RTL 逐字节一致。
-  \item \textbf{高负载多 VL 加分片门级窗口（顶层流包装发送与接收双窗口）：}覆盖 81~VL 高负载叠加 \code{1472}~B 分片发送窗口（耗时 \NetTSixTxTime~s）与接收重组窗口（耗时 \NetTSixRxTime~s），各通过 161 项断言且 11 份导出记录与 RTL 逐字节一致。
+  \item \textbf{高负载多 VL 加分片门级窗口（顶层流包装发送与接收双窗口）：}覆盖 81~VL 高负载叠加 \code{1472}~B 分片发送窗口（耗时 \NetLoadTxTime~s）与接收重组窗口（耗时 \NetLoadRxTime~s），各通过 161 项断言且 11 份导出记录与 RTL 逐字节一致。
 \end{enumerate}
 
 \section{硬件可观察性与可控性机制}\label{sec:observability}

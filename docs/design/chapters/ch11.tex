@@ -79,7 +79,7 @@ python3 tools/run_1030_checks.py
 powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -IncludeLong
 \end{runcommand}
   \item \textbf{8 项核心评审用例无 Python 独立入口：}
-    在无外部脚本环境的纯净机器上，可在 ModelSim 批处理模式下执行 \code{vsim -batch -do "do sim/run_judge.do; quit -f"}（或 GUI 内 \code{do sim/run_judge.do}）连续运行 8 项核心评审测试平台（11-04 分片交付版实测 \textbf{8/8 PASS}，累计 1,949,513,089 次自检 0 错误，耗时 8322.7~s，完整输出归档于 \code{sim/reference/judge_result_frag1030.txt}）。
+    在无外部脚本环境的纯净机器上，可在 ModelSim 批处理模式下执行 \code{vsim -batch -do "do sim/run_judge.do; quit -f"}（或 GUI 内 \code{do sim/run_judge.do}）连续运行 8 项系统级评审测试平台（实测 \textbf{8/8 PASS}，合计约 2.3~h 累计通过 1,949,513,089 次逐拍/逐字节在线断言检查、0 错误，完整输出归档于 \code{sim/reference/judge_result_frag1030.txt}）。
 \end{enumerate}
 
 \section{eLinx 物理实现与时序签核四步闭环}\label{sec:elintropro}

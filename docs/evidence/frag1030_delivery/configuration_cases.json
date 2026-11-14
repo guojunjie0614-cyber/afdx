@@ -2,13 +2,13 @@
   {
     "name": "isolated_default",
     "started": "2026-11-04T08:53:58.986687+08:00",
-    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687",
+    "folder": "out\\app_sim\\isolated_default\\20261103_165358_986687",
     "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
     "memory_floor_gib": 3.0,
     "memory_limit_gib": 10.0,
     "passed": true,
     "baseline": false,
-    "app_folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687\\source\\out\\app\\t76_application",
+    "app_folder": "out\\app_sim\\isolated_default\\20261103_165358_986687\\source\\out\\app\\app_simlication",
     "records": {
       "rx.txt": "ACC0316D89BD510004523C072FD84F62F8E59EC422AB8ACF0B187B98C3F336D8",
       "summary.txt": "4E8752369326706DC429A51B7BD15F32478E24D77EE09FFEBA4B8F8EE72F27F9",
@@ -42,13 +42,13 @@
           "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
           "-batch",
           "-l",
-          "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687\\transcript.log",
+          "out\\app_sim\\isolated_default\\20261103_165358_986687\\transcript.log",
           "-wlf",
-          "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687\\entry.wlf",
+          "out\\app_sim\\isolated_default\\20261103_165358_986687\\entry.wlf",
           "-do",
           "do entry.do"
         ],
-        "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687",
+        "cwd": "out\\app_sim\\isolated_default\\20261103_165358_986687",
         "pid": 39664,
         "created": 1793753639.2003505,
         "exit_code": 0,
@@ -56,20 +56,20 @@
         "seconds": 38.188,
         "peak_tree_bytes": 377585664,
         "budget_seconds": 2840.8008902072906,
-        "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_default\\20261103_165358_986687\\entry.log"
+        "log": "out\\app_sim\\isolated_default\\20261103_165358_986687\\entry.log"
       }
     ]
   },
   {
     "name": "isolated_small",
     "started": "2026-11-04T08:54:37.602192+08:00",
-    "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193",
+    "folder": "out\\app_sim\\isolated_small\\20261103_165437_601193",
     "scope": "EQ6HL130/CSG484_H; unplaced estimates, no physical signoff",
     "memory_floor_gib": 3.0,
     "memory_limit_gib": 10.0,
     "passed": true,
     "baseline": false,
-    "app_folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193\\source\\out\\app\\t76_application",
+    "app_folder": "out\\app_sim\\isolated_small\\20261103_165437_601193\\source\\out\\app\\app_simlication",
     "records": {
       "rx.txt": "53101444E302CA4CBB4C9E543754E36C71636495FA55644EC2A20176E50EA8D8",
       "summary.txt": "2F4C1DDC27A2921D17D5B07366933B4781538A489E7D81F9D0BF411E71D3E139",
@@ -103,13 +103,13 @@
           "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vsim.exe",
           "-batch",
           "-l",
-          "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193\\transcript.log",
+          "out\\app_sim\\isolated_small\\20261103_165437_601193\\transcript.log",
           "-wlf",
-          "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193\\entry.wlf",
+          "out\\app_sim\\isolated_small\\20261103_165437_601193\\entry.wlf",
           "-do",
           "do entry.do"
         ],
-        "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193",
+        "cwd": "out\\app_sim\\isolated_small\\20261103_165437_601193",
         "pid": 20412,
         "created": 1793753677.789698,
         "exit_code": 0,
@@ -117,7 +117,7 @@
         "seconds": 15.828,
         "peak_tree_bytes": 363479040,
         "budget_seconds": 2802.2115166187286,
-        "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t78\\out\\t76_app\\isolated_small\\20261103_165437_601193\\entry.log"
+        "log": "out\\app_sim\\isolated_small\\20261103_165437_601193\\entry.log"
       }
     ]
   }

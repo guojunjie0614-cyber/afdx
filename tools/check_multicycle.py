@@ -15,7 +15,7 @@ from adapt_gui_vqm import CELL, OUTPUTS
 
 def native_name(name):
     result = '|'.join(token.split(':')[-1] for token in name.lstrip('\\').split('|'))
-    # The T60 wrapper adds exactly one known hierarchy level; retain engine scope.
+    # AFDX_top wraps afdx_es by one hierarchy level; retain engine scope.
     return result[3:] if result.startswith('es|') else result
 
 def signals(value):
@@ -70,17 +70,15 @@ def _timing_constraints(path):
     return [(tuple(collections_by_name[a]),tuple(collections_by_name[b])) for a,b in pairs],uncertainty
 
 def constraints(path):
-    # T62 checks the complete physical membership before extracting pure SDC.
-    # Existing T61 guard imports this function only in T61 checkouts, where the
-    # T62 policy does not exist; their frozen behavior is unchanged.
-    policy=Path(__file__).resolve().parents[1]/'elinx/constraints_t62.json'
+    # Check complete physical membership against the constraint spec before extracting pure SDC.
+    policy=Path(__file__).resolve().parents[1]/'elinx/multicycle_spec.json'
     if policy.is_file():
-        from t62_constraints import split
+        from constraints_mgr import split
         timing=split(path.read_text(encoding='utf-8-sig'))['timing']
         class TimingText:
             def read_text(self,encoding='utf-8-sig'):return timing
         result=_timing_constraints(TimingText())
-        if result[1]!=0.30:raise ValueError('T62 requires exactly 0.30 ns setup uncertainty')
+        if result[1]!=0.30:raise ValueError('Policy requires exactly 0.30 ns setup uncertainty')
         return result
     return _timing_constraints(path)
 

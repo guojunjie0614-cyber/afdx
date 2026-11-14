@@ -1,7 +1,0 @@
-{
-  "head": "360cd0294e9ae129eef97fe37ae325187e13650c",
-  "rtl_diff": "rtl/afdx_615a.v               | 14 ++++++++++++++\n rtl/afdx_app_tx.v             |  5 +++++\n rtl/afdx_rtc.v                | 25 +++++++++++++++++++++++++\n rtl/afdx_rx_engine.v          | 19 +++++++++++++++++++\n rtl/afdx_rx_parse.v           |  5 +++++\n rtl/afdx_rx_reassembly_bank.v | 16 ++++++++++++++++\n rtl/afdx_tx_engine.v          |  5 +++++\n 7 files changed, 89 insertions(+)",
-  "elinx_diff": "diff --git a/elinx/AFDX_EndSystem.epr b/elinx/AFDX_EndSystem.epr\nindex a51181fa..f74c047c 100644\n--- a/elinx/AFDX_EndSystem.epr\n+++ b/elinx/AFDX_EndSystem.epr\n@@ -21,6 +21,7 @@\n             </Config>\n         </FileSet>\n         <FileSet Name=\"sim_1\" Type=\"SimulationSrcs\" RelSrcDir=\"$PSRCDIR/sim_1\">\n+            <File Path=\"/../tb/lib/afdx_sys_config.v\"/>\n             <File Path=\"/../tb/lib/top_stream_endpoint.v\"/>\n             <File Path=\"/../tb/lib/judge_endpoint.v\"/>\n             <File Path=\"/../tb/tb_elinx.v\"/>",
-  "elinx_matches_t76_start": true,
-  "elinx_baseline_gate": "FAIL: pre-existing T76 sim_1 afdx_sys_config.v registration; protected project unchanged"
-}

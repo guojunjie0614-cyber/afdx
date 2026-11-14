@@ -70,10 +70,10 @@
 
 \subsubsection{硬件整体介绍}
 
-硬件系统以中科亿海微国产大容量 FPGA \textbf{EQ6HL130（CSG484\_H 封装）}为唯一核心处理器件，无需外部软核或协处理器，全芯片由单一全局主时钟 \code{clk}（125~MHz，周期 8.000~ns）同步驱动。顶层模块 \code{AFDX_top} 共声明 26 组端口信号、合计 \Pins{} 个用户引脚（占器件 339 个可用 I/O 的 \PinPct\%），完整端口定义见表~\ref{tab:s2_ports}。
+硬件系统以中科亿海微国产大容量 FPGA \textbf{EQ6HL130（CSG484\_H 封装）}为唯一核心处理器件，无需外部软核或协处理器，全芯片由单一全局主时钟 \code{clk}（125~MHz，周期 8.000~ns）同步驱动。顶层模块 \code{AFDX_top} 共声明 29 个独立端口信号、合计 \Pins{} 个用户引脚（占器件 339 个可用 I/O 的 \PinPct\%），完整端口定义见表~\ref{tab:s2_ports}。
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{4.8cm}>{\centering\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.8cm-4\tabcolsep\relax}@{}}
-\caption{\code{AFDX_top} 顶层硬件端口定义（26 组信号，共 \Pins{} 引脚）}\label{tab:s2_ports}\\
+\caption{\code{AFDX_top} 顶层硬件端口定义（29 个独立端口信号，共 \Pins{} 引脚）}\label{tab:s2_ports}\\
 \longtablehead{3}{\thead{端口信号名称} & \thead{方向} & \thead{位宽、协议语义与硬件接口时序说明}}
 \multicolumn{3}{@{}l}{\textit{1. 赛题模板核心端口（带 2 字节大端 VLID 前缀的应用流式接口，共 22 引脚）}} \\*
 \code{clk} / \code{reset} & 入 & 125~MHz 全局主时钟（8.000~ns）；高有效同步复位 \\

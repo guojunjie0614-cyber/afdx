@@ -1,6 +1,0 @@
-{
-  "status": "CANCELLED_SUPERSEDED",
-  "report_time": "2026-11-04 00:56:12",
-  "reason": "User replaced fixed-baseline R2 with one end-to-end build of modified RTL. Existing-receipt gate prevents the active serial controller from launching R2 after R1.",
-  "tools_launched": false
-}

@@ -1,8 +1,8 @@
 {
   "name": "self_rtl_n4",
   "started": "2026-10-11T21:06:04.288600+08:00",
-  "folder": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
-  "scope": "T22b isolated official MAC experiment; original IP and tracked sources unchanged",
+  "folder": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+  "scope": "Isolated official MAC experiment; original IP and tracked sources unchanged",
   "memory_floor_gib": 5.0,
   "memory_limit_gib": 10.0,
   "completed": true,
@@ -2865,7 +2865,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-c"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+      "cwd": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
       "pid": 32004,
       "created": 1791723964.328725,
       "exit_code": 0,
@@ -2873,7 +2873,7 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8626176,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\ini.log"
+      "log": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\ini.log"
     },
     {
       "name": "work",
@@ -2881,7 +2881,7 @@
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlib.exe",
         "work"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+      "cwd": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
       "pid": 28756,
       "created": 1791723964.5986,
       "exit_code": 0,
@@ -2889,18 +2889,18 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8806400,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\work.log"
+      "log": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\work.log"
     },
     {
       "name": "vendor_map",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vmap.exe",
         "-modelsimini",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\modelsim.ini",
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\modelsim.ini",
         "ip_vendor",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\vendor\\ip_vendor"
+        "out\\b\\vendor\\ip_vendor"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+      "cwd": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
       "pid": 16768,
       "created": 1791723964.8654113,
       "exit_code": 0,
@@ -2908,20 +2908,20 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8572928,
       "budget_seconds": 30,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\vendor_map.log"
+      "log": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\vendor_map.log"
     },
     {
       "name": "compile",
       "command": [
         "E:\\Verilog\\ModelSim\\setup_pack\\win64\\vlog.exe",
         "-vlog01compat",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\self_mac.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_mac_tx.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_mac_rx.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_crc32_d8.v",
-        "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\tb_mac_baseline.v"
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\self_mac.v",
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_mac_tx.v",
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_mac_rx.v",
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\afdx_crc32_d8.v",
+        "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\tb_mac_baseline.v"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+      "cwd": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
       "pid": 12188,
       "created": 1791723965.151148,
       "exit_code": 0,
@@ -2929,7 +2929,7 @@
       "seconds": 0.266,
       "peak_tree_bytes": 8151040,
       "budget_seconds": 120,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\compile.log"
+      "log": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\compile.log"
     },
     {
       "name": "simulation",
@@ -2947,7 +2947,7 @@
         "-do",
         "do run.do"
       ],
-      "cwd": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
+      "cwd": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602",
       "pid": 33960,
       "created": 1791723965.4316468,
       "exit_code": 0,
@@ -2955,7 +2955,7 @@
       "seconds": 3.454,
       "peak_tree_bytes": 195973120,
       "budget_seconds": 600,
-      "log": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_github\\out\\t22\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\simulation.log"
+      "log": "out\\b\\jobs\\self_rtl_n4\\20261011_210604_287602\\simulation.log"
     }
   ]
 }

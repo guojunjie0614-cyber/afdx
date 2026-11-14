@@ -68,9 +68,9 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
                 originals[str(ROOT / 'tools' / name)] = eda.sha(ROOT / 'tools' / name)
             flow.job('vectors', [sys.executable, '-B', '-X', 'utf8', checker, 'vectors', '--dir', flow.folder], 60)
         if test in FRAGMENT_TESTS:
-            for name in ('fragment_integration.py','fragment_ref.py','t75_fragment_check.py'):
+            for name in ('fragment_integration.py','fragment_ref.py','frag_netlist_check.py'):
                 originals[str(ROOT / 'tools' / name)] = eda.sha(ROOT / 'tools' / name)
-            checker = ROOT / 'tools/t75_fragment_check.py'
+            checker = ROOT / 'tools/frag_netlist_check.py'
             flow.job('vectors', [sys.executable,'-B','-X','utf8',ROOT/'tools/fragment_integration.py','prepare',flow.folder], 60)
         (flow.folder / 'run.do').write_text(
             'onerror {quit -code 1}\nonbreak {quit -code 1}\nrun -all\nquit -code 0\n', encoding='ascii')

@@ -140,7 +140,7 @@ def main():
     parser.add_argument('--raw-sources', action='store_true', help='Compile original RTL without portability copies')
     parser.add_argument('--post-command',type=Path,help='Finite JSON argv to execute once after this queue ends')
     parser.add_argument('--compute-cores',type=int,default=0,help='Computing simulations plus one owned build reservation')
-    parser.add_argument('--paused-manifest',type=Path,help='Identity-pinned T76 kernels held for priority work')
+    parser.add_argument('--paused-manifest',type=Path,help='Identity-pinned load kernels held for priority work')
     parser.add_argument('--manage-pauses',action='store_true')
     parser.add_argument('--peer-queue',type=Path,action='append',default=[])
     parser.add_argument('--critical-net-queue',type=Path)
@@ -259,7 +259,7 @@ def main():
                     peaks['observed_class_a_tree_bytes'] = max(peaks.get('observed_class_a_tree_bytes', 0), rss)
                     kernels=[q for q in children if q.name().lower()=='vsimk.exe']
                     optimizing=any(q.name().lower().startswith('vopt') for q in children)
-                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/|/t76_sim/tb_t76_load/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
+                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/|/(?:t76_sim|load_sim)/tb_t76_load/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
                         peaks['class_a_runtime_measured']=True
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
@@ -333,14 +333,14 @@ def main():
                     if q.create_time()==entry['created'] and q.pid in sim_slots:paused_count+=1
                 except psutil.NoSuchProcess:pass
             # Resume original kernels without re-launching or changing any
-            # deadline. All identities and the owning worktree are rechecked.
+            # deadline. All identities and the owning workspace are rechecked.
             if args.manage_pauses and not build_reservation and args.compute_cores:
                 for entry in sorted(hold['kernels'],key=lambda r:-r.get('resume_priority',0)):
                     if not entry.get('paused') or compute_reserved-paused_count+reserve_rx>=args.compute_cores:continue
                     try:
                         q=psutil.Process(entry['pid'])
                         if q.create_time()!=entry['created']:continue
-                        if str(ROOT).lower() not in q.cwd().lower():raise RuntimeError('Paused kernel left task worktree')
+                        if str(ROOT).lower() not in q.cwd().lower():raise RuntimeError('Paused kernel left workspace root')
                         q.resume();entry.update(paused=False,resumed=now());paused_count-=1
                         save(args.paused_manifest,hold)
                         print('PAR RESUME ORIGINAL KERNEL '+str(q.pid),flush=True)
@@ -354,8 +354,8 @@ def main():
         net_active = sum(v['row']['kind'] in ('A', 'B','VQM76') for v in active.values())
         own_sim_workers=sum(v['row']['kind']!='SYNTH' for v in active.values())
         owned_sim_pids=set().union(*(v.get('sim_pids',set()) for v in active.values()))
-        # Conservatively reserve every foreign kernel as a netlist seat. This
-        # keeps the three running T75 VQM jobs within the whole-host limit.
+        # Conservatively reserve every foreign kernel as a netlist seat to keep
+        # concurrent VQM simulations within whole-host memory limits.
         foreign_sim_workers=len(sim_slots-owned_sim_pids)
         net_budget,net_reserve=reserved_netlist_bytes(active.values(),observed)
         usable=available-net_reserve
@@ -392,11 +392,9 @@ def main():
                        AFDX_MEM_FLOOR_GB='3', AFDX_LATEST_PREFIX=row['prefix'], AFDX_PAR_RESOURCE_GATES='1',
                        AFDX_MODELSIM_DECL_ORDER='0' if args.raw_sources else '1')
             if row['kind']=='MIX_SEARCH76':
-                command=[sys.executable,'-B','-X','utf8',str(root/'tools/t76_search.py'),'--deadline',deadline]
-                env['AFDX_T76_SPEC_CONFIRMED']='1'
+                command=[sys.executable,'-B','-X','utf8',str(root/'tools/run_load_search.py'),'--deadline',deadline]
             elif row['kind'] in ('RTL76','VQM76'):
-                command=[sys.executable,'-B','-X','utf8',str(root/'tools/t76_sim.py'),'--deadline',deadline]
-                env['AFDX_T76_SPEC_CONFIRMED']='1'
+                command=[sys.executable,'-B','-X','utf8',str(root/'tools/run_load_sim.py'),'--deadline',deadline]
                 if row['kind']=='VQM76':
                     command+=['--netlist',row['netlist']]
                     reference=next(r for r in runs if r['Index']==row['reference_index'])

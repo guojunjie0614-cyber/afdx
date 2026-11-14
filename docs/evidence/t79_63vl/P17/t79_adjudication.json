@@ -1,9 +1,0 @@
-{
-  "hdl_pass": true,
-  "inputs_unchanged": true,
-  "known_warning_count": 84,
-  "unexpected_warnings": [],
-  "wrapper_passed": false,
-  "wrapper_error": "Simulation not passed; see simulation.log",
-  "policy": "Same exact known-warning patterns as tools/eda.py direct RTL gate; original wrapper result retained"
-}

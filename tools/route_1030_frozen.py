@@ -225,7 +225,7 @@ def main():
         )
 
         timing_sdc = (ROOT / 'elinx/timing_only.sdc').read_text(encoding='utf-8-sig')
-        spec = json.loads((ROOT / 'elinx/constraints_t62.json').read_text(encoding='utf-8-sig'))
+        spec = json.loads((ROOT / 'elinx/multicycle_spec.json').read_text(encoding='utf-8-sig'))
         phys_lines = [f'set_global_assignment -name PRES_FAC_MULT {args.pres}']
         for k, v in settings.items():
             phys_lines.append(f'set_global_assignment -name {k} {v}')

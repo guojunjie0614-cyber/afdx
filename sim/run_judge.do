@@ -1,5 +1,5 @@
 # ModelSim batch entry: run from the repository root with do sim/run_judge.do.
-# The current T76 fallback uses Python only to prepare RTL simulation copies.
+# Optional ModelSim compatibility-copy fallback uses Python only to prepare simulation copies.
 # Configuration tasks stay in non-top endpoint modules; application file input
 # is isolated in tb/lib/afdx_sys_config.v (sim/run_app.do).
 # Compilation and each case are launched as external `vlog`/`vsim -batch`

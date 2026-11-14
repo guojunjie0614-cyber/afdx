@@ -15,9 +15,7 @@ ROOT=Path(__file__).resolve().parents[1]
 # Only the result limit and paths-per-endpoint fields are changed below.
 REPORT_CONFIG=bytes.fromhex('00000000640000000a00000003000000caf249710103000000000000000000000000000000')
 
-def report(route_path,deadline):
-    import t62_runtime
-    t62_runtime.install()
+def report(route_path,deadline=None):
     route=json.loads(route_path.read_text(encoding='utf-8'))
     if not route.get('completed'):raise RuntimeError('Official implementation has not completed')
     for name,digest in {**route['source_hashes'],**route['setting_hashes']}.items():

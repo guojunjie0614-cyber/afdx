@@ -13,19 +13,19 @@ def measure(sysrows,endpoints,gmii,samples,expect):
                     mean=sum(values)/len(values) if values else None,
                     max_us=max(values)*0.008 if values else None,
                     mean_us=sum(values)*0.008/len(values) if values else None)
-    # T76: bind each reconstructed message to the actually captured public
+    # Bind each reconstructed message to the captured public
     # tx_data/rx_data bytes. Core M/D completion cycles are not measurements.
     for ep in endpoints.values():
         app_rows=[p for _,_,p in ep['txrows'] if p[0]=='A']
-        expect(len(app_rows)==len(ep['messages']),'T76 every message has public application input')
+        expect(len(app_rows)==len(ep['messages']),'every message has public application input')
         for m,a in zip(ep['messages'],app_rows):
             expect(int(a[2],16)==(m['words'][2]&65535) and int(a[3])==m['n'] and bytes.fromhex(a[4])==m['payload'],
-                   'T76 public tx_data VLID/length/bytes match')
+                   'public tx_data VLID/length/bytes match')
             m['public_first']=int(a[5]);m['public_last']=int(a[1])
         app_delivery=[p for _,_,p in ep['rxrows'] if p[0]=='D']
-        expect(len(app_delivery)==len(ep['deliveries']),'T76 every delivery has public receive timestamps')
+        expect(len(app_delivery)==len(ep['deliveries']),'every delivery has public receive timestamps')
         for d,p in zip(ep['deliveries'],app_delivery):
-            expect(len(p)>=10,'T76 public rx_data timestamps are present')
+            expect(len(p)>=10,'public rx_data timestamps are present')
             d['public_first']=int(p[8]);d['public_last']=int(p[9])
     result={}
     required={'light_d0','light_d257','throughput_d0','throughput_d257','duplex_d0','duplex_d257','gbe77_d0','gbe77_d257','gbe81_d0','gbe81_d257'}
@@ -161,14 +161,14 @@ def measure(sysrows,endpoints,gmii,samples,expect):
             for (vl,n),rr in sorted(grouped.items()):
                 rr.sort();first=rr[0];worst=max(rr,key=lambda r:r[1])
                 # Confirmed periodic-injection branch: no sample is a forced
-                # BAG-wait probe. The separate T76 paired scenario covers that.
+                # BAG-wait probe. The separate load scenario covers that.
                 minimum=min(r[1] for r in rr)
                 jitter=worst[1]-minimum
                 official.append(dict(vl=vl,length=n,first_tx=first[0],first_rx=first[2],minimum_first=first[1],
                     maximum=worst[1],worst_tx=worst[0],worst_rx=worst[2],BAG=bag,
                     observed_minimum=minimum,bag_deduction=0,jitter_cycles=jitter,
                     formula_precondition=True,policy='periodic_no_BAG_wait'))
-            metrics['T76_R139_public_groups']=official
+            metrics['r139_public_groups']=official
             metrics['scheduling_interval_error']=stats([abs(v) for v in schedule_errors])
             metrics['raw_gap_minus_BAG']=stats(intervals)
             metrics['formula_limit']=max((m['w_limit'] for m in selected),default=0)

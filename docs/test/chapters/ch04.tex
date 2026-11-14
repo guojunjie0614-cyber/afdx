@@ -30,7 +30,7 @@ SYS-09 & 在 eLinx 中运行；两端经顶层 2B-VLID 流各发送 1、64、147
 
 \subsection{eLinx 行为仿真}
 
-图~\ref{fig:welinx} 为 eLinx 3.0.7 调用 ModelSim 运行 \code{tb_elinx}（SYS-09）的实测界面截图（归档于 \code{docs/evidence/t79_63vl/elinx_gui_behav_pass.png}）。仿真到达 \code{Time: 2557777 ns}（界面耗时 \code{0:02:18}），日志显示 1、64、1471 字节消息经顶层 2B-VLID 流接口的双向双网传输全部通过，自检 \ElinxChecks{} 次，错误数为 0（编译阶段报告的 90 条警告均为 eLinx/ModelSim 原语库位宽截断提示，详见 \code{warning_policy_proof.json}）。
+图~\ref{fig:welinx} 为 eLinx 3.0.7 调用 ModelSim 运行 \code{tb_elinx}（SYS-09）的实测界面截图（归档于 \code{docs/evidence/vl63_full_load/elinx_gui_behav_pass.png}）。仿真到达 \code{Time: 2557777 ns}（界面耗时 \code{0:02:18}），日志显示 1、64、1471 字节消息经顶层 2B-VLID 流接口的双向双网传输全部通过，自检 \ElinxChecks{} 次，错误数为 0（编译阶段报告的 90 条警告均为 eLinx/ModelSim 原语库位宽截断提示，详见 \code{warning_policy_proof.json}）。
 
 \begin{figure}[H]\centering
 \pgfmathsetlengthmacro{\zoomunit}{0.96*\linewidth/944}
