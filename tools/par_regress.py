@@ -388,8 +388,6 @@ def main():
             root = Path(row['root'])
             deadline = (datetime.now(TZ)+timedelta(hours=24 if row['kind'] in ('A','B','VQM76','RTL76') else args.rtl_hours)).isoformat()
             env = os.environ.copy()
-            env.setdefault('MODELSIM_HOME', 'E:/Verilog/ModelSim/setup_pack/win64')
-            env.setdefault('ELINX_HOME', 'E:/2026_Embedded_FPGA/setup_pack')
             env.update(AFDX_PYTHON=sys.executable, AFDX_CE_DIV='2',
                        AFDX_MEM_FLOOR_GB='3', AFDX_LATEST_PREFIX=row['prefix'], AFDX_PAR_RESOURCE_GATES='1',
                        AFDX_MODELSIM_DECL_ORDER='0' if args.raw_sources else '1')
