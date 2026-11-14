@@ -87,15 +87,15 @@ def resource():
 
 def latency():
     points = [
-        ("1 B", 1.056),
-        ("17 B", 1.136),
-        ("18 B", 1.152),
-        ("511 B", 9.040),
-        ("1471 B", 24.400),
+        ("1 B", 1.576),
+        ("17 B", 1.968),
+        ("18 B", 2.000),
+        ("511 B", 17.776),
+        ("1471 B", 48.592),
     ]
     width, height = 1200, 440
     x0, x1, y0, y1 = 110, 1140, 88, 344
-    ymax = 28.0
+    ymax = 55.0
     xs = [215, 410, 605, 800, 995]
     bar_w = 68
 
@@ -104,26 +104,18 @@ def latency():
 
     parts = [
         text(32, 38, "端到端传输时延（125 MHz 轻载单帧）", 17, INK, "start", 700),
-        text(1168, 38, "注：63 VL 满载时 Lmax=1471 B 核心流水线时延为 24.424 µs（3,053 拍）", 13, MUTED, "end", 500),
+        text(1168, 38, "分片版 tb_sys_perf 轻载工况（11-03）；63 VL 满载见 5.2 节", 13, MUTED, "end", 500),
         f'<line x1="32" y1="54" x2="1168" y2="54" stroke="{OUTER_BORDER}" stroke-width="1"/>',
         text(32, 84, "时延 / µs", 13, MUTED),
     ]
 
-    for tick in (0, 5, 10, 15, 20, 25):
+    for tick in (0, 10, 20, 30, 40, 50):
         y = py(tick)
         parts.append(
             f'<line x1="{x0}" y1="{y:.2f}" x2="{x1}" y2="{y:.2f}" '
             f'stroke="{GRID if tick > 0 else AXIS}" stroke-width="1"/>'
         )
         parts.append(text(x0 - 14, y + 5, str(tick), 13, MUTED, "end"))
-
-    parts += [
-        box(248, 126, 440, 68, ACCENT_SOFT, ACCENT_BORDER, 1.2, 6),
-        text(468, 152, "17 B → 18 B 为以太网 64 B 最小帧补零边界", 13.5, ACCENT, "middle", 700),
-        text(468, 174, "1~17 B 均填充至 64 B，线上耗时恒定；≥18 B 随载荷线性增长", 12.5, SLATE, "middle"),
-        f'<line x1="410" y1="194" x2="410" y2="296" stroke="{ACCENT_BORDER}" stroke-dasharray="4 3" stroke-width="1.3"/>',
-        f'<line x1="605" y1="194" x2="605" y2="296" stroke="{ACCENT_BORDER}" stroke-dasharray="4 3" stroke-width="1.3"/>',
-    ]
 
     for x, (label, value) in zip(xs, points):
         top = py(value)
@@ -135,7 +127,7 @@ def latency():
         parts.append(text(x, top - 12, f"{value:.3f} µs", 14.5, INK, "middle", 700))
         parts.append(text(x, y1 + 26, label, 14.5, INK, "middle", 600))
 
-    parts.append(text(x1, y1 + 58, "应用消息载荷长度（8 样本均值，正反方向与双链路延迟一致）", 13, MUTED, "end"))
+    parts.append(text(x1, y1 + 58, "应用消息载荷长度（每种 8 样本，取正反方向与两种链路延迟中的最大值）", 13, MUTED, "end"))
     return document(width, height, parts)
 
 
