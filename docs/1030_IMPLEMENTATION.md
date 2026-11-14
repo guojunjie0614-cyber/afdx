@@ -1,6 +1,6 @@
 # 1030 答疑实现记录
 
-本记录对应 `feature/fragmentation-timing-1030` 开发分支。依据为 [1030 答疑表](sources/FPGA创新大赛问题汇总1030.xlsx) Sheet1 R138、R139。F1/T65 的历史 PASS、覆盖率、吞吐和时序数字不能用于本次修改后的 RTL 验收。
+本记录对应分片交付版。依据为 [1030 答疑表](sources/FPGA创新大赛问题汇总1030.xlsx) Sheet1 R138、R139。
 
 ## 实现边界
 

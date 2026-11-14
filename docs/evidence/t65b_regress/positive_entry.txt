@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "checks": 10,
-  "errors": 0,
-  "failures": [],
-  "mutant": 0
-}
-输出：E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_t65_queue_a\20261029_185608_882816
-[RESULT] tb_t65_queue_a PASS checks=3088 errors=0

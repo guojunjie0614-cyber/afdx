@@ -1,7 +1,0 @@
-Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
-Start time: 18:12:06 on Oct 29,2026
-vcover testnames E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\sim\tb_t65_rx_desc\20261029_175924_124126\coverage.ucdb 
-tb_t65_rx_desc_20261029_175924_124126
-
-End time: 18:12:06 on Oct 29,2026, Elapsed time: 0:00:00
-Errors: 0, Warnings: 0
