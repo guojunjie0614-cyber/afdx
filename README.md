@@ -309,7 +309,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | :--- | :---: | ---: | :--- |
 | 满载交付规格 | 63 TX / 63 RX | **`741.384 Mbps`** | 双向合计 1482.768 Mbps（线速占用 77.5%），7 大场景各连续 100 ms 零丢包 |
 | 定长满载压测 | 77 TX / 77 RX | `906.136 Mbps` | 全固定 1471 B 帧连续注入千兆压测 |
-| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 历史补充测试口径，见 [`performance.json`](docs/evidence/performance.json) |
+| 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [`performance.json`](docs/evidence/performance.json) |
 
 <img src="docs/fig/latency.png" width="100%" alt="端到端传输时延柱状图（1 B 至 1471 B）"/>
 <p><sub>图 14：不同载荷长度的端到端传输时延及 64 B 最小帧填充边界。</sub></p>
@@ -379,13 +379,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | [`snmp_get_1.png`](sim/wave/png/snmp_get_1.png) / [`_2`](sim/wave/png/snmp_get_2.png) | `525.944 – 538.948` | 请求 `525.964 µs` 到达，代理 `538.628 µs` 发回 `GetResponse`（耗时 `12.664 µs`） |
 | [`services.png`](sim/wave/png/services.png) | `0 – 1095.014` | 五功能联测全程闭环，RTC 误差 `0 ns` |
 | [`frag_1.png`](sim/wave/png/frag_1.png) / [`_2`](sim/wave/png/frag_2.png) / [`_3`](sim/wave/png/frag_3.png) | `474.768 – 5787.076` | 首片 `Flags/Offset = 20 00`（`MF=1`），6 分片 1 ms BAG 发出后交付 `8194` 字节 |
-
-</details>
-
-<details>
-<summary>展开查看：分片前 F1 历史基线归档（仅供版本演进溯源）</summary>
-
-分片版（34 个模块）已全面取代早期无分片 F1 基线（29 个模块、最大单帧 1471 B）。早期记录保留于 `docs/evidence/t63_f1_*.json` 与 `docs/evidence/t65b_regress/`：LUT `39,895`（29.30%）、FF `20,885`（15.34%）、CLB `5,136`（37.72%）、M4K `404`（33.67%）、5,540 条簇约束下 Setup `+0.016 ns` / Hold `+0.229 ns`（0/53,882）、语句覆盖 98.65% / 分支 96.86% / 56 项回归全过。
 
 </details>
 

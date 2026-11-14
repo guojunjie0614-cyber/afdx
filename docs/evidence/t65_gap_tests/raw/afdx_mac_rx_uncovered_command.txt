@@ -1,5 +1,0 @@
-Model Technology ModelSim SE-64 vcover 2020.4 Coverage Utility 2020.10 Oct 13 2020
-Start time: 18:33:04 on Oct 29,2026
-vcover report -du=work.afdx_mac_rx -code bcesft -details -zeros -showenabledcodecov -output E:\2026_Embedded_FPGA\worktrees\active\c3_t63\docs\evidence\t65_gap_tests\raw\afdx_mac_rx_uncovered.txt E:\2026_Embedded_FPGA\worktrees\active\c3_t63\out\t65\coverage\merged.ucdb 
-End time: 18:33:07 on Oct 29,2026, Elapsed time: 0:00:03
-Errors: 0, Warnings: 0

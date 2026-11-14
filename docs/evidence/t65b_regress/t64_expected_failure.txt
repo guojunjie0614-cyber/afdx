@@ -1,5 +1,0 @@
-{
-  "function": "tools/t64_coverage.py:cases()",
-  "expected_failure": true,
-  "error": "Expected exactly 40 unique frozen cases"
-}
