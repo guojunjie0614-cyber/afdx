@@ -6,8 +6,7 @@
     "sha256": "8d8b28919b7b0c77eb56a081af5ca643dfc08c9f2d600a1f5920f1e14f59604b",
     "operation": "Copy the T59 tb_sys_perf independent check summary",
     "source_commit": "286fa1b6",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "rtc.json",
@@ -41,80 +40,70 @@
     "source": "out/latest_functional.json",
     "bytes": 9738,
     "sha256": "f027e5ca7664945aedb0b06cc3c5b6f9cb76d3da8b7a22e984585e7519044946",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "vo_ram.json",
     "source": "out/t22/ram_summary.json",
     "bytes": 19214,
     "sha256": "f7af1f6238d3ab51de9b32e9d3bfae54549468731b5be47d58e04253b4e8b797",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "vo_ram_bits.json",
     "source": "out/t22/ram_bit_map.json",
     "bytes": 2912,
     "sha256": "b2ef764b19772cd818930cae90d4cb62db185ae97f7cec44d9f527173dce8163",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_results.json",
     "source": "out/t22/b/results.json",
     "bytes": 12226,
     "sha256": "83e5d49e3fb7b3fe1e0806fc991f3be1a85807d1bbdc3a8b7d80edb21594bae9",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_official_resources.json",
     "source": "out/t22/b/result_resources_official.json",
     "bytes": 2416,
     "sha256": "46c8acfc232e11e4698348ffe80b72f9936acf6edf74ad9a6fcbd0e226dd0cb9",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_self_resources.json",
     "source": "out/t22/b/result_resources_self.json",
     "bytes": 3919,
     "sha256": "e3a115d8826ce9a7f9aa8bdb6e33719c89ec8e40d6d5d7fe5d030a43ec9374a4",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_official_stress.json",
     "source": "out/t22/b/result_stress_crc_n4.json",
     "bytes": 86344,
     "sha256": "c2e0ac68815d43d0b234b821b9d63af146a54a8a21136a16cfe949e4b97fa002",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_self_rtl.json",
     "source": "out/t22/b/result_self_rtl_n4.json",
     "bytes": 85208,
     "sha256": "52642e9025be71878b7f7ab7f278a3973076a14b9aa7a850ade170441d258e16",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_self_net.json",
     "source": "out/t22/b/result_self_netlist_n4.json",
     "bytes": 85833,
     "sha256": "e7f1d30ec59fa458d41aca1bf55eec9ad19a60c8a544e0d4d36bc08972958165",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "mac_bad_crc.json",
     "source": "out/t22/b/result_bad_crc.json",
     "bytes": 7345,
     "sha256": "3f9b57053d2d902becf875c39b3597e8d208f9b30c74fd413cd4719abad59393",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
+    "historical": true
   },
   {
     "file": "perf_r97.json",
@@ -124,292 +113,5 @@
     "operation": "Recompute Python against fresh same-folder Tcl results; all current performance windows",
     "bytes": 71530,
     "sha256": "8DE6987E6FDCB1815F467D3A8E7A39D640ACA46495AE1B1770C161F3C9767380"
-  },
-  {
-    "file": "../../sim/reference/regression.json",
-    "source": "out/t63/F1_final_v2/summary.json",
-    "source_sha256": "90A05E9FBA3D5B42CBA2C33C3A7C310EE9EF04FFB6355FC8237267ECEC32D48A",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Collect all 40 same-commit CE2 runs in original list order",
-    "bytes": 9384,
-    "sha256": "A0D88EC64CAB1D1BCB32E069D5ADCDC4C2ACF055036286078BF225AAE7A117F9"
-  },
-  {
-    "file": "../../sim/reference/judge_result.txt",
-    "source": "out/modelsim/judge_20261028_225509_8540/result.txt",
-    "source_sha256": "9F0A8558811D8A83CEC0804CFB7E816041ACD8E6CFBC34707F982C6CEBEA6589",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
-    "bytes": 18878,
-    "sha256": "9F0A8558811D8A83CEC0804CFB7E816041ACD8E6CFBC34707F982C6CEBEA6589"
-  },
-  {
-    "file": "../../sim/reference/coverage/merged.ucdb",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 2916591,
-    "sha256": "e000db372a9d6274b00955fea9c2aab2914f413569d8daf1e8dce7576cd42b88",
-    "inputs": [
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_ram_sdp\\20261026_122543_111611\\coverage.ucdb",
-        "sha256": "ecbcc69a4f6724eda05e501f0b934a85dbfdc1b985b4afa5cf9d47420e89ad04"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_tx\\20261026_122513_904706\\coverage.ucdb",
-        "sha256": "d43291da99dbe58c96a66bd5763b795775a3087169ce09f39f4ffcac0317eac1"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_rx\\20261026_122530_040979\\coverage.ucdb",
-        "sha256": "b78afd8a3bea60feaed15083b21712566ac9b814ca913910298fbbfbcef7ed33"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_mac_loop\\20261026_122435_669186\\coverage.ucdb",
-        "sha256": "55ea27b7099524bb830cbf512361b36c4435cf0bb74baa829b02de05e21e8a6c"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_basic\\20261026_122428_597964\\coverage.ucdb",
-        "sha256": "a2f00926424b883fb68c1f7734972da23a3a43c33b9c8d7b2a3db7d68b32497c"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_basic\\20261026_122442_699696\\coverage.ucdb",
-        "sha256": "c2ae166e2832c43097eb8d7cf376dd16819d20e4841d077195b2662b53d6933b"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_bag\\20261026_122022_148592\\coverage.ucdb",
-        "sha256": "101ec14a28c08212ade08fbf2f79c35fe1fe6f72f8898900eb24941115215c23"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_multi\\20261026_121817_571134\\coverage.ucdb",
-        "sha256": "6b936a0bccdd0362d46f532cc3daf074bbc3744ad3936045c2a00ac481098b5e"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_drop\\20261026_121646_823592\\coverage.ucdb",
-        "sha256": "3a6d0f73c477e6e7d49e7fa952739fea2ccf242e858531f6d19012c10c6827a9"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_tx_net\\20261026_122506_794732\\coverage.ucdb",
-        "sha256": "757bade0788a8602ac24d23de0fc3567edba61009add2e38771a1bdc5639cff8"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_basic\\20261026_121819_636920\\coverage.ucdb",
-        "sha256": "90d7591c68fce5f7de42ae7c91103b8b4959b7bc51fe3e4d98bd047ac7cc2866"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_fault\\20261026_122427_587812\\coverage.ucdb",
-        "sha256": "831e975dcbe14f75e0df60445597082728004a34583b8485b276e22686ef44ce"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_icrm\\20261026_122334_133436\\coverage.ucdb",
-        "sha256": "32843f7a956e3d62a8fa5fde95ff877297cc5611ed7b374d2039ff6d1ac75152"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_load\\20261026_122255_378102\\coverage.ucdb",
-        "sha256": "49040ae9d9bc8700f8a5e63344103c5f5bbf03e00bf6bd150cfb2473e21370c1"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_ovf_ring\\20261026_122432_614915\\coverage.ucdb",
-        "sha256": "e8039eaa4da05908159589f5951ed391ffd66d1fb2d2eb960a80f5d61b84c672"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_ovf_dq\\20261026_122433_630001\\coverage.ucdb",
-        "sha256": "cf033b5bad3f1a9ede859def27415349dd0fced40830ea3f92ccc37f39cecbf3"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rx_net\\20261026_122422_605346\\coverage.ucdb",
-        "sha256": "86f2cadbf422f7023ba83d729c8b5bfb5796996233505b8f3564715f75b676ea"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_basic\\20261026_121818_593014\\coverage.ucdb",
-        "sha256": "696455a309c33da9e81fc21eacc8194b4dca9fcc9afe009b90454941565e2e9a"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_fault\\20261026_115041_293287\\coverage.ucdb",
-        "sha256": "9cb0f3dc61f983345d7ac41e74679d4c60cb8f21937972b4a4984d4e67b49c3c"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_delay\\20261026_121442_899742\\coverage.ucdb",
-        "sha256": "c30fd46e766f79fa29fbc6149b1f5728e2e05336778637b8b6c53fe48ab37857"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_load\\20261026_112151_152119\\coverage.ucdb",
-        "sha256": "eb88577bd6820319c23d3018a5bab7358a925965679ef245222a9e3c27004e96"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_cfg\\20261026_120832_990781\\coverage.ucdb",
-        "sha256": "2d2c47e60654bc2dd835247bab84126782ba34764e83afdc99c2976c37425179"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_reset\\20261026_121506_419287\\coverage.ucdb",
-        "sha256": "37646db25de6f1b21eee5f6f0fe3daf2ffab8f11fea178016930a2e170db512b"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_ovf\\20261026_121512_432080\\coverage.ucdb",
-        "sha256": "aa80d7adbb5de9630da2213c20d2d89a566c7d994dfe13fa5ecbce3342434ef2"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_net\\20261026_122144_707811\\coverage.ucdb",
-        "sha256": "ae03cb1c1cf4c8ed83b215cd02847796ba7ce5847242a1a513817cc13a317d03"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_perf\\20261026_112151_120728\\coverage.ucdb",
-        "sha256": "f65e0b6466ac7a5f8eb6bbdc684dbfdeea4f446cd7902750707a00929ead075c"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_rtc\\20261026_112151_127229\\coverage.ucdb",
-        "sha256": "18c3321fd74dddc456b80d0ea9ae6cee7ddf5adacac3e95ecb5dbdd8e1d1c6ce"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_snmp\\20261026_120528_935304\\coverage.ucdb",
-        "sha256": "247022538a9bbbfa5f7c787d5b38da010f075635bc4af8b2a2c2eb856c5ab7f7"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_snmp_settrap\\20261026_120754_352363\\coverage.ucdb",
-        "sha256": "43c2dc214bdd83391d6a142e0cee6a3bf33226e928916837b79fef75d80c8ca9"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_615a\\20261026_115344_759686\\coverage.ucdb",
-        "sha256": "6cf2adcdec250153c3e08d4f2d7b53d4695ddef59cdeb9331ee992bfcc00ec28"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_gbe_burst\\20261026_122417_658433\\coverage.ucdb",
-        "sha256": "9ba6f742082b38669ee1d4b0c819ca5160d5924fa70aa328bf5ec65a3b1075c2"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_gbe_burst\\20261026_122400_463508\\coverage.ucdb",
-        "sha256": "c7099c6d51e2cff6eca3d93f34c01159f97d07ab369a7040644d743d97934f40"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rm_phase\\20261026_121921_786960\\coverage.ucdb",
-        "sha256": "cb2caf9338d0e03725f69218ccd50f6c4955c1be00162953c6c566c5a67943b7"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rtc_recovery\\20261026_122533_057084\\coverage.ucdb",
-        "sha256": "9aecfce47e66c1c4a9294e63dc33257aa6388fa439cdee0de6afeced58ad11d3"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_rtc_originate\\20261026_122535_078368\\coverage.ucdb",
-        "sha256": "ff11ec5dd537dd2db3bf8599b9c0de105014fa402901590a574768a522e051af"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_judge_capacity\\20261026_122116_464141\\coverage.ucdb",
-        "sha256": "dd73a94b3ec81aaccadf0cc9c71f5676290a770a3daf1d558783f12c1da9a7dd"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_judge_snmp\\20261026_121200_804491\\coverage.ucdb",
-        "sha256": "c5fcb4917e22def65a91b02480948ded608c01a2897261a0fe7033153ee4a563"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_elinx\\20261026_121922_892246\\coverage.ucdb",
-        "sha256": "084ec0b1c163ab443c4bf87bfc18c6779edef58e1f018e866d110ae9d53f1df2"
-      },
-      {
-        "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57_v02_ce2cov\\out\\sim\\tb_sys_perf_var\\20261026_112151_133459\\coverage.ucdb",
-        "sha256": "f865119abc555d05fc0aab442fe42782e002a154a63daea9282b97c2429e2b11"
-      }
-    ],
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/coverage/vcover_report.txt",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 20142,
-    "sha256": "c3b399396d98e75e219c454f023429d49a0d2f16c55cc557b35d441ac35abfbb",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/coverage/modules.csv",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 2928,
-    "sha256": "070400d36337d5cd92f2371aba511c6b50f2c84e850bc847da265475b7d09578",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/coverage/totals.json",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 2776,
-    "sha256": "17fc81d9fe9d6f03773e1923b674e8a0f74479f38370c781f82d7f16522321ff",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/coverage/coverage_numbers.json",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 14749,
-    "sha256": "d1ea0796af89060de65b0b714baca1a38258411bddb0ea1423c95526a228efeb",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/coverage/README.md",
-    "source": "E:\\2026_Embedded_FPGA\\worktrees\\active\\c3_t57\\out\\t57\\validation\\v02\\ce2cov\\summary.json",
-    "source_sha256": "cab057f02f803791968174e14790690ac894358147aee231c127695a8fa1ff7a",
-    "source_commit": "f1393d44",
-    "operation": "Derive from T57 v02 CE2 coverage outputs; merge/report only, no simulation",
-    "bytes": 1284,
-    "sha256": "2d9aa9224e9183f369d85838a0930327fa2be14c0f7553c94832ced0985bad90",
-    "historical": true,
-    "note": "Earlier evidence retained; current F1 validation is registered in t63_f1_final.json"
-  },
-  {
-    "file": "../../sim/reference/netlist.json",
-    "source": "docs/evidence/t63_f1b_sys_net_pass.json",
-    "source_sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
-    "source_commit": "67d2e618",
-    "operation": "Retain seven unaffected F1 results and replace tb_sys_net with F1b passing replay",
-    "bytes": 9811,
-    "sha256": "611B40DB43C7992678570CBFD35E28E1DEF47BC167A2616FA204C52249DEA59E"
-  },
-  {
-    "file": "../../sim/reference/app_result.json",
-    "source": "out/t63/F1_final_v2/jobs/app_default/result.json",
-    "source_sha256": "E740C0EC7DD1AB8F6229F0B35F6726AD722EF318973D1B1B2361B8595BF25C14",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Copy current T63-F1 evidence",
-    "bytes": 2410,
-    "sha256": "6168B2AB13DAFD8C185269991E155522454E215CD76DA8EC043D694751B94C9D"
-  },
-  {
-    "file": "t63_f1_sys_net_failure.json",
-    "source": "out/net/tb_sys_net/20261029_021958_470457_3948adc9a8e6/summary.json",
-    "source_sha256": "F2125BCE1304C6E1993CF7BEA1DA08C11A9FDE32AD04F1940471A914C4A78CF7",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Record actual mapped FAIL and same-macro RTL reproduction; retain failure as an acceptance blocker",
-    "bytes": 6146,
-    "sha256": "0145AB1349078951E774BC8D92E67DADA2BE20C6E8DC779E8D9CBA64AAB79854"
-  },
-  {
-    "file": "t63_f1_netlist_reuse.json",
-    "source": "out/t63/F1_final_v2/official_netlist/final_summary.json",
-    "source_sha256": "05D442EE64D12D91C60AEC5E156682C59BC231EDEC9EAEE4CD504A75DD991F6E",
-    "source_commit": "92ab7d7ea0dd5ad3db443eb5b2d7aa7afd613516",
-    "operation": "Record exact source hashes and module VQM reuse; every simulation rerun on the final verification commit",
-    "bytes": 11136,
-    "sha256": "F285BE7547D5D8267A80B5DAF4384F04C5C8183D82D39A1ED46A8E263C90DF73"
-  },
-  {
-    "file": "t63_f1b_sys_net_pass.json",
-    "source": "out/t63/F1b",
-    "operation": "F1b macro-only observation repair and replay evidence",
-    "bytes": 8326,
-    "sha256": "7DA68B3A0EF2B5323E748FA3E837B594CBDC9931E00074142F6E23E1893E596E",
-    "source_commit": "67d2e618",
-    "historical": false
   }
 ]
