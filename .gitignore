@@ -1,5 +1,7 @@
 /out/
 /.venv/
+/.scratch/
+/.obsidian/
 
 # eLinx GUI generated outputs; keep project source and project-local defaults.
 /elinx/*.qpf
