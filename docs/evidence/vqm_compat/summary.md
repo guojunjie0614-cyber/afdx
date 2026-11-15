@@ -8,11 +8,11 @@
 |---|---|---|---:|---:|---:|
 | `tb_elinx` | 官方 VQM | PASS | 9,238 | — | 52,312.469 |
 | `tb_net_services` | 官方 VQM | PASS | 1,123 | 65 | 23,614.453 |
-| `tb_frag1030_net` | 官方 VQM | PASS-PREFIX | — | 5 组字节比对 | 34,727.859 |
+| `tb_frag_net` | 官方 VQM | PASS-PREFIX | — | 5 组字节比对 | 34,727.859 |
 | `tb_net_services` | RTL 配对参考 | PASS | 1,123 | 59 | 10.344 |
-| `tb_frag1030_net` | RTL 配对参考 | PASS | 33 | 9 | 42.313 |
+| `tb_frag_net` | RTL 配对参考 | PASS | 33 | 9 | 42.313 |
 
-- `tb_elinx` 按卡内规范使用公开端口独立自检；`tb_net_services` 全窗口外部记录与配对 RTL 参考逐字节相同；`tb_frag1030_net` 官方 VQM 运行至第 `199,578` 拍（含 1472 B 两帧分片重组与 A/B 各 6 帧、RX 4 条、发送记录 8 行与事件日志 5 组字节逐一核对），详见 [fragment_prefix.json](../frag1030_delivery/fragment_prefix.json) 与 [vqm_official.json](../frag1030_delivery/vqm_official.json)。
+- `tb_elinx` 按卡内规范使用公开端口独立自检；`tb_net_services` 全窗口外部记录与配对 RTL 参考逐字节相同；`tb_frag_net` 官方 VQM 运行至第 `199,578` 拍（含 1472 B 两帧分片重组与 A/B 各 6 帧、RX 4 条、发送记录 8 行与事件日志 5 组字节逐一核对），详见 [fragment_prefix.json](../frag1030_delivery/fragment_prefix.json) 与 [vqm_official.json](../frag1030_delivery/vqm_official.json)。
 - RX/TX 两路独立端点的 1 ms 官方 VQM 对照窗口已完成并全量通过（各 161 checks），见 [vqm_windows.json](../frag1030_delivery/vqm_windows.json)。
 
 ## 全套 RTL 与参数分支测试记录
@@ -59,22 +59,22 @@
 | `tb_elinx` | RTL | PASS | 9,238 | — | 24.406 |
 | `tb_sys_perf_var` | RTL | PASS | 1,254,291,331 | 1,701,468 | 6,200.359 |
 | `tb_top_wrap` | RTL | PASS | 12,284 | — | 12.891 |
-| `tb_t65_queue_a` | RTL | PASS | 3,088 | 10 | 4.172 |
-| `tb_t65_reset_app` | RTL | PASS | 204 | 42 | 17.593 |
-| `tb_t65_reset_mac` | RTL | PASS | 204 | 45 | 17.797 |
-| `tb_t65_reset_rx` | RTL | PASS | 204 | 44 | 17.562 |
-| `tb_t65_rx_data` | RTL | PASS | 14,536,729 | 9,874 | 80.687 |
-| `tb_t65_rx_desc` | RTL | PASS | 669 | 216 | 3.547 |
-| `tb_t65_tx_desc` | RTL | PASS | 222,062 | 250 | 7.672 |
-| `tb_t65_tx_hint` | RTL | PASS | 219,054 | 235 | 7.687 |
-| `tb_t65_tx_init` | RTL | PASS | 198,841 | 14 | 7.406 |
-| `tb_t65_tx_ready` | RTL | PASS | 221,142 | 239 | 7.672 |
-| `tb_t65_tx_short_full` | RTL | PASS | 504,828 | 18 | 10.656 |
-| `tb_t65_tx_short_init` | RTL | PASS | 498,847 | 17 | 10.672 |
-| `tb_t65_tx_short_normal` | RTL | PASS | 499,054 | 17 | 11.766 |
-| `tb_t65_tx_space` | RTL | PASS | 246,327 | 22 | 7.984 |
-| `tb_t65_tx_space_edge` | RTL | PASS | 223,502 | 14 | 8.157 |
-| `tb_t65_tx_unmapped` | RTL | PASS | 199,811 | 14 | 7.969 |
+| `tb_app_queue_a` | RTL | PASS | 3,088 | 10 | 4.172 |
+| `tb_app_reset_app` | RTL | PASS | 204 | 42 | 17.593 |
+| `tb_app_reset_mac` | RTL | PASS | 204 | 45 | 17.797 |
+| `tb_app_reset_rx` | RTL | PASS | 204 | 44 | 17.562 |
+| `tb_app_rx_data` | RTL | PASS | 14,536,729 | 9,874 | 80.687 |
+| `tb_app_rx_desc` | RTL | PASS | 669 | 216 | 3.547 |
+| `tb_app_tx_desc` | RTL | PASS | 222,062 | 250 | 7.672 |
+| `tb_app_tx_hint` | RTL | PASS | 219,054 | 235 | 7.687 |
+| `tb_app_tx_init` | RTL | PASS | 198,841 | 14 | 7.406 |
+| `tb_app_tx_ready` | RTL | PASS | 221,142 | 239 | 7.672 |
+| `tb_app_tx_short_full` | RTL | PASS | 504,828 | 18 | 10.656 |
+| `tb_app_tx_short_init` | RTL | PASS | 498,847 | 17 | 10.672 |
+| `tb_app_tx_short_normal` | RTL | PASS | 499,054 | 17 | 11.766 |
+| `tb_app_tx_space` | RTL | PASS | 246,327 | 22 | 7.984 |
+| `tb_app_tx_space_edge` | RTL | PASS | 223,502 | 14 | 8.157 |
+| `tb_app_tx_unmapped` | RTL | PASS | 199,811 | 14 | 7.969 |
 | `tb_cfg_local_ready` | RTL | PASS | 6,090 | — | 4.328 |
 | `tb_context_pipeline` | RTL | PASS | 134 | — | 3.578 |
 | `tb_reassembly_engine` | RTL | PASS | 39 | — | 3.875 |

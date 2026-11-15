@@ -31,6 +31,5 @@
 `include "../rtl/afdx_app_tx.v"
 `include "../rtl/afdx_app_rx.v"
 `include "../rtl/afdx_app_read.v"
-
 `include "../rtl/afdx_app_map.v"
 `include "../rtl/afdx_app_payload.v"

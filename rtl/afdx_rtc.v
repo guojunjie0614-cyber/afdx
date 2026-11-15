@@ -139,7 +139,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
-    // T50：读秒使能在 rtc 内分成 4 份缓冲，各驱动 8 位切片，缩短顶层使能锥到使能端的连线。
+    // 读秒使能在 rtc 内分成 4 份缓冲，各驱动 8 位切片，缩短顶层使能锥到使能端的连线。
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b0 = cfg_re;
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b1 = cfg_re;
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b2 = cfg_re;

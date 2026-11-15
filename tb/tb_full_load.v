@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // Each run is independent. Long runs require the line-1 confirmation gate.
-module tb_t76_load #(
+module tb_full_load #(
     parameter VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,DUPLEX=1,
     DURATION=12500000,SMOKE=0,SWAP=0,BAG_BURST=0,LONG_COUNT=1
 );
@@ -8,8 +8,8 @@ module tb_t76_load #(
     always #4 clk=~clk;
     wire [7:0] a0,b0,a1,b1;
     wire av0,bv0,av1,bv1,c0,c1;
-    t76_load_endpoint #(0,VL_COUNT,GROUP_LENGTH,MIXED,SWAP,LONG_COUNT) ep0(clk,reset,a1,b1,av1,bv1,a0,b0,av0,bv0,c0);
-    t76_load_endpoint #(1,VL_COUNT,GROUP_LENGTH,MIXED,!SWAP,LONG_COUNT) ep1(clk,reset,a0,b0,av0,bv0,a1,b1,av1,bv1,c1);
+    full_load_endpoint #(0,VL_COUNT,GROUP_LENGTH,MIXED,SWAP,LONG_COUNT) ep0(clk,reset,a1,b1,av1,bv1,a0,b0,av0,bv0,c0);
+    full_load_endpoint #(1,VL_COUNT,GROUP_LENGTH,MIXED,!SWAP,LONG_COUNT) ep1(clk,reset,a0,b0,av0,bv0,a1,b1,av1,bv1,c1);
     integer epoch,fd,cycles=0;
     // Mode 2 changes only the order among equally due VLs. Three adjacent
     // VLs rotate each round; message lengths, counts and due times are fixed.
@@ -68,10 +68,10 @@ module tb_t76_load #(
     endtask
     always @(negedge clk)begin
         cycles=cycles+1;
-        if(cycles>DURATION+2000000)$fatal(1,"T76 bounded simulation cycle timeout");
+        if(cycles>DURATION+2000000)$fatal(1,"Full-load bounded simulation cycle timeout");
     end
     initial begin
-        if(!SMOKE && DURATION<12500000)$display("[T76_WINDOW] short netlist window, not 100ms RTL acceptance");
+        if(!SMOKE && DURATION<12500000)$display("[LOAD_WINDOW] short netlist window, not 100ms RTL acceptance");
         fd=$fopen("window.txt","w");
         repeat(8)@(negedge clk);reset=0;
         wait(c0 && c1);@(negedge clk);epoch=ep0.cycle+16;
@@ -82,8 +82,8 @@ module tb_t76_load #(
         repeat(SMOKE ? 64 : 20000)@(negedge clk);
         if(ep1.received!=ep0.sent || ep0.received!=ep1.sent ||
            ep1.duplicates<ep0.sent || ep0.duplicates<ep1.sent)
-            $fatal(1,"T76 exact delivery count mismatch");
-        $display("[T76_COUNTS] sent0=%0d received1=%0d sent1=%0d received0=%0d x_cycles0=%0d x_cycles1=%0d",ep0.sent,ep1.received,ep1.sent,ep0.received,ep0.x_checked,ep1.x_checked);
-        $display("[RESULT] tb_t76_load PASS checks=%0d errors=0",ep0.sent+ep1.sent);$finish;
+            $fatal(1,"Full-load exact delivery count mismatch");
+        $display("[LOAD_COUNTS] sent0=%0d received1=%0d sent1=%0d received0=%0d x_cycles0=%0d x_cycles1=%0d",ep0.sent,ep1.received,ep1.sent,ep0.received,ep0.x_checked,ep1.x_checked);
+        $display("[RESULT] tb_full_load PASS checks=%0d errors=0",ep0.sent+ep1.sent);$finish;
     end
 endmodule

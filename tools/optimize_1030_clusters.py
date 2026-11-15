@@ -23,9 +23,41 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / 'tools') not in sys.path:
     sys.path.insert(0, str(ROOT / 'tools'))
 
-from eco_place import normalize_cell
-from eco_merge import read_owner
-from eco_move import valid_tiles
+def normalize_molecule(name):
+    return '|'.join(part.split(':', 1)[1] if ':' in part else part
+                    for part in name.lstrip('\\').split('|'))
+
+
+def normalize_cell(resource):
+    name = resource.lstrip('\\')
+    name = re.sub(r'\|ff/\w+$', '', name)
+    name = re.sub(r'\|port_\w+$', '', name)
+    name = re.sub(r'/\w+(\[\d+\])?$', '', name)
+    return name
+
+
+def read_owner(xml):
+    owner, current = {}, None
+    with open(xml, encoding='utf-8') as stream:
+        for line in stream:
+            m = re.search(r'<CLUSTER name="([^"]+)"', line)
+            if m:
+                current = m.group(1)
+                continue
+            m = re.search(r'<MOLECULE name="([^"]+)"', line)
+            if m and current:
+                owner[normalize_molecule(m.group(1))] = current
+    return owner
+
+
+def valid_tiles(root):
+    tiles = set()
+    for place in Path(root).rglob('*.place'):
+        for line in place.read_text(encoding='utf-8-sig').splitlines():
+            f = line.split()
+            if len(f) >= 4 and f[0].startswith('stratix_clb'):
+                tiles.add((int(f[1]), int(f[2])))
+    return tiles
 
 GAIN_PS_PER_TILE = 55.0     # Conservative credit when shortening a path
 PENALTY_PS_PER_TILE = 90.0  # Pessimistic penalty when lengthening a path

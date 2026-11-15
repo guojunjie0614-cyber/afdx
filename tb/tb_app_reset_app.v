@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_t65_reset_app #(parameter T65_MUTANT=0);
+module tb_app_reset_app #(parameter APP_MUTANT=0);
     reg clk=0; always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,fd;
     task check; input ok; input [8*120-1:0] label;
@@ -13,7 +13,7 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
     task finish_test;
         begin
             $fflush(fd);$fclose(fd);
-            $display("[RESULT] tb_t65_reset_app %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
+            $display("[RESULT] tb_app_reset_app %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
             $finish;
         end
     endtask
@@ -21,7 +21,7 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
         cycle=cycle+1;
         if(cycle>2000000)begin check(0,"bounded test timeout");finish_test;end
     end
-    initial fd=$fopen("t65_trace.txt","w");
+    initial fd=$fopen("app_trace.txt","w");
     reg [7:0] wire_bytes[0:1581];
     integer offsets[0:3],lengths[0:3];
     initial begin
@@ -250,11 +250,11 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
         .cfg_wdata(cd),.cfg_ready(ok2),.cfg_rdata(),.cfg_rvalid(),.ev_tx(),.ev_a(ea2),.ev_b(eb2),
         .ev_rm_drop(),.ev_deliver(de2),.ev_app(app2));
     wire [31:0] om1,om2,wm1,wm2,pm,ob1,ob2,wb1,wb2,pbytes;
-    t65_capture #(.CHANNEL("target")) c1(clk,ov1,od1,fd,om1,ob1);
-    t65_capture #(.CHANNEL("peer")) c2(clk,ov2,od2,fd,om2,ob2);
-    t65_capture #(.CHANNEL("wire_target")) c3(clk,av1,ad1,fd,wm1,wb1);
-    t65_capture #(.CHANNEL("wire_peer")) c4(clk,av2,ad2,fd,wm2,wb2);
-    t65_capture #(.CHANNEL("peer_input")) c5(clk,peer_valid,peer_data,fd,pm,pbytes);
+    app_capture #(.CHANNEL("target")) c1(clk,ov1,od1,fd,om1,ob1);
+    app_capture #(.CHANNEL("peer")) c2(clk,ov2,od2,fd,om2,ob2);
+    app_capture #(.CHANNEL("wire_target")) c3(clk,av1,ad1,fd,wm1,wb1);
+    app_capture #(.CHANNEL("wire_peer")) c4(clk,av2,ad2,fd,wm2,wb2);
+    app_capture #(.CHANNEL("peer_input")) c5(clk,peer_valid,peer_data,fd,pm,pbytes);
     integer peer_good=0,peer_ovf=0,peer_len=0,peer_fcs=0,peer_hdr=0,peer_deliver=0;
     integer peer_other=0,peer_b=0,target_deliver=0;
     integer i,j,k,baseline_bytes=0,baseline_good=0,baseline_deliver=0,baseline_len=0;
@@ -320,7 +320,7 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
             check(e2.es.rx_core.parse_b.committed==e2.es.rx_core.ptr_b &&
                 e2.es.rx_core.parse_b.trial==e2.es.rx_core.ptr_b,"unreset peer B ring idle");
             check(e2.es.rx_core.da_valid==0 && e2.es.rx_core.db_valid==0 &&
-                e2.es.rx_core.dq_count==(T65_MUTANT==2?1:0),"unreset peer all descriptors reclaimed");
+                e2.es.rx_core.dq_count==(APP_MUTANT==2?1:0),"unreset peer all descriptors reclaimed");
             $fwrite(fd,"Q peer %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
                 e2.es.rx_core.parse_a.committed,e2.es.rx_core.parse_a.trial,e2.es.rx_core.ptr_a,
                 e2.es.rx_core.parse_b.committed,e2.es.rx_core.parse_b.trial,e2.es.rx_core.ptr_b,
@@ -377,7 +377,7 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
         check(e1.es.rx_core.parse_a.committed==e1.es.rx_core.ptr_a && e1.es.rx_core.dq_count==0,"reset target fresh receive drains");
         check(c2.bytes[0]==8'h40 && c2.bytes[1]==0 && c1.bytes[0]==8'h40 && c1.bytes[1]==0,"fresh bidirectional VLID bytes");
         for(j=0;j<64;j=j+1)begin
-            check(c2.bytes[j+2]==((8'h90+j+(T65_MUTANT==1 && j==7?1:0))&255),"unreset peer recovery payload exact");
+            check(c2.bytes[j+2]==((8'h90+j+(APP_MUTANT==1 && j==7?1:0))&255),"unreset peer recovery payload exact");
             check(c1.bytes[j+2]==((8'ha0+j)&255),"reset target recovery payload exact");
         end
         peer_idle;
@@ -387,7 +387,7 @@ module tb_t65_reset_app #(parameter T65_MUTANT=0);
 endmodule
 
 // Capture exactly the bytes sampled by the connected receiver at the active edge.
-module t65_capture #(parameter CHANNEL="wire")(
+module app_capture #(parameter CHANNEL="wire")(
     input wire clk, valid,input wire [7:0] data,input wire [31:0] file_handle,
     output reg [31:0] messages=0,output reg [31:0] byte_count=0);
     reg old_valid=0;reg [7:0] bytes[0:4095];integer n=0,j,c=0,start=0;

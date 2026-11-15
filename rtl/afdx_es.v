@@ -1,8 +1,6 @@
-// 本模块是 AFDX 端系统的顶层，把双网收发核心和三种服务连接在一起。
-// AFDX（Avionics Full-Duplex Switched Ethernet）
-// 是航空电子全双工交换式以太网。
-// 应用消息经收发核心送到两路以太网，也从两路网络交付给应用。
-// 本模块提供赛题要求的收发、网络管理、加卸载和时钟同步功能。
+// 本模块为 AFDX 端系统协议与双网收发核心层，把双网收发引擎和三种机载网络服务连接在一起。
+// 对上衔接外层应用流适配模块（afdx_app_tx / afdx_app_rx），对下连接 A/B 两路千兆以太网 GMII 接口，
+// 完整实现虚拟链路（VL）整形分片、完整性与冗余重组、SNMP 管理、ARINC 615A 加卸载及 SNTP 时钟同步。
 `ifndef AFDX_CE_DIV
 `define AFDX_CE_DIV 2
 `endif
@@ -15,8 +13,7 @@ module afdx_es #(
     parameter RX_DQ_AW = 5,
     parameter RX_CONFIG_BANKS = 16) (
 
-    // 下面八个端口与赛题模板一致，其中的数据口连接 A 网。
-    // A 网和 B 网是互为备份的两路以太网，同一帧在两路上各发一份。
+    // 时钟复位与 A 网千兆 GMII 收发信号（A 网与 B 网互为冗余备份，同一帧双路并发）。
     input wire clk, // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
     input wire reset, // reset 为高时，在时钟上升沿复位。
     output wire [7:0] tx_data, // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
@@ -24,7 +21,7 @@ module afdx_es #(
     output wire tx_valid, // tx_valid 为高表示本拍有发送字节，帧内每拍都有效。
     input wire rx_valid, // rx_valid 为高表示本拍有接收字节，拉低表示帧已结束。
     output wire tx_ready, // tx_ready 为高表示收发核心初始化完成，可以配置和使用。
-    input wire rx_ready, // rx_ready 是赛题模板规定的端口；以太网线路不能暂停，本设计不使用它。
+    input wire rx_ready, // 兼容保留端口；以太网物理线路无反压，本模块不使用该信号。
 
     // 下面四个是 B 网的数据口，含义与 A 网的对应端口相同。
     output wire [7:0] tx_data_b,
@@ -68,7 +65,7 @@ module afdx_es #(
     output wire [6:0] ev_tx,
     output wire [7:0] ev_a, ev_b,
     output wire ev_rm_drop, ev_deliver,
-    // Same-cycle ready replicas only for the wrapper's application tables.
+    // 与 cfg_ready 同拍有效但独立复制的就绪副本，专供外层应用映射表同步监听配置写。
     output wire [1:0] app_cfg_ready);
 
     // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
@@ -80,7 +77,8 @@ module afdx_es #(
     // 与 tx_ready_q 同拍更新；末项独供首配置副本的 32 位数据。
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
-    // 同一主时钟下的本地时钟使能副本；不产生新时钟。
+    // 同一 125 MHz 主时钟下的二分频时钟使能（CE_DIV=2）扇出复制树，不产生派生时钟；
+    // 按 615A 与 SNMP 引擎内部寄存器分组一对一供电（72 组与 59 组），限制单支路扇出与跨片走线延迟。
     (* preserve = 1, dont_merge = 1 *) reg [71:0] loader_ce_q;
     (* preserve = 1, dont_merge = 1 *) reg [58:0] snmp_ce_q;
     always @(posedge clk) begin
@@ -381,7 +379,7 @@ module afdx_es #(
         end
     end
 
-    // 双网收发核心直接连接线路，每拍处理一个字节。
+    // 为服务层、发送核心和接收核心各自配置同钟同复位的本地时基副本，消除跨片全局时基广播长线。
     afdx_timebase timebase (
         .clk(clk),
         .reset(reset),

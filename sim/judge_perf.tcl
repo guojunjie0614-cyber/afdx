@@ -81,7 +81,7 @@ proc judge_perf::vectors {folder} {
 proc judge_perf::require {condition message} {if {!$condition} {error "Performance check: $message"}}
 proc judge_perf::overlap {start end begin finish} {expr {max(0,min($end,$finish)-max($start,$begin))}}
 
-# R119/R120 baseline for the frag1030 delivery RTL, measured 2026-11-04
+# Performance baseline for the fragmentation-enabled RTL, measured 2026-11-04
 # by the judge entry. The fragmentation path adds 39 cycles (0.312 us) to both latency
 # fields relative to the F1 baseline (48.288/36.512 and 50.344/38.568 us).
 # fields: inject_mbps max_e2e_us max_e2e_first_us jitter_r119_us stall_cycles lag_max_cycles
@@ -172,7 +172,7 @@ proc judge_perf::measure {folder} {
         while {[gets $fh line]>=0} {
             if {[regexp {^P [0-9]+ (\S+)$} $line all label]} {set stage $label}
             if {$stage ni $phases} {continue}
-            # M rows end with two T59 fields: first-valid cycle and longest stall run.
+            # M rows end with two fields: first-valid cycle and longest stall run.
             if {[regexp {^M ([0-9]+) ([0-9]+) ([0-9]+) [0-9]+ [0-9a-f]+ [0-9a-f]+ ([0-9a-f]+)(?: [0-9-]+ [0-9]+(?: [0-9]+ [0-9]+)?)?$} $line all cycle vl n data]} {
                 require [expr {$vl<77 && $n==1471 && [string length $data]==$n*2}] "invalid application message"
                 lappend messages($es,$stage,$vl) [list $cycle $n $data]

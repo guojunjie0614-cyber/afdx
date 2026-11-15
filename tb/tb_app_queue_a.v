@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_t65_queue_a #(parameter T65_MUTANT=0);
+module tb_app_queue_a #(parameter APP_MUTANT=0);
     reg clk=0; always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,fd;
     task check; input ok; input [8*120-1:0] label;
@@ -13,7 +13,7 @@ module tb_t65_queue_a #(parameter T65_MUTANT=0);
     task finish_test;
         begin
             $fflush(fd);$fclose(fd);
-            $display("[RESULT] tb_t65_queue_a %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
+            $display("[RESULT] tb_app_queue_a %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
             $finish;
         end
     endtask
@@ -21,7 +21,7 @@ module tb_t65_queue_a #(parameter T65_MUTANT=0);
         cycle=cycle+1;
         if(cycle>2000000)begin check(0,"bounded test timeout");finish_test;end
     end
-    initial fd=$fopen("t65_trace.txt","w");
+    initial fd=$fopen("app_trace.txt","w");
     reg [7:0] wire_bytes[0:2364];
     integer offsets[0:11],lengths[0:11];
     initial begin
@@ -359,7 +359,7 @@ module tb_t65_queue_a #(parameter T65_MUTANT=0);
                 else if(got==1)expected_byte=8'h51+pos;
                 else if(got==2)expected_byte=8'h52+pos;
                 else expected_byte=8'h90+pos;
-                if(T65_MUTANT==1 && got==3 && pos==7)expected_byte=expected_byte^1;
+                if(APP_MUTANT==1 && got==3 && pos==7)expected_byte=expected_byte^1;
                 check(got<4 && dd==expected_byte,"accepted payload byte and order");
                 check(!dn && di==0 && sp==3001 && dp==4001,"A delivery metadata");
                 captured[pos]=dd;pos=pos+1;
@@ -405,7 +405,7 @@ module tb_t65_queue_a #(parameter T65_MUTANT=0);
         wait(dv);
         for(j=1;j<=10;j=j+1)send_frame(j);
         repeat(3000)@(negedge clk);
-        check(good==11 && ovf==8+(T65_MUTANT==2?1:0),"one queue event for each rejected A frame");
+        check(good==11 && ovf==8+(APP_MUTANT==2?1:0),"one queue event for each rejected A frame");
         check(got==3 && delivers==3 && pos==0,"one long plus two queued short deliveries");
         check(parse_ovf==0 && b_events==0,"no ring overflow or B event");idle_resources;
         send_frame(11);repeat(1000)@(negedge clk);

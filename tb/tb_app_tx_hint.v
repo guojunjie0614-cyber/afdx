@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
+module tb_app_tx_hint #(parameter APP_MUTANT=0);
     reg clk=0; always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,fd;
     task check; input ok; input [8*120-1:0] label;
@@ -13,7 +13,7 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
     task finish_test;
         begin
             $fflush(fd);$fclose(fd);
-            $display("[RESULT] tb_t65_tx_short_init %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
+            $display("[RESULT] tb_app_tx_hint %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
             $finish;
         end
     endtask
@@ -21,7 +21,7 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
         cycle=cycle+1;
         if(cycle>2000000)begin check(0,"bounded test timeout");finish_test;end
     end
-    initial fd=$fopen("t65_trace.txt","w");
+    initial fd=$fopen("app_trace.txt","w");
 
     reg reset=1,tv=0,cw=0;reg [7:0] td=0;
     reg [17:0] ca=0;reg [31:0] cd=0;
@@ -85,7 +85,7 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
             if(!observation_mode)check(got<expected,"no partial or unexpected application message");
             if(got<expected || observation_mode)begin
                 if(!observation_mode)begin
-                    check(dut.m_data==((tags[got]+pos+(T65_MUTANT==1 && got==0 && pos==0?1:0))&255),"TX consumer payload exact");
+                    check(dut.m_data==((tags[got]+pos+(APP_MUTANT==1 && got==0 && pos==0?1:0))&255),"TX consumer payload exact");
                     check(dut.m_vl==0,"TX selected VL index");
                 end
                 bytes[pos]=dut.m_data;pos=pos+1;
@@ -161,7 +161,7 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
             if(observation_mode)repeat(100000)@(negedge clk);
             else repeat(300)@(negedge clk);
             if(!observation_mode)check(got>=expected-optional_last && got<=expected && wire_frames==got && pos==0,"legal messages emitted; optional ready-low input observed whole or absent");
-            check(dut.application_tx.descriptors+(T65_MUTANT==2?1:0)==0 &&
+            check(dut.application_tx.descriptors+(APP_MUTANT==2?1:0)==0 &&
                 dut.application_tx.write_ptr==dut.application_tx.read_ptr,"TX drain releases descriptors and data");
             check(ready,"ready recovers after drain");
             $fwrite(fd,"Q tx %0d %0d %0d\n",dut.application_tx.write_ptr,dut.application_tx.read_ptr,dut.application_tx.descriptors);
@@ -171,7 +171,7 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
         begin
             drain;
             if(exact_events)begin
-                check(full==exp_full+(T65_MUTANT==2?1:0),"capacity drop count matches complete rejected inputs");
+                check(full==exp_full+(APP_MUTANT==2?1:0),"capacity drop count matches complete rejected inputs");
                 check(miss==exp_miss,"unknown/empty message count");
             end
             $fwrite(fd,"E overflow %0d\nE miss %0d\nE max_used %0d\nE max_desc %0d\nE max_count %0d\nE expected %0d\n",full,miss,max_used,max_desc,max_count,expected);
@@ -190,10 +190,10 @@ module tb_t65_tx_short_init #(parameter T65_MUTANT=0);
     initial begin
         repeat(5)@(negedge clk);reset=0;
 
-        observation_mode=1;send(1,16'h4000,0,0);repeat(20)@(negedge clk);
-        $fwrite(fd,"S short_observation %0d %0d %0d\n",cycle,full,miss);
-        two_full=full;two_miss=miss;send(2,16'h4000,0,0);repeat(20)@(negedge clk);
-        check(!dut.initialized && full-two_full==1 && miss==two_miss,"VLID-only initialization rejects once");
-        $fwrite(fd,"S two_result %0d %0d\n",full-two_full,miss-two_miss);setup;short_recovery;
+        setup;i=0;
+        while(ready && i<200)begin send(3,16'h4000,i,0);i=i+1;end
+        check(!ready && dut.application_tx.descriptors<32 && dut.application_tx.used<32768,"ready low while resources remain");
+        // The additional input's output/drop is reported as an observation.
+        optional_last=1;send(3,16'h4000,8'he1,2);conclude(0);
     end
 endmodule

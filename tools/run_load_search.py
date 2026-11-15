@@ -17,7 +17,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--deadline')
     args=parser.parse_args()
-    flow=eda.Flow('load_search','tb_t76_mixed_search',args.deadline)
+    flow=eda.Flow('load_search','tb_full_load_mixed_search',args.deadline)
     flow.result.update(passed=False,probes=[],final_run=None,
         scope='Confirmed 22:40 mixed-profile search; 81-VL maximum short profile unchanged',
         baseline_rtl={p.name:eda.sha(p) for p in sorted((ROOT/'rtl').glob('*.v'))})
@@ -35,7 +35,7 @@ def main():
         tool='confirm_'+str(vls) if final else 'probe_'+str(vls)
         try:flow.job(tool,command,86400)
         except RuntimeError:pass
-        path=ROOT/'out'/(prefix+'latest_tb_t76_load.json')
+        path=ROOT/'out'/(prefix+'latest_tb_full_load.json')
         if not path.is_file():raise RuntimeError('Search child produced no final receipt')
         receipt=json.loads(path.read_text(encoding='utf-8'))
         params=receipt.get('parameters',{})
@@ -44,7 +44,7 @@ def main():
         folder=Path(receipt['folder'])
         log=(folder/'simulation.log').read_text(encoding='utf-8',errors='replace') if (folder/'simulation.log').exists() else ''
         infrastructure=any(j.get('stop_reason') for j in receipt.get('jobs',[]))
-        functional=bool(re.search(r'\*\* Fatal: (T76|\[XZ_FAIL\])',log))
+        functional=bool(re.search(r'\*\* Fatal: (Full-load|\[XZ_FAIL\])',log))
         if receipt.get('passed') is True:status='PASS'
         elif functional and not infrastructure:status='FAIL_DESIGN'
         else:status='STOP_INFRASTRUCTURE'

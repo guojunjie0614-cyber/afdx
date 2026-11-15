@@ -259,7 +259,7 @@ def main():
                     peaks['observed_class_a_tree_bytes'] = max(peaks.get('observed_class_a_tree_bytes', 0), rss)
                     kernels=[q for q in children if q.name().lower()=='vsimk.exe']
                     optimizing=any(q.name().lower().startswith('vopt') for q in children)
-                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/|/(?:t76_sim|load_sim)/tb_t76_load/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
+                    if not optimizing and any(re.search(r'/gui_netlist/[^/]+_gui/|/(?:t76_sim|load_sim)/(?:tb_full_load|tb_t76_load)/',q.cwd().replace('\\','/')) and q.cpu_times().user>=5 for q in kernels):
                         peaks['class_a_runtime_measured']=True
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass

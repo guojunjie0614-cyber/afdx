@@ -141,6 +141,25 @@ class Flow:
         # Parallel verification batches keep separate latest pointers.
         save(ROOT/"out"/(os.environ.get("AFDX_LATEST_PREFIX","")+"latest_"+self.result["name"]+".json"),self.result)
 
+WRAP_TESTS = (
+    "tb_app_queue_a",
+    "tb_app_reset_app",
+    "tb_app_reset_mac",
+    "tb_app_reset_rx",
+    "tb_app_rx_data",
+    "tb_app_rx_desc",
+    "tb_app_tx_desc",
+    "tb_app_tx_hint",
+    "tb_app_tx_init",
+    "tb_app_tx_ready",
+    "tb_app_tx_short_full",
+    "tb_app_tx_short_init",
+    "tb_app_tx_short_normal",
+    "tb_app_tx_space",
+    "tb_app_tx_space_edge",
+    "tb_app_tx_unmapped",
+)
+
 def sim(options):
     f=Flow("net" if options.netlist else "sim",options.test,options.deadline)
     try:
@@ -213,13 +232,13 @@ def sim(options):
         if options.test=="tb_net_services":
             f.job("vectors",[sys.executable,ROOT/"tools/net_services_ref.py","vectors","--dir",f.folder],30)
             sources.extend(ROOT/"tools"/name for name in ("net_services_ref.py","load_ref.py","download_ref.py","snmp_ref.py","afdx_ref.py"))
-        if options.test in ("tb_fragmentation","tb_frag1030_net"):
+        if options.test in ("tb_fragmentation","tb_frag_net"):
             f.job("vectors",[sys.executable,"-B",ROOT/"tools/fragment_integration.py","prepare",f.folder],60)
             sources.extend(ROOT/"tools"/name for name in ("fragment_integration.py","fragment_ref.py","frag_netlist_check.py"))
-            if options.test=="tb_frag1030_net":
+            if options.test=="tb_frag_net":
                 sources.append(ROOT/"tb/tb_fragmentation.v")
                 compile_sources.append(ROOT/"tb/tb_fragmentation.v")
-        if options.test.startswith("tb_t65_"):
+        if options.test in WRAP_TESTS:
             sources.append(ROOT/"tools/wrap_check.py")
         f.result["inputs"]=[{"path":str(p),"sha256":sha(p)} for p in sources]
         snapshot=f.folder/"sources";snapshot.mkdir()
@@ -308,7 +327,7 @@ def sim(options):
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
-        if options.test in ("tb_fragmentation","tb_frag1030_net"):
+        if options.test in ("tb_fragmentation","tb_frag_net"):
             report=f.job("check",[sys.executable,"-B",ROOT/"tools/frag_netlist_check.py","--dir",f.folder],180)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))
             good=good and f.result["check"]["errors"]==0
@@ -342,8 +361,8 @@ def sim(options):
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text())
             good=good and f.result["check"]["errors"]==0
             print(report.strip(),flush=True)
-        if options.test.startswith("tb_t65_"):
-            mutant=next((int(value.split("=",1)[1]) for value in reversed(options.param) if value.startswith("T65_MUTANT=")),0)
+        if options.test in WRAP_TESTS:
+            mutant=next((int(value.split("=",1)[1]) for value in reversed(options.param) if value.startswith(("APP_MUTANT=","T65_MUTANT="))),0)
             command="import sys,json;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from wrap_check import check;r=check(sys.argv[2],sys.argv[3],int(sys.argv[4]));s=json.dumps(r,ensure_ascii=False,indent=2);Path(sys.argv[2],'check_summary.json').write_text(s+'\\n',encoding='utf-8');print(s)"
             report=f.job("check",[sys.executable,"-c",command,ROOT/"tools",f.folder,options.test,str(mutant)],60)
             f.result["check"]=json.loads((f.folder/"check_summary.json").read_text(encoding="utf-8"))

@@ -16,11 +16,11 @@ proc load_official {folder} {
     if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
     exec [file join $tools vlib.exe] work > official_vlib.log 2>@1
     exec [file join $tools vlog.exe] -vlog01compat +define+AFDX_CE_DIV=2 {*}$load_sources > official_compile.log 2>@1
-    exec [file join $tools vsim.exe] -batch -t 1ps work.tb_t76_load {*}$load_parameters \
+    exec [file join $tools vsim.exe] -batch -t 1ps work.tb_full_load {*}$load_parameters \
         -wlf simulation.wlf -do {do run.do} > simulation.log 2>@1
     set fd [open simulation.log r];set report [read $fd];close $fd
     puts $report
-    if {![regexp {\[RESULT\] tb_t76_load PASS checks=[0-9]+ errors=0} $report]} {error "official VQM self-check did not pass"}
+    if {![regexp {\[RESULT\] tb_full_load PASS checks=[0-9]+ errors=0} $report]} {error "official VQM self-check did not pass"}
     puts "LOAD OFFICIAL .VO TO .VQM ENTRY PASS"
 }
 if {$argc!=1} {error "one prepared run folder is required"}

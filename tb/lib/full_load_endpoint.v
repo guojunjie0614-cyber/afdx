@@ -1,7 +1,7 @@
 // Test-only endpoint: configuration, captures and deterministic payload checks.
 // No DUT internals are used. NET_RX selects a separately compiled RTL receiver.
 `timescale 1ns/1ps
-module t76_load_endpoint #(
+module full_load_endpoint #(
     parameter ID=0,VL_COUNT=81,GROUP_LENGTH=1471,MIXED=0,NET_RX=0,LONG_COUNT=1
 )(input wire clk,reset,input wire [7:0] ra,rb,input wire rva,rvb,
    output wire [7:0] ta,tb,output wire tva,tvb,output reg configured=0);
@@ -36,7 +36,7 @@ module t76_load_endpoint #(
     // Every bit of all sixteen public output ports is included (90 bits).
     wire [89:0] public_outputs={ready,rx,rv,ta,tva,tb,tvb,et,ea,eb,rm,deliver,app,rdata,crv,crdy};
     wire [31:0] x_checked;
-    afdx_x_monitor #(.WIDTH(90),.LABEL("T76 complete endpoint outputs")) monitor(
+    afdx_x_monitor #(.WIDTH(90),.LABEL("Full-load complete endpoint outputs")) monitor(
         clk,reset,configured,public_outputs,x_checked);
     integer cycle=0,received=0,sent=0,errors=0,duplicates=0;
     integer txfd,rxfd,afd,bfd,efd,ci,j,rn=0,rs=0,an=0,bs=0,bn=0,as_=0;
@@ -79,7 +79,7 @@ module t76_load_endpoint #(
             txfd=$fopen("ep1_tx.txt","w");rxfd=$fopen("ep1_rx.txt","w");
             afd=$fopen("ep1_a.txt","w");bfd=$fopen("ep1_b.txt","w");efd=$fopen("ep1_events.txt","w");
         end
-        if(!txfd||!rxfd||!afd||!bfd||!efd)$fatal(1,"T76 capture file open");
+        if(!txfd||!rxfd||!afd||!bfd||!efd)$fatal(1,"Full-load capture file open");
         for(ci=0;ci<128;ci=ci+1)receive_seq[ci]=0;
         wait(!reset);wait(crdy && ready);
         for(ci=0;ci<VL_COUNT;ci=ci+1)begin
@@ -119,15 +119,15 @@ module t76_load_endpoint #(
         if(!reset)begin
             if(rv)begin
                 if(!previous_rx)begin rn=0;rs=cycle;end
-                if(rn>=8194)$fatal(1,"T76 receive capture overflow");
+                if(rn>=8194)$fatal(1,"Full-load receive capture overflow");
                 receive_bytes[rn]=rx;rn=rn+1;
             end else if(previous_rx)begin
                 rid={receive_bytes[0],receive_bytes[1]}-256;
-                if(rid<0 || rid>=VL_COUNT)$fatal(1,"T76 unknown receive VLID");
+                if(rid<0 || rid>=VL_COUNT)$fatal(1,"Full-load unknown receive VLID");
                 seq=receive_seq[rid];n=message_length(rid,seq);
-                if(rn!=n+2)$fatal(1,"T76 receive length vl=%0d seq=%0d got=%0d expected=%0d",rid,seq,rn,n+2);
+                if(rn!=n+2)$fatal(1,"Full-load receive length vl=%0d seq=%0d got=%0d expected=%0d",rid,seq,rn,n+2);
                 for(j=0;j<n;j=j+1)if(receive_bytes[j+2]!==payload_byte(rid,seq,j))
-                    $fatal(1,"T76 payload mismatch vl=%0d seq=%0d byte=%0d",rid,seq,j);
+                    $fatal(1,"Full-load payload mismatch vl=%0d seq=%0d byte=%0d",rid,seq,j);
                 $fwrite(rxfd,"R %0d %0d %0d %0d %0d ",rs,cycle-1,rid,n,seq);
                 for(j=2;j<rn;j=j+1)$fwrite(rxfd,"%02x",receive_bytes[j]);
                 $fwrite(rxfd,"\n");$fflush(rxfd);
@@ -135,7 +135,7 @@ module t76_load_endpoint #(
             end
             if(tva)begin
                 if(!previous_a)begin an=0;as_=cycle;end
-                if(an>=2048)$fatal(1,"T76 A capture overflow");
+                if(an>=2048)$fatal(1,"Full-load A capture overflow");
                 a_bytes[an]=ta;an=an+1;
             end else if(previous_a)begin
                 $fwrite(afd,"%0d %0d ",as_,cycle-1);
@@ -144,7 +144,7 @@ module t76_load_endpoint #(
             end
             if(tvb)begin
                 if(!previous_b)begin bn=0;bs=cycle;end
-                if(bn>=2048)$fatal(1,"T76 B capture overflow");
+                if(bn>=2048)$fatal(1,"Full-load B capture overflow");
                 b_bytes[bn]=tb;bn=bn+1;
             end else if(previous_b)begin
                 $fwrite(bfd,"%0d %0d ",bs,cycle-1);
@@ -156,7 +156,7 @@ module t76_load_endpoint #(
                     $fwrite(efd,"%0d %02x %02x %02x %0d %0d %0d\n",cycle,et,ea,eb,rm,deliver,app);$fflush(efd);
                 end
                 if((|et[4:1])||(|ea[7:1])||(|eb[7:1])||(|app))
-                    $fatal(1,"T76 unexpected event endpoint=%0d tx=%h a=%h b=%h app=%h",ID,et,ea,eb,app);
+                    $fatal(1,"Full-load unexpected event endpoint=%0d tx=%h a=%h b=%h app=%h",ID,et,ea,eb,app);
                 if(rm)duplicates=duplicates+1;
             end
             previous_rx=rv;previous_a=tva;previous_b=tvb;

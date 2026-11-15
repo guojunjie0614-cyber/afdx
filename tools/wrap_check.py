@@ -7,7 +7,7 @@ def pattern(tag,n):return bytes((tag+j)&255 for j in range(n))
 
 def read(folder):
     rows=[]
-    p=Path(folder)/'t65_trace.txt'
+    p=Path(folder)/'app_trace.txt'
     if p.exists():
         rows=[s.split() for s in p.read_text().splitlines() if s.strip()]
     return rows
@@ -27,13 +27,13 @@ def check(folder,test,mutant=0):
                 b=bytes.fromhex(r[4]);expect(len(b)==int(r[3]),'capture length '+channel);out.append(b)
         return out
     events={r[1]:int(r[2]) for r in rows if r[0]=='E'}
-    if test=='tb_t65_queue_a':
+    if test=='tb_app_queue_a':
         expect(messages('rx')==[pattern(0x31,1471),pattern(0x51,1),pattern(0x52,1),pattern(0x90,64)],'G1 exact accepted messages including recovery')
         expect(events==dict(good=12,overflow=8,parse_overflow=0,b_events=0,deliver=4),'G1 event conservation, no B/ring event')
         q=[r for r in rows if r[0]=='Q'];expect(len(q)==2,'G1 both drain snapshots')
         for r in q:
             v=list(map(int,r[2:]));expect(v[0]==v[1]==v[2] and v[3]==v[4]==v[5] and v[6:]==[0,0,0],'G1 ring and descriptors idle')
-    elif test.startswith('tb_t65_tx_'):
+    elif test.startswith('tb_app_tx_'):
         inputs=[list(map(int,r[1:])) for r in rows if r[0]=='I']
         expect(bool(inputs),'TX first-byte admission capture')
         recovery=-1
@@ -83,7 +83,7 @@ def check(folder,test,mutant=0):
         q=[r for r in rows if r[:2]==['Q','tx']];expect(bool(q),'TX drain resource snapshot')
         for r in q:
             wp,rp,d=map(int,r[2:]);expect(wp==rp and d==0,'TX pointers and descriptors reclaimed')
-    elif test.startswith('tb_t65_rx_'):
+    elif test.startswith('tb_app_rx_'):
         inputs=[list(map(int,r[1:])) for r in rows if r[0]=='J']
         expected=[];rejected=0;desc_reject=0;data_reject=0
         for cycle,n,tag,serial,reject,prev_used,prev_desc,used in inputs:
@@ -101,7 +101,7 @@ def check(folder,test,mutant=0):
         q=[r for r in rows if r[:2]==['Q','rx']];expect(len(q)==2,'RX both drain snapshots')
         for r in q:
             wp,rp,d=map(int,r[2:]);expect(wp==rp and d==0,'RX resources fully recovered')
-    elif test.startswith('tb_t65_reset_'):
+    elif test.startswith('tb_app_reset_'):
         pressure=[b'\x41\x00'+pattern(0x10,320),b'\x41\x02'+pattern(0x30,512),b'\x41\x03'+pattern(0x40,17)]
         expect(messages('peer')==pressure*2+[b'\x40\0'+pattern(0x90,64)],'G3 unreset peer exact messages, no partial/old/duplicate')
         expect(messages('target')==[b'\x40\0'+pattern(0xa0,64)],'G3 target fresh receive exact, old RX abandoned')

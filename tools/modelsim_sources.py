@@ -20,9 +20,8 @@ DECLARATIONS = {
     'afdx_tx_engine.v': ('words',),
 }
 OPEN_PORTS = {
-    'afdx_app_tx.v': ('.read_data(memory_q));', '.read_data(memory_q),.raw_write_data());'),
-    'afdx_app_rx.v': ('.valid(q_valid),.ready(q_ready),.data(q_data));',
-                      '.valid(q_valid),.ready(q_ready),.data(q_data),.next_limit());'),
+    'afdx_app_tx.v': ('.read_data(memory_q));', '.read_data(memory_q), .raw_write_data());'),
+    'afdx_app_rx.v': ('.data(q_data));', '.data(q_data), .next_limit());'),
 }
 
 
@@ -39,7 +38,7 @@ def adapt(source, destination):
             raise ValueError('Optional open-port instance is not unique: ' + source.name)
         text = text.replace(before, after)
     lines = text.splitlines(keepends=True)
-    names = DECLARATIONS.get(source.name, ())
+    names = () if '`ifdef MODEL_TECH' in raw_text else DECLARATIONS.get(source.name, ())
     moved, edits, found = [], [], set()
     for index, line in enumerate(lines):
         match = re.fullmatch(r'(\s*(?:\(\*[^\n]*?\*\)\s*)?(wire|reg)\s+(?:\[[^\n]+?\]\s*)?)([^;\n]+);\s*\r?\n?', line)

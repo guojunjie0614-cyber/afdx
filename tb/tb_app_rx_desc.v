@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_t65_rx_data #(parameter T65_MUTANT=0);
+module tb_app_rx_desc #(parameter APP_MUTANT=0);
     reg clk=0; always #4 clk=~clk;
     integer cycle=0,checks=0,errors=0,fd;
     task check; input ok; input [8*120-1:0] label;
@@ -13,15 +13,15 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
     task finish_test;
         begin
             $fflush(fd);$fclose(fd);
-            $display("[RESULT] tb_t65_rx_data %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
+            $display("[RESULT] tb_app_rx_desc %0s checks=%0d errors=%0d",errors==0?"PASS":"FAIL",checks,errors);
             $finish;
         end
     endtask
     always @(posedge clk)begin
         cycle=cycle+1;
-        if(cycle>20000000)begin check(0,"bounded test timeout");finish_test;end
+        if(cycle>2000000)begin check(0,"bounded test timeout");finish_test;end
     end
-    initial fd=$fopen("t65_trace.txt","w");
+    initial fd=$fopen("app_trace.txt","w");
 
     reg reset=1,cw=0,av=0,al=0;reg [7:0] ad=0;
     wire ov,drop;wire [7:0] od;
@@ -68,7 +68,7 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
                 if(pos==0)expected_byte=8'h40;
                 else if(pos==1)expected_byte=0;
                 else expected_byte=tags[got]+pos-2;
-                if(T65_MUTANT==1 && got==0 && pos==2)expected_byte=expected_byte^1;
+                if(APP_MUTANT==1 && got==0 && pos==2)expected_byte=expected_byte^1;
                 check(od==expected_byte,"RX VLID and payload exact");
                 captured[pos]=od;pos=pos+1;
             end else if(was_valid)begin
@@ -101,12 +101,12 @@ module tb_t65_rx_data #(parameter T65_MUTANT=0);
         repeat(5)@(negedge clk);reset=0;cw=1;
         @(negedge clk);cw=0;repeat(5)@(negedge clk);
 
-        i=0;
-        while(data_reject==0 && i<10000)begin send(1471,i);i=i+1;end
-        check(data_reject>0 && desc_reject==0,"data pressure isolated from descriptor pressure");
+        for(i=0;i<150;i=i+1)send(1,i);
+        send(8,8'he0);
+        check(desc_reject>0 && data_reject==0,"descriptor pressure isolated from data pressure");
 
         drain;send(64,8'h90);drain;
-        check(drop_count==rejected+(T65_MUTANT==2?1:0),"one drop per rejected complete message");
+        check(drop_count==rejected+(APP_MUTANT==2?1:0),"one drop per rejected complete message");
         $fwrite(fd,"E overflow %0d\nE max_used %0d\nE max_desc %0d\nE data_reject %0d\nE desc_reject %0d\n",drop_count,max_used,max_desc,data_reject,desc_reject);
         finish_test;
     end

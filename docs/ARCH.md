@@ -620,7 +620,7 @@ Python 参考模型按报文格式和协议规则生成输入及期望值，CRC 
 
 标准回归共有 56 项（原有 40 项 + 10-29/30 恢复与缓冲边界覆盖测试新增 16 项），包含基础存储/MAC、发送分页与 BAG、接收错误/序号/冗余、双端用户通信与配置/复位、服务报文与失败恢复、容量/突发/性能等类别。10-29/30 恢复与缓冲边界覆盖测试增加 A 网队列满及恢复、应用收发封装资源边界和三个登记状态的复位恢复；新增测试在 RTL 上运行，接收封装压力为模块级测试，复位恢复覆盖三个登记状态，1 字节输入为观察项。具体测试、参数、检查项目和结果见[补充数据的回归表](FACTS_DETAIL.md#逐项回归与评委入口)。
 
-`tools/eda.py` 对 `tb_t65_` 测试在仿真后调用 `tools/wrap_check.py`，检查器纳入输入摘要，结果写入 `summary.json` 的 `check` 字段；独立核对有错误时，即使 TB 自检通过，入口仍返回失败。覆盖率见[补充数据](FACTS_DETAIL.md)。
+`tools/eda.py` 对 `tb_app_` 测试在仿真后调用 `tools/wrap_check.py`，检查器纳入输入摘要，结果写入 `summary.json` 的 `check` 字段；独立核对有错误时，即使 TB 自检通过，入口仍返回失败。覆盖率见[补充数据](FACTS_DETAIL.md)。
 
 评委从仓库根目录的 ModelSim Transcript 运行 `do sim/run_judge.do`；本地 ModelSim 的 `vsim -c` 走 vish 与 vsim 的 RPC 传输，在部分主机上不可用，因此用 `vsim -batch -do "do sim/run_judge.do; quit -f"` 启动。入口覆盖五功能、配置容量、SNMP、突发、RTC 和性能。eLinx 工程的行为仿真入口为 tb_elinx，完整 RTL 回归入口为 sim/regress.ps1；软件准备、命令及预期输出见 [README](../README.md)。
 

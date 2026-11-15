@@ -16,7 +16,7 @@ from adapt_gui_vqm import adapt
 
 RECORDS = ('net_services.txt', 'es1_a.txt', 'es1_b.txt', 'es2_a.txt',
            'es2_b.txt', 'es2_rx_a.txt', 'download_results.txt')
-FRAGMENT_TESTS = ('tb_fragmentation', 'tb_frag1030_net')
+FRAGMENT_TESTS = ('tb_fragmentation', 'tb_frag_net')
 FRAGMENT_RECORDS = ('tx_a.txt', 'tx_b.txt', 'rx.txt', 'tx_messages.txt', 'events.txt', 'summary.txt')
 MODELS = ('220model.v', 'altera_mf.v', 'altera_primitives.v',
           'stratix_atoms.v', 'stratixiv_atoms.v')
@@ -60,7 +60,7 @@ def run_case(test, deadline, netlist=None, model_dir=None, reference=None):
                 if path.suffix == '.v':
                     sources.append(name)
         sources.append(copy(ROOT / 'tb' / (test + '.v'), test + '.v'))
-        if test == 'tb_frag1030_net':
+        if test == 'tb_frag_net':
             sources.append(copy(ROOT / 'tb/tb_fragmentation.v', 'tb_fragmentation.v'))
         checker = ROOT / 'tools/net_services_ref.py'
         if test == 'tb_net_services':

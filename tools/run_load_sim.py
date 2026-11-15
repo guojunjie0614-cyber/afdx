@@ -37,10 +37,10 @@ def main():
     if params['MIXED']==3 and (params['GROUP_LENGTH']!=1471 or params['BAG_BURST'] or not 1<=params['LONG_COUNT']<=params['VL_COUNT']):
         parser.error('Mode 3 requires 1..VL_COUNT long VLs, 1471-byte short messages and no BAG burst')
     if params['MIXED']!=3:params.pop('LONG_COUNT')
-    flow = eda.Flow('load_sim', 'tb_t76_load', args.deadline)
+    flow = eda.Flow('load_sim', 'tb_full_load', args.deadline)
     flow.result.update(parameters=params,kind='official_vqm' if args.netlist else 'RTL',passed=False)
-    originals = sorted((ROOT/'rtl').glob('*.v')) + [ROOT/'tb/tb_t76_load.v',
-        ROOT/'tb/lib/t76_load_endpoint.v',ROOT/'tb/lib/afdx_x_monitor.v',Path(__file__),
+    originals = sorted((ROOT/'rtl').glob('*.v')) + [ROOT/'tb/tb_full_load.v',
+        ROOT/'tb/lib/full_load_endpoint.v',ROOT/'tb/lib/afdx_x_monitor.v',Path(__file__),
         ROOT/'tools/modelsim_sources.py',ROOT/'tools/adapt_gui_vqm.py',ROOT/'tools/eda.py']
     if args.netlist:
         originals.append(args.netlist.resolve())
@@ -87,7 +87,7 @@ def main():
             raise RuntimeError('Compile diagnostics; see compile.log')
         run_do = flow.folder/'run.do'
         run_do.write_text('onerror {quit -code 1}\nonbreak {quit -code 1}\nrun -all\nquit -code 0\n',encoding='ascii')
-        command = [ms/'vsim.exe','-batch','-t','1ps','work.tb_t76_load',
+        command = [ms/'vsim.exe','-batch','-t','1ps','work.tb_full_load',
             *['-g'+k+'='+str(v) for k,v in params.items()],'-wlf','simulation.wlf','-do','do run.do']
         if args.netlist:
             entry=ROOT/'sim/run_load_post_synth.do'
@@ -99,10 +99,20 @@ def main():
             flow.result['official_do_entry']=str(entry)
         else:
             log = flow.job('simulation',command,86400)
-        rows = re.findall(r'\[RESULT\] tb_t76_load (PASS|FAIL) checks=(\d+) errors=(\d+)',log)
+        rows = re.findall(r'\[RESULT\] tb_full_load (PASS|FAIL) checks=(\d+) errors=(\d+)',log)
         diagnostics = {k:len(re.findall(r'\*\* '+k+':',log)) for k in ('Error','Fatal','Warning')}
-        flow.result.update(diagnostics=diagnostics)
-        if len(rows)!=1 or rows[0][0]!='PASS' or rows[0][2]!='0' or any(diagnostics.values()) or 'RAMCOLL' in log:
+        known_rtl_warnings = (
+            r"\(vsim-PLI-3003\) \[TOFD\] - System task or function '\$finish_and_return' is not defined\.$",
+            r"afdx_app_tx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'payload'\.  Expected 9, found 8\.$",
+            r"afdx_app_tx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'raw_write_data'\.$",
+            r"afdx_app_rx\.v\(\d+\): \(vopt-2685\) \[TFMPC\] - Too few port connections for 'reader'\.  Expected 11, found 10\.$",
+            r"afdx_app_rx\.v\(\d+\): \(vopt-2718\) \[TFMPC\] - Missing connection for port 'next_limit'\.$",
+        )
+        warning_lines = re.findall(r'(?m)^.*\*\* Warning:[^\r\n]*', log)
+        unexpected_warnings = [line for line in warning_lines if args.netlist or
+                               not any(re.search(p, line) for p in known_rtl_warnings)]
+        flow.result.update(diagnostics=diagnostics, unexpected_warnings=unexpected_warnings)
+        if len(rows)!=1 or rows[0][0]!='PASS' or rows[0][2]!='0' or diagnostics['Error'] or diagnostics['Fatal'] or unexpected_warnings or 'RAMCOLL' in log:
             raise RuntimeError('Simulation not passed; see simulation.log')
         if any(eda.sha(Path(path))!=value for path,value in manifest.items()):
             raise RuntimeError('Input changed during run; frozen inputs retained')
