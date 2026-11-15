@@ -1,27 +1,42 @@
 // 单组 8 行分片重组上下文分块（Bank）：宽位宽键值、首部、边界与进度存放于四张同步 M4K 表，
 // 每行仅用少量触发器维护有效位、挂起计数与重组超时状态。
 module afdx_rx_reassembly_bank #(
-    parameter ROWS = 8, TIMEOUT_CYCLES = 250000000
+    parameter ROWS = 8,
+    TIMEOUT_CYCLES = 250000000
 ) (
-    input  wire        clk, reset,
-    input  wire        query, cancel, commit,
-    input  wire [11:0] r_vl, input wire [125:0] r_meta,
-    input  wire [10:0] r_length, input wire [15:0] r_sport, r_dport,
-    input  wire        r_net,
-    output reg         match_found, free_found, output reg [2:0] match_row, free_row,
-    input  wire        select_valid, input wire [2:0] select_row,
-    input  wire        select_match, select_free,
-    output reg         admission_valid, admission_ok,
-    input  wire        copy_request, input wire [2:0] copy_request_row,
-    input  wire        copy_empty, copy_valid, copy_last, input wire [7:0] copy_data,
-    output reg         copy_prepared, copy_done,
-    output reg         complete_available, output reg [2:0] complete_row,
-    input  wire        output_request, input wire [2:0] output_request_row,
-    input  wire        output_release, output reg release_done,
-    output reg         out_valid, out_last, output reg [7:0] out_data,
-    output reg  [11:0] out_vl, output reg [15:0] out_sport, out_dport,
-    output reg         out_net, output reg [1:0] events
+    input  wire         clk, reset,
+    input  wire         query, cancel, commit,
+    input  wire [11:0]  r_vl,
+    input  wire [125:0] r_meta,
+    input  wire [10:0]  r_length,
+    input  wire [15:0]  r_sport, r_dport,
+    input  wire         r_net,
+    output reg          match_found, free_found,
+    output reg  [2:0]   match_row, free_row,
+    input  wire         select_valid,
+    input  wire [2:0]   select_row,
+    input  wire         select_match, select_free,
+    output reg          admission_valid, admission_ok,
+    input  wire         copy_request,
+    input  wire [2:0]   copy_request_row,
+    input  wire         copy_empty, copy_valid, copy_last,
+    input  wire [7:0]   copy_data,
+    output reg          copy_prepared, copy_done,
+    output reg          complete_available,
+    output reg  [2:0]   complete_row,
+    input  wire         output_request,
+    input  wire [2:0]   output_request_row,
+    input  wire         output_release,
+    output reg          release_done,
+    output reg          out_valid, out_last,
+    output reg  [7:0]   out_data,
+    output reg  [11:0]  out_vl,
+    output reg  [15:0]  out_sport, out_dport,
+    output reg          out_net,
+    output reg  [1:0]   events
 );
+
+    // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
     (* preserve = 1, dont_merge = 1 *) reg query_active, query_start;
     (* preserve = 1, dont_merge = 1 *) reg commit_cmd, allocate;
@@ -33,14 +48,14 @@ module afdx_rx_reassembly_bank #(
         integer n;
         begin
             counter_width = 1;
-            for (n = 1;n < 32;n = n+1)
-            if ((count-1)>>n) counter_width = n+1;
+            for (n = 1; n < 32; n = n + 1)
+                if ((count - 1)>>n) counter_width = n + 1;
         end
     endfunction
     localparam AGE_W = counter_width(TIMEOUT_CYCLES);
     localparam AGE_LOW_W = (AGE_W > 14) ? 14 : AGE_W;
-    localparam AGE_HIGH_W = (AGE_W > 14) ? AGE_W-14 : 1;
-    localparam [AGE_W-1:0] AGE_BEFORE_LAST = (TIMEOUT_CYCLES > 1) ? TIMEOUT_CYCLES-2 : 0;
+    localparam AGE_HIGH_W = (AGE_W > 14) ? AGE_W - 14 : 1;
+    localparam [AGE_W-1:0] AGE_BEFORE_LAST = (TIMEOUT_CYCLES > 1) ? TIMEOUT_CYCLES - 2 : 0;
     reg [7:0] valid, closed, complete, copy_initialized, context_net;
     reg [5:0] pending[0:7];
     reg [AGE_W-1:0] age[0:7];
@@ -61,11 +76,13 @@ module afdx_rx_reassembly_bank #(
     end
     genvar field_group;
 
-    generate for (field_group = 0;field_group < 12;field_group = field_group+1) begin : query_capture
+    generate
+        for (field_group = 0; field_group < 12; field_group = field_group + 1) begin : query_capture
             (* preserve = 1, dont_merge = 1 *) reg command;
             assign capture_group[field_group] = command;
-            always @(posedge clk) if (reset) command <= 0;
-            else command <= query_start;
+            always @(posedge clk)
+                if (reset) command <= 0;
+                else command <= query_start;
         end
     endgenerate
 
@@ -107,7 +124,7 @@ module afdx_rx_reassembly_bank #(
         end
         else begin
             if (scan_active) begin
-                scan_row <= scan_row+1'b1;
+                scan_row <= scan_row + 1'b1;
                 if (scan_row == 7) scan_active <= 0;
             end
             if (cancel || commit_cmd || (query_active && query_age == 31)) scan_active <= 0;
@@ -133,8 +150,8 @@ module afdx_rx_reassembly_bank #(
     always @(posedge clk) begin
         key_return <= key_q;
         key_equal <= {key_return[91:80] == query_key[91:80],
-        key_return[79:48] == query_key[79:48], key_return[47:16] == query_key[47:16],
-        key_return[15:0] == query_key[15:0]};
+            key_return[79:48] == query_key[79:48], key_return[47:16] == query_key[47:16],
+            key_return[15:0] == query_key[15:0]};
     end
     (* preserve = 1, dont_merge = 1 *) reg locked;
     (* preserve = 1, dont_merge = 1 *) reg [2:0] locked_row;
@@ -145,11 +162,11 @@ module afdx_rx_reassembly_bank #(
 
     always @(posedge clk) admission_return <= admission_q;
     wire live_ok = q_first ? (!selected_match && selected_free && !selected_valid)
-    : (selected_match && selected_valid && !selected_closed && !selected_full);
+        : (selected_match && selected_valid && !selected_closed && !selected_full);
     wire bounds_ok = q_first
-    ? (q_mf && q_udp_length >= 9 && q_udp_length <= 8200 && q_end < {1'b0, q_udp_length} && q_end[2:0] == 0)
-    : (q_start == {3'b0, admission_return[27:14]} && q_end <= {3'b0, admission_return[13:0]} &&
-    (q_mf ? (q_end < {3'b0, admission_return[13:0]} && q_end[2:0] == 0) : q_end == {3'b0, admission_return[13:0]}));
+        ? (q_mf && q_udp_length >= 9 && q_udp_length <= 8200 && q_end < {1'b0, q_udp_length} && q_end[2:0] == 0)
+        : (q_start == {3'b0, admission_return[27:14]} && q_end <= {3'b0, admission_return[13:0]} &&
+        (q_mf ? (q_end < {3'b0, admission_return[13:0]} && q_end[2:0] == 0) : q_end == {3'b0, admission_return[13:0]}));
 
     // 分片偏移与长度合法性每拍本地评估寄存，由 admission_valid 单独门控准入有效性。
     always @(posedge clk) begin
@@ -182,8 +199,8 @@ module afdx_rx_reassembly_bank #(
     (* preserve = 1, dont_merge = 1 *) reg [15:0] checksum_word_q;
     reg [28:0] checksum_seed;
     reg [13:0] written_seed;
-    wire [6:0] written_low_next = copy_written[6:0]+1'b1;
-    wire [6:0] written_high_next = copy_written[13:7]+copy_carry;
+    wire [6:0] written_low_next = copy_written[6:0] + 1'b1;
+    wire [6:0] written_high_next = copy_written[13:7] + copy_carry;
     wire [13:0] write_address_ahead = payload_we ? {written_high_next, written_low_next} : copy_written;
     (* preserve = 1, dont_merge = 1 *) reg [7:0] write_slots, read_slots;
     wire [7:0] final_rows;
@@ -198,8 +215,8 @@ module afdx_rx_reassembly_bank #(
         if (reset) copy_valid_q <= 0;
         else copy_valid_q <= copy_valid;
     end
-    wire [16:0] checksum_next = {1'b0, checksum_low}+{1'b0, checksum_word_q};
-    wire [12:0] checksum_high_next = checksum_high+checksum_carry;
+    wire [16:0] checksum_next = {1'b0, checksum_low} + {1'b0, checksum_word_q};
+    wire [12:0] checksum_high_next = checksum_high + checksum_carry;
 `ifndef MODEL_TECH
     wire payload_we = copy_state == C_RUN && copy_valid_q;
 `else
@@ -241,7 +258,7 @@ module afdx_rx_reassembly_bank #(
     wire retire_issue = (copy_state == C_FLUSH) || (copy_state == C_INIT && empty_copy);
     wire retire = copy_state == C_RETIRE;
     wire [45:0] progress_wd = {retire_written, retire_sum};
-    wire [15:0] checksum_folded = folded_sum[15:0]+{15'b0, folded_sum[16]};
+    wire [15:0] checksum_folded = folded_sum[15:0] + {15'b0, folded_sum[16]};
 
     localparam O_IDLE = 0, O_LOAD = 1, O_READ = 2, O_RELEASE = 3, O_ARM = 4, O_SEED = 5;
     reg [2:0] output_state;
@@ -254,15 +271,15 @@ module afdx_rx_reassembly_bank #(
         if (reset) output_equal <= 0;
         else if (output_state == O_SEED) output_equal <= {2{output_second_last}};
         else output_equal <= {output_position[13:7] == output_compare_target[13:7],
-        output_position[6:0] == output_compare_target[6:0]};
+            output_position[6:0] == output_compare_target[6:0]};
     end
 `ifndef MODEL_TECH
     (* maxfan = 16 *) reg [13:0] output_position;
 `endif
     reg output_carry;
     (* preserve = 1, dont_merge = 1 *) reg output_read_active, output_last_request;
-    wire [6:0] output_low_next = output_position[6:0]+1'b1;
-    wire [6:0] output_high_next = output_position[13:7]+output_carry;
+    wire [6:0] output_low_next = output_position[6:0] + 1'b1;
+    wire [6:0] output_high_next = output_position[13:7] + output_carry;
     wire [13:0] output_next = {output_high_next, output_low_next};
     localparam PAYLOAD_READ_LATENCY = 5;
     reg [PAYLOAD_READ_LATENCY-1:0] output_pipe_valid, output_pipe_last;
@@ -276,24 +293,25 @@ module afdx_rx_reassembly_bank #(
     // 每行独立预译码提交、退休、校验与超时回收命令，消除行状态反馈回路上的跨行组合译码。
     genvar row;
 
-    generate for (row = 0;row < 8;row = row+1) begin : row_control
+    generate
+        for (row = 0; row < 8; row = row + 1) begin : row_control
             (* preserve = 1, dont_merge = 1 *) reg commit_row_command, retire_row_command, check_row_command;
             reg age_carry;
             (* preserve = 1, dont_merge = 1 *) reg age_reset, age_running, row_locked;
             (* preserve = 1, dont_merge = 1 *) reg timer_open, pending_one;
-            wire [5:0] pending_next = commit_row_command && !retire_row_command ? pending[row]+1'b1 :
-            retire_row_command && !commit_row_command ? pending[row]-1'b1 : pending[row];
+            wire [5:0] pending_next = commit_row_command && !retire_row_command ? pending[row] + 1'b1 :
+                retire_row_command && !commit_row_command ? pending[row] - 1'b1 : pending[row];
             wire [AGE_LOW_W-1:0] low_age = age[row][AGE_LOW_W-1:0];
             wire [AGE_HIGH_W-1:0] high_age = age[row]>>AGE_LOW_W;
-            wire [AGE_LOW_W-1:0] next_low = low_age+1'b1;
-            wire [AGE_HIGH_W-1:0] next_high = high_age+age_carry;
+            wire [AGE_LOW_W-1:0] next_low = low_age + 1'b1;
+            wire [AGE_HIGH_W-1:0] next_high = high_age + age_carry;
             // 与 pending_one 同步基于更新后的挂起分片计数判定满状态。
             assign commit_rows[row] = commit_row_command;
             assign retire_rows[row] = retire_row_command;
             assign check_rows[row] = check_row_command;
             // 若超时边界恰逢该行被锁定或刚提交预约，则抑制本次超时回收以保护在途写操作。
             assign reclaim_row[row] = valid[row] && age_running && age_due[row] && !commit_row_command &&
-            !(row_locked || (select_valid && select_row == row));
+                !(row_locked || (select_valid && select_row == row));
             assign final_rows[row] = retire_row_command && closed[row] && pending_one && !commit_row_command;
             always @(posedge clk) begin
                 if (reset) begin
@@ -331,46 +349,58 @@ module afdx_rx_reassembly_bank #(
                 end
                 else if (valid[row] && age_running && !age_due[row]) begin
                     age[row] <= {next_high, next_low};
-                    age_carry <= low_age == ({AGE_LOW_W{1'b1}}-1'b1);
+                    age_carry <= low_age == ({AGE_LOW_W{1'b1}} - 1'b1);
                     age_due[row] <= age[row] == AGE_BEFORE_LAST;
                 end
             end
         end
     endgenerate
 
-    afdx_rx_reassembly_ram #(.WIDTH(92), .AW(3), .REGISTER_WRITE_ADDRESS(1)) key_table(
+    afdx_rx_reassembly_ram #(
+        .WIDTH                  (92),
+        .AW                     (3),
+        .REGISTER_WRITE_ADDRESS (1)
+    ) key_table (
         .clk (clk),
         .we  (allocate && !reset),
         .wa  (locked_row),
         .wd  (query_key),
         .re  (key_re && !reset),
         .ra  (key_ra),
-        .q   (key_q));
-    afdx_rx_reassembly_ram #(.WIDTH(92), .AW(3), .REGISTER_WRITE_ADDRESS(1)) header_table(
+        .q   (key_q)
+    );
+    afdx_rx_reassembly_ram #(
+        .WIDTH                  (92),
+        .AW                     (3),
+        .REGISTER_WRITE_ADDRESS (1)
+    ) header_table (
         .clk (clk),
         .we  (allocate && !reset),
         .wa  (locked_row),
         .wd  (header_wd),
         .re  (header_re && !reset),
         .ra  (header_ra),
-        .q   (header_q));
-    afdx_rx_reassembly_ram #(.WIDTH(28), .AW(3)) admission_table(
+        .q   (header_q)
+    );
+    afdx_rx_reassembly_ram #(.WIDTH(28), .AW(3)) admission_table (
         .clk (clk),
         .we  (commit_cmd && !reset),
         .wa  (commit_row),
         .wd  (admission_wd),
         .re  (admission_read_enable && !reset),
         .ra  (admission_read_address),
-        .q   (admission_q));
-    afdx_rx_reassembly_ram #(.WIDTH(46), .AW(3)) progress_table(
+        .q   (admission_q)
+    );
+    afdx_rx_reassembly_ram #(.WIDTH(46), .AW(3)) progress_table (
         .clk (clk),
         .we  (retire && !reset),
         .wa  (active_copy_row),
         .wd  (progress_wd),
         .re  (copy_request && copy_initialized[copy_request_row] && !reset),
         .ra  (copy_request_row),
-        .q   (progress_q));
-    afdx_rx_reassembly_payload payload(
+        .q   (progress_q)
+    );
+    afdx_rx_reassembly_payload payload (
         .clk         (clk),
         .reset       (reset),
         .we          (payload_we),
@@ -380,7 +410,8 @@ module afdx_rx_reassembly_bank #(
         .ra          ({active_output_row, output_position[12:0]}),
         .write_slots (write_slots),
         .read_slots  (read_slots),
-        .q           (payload_q));
+        .q           (payload_q)
+    );
 
     integer i, k;
     reg complete_any;
@@ -391,7 +422,7 @@ module afdx_rx_reassembly_bank #(
         complete_any = 0;
         first_complete = 0;
         event_comb = 0;
-        for (k = 0;k < 8;k = k+1) begin
+        for (k = 0; k < 8; k = k + 1) begin
             if (complete[k] && !complete_any) begin
                 complete_any = 1;
                 first_complete = k;
@@ -461,12 +492,12 @@ module afdx_rx_reassembly_bank #(
             allocate <= commit && q_first;
             locked_row <= select_row;
             commit_row <= locked_row;
-            quad0 <= pair0+pair1;
-            quad1 <= pair2+pair3;
+            quad0 <= pair0 + pair1;
+            quad1 <= pair2 + pair3;
             tail_sum <= pair4;
-            oct_sum <= quad0+quad1;
+            oct_sum <= quad0 + quad1;
             last_sum <= tail_sum;
-            initial_sum <= oct_sum+last_sum;
+            initial_sum <= oct_sum + last_sum;
             key_read_valid <= key_re;
             if (key_re) begin
                 key_read_row <= key_ra;
@@ -484,7 +515,7 @@ module afdx_rx_reassembly_bank #(
             reduce_occupied <= compare_occupied;
             reduce_row <= compare_row;
             if (query_active) begin
-                query_age <= query_age+1'b1;
+                query_age <= query_age + 1'b1;
                 if (reduce_valid && reduce_present) begin
                     if (reduce_occupied && &key_equal) begin
                         match_found <= 1;
@@ -543,7 +574,7 @@ module afdx_rx_reassembly_bank #(
             if (capture_group[2]) query_key[47:16] <= capture_meta[93:62];
             if (capture_group[3]) begin
                 q_start <= {1'b0, capture_meta[45:33], 3'b0};
-                q_end <= capture_meta[45:33] == 0 ? ({6'b0, capture_length}+17'd8) : ({1'b0, capture_meta[45:33], 3'b0}+{6'b0, capture_length});
+                q_end <= capture_meta[45:33] == 0 ? ({6'b0, capture_length} + 17'd8) : ({1'b0, capture_meta[45:33], 3'b0} + {6'b0, capture_length});
             end
             if (capture_group[4]) begin
                 q_udp_length <= capture_meta[31:16];
@@ -557,14 +588,14 @@ module afdx_rx_reassembly_bank #(
                 q_first <= capture_meta[45:33] == 0;
                 q_mf <= capture_meta[32];
                 q_net <= request_hold[0];
-                q_app_total <= capture_meta[31:16]-16'd8;
+                q_app_total <= capture_meta[31:16] - 16'd8;
             end
-            if (capture_group[7]) pair0 <= {16'b0, capture_meta[125:110]}+{16'b0, capture_meta[109:94]};
-            if (capture_group[8]) pair1 <= {16'b0, capture_meta[93:78]}+{16'b0, capture_meta[77:62]};
-            if (capture_group[9]) pair2 <= 32'd17+{16'b0, capture_meta[31:16]};
-            if (capture_group[10]) pair3 <= {16'b0, capture_meta[31:16]}+{16'b0, capture_sport};
+            if (capture_group[7]) pair0 <= {16'b0, capture_meta[125:110]} + {16'b0, capture_meta[109:94]};
+            if (capture_group[8]) pair1 <= {16'b0, capture_meta[93:78]} + {16'b0, capture_meta[77:62]};
+            if (capture_group[9]) pair2 <= 32'd17 + {16'b0, capture_meta[31:16]};
+            if (capture_group[10]) pair3 <= {16'b0, capture_meta[31:16]} + {16'b0, capture_sport};
             if (capture_group[11]) begin
-                pair4 <= {16'b0, capture_dport}+{16'b0, capture_meta[15:0]};
+                pair4 <= {16'b0, capture_dport} + {16'b0, capture_meta[15:0]};
             end
         end
     end
@@ -619,7 +650,7 @@ module afdx_rx_reassembly_bank #(
             complete_available <= 0;
             complete_row <= 0;
             events <= 0;
-            for (i = 0;i < 8;i = i+1) begin
+            for (i = 0; i < 8; i = i + 1) begin
                 pending[i] <= 0;
                 context_event[i] <= 0;
             end
@@ -631,16 +662,16 @@ module afdx_rx_reassembly_bank #(
             copy_prepared <= 0;
             copy_done <= 0;
             release_done <= 0;
-            for (i = 0;i < 8;i = i+1) begin
+            for (i = 0; i < 8; i = i + 1) begin
                 context_event[i] <= 0;
                 if (reclaim_row[i]) begin
                     valid[i] <= 0;
                     context_event[i] <= context_net[i] ? 2'b10 : 2'b01;
                 end
                 case ({commit_rows[i], retire_rows[i]})
-                        2'b10: pending[i] <= pending[i]+1'b1;
-                        2'b01: pending[i] <= pending[i]-1'b1;
-                        default: ;
+                    2'b10 : pending[i] <= pending[i] + 1'b1;
+                    2'b01 : pending[i] <= pending[i] - 1'b1;
+                    default :;
                 endcase
                 if (commit_rows[i]) begin
                     if (q_first) begin
@@ -666,65 +697,65 @@ module afdx_rx_reassembly_bank #(
                 end
             end
             case (copy_state)
-                    C_IDLE: if (copy_request) begin
-                        active_copy_row <= copy_request_row;
-                        was_initialized <= copy_initialized[copy_request_row];
-                        empty_copy <= copy_empty;
-                        write_slots <= 8'b1<<copy_request_row;
-                        copy_state <= C_LOAD;
-                    end
-                    C_LOAD: begin
-                        written_seed <= was_initialized ? progress_q[45:32] : 14'd0;
-                        checksum_seed <= was_initialized ? progress_q[28:0] : header_q[30:2];
-                        copy_check_disabled <= header_q[1];
-                        copy_net <= header_q[0];
-                        high_byte <= 0;
-                        copy_state <= C_INIT;
-                    end
-                    C_INIT: begin
-                        copy_written <= written_seed;
-                        copy_carry <= &written_seed[6:0];
-                        word_half <= written_seed[0];
-                        copy_prepared <= 1;
-                        if (empty_copy) begin
-                            retire_written <= written_seed;
-                            retire_sum <= {3'b0, checksum_seed};
-                            copy_state <= C_RETIRE;
-                        end
-                        else copy_state <= C_RUN;
-                    end
-                    C_RUN: if (copy_valid_q) begin
-                        if (!word_half) high_byte <= copy_data_q;
-                        word_half <= !word_half;
-                        copy_written <= {written_high_next, written_low_next};
-                        copy_carry <= copy_written[6:0] == 7'd126;
-                        if (copy_last_q) begin
-                            retire_written <= {written_high_next, written_low_next};
-                            copy_state <= C_DRAIN;
-                        end
-                    end
-                    // 末字节写入后依次等待拼字累加与进位级排空，再将累计长度与校验和写回进度表。
-                    C_DRAIN: copy_state <= C_FLUSH;
-                    C_FLUSH: begin
-                        retire_sum <= {3'b0, checksum_high_next, checksum_low};
+                C_IDLE : if (copy_request) begin
+                    active_copy_row <= copy_request_row;
+                    was_initialized <= copy_initialized[copy_request_row];
+                    empty_copy <= copy_empty;
+                    write_slots <= 8'b1<<copy_request_row;
+                    copy_state <= C_LOAD;
+                end
+                C_LOAD : begin
+                    written_seed <= was_initialized ? progress_q[45:32] : 14'd0;
+                    checksum_seed <= was_initialized ? progress_q[28:0] : header_q[30:2];
+                    copy_check_disabled <= header_q[1];
+                    copy_net <= header_q[0];
+                    high_byte <= 0;
+                    copy_state <= C_INIT;
+                end
+                C_INIT : begin
+                    copy_written <= written_seed;
+                    copy_carry <= &written_seed[6:0];
+                    word_half <= written_seed[0];
+                    copy_prepared <= 1;
+                    if (empty_copy) begin
+                        retire_written <= written_seed;
+                        retire_sum <= {3'b0, checksum_seed};
                         copy_state <= C_RETIRE;
                     end
-                    C_RETIRE: begin
-                        if (|final_rows) copy_state <= C_FOLD;
-                        else begin
-                            copy_state <= C_IDLE;
-                            copy_done <= 1;
-                        end
+                    else copy_state <= C_RUN;
+                end
+                C_RUN : if (copy_valid_q) begin
+                    if (!word_half) high_byte <= copy_data_q;
+                    word_half <= !word_half;
+                    copy_written <= {written_high_next, written_low_next};
+                    copy_carry <= copy_written[6:0] == 7'd126;
+                    if (copy_last_q) begin
+                        retire_written <= {written_high_next, written_low_next};
+                        copy_state <= C_DRAIN;
                     end
-                    C_FOLD: begin
-                        folded_sum <= {1'b0, retire_sum[15:0]}+{1'b0, retire_sum[31:16]};
-                        copy_state <= C_CHECK;
-                    end
-                    C_CHECK: begin
-                        copy_done <= 1;
+                end
+                // 末字节写入后依次等待拼字累加与进位级排空，再将累计长度与校验和写回进度表。
+                C_DRAIN : copy_state <= C_FLUSH;
+                C_FLUSH : begin
+                    retire_sum <= {3'b0, checksum_high_next, checksum_low};
+                    copy_state <= C_RETIRE;
+                end
+                C_RETIRE : begin
+                    if (|final_rows) copy_state <= C_FOLD;
+                    else begin
                         copy_state <= C_IDLE;
+                        copy_done <= 1;
                     end
-                    default: copy_state <= C_IDLE;
+                end
+                C_FOLD : begin
+                    folded_sum <= {1'b0, retire_sum[15:0]} + {1'b0, retire_sum[31:16]};
+                    copy_state <= C_CHECK;
+                end
+                C_CHECK : begin
+                    copy_done <= 1;
+                    copy_state <= C_IDLE;
+                end
+                default : copy_state <= C_IDLE;
             endcase
 
             output_pipe_valid <= {output_pipe_valid[PAYLOAD_READ_LATENCY-2:0], payload_re};
@@ -736,67 +767,68 @@ module afdx_rx_reassembly_bank #(
                 if (output_pipe_last[PAYLOAD_READ_LATENCY-1]) output_state <= O_RELEASE;
             end
             case (output_state)
-                    O_IDLE: if (output_request) begin
-                        active_output_row <= output_request_row;
-                        read_slots <= 8'b1<<output_request_row;
-                        output_state <= O_LOAD;
-                    end
-                    O_LOAD: begin
-                        out_vl <= header_q[91:80];
-                        out_sport <= header_q[79:64];
-                        out_dport <= header_q[63:48];
-                        out_net <= header_q[0];
-                        output_total <= header_q[47:34];
-                        output_position <= 0;
-                        output_carry <= 0;
-                        output_state <= O_ARM;
-                    end
-                    O_ARM: begin
-                        // 预计算 P == N-3 并按高低 7 位分段寄存比较，对 1 字节和 2 字节短包直接置位初始末拍标志。
-                        output_compare_target <= output_total-14'd3;
-                        output_nonempty <= output_total != 0;
-                        output_first_last <= output_total == 1;
-                        output_second_last <= output_total == 2;
-                        output_state <= O_SEED;
-                    end
-                    O_SEED: begin
-                        output_read_active <= output_nonempty;
-                        output_last_request <= output_first_last;
-                        output_state <= O_READ;
-                    end
-                    O_READ: if (payload_re) begin
-                        output_position <= output_next;
-                        output_carry <= output_position[6:0] == 7'd126;
-                        output_read_active <= !output_last_request;
-                        output_last_request <= &output_equal;
-                    end
-                    O_RELEASE: if (output_release) begin
-                        output_state <= O_IDLE;
-                        release_done <= 1;
-                    end
-                    default: output_state <= O_IDLE;
+                O_IDLE : if (output_request) begin
+                    active_output_row <= output_request_row;
+                    read_slots <= 8'b1<<output_request_row;
+                    output_state <= O_LOAD;
+                end
+                O_LOAD : begin
+                    out_vl <= header_q[91:80];
+                    out_sport <= header_q[79:64];
+                    out_dport <= header_q[63:48];
+                    out_net <= header_q[0];
+                    output_total <= header_q[47:34];
+                    output_position <= 0;
+                    output_carry <= 0;
+                    output_state <= O_ARM;
+                end
+                O_ARM : begin
+                    // 预计算 P == N-3 并按高低 7 位分段寄存比较，对 1 字节和 2 字节短包直接置位初始末拍标志。
+                    output_compare_target <= output_total - 14'd3;
+                    output_nonempty <= output_total != 0;
+                    output_first_last <= output_total == 1;
+                    output_second_last <= output_total == 2;
+                    output_state <= O_SEED;
+                end
+                O_SEED : begin
+                    output_read_active <= output_nonempty;
+                    output_last_request <= output_first_last;
+                    output_state <= O_READ;
+                end
+                O_READ : if (payload_re) begin
+                    output_position <= output_next;
+                    output_carry <= output_position[6:0] == 7'd126;
+                    output_read_active <= !output_last_request;
+                    output_last_request <= &output_equal;
+                end
+                O_RELEASE : if (output_release) begin
+                    output_state <= O_IDLE;
+                    release_done <= 1;
+                end
+                default : output_state <= O_IDLE;
             endcase
         end
     end
 `ifndef SYNTHESIS
-    always @(posedge clk) if (!reset) begin
-        if (copy_request && output_request) begin
-            $display("[RX_ASSERT] header port double grant %m");
-            $finish_and_return(1);
+    always @(posedge clk)
+        if (!reset) begin
+            if (copy_request && output_request) begin
+                $display("[RX_ASSERT] header port double grant %m");
+                $finish_and_return(1);
+            end
+            if (copy_request && (!valid[copy_request_row] || pending[copy_request_row] == 0 || copy_state != C_IDLE)) begin
+                $display("[RX_ASSERT] copy without committed owner %m row=%0d", copy_request_row);
+                $finish_and_return(1);
+            end
+            if (retire && pending[active_copy_row] == 0) begin
+                $display("[RX_ASSERT] pending underflow %m");
+                $finish_and_return(1);
+            end
+            if (output_request && !complete[output_request_row]) begin
+                $display("[RX_ASSERT] output before complete %m");
+                $finish_and_return(1);
+            end
         end
-        if (copy_request && (!valid[copy_request_row] || pending[copy_request_row] == 0 || copy_state != C_IDLE)) begin
-            $display("[RX_ASSERT] copy without committed owner %m row=%0d", copy_request_row);
-            $finish_and_return(1);
-        end
-        if (retire && pending[active_copy_row] == 0) begin
-            $display("[RX_ASSERT] pending underflow %m");
-            $finish_and_return(1);
-        end
-        if (output_request && !complete[output_request_row]) begin
-            $display("[RX_ASSERT] output before complete %m");
-            $finish_and_return(1);
-        end
-    end
 `endif
 
 endmodule

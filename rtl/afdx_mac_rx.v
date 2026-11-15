@@ -2,7 +2,6 @@
 // 输入来自线路，去掉校验值后的内容交给 afdx_rx_parse。
 // 本模块用于赛题的以太网接收和错误检测。
 module afdx_mac_rx (
-
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire        clk, reset,
 
@@ -24,7 +23,8 @@ module afdx_mac_rx (
     // f_err=3 表示前导码错误。
     // f_len 包含末尾四字节校验值。
     output reg  [1:0]  f_err,
-    output reg  [10:0] f_len);
+    output reg  [10:0] f_len
+);
 
     // IDLE：先等线路空闲，再按首字节转 PREAMBLE、FRAME 或 BAD_PRE。
     // PREAMBLE：遇帧起始定界符转 FRAME，遇非法字节转 BAD_PRE。
@@ -88,7 +88,7 @@ module afdx_mac_rx (
             m_first <= 0;
             f_end <= 0;
             if (state == IDLE) begin
-                if ( ! valid_q) armed <= 1;
+                if (!valid_q) armed <= 1;
                 else if (armed) begin
                     state <= data_q == SFD_BYTE ? FRAME : data_q == PREAMBLE_BYTE ? PREAMBLE : BAD_PRE;
                     armed <= 0;
@@ -99,7 +99,7 @@ module afdx_mac_rx (
             else begin
                 // 输入先寄存再逐拍处理，最后四个字节用于帧校验。
                 begin
-                    if ( ! valid_q) begin
+                    if (!valid_q) begin
                         f_end <= 1;
                         state <= IDLE;
                         armed <= 1;

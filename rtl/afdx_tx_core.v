@@ -2,8 +2,10 @@
 // 它从 afdx_svc 接收消息，再输出到两路以太网。
 // 本模块对应赛题的发送、带宽控制和双网冗余发送功能。
 module afdx_tx_core #(
-    parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, LOOKAHEAD = 512) (
-
+    parameter TX_PAGE_AW = 8,
+    TX_OFF_AW            = 9,
+    LOOKAHEAD            = 512
+) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire        clk, reset,
 
@@ -36,11 +38,13 @@ module afdx_tx_core #(
     output wire        tx_valid_a,
     output wire [7:0]  tx_data_b,
     output wire        tx_valid_b,
-    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg init_done,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *)
+    output reg         init_done,
 
     // ev_* 用单拍脉冲报告消息接纳、丢弃原因和两网发送完成。
-    output wire ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage, ev_tx_a, ev_tx_b,
-    output wire cfg_ok);
+    output wire        ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage, ev_tx_a, ev_tx_b,
+    output wire        cfg_ok
+);
 
     localparam PAGES = (1 << TX_PAGE_AW), PAYLOAD_DEPTH = (1 << (TX_PAGE_AW + TX_OFF_AW));
 
@@ -98,8 +102,8 @@ module afdx_tx_core #(
         end
         else begin
             cfg_write <= 0;
-            if ( ! cfg_initialized) begin
-                if ( ! init_flush) begin
+            if (!cfg_initialized) begin
+                if (!init_flush) begin
                     cfg_write <= 1;
                     cfg_write_addr <= init_addr;
                     cfg_write_data <= 0;
@@ -168,13 +172,14 @@ module afdx_tx_core #(
         .read_address  (pnext_read_addr),
         .read_data     (pnext_data)
     );
-    afdx_tx_payload_store #(.AW(TX_PAGE_AW+TX_OFF_AW)) tx_payload (
-        .clk(clk),.reset(reset),
+    afdx_tx_payload_store #(.AW(TX_PAGE_AW + TX_OFF_AW)) tx_payload (
+        .clk           (clk),
+        .reset         (reset),
         .write_enable  (payload_write),
         .write_address (payload_write_addr),
         .write_data    (payload_write_data),
-        // Used only to diagnose a collision on an actually consumed response;
-        // the storage read itself is unconditional.
+        // 仅用于仿真监测实际被消费读请求上的读写同址冲突；
+        // 存储体本身的同步读始终自由执行。
         .read_request  (payload_read),
         .read_address  (payload_read_addr),
         .read_data     (payload_data)
@@ -200,7 +205,11 @@ module afdx_tx_core #(
         .ret2_page  (ret2_page),
         .ret2_ready (ret2_ready)
     );
-    afdx_tx_buf #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .EARLY_ENQUEUE(1)) buffer (
+    afdx_tx_buf #(
+        .TX_PAGE_AW    (TX_PAGE_AW),
+        .TX_OFF_AW     (TX_OFF_AW),
+        .EARLY_ENQUEUE (1)
+    ) buffer (
         // 时钟和复位
         .clk            (clk),
         .reset          (reset),
@@ -245,95 +254,119 @@ module afdx_tx_core #(
         .ev_drop_long   (ev_drop_long),
         .ev_drop_nopage (ev_drop_nopage)
     );
-    afdx_tx_engine #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .LOOKAHEAD(LOOKAHEAD), .PIPELINED_ENQUEUE(1), .COMPLETION_LOOKAHEAD(1)) engine (
+    afdx_tx_engine #(
+        .TX_PAGE_AW           (TX_PAGE_AW),
+        .TX_OFF_AW            (TX_OFF_AW),
+        .LOOKAHEAD            (LOOKAHEAD),
+        .PIPELINED_ENQUEUE    (1),
+        .COMPLETION_LOOKAHEAD (1)
+    ) engine (
         // 时钟和复位
-        .clk         (clk),
-        .reset       (reset),
-        .now         (now),
+        .clk                  (clk),
+        .reset                (reset),
+        .now                  (now),
         // 配置和初始化
-        .enable      (init_done),
-        .initialized (engine_initialized),
-        .cfg_re      (cfg_read),
-        .cfg_ra      (cfg_read_addr),
-        .cfg_q       (cfg_data),
-        .cfg_ok      (cfg_ok),
+        .enable               (init_done),
+        .initialized          (engine_initialized),
+        .cfg_re               (cfg_read),
+        .cfg_ra               (cfg_read_addr),
+        .cfg_q                (cfg_data),
+        .cfg_ok               (cfg_ok),
         // 数据和握手
-        .state_we    (state_write),
-        .state_re    (state_read),
-        .state_wa    (state_write_addr),
-        .state_ra    (state_read_addr),
-        .state_wd    (state_write_data),
-        .state_q     (state_data),
-        .mnext_we    (mnext_write),
-        .mnext_re    (mnext_read),
-        .mnext_wa    (mnext_write_addr),
-        .mnext_ra    (mnext_read_addr),
-        .mnext_wd    (mnext_write_data),
-        .mnext_q     (mnext_data),
-        .desc_re     (desc_read),
-        .desc_ra     (desc_read_addr),
-        .desc_q      (desc_data),
-        .enq_valid   (enq_valid),
-        .enq_vl      (enq_vl),
-        .enq_head    (enq_head),
-        .enq_len     (enq_len),
-        .enq_ack     (enq_ack),
-        .enq_result  (enq_result),
-        .start_valid (start_valid),
-        .t_start     (t_start),
-        .grant_ready (grant_ready),
-        .grant_valid (grant_valid),
-        .grant_a     (grant_a),
-        .grant_b     (grant_b),
-        .grant_timed (grant_timed),
-        .grant_time  (grant_time),
-        .grant_vlid  (grant_vlid),
-        .grant_sport (grant_sport),
-        .grant_dport (grant_dport),
-        .grant_src   (grant_src),
-        .grant_dst   (grant_dst),
-        .grant_len   (grant_len),
-        .grant_sn    (grant_sn),
-        .grant_page  (grant_page),
-        .grant_head(grant_head), .grant_offset(grant_offset),
-        .grant_ip_offset(grant_ip_offset), .grant_message_len(grant_message_len),
-        .grant_ident(grant_ident), .grant_first(grant_first), .grant_more(grant_more),
-        .completion_now(completion_now),.completion_vl(completion_vl),
-        .grant_vl_index(grant_vl_index), .fragment_done(fragment_done),
-        .fragment_done_vl(fragment_done_vl), .fragment_done_page(fragment_done_page),
-        .fragment_done_offset(fragment_done_offset)
+        .state_we             (state_write),
+        .state_re             (state_read),
+        .state_wa             (state_write_addr),
+        .state_ra             (state_read_addr),
+        .state_wd             (state_write_data),
+        .state_q              (state_data),
+        .mnext_we             (mnext_write),
+        .mnext_re             (mnext_read),
+        .mnext_wa             (mnext_write_addr),
+        .mnext_ra             (mnext_read_addr),
+        .mnext_wd             (mnext_write_data),
+        .mnext_q              (mnext_data),
+        .desc_re              (desc_read),
+        .desc_ra              (desc_read_addr),
+        .desc_q               (desc_data),
+        .enq_valid            (enq_valid),
+        .enq_vl               (enq_vl),
+        .enq_head             (enq_head),
+        .enq_len              (enq_len),
+        .enq_ack              (enq_ack),
+        .enq_result           (enq_result),
+        .start_valid          (start_valid),
+        .t_start              (t_start),
+        .grant_ready          (grant_ready),
+        .grant_valid          (grant_valid),
+        .grant_a              (grant_a),
+        .grant_b              (grant_b),
+        .grant_timed          (grant_timed),
+        .grant_time           (grant_time),
+        .grant_vlid           (grant_vlid),
+        .grant_sport          (grant_sport),
+        .grant_dport          (grant_dport),
+        .grant_src            (grant_src),
+        .grant_dst            (grant_dst),
+        .grant_len            (grant_len),
+        .grant_sn             (grant_sn),
+        .grant_page           (grant_page),
+        .grant_head           (grant_head),
+        .grant_offset         (grant_offset),
+        .grant_ip_offset      (grant_ip_offset),
+        .grant_message_len    (grant_message_len),
+        .grant_ident          (grant_ident),
+        .grant_first          (grant_first),
+        .grant_more           (grant_more),
+        .completion_now       (completion_now),
+        .completion_vl        (completion_vl),
+        .grant_vl_index       (grant_vl_index),
+        .fragment_done        (fragment_done),
+        .fragment_done_vl     (fragment_done_vl),
+        .fragment_done_page   (fragment_done_page),
+        .fragment_done_offset (fragment_done_offset)
     );
     localparam READY_COPIES = 15;
     wire [READY_COPIES - 1:0] s_ready;
 
-    afdx_tx_builder #(.TX_PAGE_AW(TX_PAGE_AW), .TX_OFF_AW(TX_OFF_AW), .READY_COPIES(READY_COPIES)) builder (
+    afdx_tx_builder #(
+        .TX_PAGE_AW   (TX_PAGE_AW),
+        .TX_OFF_AW    (TX_OFF_AW),
+        .READY_COPIES (READY_COPIES)
+    ) builder (
         // 时钟和复位
-        .clk         (clk),
-        .reset       (reset),
-        .now         (now),
+        .clk                  (clk),
+        .reset                (reset),
+        .now                  (now),
         // 配置和初始化
-        .user_id     (user_id),
+        .user_id              (user_id),
         // 数据和握手
-        .grant_ready (grant_ready),
-        .grant_valid (grant_valid),
-        .grant_a     (grant_a),
-        .grant_b     (grant_b),
-        .grant_timed (grant_timed),
-        .grant_time  (grant_time),
-        .grant_src   (grant_src),
-        .grant_dst   (grant_dst),
-        .grant_vlid  (grant_vlid),
-        .grant_sport (grant_sport),
-        .grant_dport (grant_dport),
-        .grant_len   (grant_len),
-        .grant_sn    (grant_sn),
-        .grant_page  (grant_page),
-        .grant_head(grant_head), .grant_offset(grant_offset),
-        .grant_ip_offset(grant_ip_offset), .grant_message_len(grant_message_len),
-        .grant_ident(grant_ident), .grant_first(grant_first), .grant_more(grant_more),
-        .completion_now(completion_now),.completion_vl(completion_vl),
-        .grant_vl_index(grant_vl_index), .fragment_done(fragment_done),
-        .fragment_done_vl(fragment_done_vl), .fragment_done_page(fragment_done_page),
+        .grant_ready          (grant_ready),
+        .grant_valid          (grant_valid),
+        .grant_a              (grant_a),
+        .grant_b              (grant_b),
+        .grant_timed          (grant_timed),
+        .grant_time           (grant_time),
+        .grant_src            (grant_src),
+        .grant_dst            (grant_dst),
+        .grant_vlid           (grant_vlid),
+        .grant_sport          (grant_sport),
+        .grant_dport          (grant_dport),
+        .grant_len            (grant_len),
+        .grant_sn             (grant_sn),
+        .grant_page           (grant_page),
+        .grant_head           (grant_head),
+        .grant_offset         (grant_offset),
+        .grant_ip_offset      (grant_ip_offset),
+        .grant_message_len    (grant_message_len),
+        .grant_ident          (grant_ident),
+        .grant_first          (grant_first),
+        .grant_more           (grant_more),
+        .completion_now       (completion_now),
+        .completion_vl        (completion_vl),
+        .grant_vl_index       (grant_vl_index),
+        .fragment_done        (fragment_done),
+        .fragment_done_vl     (fragment_done_vl),
+        .fragment_done_page   (fragment_done_page),
         .fragment_done_offset (fragment_done_offset),
         .start_valid          (start_valid),
         .t_start              (t_start),
@@ -360,11 +393,12 @@ module afdx_tx_core #(
         .ev_tx_a              (ev_tx_a),
         .ev_tx_b              (ev_tx_b)
     );
+
     // 组帧模块到 MAC 之间放一级两项的流水缓冲：组帧模块只看缓冲的寄存 ready，
     // MAC 看到的有效、数据都由靠近它的寄存器驱动，两段长线各自只有一级寄存器到寄存器。
     // 缓冲满速时每拍进出一个字节，不插空拍；发送整体晚一拍。
     localparam STREAM_WIDTH = 19;
-    wire [STREAM_WIDTH - 1:0] up_word = { s_data_a, s_data_b, s_last, s_en_a, s_en_b };
+    wire [STREAM_WIDTH - 1:0] up_word = {s_data_a, s_data_b, s_last, s_en_a, s_en_b};
     (* preserve = 1, dont_merge = 1 *) reg [READY_COPIES - 1:0] up_ready;
     reg main_valid, skid_valid;
     reg [STREAM_WIDTH - 1:0] main_word, skid_word;
@@ -381,9 +415,8 @@ module afdx_tx_core #(
             skid_word <= 0;
         end
         else begin
-            // Invariant: up_ready == !skid_valid. Predict the next empty
-            // reserve slot every edge, including held cycles, without a ready
-            // feedback enable. The advertised credit always has real storage.
+            // 不变量 up_ready == !skid_valid：每拍提前预测下一个空余预留槽，
+            // 包括反压停顿周期在内均不依赖 ready 反馈环，保证对外声明的信用始终有真实存储支撑。
             up_ready <= {READY_COPIES{main_free || (!skid_valid && !s_valid)}};
             if (main_free) begin
                 // MAC 取走或缓冲为空时，先补入暂存项，否则补入本拍新字节。
@@ -423,39 +456,46 @@ module afdx_tx_core #(
 
 endmodule
 
-// Preserve the original single logical RAM and free-running synchronous read.
-// Builder E0 request -> E1 RAM -> E2 builder return FF -> E3 payload FIFO.
-// A complete write bundle is captured locally, then physically written one
-// clock later. Descriptor/admission scheduling leaves >=36 clocks before the
-// earliest new-message read; rollback cannot return a page before retirement.
-module afdx_tx_payload_store #(parameter AW=17) (
-    input  wire          clk,reset,write_enable,
+// 保留原单一逻辑载荷存储体及自由运行的同步读口：构帧器 E0 发请求、E1 读 RAM、
+// E2 本地返回 FF、E3 入载荷 FIFO；完整写请求先本地寄存一拍再物理写入。
+// 入队与描述符调度天然保证至早 36 拍后才读取新消息，回滚也不会在退休前释放该页。
+module afdx_tx_payload_store #(parameter AW = 17) (
+    input  wire          clk, reset, write_enable,
     input  wire [AW-1:0] write_address,
     input  wire [7:0]    write_data,
     input  wire          read_request,
     input  wire [AW-1:0] read_address,
     output reg  [7:0]    read_data
 );
-    (* preserve=1,dont_merge=1 *) reg write_command,write_qualifier;
-    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address_command;
-    (* preserve=1,dont_merge=1 *) reg [7:0] write_data_command;
-    (* ramstyle="no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
-    always @(posedge clk)begin
-        if(reset)begin write_command<=0;write_qualifier<=0;end
-        else begin write_command<=write_enable;write_qualifier<=write_enable;end
-        // Empty/unaccepted commands may sample; WE never gates wide FFs.
-        write_address_command<=write_address;
-        write_data_command<=write_data;
+
+    (* preserve = 1, dont_merge = 1 *) reg write_command, write_qualifier;
+    (* preserve = 1, dont_merge = 1 *) reg [AW-1:0] write_address_command;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] write_data_command;
+    (* ramstyle = "no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
+    always @(posedge clk) begin
+        if (reset) begin
+            write_command <= 0;
+            write_qualifier <= 0;
+        end
+        else begin
+            write_command <= write_enable;
+            write_qualifier <= write_enable;
+        end
+        // 未握手拍允许自由采样地址，保证 WE 不门控宽位地址触发器。
+        write_address_command <= write_address;
+        write_data_command <= write_data;
     end
-    // Command and data qualifier have identical values but independent local
-    // loads. Reset flushes valid; a previously accepted write may retire on
-    // the first reset edge while all allocation/descriptor ownership is reset.
-    always @(posedge clk)if(write_command)
-        memory[write_address_command]<=write_qualifier ? write_data_command : 8'b0;
-    always @(posedge clk)read_data<=memory[read_address];
+
+    // 写命令脉冲与写数据使能限定逻辑等价，但保留独立本地触发器；复位仅清空有效标记，
+    // 上一拍已受理的写请求仍在首个复位沿退休（此时全部分配/描述符归属已被清空）。
+    always @(posedge clk)
+        if (write_command)
+            memory[write_address_command] <= write_qualifier ? write_data_command : 8'b0;
+    always @(posedge clk) read_data <= memory[read_address];
 `ifndef SYNTHESIS
-    // Only actual physical writes and consumed read requests may collide.
-    always @(posedge clk)if(!reset && write_command && read_request && write_address_command==read_address)
-        $display("** Error: [RAMCOLL] %m physical_read time=%0t address=%0d",$time,write_address_command);
+    // 仅在真实物理写与已被消费的读请求冲突时才报错。
+    always @(posedge clk)
+        if (!reset && write_command && read_request && write_address_command == read_address)
+            $display("** Error: [RAMCOLL] %m physical_read time=%0t address=%0d", $time, write_address_command);
 `endif
 endmodule

@@ -1,24 +1,38 @@
 // 16 上下文 IPv4 分片重组顶层：划分为两个独立控制的 8 行重组分块（Bank），
 // 上下文查询固定 19 拍返回结果，字节流在收到显式 prepared 应答后启动传输。
 module afdx_rx_reassembly #(
-    parameter CONTEXTS = 16, TIMEOUT_CYCLES = 250000000, BANK_CTRL_COPIES = 0
+    parameter CONTEXTS = 16,
+    TIMEOUT_CYCLES     = 250000000,
+    BANK_CTRL_COPIES   = 0
 ) (
-    input  wire                                  clk, reset,
-    input  wire                                  query, reserve, cancel,
+    input  wire         clk, reset,
+    input  wire         query, reserve, cancel,
     input  wire [(BANK_CTRL_COPIES ? 2 : 1)-1:0] query_bank, reserve_bank, cancel_bank,
-    input  wire [11:0]                           r_vl,
-    input  wire [125:0]                          r_meta, input wire [10:0] r_length,
-    input  wire [15:0]                           r_sport, r_dport, input wire r_net,
-    output reg                                   result_valid, output reg reserve_ok,
-    (* preserve = 1, dont_merge = 1 *) output reg [3:0] reserve_slot,
-    input  wire        in_start, in_valid, in_last, in_empty, in_frag,
-    input  wire [3:0]  in_slot, input wire [7:0] in_data,
-    input  wire [11:0] in_vl, input wire [15:0] in_sport, in_dport,
-    input  wire        in_net, output reg ready, output reg prepared,
-    output reg         d_valid, d_last, output reg [7:0] d_data,
-    output reg  [11:0] d_vl, output reg [15:0] d_sport, d_dport,
-    output reg         d_net, output reg [1:0] reject_events
+    input  wire [11:0]  r_vl,
+    input  wire [125:0] r_meta,
+    input  wire [10:0]  r_length,
+    input  wire [15:0]  r_sport, r_dport,
+    input  wire         r_net,
+    output reg          result_valid,
+    output reg          reserve_ok,
+    (* preserve = 1, dont_merge = 1 *)
+    output reg  [3:0]   reserve_slot,
+    input  wire         in_start, in_valid, in_last, in_empty, in_frag,
+    input  wire [3:0]   in_slot,
+    input  wire [7:0]   in_data,
+    input  wire [11:0]  in_vl,
+    input  wire [15:0]  in_sport, in_dport,
+    input  wire         in_net,
+    output reg          ready,
+    output reg          prepared,
+    output reg          d_valid, d_last,
+    output reg  [7:0]   d_data,
+    output reg  [11:0]  d_vl,
+    output reg  [15:0]  d_sport, d_dport,
+    output reg          d_net,
+    output reg  [1:0]   reject_events
 );
+
     reg query_active, query_first;
     reg [5:0] query_age;
     (* preserve = 1, dont_merge = 1 *) reg reject_credit;
@@ -57,8 +71,9 @@ module afdx_rx_reassembly #(
 
     genvar b;
 
-    generate for (b = 0;b < 2;b = b+1) begin : banks
-            localparam BANK_ROWS = (CONTEXTS > b*8+8) ? 8 : ((CONTEXTS > b*8) ? CONTEXTS-b*8 : 0);
+    generate
+        for (b = 0; b < 2; b = b + 1) begin : banks
+            localparam BANK_ROWS = (CONTEXTS > b*8 + 8) ? 8 : ((CONTEXTS > b*8) ? CONTEXTS - b*8 : 0);
             wire bank_query_in, bank_reserve_in, bank_cancel_in;
             if (BANK_CTRL_COPIES) begin : local_ctrl
                 assign bank_query_in = query_bank[b];
@@ -73,7 +88,7 @@ module afdx_rx_reassembly #(
             wire bank_query_fire = bank_query_in && !query_active_bank[b] && !bank_cancel_in && !reset;
             wire bank_cancel = bank_cancel_in || (bank_reserve_in && reject_credit_bank[b]);
             wire bank_commit = bank_reserve_in && commit_credit[b] && !bank_cancel_in && !reset;
-            afdx_rx_reassembly_bank #(.ROWS(BANK_ROWS), .TIMEOUT_CYCLES(TIMEOUT_CYCLES)) u_bank(
+            afdx_rx_reassembly_bank #(.ROWS(BANK_ROWS), .TIMEOUT_CYCLES(TIMEOUT_CYCLES)) u_bank (
                 .clk                (clk),
                 .reset              (reset),
                 .query              (bank_query_fire),
@@ -116,7 +131,8 @@ module afdx_rx_reassembly #(
                 .out_sport          (bank_sport[b*16+:16]),
                 .out_dport          (bank_dport[b*16+:16]),
                 .out_net            (bank_net[b]),
-                .events             (bank_events[b*2+:2]));
+                .events             (bank_events[b*2+:2])
+            );
         end
     endgenerate
 
@@ -144,7 +160,7 @@ module afdx_rx_reassembly #(
         else begin
             select_request <= 0;
             if (query_active) begin
-                query_age <= query_age+1'b1;
+                query_age <= query_age + 1'b1;
                 if (query_age == 12) begin
                     match_summary <= bank_match;
                     free_summary <= bank_free;
@@ -185,7 +201,7 @@ module afdx_rx_reassembly #(
                     reject_credit <= reserve_slot[3] ? !(bank_admit_valid[1] && bank_admit_ok[1]) : !(bank_admit_valid[0] && bank_admit_ok[0]);
                     reject_credit_bank <= {2{reserve_slot[3] ? !(bank_admit_valid[1] && bank_admit_ok[1]) : !(bank_admit_valid[0] && bank_admit_ok[0])}};
                     commit_credit <= reserve_slot[3] ? {bank_admit_valid[1] && bank_admit_ok[1], 1'b0}
-                    : {1'b0, bank_admit_valid[0] && bank_admit_ok[0]};
+                        : {1'b0, bank_admit_valid[0] && bank_admit_ok[0]};
                 end
             end
             if (cancel || (reserve && result_valid) || (query_active && query_age == 31)) begin
@@ -246,58 +262,58 @@ module afdx_rx_reassembly #(
             ready <= 0;
             reject_events <= bank_events[1:0] | bank_events[3:2];
             case (stream_state)
-                    D_IDLE: begin
-                        ready <= !bank_complete[0] && !bank_complete[1];
-                        if (|bank_complete) stream_state <= D_QUIET;
+                D_IDLE : begin
+                    ready <= !bank_complete[0] && !bank_complete[1];
+                    if (|bank_complete) stream_state <= D_QUIET;
+                end
+                D_QUIET : if (!in_start) begin
+                    if (bank_complete[0]) begin
+                        output_bank <= 0;
+                        output_row <= bank_complete_row[2:0];
+                        output_request <= 2'b01;
+                        stream_state <= D_OUTPUT;
                     end
-                    D_QUIET: if (!in_start) begin
-                        if (bank_complete[0]) begin
-                            output_bank <= 0;
-                            output_row <= bank_complete_row[2:0];
-                            output_request <= 2'b01;
-                            stream_state <= D_OUTPUT;
-                        end
-                        else if (bank_complete[1]) begin
-                            output_bank <= 1;
-                            output_row <= bank_complete_row[5:3];
-                            output_request <= 2'b10;
-                            stream_state <= D_OUTPUT;
-                        end
-                        else stream_state <= D_IDLE;
+                    else if (bank_complete[1]) begin
+                        output_bank <= 1;
+                        output_row <= bank_complete_row[5:3];
+                        output_request <= 2'b10;
+                        stream_state <= D_OUTPUT;
                     end
-                    D_PREP: if (stream_bank ? bank_prepared[1] : bank_prepared[0]) begin
-                        prepared <= 1;
-                        stream_state <= D_COPY;
-                    end
-                    D_COPY: if (stream_bank ? bank_copy_done[1] : bank_copy_done[0]) stream_state <= D_IDLE;
-                    D_LEGACY_PREP: begin
-                        prepared <= 1;
-                        stream_state <= legacy_empty ? D_IDLE : D_LEGACY;
-                    end
-                    D_LEGACY: if (in_valid) begin
+                    else stream_state <= D_IDLE;
+                end
+                D_PREP : if (stream_bank ? bank_prepared[1] : bank_prepared[0]) begin
+                    prepared <= 1;
+                    stream_state <= D_COPY;
+                end
+                D_COPY : if (stream_bank ? bank_copy_done[1] : bank_copy_done[0]) stream_state <= D_IDLE;
+                D_LEGACY_PREP : begin
+                    prepared <= 1;
+                    stream_state <= legacy_empty ? D_IDLE : D_LEGACY;
+                end
+                D_LEGACY : if (in_valid) begin
+                    d_valid <= 1;
+                    d_last <= in_last;
+                    d_data <= in_data;
+                    if (in_last) stream_state <= D_IDLE;
+                end
+                D_OUTPUT : begin
+                    // 分块装载报文头并完成末字节比较预置后，经 5 拍存储读流水连续输出重组后的完整载荷。
+                    d_vl <= output_bank ? bank_vl[23:12] : bank_vl[11:0];
+                    d_sport <= output_bank ? bank_sport[31:16] : bank_sport[15:0];
+                    d_dport <= output_bank ? bank_dport[31:16] : bank_dport[15:0];
+                    d_net <= output_bank ? bank_net[1] : bank_net[0];
+                    if (output_valid) begin
                         d_valid <= 1;
-                        d_last <= in_last;
-                        d_data <= in_data;
-                        if (in_last) stream_state <= D_IDLE;
-                    end
-                    D_OUTPUT: begin
-                        // 分块装载报文头并完成末字节比较预置后，经 5 拍存储读流水连续输出重组后的完整载荷。
-                        d_vl <= output_bank ? bank_vl[23:12] : bank_vl[11:0];
-                        d_sport <= output_bank ? bank_sport[31:16] : bank_sport[15:0];
-                        d_dport <= output_bank ? bank_dport[31:16] : bank_dport[15:0];
-                        d_net <= output_bank ? bank_net[1] : bank_net[0];
-                        if (output_valid) begin
-                            d_valid <= 1;
-                            d_last <= output_last;
-                            d_data <= output_bank ? bank_data[15:8] : bank_data[7:0];
-                            if (output_last) begin
-                                output_release <= output_bank ? 2'b10 : 2'b01;
-                                stream_state <= D_RELEASE;
-                            end
+                        d_last <= output_last;
+                        d_data <= output_bank ? bank_data[15:8] : bank_data[7:0];
+                        if (output_last) begin
+                            output_release <= output_bank ? 2'b10 : 2'b01;
+                            stream_state <= D_RELEASE;
                         end
                     end
-                    D_RELEASE: if (output_bank ? bank_release_done[1] : bank_release_done[0]) stream_state <= D_IDLE;
-                    default: stream_state <= D_IDLE;
+                end
+                D_RELEASE : if (output_bank ? bank_release_done[1] : bank_release_done[0]) stream_state <= D_IDLE;
+                default : stream_state <= D_IDLE;
             endcase
             if (accept_header) begin
                 ready <= 0;
@@ -321,16 +337,17 @@ module afdx_rx_reassembly #(
         end
     end
 `ifndef SYNTHESIS
-    always @(posedge clk) if (!reset) begin
-        if (in_start && !accept_header) begin
-            $display("[RX_ASSERT] header without idle credit");
-            $finish_and_return(1);
+    always @(posedge clk)
+        if (!reset) begin
+            if (in_start && !accept_header) begin
+                $display("[RX_ASSERT] header without idle credit");
+                $finish_and_return(1);
+            end
+            if (in_valid && !(stream_state == D_COPY || stream_state == D_LEGACY)) begin
+                $display("[RX_ASSERT] byte before preparation state=%0d", stream_state);
+                $finish_and_return(1);
+            end
         end
-        if (in_valid && !(stream_state == D_COPY || stream_state == D_LEGACY)) begin
-            $display("[RX_ASSERT] byte before preparation state=%0d", stream_state);
-            $finish_and_return(1);
-        end
-    end
 `endif
 
 endmodule

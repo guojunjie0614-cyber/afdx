@@ -12,13 +12,15 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     output reg  [AW - 1:0] read_address,
     input  wire [7:0]      read_data,
     output reg             read_mode,
-    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
-    input  wire        tx_ready,
-    output wire [7:0]  tx_data,
-    output wire        tx_last,
-    output reg  [6:0]  tx_vl,
-    output reg  [15:0] tx_sport, tx_dport
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *)
+    output reg             tx_valid,
+    input  wire            tx_ready,
+    output wire [7:0]      tx_data,
+    output wire            tx_last,
+    output reg  [6:0]      tx_vl,
+    output reg  [15:0]     tx_sport, tx_dport
 );
+
     // 协议引擎与本模块可能相距很远，跨段输入整组经两级寄存，后续控制只使用第二级。
     // 请求与元数据同样晚两拍，元数据在请求翻转前已稳定并保持到 complete，对齐关系不变。
     (* preserve = 1, dont_merge = 1 *) reg request_p, mode_p;
@@ -59,10 +61,9 @@ module afdx_mgmt_tx #(parameter AW = 10) (
         end
     end
 
-    // Eight queue credits still cover all pending reads and queued bytes.
-    // A take is retired locally one clock later. Subtracting the registered
-    // debt reconstructs exactly the original current credit/head values, so
-    // read issue and public valid retain every original clock under backpressure.
+    // 共 8 个队列信用仍完整覆盖全部在途读与已缓冲字节；
+    // 每次消费延迟一拍在本地归还，减去已寄存欠账即可准确重建当前
+    // 信用与队头指针，使读发起和公开 valid 在反压下保持与原拍序完全一致。
     reg active, packet_request, return_valid;
     reg [AW:0] packet_length, issued;
     (* preserve = 1, dont_merge = 1 *) reg [AW:0] output_left;
@@ -70,24 +71,22 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     reg [2:0] write_pos, read_pos;
     reg [7:0] bytes [0:7];
     (* preserve = 1, dont_merge = 1 *) reg take_q;
-    wire [3:0] queued_current = queued - {3'b0,take_q};
-    wire [3:0] reserved_current = reserved - {3'b0,take_q};
-    wire [2:0] queue_head = read_pos + {2'b0,take_q};
-    wire [AW:0] left_current = output_left - {{AW{1'b0}},take_q};
+    wire [3:0] queued_current = queued - {3'b0, take_q};
+    wire [3:0] reserved_current = reserved - {3'b0, take_q};
+    wire [2:0] queue_head = read_pos + {2'b0, take_q};
+    wire [AW:0] left_current = output_left - {{AW{1'b0}}, take_q};
     wire issue = active && issued < packet_length && reserved_current < 8;
     wire take_armed = active && queued_current != 0;
     wire take = take_armed && (!tx_valid || tx_ready);
     wire pop = tx_valid && tx_ready;
 
-    // There is still only ONE owned public output byte. The other physical
-    // candidate bank samples the queue head while free. A take changes only
-    // ownership/pointers; remote ready never enters either byte FF enable.
-    // Alternating banks allow an occupied byte to stay stable through stalls
-    // and allow a simultaneous pop/take every clock without extra capacity.
+    // 对外有效输出字节同一时刻仍只有一个，另一块物理候选缓冲槽空闲时
+    // 预先采样队头；消费只切换归属与指针，远端 ready 不进入字节 FF 使能。
+    // 双槽交替使当前占用字节在反压停顿时保持稳定，同时支持连续每拍
+    // 完成弹出与消费而不增加额外存储容量。
     reg output_read;
-    // With at most one public byte, valid plus the head bit fully encode
-    // ownership. The next free candidate is the opposite bank while valid.
-    // Removing redundant ownership FFs also removes remote-ready D cones.
+    // 最多只有一个对外字节，valid 与读槽位 bit 即可完整编码归属，
+    // 有效时下一个空闲候选槽即相反编号；去掉冗余归属 FF 与远端 ready 锥。
     wire output_write = output_read ^ tx_valid;
     wire [1:0] output_owned = tx_valid ? (2'b01 << output_read) : 2'b00;
     wire [7:0] output_data [0:1];
@@ -95,23 +94,25 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     assign tx_data = output_data[output_read];
     assign tx_last = tx_valid && output_last[output_read];
     genvar output_bank;
-    generate for (output_bank=0; output_bank<2; output_bank=output_bank+1) begin : candidate
-        (* preserve = 1, dont_merge = 1 *) reg [7:0] data;
-        (* preserve = 1, dont_merge = 1 *) reg last;
-        assign output_data[output_bank] = data;
-        assign output_last[output_bank] = last;
-        always @(posedge clk) begin
-            if (reset) begin
-                data <= 0;
-                last <= 0;
-            end else begin
-                if (!output_owned[output_bank]) begin
-                    data <= bytes[queue_head];
-                    last <= left_current == 1;
+    generate
+        for (output_bank = 0; output_bank < 2; output_bank = output_bank + 1) begin : candidate
+            (* preserve = 1, dont_merge = 1 *) reg [7:0] data;
+            (* preserve = 1, dont_merge = 1 *) reg last;
+            assign output_data[output_bank] = data;
+            assign output_last[output_bank] = last;
+            always @(posedge clk) begin
+                if (reset) begin
+                    data <= 0;
+                    last <= 0;
+                end else begin
+                    if (!output_owned[output_bank]) begin
+                        data <= bytes[queue_head];
+                        last <= left_current == 1;
+                    end
                 end
-                end
+            end
         end
-    end endgenerate
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -176,7 +177,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 read_pos <= 0;
                 take_q <= 0;
                 output_read <= 0;
-                    return_valid <= 0;
+                return_valid <= 0;
                 read_enable <= 0;
                 read_mode <= mode_q;
                 tx_vl <= vl_q;

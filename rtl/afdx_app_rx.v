@@ -45,9 +45,9 @@ module afdx_app_rx (
         else committed <= write_ptr;
     end
     wire [15:0] read_ptr;
-    wire [15:0] used = write_ptr-read_ptr;
+    wire [15:0] used = write_ptr - read_ptr;
     reg [5:0] dw, dr;
-    wire [5:0] descriptors = dw-dr;
+    wire [5:0] descriptors = dw - dr;
     wire first = delivery_valid && !active;
     reg reject;
 
@@ -56,7 +56,7 @@ module afdx_app_rx (
         // 计入寄存准入延迟并按 8192 字节最大消息长度预留缓存余量。
         else reject <= used > 16'd24575 || descriptors >= 30;
     end
-    wire store = delivery_valid && (active ? !discard:!reject);
+    wire store = delivery_valid && (active ? !discard : !reject);
     wire [15:0] map_q;
 
     // 配置写与交付读若在同一输入拍命中同一索引，通过旁路直接使用新写入的 VLID，
@@ -64,32 +64,34 @@ module afdx_app_rx (
     wire map_collision = configuration_write && configuration_index == delivery_index;
     reg map_bypass;
     reg [15:0] map_write_value;
-    afdx_app_map reverse_map(
+    afdx_app_map reverse_map (
         .clk           (clk),
         .write_enable  (configuration_write),
         .write_address (configuration_index),
         .write_data    (configuration_vlid),
         .read_enable   (1'b1),
         .read_address  (delivery_index),
-        .read_data     (map_q));
+        .read_data     (map_q)
+    );
     reg map_pending;
     reg [2:0] state;
     wire q_valid, q_ready;
     wire [15:0] descriptor_id;
-    afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids(
+    afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids (
         .clk           (clk),
         .write_enable  (map_pending),
         .write_address (dw[4:0]),
-        .write_data    (map_bypass ? map_write_value:map_q),
+        .write_data    (map_bypass ? map_write_value : map_q),
         .read_enable   (state == 0 && descriptors != 0 && q_valid),
         .read_address  (dr[4:0]),
-        .read_data     (descriptor_id));
+        .read_data     (descriptor_id)
+    );
     wire read_en;
     wire [14:0] read_addr;
     wire [8:0] memory_q;
 
     // 四组双分块副本并行采样原始字节与末字节标志，下一拍仅在 store 有效时写入。
-    afdx_app_payload #(.EARLY_DATA(1)) payload(
+    afdx_app_payload #(.EARLY_DATA(1)) payload (
         .clk            (clk),
         .reset          (reset),
         .write_enable   (store),
@@ -98,9 +100,10 @@ module afdx_app_rx (
         .read_enable    (read_en),
         .read_address   (read_addr),
         .read_data      (memory_q),
-        .raw_write_data ({app_last, app_data}));
+        .raw_write_data ({app_last, app_data})
+    );
     wire [8:0] q_data;
-    afdx_app_read #(.AW(15), .READ_LATENCY(4)) reader(
+    afdx_app_read #(.AW(15), .READ_LATENCY(4)) reader (
         .clk          (clk),
         .reset        (reset),
         .limit        (committed),
@@ -110,7 +113,8 @@ module afdx_app_rx (
         .read_data    (memory_q),
         .valid        (q_valid),
         .ready        (q_ready),
-        .data         (q_data));
+        .data         (q_data)
+    );
 
     always @(posedge clk) begin
         if (reset) begin
@@ -128,12 +132,12 @@ module afdx_app_rx (
             map_pending <= first && !reject;
             map_bypass <= map_collision;
             map_write_value <= configuration_vlid;
-            if (map_pending) dw <= dw+1'b1;
+            if (map_pending) dw <= dw + 1'b1;
             if (delivery_valid) begin
                 active <= !delivery_last;
                 if (first) discard <= reject;
             end
-            if (store) write_ptr <= write_ptr+1'b1;
+            if (store) write_ptr <= write_ptr + 1'b1;
         end
     end
     reg [15:0] id;
@@ -151,31 +155,31 @@ module afdx_app_rx (
             valid <= 0;
             data <= 0;
             case (state)
-                    0:if (descriptors != 0 && q_valid) state <= 5;
-                    5:begin
-                        id <= descriptor_id;
-                        state <= 1;
+                0 : if (descriptors != 0 && q_valid) state <= 5;
+                5 : begin
+                    id <= descriptor_id;
+                    state <= 1;
+                end
+                1 : begin
+                    valid <= 1;
+                    data <= id[15:8];
+                    state <= 2;
+                end
+                2 : begin
+                    valid <= 1;
+                    data <= id[7:0];
+                    state <= 3;
+                end
+                3 : if (q_valid) begin
+                    valid <= 1;
+                    data <= q_data[7:0];
+                    if (q_data[8]) begin
+                        dr <= dr + 1'b1;
+                        state <= 4;
                     end
-                    1:begin
-                        valid <= 1;
-                        data <= id[15:8];
-                        state <= 2;
-                    end
-                    2:begin
-                        valid <= 1;
-                        data <= id[7:0];
-                        state <= 3;
-                    end
-                    3:if (q_valid) begin
-                        valid <= 1;
-                        data <= q_data[7:0];
-                        if (q_data[8]) begin
-                            dr <= dr+1'b1;
-                            state <= 4;
-                        end
-                    end
-                    4:state <= 0;
-                    default:state <= 0;
+                end
+                4 : state <= 0;
+                default : state <= 0;
             endcase
         end
     end

@@ -1,6 +1,9 @@
 // 同步 RAM 的连续预取队列；计入在途读，反压时保留已经发出的读。
-module afdx_app_read #(parameter AW = 12, parameter READ_LATENCY = 1,
-    parameter PREDICT_LIMIT = 0) (
+module afdx_app_read #(
+    parameter AW            = 12,
+    parameter READ_LATENCY  = 1,
+    parameter PREDICT_LIMIT = 0
+) (
     input  wire          clk, reset,
     input  wire [AW:0]   limit,
     output reg  [AW:0]   pointer,
@@ -26,16 +29,17 @@ module afdx_app_read #(parameter AW = 12, parameter READ_LATENCY = 1,
     reg [8:0] bytes[0:7];
     wire available;
     wire issue = available && reserved < 8;
-    wire [AW:0] pointer_step = pointer+{{AW{1'b0}}, 1'b1};
+    wire [AW:0] pointer_step = pointer + {{AW{1'b0}}, 1'b1};
 
-    generate if (PREDICT_LIMIT) begin : predict_limit
+    generate
+        if (PREDICT_LIMIT) begin : predict_limit
             (* preserve = 1, dont_merge = 1 *) reg available_q;
             // 提前并行比较当前指针与步进指针，再按本拍是否发起读操作选择寄存结果。
             wire current_available = pointer != next_limit;
             wire step_available = pointer_step != next_limit;
             always @(posedge clk) begin
                 if (reset) available_q <= 0;
-                else available_q <= issue ? step_available:current_available;
+                else available_q <= issue ? step_available : current_available;
             end
             assign available = available_q;
         end
@@ -52,7 +56,7 @@ module afdx_app_read #(parameter AW = 12, parameter READ_LATENCY = 1,
     reg output_wr, output_rd;
     reg [1:0] output_count;
     assign valid = output_count != 0;
-    assign data = output_rd ? output1:output0;
+    assign data = output_rd ? output1 : output0;
     wire take = valid && ready;
     (* preserve = 1, dont_merge = 1 *) reg take_q;
     wire refill = queued != 0 && output_count < 2;
@@ -75,30 +79,31 @@ module afdx_app_read #(parameter AW = 12, parameter READ_LATENCY = 1,
         else begin
             take_q <= take;
             pending[0] <= issue;
-            for (stage = 1;stage < READ_LATENCY;stage = stage+1) pending[stage] <= pending[stage-1];
+            for (stage = 1; stage < READ_LATENCY; stage = stage + 1)
+                pending[stage] <= pending[stage-1];
             if (issue) pointer <= pointer_step;
             case ({issue, take_q})
-                    2'b10:reserved <= reserved+1'b1;
-                    2'b01:reserved <= reserved-1'b1;
+                2'b10 : reserved <= reserved + 1'b1;
+                2'b01 : reserved <= reserved - 1'b1;
             endcase
             case ({response, refill})
-                    2'b10:queued <= queued+1'b1;
-                    2'b01:queued <= queued-1'b1;
+                2'b10 : queued <= queued + 1'b1;
+                2'b01 : queued <= queued - 1'b1;
             endcase
             // 保留推断队列存储器的写数据输入门控隔离。
             if (response) begin
                 bytes[wr] <= response ? read_data : 9'b0;
-                wr <= wr+1'b1;
+                wr <= wr + 1'b1;
             end
             case ({refill, take})
-                    2'b10:output_count <= output_count+1'b1;
-                    2'b01:output_count <= output_count-1'b1;
+                2'b10 : output_count <= output_count + 1'b1;
+                2'b01 : output_count <= output_count - 1'b1;
             endcase
             if (refill) begin
                 if (output_wr) output1 <= bytes[rd];
                 else output0 <= bytes[rd];
                 output_wr <= !output_wr;
-                rd <= rd+1'b1;
+                rd <= rd + 1'b1;
             end
             if (take) output_rd <= !output_rd;
         end

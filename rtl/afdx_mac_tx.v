@@ -3,7 +3,6 @@
 // 本模块用于赛题的以太网发送，并保证两帧之间的空闲时间。
 // FCS（Frame Check Sequence，帧校验序列）用于让接收方检查帧内容。
 module afdx_mac_tx #(parameter READY_COPIES = 1) (
-
     // byte_en 为高时推进一个字节，当前顶层每拍都为高。
     input  wire                      clk, reset, byte_en,
 
@@ -24,7 +23,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     output reg  [7:0]                tx_data_a,
     output reg                       tx_valid_a,
     output reg  [7:0]                tx_data_b,
-    output reg                       tx_valid_b);
+    output reg                       tx_valid_b
+);
 
     localparam GAP = 3'd0, PREAMBLE = 3'd1, DATA = 3'd2, FCS = 3'd3, DRAIN = 3'd4;
 
@@ -37,8 +37,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
     // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
-    // Three remaining bytes follow the byte emitted on FCS entry.
-    // A shift token exposes terminal status directly, without counter decode.
+    // 进入 FCS 状态发出首字节后还剩 3 个字节，使用移位令牌直接
+    // 指示结束状态，省去计数器译码逻辑。
     reg [2:0] fcs_remaining;
     reg [6:0] gap_left;
 
@@ -106,8 +106,8 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
             tx_eof <= 0;
             tx_underrun <= 0;
             if (gap_left != 0) gap_left <= gap_left - 1'b1;
-            // Entry loads below override these otherwise free-running shifts.
-            // Neither terminal status nor FSM state gates the stored CRC bits.
+            // 下方进入 FCS 时的装载分支会覆盖此处的自由移位；
+            // 终止标记与状态机状态均不再门控寄存中的 CRC 比特使能。
             if (byte_en) begin
                 fcs_a <= {8'b0, fcs_a[31:8]};
                 fcs_b <= {8'b0, fcs_b[31:8]};
@@ -162,29 +162,29 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             fcs_remaining <= 3'b111;
                             tx_data_a <= en_a ? crc_a[7:0] : 8'd0;
                             tx_data_b <= en_b ? crc_b[7:0] : 8'd0;
-                            fcs_a <= { 8'b0, crc_a[31:8] };
-                            fcs_b <= { 8'b0, crc_b[31:8] };
+                            fcs_a <= {8'b0, crc_a[31:8]};
+                            fcs_b <= {8'b0, crc_b[31:8]};
                         end
                     end
 
                     // DATA：逐字节发送内容，末字节或上游缺字节时转 FCS。
                     DATA : begin
-                        if (last_byte || ! s_valid) begin
+                        if (last_byte || !s_valid) begin
                             state <= FCS;
                             fcs_remaining <= 3'b111;
                             if (last_byte) begin
-                                tx_data_a <= en_a ? ~ crc_a[7:0] : 8'd0;
-                                tx_data_b <= en_b ? ~ crc_b[7:0] : 8'd0;
-                                fcs_a <= { 8'b0, ~ crc_a[31:8] };
-                                fcs_b <= { 8'b0, ~ crc_b[31:8] };
+                                tx_data_a <= en_a ? ~crc_a[7:0] : 8'd0;
+                                tx_data_b <= en_b ? ~crc_b[7:0] : 8'd0;
+                                fcs_a <= {8'b0, ~crc_a[31:8]};
+                                fcs_b <= {8'b0, ~crc_b[31:8]};
                             end
                             else begin
                                 tx_underrun <= 1;
                                 discard_tail <= 1;
                                 tx_data_a <= en_a ? crc_a[7:0] : 8'd0;
                                 tx_data_b <= en_b ? crc_b[7:0] : 8'd0;
-                                fcs_a <= { 8'b0, crc_a[31:8] };
-                                fcs_b <= { 8'b0, crc_b[31:8] };
+                                fcs_a <= {8'b0, crc_a[31:8]};
+                                fcs_b <= {8'b0, crc_b[31:8]};
                             end
                         end
                         else begin
@@ -209,7 +209,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                             gap_left <= 11;
                         end
                         else begin
-                            fcs_remaining <= {fcs_remaining[1:0],1'b0};
+                            fcs_remaining <= {fcs_remaining[1:0], 1'b0};
                             tx_data_a <= en_a ? fcs_a[7:0] : 8'd0;
                             tx_data_b <= en_b ? fcs_b[7:0] : 8'd0;
                         end

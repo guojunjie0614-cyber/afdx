@@ -899,9 +899,9 @@ next_error_position = packet_pos - 10'd4;
                             candidate_source[PK_LUS] <= 1;
                             candidate_address[PK_LUS] <= header_name_addr + head_index;
                         end
-                        else if ( ! download_mode && build_position[PK_LUS] == lus_partlen_pos)
+                        else if ( !download_mode && build_position[PK_LUS] == lus_partlen_pos)
                             candidate_byte[PK_LUS] <= part_len;
-                        else if ( ! download_mode && build_position[PK_LUS] >= lus_part_pos
+                        else if ( !download_mode && build_position[PK_LUS] >= lus_part_pos
                             && build_position[PK_LUS] < lus_tail_pos) begin
                                 candidate_read[PK_LUS] <= 1;
                                 candidate_source[PK_LUS] <= 1;
@@ -1623,14 +1623,14 @@ next_error_position = packet_pos - 10'd4;
                         next_wait_kind = 3'd2;
                         make_packet (PK_ACK, TFTP_HEADER_BYTES, tid_sequence, command_sport, WAIT_PACKET);
                     end
-                    else if ( ! request_write) begin
+                    else if ( !request_write) begin
                         next_status = 2'd1;
                         next_reason = 8'd0;
                         next_download_mode = request_download;
                         next_main_peer = command_sport;
                         next_main_tid = tid_sequence;
                         next_tid_sequence = tid_sequence + 1'b1;
-                        if ( ! request_download) begin
+                        if ( !request_download) begin
                             next_loaded = 0;
                             next_available_size = 0;
                         end
@@ -2138,7 +2138,7 @@ next_error_position = packet_pos - 10'd4;
                 end
 
                 // HEADER_PTR_CHECK：合法时开始 HEADER_CRC，否则报告失败。
-                HEADER_PTR_CHECK : if ( ! header_pointer_ok) fail (REASON_DESCRIPTION);
+                HEADER_PTR_CHECK : if ( !header_pointer_ok) fail (REASON_DESCRIPTION);
                 else begin
                     next_header_pointer = number[10:0] << 1;
                     next_header_crc = CRC16_INIT;
@@ -2273,16 +2273,15 @@ next_error_position = packet_pos - 10'd4;
             deny_we <= next_deny_we;
             deny_wa <= next_deny_wa;
             deny_wd <= next_deny_wd;
-            // Capture the exact mode used by denial_byte on this command.
-            // The integrated RAM consumer decodes locally from address/mode.
+            // 锁存本次命令生成拒绝应答字节所需的精确模式；
+            // 集成侧在 RAM 消费端根据地址与模式本地译码。
             deny_format <= {protocol_a4,deny_empty,deny_unsupported};
             status <= next_status;
         end
     end
     end
-    // Reason updates are mutually exclusive state-qualified events. Keep
-    // this small status register out of the large protocol next-state mux;
-    // no event or CE moves to a different clock.
+    // reason 更新属于互斥的状态限定事件，将这个小状态寄存器从
+    // 庞大的协议次态多路选择器中拆出，事件判定与 CE 相位均不移拍。
     wire local_description_event =
         (state==NAME_BYTE && !name_mark && !name_option && name_bad) ||
         (state==LUR_LENGTH && !number_metadata_ok) ||

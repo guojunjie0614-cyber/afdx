@@ -3,41 +3,51 @@
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
 // 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
-module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, CE_BANKS = 72,
-    CFG_WRITE_SELECT = 0, READY_PREDICT = 0, CFG_READY_PREDICT = 0, CFG_READY_TERMS = 0) (
-
+module afdx_615a #(
+    parameter LOCAL_RX_PORT = 0,
+    SPLIT_CFG_ADDR          = 0,
+    CE_DIV                  = 2,
+    CE_BANKS                = 72,
+    CFG_WRITE_SELECT        = 0,
+    READY_PREDICT           = 0,
+    CFG_READY_PREDICT       = 0,
+    CFG_READY_TERMS         = 0
+) (
     // enable 为高且配置已启用时，模块才接受加卸载请求。
-    input  wire                                                              clk, reset, enable,
-    input  wire                                                              enable_next,
-    input  wire [CE_BANKS - 1:0]                                             ce,
+    input  wire                  clk, reset, enable,
+    input  wire                  enable_next,
+    input  wire [CE_BANKS - 1:0] ce,
 
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
-    input  wire                                                              cfg_we,
-    // The raw write request is already qualified by the full loader group.
-    input  wire                                                              cfg_ready_next, cfg_write_request,
-    input  wire                                                              cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
-    input  wire [6:0]                                                        cfg_wr_sel,
+    input  wire                  cfg_we,
+    // 原始写请求已由完整的加载器地址组条件约束。
+    input  wire                  cfg_ready_next, cfg_write_request,
+    input  wire                  cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
+    input  wire [6:0]            cfg_wr_sel,
     input  wire [(SPLIT_CFG_ADDR == 2 ? 15 : SPLIT_CFG_ADDR ? 11 : 8) - 1:0] cfg_addr,
-    input  wire [31:0]                                                       cfg_wdata,
-    output reg  [31:0]                                                       cfg_rdata, cfg_extra_data,
+    input  wire [31:0]           cfg_wdata,
+    output reg  [31:0]           cfg_rdata, cfg_extra_data,
 
     // tx_valid 和 tx_ready 同为高时发送一个报文字节。
     // tx_last 标记末字节，tx_vl 选择发送配置，tx_sport/dport 给出两端端口。
-    output wire                                                              tx_valid,
-    input  wire                                                              tx_ready,
-    output wire [7:0]                                                        tx_data,
-    output wire                                                              tx_last,
-    output wire [6:0]                                                        tx_vl,
-    output wire [15:0]                                                       tx_sport, tx_dport,
+    output wire                  tx_valid,
+    input  wire                  tx_ready,
+    output wire [7:0]            tx_data,
+    output wire                  tx_last,
+    output wire [6:0]            tx_vl,
+    output wire [15:0]           tx_sport, tx_dport,
 
     // rx_valid 为高时必须接收当前字节，rx_last 标记报文末字节。
     // 目的端口匹配当前服务或传输任务时，rx_claim 为高。
-    input  wire                                                              rx_valid,
-    input  wire [7:0]                                                        rx_data,
-    input  wire                                                              rx_last,
-    input  wire [15:0]                                                       rx_sport, rx_dport,
-    output wire                                                              rx_claim);
+    input  wire                  rx_valid,
+    input  wire [7:0]            rx_data,
+    input  wire                  rx_last,
+    input  wire [15:0]           rx_sport, rx_dport,
+    output wire                  rx_claim
+);
+
+    // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
     wire [1:0] engine_status;
     wire [15:0] engine_main_tid;
@@ -47,7 +57,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
-    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0) +: 8];
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7:SPLIT_CFG_ADDR ? 3:0)+:8];
 
     // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
@@ -62,25 +72,27 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [6:0] field_ready;
     wire configuration_ready_d = CFG_READY_TERMS
         ? (cfg_ready_base || (cfg_ready_rx_term && cfg_ready_rx_ack)) : cfg_ready_next;
-    generate if(CFG_READY_PREDICT || CFG_READY_TERMS) begin : configuration_ready
-        (* preserve = 1, dont_merge = 1 *) reg [6:0] ready_q;
-        always @(posedge clk) begin
-            if(reset) ready_q<=0;
-            else ready_q<={7{configuration_ready_d}};
+    generate
+        if (CFG_READY_PREDICT || CFG_READY_TERMS) begin : configuration_ready
+            (* preserve = 1, dont_merge = 1 *) reg [6:0] ready_q;
+            always @(posedge clk) begin
+                if (reset) ready_q <= 0;
+                else ready_q <= {7{configuration_ready_d}};
+            end
+            assign field_ready = ready_q;
+        end else begin : external_configuration
+            assign field_ready = 7'b0;
         end
-        assign field_ready=ready_q;
-    end else begin : external_configuration
-        assign field_ready=7'b0;
-    end endgenerate
+    endgenerate
     wire [6:0] cfg_write_sel = (CFG_READY_PREDICT || CFG_READY_TERMS) ? {
-        field_ready[6] && cfg_write_request && cfg_write_addr==REG_VERSION,
-        field_ready[5] && cfg_write_request && cfg_write_addr==REG_RETRY_LIMIT,
-        field_ready[4] && cfg_write_request && cfg_write_addr==REG_TIMEOUT,
-        field_ready[3] && cfg_write_request && cfg_write_addr==REG_REQUEST_PORT,
-        field_ready[2] && cfg_write_request && cfg_write_addr==REG_MEMORY_ADDRESS,
-        field_ready[1] && cfg_write_request && cfg_write_addr==REG_TX_VL,
-        field_ready[0] && cfg_write_request && cfg_write_addr==REG_ENABLE
-    } : CFG_WRITE_SELECT ? cfg_wr_sel : {
+        field_ready[6] && cfg_write_request && cfg_write_addr == REG_VERSION,
+        field_ready[5] && cfg_write_request && cfg_write_addr == REG_RETRY_LIMIT,
+        field_ready[4] && cfg_write_request && cfg_write_addr == REG_TIMEOUT,
+        field_ready[3] && cfg_write_request && cfg_write_addr == REG_REQUEST_PORT,
+        field_ready[2] && cfg_write_request && cfg_write_addr == REG_MEMORY_ADDRESS,
+        field_ready[1] && cfg_write_request && cfg_write_addr == REG_TX_VL,
+        field_ready[0] && cfg_write_request && cfg_write_addr == REG_ENABLE
+        } : CFG_WRITE_SELECT ? cfg_wr_sel : {
         cfg_we && cfg_write_addr == REG_VERSION,
         cfg_we && cfg_write_addr == REG_RETRY_LIMIT,
         cfg_we && cfg_write_addr == REG_TIMEOUT,
@@ -88,7 +100,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         cfg_we && cfg_write_addr == REG_MEMORY_ADDRESS,
         cfg_we && cfg_write_addr == REG_TX_VL,
         cfg_we && cfg_write_addr == REG_ENABLE
-    };
+        };
 
     reg configured, protocol_a4;
     reg [6:0] configured_vl;
@@ -103,19 +115,21 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     reg [31:0] retry_total;
     reg consume_q, consume_previous;
     reg rx_we, packet_pending, receiving;
-    // Integrated next-state input is the original enable register's D.
-    // Copies therefore equal enable on every clock, rather than delaying it.
+    // 集成输入的次态即原 enable 寄存器的 D 端，
+    // 因此各本地副本每拍都与 enable 完全同值，不会延后一拍。
     wire [2:0] local_ready;
-    generate if(READY_PREDICT) begin : ready_prediction
-        (* preserve = 1, dont_merge = 1 *) reg [2:0] ready_q;
-        always @(posedge clk) begin
-            if(reset) ready_q<=0;
-            else ready_q<={3{enable_next}};
+    generate
+        if (READY_PREDICT) begin : ready_prediction
+            (* preserve = 1, dont_merge = 1 *) reg [2:0] ready_q;
+            always @(posedge clk) begin
+                if (reset) ready_q <= 0;
+                else ready_q <= {3{enable_next}};
+            end
+            assign local_ready = ready_q;
+        end else begin : external_ready
+            assign local_ready = {3{enable}};
         end
-        assign local_ready=ready_q;
-    end else begin : external_ready
-        assign local_ready={3{enable}};
-    end endgenerate
+    endgenerate
     (* preserve = 1, dont_merge = 1 *) reg [9:0] rx_wa;
     reg [9:0] rx_index, rx_length;
     // 块号字节的前瞻译码随接收索引一起更新；无有效字节时保持，允许字节间有空拍。
@@ -133,70 +147,78 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         if (reset) request_config_idle <= 1;
         else request_config_idle <= engine_status != ST_BUSY;
     end
-    // Predict exactly the port registers written on this edge.  The second
-    // comparison stage therefore sees the same target as the original full
-    // comparison, including a simultaneous configuration or engine update.
+
+    // 精确预测本拍时钟沿将写入的端口寄存器；下一拍二级比较
+    // 因此看到与原完整比较逻辑完全一致的目标值（含同时发生配置
+    // 写入或协议引擎更新的情况）。
     wire request_port_request = (CFG_READY_PREDICT || CFG_READY_TERMS)
-        ? cfg_write_request && cfg_write_addr==REG_REQUEST_PORT : cfg_write_sel[3];
+        ? cfg_write_request && cfg_write_addr == REG_REQUEST_PORT : cfg_write_sel[3];
     wire timeout_request = (CFG_READY_PREDICT || CFG_READY_TERMS)
-        ? cfg_write_request && cfg_write_addr==REG_TIMEOUT : cfg_write_sel[4];
+        ? cfg_write_request && cfg_write_addr == REG_TIMEOUT : cfg_write_sel[4];
     wire [3:0] request_write_allowed, timeout_write_allowed;
     genvar permit_byte;
-    generate for(permit_byte=0;permit_byte<4;permit_byte=permit_byte+1) begin : field_permit
-        if(CFG_READY_PREDICT || CFG_READY_TERMS) begin : prediction
-            (* preserve=1,dont_merge=1 *) reg request_allowed, timeout_allowed;
+    generate
+        for (permit_byte = 0; permit_byte < 4; permit_byte = permit_byte + 1) begin : field_permit
+            if (CFG_READY_PREDICT || CFG_READY_TERMS) begin : prediction
+                (* preserve = 1, dont_merge = 1 *) reg request_allowed, timeout_allowed;
+                always @(posedge clk) begin
+                    if (reset) begin
+                        request_allowed <= 0;
+                        timeout_allowed <= 0;
+                    end
+                    else begin
+                        request_allowed <= configuration_ready_d && engine_status != ST_BUSY;
+                        timeout_allowed <= configuration_ready_d && engine_status != ST_BUSY;
+                    end
+                end
+                assign request_write_allowed[permit_byte] = request_allowed;
+                assign timeout_write_allowed[permit_byte] = timeout_allowed;
+            end else begin : external_fields
+                assign request_write_allowed[permit_byte] = request_config_idle;
+                assign timeout_write_allowed[permit_byte] = status != ST_BUSY;
+            end
             always @(posedge clk) begin
-                if(reset) begin request_allowed<=0;timeout_allowed<=0;end
-                else begin
-                    request_allowed<=configuration_ready_d && engine_status!=ST_BUSY;
-                    timeout_allowed<=configuration_ready_d && engine_status!=ST_BUSY;
+                if (reset) timeout_cycles[permit_byte*8+:8] <= DEFAULT_TIMEOUT_CYCLES[permit_byte*8+:8];
+                else if (timeout_write_allowed[permit_byte] && timeout_request && cfg_wdata != 0)
+                    timeout_cycles[permit_byte*8+:8] <= cfg_wdata[permit_byte*8+:8];
+            end
+        end
+    endgenerate
+    genvar port_byte, port_pair;
+    generate
+        for (port_byte = 0; port_byte < 4; port_byte = port_byte + 1) begin : port_compare
+            always @(posedge clk) begin
+                if (reset) begin
+                    request_byte_match[port_byte] <= 0;
+                end else begin
+                    request_byte_match[port_byte] <=
+                        (request_write_allowed[port_byte] && request_port_request && cfg_wdata[15:0] != 0 &&
+                        rx_dport[port_byte*4+:4] == cfg_wdata[port_byte*4+:4]) ||
+                        (!(request_write_allowed[port_byte] && request_port_request && cfg_wdata[15:0] != 0) &&
+                        rx_dport[port_byte*4+:4] == request_port[port_byte*4+:4]);
                 end
             end
-            assign request_write_allowed[permit_byte]=request_allowed;
-            assign timeout_write_allowed[permit_byte]=timeout_allowed;
-        end else begin : external_fields
-            assign request_write_allowed[permit_byte]=request_config_idle;
-            assign timeout_write_allowed[permit_byte]=status!=ST_BUSY;
         end
-        always @(posedge clk) begin
-            if(reset) timeout_cycles[permit_byte*8+:8]<=DEFAULT_TIMEOUT_CYCLES[permit_byte*8+:8];
-            else if(timeout_write_allowed[permit_byte] && timeout_request && cfg_wdata!=0)
-                timeout_cycles[permit_byte*8+:8]<=cfg_wdata[permit_byte*8+:8];
-        end
-    end endgenerate
-    genvar port_byte, port_pair;
-    generate for (port_byte=0; port_byte<4; port_byte=port_byte+1) begin : port_compare
-        always @(posedge clk) begin
-            if (reset) begin
-                request_byte_match[port_byte]<=0;
-            end else begin
-                request_byte_match[port_byte]<=
-                    (request_write_allowed[port_byte] && request_port_request && cfg_wdata[15:0]!=0 &&
-                        rx_dport[port_byte*4+:4]==cfg_wdata[port_byte*4+:4]) ||
-                    (!(request_write_allowed[port_byte] && request_port_request && cfg_wdata[15:0]!=0) &&
-                        rx_dport[port_byte*4+:4]==request_port[port_byte*4+:4]);
+        for (port_pair = 0; port_pair < 8; port_pair = port_pair + 1) begin : tid_pair_compare
+            always @(posedge clk) begin
+                if (reset) begin
+                    main_pair_match[port_pair] <= 0;
+                    status_pair_match[port_pair] <= 0;
+                    deny_pair_match[port_pair] <= 0;
+                end else begin
+                    main_pair_match[port_pair] <= rx_dport[port_pair*2+:2] == engine_main_tid[port_pair*2+:2];
+                    status_pair_match[port_pair] <= rx_dport[port_pair*2+:2] == engine_status_tid[port_pair*2+:2];
+                    deny_pair_match[port_pair] <= rx_dport[port_pair*2+:2] == engine_deny_tid[port_pair*2+:2];
+                end
             end
         end
-    end
-    for (port_pair=0; port_pair<8; port_pair=port_pair+1) begin : tid_pair_compare
-        always @(posedge clk) begin
-            if (reset) begin
-                main_pair_match[port_pair]<=0;
-                status_pair_match[port_pair]<=0;
-                deny_pair_match[port_pair]<=0;
-            end else begin
-                main_pair_match[port_pair]<=rx_dport[port_pair*2+:2]==engine_main_tid[port_pair*2+:2];
-                status_pair_match[port_pair]<=rx_dport[port_pair*2+:2]==engine_status_tid[port_pair*2+:2];
-                deny_pair_match[port_pair]<=rx_dport[port_pair*2+:2]==engine_deny_tid[port_pair*2+:2];
-            end
-        end
-    end endgenerate
+    endgenerate
     wire svc_port_match = svc_request_match || svc_main_match || svc_status_match || svc_deny_match;
     wire [15:0] incoming_port = LOCAL_RX_PORT ? rx_port_local : rx_dport;
     wire send_complete, tx_re, read_mode;
     wire [9:0] tx_ra;
     wire [7:0] tx_q, deny_q;
-    wire  consume;
+    wire consume;
 `ifndef MODEL_TECH
     wire [1:0] engine_status;
 `endif
@@ -215,31 +237,31 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 `endif
     wire [15:0] engine_tx_sport;
     wire [15:0] engine_tx_dport;
-    wire  send_request;
-    wire  send_mode;
+    wire send_request;
+    wire send_mode;
     wire [10:0] send_length;
-    wire  deny_we;
+    wire deny_we;
     wire [4:0] deny_wa;
     wire [2:0] deny_format;
-    wire  rx_re;
+    wire rx_re;
     wire [9:0] rx_ra;
-    wire  tx_we;
+    wire tx_we;
     wire [9:0] tx_wa;
     wire [7:0] tx_wd;
-    wire  lur_we;
+    wire lur_we;
     wire [8:0] lur_wa;
     wire [7:0] lur_wd;
-    wire  lur_re;
+    wire lur_re;
     wire [8:0] lur_ra;
-    wire  hdr_we;
+    wire hdr_we;
     wire [10:0] hdr_wa;
     wire [7:0] hdr_wd;
-    wire  hdr_re;
+    wire hdr_re;
     wire [10:0] hdr_ra;
-    wire  load_we;
+    wire load_we;
     wire [12:0] load_wa;
     wire [7:0] load_wd;
-    wire  load_re;
+    wire load_re;
     wire [12:0] load_ra;
     wire [7:0] rx_q;
     wire [7:0] lur_q;
@@ -248,30 +270,30 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     // 配置采样单独跨一拍，给 RAM 读口到配置读回区之间留下寄存级。
     // 引擎仍直接使用 load_q；只把寄存器 5 的采样更新推迟一拍。
     (* preserve = 1, dont_merge = 1 *) reg [7:0] load_sample_local;
-    reg  ram_deny_we, cmd_deny_we;
+    reg ram_deny_we, cmd_deny_we;
     reg [4:0] ram_deny_wa, cmd_deny_wa;
     reg [7:0] ram_deny_wd;
     reg [2:0] cmd_deny_format;
-    reg  ram_rx_re, cmd_rx_re;
+    reg ram_rx_re, cmd_rx_re;
     reg [9:0] ram_rx_ra, cmd_rx_ra;
-    reg  ram_tx_we, cmd_tx_we;
+    reg ram_tx_we, cmd_tx_we;
     reg [9:0] ram_tx_wa, cmd_tx_wa;
     reg [7:0] ram_tx_wd, cmd_tx_wd;
-    reg  ram_lur_we, cmd_lur_we;
+    reg ram_lur_we, cmd_lur_we;
     reg [8:0] ram_lur_wa, cmd_lur_wa;
     reg [7:0] ram_lur_wd, cmd_lur_wd;
-    reg  ram_lur_re, cmd_lur_re;
+    reg ram_lur_re, cmd_lur_re;
     reg [8:0] ram_lur_ra, cmd_lur_ra;
-    reg  ram_hdr_we, cmd_hdr_we;
+    reg ram_hdr_we, cmd_hdr_we;
     reg [10:0] ram_hdr_wa, cmd_hdr_wa;
     reg [7:0] ram_hdr_wd, cmd_hdr_wd;
-    reg  ram_hdr_re, cmd_hdr_re;
+    reg ram_hdr_re, cmd_hdr_re;
     wire [10:0] ram_hdr_ra;
     reg [10:0] cmd_hdr_ra;
-    reg  ram_load_we, cmd_load_we;
+    reg ram_load_we, cmd_load_we;
     reg [12:0] ram_load_wa, cmd_load_wa;
     reg [7:0] ram_load_wd, cmd_load_wd;
-    reg  ram_load_re, cmd_load_re;
+    reg ram_load_re, cmd_load_re;
     reg [12:0] ram_load_ra, cmd_load_ra;
     always @(posedge clk) begin
         if (reset) begin
@@ -294,7 +316,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
 
     wire local_port_claim = configured && (LOCAL_RX_PORT ? svc_port_match
         : (rx_dport == request_port || rx_dport == main_tid || rx_dport == status_tid
-            || rx_dport == deny_tid));
+        || rx_dport == deny_tid));
     assign rx_claim = local_ready[0] && local_port_claim;
     wire index_byte = rx_valid && (receiving ||
         (local_ready[1] && local_port_claim && !packet_pending));
@@ -330,7 +352,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 peer_sp <= rx_sport;
                 peer_dp <= incoming_port;
             end
-            if (rx_valid && (receiving || (rx_claim && ! packet_pending))) begin
+            if (rx_valid && (receiving || (rx_claim && !packet_pending))) begin
                 rx_we <= 1;
                 if (rx_last) begin
                     receiving <= 0;
@@ -344,22 +366,29 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     end
 
     always @(posedge clk) begin
-        if(reset) begin
-            rx_index<=0;capture_op_q<=0;capture_hi_q<=0;capture_lo_q<=0;
-        end else if(index_byte) begin
-            if(rx_last) begin
-                rx_index<=0;capture_op_q<=0;capture_hi_q<=0;capture_lo_q<=0;
+        if (reset) begin
+            rx_index <= 0;
+            capture_op_q <= 0;
+            capture_hi_q <= 0;
+            capture_lo_q <= 0;
+        end else if (index_byte) begin
+            if (rx_last) begin
+                rx_index <= 0;
+                capture_op_q <= 0;
+                capture_hi_q <= 0;
+                capture_lo_q <= 0;
             end else begin
-                rx_index<=rx_index+1'b1;
-                capture_op_q<=rx_index==0;
-                capture_hi_q<=rx_index==1;
-                capture_lo_q<=rx_index==2;
+                rx_index <= rx_index + 1'b1;
+                capture_op_q <= rx_index == 0;
+                capture_hi_q <= rx_index == 1;
+                capture_lo_q <= rx_index == 2;
             end
         end
     end
+
     always @(posedge clk) begin
-        if(reset) rx_length<=0;
-        else if(length_byte && rx_last) rx_length<=rx_index+1'b1;
+        if (reset) rx_length <= 0;
+        else if (length_byte && rx_last) rx_length <= rx_index + 1'b1;
     end
 
     // 配置读口保持两拍协议，加载区空闲读也保持主时钟速度。
@@ -403,76 +432,84 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             if (cfg_write_sel[3] && status != ST_BUSY && cfg_wdata[15:0] != 0) request_port <= cfg_wdata[15:0];
             if (cfg_write_sel[5] && status != ST_BUSY) retry_limit <= cfg_wdata[7:0];
             if (cfg_write_sel[6] && status != ST_BUSY && (cfg_wdata[15:0] == VERSION_A3
-                || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
+                    || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
             if (SPLIT_CFG_ADDR != 2) begin
-            case (cfg_addr[2:0])
-                0 : cfg_rdata <= { 31'b0, configured };
-                1 : cfg_rdata <= { 25'b0, configured_vl };
-                2 : cfg_rdata <= { 16'b0, reason, 6'b0, status };
-                3 : cfg_rdata <= { 18'b0, loaded };
-                4 : cfg_rdata <= { 19'b0, memory_addr };
-                5 : cfg_rdata <= { 24'b0, load_sample };
-                6 : cfg_rdata <= { 16'b0, lus_counter };
-                7 : cfg_rdata <= retry_total;
-            endcase
+                case (cfg_addr[2:0])
+                    0 : cfg_rdata <= {31'b0, configured};
+                    1 : cfg_rdata <= {25'b0, configured_vl};
+                    2 : cfg_rdata <= {16'b0, reason, 6'b0, status};
+                    3 : cfg_rdata <= {18'b0, loaded};
+                    4 : cfg_rdata <= {19'b0, memory_addr};
+                    5 : cfg_rdata <= {24'b0, load_sample};
+                    6 : cfg_rdata <= {16'b0, lus_counter};
+                    7 : cfg_rdata <= retry_total;
+                endcase
             end
             if (SPLIT_CFG_ADDR != 2) begin
-            case (cfg_addr[2:0])
-                0 : cfg_extra_data <= { 16'b0, request_port };
-                1 : cfg_extra_data <= timeout_cycles;
-                2 : cfg_extra_data <= { 24'b0, retry_limit };
-                3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
-                default : cfg_extra_data <= 0;
-            endcase
+                case (cfg_addr[2:0])
+                    0 : cfg_extra_data <= {16'b0, request_port};
+                    1 : cfg_extra_data <= timeout_cycles;
+                    2 : cfg_extra_data <= {24'b0, retry_limit};
+                    3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
+                    default : cfg_extra_data <= 0;
+                endcase
             end
         end
     end
-    // A denial byte is a ROM of the command address and three mode bits.
-    // Decode at its RAM consumer instead of transporting a decoded byte
-    // from the distant shared protocol engine and registering it again.
+
+    // 拒绝应答字节本质上是由命令地址与三位模式决定的只读查表，
+    // 直接在 RAM 消费端本地译码，避免从远端共享协议引擎跨区传回
+    // 已译码字节并再次寄存。
     function [7:0] denial_octet;
         input [4:0] position;
         input [2:0] format;
         begin
-            denial_octet=0;
-            case(position)
-                1:denial_octet=3;
-                3:denial_octet=1;
-                7:denial_octet=format[0]?8'd9:8'd17;
-                8:denial_octet="A";
-                9:denial_octet=format[2]?"4":"3";
-                10:denial_octet=8'h10;
-                11:denial_octet=format[0]?8'd2:8'd0;
-                12:denial_octet=format[0]?8'd0:8'd8;
-                13:denial_octet=format[1]?"N":"B";
-                14:denial_octet=format[1]?"O":"U";
-                15:denial_octet=format[1]?" ":"S";
-                16:denial_octet=format[1]?"D":"Y";
-                17:denial_octet=format[1]?"A":8'd0;
-                18:denial_octet=format[1]?"T":8'd0;
-                19:denial_octet=format[1]?"A":8'd0;
-                default:;
+            denial_octet = 0;
+            case (position)
+                1 : denial_octet = 3;
+                3 : denial_octet = 1;
+                7 : denial_octet = format[0] ? 8'd9 : 8'd17;
+                8 : denial_octet = "A";
+                9 : denial_octet = format[2] ? "4" : "3";
+                10 : denial_octet = 8'h10;
+                11 : denial_octet = format[0] ? 8'd2 : 8'd0;
+                12 : denial_octet = format[0] ? 8'd0 : 8'd8;
+                13 : denial_octet = format[1] ? "N" : "B";
+                14 : denial_octet = format[1] ? "O" : "U";
+                15 : denial_octet = format[1] ? " " : "S";
+                16 : denial_octet = format[1] ? "D" : "Y";
+                17 : denial_octet = format[1] ? "A" : 8'd0;
+                18 : denial_octet = format[1] ? "T" : 8'd0;
+                19 : denial_octet = format[1] ? "A" : 8'd0;
+                default :;
             endcase
         end
     endfunction
 
-    // CE_DIV=2 has one fixed intervening clock. Sample the address on
-    // the engine phase and hold it through the original physical RAM read.
-    // This removes the otherwise redundant full-rate RAM address bridge.
-    generate if(CE_DIV==2) begin : header_address_hold
-        always @(posedge clk) begin
-            if(reset) cmd_hdr_ra<=0;
-            else if(ce[0]) cmd_hdr_ra<=hdr_ra;
+    // CE_DIV=2 时存在固定间隔拍：在引擎相位采样读地址并保持到原物理
+    // RAM 读取完成，从而去掉原本多余的全速 RAM 地址桥接级。
+    generate
+        if (CE_DIV == 2) begin : header_address_hold
+            always @(posedge clk) begin
+                if (reset) cmd_hdr_ra <= 0;
+                else if (ce[0]) cmd_hdr_ra <= hdr_ra;
+            end
+            assign ram_hdr_ra = cmd_hdr_ra;
+        end else begin : header_address_pipeline
+            reg [10:0] address_q;
+            always @(posedge clk) begin
+                if (reset) begin
+                    cmd_hdr_ra <= 0;
+                    address_q <= 0;
+                end
+                else begin
+                    cmd_hdr_ra <= hdr_ra;
+                    address_q <= cmd_hdr_ra;
+                end
+            end
+            assign ram_hdr_ra = address_q;
         end
-        assign ram_hdr_ra=cmd_hdr_ra;
-    end else begin : header_address_pipeline
-        reg [10:0] address_q;
-        always @(posedge clk) begin
-            if(reset) begin cmd_hdr_ra<=0;address_q<=0;end
-            else begin cmd_hdr_ra<=hdr_ra;address_q<=cmd_hdr_ra;end
-        end
-        assign ram_hdr_ra=address_q;
-    end endgenerate
+    endgenerate
 
     // 引擎输出保持到下一个 CE 拍，RAM 端口在本地寄存后使用。
     always @(posedge clk) begin
@@ -528,7 +565,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             cmd_deny_wa <= deny_wa;
             ram_deny_wa <= cmd_deny_wa;
             cmd_deny_format <= deny_format;
-            ram_deny_wd <= denial_octet(cmd_deny_wa,cmd_deny_format);
+            ram_deny_wd <= denial_octet(cmd_deny_wa, cmd_deny_format);
             cmd_rx_re <= rx_re;
             ram_rx_re <= cmd_rx_re && (CE_DIV == 1 || !ce[0]);
             cmd_rx_ra <= rx_ra;
@@ -570,37 +607,83 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
         end
     end
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_rx (
-        .clk(clk), .write_enable(rx_we), .write_address(rx_wa), .write_data(rx_wd),
-        .read_enable(ram_rx_re), .read_address(ram_rx_ra), .read_data(rx_q)
+        .clk           (clk),
+        .write_enable  (rx_we),
+        .write_address (rx_wa),
+        .write_data    (rx_wd),
+        .read_enable   (ram_rx_re),
+        .read_address  (ram_rx_ra),
+        .read_data     (rx_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (
-        .clk(clk), .write_enable(ram_tx_we), .write_address(ram_tx_wa), .write_data(ram_tx_wd),
-        .read_enable(tx_re), .read_address(tx_ra), .read_data(tx_q)
+        .clk           (clk),
+        .write_enable  (ram_tx_we),
+        .write_address (ram_tx_wa),
+        .write_data    (ram_tx_wd),
+        .read_enable   (tx_re),
+        .read_address  (tx_ra),
+        .read_data     (tx_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (
-        .clk(clk), .write_enable(ram_lur_we), .write_address(ram_lur_wa), .write_data(ram_lur_wd),
-        .read_enable(ram_lur_re), .read_address(ram_lur_ra), .read_data(lur_q)
+        .clk           (clk),
+        .write_enable  (ram_lur_we),
+        .write_address (ram_lur_wa),
+        .write_data    (ram_lur_wd),
+        .read_enable   (ram_lur_re),
+        .read_address  (ram_lur_ra),
+        .read_data     (lur_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (
-        .clk(clk), .write_enable(ram_hdr_we), .write_address(ram_hdr_wa), .write_data(ram_hdr_wd),
-        .read_enable(ram_hdr_re), .read_address(ram_hdr_ra), .read_data(hdr_q)
+        .clk           (clk),
+        .write_enable  (ram_hdr_we),
+        .write_address (ram_hdr_wa),
+        .write_data    (ram_hdr_wd),
+        .read_enable   (ram_hdr_re),
+        .read_address  (ram_hdr_ra),
+        .read_data     (hdr_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (
-        .clk(clk), .write_enable(ram_load_we), .write_address(ram_load_wa), .write_data(ram_load_wd),
-        .read_enable(ram_load_re), .read_address(ram_load_ra), .read_data(load_q)
+        .clk           (clk),
+        .write_enable  (ram_load_we),
+        .write_address (ram_load_wa),
+        .write_data    (ram_load_wd),
+        .read_enable   (ram_load_re),
+        .read_address  (ram_load_ra),
+        .read_data     (load_q)
     );
+
     // 原 RAM 读值无复位约束；配置采样寄存器仍按原协议复位。
     always @(posedge clk) load_sample_local <= load_q;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(32)) denial_ram (
-        .clk(clk), .write_enable(ram_deny_we), .write_address(ram_deny_wa), .write_data(ram_deny_wd),
-        .read_enable(tx_re), .read_address(tx_ra[4:0]), .read_data(deny_q)
+        .clk           (clk),
+        .write_enable  (ram_deny_we),
+        .write_address (ram_deny_wa),
+        .write_data    (ram_deny_wd),
+        .read_enable   (tx_re),
+        .read_address  (tx_ra[4:0]),
+        .read_data     (deny_q)
     );
     afdx_mgmt_tx #(.AW(10)) sender (
-        .clk(clk), .reset(reset), .request(send_request), .length(send_length), .vl(configured_vl),
-        .sport(engine_tx_sport), .dport(engine_tx_dport), .mode(send_mode), .complete(send_complete),
-        .read_enable(tx_re), .read_address(tx_ra), .read_data(read_mode ? deny_q : tx_q), .read_mode(read_mode),
-        .tx_valid(tx_valid), .tx_ready(tx_ready), .tx_data(tx_data), .tx_last(tx_last),
-        .tx_vl(tx_vl), .tx_sport(tx_sport), .tx_dport(tx_dport)
+        .clk          (clk),
+        .reset        (reset),
+        .request      (send_request),
+        .length       (send_length),
+        .vl           (configured_vl),
+        .sport        (engine_tx_sport),
+        .dport        (engine_tx_dport),
+        .mode         (send_mode),
+        .complete     (send_complete),
+        .read_enable  (tx_re),
+        .read_address (tx_ra),
+        .read_data    (read_mode ? deny_q : tx_q),
+        .read_mode    (read_mode),
+        .tx_valid     (tx_valid),
+        .tx_ready     (tx_ready),
+        .tx_data      (tx_data),
+        .tx_last      (tx_last),
+        .tx_vl        (tx_vl),
+        .tx_sport     (tx_sport),
+        .tx_dport     (tx_dport)
     );
 
     generate
@@ -729,6 +812,7 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
             );
         end
     endgenerate
+
     // 模式 2：高位为写地址，bit 6 选主机，[5:3] 为主机读址，[2:0] 为 MIB 预读址。
     // MIB 地址在读请求之前稳定一拍；每四位输出使用独立译码副本，主机仍直接译码。
     wire [31:0] word_cfg_rdata_0 = {31'b0, configured};
@@ -743,8 +827,8 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
     wire [31:0] word_cfg_extra_data_1 = timeout_cycles;
     wire [31:0] word_cfg_extra_data_2 = {24'b0, retry_limit};
     wire [31:0] word_cfg_extra_data_3 = protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
-    // Host and MIB share one parallel word reduction. Data words do not
-    // traverse a second wide mux after address selection.
+    // 主机接口与 MIB 共享同一组并行字归约，各数据字在地址选通后
+    // 不再经过第二级宽位多路复用器。
     genvar read_nibble;
     generate
         if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
@@ -752,33 +836,33 @@ module afdx_615a #(parameter LOCAL_RX_PORT = 0, SPLIT_CFG_ADDR = 0, CE_DIV = 2, 
                 (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
                 wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
                 (* keep = 1 *) wire [3:0] r01 =
-                    ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
-                    ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]);
+                    ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4+:4]) |
+                    ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] r23 =
-                    ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
-                    ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]);
+                    ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4+:4]) |
+                    ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] r45 =
-                    ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
-                    ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]);
+                    ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4+:4]) |
+                    ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] r67 =
-                    ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
-                    ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                    ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4+:4]) |
+                    ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] e01 =
-                    ({4{lane[0]}} & word_cfg_extra_data_0[read_nibble * 4 +: 4]) |
-                    ({4{lane[1]}} & word_cfg_extra_data_1[read_nibble * 4 +: 4]);
+                    ({4{lane[0]}} & word_cfg_extra_data_0[read_nibble * 4+:4]) |
+                    ({4{lane[1]}} & word_cfg_extra_data_1[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] e23 =
-                    ({4{lane[2]}} & word_cfg_extra_data_2[read_nibble * 4 +: 4]) |
-                    ({4{lane[3]}} & word_cfg_extra_data_3[read_nibble * 4 +: 4]);
+                    ({4{lane[2]}} & word_cfg_extra_data_2[read_nibble * 4+:4]) |
+                    ({4{lane[3]}} & word_cfg_extra_data_3[read_nibble * 4+:4]);
                 always @(posedge clk) begin
                     if (reset) begin
                         mib_lane <= 8'b1;
-                        cfg_rdata[read_nibble * 4 +: 4] <= 0;
-                        cfg_extra_data[read_nibble * 4 +: 4] <= 0;
+                        cfg_rdata[read_nibble * 4+:4] <= 0;
+                        cfg_extra_data[read_nibble * 4+:4] <= 0;
                     end
                     else begin
                         mib_lane <= 8'b1 << cfg_addr[2:0];
-                        cfg_rdata[read_nibble * 4 +: 4] <= r01 | r23 | r45 | r67;
-                        cfg_extra_data[read_nibble * 4 +: 4] <= e01 | e23;
+                        cfg_rdata[read_nibble * 4+:4] <= r01 | r23 | r45 | r67;
+                        cfg_extra_data[read_nibble * 4+:4] <= e01 | e23;
                     end
                 end
             end

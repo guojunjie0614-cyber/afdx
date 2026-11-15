@@ -3,7 +3,6 @@
 // 接收时按端口交给对应服务，其余消息交给应用。
 // 它连接赛题的用户收发、时钟同步、网络管理和加卸载功能。
 module afdx_svc (
-
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire        clk, reset,
 
@@ -64,7 +63,8 @@ module afdx_svc (
     output wire        load_rx_valid,
     output wire [7:0]  load_rx_data,
     output wire        load_rx_last,
-    output wire [15:0] load_rx_sport, load_rx_dport);
+    output wire [15:0] load_rx_sport, load_rx_dport
+);
 
     // 四个发送方的编号，也是 request 里对应的位：应用、时钟同步、网络管理、加卸载。
     localparam SRC_APP = 0, SRC_RTC = 1, SRC_SNMP = 2, SRC_LOAD = 3;
@@ -76,8 +76,8 @@ module afdx_svc (
     reg reselect, select_pending;
     reg completed_message;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] request_local;
-    // Separate service and application capture points keep the incoming
-    // byte/control fanout local. Metadata and bytes both gain one cycle.
+    // 将管理服务与应用接收的输入捕获级拆开，使字节与控制扇出完全本地化
+    // （元数据与字节流同步各自后移一拍）。
     (* preserve = 1, dont_merge = 1 *) reg service_valid, application_valid, snmp_valid_q, load_valid_q;
     (* preserve = 1, dont_merge = 1 *) reg service_last, application_last, snmp_last_q, load_last_q;
     (* preserve = 1, dont_merge = 1 *) reg [7:0] service_data, application_data, snmp_data_q, load_data_q;
@@ -88,16 +88,15 @@ module afdx_svc (
     reg [1:0] turn, selected;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] served;
     reg [3:0] next_granted;
-    wire [3:0] request = { svc_tx_valid, app_tx_valid };
+    wire [3:0] request = {svc_tx_valid, app_tx_valid};
     wire source_valid = |(request & served);
     wire finishing = m_valid && m_ready && m_last;
     wire [3:0] eff_request = request_local;
     wire [1:0] base_turn = turn;
     wire arbitrating = reselect || select_pending;
 
-    // After a completed message, capture fresh requests in the first quiet
-    // cycle and choose from that local snapshot in the second. A source holds
-    // its byte until ready, so arbitration never consumes a speculative byte.
+    // 当前消息发送结束后，先在首个静默周期捕获新请求快照，次拍再从该快照中裁决；
+    // 各发送源在收到 ready 前保持字节稳定，仲裁绝不会误消费投机字节。
     always @* begin
         next_granted = 4'b0001;
         case (base_turn)
@@ -128,12 +127,14 @@ module afdx_svc (
         endcase
     end
 
-    // Keep the source fixed throughout a message, including backpressure.
-    // Remote valid feeds only the request capture and the small idle detector;
-    // priority selection and the grant update use registered local inputs.
+    // 整条消息传输（含反压停顿）期间保持选中源锁定不变：远端 valid 只喂入请求捕获
+    // 与小空闲检测器，优先级裁决和授权切换均只消费本地已寄存输入。
     always @(posedge clk) begin
         if (reset) begin
-            served <= 4'b0001;reselect <= 0;select_pending <= 0;request_local <= 0;
+            served <= 4'b0001;
+            reselect <= 0;
+            select_pending <= 0;
+            request_local <= 0;
         end else begin
             request_local <= request;
             reselect <= !arbitrating && (finishing || (!busy && !source_valid));
@@ -148,29 +149,29 @@ module afdx_svc (
         m_valid = source_valid && !arbitrating;
         svc_tx_ready = served[3:1] & {3{m_ready && !arbitrating}};
         m_data = ({8{served[0]}} & app_tx_data) |
-            ({8{served[1]}} & svc_tx_data[0 +: 8]) |
-            ({8{served[2]}} & svc_tx_data[8 +: 8]) |
-            ({8{served[3]}} & svc_tx_data[16 +: 8]);
+            ({8{served[1]}} & svc_tx_data[0+:8]) |
+            ({8{served[2]}} & svc_tx_data[8+:8]) |
+            ({8{served[3]}} & svc_tx_data[16+:8]);
         m_last = ({1{served[0]}} & app_tx_last) |
             ({1{served[1]}} & svc_tx_last[0]) |
             ({1{served[2]}} & svc_tx_last[1]) |
             ({1{served[3]}} & svc_tx_last[2]);
         m_vl = ({7{served[0]}} & app_tx_vl) |
-            ({7{served[1]}} & svc_tx_vl[0 +: 7]) |
-            ({7{served[2]}} & svc_tx_vl[7 +: 7]) |
-            ({7{served[3]}} & svc_tx_vl[14 +: 7]);
+            ({7{served[1]}} & svc_tx_vl[0+:7]) |
+            ({7{served[2]}} & svc_tx_vl[7+:7]) |
+            ({7{served[3]}} & svc_tx_vl[14+:7]);
         m_port_en = ({1{served[0]}} & app_tx_port_en) |
             ({1{served[1]}} & svc_tx_port_en[0]) |
             ({1{served[2]}} & svc_tx_port_en[1]) |
             ({1{served[3]}} & svc_tx_port_en[2]);
         m_sport = ({16{served[0]}} & app_tx_sport) |
-            ({16{served[1]}} & svc_tx_sport[0 +: 16]) |
-            ({16{served[2]}} & svc_tx_sport[16 +: 16]) |
-            ({16{served[3]}} & svc_tx_sport[32 +: 16]);
+            ({16{served[1]}} & svc_tx_sport[0+:16]) |
+            ({16{served[2]}} & svc_tx_sport[16+:16]) |
+            ({16{served[3]}} & svc_tx_sport[32+:16]);
         m_dport = ({16{served[0]}} & app_tx_dport) |
-            ({16{served[1]}} & svc_tx_dport[0 +: 16]) |
-            ({16{served[2]}} & svc_tx_dport[16 +: 16]) |
-            ({16{served[3]}} & svc_tx_dport[32 +: 16]);
+            ({16{served[1]}} & svc_tx_dport[0+:16]) |
+            ({16{served[2]}} & svc_tx_dport[16+:16]) |
+            ({16{served[3]}} & svc_tx_dport[32+:16]);
     end
 
     assign app_tx_ready = served[0] && m_ready && !arbitrating;
@@ -191,9 +192,9 @@ module afdx_svc (
     assign load_rx_last = load_last_q;
     assign load_rx_sport = load_sport_q;
     assign load_rx_dport = load_dport_q;
-    assign app_rx_valid = application_valid && ! (rx_active ? rx_claimed : | svc_rx_claim);
-    // Like data, last is consumed only with valid. Keep claim/configuration
-    // qualification on that token instead of feeding the last data register.
+    assign app_rx_valid = application_valid && !(rx_active ? rx_claimed : | svc_rx_claim);
+    // 与 data 相同，last 仅在 valid 为高时才被采样；认领/配置判定仅约束在令牌上，
+    // 不再反馈到 last 数据触发器的 D 端或使能端。
     assign app_rx_last = application_last;
     assign app_rx_data = application_data;
     assign app_rx_vl = application_vl;
@@ -203,19 +204,55 @@ module afdx_svc (
 
     always @(posedge clk) begin
         if (reset) begin
-            service_valid<=0;service_last<=0;service_data<=0;service_vl<=0;
-            service_sport<=0;service_dport<=0;service_net<=0;
-            snmp_valid_q<=0;snmp_last_q<=0;snmp_data_q<=0;snmp_sport_q<=0;snmp_dport_q<=0;
-            load_valid_q<=0;load_last_q<=0;load_data_q<=0;load_sport_q<=0;load_dport_q<=0;
-            application_valid<=0;application_last<=0;application_data<=0;application_vl<=0;
-            application_sport<=0;application_dport<=0;application_net<=0;
+            service_valid <= 0;
+            service_last <= 0;
+            service_data <= 0;
+            service_vl <= 0;
+            service_sport <= 0;
+            service_dport <= 0;
+            service_net <= 0;
+            snmp_valid_q <= 0;
+            snmp_last_q <= 0;
+            snmp_data_q <= 0;
+            snmp_sport_q <= 0;
+            snmp_dport_q <= 0;
+            load_valid_q <= 0;
+            load_last_q <= 0;
+            load_data_q <= 0;
+            load_sport_q <= 0;
+            load_dport_q <= 0;
+            application_valid <= 0;
+            application_last <= 0;
+            application_data <= 0;
+            application_vl <= 0;
+            application_sport <= 0;
+            application_dport <= 0;
+            application_net <= 0;
         end else begin
-            service_valid<=d_valid;service_last<=d_last;service_data<=d_data;service_vl<=d_vl;
-            service_sport<=d_sport;service_dport<=d_dport;service_net<=d_net;
-            snmp_valid_q<=d_valid;snmp_last_q<=d_last;snmp_data_q<=d_data;snmp_sport_q<=d_sport;snmp_dport_q<=d_dport;
-            load_valid_q<=d_valid;load_last_q<=d_last;load_data_q<=d_data;load_sport_q<=d_sport;load_dport_q<=d_dport;
-            application_valid<=d_valid;application_last<=d_last;application_data<=d_data;application_vl<=d_vl;
-            application_sport<=d_sport;application_dport<=d_dport;application_net<=d_net;
+            service_valid <= d_valid;
+            service_last <= d_last;
+            service_data <= d_data;
+            service_vl <= d_vl;
+            service_sport <= d_sport;
+            service_dport <= d_dport;
+            service_net <= d_net;
+            snmp_valid_q <= d_valid;
+            snmp_last_q <= d_last;
+            snmp_data_q <= d_data;
+            snmp_sport_q <= d_sport;
+            snmp_dport_q <= d_dport;
+            load_valid_q <= d_valid;
+            load_last_q <= d_last;
+            load_data_q <= d_data;
+            load_sport_q <= d_sport;
+            load_dport_q <= d_dport;
+            application_valid <= d_valid;
+            application_last <= d_last;
+            application_data <= d_data;
+            application_vl <= d_vl;
+            application_sport <= d_sport;
+            application_dport <= d_dport;
+            application_net <= d_net;
         end
     end
 
@@ -230,9 +267,8 @@ module afdx_svc (
             rx_claimed <= 0;
         end
         else begin
-            // Retire the turn during the first existing quiet arbitration
-            // clock. served is still the completed source until the second
-            // quiet clock, so the actual next-grant edge remains unchanged.
+            // 在首个现存静默仲裁拍期间完成轮次退休；到次拍静默期才清除 served，
+            // 因此下一次真实授权生效的时钟沿完全不变。
             completed_message <= finishing;
             if (completed_message) turn <= selected + 2'd1;
             if (m_valid) begin
@@ -244,8 +280,8 @@ module afdx_svc (
                 end
             end
             if (application_valid) begin
-                if ( ! rx_active) rx_claimed <= | svc_rx_claim;
-                rx_active <= ! application_last;
+                if (!rx_active) rx_claimed <= | svc_rx_claim;
+                rx_active <= !application_last;
             end
         end
     end

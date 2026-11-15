@@ -15,6 +15,8 @@ module afdx_app_tx (
     output reg  [6:0]  app_vl,
     output reg  [1:0]  drop
 );
+
+    // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
     wire read_en;
 `endif
@@ -43,7 +45,8 @@ module afdx_app_tx (
     end
     genvar cb, cg, cv;
 
-    generate for (cb = 0;cb < 8;cb = cb+1) begin : configuration_bank
+    generate
+        for (cb = 0; cb < 8; cb = cb + 1) begin : configuration_bank
             (* preserve = 1, dont_merge = 1 *) reg [15:0] data_q;
             (* preserve = 1, dont_merge = 1 *) reg [3:0] index_q;
             (* preserve = 1, dont_merge = 1 *) reg write_q;
@@ -53,7 +56,7 @@ module afdx_app_tx (
                 data_q <= configuration_vlid;
                 index_q <= configuration_index[3:0];
             end
-            for (cg = 0;cg < 4;cg = cg+1) begin : group
+            for (cg = 0; cg < 4; cg = cg + 1) begin : group
                 (* preserve = 1, dont_merge = 1 *) reg [15:0] local_data;
                 (* preserve = 1, dont_merge = 1 *) reg [3:0] write_select;
                 always @(posedge clk) begin
@@ -61,13 +64,13 @@ module afdx_app_tx (
                     if (reset) write_select <= 0;
                     else begin
                         write_select[0] <= write_q && index_q == cg*4;
-                        write_select[1] <= write_q && index_q == cg*4+1;
-                        write_select[2] <= write_q && index_q == cg*4+2;
-                        write_select[3] <= write_q && index_q == cg*4+3;
+                        write_select[1] <= write_q && index_q == cg*4 + 1;
+                        write_select[2] <= write_q && index_q == cg*4 + 2;
+                        write_select[3] <= write_q && index_q == cg*4 + 3;
                     end
                 end
                 // 每个寄存后的写片选信号仅驱动单个 16 位 VLID 表项的写使能。
-                for (cv = 0;cv < 4;cv = cv+1) begin : entry
+                for (cv = 0; cv < 4; cv = cv + 1) begin : entry
                     always @(posedge clk) begin
                         if (reset) enabled[cb*16+cg*4+cv] <= 0;
                         else if (write_select[cv]) begin
@@ -90,12 +93,12 @@ module afdx_app_tx (
     (* preserve = 1, dont_merge = 1 *) reg header_second, payload_phase, too_long;
     reg [15:0] write_ptr, start_ptr, committed;
     wire [15:0] read_ptr;
-    wire [15:0] used = write_ptr-read_ptr;
+    wire [15:0] used = write_ptr - read_ptr;
     reg [5:0] desc_wr, desc_rd;
     (* preserve = 1, dont_merge = 1 *) reg descriptor_retire;
-    wire [5:0] descriptor_head = desc_rd+{5'd0, descriptor_retire};
+    wire [5:0] descriptor_head = desc_rd + {5'd0, descriptor_retire};
     wire descriptors_waiting = desc_wr != descriptor_head;
-    wire [5:0] descriptors = desc_wr-descriptor_head;
+    wire [5:0] descriptors = desc_wr - descriptor_head;
     reg [3:0] state;
     wire [15:0] descriptor_id;
     reg space_available;
@@ -113,7 +116,7 @@ module afdx_app_tx (
         else begin
             descriptor_write <= commit_request;
             if (commit_request) begin
-                commit_pointer <= write_ptr+1'b1;
+                commit_pointer <= write_ptr + 1'b1;
                 commit_id <= message_id;
             end
         end
@@ -121,17 +124,18 @@ module afdx_app_tx (
 
     // 队列非空时持续预采样队首描述符，空队列抑制读使能以避免同址读写冲突，
     // 同时使配置忙状态无需接入描述符存储块的读使能锥。
-    afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids(
+    afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids (
         .clk           (clk),
         .write_enable  (descriptor_write),
         .write_address (desc_wr[4:0]),
         .write_data    (commit_id),
         .read_enable   (descriptors_waiting),
         .read_address  (descriptor_head[4:0]),
-        .read_data     (descriptor_id));
+        .read_data     (descriptor_id)
+    );
     wire store = vq && payload_phase && !too_long && !bad && space_available;
     wire rollback = vq && !valid && payload_phase && (bad || too_long || !space_available);
-    wire [15:0] write_next = write_ptr+16'd1;
+    wire [15:0] write_next = write_ptr + 16'd1;
     wire rollback_full = start_ptr == (read_ptr^16'h8000);
 
     // 32 KiB 环形缓存满状态前瞻判定（读写指针最高位翻转且低位相等即满）：
@@ -148,14 +152,14 @@ module afdx_app_tx (
     always @(posedge clk) begin
         if (reset) write_ptr <= 0;
         else if (rollback) write_ptr <= start_ptr;
-        else if (store) write_ptr <= write_ptr+1'b1;
+        else if (store) write_ptr <= write_ptr + 1'b1;
     end
     wire [8:0] memory_q;
 `ifndef MODEL_TECH
     wire read_en;
 `endif
     wire [14:0] read_addr;
-    afdx_app_payload #(.SPLIT_RETURN(1)) payload(
+    afdx_app_payload #(.SPLIT_RETURN(1)) payload (
         .clk           (clk),
         .reset         (reset),
         .write_enable  (store),
@@ -163,11 +167,16 @@ module afdx_app_tx (
         .write_data    ({!valid, dq}),
         .read_enable   (read_en),
         .read_address  (read_addr),
-        .read_data     (memory_q));
+        .read_data     (memory_q)
+    );
     wire q_valid, q_ready;
     wire [8:0] q_data;
-    wire [15:0] next_committed = descriptor_write ? commit_pointer:committed;
-    afdx_app_read #(.AW(15), .READ_LATENCY(4), .PREDICT_LIMIT(1)) reader(
+    wire [15:0] next_committed = descriptor_write ? commit_pointer : committed;
+    afdx_app_read #(
+        .AW            (15),
+        .READ_LATENCY  (4),
+        .PREDICT_LIMIT (1)
+    ) reader (
         .clk          (clk),
         .reset        (reset),
         .limit        (committed),
@@ -178,7 +187,8 @@ module afdx_app_tx (
         .valid        (q_valid),
         .ready        (q_ready),
         .data         (q_data),
-        .next_limit   (next_committed));
+        .next_limit   (next_committed)
+    );
 
     always @(posedge clk) begin
         if (reset) begin
@@ -202,9 +212,9 @@ module afdx_app_tx (
             vq <= valid;
             dq <= data;
             drop[1] <= 0;
-            ready <= initialized && used <= RING_BYTES-MAX_MESSAGE_BYTES && descriptors < 31;
+            ready <= initialized && used <= RING_BYTES - MAX_MESSAGE_BYTES && descriptors < 31;
             if (descriptor_write) begin
-                desc_wr <= desc_wr+1'b1;
+                desc_wr <= desc_wr + 1'b1;
                 committed <= commit_pointer;
             end
             if (vq) begin
@@ -219,14 +229,14 @@ module afdx_app_tx (
                     bad <= !initialized || descriptors == 32;
                 end
                 else begin
-                    if (!too_long) count <= count+1'b1;
+                    if (!too_long) count <= count + 1'b1;
                     if (header_second) begin
                         message_id <= {hi, dq};
                         header_second <= 0;
                         payload_phase <= 1;
                     end
                     // count=8193 对应第 8192 个合法载荷字节，置位超长标志以拦截后续多余字节。
-                    if (count == MAX_MESSAGE_BYTES+1) too_long <= 1;
+                    if (count == MAX_MESSAGE_BYTES + 1) too_long <= 1;
                     if (payload_phase && (!space_available || too_long)) bad <= 1;
                 end
                 if (!valid) begin
@@ -261,8 +271,8 @@ module afdx_app_tx (
     integer query_group;
 
     always @(posedge clk) begin
-        for (query_group = 0;query_group < 32;query_group = query_group+1)
-        query_local[query_group] <= descriptor_capture;
+        for (query_group = 0; query_group < 32; query_group = query_group + 1)
+            query_local[query_group] <= descriptor_capture;
     end
     reg [127:0] hit, hit_low, hit_high, nibble0, nibble1, nibble2, nibble3;
     reg [7:0] bank_hit;
@@ -286,13 +296,13 @@ module afdx_app_tx (
             nibble3 <= 0;
         end
         else begin
-            for (compare_bank = 0;compare_bank < 8;compare_bank = compare_bank+1)
-            for (compare_item = 0;compare_item < 16;compare_item = compare_item+1) begin
-                nibble0[compare_bank*16+compare_item] <= enabled[compare_bank*16+compare_item] && vlids[compare_bank*16+compare_item][3:0] == query_local[compare_bank*4+compare_item/4][3:0];
-                nibble1[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][7:4] == query_local[compare_bank*4+compare_item/4][7:4];
-                nibble2[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][11:8] == query_local[compare_bank*4+compare_item/4][11:8];
-                nibble3[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][15:12] == query_local[compare_bank*4+compare_item/4][15:12];
-            end
+            for (compare_bank = 0; compare_bank < 8; compare_bank = compare_bank + 1)
+                for (compare_item = 0; compare_item < 16; compare_item = compare_item + 1) begin
+                    nibble0[compare_bank*16+compare_item] <= enabled[compare_bank*16+compare_item] && vlids[compare_bank*16+compare_item][3:0] == query_local[compare_bank*4+compare_item/4][3:0];
+                    nibble1[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][7:4] == query_local[compare_bank*4+compare_item/4][7:4];
+                    nibble2[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][11:8] == query_local[compare_bank*4+compare_item/4][11:8];
+                    nibble3[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][15:12] == query_local[compare_bank*4+compare_item/4][15:12];
+                end
             hit_low <= nibble0 & nibble1;
             hit_high <= nibble2 & nibble3;
             hit <= hit_low & hit_high;
@@ -307,26 +317,29 @@ module afdx_app_tx (
             pair_hit <= 0;
             half_hit <= 0;
             found <= 0;
-            for (bank = 0;bank < 4;bank = bank+1) pair_index[bank] <= 0;
-            for (bank = 0;bank < 2;bank = bank+1) half_index[bank] <= 0;
-            for (bank = 0;bank < 8;bank = bank+1) bank_index[bank] <= 0;
+            for (bank = 0; bank < 4; bank = bank + 1)
+                pair_index[bank] <= 0;
+            for (bank = 0; bank < 2; bank = bank + 1)
+                half_index[bank] <= 0;
+            for (bank = 0; bank < 8; bank = bank + 1)
+                bank_index[bank] <= 0;
         end
         else begin
-            for (bank = 0;bank < 8;bank = bank+1) begin
+            for (bank = 0; bank < 8; bank = bank + 1) begin
                 bank_hit[bank] <= |hit[bank*16+:16];
                 bank_index[bank] <= 0;
-                for (item = 15;item >= 0;item = item-1)
-                if (hit[bank*16+item]) bank_index[bank] <= item[3:0];
+                for (item = 15; item >= 0; item = item - 1)
+                    if (hit[bank*16+item]) bank_index[bank] <= item[3:0];
             end
-            for (bank = 0;bank < 4;bank = bank+1) begin
+            for (bank = 0; bank < 4; bank = bank + 1) begin
                 pair_hit[bank] <= |bank_hit[bank*2+:2];
                 pair_index[bank] <= bank_hit[bank*2] ?
-                {bank[1:0], 1'b0, bank_index[bank*2]} :
-                {bank[1:0], 1'b1, bank_index[bank*2+1]};
+                    {bank[1:0], 1'b0, bank_index[bank*2]} :
+                    {bank[1:0], 1'b1, bank_index[bank*2+1]};
             end
-            for (bank = 0;bank < 2;bank = bank+1) begin
+            for (bank = 0; bank < 2; bank = bank + 1) begin
                 half_hit[bank] <= |pair_hit[bank*2+:2];
-                half_index[bank] <= pair_hit[bank*2] ? pair_index[bank*2]:pair_index[bank*2+1];
+                half_index[bank] <= pair_hit[bank*2] ? pair_index[bank*2] : pair_index[bank*2+1];
             end
             found <= |half_hit;
         end
@@ -335,7 +348,7 @@ module afdx_app_tx (
     // 仅在查找结果就绪状态锁存匹配到的发送 VL 索引，发送期间保持恒定。
     always @(posedge clk) begin
         if (reset) app_vl <= 0;
-        else if (state == 8) app_vl <= half_hit[0] ? half_index[0]:half_index[1];
+        else if (state == 8) app_vl <= half_hit[0] ? half_index[0] : half_index[1];
     end
 
     // 本地寄存末字节握手后再执行描述符读指针递增，并前递至队首预取以实现零额外等待。
@@ -346,7 +359,7 @@ module afdx_app_tx (
         end
         else begin
             descriptor_retire <= state == 5 && q_valid && q_ready && q_data[8];
-            if (descriptor_retire) desc_rd <= desc_rd+1'b1;
+            if (descriptor_retire) desc_rd <= desc_rd + 1'b1;
         end
     end
 
@@ -361,27 +374,27 @@ module afdx_app_tx (
             // 若配置表正在流水更新则重新发起查找，队首消息保持不变。
             if (configuration_busy && state != 0 && state != 5) state <= 6;
             else case (state)
-                    0:if (descriptors_waiting && !configuration_busy) state <= 6;
-                    6:state <= 1;
-                    1:state <= 11;
-                    11:state <= 9;
-                    9:state <= 10;
-                    10:state <= 2;
-                    2:state <= 3;
-                    3:state <= 7;
-                    7:state <= 8;
-                    8:state <= 4;
-                    4:begin
-                        discard <= !found;
-                        drop[0] <= !found || empty_message;
-                        state <= 5;
-                    end
-                    // 末字节发出后由 descriptor_retire 屏蔽输出一拍作为帧间间隔，随后无缝启动下一条查找。
-                    5:if (descriptor_retire) begin
-                        if (descriptors_waiting && !configuration_busy) state <= 6;
-                        else state <= 0;
-                    end
-                    default:state <= 0;
+                0 : if (descriptors_waiting && !configuration_busy) state <= 6;
+                6 : state <= 1;
+                1 : state <= 11;
+                11 : state <= 9;
+                9 : state <= 10;
+                10 : state <= 2;
+                2 : state <= 3;
+                3 : state <= 7;
+                7 : state <= 8;
+                8 : state <= 4;
+                4 : begin
+                    discard <= !found;
+                    drop[0] <= !found || empty_message;
+                    state <= 5;
+                end
+                // 末字节发出后由 descriptor_retire 屏蔽输出一拍作为帧间间隔，随后无缝启动下一条查找。
+                5 : if (descriptor_retire) begin
+                    if (descriptors_waiting && !configuration_busy) state <= 6;
+                    else state <= 0;
+                end
+                default : state <= 0;
             endcase
         end
     end

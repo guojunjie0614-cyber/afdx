@@ -11,8 +11,8 @@ module afdx_es #(
     parameter LOOKAHEAD       = 512,
     parameter RX_RING_AW      = 12,
     parameter RX_DQ_AW        = 5,
-    parameter RX_CONFIG_BANKS = 16) (
-
+    parameter RX_CONFIG_BANKS = 16
+) (
     // 时钟复位与 A 网千兆 GMII 收发信号（A 网与 B 网互为冗余备份，同一帧双路并发）。
     input  wire        clk, // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
     input  wire        reset, // reset 为高时，在时钟上升沿复位。
@@ -66,7 +66,8 @@ module afdx_es #(
     output wire [7:0]  ev_a, ev_b,
     output wire        ev_rm_drop, ev_deliver,
     // 与 cfg_ready 同拍有效但独立复制的就绪副本，专供外层应用映射表同步监听配置写。
-    output wire [1:0]  app_cfg_ready);
+    output wire [1:0]  app_cfg_ready
+);
 
     // 初始化完成电平只会上升，先经两级寄存拆开核心到顶层广播的长线。
     (* preserve = 1, dont_merge = 1 *) reg rx_init_a, rx_init_b, tx_init_a, tx_init_b;
@@ -163,7 +164,7 @@ module afdx_es #(
     // 网络管理仅能写 user_id，独立分发该写使能，避免写握手进入所有读地址和 RTC 控制链。
     assign bus_addr = (cfg_rd || cfg_wr) ? cfg_addr : snmp_mib_addr;
     assign bus_rd = cfg_rd || (snmp_grant && snmp_mib_rd);
-    // cfg_regs applies its equivalent local ready at the actual write edge.
+    // cfg_regs 会在实际写入时钟沿施加等效的本地就绪约束。
     assign mib_user_write = snmp_mib_wr && !cfg_wr && !cfg_rd && mib_is_user_id;
     assign cfg_rvalid = host_read_pipe[1];
 
@@ -173,8 +174,8 @@ module afdx_es #(
             snmp_read_pipe <= 0;
         end
         else begin
-            host_read_pipe <= { host_read_pipe[0], cfg_rd };
-            snmp_read_pipe <= { snmp_read_pipe[0], snmp_grant && snmp_mib_rd };
+            host_read_pipe <= {host_read_pipe[0], cfg_rd};
+            snmp_read_pipe <= {snmp_read_pipe[0], snmp_grant && snmp_mib_rd};
         end
     end
 
@@ -199,11 +200,19 @@ module afdx_es #(
             mib_snapshot_seconds <= snmp_mib_addr[17:4] == RTC_ADDR_GROUP && snmp_mib_addr[2:0] == 4;
         end
     end
+
     // SNMP 状态机保证 mib_rd/mib_wr 互斥，读抓拍不依赖写 ready。
     wire rtc_snapshot_read = (cfg_rd && cfg_addr[17:4] == RTC_ADDR_GROUP && cfg_addr[2:0] == 4)
         || (!cfg_rd && !cfg_wr && snmp_mib_rd && mib_snapshot_seconds);
-    afdx_615a #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1),
-        .READY_PREDICT(1), .CFG_READY_PREDICT(1), .CFG_READY_TERMS(1), .CE_DIV(CE_DIV)) loader (
+    afdx_615a #(
+        .LOCAL_RX_PORT     (1),
+        .SPLIT_CFG_ADDR    (2),
+        .CFG_WRITE_SELECT  (1),
+        .READY_PREDICT     (1),
+        .CFG_READY_PREDICT (1),
+        .CFG_READY_TERMS   (1),
+        .CE_DIV            (CE_DIV)
+    ) loader (
         .ce                (CE_DIV == 1 ? {72{1'b1}} : loader_ce_q),
         .clk               (clk),
         .reset             (reset),
@@ -234,7 +243,14 @@ module afdx_es #(
         .rx_dport          (load_rx_port),
         .rx_claim          (load_claim)
     );
-    afdx_snmp #(.LOCAL_RX_PORT(1), .SPLIT_CFG_ADDR(2), .CE_DIV(CE_DIV), .PREDECODED_CFG_WR(1), .SPLIT_MIB_READY(1), .LOCAL_TIMEBASE(1)) snmp (
+    afdx_snmp #(
+        .LOCAL_RX_PORT     (1),
+        .SPLIT_CFG_ADDR    (2),
+        .CE_DIV            (CE_DIV),
+        .PREDECODED_CFG_WR (1),
+        .SPLIT_MIB_READY   (1),
+        .LOCAL_TIMEBASE    (1)
+    ) snmp (
         .clk              (clk),
         .reset            (reset),
         .ce               (CE_DIV == 1 ? {59{1'b1}} : snmp_ce_q),
@@ -268,7 +284,14 @@ module afdx_es #(
         .rx_dport         (snmp_rx_port),
         .rx_claim         (snmp_claim)
     );
-    afdx_rtc #(.LOCAL_RX_PORT(1), .BANKED_RX(1), .SPLIT_CFG_ADDR(2), .CFG_WRITE_SELECT(1), .CFG_READY_TERMS(1), .RX_STREAM_DELAY_CYCLES(1)) rtc (
+    afdx_rtc #(
+        .LOCAL_RX_PORT          (1),
+        .BANKED_RX              (1),
+        .SPLIT_CFG_ADDR         (2),
+        .CFG_WRITE_SELECT       (1),
+        .CFG_READY_TERMS        (1),
+        .RX_STREAM_DELAY_CYCLES (1)
+    ) rtc (
         .clk               (clk),
         .reset             (reset),
         // active 只能由 cfg_ready 后的写请求置位；初始化完成标志随后保持到复位。
@@ -308,14 +331,14 @@ module afdx_es #(
         .app_tx_port_en (app_tx_port_en),
         .app_tx_sport   (app_tx_sport),
         .app_tx_dport   (app_tx_dport),
-        .svc_tx_valid   ({ load_tx_valid, snmp_tx_valid, rtc_tx_valid }),
+        .svc_tx_valid   ({load_tx_valid, snmp_tx_valid, rtc_tx_valid}),
         .svc_tx_ready   (svc_tx_ready),
-        .svc_tx_data    ({ load_tx_data, snmp_tx_data, rtc_tx_data }),
-        .svc_tx_last    ({ load_tx_last, snmp_tx_last, rtc_tx_last }),
-        .svc_tx_vl      ({ load_tx_vl, snmp_tx_vl, rtc_tx_vl }),
+        .svc_tx_data    ({load_tx_data, snmp_tx_data, rtc_tx_data}),
+        .svc_tx_last    ({load_tx_last, snmp_tx_last, rtc_tx_last}),
+        .svc_tx_vl      ({load_tx_vl, snmp_tx_vl, rtc_tx_vl}),
         .svc_tx_port_en (3'b111),
-        .svc_tx_sport   ({ load_tx_sport, SNMP_PORT, rtc_port }),
-        .svc_tx_dport   ({ load_tx_dport, snmp_tx_dport, rtc_port }),
+        .svc_tx_sport   ({load_tx_sport, SNMP_PORT, rtc_port}),
+        .svc_tx_dport   ({load_tx_dport, snmp_tx_dport, rtc_port}),
         .m_valid        (m_valid),
         .m_ready        (m_ready),
         .m_data         (m_data),
@@ -331,7 +354,7 @@ module afdx_es #(
         .d_sport        (d_sport),
         .d_dport        (d_dport),
         .d_net          (d_net),
-        .svc_rx_claim   ({ load_claim, snmp_claim, rtc_claim }),
+        .svc_rx_claim   ({load_claim, snmp_claim, rtc_claim}),
         .svc_rx_valid   (svc_rx_valid),
         .svc_rx_data    (svc_rx_data),
         .svc_rx_last    (svc_rx_last),
@@ -436,10 +459,11 @@ module afdx_es #(
         .ev_tx_b        (ev_tx[6]),
         .cfg_ok         (tx_cfg_ok)
     );
-    afdx_rx_core #(.REGISTERED_TIME_TICK(1),
-        .RX_RING_AW (RX_RING_AW),
-        .RX_DQ_AW   (RX_DQ_AW),
-        .CFG_COPIES (RX_CONFIG_BANKS)
+    afdx_rx_core #(
+        .REGISTERED_TIME_TICK (1),
+        .RX_RING_AW           (RX_RING_AW),
+        .RX_DQ_AW             (RX_DQ_AW),
+        .CFG_COPIES           (RX_CONFIG_BANKS)
     ) rx_core (
         .clk        (clk),
         .reset      (reset),

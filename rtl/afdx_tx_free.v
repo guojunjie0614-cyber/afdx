@@ -1,9 +1,7 @@
 // 本模块记录哪些发送缓存页还空着，并分配或收回这些页。
 // afdx_tx_buf 申请页，发送完成或接收失败后由相应模块归还页。
 // 本模块为赛题的发送缓存管理空间，避免两条消息使用同一页。
-module afdx_tx_free #(
-    parameter TX_PAGE_AW = 8) (
-
+module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire       clk, reset,
 
@@ -24,7 +22,8 @@ module afdx_tx_free #(
     output wire       ret1_ready,
     input  wire       ret2_valid,
     input  wire [7:0] ret2_page,
-    output wire       ret2_ready);
+    output wire       ret2_ready
+);
 
     localparam [TX_PAGE_AW:0] PAGES = {1'b1, {TX_PAGE_AW{1'b0}}};
 
@@ -52,8 +51,8 @@ module afdx_tx_free #(
     wire put = (ret1_pending || ret2_pending) && count < PAGES;
 
     assign pop_ready = init_done && phase == POP_IDLE;
-    assign ret1_ready = init_done && ! ret1_pending;
-    assign ret2_ready = init_done && ! ret2_pending;
+    assign ret1_ready = init_done && !ret1_pending;
+    assign ret2_ready = init_done && !ret2_pending;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
         .clk           (clk),
         .write_enable  (we),
@@ -91,13 +90,13 @@ module afdx_tx_free #(
             we <= 0;
             re <= 0;
             pop_ack <= 0;
-            // Empty slots may sample freely. Occupied slots hold their page
-            // through arbitration/backpressure until the pending write retires.
+            // 空槽允许自由采样输入，已占用槽位在仲裁与反压期间稳妥保持
+            // 原页号直至待退休写完成为止。
             if (!ret1_pending) ret1_saved <= ret1_page;
             if (!ret2_pending) ret2_saved <= ret2_page;
             // 初始化时逐拍写入所有页号，再等最后一次写入完成。
-            if ( ! init_done) begin
-                if ( ! init_flush) begin
+            if (!init_done) begin
+                if (!init_flush) begin
                     we <= 1;
                     wa <= init_ptr;
                     wd <= init_ptr;
@@ -118,10 +117,10 @@ module afdx_tx_free #(
                 end
                 // 分配和归还同时完成时，空闲页数不变。
                 // 两个归还口先各自保存页号，再依次写入空闲队列。
-                case ({ put, take && count != 0 })
+                case ({put, take && count != 0})
                     2'b10 : count <= count + 1'b1;
                     2'b01 : count <= count - 1'b1;
-                    default : ;
+                    default :;
                 endcase
                 if (put) begin
                     we <= 1;

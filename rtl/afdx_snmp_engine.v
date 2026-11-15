@@ -793,7 +793,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
             next_req_re = 0;
             next_out_we = 0;
 
-            if ( ! configured || ! enable) begin
+            if ( !configured || !enable) begin
                 next_state = 7'd0;
 
             end
@@ -902,7 +902,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 // LENGTH：短长度转 DISPATCH，长长度转 LONG_LENGTH，非法长度转 IDLE。
                 LENGTH : begin
                     next_cursor = cursor + 9'd1;
-                    if ( ! byte_value[7]) begin
+                    if ( !byte_value[7]) begin
                         next_field_length = { 9'b0, byte_value[6:0] };
                         next_state = DISPATCH_SUM;
                     end
@@ -1129,7 +1129,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                     next_object_index = candidate;
                     next_mib_addr = mib_address (candidate);
                     next_missing = 0;
-                    if ( ! get_set) begin
+                    if ( !get_set) begin
 
                         next_state = MIB_ADDRESS;
                     end
@@ -1571,7 +1571,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
                 default : next_state = 7'd0;
             endcase
             // 关闭事件通知后，模块丢弃尚未发送的通知请求。
-            if ( ! configured || ! trap_enabled) begin
+            if ( !configured || !trap_enabled) begin
                 next_cold_pending = 0;
                 next_auth_pending = 0;
             end

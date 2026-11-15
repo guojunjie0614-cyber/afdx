@@ -20,8 +20,14 @@ DECLARATIONS = {
     'afdx_tx_engine.v': ('words',),
 }
 OPEN_PORTS = {
-    'afdx_app_tx.v': ('.read_data     (memory_q));', '.read_data     (memory_q), .raw_write_data());'),
-    'afdx_app_rx.v': ('.data         (q_data));', '.data         (q_data), .next_limit());'),
+    'afdx_app_tx.v': (
+        '        .read_data     (memory_q)\n    );',
+        '        .read_data     (memory_q),\n        .raw_write_data ()\n    );',
+    ),
+    'afdx_app_rx.v': (
+        '        .data         (q_data)\n    );',
+        '        .data         (q_data),\n        .next_limit   ()\n    );',
+    ),
 }
 
 

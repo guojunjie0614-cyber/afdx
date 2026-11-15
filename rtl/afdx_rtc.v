@@ -3,25 +3,31 @@
 // 本模块对应赛题的 RTC（Real-Time Clock，实时时钟）同步功能。
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
-module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0,
-    CFG_WRITE_SELECT = 0, RX_STREAM_DELAY_CYCLES = 0, CFG_READY_TERMS = 0) (
-
+module afdx_rtc #(
+    parameter LOCAL_RX_PORT = 0,
+    BANKED_RX               = 0,
+    SPLIT_CFG_ADDR          = 0,
+    CFG_WRITE_SELECT        = 0,
+    RX_STREAM_DELAY_CYCLES  = 0,
+    CFG_READY_TERMS         = 0
+) (
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
-    input  wire                                                             clk, reset, enable,
+    input  wire        clk, reset, enable,
 
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     // 预译码模式在原写使能端口上传六位独热选通，默认仍为单比特。
-    input  wire [(CFG_WRITE_SELECT ? 6 : 1) - 1:0]                          cfg_we,
-    input  wire                                                             cfg_re,
+    input  wire [(CFG_WRITE_SELECT ? 6 : 1) - 1:0] cfg_we,
+    input  wire        cfg_re,
     input  wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
-    input  wire [31:0]                                                      cfg_wdata,
-    output reg  [31:0]                                                      cfg_rdata,
-    output reg  [31:0]                                                      sync_count,
+    input  wire [31:0] cfg_wdata,
+    output reg  [31:0] cfg_rdata,
+    output reg  [31:0] sync_count,
 
     // tx_valid 和 tx_ready 同为高时发送一个时间报文字节。
     // tx_last 标记第 48 个字节，tx_vl/port 选择发送通道。
-    (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
+    (* preserve = 1, dont_merge = 1, maxfan = 16 *)
+    output reg         tx_valid,
     input  wire        tx_ready,
     output reg  [7:0]  tx_data,
     output reg         tx_last,
@@ -36,17 +42,20 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     input  wire [15:0] rx_port,
     output wire        rx_claim,
     input  wire        cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
-    input  wire        cfg_write_request);
+    input  wire        cfg_write_request
+);
+
+    // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
     wire [31:0] receive_timestamp_seconds;
     wire [31:0] receive_timestamp_nanoseconds;
-    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
     wire rtc_client_launch;
     wire rtc_server_launch;
 `endif
 
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
-    wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 4 : 0) +: 4];
+    wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7:SPLIT_CFG_ADDR ? 4:0)+:4];
 
     localparam CALC_OFFSET_CANDIDATES = 15, CALC_TIME_CANDIDATES = 16;
     localparam CALC_IDLE = 0;
@@ -94,33 +103,35 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     localparam REG_OFFSET_SEC = 6, REG_OFFSET_NS = 7;
     // 顶层传入当拍独热选通；独立实例保留原来的地址译码接口。
     wire [11:0] rtc_field_ready;
-    generate if(CFG_READY_TERMS) begin : configuration_terms
-        // Four narrow fields and four bytes of each time-load word own
-        // identical, same-cycle ready state; no distant ready gates 64 FFs.
-        (* preserve=1,dont_merge=1 *) reg [11:0] field_ctl;
-        always @(posedge clk) begin
-            if(reset) field_ctl<=0;
-            else field_ctl<={12{cfg_ready_base || (cfg_ready_rx_term && cfg_ready_rx_ack)}};
+    generate
+        if (CFG_READY_TERMS) begin : configuration_terms
+            // 四个窄字段及时间装载字的四个字节各自拥有同拍本地就绪状态，
+            // 避免单个远端 ready 门控全部 64 位寄存器。
+            (* preserve = 1, dont_merge = 1 *) reg [11:0] field_ctl;
+            always @(posedge clk) begin
+                if (reset) field_ctl <= 0;
+                else field_ctl <= {12{cfg_ready_base || (cfg_ready_rx_term && cfg_ready_rx_ack)}};
+            end
+            assign rtc_field_ready = field_ctl;
+        end else begin : external_configuration
+            assign rtc_field_ready = 12'b0;
         end
-        assign rtc_field_ready=field_ctl;
-    end else begin : external_configuration
-        assign rtc_field_ready=12'b0;
-    end endgenerate
+    endgenerate
     wire [5:0] cfg_write_sel = CFG_READY_TERMS ? {
-        rtc_field_ready[8] && cfg_write_request && cfg_write_addr==REG_NS,
-        rtc_field_ready[4] && cfg_write_request && cfg_write_addr==REG_SECONDS,
-        rtc_field_ready[3] && cfg_write_request && cfg_write_addr==REG_PORT,
-        rtc_field_ready[2] && cfg_write_request && cfg_write_addr==REG_VL,
-        rtc_field_ready[1] && cfg_write_request && cfg_write_addr==REG_PERIOD,
-        rtc_field_ready[0] && cfg_write_request && cfg_write_addr==REG_CONTROL
-    } : CFG_WRITE_SELECT ? cfg_we : {
+        rtc_field_ready[8] && cfg_write_request && cfg_write_addr == REG_NS,
+        rtc_field_ready[4] && cfg_write_request && cfg_write_addr == REG_SECONDS,
+        rtc_field_ready[3] && cfg_write_request && cfg_write_addr == REG_PORT,
+        rtc_field_ready[2] && cfg_write_request && cfg_write_addr == REG_VL,
+        rtc_field_ready[1] && cfg_write_request && cfg_write_addr == REG_PERIOD,
+        rtc_field_ready[0] && cfg_write_request && cfg_write_addr == REG_CONTROL
+        } : CFG_WRITE_SELECT ? cfg_we : {
         cfg_we && cfg_write_addr == REG_NS,
         cfg_we && cfg_write_addr == REG_SECONDS,
         cfg_we && cfg_write_addr == REG_PORT,
         cfg_we && cfg_write_addr == REG_VL,
         cfg_we && cfg_write_addr == REG_PERIOD,
         cfg_we && cfg_write_addr == REG_CONTROL
-    };
+        };
 
     // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
     // active 表示服务已启用，master 为高表示本机是服务端。
@@ -149,8 +160,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg [31:0] timestamp_seconds, timestamp_nanoseconds;
     // seconds_increment 恒为 seconds + 1；tick_overflow 恒表示当前纳秒到达秒边界。
     reg [31:0] seconds_increment;
-    // Each flag describes one byte of the current seconds+1 value.
-    // Three short prefix terms replace the 16-bit carry/comparator feedback.
+    // 各位标志对应当前秒值加 1 后的逐字节全 F 进位前驱，
+    // 用三个短前缀项替代原本 16 位进位/比较反馈链。
     (* preserve = 1, dont_merge = 1 *) reg [2:0] seconds_byte_full;
     reg load_overflow;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tick_overflow;
@@ -184,7 +195,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
 
     assign rx_claim = active_rx && (LOCAL_RX_PORT ? local_port_match : incoming_port == port_number);
 
-    // Only the header and timestamp fields used by the protocol are retained.
+    // 仅保留协议处理真正需要的报头字节与时间戳字段。
     reg [7:0] rx_header;
     (* preserve = 1, dont_merge = 1 *) reg rx_client_header, rx_server_header;
     reg [31:0] rx_origin_sec, rx_origin_frac;
@@ -261,7 +272,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire tx_armed = active_tx && enable && tx_first_armed;
     wire first_tx = tx_armed && tx_ready;
     wire rx_byte = rx_valid && rx_claim;
-    wire rx_armed = enable && rx_claim && ! rx_busy;
+    wire rx_armed = enable && rx_claim && !rx_busy;
     wire first_rx = rx_armed && rx_valid;
     (* preserve = 1, dont_merge = 1 *) reg first_tx_q, first_rx_q;
     reg reference_event_q;
@@ -300,11 +311,9 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         .result         (decode_result)
     );
 
-    // The banked interface delays the byte and its index together.  The
-    // completion pulse is delayed by the same amount; the first-byte time
-    // capture remains on the original interface.
-    // These are the RTC's own byte boundary, not mergeable copies of the
-    // loader/SNMP capture FFs on the same shared input stream.
+    // 组寄存接收接口会将数据字节与字节序号同步延后一拍，报文结束脉冲也同幅
+    // 延后；首字节时间捕获仍停留在原接口拍。这些寄存器专用于 RTC 自身字节边界，
+    // 禁止与同一共享输入流上的加载/SNMP 捕获寄存器合并优化。
     (* preserve = 1, dont_merge = 1 *) reg [7:0] rx_data_stage;
     (* preserve = 1, dont_merge = 1 *) reg [5:0] rx_index_stage;
     (* preserve = 1, dont_merge = 1 *) reg rx_write_stage;
@@ -318,10 +327,14 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             rx_index_stage <= 0;
             rx_write_stage <= 0;
             rx_header <= 0;
-            rx_client_header <= 0;rx_server_header <= 0;
-            rx_origin_sec <= 0; rx_origin_frac <= 0;
-            rx_receive_sec <= 0; rx_receive_frac <= 0;
-            rx_transmit_sec <= 0; rx_transmit_frac <= 0;
+            rx_client_header <= 0;
+            rx_server_header <= 0;
+            rx_origin_sec <= 0;
+            rx_origin_frac <= 0;
+            rx_receive_sec <= 0;
+            rx_receive_frac <= 0;
+            rx_transmit_sec <= 0;
+            rx_transmit_frac <= 0;
         end else begin
             rx_data_stage <= rx_data;
             rx_index_stage <= incoming_index;
@@ -347,34 +360,38 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             end
         end
     end
+
     always @(posedge clk) begin
         if (reset || !active || !enable || load_pending) rx_done_delayed <= 0;
         else rx_done_delayed <= rx_done;
     end
+
     always @(posedge clk) begin
         if (reset) load_pending <= 0;
         else load_pending <= load_time;
     end
 
-    // Byte comparisons are registered locally.  All eight Originate bytes
-    // have settled before packet_done, including with the banked data stage.
+    // 发起时间戳的逐字节比对在本地寄存；即使经过组寄存数据级，
+    // 8 个字节的比对结果也在 packet_done 之前全部稳定。
     (* preserve = 1, dont_merge = 1 *) reg [7:0] reply_byte_match;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] reply_nibble_match;
     wire reply_match = &reply_byte_match;
     genvar origin_byte;
-    generate for (origin_byte = 0; origin_byte < 8; origin_byte = origin_byte + 1) begin : origin_compare
-        always @(posedge clk) begin
-            if (reset) begin
-                reply_nibble_match[origin_byte] <= 0;
-                reply_nibble_match[origin_byte+8] <= 0;
-                reply_byte_match[origin_byte] <= 0;
-            end else begin
-                reply_nibble_match[origin_byte] <= rx_origin_sec[origin_byte*4+:4] == stamp_tx_sec[origin_byte*4+:4];
-                reply_nibble_match[origin_byte+8] <= rx_origin_frac[origin_byte*4+:4] == stamp_tx_frac[origin_byte*4+:4];
-                reply_byte_match[origin_byte] <= &reply_nibble_match[origin_byte*2+:2];
+    generate
+        for (origin_byte = 0; origin_byte < 8; origin_byte = origin_byte + 1) begin : origin_compare
+            always @(posedge clk) begin
+                if (reset) begin
+                    reply_nibble_match[origin_byte] <= 0;
+                    reply_nibble_match[origin_byte+8] <= 0;
+                    reply_byte_match[origin_byte] <= 0;
+                end else begin
+                    reply_nibble_match[origin_byte] <= rx_origin_sec[origin_byte*4+:4] == stamp_tx_sec[origin_byte*4+:4];
+                    reply_nibble_match[origin_byte+8] <= rx_origin_frac[origin_byte*4+:4] == stamp_tx_frac[origin_byte*4+:4];
+                    reply_byte_match[origin_byte] <= &reply_nibble_match[origin_byte*2+:2];
+                end
             end
         end
-    end endgenerate
+    endgenerate
 
     // ready/valid 的远端组合链只到单比特事件寄存器，下一拍再驱动时间戳和换算输入。
     // RX 在事件拍确定 master 和装载优先级，避免下一拍配置改变时丢失或补采事件。
@@ -442,8 +459,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         if (reset) begin
             active <= 0;
             master <= 0;
-            active_rx <= 0;active_tx <= 0;active_protocol <= 0;
-            master_rx <= 0;master_tx <= 0;
+            active_rx <= 0;
+            active_tx <= 0;
+            active_protocol <= 0;
+            master_rx <= 0;
+            master_tx <= 0;
             period <= DEFAULT_PERIOD;
             period_zero <= 0;
             period_read <= DEFAULT_PERIOD;
@@ -463,8 +483,11 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             if (cfg_write_sel[REG_CONTROL]) begin
                 active <= cfg_wdata[0];
                 master <= cfg_wdata[1];
-                active_rx <= cfg_wdata[0];active_tx <= cfg_wdata[0];active_protocol <= cfg_wdata[0];
-                master_rx <= cfg_wdata[1];master_tx <= cfg_wdata[1];
+                active_rx <= cfg_wdata[0];
+                active_tx <= cfg_wdata[0];
+                active_protocol <= cfg_wdata[0];
+                master_rx <= cfg_wdata[1];
+                master_tx <= cfg_wdata[1];
             end
             if (cfg_write_sel[REG_PERIOD]) begin
                 period <= cfg_wdata;
@@ -483,50 +506,52 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             end
             // 读秒时同时保存纳秒值，由配置模块再选择最终读结果。
             if (SPLIT_CFG_ADDR != 2) begin
-            case (cfg_addr[2:0])
-                REG_CONTROL : cfg_rdata <= { 30'b0, master, active };
-                REG_PERIOD : cfg_rdata <= period;
-                REG_VL : cfg_rdata <= { 25'b0, vl };
-                REG_PORT : cfg_rdata <= { 16'b0, port_number };
-                REG_SECONDS : begin
-                    cfg_rdata <= seconds;
-                    if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
-                    if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];
-                    if (cfg_re_b2) snapshot_ns[23:16] <= nanoseconds[23:16];
-                    if (cfg_re_b3) snapshot_ns[31:24] <= nanoseconds[31:24];
-                end
-                REG_NS : cfg_rdata <= snapshot_ns;
-                REG_OFFSET_SEC : cfg_rdata <= offset_sec;
-                REG_OFFSET_NS : cfg_rdata <= offset_ns;
-                default : cfg_rdata <= 0;
-            endcase
+                case (cfg_addr[2:0])
+                    REG_CONTROL : cfg_rdata <= {30'b0, master, active};
+                    REG_PERIOD : cfg_rdata <= period;
+                    REG_VL : cfg_rdata <= {25'b0, vl};
+                    REG_PORT : cfg_rdata <= {16'b0, port_number};
+                    REG_SECONDS : begin
+                        cfg_rdata <= seconds;
+                        if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
+                        if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];
+                        if (cfg_re_b2) snapshot_ns[23:16] <= nanoseconds[23:16];
+                        if (cfg_re_b3) snapshot_ns[31:24] <= nanoseconds[31:24];
+                    end
+                    REG_NS : cfg_rdata <= snapshot_ns;
+                    REG_OFFSET_SEC : cfg_rdata <= offset_sec;
+                    REG_OFFSET_NS : cfg_rdata <= offset_ns;
+                    default : cfg_rdata <= 0;
+                endcase
             end
         end
     end
 
     wire [31:0] rtc_load_increment = cfg_wdata + 32'd1;
     genvar load_byte;
-    generate for(load_byte=0;load_byte<4;load_byte=load_byte+1) begin : time_load_field
-        wire seconds_write = CFG_READY_TERMS
-            ? rtc_field_ready[4+load_byte] && cfg_write_request && cfg_write_addr==REG_SECONDS
-            : cfg_write_sel[REG_SECONDS];
-        wire ns_write = CFG_READY_TERMS
-            ? rtc_field_ready[8+load_byte] && cfg_write_request && cfg_write_addr==REG_NS
-            : cfg_write_sel[REG_NS];
-        always @(posedge clk) begin
-            if(reset) begin
-                load_sec[load_byte*8+:8]<=0;
-                load_sec_increment[load_byte*8+:8]<=load_byte==0 ? 8'd1 : 8'd0;
-                load_ns[load_byte*8+:8]<=0;
-            end else begin
-                if(seconds_write) begin
-                    load_sec[load_byte*8+:8]<=cfg_wdata[load_byte*8+:8];
-                    load_sec_increment[load_byte*8+:8]<=rtc_load_increment[load_byte*8+:8];
+    generate
+        for (load_byte = 0; load_byte < 4; load_byte = load_byte + 1) begin : time_load_field
+            wire seconds_write = CFG_READY_TERMS
+                ? rtc_field_ready[4+load_byte] && cfg_write_request && cfg_write_addr == REG_SECONDS
+                : cfg_write_sel[REG_SECONDS];
+            wire ns_write = CFG_READY_TERMS
+                ? rtc_field_ready[8+load_byte] && cfg_write_request && cfg_write_addr == REG_NS
+                : cfg_write_sel[REG_NS];
+            always @(posedge clk) begin
+                if (reset) begin
+                    load_sec[load_byte*8+:8] <= 0;
+                    load_sec_increment[load_byte*8+:8] <= load_byte == 0 ? 8'd1 : 8'd0;
+                    load_ns[load_byte*8+:8] <= 0;
+                end else begin
+                    if (seconds_write) begin
+                        load_sec[load_byte*8+:8] <= cfg_wdata[load_byte*8+:8];
+                        load_sec_increment[load_byte*8+:8] <= rtc_load_increment[load_byte*8+:8];
+                    end
+                    if (ns_write) load_ns[load_byte*8+:8] <= cfg_wdata[load_byte*8+:8];
                 end
-                if(ns_write) load_ns[load_byte*8+:8]<=cfg_wdata[load_byte*8+:8];
             end
         end
-    end endgenerate
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -622,8 +647,15 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             tick_overflow <= 0;
             previous_time_mode <= TIME_NORMAL;
             previous_wrap_mode <= TIME_NORMAL;
-            tick_nn <= 0; tick_wn <= 0; tick_ww <= 0;
-            tick_ln <= 0; tick_lw <= 0; tick_dn <= 0; tick_dw <= 0; tick_an <= 0; tick_aw <= 0;
+            tick_nn <= 0;
+            tick_wn <= 0;
+            tick_ww <= 0;
+            tick_ln <= 0;
+            tick_lw <= 0;
+            tick_dn <= 0;
+            tick_dw <= 0;
+            tick_an <= 0;
+            tick_aw <= 0;
         end
         else begin
             tick_nn <= ge32(nanoseconds, LAST_TICK_NS - 2 * CLOCK_NS);
@@ -635,14 +667,13 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             tick_dw <= ge32(adjusted_ns, 2 * LAST_TICK_NS);
             tick_an <= ge32(final_ns_wrapped, LAST_TICK_NS - CLOCK_NS);
             tick_aw <= ge32(final_ns_wrapped, 2 * LAST_TICK_NS);
-            // Exclusive update terms avoid three serial mode/data muxes on
-            // the already registered overflow prediction. Priority is still
-            // load, correction apply, then the ordinary clock step.
+            // 采用互斥更新项避免在已寄存的溢出预测上串联三级模式/数据复用；
+            // 优先级仍保持为装载优先、其次校正量累加、最后常规走时步进。
             tick_overflow <= (load_pending && load_overflow) ||
                 (!load_pending && in_apply_q &&
-                    ((final_overflow && final_tick_wrapped) || (!final_overflow && final_tick_direct))) ||
+                ((final_overflow && final_tick_wrapped) || (!final_overflow && final_tick_direct))) ||
                 (!load_pending && !in_apply_q &&
-                    ((tick_overflow && predicted_wrap) || (!tick_overflow && predicted_normal)));
+                ((tick_overflow && predicted_wrap) || (!tick_overflow && predicted_normal)));
             if (load_pending) begin
                 previous_time_mode <= TIME_LOAD;
                 previous_wrap_mode <= TIME_LOAD;
@@ -662,36 +693,41 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     (* preserve = 1, dont_merge = 1 *) reg receive_seconds_event, receive_nanoseconds_event;
     (* preserve = 1, dont_merge = 1 *) reg request_seconds_event, request_nanoseconds_event;
     wire request_event = rtc_request_armed && tx_ready;
-    // Only the parent stream delay is compensated here. Existing banked
-    // byte capture and local event registers already have their own timing.
-    // History preserves exact pre-step/pre-wrap values, unlike subtracting
-    // a constant from a clock that may have loaded or applied an offset.
-    wire [(RX_STREAM_DELAY_CYCLES+1)*32-1:0] receive_seconds_history,receive_ns_history;
-    assign receive_seconds_history[31:0]=timestamp_seconds;
-    assign receive_ns_history[31:0]=timestamp_nanoseconds;
+    // 此处仅补偿上层数据流引入的拍延迟，现有的字节捕获与本地事件寄存器均已
+    // 自带对应时序；历史移位寄存器保存精准的步进前/回绕前数值，而不是从可能
+    // 刚发生装载或加减校正的时钟上直接减去常量。
+    wire [(RX_STREAM_DELAY_CYCLES+1)*32-1:0] receive_seconds_history, receive_ns_history;
+    assign receive_seconds_history[31:0] = timestamp_seconds;
+    assign receive_ns_history[31:0] = timestamp_nanoseconds;
 `ifndef MODEL_TECH
-    wire [31:0] receive_timestamp_seconds=receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
+    wire [31:0] receive_timestamp_seconds = receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
 `else
-    assign receive_timestamp_seconds =receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
+    assign receive_timestamp_seconds = receive_seconds_history[RX_STREAM_DELAY_CYCLES*32+:32];
 `endif
 `ifndef MODEL_TECH
-    wire [31:0] receive_timestamp_nanoseconds=receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
+    wire [31:0] receive_timestamp_nanoseconds = receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
 `else
-    assign receive_timestamp_nanoseconds =receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
+    assign receive_timestamp_nanoseconds = receive_ns_history[RX_STREAM_DELAY_CYCLES*32+:32];
 `endif
     genvar history_stage;
-    generate for(history_stage=0;history_stage<RX_STREAM_DELAY_CYCLES;history_stage=history_stage+1) begin : receive_time_history
-        (* preserve=1,dont_merge=1 *) reg [31:0] seconds_q,nanoseconds_q;
-        assign receive_seconds_history[(history_stage+1)*32+:32]=seconds_q;
-        assign receive_ns_history[(history_stage+1)*32+:32]=nanoseconds_q;
-        always @(posedge clk) begin
-            if(reset) begin seconds_q<=0;nanoseconds_q<=0;end
-            else begin
-                seconds_q<=receive_seconds_history[history_stage*32+:32];
-                nanoseconds_q<=receive_ns_history[history_stage*32+:32];
+    generate
+        for (history_stage = 0; history_stage < RX_STREAM_DELAY_CYCLES; history_stage = history_stage + 1) begin : receive_time_history
+            (* preserve = 1, dont_merge = 1 *) reg [31:0] seconds_q, nanoseconds_q;
+            assign receive_seconds_history[(history_stage+1)*32+:32] = seconds_q;
+            assign receive_ns_history[(history_stage+1)*32+:32] = nanoseconds_q;
+            always @(posedge clk) begin
+                if (reset) begin
+                    seconds_q <= 0;
+                    nanoseconds_q <= 0;
+                end
+                else begin
+                    seconds_q <= receive_seconds_history[history_stage*32+:32];
+                    nanoseconds_q <= receive_ns_history[history_stage*32+:32];
+                end
             end
         end
-    end endgenerate
+    endgenerate
+
     always @(posedge clk) begin
         if (reset) begin
             timestamp_seconds <= 0;
@@ -761,13 +797,17 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     (* preserve = 1, dont_merge = 1 *) reg rtc_byte_taken;
     wire [5:0] rtc_effective_index = rtc_byte_taken ? tx_index_next : tx_index;
     always @(posedge clk) begin
-        if(reset) begin rtc_byte_taken<=0;tx_index<=0;end
+        if (reset) begin
+            rtc_byte_taken <= 0;
+            tx_index <= 0;
+        end
         else begin
-            rtc_byte_taken<=tx_state==TX_HANDSHAKE && tx_ready && !tx_index_last_q;
-            if(tx_state==TX_IDLE) tx_index<=0;
-            else if(rtc_byte_taken) tx_index<=tx_index_next;
+            rtc_byte_taken <= tx_state == TX_HANDSHAKE && tx_ready && !tx_index_last_q;
+            if (tx_state == TX_IDLE) tx_index <= 0;
+            else if (rtc_byte_taken) tx_index <= tx_index_next;
         end
     end
+
     always @(posedge clk) begin
         if (reset) begin
             tx_index_compare <= 0;
@@ -783,79 +823,88 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         end
     end
 
-    // Every offset byte has same-cycle local mode/load/commit controls.
-    // A disable or load on the original application edge still cancels it;
-    // no registered delayed abort is substituted for that decision.
+    // 每个校正字节拥有同拍的本地模式/装载/提交控制；原应用沿上的关闭或
+    // 新装载请求仍会在当拍直接取消该动作，不使用延后一拍的中止副本替代原判决。
     genvar offset_byte;
-    generate for (offset_byte=0; offset_byte<8; offset_byte=offset_byte+1) begin : offset_commit
-        (* preserve = 1, dont_merge = 1 *) reg active_local, load_local, apply_local;
-        wire abort_local = !active_local || !enable || load_local;
-        always @(posedge clk) begin
-            if (reset) begin active_local<=0;load_local<=0;apply_local<=0;end
-            else begin
-                if (cfg_write_sel[REG_CONTROL]) active_local<=cfg_wdata[0];
-                load_local<=load_time;
-                apply_local<=calc_state==CALC_LATENCY && !abort_local;
+    generate
+        for (offset_byte = 0; offset_byte < 8; offset_byte = offset_byte + 1) begin : offset_commit
+            (* preserve = 1, dont_merge = 1 *) reg active_local, load_local, apply_local;
+            wire abort_local = !active_local || !enable || load_local;
+            always @(posedge clk) begin
+                if (reset) begin
+                    active_local <= 0;
+                    load_local <= 0;
+                    apply_local <= 0;
+                end
+                else begin
+                    if (cfg_write_sel[REG_CONTROL]) active_local <= cfg_wdata[0];
+                    load_local <= load_time;
+                    apply_local <= calc_state == CALC_LATENCY && !abort_local;
+                end
+            end
+            if (offset_byte<4) begin : sec
+                always @(posedge clk) begin
+                    if (reset) offset_sec[offset_byte*8+:8] <= 0;
+                    else if (apply_local && !abort_local)
+                        offset_sec[offset_byte*8+:8] <= correction_sec[offset_byte*8+:8];
+                end
+            end else begin : ns
+                always @(posedge clk) begin
+                    if (reset) offset_ns[(offset_byte-4)*8+:8] <= 0;
+                    else if (apply_local && !abort_local)
+                        offset_ns[(offset_byte-4)*8+:8] <= correction_ns[(offset_byte-4)*8+:8];
+                end
             end
         end
-        if (offset_byte<4) begin : sec
-            always @(posedge clk) begin
-                if (reset) offset_sec[offset_byte*8+:8]<=0;
-                else if (apply_local && !abort_local)
-                    offset_sec[offset_byte*8+:8]<=correction_sec[offset_byte*8+:8];
-            end
-        end else begin : ns
-            always @(posedge clk) begin
-                if (reset) offset_ns[(offset_byte-4)*8+:8]<=0;
-                else if (apply_local && !abort_local)
-                    offset_ns[(offset_byte-4)*8+:8]<=correction_ns[(offset_byte-4)*8+:8];
-            end
-        end
-    end endgenerate
+    endgenerate
     (* preserve = 1, dont_merge = 1 *) reg apply_count;
     always @(posedge clk) begin
-        if (reset) begin apply_count<=0;sync_count<=0;end
+        if (reset) begin
+            apply_count <= 0;
+            sync_count <= 0;
+        end
         else begin
-            apply_count<=calc_state==CALC_LATENCY && !abort_protocol;
-            if (apply_count && !abort_protocol) sync_count<=sync_count+32'd1;
+            apply_count <= calc_state == CALC_LATENCY && !abort_protocol;
+            if (apply_count && !abort_protocol) sync_count <= sync_count + 32'd1;
         end
     end
 
-    // HALF already owns a preparation edge. Predict the two nontrivial
-    // byte carries of +0x1dcd6500 there; HALF_SECOND then has only byte adders.
-    (* preserve=1,dont_merge=1 *) reg [1:0] rtc_half_carry;
+    // HALF 状态本身就有一拍准备周期，提前在该拍预测 +0x1dcd6500 的两个
+    // 非平凡字节进位，使 HALF_SECOND 状态只需做逐字节加法。
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] rtc_half_carry;
     wire [31:0] rtc_half_value = sum_ns >>> 1;
-    wire rtc_half_c16 = rtc_half_value[15:8]>=8'h9b;
+    wire rtc_half_c16 = rtc_half_value[15:8] >= 8'h9b;
     wire rtc_half_c24 = rtc_half_value[23:16]>8'h32 ||
-        (rtc_half_value[23:16]==8'h32 && rtc_half_c16);
+        (rtc_half_value[23:16] == 8'h32 && rtc_half_c16);
     always @(posedge clk) begin
-        if(reset) rtc_half_carry<=0;
-        else if(calc_state==CALC_HALF)
-            rtc_half_carry<={sum_sec[0] && rtc_half_c24,sum_sec[0] && rtc_half_c16};
+        if (reset) rtc_half_carry <= 0;
+        else if (calc_state == CALC_HALF)
+            rtc_half_carry <= {sum_sec[0] && rtc_half_c24, sum_sec[0] && rtc_half_c16};
     end
+
     function [31:0] rtc_add_half;
         input [31:0] value;
         input odd;
         input [1:0] carry;
         begin
-            rtc_add_half[7:0]=value[7:0];
-            rtc_add_half[15:8]=value[15:8]+(odd?8'h65:8'h00);
-            rtc_add_half[23:16]=value[23:16]+(odd?8'hcd:8'h00)+{7'b0,carry[0]};
-            rtc_add_half[31:24]=value[31:24]+(odd?8'h1d:8'h00)+{7'b0,carry[1]};
+            rtc_add_half[7:0] = value[7:0];
+            rtc_add_half[15:8] = value[15:8] + (odd ? 8'h65 : 8'h00);
+            rtc_add_half[23:16] = value[23:16] + (odd ? 8'hcd : 8'h00) + {7'b0, carry[0]};
+            rtc_add_half[31:24] = value[31:24] + (odd ? 8'h1d : 8'h00) + {7'b0, carry[1]};
         end
     endfunction
 
-    // Same-cycle run/first-request predicates use the original next values.
-    // Enable remains a current-cycle input for standalone callers.
+    // 同拍运行与首次请求判定采用原信号次态表达式；独立调用模式下
+    // enable 仍作为当拍组合输入生效。
 `ifndef MODEL_TECH
-    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
 `endif
     wire rtc_tx_running = rtc_run_ctl && enable;
-    wire rtc_tx_idle = tx_state==TX_IDLE;
-    wire rtc_tx_groups = tx_state==TX_GROUPS;
-    wire rtc_tx_word = tx_state==TX_WORD;
-    wire rtc_tx_byte = tx_state==TX_BYTE;
-    wire rtc_tx_handshake = tx_state==TX_HANDSHAKE;
+    wire rtc_tx_idle = tx_state == TX_IDLE;
+    wire rtc_tx_groups = tx_state == TX_GROUPS;
+    wire rtc_tx_word = tx_state == TX_WORD;
+    wire rtc_tx_byte = tx_state == TX_BYTE;
+    wire rtc_tx_handshake = tx_state == TX_HANDSHAKE;
     wire rtc_tx_invalid = tx_state>TX_HANDSHAKE;
     wire rtc_tx_launch = rtc_server_launch || rtc_client_launch;
     wire rtc_control_hold = !rtc_tx_idle && !rtc_tx_byte && (!rtc_tx_handshake || !tx_ready);
@@ -864,31 +913,33 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     wire rtc_reply_next = rtc_tx_idle && rtc_server_launch ? 1'b1 :
         rtc_tx_idle && rtc_client_launch ? 1'b0 : tx_reply;
     always @(posedge clk) begin
-        if(reset) begin
-            rtc_run_ctl<=0;rtc_request_armed<=0;
-            tx_state<=TX_IDLE;tx_valid<=0;tx_last<=0;tx_first_armed<=0;
+        if (reset) begin
+            rtc_run_ctl <= 0;
+            rtc_request_armed <= 0;
+            tx_state <= TX_IDLE;
+            tx_valid <= 0;
+            tx_last <= 0;
+            tx_first_armed <= 0;
         end else begin
-            rtc_run_ctl<=(cfg_write_sel[REG_CONTROL] ? cfg_wdata[0] : active_protocol) && !load_time;
-            rtc_request_armed<=rtc_first_armed_next && !rtc_reply_next;
-            // Parallel equations retain numeric state values and their
-            // original phases, including hold on an unused state encoding.
-            tx_state[0]<=rtc_tx_running && ((rtc_tx_idle && rtc_tx_launch) || rtc_tx_word ||
+            rtc_run_ctl <= (cfg_write_sel[REG_CONTROL] ? cfg_wdata[0] : active_protocol) && !load_time;
+            rtc_request_armed <= rtc_first_armed_next && !rtc_reply_next;
+            // 并行次态方程完整保留原数字状态编码及其各阶段节拍，
+            // 包括未使用状态编码下保持不变的行为。
+            tx_state[0] <= rtc_tx_running && ((rtc_tx_idle && rtc_tx_launch) || rtc_tx_word ||
                 (rtc_tx_handshake && tx_ready && !tx_index_last_q) || (rtc_tx_invalid && tx_state[0]));
-            tx_state[1]<=rtc_tx_running && (rtc_tx_groups || rtc_tx_word || (rtc_tx_invalid && tx_state[1]));
-            tx_state[2]<=rtc_tx_running && (rtc_tx_byte || (rtc_tx_handshake && !tx_ready) ||
+            tx_state[1] <= rtc_tx_running && (rtc_tx_groups || rtc_tx_word || (rtc_tx_invalid && tx_state[1]));
+            tx_state[2] <= rtc_tx_running && (rtc_tx_byte || (rtc_tx_handshake && !tx_ready) ||
                 (rtc_tx_invalid && tx_state[2]));
-            tx_valid<=rtc_tx_running && (rtc_tx_byte || (rtc_control_hold && tx_valid));
-            tx_last<=rtc_tx_running && ((rtc_tx_byte && tx_index_last_q) || (rtc_control_hold && tx_last));
-            tx_first_armed<=rtc_first_armed_next;
+            tx_valid <= rtc_tx_running && (rtc_tx_byte || (rtc_control_hold && tx_valid));
+            tx_last <= rtc_tx_running && ((rtc_tx_byte && tx_index_last_q) || (rtc_control_hold && tx_last));
+            tx_first_armed <= rtc_first_armed_next;
         end
     end
 
-    // Predict the complete response acceptance from the exact D functions
-    // of its registered inputs. Each byte owns a same-edge permit: these
-    // are not delayed accepted events and add no timestamp/data pipeline.
-    // Waiting responses may replace these seconds even while calculation is
-    // busy; abort clears protocol control but never cancels that old-edge
-    // seconds capture. Both original priority rules remain intact.
+    // 由已寄存输入的精确 D 端方程预测完整回应接收许可：每个字节拥有同拍
+    // 许可信号，既不引入额外时间戳流水也无延后拍；等待回应期间新秒值可覆写
+    // 已有暂存，而超时/终止仅清除协议控制位，绝不取消旧沿上的秒字节捕获，
+    // 两条原优先级规则完全保留。
 `ifndef MODEL_TECH
     wire rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;
 `else
@@ -900,41 +951,43 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     assign rtc_server_launch = master_tx && reply_pending;
 `endif
     wire rtc_waiting_next = !abort_protocol &&
-        ((tx_state==TX_IDLE && rtc_client_launch) || (waiting && calc_state!=CALC_APPLY));
+        ((tx_state == TX_IDLE && rtc_client_launch) || (waiting && calc_state != CALC_APPLY));
     wire rtc_tx_idle_next = abort_protocol ||
-        (tx_state==TX_IDLE && !rtc_server_launch && !rtc_client_launch) ||
-        (tx_state==TX_HANDSHAKE && tx_ready && tx_index_last_q);
+        (tx_state == TX_IDLE && !rtc_server_launch && !rtc_client_launch) ||
+        (tx_state == TX_HANDSHAKE && tx_ready && tx_index_last_q);
     wire rtc_master_next = cfg_write_sel[REG_CONTROL] ? cfg_wdata[1] : master_rx;
-    wire rtc_server_header_next = field_write && field_index==0
-        ? (field_data[5:3]==NTP_VERSION && field_data[2:0]==MODE_SERVER) : rx_server_header;
+    wire rtc_server_header_next = field_write && field_index == 0
+        ? (field_data[5:3] == NTP_VERSION && field_data[2:0] == MODE_SERVER) : rx_server_header;
     wire rtc_packet_done_next = BANKED_RX
         ? (!active || !enable || load_pending ? 1'b0 : rx_done)
-        : (!abort_protocol && rx_byte && rx_last && rx_index==PACKET_LAST);
+        : (!abort_protocol && rx_byte && rx_last && rx_index == PACKET_LAST);
     wire rtc_accept_next = rtc_packet_done_next && !rtc_master_next && rtc_waiting_next
         && rtc_tx_idle_next && rtc_server_header_next && (&reply_nibble_match);
-    (* preserve=1,dont_merge=1 *) reg [8:0] rtc_capture_ctl;
+    (* preserve = 1, dont_merge = 1 *) reg [8:0] rtc_capture_ctl;
     wire [31:0] rtc_receive_seconds = rx_receive_sec - NTP_EPOCH;
     wire [31:0] rtc_transmit_seconds = rx_transmit_sec - NTP_EPOCH;
     genvar capture_byte;
-    generate for(capture_byte=0;capture_byte<9;capture_byte=capture_byte+1) begin : response_capture
-        always @(posedge clk) begin
-            if(reset) rtc_capture_ctl[capture_byte]<=0;
-            else rtc_capture_ctl[capture_byte]<=rtc_accept_next;
-        end
-        if(capture_byte<4) begin : receive_word
+    generate
+        for (capture_byte = 0; capture_byte < 9; capture_byte = capture_byte + 1) begin : response_capture
             always @(posedge clk) begin
-                if(reset) server_receive_sec[capture_byte*8+:8]<=0;
-                else if(rtc_capture_ctl[capture_byte])
-                    server_receive_sec[capture_byte*8+:8]<=rtc_receive_seconds[capture_byte*8+:8];
+                if (reset) rtc_capture_ctl[capture_byte] <= 0;
+                else rtc_capture_ctl[capture_byte] <= rtc_accept_next;
             end
-        end else if(capture_byte<8) begin : transmit_word
-            always @(posedge clk) begin
-                if(reset) server_transmit_sec[(capture_byte-4)*8+:8]<=0;
-                else if(rtc_capture_ctl[capture_byte])
-                    server_transmit_sec[(capture_byte-4)*8+:8]<=rtc_transmit_seconds[(capture_byte-4)*8+:8];
+            if (capture_byte<4) begin : receive_word
+                always @(posedge clk) begin
+                    if (reset) server_receive_sec[capture_byte*8+:8] <= 0;
+                    else if (rtc_capture_ctl[capture_byte])
+                        server_receive_sec[capture_byte*8+:8] <= rtc_receive_seconds[capture_byte*8+:8];
+                end
+            end else if (capture_byte<8) begin : transmit_word
+                always @(posedge clk) begin
+                    if (reset) server_transmit_sec[(capture_byte-4)*8+:8] <= 0;
+                    else if (rtc_capture_ctl[capture_byte])
+                        server_transmit_sec[(capture_byte-4)*8+:8] <= rtc_transmit_seconds[(capture_byte-4)*8+:8];
+                end
             end
         end
-    end endgenerate
+    endgenerate
 
     always @(posedge clk) begin
         if (reset) begin
@@ -992,8 +1045,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
             countdown_zero_q <= countdown_zero_q || countdown == 32'd1;
             if (!countdown_zero_q) countdown <= countdown - 32'd1;
             if (rx_byte) begin
-                rx_busy <= ! rx_last;
-                if ( ! rx_busy) begin
+                rx_busy <= !rx_last;
+                if (!rx_busy) begin
                     rx_index <= 1;
                 end
                 else rx_index <= rx_index + 6'd1;
@@ -1009,8 +1062,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     reply_pending <= 1;
                 end
             end
-            // Same-edge local acceptance includes packet_done and TX_IDLE;
-            // a retry still excludes an old response throughout transmission.
+            // 同拍本地接收使能仅在 packet_done 与 TX_IDLE 同时不重传旧响应的
+            // 条件下有效，发送重传期间始终排除旧回应干扰。
             if (rtc_capture_ctl[8]) begin
                 calc_state <= CALC_START_T2;
                 calc_busy <= 1;
@@ -1065,8 +1118,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                 end
 
                 CALC_HALF_SECOND : begin
-                    correction_ns <= rtc_add_half(correction_ns,second_odd,rtc_half_carry);
-                    correction_ns_calc <= rtc_add_half(correction_ns_calc,second_odd,rtc_half_carry);
+                    correction_ns <= rtc_add_half(correction_ns, second_odd, rtc_half_carry);
+                    correction_ns_calc <= rtc_add_half(correction_ns_calc, second_odd, rtc_half_carry);
                     calc_state <= CALC_OFFSET_CANDIDATES;
                 end
 
@@ -1140,7 +1193,7 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                         reply_pending <= 0;
                     end
                     // 正在接收完整回应或计算校正量时，客户端暂不启动下一次请求。
-                    else if ( ! master_tx && countdown_zero_q && ! calc_busy && !rx_done && !packet_done) begin
+                    else if (!master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done) begin
                         tx_reply <= 0;
                         waiting <= 1;
                         countdown <= period;
@@ -1185,7 +1238,8 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
                     endcase
                 end
 
-                TX_HANDSHAKE : begin end
+                TX_HANDSHAKE : begin
+                end
             endcase
             // 中止只覆盖控制位；宽中间结果会在下一事务使用前重新计算。
             if (abort_protocol) begin
@@ -1217,29 +1271,29 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
         if (SPLIT_CFG_ADDR == 2) begin : local_read_decode
             for (read_nibble = 0; read_nibble < 8; read_nibble = read_nibble + 1) begin : nibble
                 (* preserve = 1, dont_merge = 1 *) reg [7:0] mib_lane;
-                // Select the address before the parallel data reduction;
-                // snapshot/seconds no longer traverse a second host-data mux.
+                // 先完成地址片选译码再并行归约读数据，使快照与秒计数
+                // 不再串过第二级主机数据复用器。
                 wire [7:0] lane = cfg_addr[6] ? (8'b1 << cfg_addr[5:3]) : mib_lane;
                 (* keep = 1 *) wire [3:0] pair01 =
-                    ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4 +: 4]) |
-                    ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4 +: 4]);
+                    ({4{lane[0]}} & word_cfg_rdata_0[read_nibble * 4+:4]) |
+                    ({4{lane[1]}} & word_cfg_rdata_1[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] pair23 =
-                    ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4 +: 4]) |
-                    ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4 +: 4]);
+                    ({4{lane[2]}} & word_cfg_rdata_2[read_nibble * 4+:4]) |
+                    ({4{lane[3]}} & word_cfg_rdata_3[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] pair45 =
-                    ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4 +: 4]) |
-                    ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4 +: 4]);
+                    ({4{lane[4]}} & word_cfg_rdata_4[read_nibble * 4+:4]) |
+                    ({4{lane[5]}} & word_cfg_rdata_5[read_nibble * 4+:4]);
                 (* keep = 1 *) wire [3:0] pair67 =
-                    ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4 +: 4]) |
-                    ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4 +: 4]);
+                    ({4{lane[6]}} & word_cfg_rdata_6[read_nibble * 4+:4]) |
+                    ({4{lane[7]}} & word_cfg_rdata_7[read_nibble * 4+:4]);
                 always @(posedge clk) begin
                     if (reset) begin
                         mib_lane <= 8'b1;
-                        cfg_rdata[read_nibble * 4 +: 4] <= 0;
+                        cfg_rdata[read_nibble * 4+:4] <= 0;
                     end
                     else begin
                         mib_lane <= 8'b1 << cfg_addr[2:0];
-                        cfg_rdata[read_nibble * 4 +: 4] <= pair01 | pair23 | pair45 | pair67;
+                        cfg_rdata[read_nibble * 4+:4] <= pair01 | pair23 | pair45 | pair67;
                     end
                 end
             end
