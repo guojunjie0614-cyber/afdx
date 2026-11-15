@@ -4,18 +4,18 @@
 module afdx_mac_rx (
 
     // clk 为工作时钟，reset 为同步高有效复位。
-    input wire clk, reset,
+    input  wire        clk, reset,
 
     // rx_valid 为高时，rx_data 是线路本拍收到的字节。
     // rx_valid 拉低表示帧已结束。
-    input wire [7:0] rx_data,
-    input wire rx_valid,
+    input  wire [7:0]  rx_data,
+    input  wire        rx_valid,
 
     // m_valid 为高时，m_data 是去掉校验值后的帧内容。
     // m_first 标记目的以太网地址的首字节。
-    output reg m_valid,
-    output reg [7:0] m_data,
-    output reg m_first, f_end,
+    output reg         m_valid,
+    output reg  [7:0]  m_data,
+    output reg         m_first, f_end,
 
     // f_end 为高时，f_err 和 f_len 给出本帧检查结果。
     // f_err=0 表示通过。
@@ -23,8 +23,8 @@ module afdx_mac_rx (
     // f_err=2 表示长度错误。
     // f_err=3 表示前导码错误。
     // f_len 包含末尾四字节校验值。
-    output reg [1:0] f_err,
-    output reg [10:0] f_len);
+    output reg  [1:0]  f_err,
+    output reg  [10:0] f_len);
 
     // IDLE：先等线路空闲，再按首字节转 PREAMBLE、FRAME 或 BAD_PRE。
     // PREAMBLE：遇帧起始定界符转 FRAME，遇非法字节转 BAD_PRE。
@@ -58,9 +58,9 @@ module afdx_mac_rx (
     reg [7:0] delay0, delay1, delay2, delay3;
     wire [31:0] next_crc;
     afdx_crc32_d8 update_crc (
-        .crc(crc),
-        .data(data_q),
-        .next_crc(next_crc)
+        .crc      (crc),
+        .data     (data_q),
+        .next_crc (next_crc)
     );
 
     // 帧结束时才确定检查结果，解析器在此前暂存数据。

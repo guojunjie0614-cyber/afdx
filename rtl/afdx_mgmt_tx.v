@@ -1,23 +1,23 @@
 // 协议引擎提交完整报文后，本模块在主时钟下连续读取并发送。
 // request/complete 是翻转握手；提交者保持报文和元数据，直到 complete 返回。
 module afdx_mgmt_tx #(parameter AW = 10) (
-    input wire clk, reset,
-    input wire request,
-    input wire [AW:0] length,
-    input wire [6:0] vl,
-    input wire [15:0] sport, dport,
-    input wire mode,
-    output reg complete,
-    output reg read_enable,
-    output reg [AW - 1:0] read_address,
-    input wire [7:0] read_data,
-    output reg read_mode,
+    input  wire            clk, reset,
+    input  wire            request,
+    input  wire [AW:0]     length,
+    input  wire [6:0]      vl,
+    input  wire [15:0]     sport, dport,
+    input  wire            mode,
+    output reg             complete,
+    output reg             read_enable,
+    output reg  [AW - 1:0] read_address,
+    input  wire [7:0]      read_data,
+    output reg             read_mode,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
-    input wire tx_ready,
-    output wire [7:0] tx_data,
-    output wire tx_last,
-    output reg [6:0] tx_vl,
-    output reg [15:0] tx_sport, tx_dport
+    input  wire        tx_ready,
+    output wire [7:0]  tx_data,
+    output wire        tx_last,
+    output reg  [6:0]  tx_vl,
+    output reg  [15:0] tx_sport, tx_dport
 );
     // 协议引擎与本模块可能相距很远，跨段输入整组经两级寄存，后续控制只使用第二级。
     // 请求与元数据同样晚两拍，元数据在请求翻转前已稳定并保持到 complete，对齐关系不变。

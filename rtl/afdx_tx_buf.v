@@ -6,51 +6,51 @@ module afdx_tx_buf #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, EARLY_ENQUEUE = 0) (
 
     // init_done 为高时才允许接收新消息。
-    input wire clk, reset, init_done,
+    input  wire                                clk, reset, init_done,
 
     // m_valid 和 m_ready 同为高时接收 m_data，m_last 标记末字节。
     // m_vl 是发送配置表的 7 位索引。
-    input wire m_valid,
-    output wire m_ready,
-    input wire [7:0] m_data,
-    input wire m_last,
-    input wire [6:0] m_vl,
+    input  wire                                m_valid,
+    output wire                                m_ready,
+    input  wire [7:0]                          m_data,
+    input  wire                                m_last,
+    input  wire [6:0]                          m_vl,
 
     // m_port_en 为高时使用本消息的端口，否则使用配置中的端口。
-    input wire m_port_en,
-    input wire [15:0] m_sport, m_dport,
+    input  wire                                m_port_en,
+    input  wire [15:0]                         m_sport, m_dport,
 
     // pop_* 申请一个空闲页，ret_* 归还接收失败的消息所占用的页。
-    output reg pop_req,
-    input wire pop_ready, pop_ack, pop_ok,
-    input wire [7:0] pop_page,
-    output reg ret_valid,
-    output reg [7:0] ret_page,
-    input wire ret_ready,
+    output reg                                 pop_req,
+    input  wire                                pop_ready, pop_ack, pop_ok,
+    input  wire [7:0]                          pop_page,
+    output reg                                 ret_valid,
+    output reg  [7:0]                          ret_page,
+    input  wire                                ret_ready,
 
     // payload_* 写消息字节，pnext_* 保存同一消息的下一页。
     // desc_* 在首页对应位置保存消息长度和端口。
-    output reg payload_we,
-    output reg [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_wa,
-    output reg [7:0] payload_wd,
-    output reg pnext_we,
-    output reg [TX_PAGE_AW - 1:0] pnext_wa,
-    output reg [7:0] pnext_wd,
-    output reg desc_we,
-    output reg [TX_PAGE_AW - 1:0] desc_wa,
-    output reg [46:0] desc_wd,
+    output reg                                 payload_we,
+    output reg  [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_wa,
+    output reg  [7:0]                          payload_wd,
+    output reg                                 pnext_we,
+    output reg  [TX_PAGE_AW - 1:0]             pnext_wa,
+    output reg  [7:0]                          pnext_wd,
+    output reg                                 desc_we,
+    output reg  [TX_PAGE_AW - 1:0]             desc_wa,
+    output reg  [46:0]                         desc_wd,
 
     // 整条消息存好后，enq_* 请求加入发送队列。
     // enq_ack 为高时，enq_result 给出接纳或拒绝的原因。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg enq_valid,
-    output reg [6:0] enq_vl,
-    output reg [7:0] enq_head,
-    output reg [13:0] enq_len,
-    input wire enq_ack,
-    input wire [2:0] enq_result,
+    output reg  [6:0]  enq_vl,
+    output reg  [7:0]  enq_head,
+    output reg  [13:0] enq_len,
+    input  wire        enq_ack,
+    input  wire [2:0]  enq_result,
 
     // ev_* 每次输出一个结果脉冲，表示接纳或本次拒绝原因。
-    output reg ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
+    output reg         ev_accept, ev_drop_dis, ev_drop_full, ev_drop_long, ev_drop_nopage);
 
     localparam [2:0] ENQ_ACCEPTED = 3'd0;
     localparam ENQ_DISABLED = 1;
@@ -355,12 +355,12 @@ endmodule
 // slot, not a delayed consumer-ready signal. Full-rate simultaneous transfer
 // is allowed; when blocked, the final credited byte occupies skid_word.
 module afdx_tx_ingress_elastic (
-    input wire clk,reset,s_valid,
-    output reg s_ready,
-    input wire [48:0] s_word,
-    output reg m_valid,
-    input wire m_ready,
-    output reg [48:0] m_word
+    input  wire        clk,reset,s_valid,
+    output reg         s_ready,
+    input  wire [48:0] s_word,
+    output reg         m_valid,
+    input  wire        m_ready,
+    output reg  [48:0] m_word
 );
     reg skid_valid;
     reg [48:0] skid_word;
@@ -396,12 +396,12 @@ endmodule
 // Keep inference and data isolation inside a standalone storage hierarchy,
 // matching the RAM organization whose input LUTs survive this vendor flow.
 module afdx_tx_rollback_ram #(parameter AW=5, DEPTH=16) (
-    input wire clk,reset,we,
-    input wire [AW-1:0] wa,
-    input wire [7:0] wd,
-    input wire re,
-    input wire [AW-1:0] ra,
-    output reg [7:0] q
+    input  wire          clk,reset,we,
+    input  wire [AW-1:0] wa,
+    input  wire [7:0]    wd,
+    input  wire          re,
+    input  wire [AW-1:0] ra,
+    output reg  [7:0]    q
 );
     (* preserve=1,dont_merge=1 *) reg write_command;
     (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address;

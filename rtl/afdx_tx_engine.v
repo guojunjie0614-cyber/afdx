@@ -10,72 +10,72 @@ module afdx_tx_engine #(
 
     // enable 为高时允许调度，now 给出当前周期数。
     // initialized 为高表示状态表已初始化完成。
-    input wire clk, reset, enable,
-    input wire [31:0] now,
-    output reg initialized,
+    input  wire        clk, reset, enable,
+    input  wire [31:0] now,
+    output reg         initialized,
 
     // cfg_* 读取当前虚拟链路的配置。
     // state_* 读写队列长度、序号和下一次允许发送的时间。
-    output reg cfg_re,
+    output reg         cfg_re,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [9:0] cfg_ra,
-    input wire [31:0] cfg_q,
-    output reg state_we, state_re,
+    input  wire [31:0] cfg_q,
+    output reg         state_we, state_re,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [6:0] state_wa, state_ra,
-    output reg [62:0] state_wd,
-    input wire [62:0] state_q,
+    output reg  [62:0] state_wd,
+    input  wire [62:0] state_q,
 
     // mnext_* 记录同一虚拟链路中下一条消息的首页。
     // desc_* 读取队首消息的长度和端口。
     (* preserve = 1, dont_merge = 1 *) output reg mnext_we, mnext_re,
     (* preserve = 1, dont_merge = 1 *) output reg [TX_PAGE_AW - 1:0] mnext_wa, mnext_ra,
-    output reg [7:0] mnext_wd,
-    input wire [7:0] mnext_q,
+    output reg  [7:0] mnext_wd,
+    input  wire [7:0] mnext_q,
     (* preserve = 1, dont_merge = 1 *) output reg desc_re,
     (* preserve = 1, dont_merge = 1 *) output reg [TX_PAGE_AW - 1:0] desc_ra,
-    input wire [46:0] desc_q,
+    input  wire [46:0]          desc_q,
 
     // enq_valid 提交一条已存好的消息。
     // enq_ack 为高时，enq_result 给出接纳或拒绝结果。
-    input wire enq_valid,
-    input wire [6:0] enq_vl,
-    input wire [7:0] enq_head,
-    input wire [13:0] enq_len,
-    output reg enq_ack,
-    output reg [2:0] enq_result,
+    input  wire                 enq_valid,
+    input  wire [6:0]           enq_vl,
+    input  wire [7:0]           enq_head,
+    input  wire [13:0]          enq_len,
+    output reg                  enq_ack,
+    output reg  [2:0]           enq_result,
 
     // start_valid 为高时，t_start 是首个前导字节的实际发送周期。
-    input wire start_valid,
-    input wire [31:0] t_start,
+    input  wire                 start_valid,
+    input  wire [31:0]          t_start,
 
     // grant_valid 为高时，把选中消息的信息交给组帧模块。
     // grant_ready 表示组帧模块可以接收下一条消息。
-    input wire grant_ready,
-    output reg grant_valid,
-    output reg grant_a, grant_b, grant_timed,
-    output reg [31:0] grant_time,
-    output reg [15:0] grant_vlid, grant_sport, grant_dport,
-    output reg [31:0] grant_src, grant_dst,
-    output reg [10:0] grant_len,
-    output reg [7:0] grant_sn, grant_page,
+    input  wire                 grant_ready,
+    output reg                  grant_valid,
+    output reg                  grant_a, grant_b, grant_timed,
+    output reg  [31:0]          grant_time,
+    output reg  [15:0]          grant_vlid, grant_sport, grant_dport,
+    output reg  [31:0]          grant_src, grant_dst,
+    output reg  [10:0]          grant_len,
+    output reg  [7:0]           grant_sn, grant_page,
 
-    output reg [7:0] grant_head,
-    output reg [TX_OFF_AW-1:0] grant_offset,
-    output reg [12:0] grant_ip_offset,
-    output reg [13:0] grant_message_len,
-    output reg [15:0] grant_ident,
-    output reg grant_first, grant_more,
-    output reg [6:0] grant_vl_index,
+    output reg  [7:0]           grant_head,
+    output reg  [TX_OFF_AW-1:0] grant_offset,
+    output reg  [12:0]          grant_ip_offset,
+    output reg  [13:0]          grant_message_len,
+    output reg  [15:0]          grant_ident,
+    output reg                  grant_first, grant_more,
+    output reg  [6:0]           grant_vl_index,
     // Optional integrated current-handshake inputs. Default callers need
     // only the original registered fragment_done interface.
-    input wire completion_now,
-    input wire [6:0] completion_vl,
-    input wire fragment_done,
-    input wire [6:0] fragment_done_vl,
-    input wire [7:0] fragment_done_page,
-    input wire [TX_OFF_AW-1:0] fragment_done_offset,
+    input  wire                 completion_now,
+    input  wire [6:0]           completion_vl,
+    input  wire                 fragment_done,
+    input  wire [6:0]           fragment_done_vl,
+    input  wire [7:0]           fragment_done_page,
+    input  wire [TX_OFF_AW-1:0] fragment_done_offset,
 
     // cfg_ok 为高时，发送核心可以写入外部配置。
-    output wire cfg_ok);
+    output wire                 cfg_ok);
 `ifdef MODEL_TECH
     reg [31:0] words[0:5];
 `endif

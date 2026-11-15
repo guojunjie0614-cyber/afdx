@@ -5,26 +5,26 @@ module afdx_tx_free #(
     parameter TX_PAGE_AW = 8) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
-    input wire clk, reset,
+    input  wire       clk, reset,
 
     // 所有空闲页号装入队列后，init_done 变高。
-    output reg init_done,
+    output reg        init_done,
 
     // pop_req 和 pop_ready 同为高时接收页申请。
     // pop_ack 为高时返回结果，pop_ok 为高才表示 pop_page 有效。
-    input wire pop_req,
-    output wire pop_ready,
-    output reg pop_ack, pop_ok,
-    output reg [7:0] pop_page,
+    input  wire       pop_req,
+    output wire       pop_ready,
+    output reg        pop_ack, pop_ok,
+    output reg  [7:0] pop_page,
 
     // ret1_* 接收组帧模块归还的页，ret2_* 接收消息缓冲归还的页。
     // 对应 valid 和 ready 同为高时，完成一个页号的归还。
-    input wire ret1_valid,
-    input wire [7:0] ret1_page,
-    output wire ret1_ready,
-    input wire ret2_valid,
-    input wire [7:0] ret2_page,
-    output wire ret2_ready);
+    input  wire       ret1_valid,
+    input  wire [7:0] ret1_page,
+    output wire       ret1_ready,
+    input  wire       ret2_valid,
+    input  wire [7:0] ret2_page,
+    output wire       ret2_ready);
 
     localparam [TX_PAGE_AW:0] PAGES = {1'b1, {TX_PAGE_AW{1'b0}}};
 
@@ -55,13 +55,13 @@ module afdx_tx_free #(
     assign ret1_ready = init_done && ! ret1_pending;
     assign ret2_ready = init_done && ! ret2_pending;
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
-        .clk(clk),
-        .write_enable(we),
-        .write_address(wa),
-        .write_data(wd),
-        .read_enable(re),
-        .read_address(ra),
-        .read_data(q)
+        .clk           (clk),
+        .write_enable  (we),
+        .write_address (wa),
+        .write_data    (wd),
+        .read_enable   (re),
+        .read_address  (ra),
+        .read_data     (q)
     );
 
     always @(posedge clk) begin

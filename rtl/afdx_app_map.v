@@ -2,12 +2,12 @@
 // afdx_app_rx 在对应 map_pending 拍通过 map_bypass 使用写入值，绝不消费冲突读值。
 // 与核心通用 RAM 分开，保留核心 afdx_ram_sdp 的禁止碰撞检查语义。
 module afdx_app_map #(parameter WIDTH = 16, parameter AW = 12) (
-    input wire clk, write_enable,
-    input wire [AW-1:0] write_address,
-    input wire [WIDTH-1:0] write_data,
-    input wire read_enable,
-    input wire [AW-1:0] read_address,
-    output reg [WIDTH-1:0] read_data
+    input  wire             clk, write_enable,
+    input  wire [AW-1:0]    write_address,
+    input  wire [WIDTH-1:0] write_data,
+    input  wire             read_enable,
+    input  wire [AW-1:0]    read_address,
+    output reg  [WIDTH-1:0] read_data
 );
     (* ramstyle = "no_rw_check" *) reg [WIDTH-1:0] memory[0:(1<<AW)-1];
 

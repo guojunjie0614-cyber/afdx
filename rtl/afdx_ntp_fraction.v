@@ -2,10 +2,10 @@
 // 默认接口保留原64拍换算；LOCAL_CAPTURE=1使用本地入口，done延后一拍。
 module afdx_ntp_fraction #(parameter LOCAL_CAPTURE=0) (
     // start is accepted while idle; other busy pulses are ignored.
-    input wire clk, reset, start, to_nanoseconds,
-    input wire [31:0] value,
-    output reg done,
-    output reg [31:0] result);
+    input  wire        clk, reset, start, to_nanoseconds,
+    input  wire [31:0] value,
+    output reg         done,
+    output reg  [31:0] result);
 
     localparam STEP_IDLE=0,STEP_ADD=1,STEP_SHIFT=2,STEP_PREP=3;
     localparam NS_PER_SECOND=32'd1000000000;

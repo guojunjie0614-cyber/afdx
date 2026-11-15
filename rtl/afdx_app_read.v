@@ -1,18 +1,18 @@
 // 同步 RAM 的连续预取队列；计入在途读，反压时保留已经发出的读。
 module afdx_app_read #(parameter AW = 12, parameter READ_LATENCY = 1,
     parameter PREDICT_LIMIT = 0) (
-    input wire clk, reset,
-    input wire [AW:0] limit,
-    output reg [AW:0] pointer,
-    output wire read_enable,
+    input  wire          clk, reset,
+    input  wire [AW:0]   limit,
+    output reg  [AW:0]   pointer,
+    output wire          read_enable,
     output wire [AW-1:0] read_address,
-    input wire [8:0] read_data,
-    output wire valid,
-    input wire ready,
-    output wire [8:0] data,
+    input  wire [8:0]    read_data,
+    output wire          valid,
+    input  wire          ready,
+    output wire [8:0]    data,
 
     // 仅在 PREDICT_LIMIT=1 时启用：调用方提供同拍即将发布的提交指针，默认模式忽略该输入。
-    input wire [AW:0] next_limit
+    input  wire [AW:0]   next_limit
 );
 
     // 共 8 个信用额度统一覆盖在途读流水、缓存字节、两级输出槽及 1 个待回收消费脉冲：

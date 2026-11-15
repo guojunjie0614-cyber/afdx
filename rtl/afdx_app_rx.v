@@ -1,17 +1,17 @@
 // 连续交付流直通输出，先插入 VLID。消息开始预留最大载荷，保证不输出半条。
 // 每帧 GMII 开销至少 66 拍，应用封装增加 2 字节和 1 拍间隔，平均服务速率有余量。
 module afdx_app_rx (
-    input wire clk, reset,
-    input wire cfg_write,
-    input wire [11:0] cfg_index,
-    input wire [15:0] cfg_vlid,
-    input wire app_valid,
-    input wire [7:0] app_data,
-    input wire app_last,
-    input wire [11:0] app_index,
-    output reg valid,
-    output reg [7:0] data,
-    output reg drop
+    input  wire        clk, reset,
+    input  wire        cfg_write,
+    input  wire [11:0] cfg_index,
+    input  wire [15:0] cfg_vlid,
+    input  wire        app_valid,
+    input  wire [7:0]  app_data,
+    input  wire        app_last,
+    input  wire [11:0] app_index,
+    output reg         valid,
+    output reg  [7:0]  data,
+    output reg         drop
 );
 
     // 本地整组寄存交付流与配置写命令，避免远端信号直接驱动存储分块准入与地址译码；
@@ -65,52 +65,52 @@ module afdx_app_rx (
     reg map_bypass;
     reg [15:0] map_write_value;
     afdx_app_map reverse_map(
-        .clk(clk),
-        .write_enable(configuration_write),
-        .write_address(configuration_index),
-        .write_data(configuration_vlid),
-        .read_enable(1'b1),
-        .read_address(delivery_index),
-        .read_data(map_q));
+        .clk           (clk),
+        .write_enable  (configuration_write),
+        .write_address (configuration_index),
+        .write_data    (configuration_vlid),
+        .read_enable   (1'b1),
+        .read_address  (delivery_index),
+        .read_data     (map_q));
     reg map_pending;
     reg [2:0] state;
     wire q_valid, q_ready;
     wire [15:0] descriptor_id;
     afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids(
-        .clk(clk),
-        .write_enable(map_pending),
-        .write_address(dw[4:0]),
-        .write_data(map_bypass ? map_write_value:map_q),
-        .read_enable(state == 0 && descriptors != 0 && q_valid),
-        .read_address(dr[4:0]),
-        .read_data(descriptor_id));
+        .clk           (clk),
+        .write_enable  (map_pending),
+        .write_address (dw[4:0]),
+        .write_data    (map_bypass ? map_write_value:map_q),
+        .read_enable   (state == 0 && descriptors != 0 && q_valid),
+        .read_address  (dr[4:0]),
+        .read_data     (descriptor_id));
     wire read_en;
     wire [14:0] read_addr;
     wire [8:0] memory_q;
 
     // 四组双分块副本并行采样原始字节与末字节标志，下一拍仅在 store 有效时写入。
     afdx_app_payload #(.EARLY_DATA(1)) payload(
-        .clk(clk),
-        .reset(reset),
-        .write_enable(store),
-        .write_address(write_ptr[14:0]),
-        .write_data(9'b0),
-        .read_enable(read_en),
-        .read_address(read_addr),
-        .read_data(memory_q),
-        .raw_write_data({app_last, app_data}));
+        .clk            (clk),
+        .reset          (reset),
+        .write_enable   (store),
+        .write_address  (write_ptr[14:0]),
+        .write_data     (9'b0),
+        .read_enable    (read_en),
+        .read_address   (read_addr),
+        .read_data      (memory_q),
+        .raw_write_data ({app_last, app_data}));
     wire [8:0] q_data;
     afdx_app_read #(.AW(15), .READ_LATENCY(4)) reader(
-        .clk(clk),
-        .reset(reset),
-        .limit(committed),
-        .pointer(read_ptr),
-        .read_enable(read_en),
-        .read_address(read_addr),
-        .read_data(memory_q),
-        .valid(q_valid),
-        .ready(q_ready),
-        .data(q_data));
+        .clk          (clk),
+        .reset        (reset),
+        .limit        (committed),
+        .pointer      (read_ptr),
+        .read_enable  (read_en),
+        .read_address (read_addr),
+        .read_data    (memory_q),
+        .valid        (q_valid),
+        .ready        (q_ready),
+        .data         (q_data));
 
     always @(posedge clk) begin
         if (reset) begin

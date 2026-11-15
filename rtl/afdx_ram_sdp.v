@@ -20,18 +20,18 @@ module afdx_ram_sdp #(
     localparam AW = address_width(DEPTH);
 
     // 读写共用一个时钟，地址按存储字编号。
-    input wire clk;
+    input  wire               clk;
 
     // write_enable 为高时，把 write_data 写入 write_address。
-    input wire write_enable;
-    input wire [AW - 1:0] write_address;
-    input wire [WIDTH - 1:0] write_data;
+    input  wire               write_enable;
+    input  wire [AW - 1:0]    write_address;
+    input  wire [WIDTH - 1:0] write_data;
 
     // read_enable 为高时，在时钟上升沿读出 read_address。
     // read_enable 为低时，read_data 保持不变。
-    input wire read_enable;
-    input wire [AW - 1:0] read_address;
-    output reg [WIDTH - 1:0] read_data;
+    input  wire               read_enable;
+    input  wire [AW - 1:0]    read_address;
+    output reg  [WIDTH - 1:0] read_data;
 
     // memory 保存数据，独立的读写过程用于推断片内存储器。
     (* ramstyle = "no_rw_check" *) reg [WIDTH - 1:0] memory[0:DEPTH - 1];

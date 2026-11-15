@@ -5,42 +5,42 @@ module afdx_tx_builder #(
     parameter TX_PAGE_AW = 8, TX_OFF_AW = 9, READY_COPIES = 1) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
-    input wire clk, reset,
+    input  wire                 clk, reset,
 
     // now 提供当前周期数，user_id 提供源以太网地址中的端系统编号。
-    input wire [31:0] now,
-    input wire [15:0] user_id,
+    input  wire [31:0]          now,
+    input  wire [15:0]          user_id,
 
     // grant_valid 和 grant_ready 同为高时接收一条待发送消息。
     // grant_a/b 选择网络，grant_timed/time 给出最早发送时刻。
-    output wire grant_ready,
-    input wire grant_valid, grant_a, grant_b, grant_timed,
+    output wire                 grant_ready,
+    input  wire                 grant_valid, grant_a, grant_b, grant_timed,
 
     // grant_* 给出本帧的地址、端口、长度、序号和数据首页。
-    input wire [31:0] grant_time, grant_src, grant_dst,
-    input wire [15:0] grant_vlid, grant_sport, grant_dport,
-    input wire [10:0] grant_len,
-    input wire [7:0] grant_sn, grant_page,
+    input  wire [31:0]          grant_time, grant_src, grant_dst,
+    input  wire [15:0]          grant_vlid, grant_sport, grant_dport,
+    input  wire [10:0]          grant_len,
+    input  wire [7:0]           grant_sn, grant_page,
 
-    input wire [7:0] grant_head,
-    input wire [TX_OFF_AW-1:0] grant_offset,
-    input wire [12:0] grant_ip_offset,
-    input wire [13:0] grant_message_len,
-    input wire [15:0] grant_ident,
-    input wire grant_first, grant_more,
-    input wire [6:0] grant_vl_index,
+    input  wire [7:0]           grant_head,
+    input  wire [TX_OFF_AW-1:0] grant_offset,
+    input  wire [12:0]          grant_ip_offset,
+    input  wire [13:0]          grant_message_len,
+    input  wire [15:0]          grant_ident,
+    input  wire                 grant_first, grant_more,
+    input  wire [6:0]           grant_vl_index,
     // Actual current stream handshake, sampled locally by engine at F0.
     // Registered fragment_done and pointer publication remain unchanged.
-    output wire completion_now,
-    output wire [6:0] completion_vl,
-    output reg fragment_done,
-    output reg [6:0] fragment_done_vl,
-    output reg [7:0] fragment_done_page,
-    output reg [TX_OFF_AW-1:0] fragment_done_offset,
+    output wire                 completion_now,
+    output wire [6:0]           completion_vl,
+    output reg                  fragment_done,
+    output reg  [6:0]           fragment_done_vl,
+    output reg  [7:0]           fragment_done_page,
+    output reg  [TX_OFF_AW-1:0] fragment_done_offset,
 
     // start_valid 为高时，t_start 报告线路实际发送首字节的周期。
-    output reg start_valid,
-    output reg [31:0] t_start,
+    output reg                  start_valid,
+    output reg  [31:0]          t_start,
 
     // payload_* 读消息字节，pnext_* 读同一消息的下一页。
     // 读完一页后，通过 ret_* 归还这一页。
@@ -49,20 +49,20 @@ module afdx_tx_builder #(
     input wire [7:0] payload_q,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg pnext_re,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [TX_PAGE_AW - 1:0] pnext_ra,
-    input wire [7:0] pnext_q,
-    output reg ret_valid,
-    output reg [7:0] ret_page,
-    input wire ret_ready,
+    input  wire [7:0]                pnext_q,
+    output reg                       ret_valid,
+    output reg  [7:0]                ret_page,
+    input  wire                      ret_ready,
 
     // s_* 把两网的帧内容交给以太网发送模块。
     // tx_sof/eof 分别报告帧开始和结束，tx_underrun 表示中途缺字节。
     // ev_tx_a/b 只统计正常发送完成的帧。
-    output reg s_valid,
-    input wire [READY_COPIES - 1:0] s_ready,
-    output reg [7:0] s_data_a, s_data_b,
-    output reg s_last, s_en_a, s_en_b,
-    input wire tx_sof, tx_eof, tx_underrun,
-    output reg ev_tx_a, ev_tx_b);
+    output reg                       s_valid,
+    input  wire [READY_COPIES - 1:0] s_ready,
+    output reg  [7:0]                s_data_a, s_data_b,
+    output reg                       s_last, s_en_a, s_en_b,
+    input  wire                      tx_sof, tx_eof, tx_underrun,
+    output reg                       ev_tx_a, ev_tx_b);
 
     // pending/prepared 记录下一条消息的准备进度。
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。

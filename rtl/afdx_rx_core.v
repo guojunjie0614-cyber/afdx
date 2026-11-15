@@ -2,43 +2,43 @@
 // 两路线路分别接收，检查通过后由一个输出口交付消息。
 // 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
 module afdx_rx_core #(
-    parameter RX_RING_AW = 12, RX_DQ_AW = 5, CFG_COPIES = 1, REGISTERED_TIME_TICK = 0,
+    parameter RX_RING_AW          = 12, RX_DQ_AW = 5, CFG_COPIES = 1, REGISTERED_TIME_TICK = 0,
     parameter REASSEMBLY_CONTEXTS = 16, REASSEMBLY_TIMEOUT_CYCLES = 250000000) (
 
     // clk 为工作时钟，reset 为同步高有效复位。
-    input wire clk, reset,
+    input  wire                               clk, reset,
 
     // now_c 提供粗粒度时间，rx_data_a/b 在对应 valid 为高时有效。
     // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
-    input wire [15 + REGISTERED_TIME_TICK:0] now_c,
-    input wire [7:0] rx_data_a,
-    input wire rx_valid_a,
-    input wire [7:0] rx_data_b,
-    input wire rx_valid_b,
+    input  wire [15 + REGISTERED_TIME_TICK:0] now_c,
+    input  wire [7:0]                         rx_data_a,
+    input  wire                               rx_valid_a,
+    input  wire [7:0]                         rx_data_b,
+    input  wire                               rx_valid_b,
 
     // cfg_map_we 按配置副本写入线路编号到配置索引的映射。
     // cfg_cfg_we 写入接收参数，cfg_ok 为高时允许这些写操作。
-    input wire [CFG_COPIES - 1:0] cfg_map_we,
-    input wire cfg_cfg_we,
-    input wire [CFG_COPIES * 16 - 1:0] cfg_addr,
-    input wire [CFG_COPIES * 32 - 1:0] cfg_wdata,
+    input  wire [CFG_COPIES - 1:0]            cfg_map_we,
+    input  wire                               cfg_cfg_we,
+    input  wire [CFG_COPIES * 16 - 1:0]       cfg_addr,
+    input  wire [CFG_COPIES * 32 - 1:0]       cfg_wdata,
 
     // d_valid 为高时交付一个用户字节，d_last 标记消息末字节。
     // d_vl 是接收配置索引，d_sport/d_dport 是源端口和目的端口。
     // d_net 为 0 表示来自 A 网，为 1 表示来自 B 网。
-    output wire d_valid,
-    output wire [7:0] d_data,
-    output wire d_last,
-    output wire [11:0] d_vl,
-    output wire [15:0] d_sport, d_dport,
-    output wire d_net,
+    output wire                               d_valid,
+    output wire [7:0]                         d_data,
+    output wire                               d_last,
+    output wire [11:0]                        d_vl,
+    output wire [15:0]                        d_sport, d_dport,
+    output wire                               d_net,
 
     // 所有接收表初始化完成后，init_done 才变高。
     // ev_a/b 分别报告两网检查结果。
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
     (* preserve = 1, dont_merge = 1 *) output reg init_done,
-    output reg [7:0] ev_a, ev_b,
-    output reg ev_rm_drop, ev_deliver,
+    output reg  [7:0]              ev_a, ev_b,
+    output reg                     ev_rm_drop, ev_deliver,
     output wire [CFG_COPIES - 1:0] cfg_ok);
 
     // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
@@ -90,13 +90,13 @@ module afdx_rx_core #(
     // 交付模块最早在下一拍看到计数非零，那时读出的已是新写入的值。
     assign dq_re = !(dq_we && dq_wa == dq_ra);
     afdx_ram_sdp #(.WIDTH(DQ_WIDTH), .DEPTH(1 << RX_DQ_AW)) rx_dq (
-        .clk(clk),
-        .write_enable(dq_we),
-        .write_address(dq_wa),
-        .write_data(dq_wd),
-        .read_enable(dq_re),
-        .read_address(dq_ra),
-        .read_data(dq_q)
+        .clk           (clk),
+        .write_enable  (dq_we),
+        .write_address (dq_wa),
+        .write_data    (dq_wd),
+        .read_enable   (dq_re),
+        .read_address  (dq_ra),
+        .read_data     (dq_q)
     );
 
     // 初始化完成且 cfg_ok 为高时，外部配置才能写入接收表。
@@ -263,143 +263,143 @@ module afdx_rx_core #(
 
     // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
-        .clk(clk),
-        .write_enable(ra_we),
-        .write_address(ra_wa),
-        .write_data(ra_wd),
-        .read_enable(ra_re),
-        .read_address(ra_ra),
-        .read_data(ra_q)
+        .clk           (clk),
+        .write_enable  (ra_we),
+        .write_address (ra_wa),
+        .write_data    (ra_wd),
+        .read_enable   (ra_re),
+        .read_address  (ra_ra),
+        .read_data     (ra_q)
     );
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (
-        .clk(clk),
-        .write_enable(rb_we),
-        .write_address(rb_wa),
-        .write_data(rb_wd),
-        .read_enable(rb_re),
-        .read_address(rb_ra),
-        .read_data(rb_q)
+        .clk           (clk),
+        .write_enable  (rb_we),
+        .write_address (rb_wa),
+        .write_data    (rb_wd),
+        .read_enable   (rb_re),
+        .read_address  (rb_ra),
+        .read_data     (rb_q)
     );
 
     // 每网先检查并解析帧，再共用一个引擎检查序号和重复帧。
     afdx_mac_rx mac_a (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk      (clk),
+        .reset    (reset),
         // 数据和握手
-        .rx_data(rx_data_a),
-        .rx_valid(rx_valid_a),
-        .m_valid(ma_valid),
-        .m_data(ma_data),
-        .m_first(ma_first),
-        .f_end(fa_end),
-        .f_err(fa_err),
-        .f_len(fa_len)
+        .rx_data  (rx_data_a),
+        .rx_valid (rx_valid_a),
+        .m_valid  (ma_valid),
+        .m_data   (ma_data),
+        .m_first  (ma_first),
+        .f_end    (fa_end),
+        .f_err    (fa_err),
+        .f_len    (fa_len)
     );
     afdx_mac_rx mac_b (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk      (clk),
+        .reset    (reset),
         // 数据和握手
-        .rx_data(rx_data_b),
-        .rx_valid(rx_valid_b),
-        .m_valid(mb_valid),
-        .m_data(mb_data),
-        .m_first(mb_first),
-        .f_end(fb_end),
-        .f_err(fb_err),
-        .f_len(fb_len)
+        .rx_data  (rx_data_b),
+        .rx_valid (rx_valid_b),
+        .m_valid  (mb_valid),
+        .m_data   (mb_data),
+        .m_first  (mb_first),
+        .f_end    (fb_end),
+        .f_err    (fb_err),
+        .f_len    (fb_len)
     );
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_a (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
-        .now_c(now_c[15:0]),
+        .clk            (clk),
+        .reset          (reset),
+        .now_c          (now_c[15:0]),
         // 配置和初始化
-        .enable(init_done),
+        .enable         (init_done),
         // 数据和握手
-        .rx_valid(rx_valid_a),
-        .m_valid(ma_valid),
-        .m_first(ma_first),
-        .m_data(ma_data),
-        .f_end(fa_end),
-        .f_err(fa_err),
-        .f_len(fa_len),
-        .read_ptr(ptr_a),
-        .ring_we(ra_we),
-        .ring_wa(ra_wa),
-        .ring_wd(ra_wd),
-        .desc_valid(da_valid),
-        .desc_data(desc_a),
-        .desc_take(take_a),
-        .resolve_valid(resolve_a),
-        .resolve_commit(commit_a),
-        .ev(parse_ev_a)
+        .rx_valid       (rx_valid_a),
+        .m_valid        (ma_valid),
+        .m_first        (ma_first),
+        .m_data         (ma_data),
+        .f_end          (fa_end),
+        .f_err          (fa_err),
+        .f_len          (fa_len),
+        .read_ptr       (ptr_a),
+        .ring_we        (ra_we),
+        .ring_wa        (ra_wa),
+        .ring_wd        (ra_wd),
+        .desc_valid     (da_valid),
+        .desc_data      (desc_a),
+        .desc_take      (take_a),
+        .resolve_valid  (resolve_a),
+        .resolve_commit (commit_a),
+        .ev             (parse_ev_a)
     );
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_b (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
-        .now_c(now_c[15:0]),
+        .clk            (clk),
+        .reset          (reset),
+        .now_c          (now_c[15:0]),
         // 配置和初始化
-        .enable(init_done),
+        .enable         (init_done),
         // 数据和握手
-        .rx_valid(rx_valid_b),
-        .m_valid(mb_valid),
-        .m_first(mb_first),
-        .m_data(mb_data),
-        .f_end(fb_end),
-        .f_err(fb_err),
-        .f_len(fb_len),
-        .read_ptr(ptr_b),
-        .ring_we(rb_we),
-        .ring_wa(rb_wa),
-        .ring_wd(rb_wd),
-        .desc_valid(db_valid),
-        .desc_data(desc_b),
-        .desc_take(take_b),
-        .resolve_valid(resolve_b),
-        .resolve_commit(commit_b),
-        .ev(parse_ev_b)
+        .rx_valid       (rx_valid_b),
+        .m_valid        (mb_valid),
+        .m_first        (mb_first),
+        .m_data         (mb_data),
+        .f_end          (fb_end),
+        .f_err          (fb_err),
+        .f_len          (fb_len),
+        .read_ptr       (ptr_b),
+        .ring_we        (rb_we),
+        .ring_wa        (rb_wa),
+        .ring_wd        (rb_wd),
+        .desc_valid     (db_valid),
+        .desc_data      (desc_b),
+        .desc_take      (take_b),
+        .resolve_valid  (resolve_b),
+        .resolve_commit (commit_b),
+        .ev             (parse_ev_b)
     );
     afdx_rx_engine #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW), .LOCAL_MAP_READ(1), .REGISTERED_TIME_TICK(REGISTERED_TIME_TICK), .LOCAL_QUEUE_WRITE(0), .DESC_COPIES(CFG_COPIES), .CORE_ENABLE_PREDICT(1)) engine (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
-        .now_c(now_c),
+        .clk              (clk),
+        .reset            (reset),
+        .now_c            (now_c),
                 // 配置和初始化
-        .enable(init_done),
-        .core_enable_next(init_done || (flush_init && engine_initialized)),
-        .initialized(engine_initialized),
-        .cfg_re(cfg_re),
-        .cfg_ra(cfg_ra),
-        .cfg_q(cfg_q),
-        .cfg_ok(cfg_ok),
+        .enable           (init_done),
+        .core_enable_next (init_done || (flush_init && engine_initialized)),
+        .initialized      (engine_initialized),
+        .cfg_re           (cfg_re),
+        .cfg_ra           (cfg_ra),
+        .cfg_q            (cfg_q),
+        .cfg_ok           (cfg_ok),
         // 数据和握手
-        .desc_a_valid(da_valid),
-        .desc_b_valid(db_valid),
-        .desc_a(desc_a),
-        .desc_b(desc_b),
-        .take_a(take_a),
-        .take_b(take_b),
-        .resolve_a(resolve_a),
-        .resolve_b(resolve_b),
-        .commit_a(commit_a),
-        .commit_b(commit_b),
-        .map_re(map_re),
-        .map_ra(map_ra),
-        .map_q(map_q_r),
-        .state_re(state_re),
-        .state_we(state_we),
-        .state_ra(state_ra),
-        .state_wa(state_wa),
-        .state_wd(state_wd),
-        .state_q(state_q),
-        .dq_pop(dq_pop),
-        .dq_we(dq_we),
-        .dq_wa(dq_wa),
-        .dq_wd(dq_wd),
-        .dq_count(dq_count),
+        .desc_a_valid     (da_valid),
+        .desc_b_valid     (db_valid),
+        .desc_a           (desc_a),
+        .desc_b           (desc_b),
+        .take_a           (take_a),
+        .take_b           (take_b),
+        .resolve_a        (resolve_a),
+        .resolve_b        (resolve_b),
+        .commit_a         (commit_a),
+        .commit_b         (commit_b),
+        .map_re           (map_re),
+        .map_ra           (map_ra),
+        .map_q            (map_q_r),
+        .state_re         (state_re),
+        .state_we         (state_we),
+        .state_ra         (state_ra),
+        .state_wa         (state_wa),
+        .state_wd         (state_wd),
+        .state_q          (state_q),
+        .dq_pop           (dq_pop),
+        .dq_we            (dq_we),
+        .dq_wa            (dq_wa),
+        .dq_wd            (dq_wd),
+        .dq_count         (dq_count),
         .reassembly_result_valid(result_valid), .reassembly_ok(reserve_ok), .reassembly_slot(reserve_slot),
         .reassembly_query(query), .reassembly_cancel(cancel),
         .reassembly_query_bank(query_bank), .reassembly_cancel_bank(cancel_bank), .reassembly_reserve_bank(reserve_bank),
@@ -407,28 +407,28 @@ module afdx_rx_core #(
         .reassembly_length(reserve_length), .reassembly_sport(reserve_sport),
         .reassembly_dport(reserve_dport), .reassembly_net(reservation_net),
         // 事件
-        .ev_a(engine_ev_a),
-        .ev_b(engine_ev_b),
-        .ev_rm_drop(engine_rm),
-        .ev_deliver(engine_deliver)
+        .ev_a       (engine_ev_a),
+        .ev_b       (engine_ev_b),
+        .ev_rm_drop (engine_rm),
+        .ev_deliver (engine_deliver)
     );
     afdx_rx_deliver #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) deliver (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk        (clk),
+        .reset      (reset),
         // 数据和握手
-        .dq_count(dq_count),
-        .dq_ra(dq_ra),
-        .dq_q(dq_q),
-        .dq_pop(dq_pop),
-        .ring_a_re(ra_re),
-        .ring_b_re(rb_re),
-        .ring_a_ra(ra_ra),
-        .ring_b_ra(rb_ra),
-        .ring_a_q(ra_q),
-        .ring_b_q(rb_q),
-        .read_ptr_a(ptr_a),
-        .read_ptr_b(ptr_b),
+        .dq_count   (dq_count),
+        .dq_ra      (dq_ra),
+        .dq_q       (dq_q),
+        .dq_pop     (dq_pop),
+        .ring_a_re  (ra_re),
+        .ring_b_re  (rb_re),
+        .ring_a_ra  (ra_ra),
+        .ring_b_ra  (rb_ra),
+        .ring_a_q   (ra_q),
+        .ring_b_q   (rb_q),
+        .read_ptr_a (ptr_a),
+        .read_ptr_b (ptr_b),
         .d_valid(frag_valid), .d_data(frag_data), .d_last(frag_last),
         .d_vl(frag_vl), .d_sport(frag_sport), .d_dport(frag_dport), .d_net(frag_net),
         .downstream_ready(frag_ready), .downstream_prepared(frag_prepared), .d_frag(frag_kind), .d_slot(frag_slot), .d_start(frag_start), .d_empty(frag_empty)
@@ -450,7 +450,7 @@ endmodule
 // RX-local narrow return region: command E0, RAM E1, local return E2.
 // RX SDP write isolation and no-collision contract remain; no extra write stage.
 module afdx_rx_table_slice #(parameter WIDTH=8)(
-    input wire clk, reset, we, input wire [11:0] wa,
+    input wire             clk, reset, we, input wire [11:0] wa,
     input wire [WIDTH-1:0] wd, input wire re, input wire [11:0] ra,
     (* preserve=1, dont_merge=1 *) output reg [WIDTH-1:0] q
 );

@@ -2,23 +2,23 @@
 // ready 只授予消息头；prepared 只启动字节流，二者不进入同一条宽使能优先链。
 module afdx_rx_deliver #(
     parameter RX_RING_AW = 12, RX_DQ_AW = 5) (
-    input wire clk, reset,
-    input wire [RX_DQ_AW:0] dq_count,
-    output wire [RX_DQ_AW - 1:0] dq_ra,
-    input wire [RX_RING_AW + 60:0] dq_q,
-    output reg dq_pop,
+    input  wire                     clk, reset,
+    input  wire [RX_DQ_AW:0]        dq_count,
+    output wire [RX_DQ_AW - 1:0]    dq_ra,
+    input  wire [RX_RING_AW + 60:0] dq_q,
+    output reg                      dq_pop,
     (* preserve = 1, dont_merge = 1 *) output reg ring_a_re, ring_b_re,
     (* preserve = 1, dont_merge = 1 *) output reg [RX_RING_AW - 1:0] ring_a_ra, ring_b_ra,
-    input wire [7:0] ring_a_q, ring_b_q,
-    output reg [RX_RING_AW:0] read_ptr_a, read_ptr_b,
+    input  wire [7:0]          ring_a_q, ring_b_q,
+    output reg  [RX_RING_AW:0] read_ptr_a, read_ptr_b,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg d_valid,
-    output reg [7:0] d_data,
-    output reg d_last,
-    output reg [11:0] d_vl,
-    output reg [15:0] d_sport, d_dport,
-    output reg d_net,
-    input wire downstream_ready, downstream_prepared,
-    output reg d_frag, output reg [3:0] d_slot, output reg d_start, d_empty);
+    output reg  [7:0]  d_data,
+    output reg         d_last,
+    output reg  [11:0] d_vl,
+    output reg  [15:0] d_sport, d_dport,
+    output reg         d_net,
+    input  wire        downstream_ready, downstream_prepared,
+    output reg         d_frag, output reg [3:0] d_slot, output reg d_start, d_empty);
 
     (* preserve=1, dont_merge=1 *) reg [RX_DQ_AW-1:0] rd_ptr;
     assign dq_ra=rd_ptr;

@@ -2,11 +2,11 @@
 // 每槽拆分为 4 条独立的 2 位宽通道以收敛单端口地址与命令扇出；写地址提前一拍按槽寄存，
 // 读取结果经通道寄存、两两或门归约及四路汇总流水输出。
 module afdx_rx_reassembly_payload (
-    input wire clk, reset,
-    input wire we, input wire [15:0] wa, input wire [7:0] wd,
-    input wire re, input wire [15:0] ra,
-    input wire [7:0] write_slots, read_slots,
-    output reg [7:0] q
+    input  wire       clk, reset,
+    input  wire       we, input wire [15:0] wa, input wire [7:0] wd,
+    input  wire       re, input wire [15:0] ra,
+    input  wire [7:0] write_slots, read_slots,
+    output reg  [7:0] q
 );
     wire [63:0] slot_results;
     (* preserve = 1, dont_merge = 1 *) reg [31:0] pair_results;
@@ -14,14 +14,14 @@ module afdx_rx_reassembly_payload (
 
     generate for (slot = 0;slot < 8;slot = slot+1) begin : slots
             afdx_rx_reassembly_payload_slot storage(
-                .clk(clk),
-                .reset(reset),
-                .we(we && write_slots[slot]),
-                .wa(wa[12:0]),
-                .wd(wd),
-                .re(re && read_slots[slot]),
-                .ra(ra[12:0]),
-                .q(slot_results[slot*8+:8]));
+                .clk   (clk),
+                .reset (reset),
+                .we    (we && write_slots[slot]),
+                .wa    (wa[12:0]),
+                .wd    (wd),
+                .re    (re && read_slots[slot]),
+                .ra    (ra[12:0]),
+                .q     (slot_results[slot*8+:8]));
         end
     endgenerate
 
@@ -41,9 +41,9 @@ module afdx_rx_reassembly_payload (
 endmodule
 
 module afdx_rx_reassembly_payload_slot (
-    input wire clk, reset, we,
+    input wire        clk, reset, we,
     input wire [12:0] wa, input wire [7:0] wd,
-    input wire re, input wire [12:0] ra, output wire [7:0] q
+    input wire        re, input wire [12:0] ra, output wire [7:0] q
 );
     (* preserve = 1, dont_merge = 1 *) reg [12:0] write_address;
 
@@ -52,14 +52,14 @@ module afdx_rx_reassembly_payload_slot (
 
     generate for (lane = 0;lane < 4;lane = lane+1) begin : lanes
             afdx_rx_reassembly_payload_lane storage(
-                .clk(clk),
-                .reset(reset),
-                .we(we),
-                .wa(write_address),
-                .wd(wd[lane*2+:2]),
-                .re(re),
-                .ra(ra),
-                .q(q[lane*2+:2]));
+                .clk   (clk),
+                .reset (reset),
+                .we    (we),
+                .wa    (write_address),
+                .wd    (wd[lane*2+:2]),
+                .re    (re),
+                .ra    (ra),
+                .q     (q[lane*2+:2]));
         end
     endgenerate
 
@@ -67,9 +67,9 @@ endmodule
 
 // 将每个 2 位宽存储阵列及写数据隔离门控封装为独立模块，防止综合器在内联生成块中优化掉输入隔离 LUT。
 module afdx_rx_reassembly_payload_lane (
-    input wire clk, reset, we,
+    input wire        clk, reset, we,
     input wire [12:0] wa, input wire [1:0] wd,
-    input wire re, input wire [12:0] ra, output wire [1:0] q
+    input wire        re, input wire [12:0] ra, output wire [1:0] q
 );
     (* preserve = 1, dont_merge = 1 *) reg write_command, write_qualifier, read_command;
     (* preserve = 1, dont_merge = 1 *) reg [12:0] write_address, read_address;

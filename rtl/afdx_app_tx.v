@@ -1,19 +1,19 @@
 // 应用输入的 valid 下降沿结束消息。完整消息才提交，缓存不足时回退整个消息。
 // VLID 比较在描述符取出后流水执行，128 项并行比较，重复取最小索引。
 module afdx_app_tx (
-    input wire clk, reset, initialized,
-    input wire [7:0] data,
-    input wire valid,
-    output reg ready,
-    input wire cfg_write,
-    input wire [6:0] cfg_index,
-    input wire [15:0] cfg_vlid,
-    output wire app_valid,
-    input wire app_ready,
-    output wire [7:0] app_data,
-    output wire app_last,
-    output reg [6:0] app_vl,
-    output reg [1:0] drop
+    input  wire        clk, reset, initialized,
+    input  wire [7:0]  data,
+    input  wire        valid,
+    output reg         ready,
+    input  wire        cfg_write,
+    input  wire [6:0]  cfg_index,
+    input  wire [15:0] cfg_vlid,
+    output wire        app_valid,
+    input  wire        app_ready,
+    output wire [7:0]  app_data,
+    output wire        app_last,
+    output reg  [6:0]  app_vl,
+    output reg  [1:0]  drop
 );
 `ifdef MODEL_TECH
     wire read_en;
@@ -122,13 +122,13 @@ module afdx_app_tx (
     // 队列非空时持续预采样队首描述符，空队列抑制读使能以避免同址读写冲突，
     // 同时使配置忙状态无需接入描述符存储块的读使能锥。
     afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids(
-        .clk(clk),
-        .write_enable(descriptor_write),
-        .write_address(desc_wr[4:0]),
-        .write_data(commit_id),
-        .read_enable(descriptors_waiting),
-        .read_address(descriptor_head[4:0]),
-        .read_data(descriptor_id));
+        .clk           (clk),
+        .write_enable  (descriptor_write),
+        .write_address (desc_wr[4:0]),
+        .write_data    (commit_id),
+        .read_enable   (descriptors_waiting),
+        .read_address  (descriptor_head[4:0]),
+        .read_data     (descriptor_id));
     wire store = vq && payload_phase && !too_long && !bad && space_available;
     wire rollback = vq && !valid && payload_phase && (bad || too_long || !space_available);
     wire [15:0] write_next = write_ptr+16'd1;
@@ -156,29 +156,29 @@ module afdx_app_tx (
 `endif
     wire [14:0] read_addr;
     afdx_app_payload #(.SPLIT_RETURN(1)) payload(
-        .clk(clk),
-        .reset(reset),
-        .write_enable(store),
-        .write_address(write_ptr[14:0]),
-        .write_data({!valid, dq}),
-        .read_enable(read_en),
-        .read_address(read_addr),
-        .read_data(memory_q));
+        .clk           (clk),
+        .reset         (reset),
+        .write_enable  (store),
+        .write_address (write_ptr[14:0]),
+        .write_data    ({!valid, dq}),
+        .read_enable   (read_en),
+        .read_address  (read_addr),
+        .read_data     (memory_q));
     wire q_valid, q_ready;
     wire [8:0] q_data;
     wire [15:0] next_committed = descriptor_write ? commit_pointer:committed;
     afdx_app_read #(.AW(15), .READ_LATENCY(4), .PREDICT_LIMIT(1)) reader(
-        .clk(clk),
-        .reset(reset),
-        .limit(committed),
-        .pointer(read_ptr),
-        .read_enable(read_en),
-        .read_address(read_addr),
-        .read_data(memory_q),
-        .valid(q_valid),
-        .ready(q_ready),
-        .data(q_data),
-        .next_limit(next_committed));
+        .clk          (clk),
+        .reset        (reset),
+        .limit        (committed),
+        .pointer      (read_ptr),
+        .read_enable  (read_en),
+        .read_address (read_addr),
+        .read_data    (memory_q),
+        .valid        (q_valid),
+        .ready        (q_ready),
+        .data         (q_data),
+        .next_limit   (next_committed));
 
     always @(posedge clk) begin
         if (reset) begin

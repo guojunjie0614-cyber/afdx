@@ -1,16 +1,16 @@
 // 32 KiB x 9 位载荷缓存：划分为 8 个 4 KiB 逻辑分块，每分块含 4 片 1 KiB 本地 RAM 切片。
 // 写入经本地命令打拍后次拍落盘；读取按命令、存储阵列、切片寄存与分块汇聚固定 4 拍返回。
 module afdx_app_payload #(parameter EARLY_DATA = 0, parameter SPLIT_RETURN = 0) (
-    input wire clk, reset,
-    input wire write_enable,
-    input wire [14:0] write_address,
-    input wire [8:0] write_data,
-    input wire read_enable,
-    input wire [14:0] read_address,
-    output wire [8:0] read_data,
+    input  wire        clk, reset,
+    input  wire        write_enable,
+    input  wire [14:0] write_address,
+    input  wire [8:0]  write_data,
+    input  wire        read_enable,
+    input  wire [14:0] read_address,
+    output wire [8:0]  read_data,
 
     // 仅在 EARLY_DATA=1 模式下使用：输入前一拍的原始字节与末字节标志，发送模式忽略。
-    input wire [8:0] raw_write_data
+    input  wire [8:0]  raw_write_data
 );
     (* keep = 1 *) wire [8:0] bank_data[0:7];
     (* preserve = 1, dont_merge = 1 *) reg [7:0] read_bank_command, read_bank_ram, read_bank_result;
@@ -30,15 +30,15 @@ module afdx_app_payload #(parameter EARLY_DATA = 0, parameter SPLIT_RETURN = 0) 
         end
         for (b = 0;b < 8;b = b+1) begin : bank
             afdx_app_payload_bank storage(
-                .clk(clk),
-                .reset(reset),
-                .write_enable(write_enable && write_address[14:12] == b),
-                .write_address(write_address[11:0]),
-                .write_data(local_write_data[b/2]),
-                .read_enable(read_enable),
-                .read_select(read_address[14:12] == b),
-                .read_address(read_address[11:0]),
-                .read_data(bank_data[b]));
+                .clk           (clk),
+                .reset         (reset),
+                .write_enable  (write_enable && write_address[14:12] == b),
+                .write_address (write_address[11:0]),
+                .write_data    (local_write_data[b/2]),
+                .read_enable   (read_enable),
+                .read_select   (read_address[14:12] == b),
+                .read_address  (read_address[11:0]),
+                .read_data     (bank_data[b]));
         end
     endgenerate
 
@@ -75,12 +75,12 @@ module afdx_app_payload #(parameter EARLY_DATA = 0, parameter SPLIT_RETURN = 0) 
 endmodule
 
 module afdx_app_payload_bank (
-    input wire clk, reset, write_enable,
-    input wire [11:0] write_address,
-    input wire [8:0] write_data,
-    input wire read_enable, read_select,
-    input wire [11:0] read_address,
-    output wire [8:0] read_data
+    input  wire        clk, reset, write_enable,
+    input  wire [11:0] write_address,
+    input  wire [8:0]  write_data,
+    input  wire        read_enable, read_select,
+    input  wire [11:0] read_address,
+    output wire [8:0]  read_data
 );
     (* preserve = 1, dont_merge = 1 *) reg write_q;
     (* preserve = 1, dont_merge = 1 *) reg [11:0] address_q;
@@ -111,13 +111,13 @@ module afdx_app_payload_bank (
 
     generate for (s = 0;s < 4;s = s+1) begin : slice
             afdx_app_payload_slice storage(
-                .clk(clk),
-                .write_enable(write_q && address_q[11:10] == s),
-                .write_address(address_q[9:0]),
-                .write_data(data_q),
-                .read_enable(read_command_q && read_select_q && read_address_q[11:10] == s),
-                .read_address(read_address_q[9:0]),
-                .read_data(slice_data[s]));
+                .clk           (clk),
+                .write_enable  (write_q && address_q[11:10] == s),
+                .write_address (address_q[9:0]),
+                .write_data    (data_q),
+                .read_enable   (read_command_q && read_select_q && read_address_q[11:10] == s),
+                .read_address  (read_address_q[9:0]),
+                .read_data     (slice_data[s]));
         end
     endgenerate
     assign read_data = ({9{read_slice_result[0]}} & slice_data[0]) |
@@ -128,11 +128,11 @@ module afdx_app_payload_bank (
 endmodule
 
 module afdx_app_payload_slice (
-    input wire clk, write_enable,
-    input wire [9:0] write_address,
-    input wire [8:0] write_data,
-    input wire read_enable,
-    input wire [9:0] read_address,
+    input  wire       clk, write_enable,
+    input  wire [9:0] write_address,
+    input  wire [8:0] write_data,
+    input  wire       read_enable,
+    input  wire [9:0] read_address,
     output wire [8:0] read_data
 );
     (* ramstyle = "no_rw_check" *) reg [8:0] memory[0:1023];

@@ -5,26 +5,26 @@
 module afdx_mac_tx #(parameter READY_COPIES = 1) (
 
     // byte_en 为高时推进一个字节，当前顶层每拍都为高。
-    input wire clk, reset, byte_en,
+    input  wire                      clk, reset, byte_en,
 
     // s_valid 和 s_ready 同为高时接收一个帧内容字节。
     // s_last 标记最后的序号字节，s_en_a/b 选择发送网络。
-    input wire s_valid,
+    input  wire                      s_valid,
     output wire [READY_COPIES - 1:0] s_ready,
 
     // s_data_a/b 分别提供两网帧内容，以便使用不同的源网络标识。
-    input wire [7:0] s_data_a, s_data_b,
-    input wire s_last, s_en_a, s_en_b,
+    input  wire [7:0]                s_data_a, s_data_b,
+    input  wire                      s_last, s_en_a, s_en_b,
 
     // tx_sof 标记首个前导字节，tx_eof 标记帧结束。
     // 发送途中缺少字节时，tx_underrun 变高并发送错误校验值。
-    output reg tx_sof, tx_eof, tx_underrun,
+    output reg                       tx_sof, tx_eof, tx_underrun,
 
     // tx_valid_a/b 为高时，tx_data_a/b 是对应网络本拍发送的字节。
-    output reg [7:0] tx_data_a,
-    output reg tx_valid_a,
-    output reg [7:0] tx_data_b,
-    output reg tx_valid_b);
+    output reg  [7:0]                tx_data_a,
+    output reg                       tx_valid_a,
+    output reg  [7:0]                tx_data_b,
+    output reg                       tx_valid_b);
 
     localparam GAP = 3'd0, PREAMBLE = 3'd1, DATA = 3'd2, FCS = 3'd3, DRAIN = 3'd4;
 
@@ -52,14 +52,14 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     (* preserve = 1, dont_merge = 1 *) reg [31:0] fcs_a, fcs_b;
     wire [31:0] next_a, next_b;
     afdx_crc32_d8 update_a (
-        .crc(crc_a),
-        .data(s_data_a),
-        .next_crc(next_a)
+        .crc      (crc_a),
+        .data     (s_data_a),
+        .next_crc (next_a)
     );
     afdx_crc32_d8 update_b (
-        .crc(crc_b),
-        .data(s_data_b),
-        .next_crc(next_b)
+        .crc      (crc_b),
+        .data     (s_data_b),
+        .next_crc (next_b)
     );
 
     // 与状态寄存器同拍维护接纳窗口，每份只连接一个局部发送寄存器组。

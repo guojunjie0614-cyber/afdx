@@ -9,22 +9,22 @@ module afdx_rx_engine #(
 
     // enable 为高时允许处理帧，now_c 给出粗粒度时间。
     // initialized 为高表示接收状态表已初始化。
-    input wire clk, reset, enable,
+    input  wire                               clk, reset, enable,
     // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
-    input wire [15 + REGISTERED_TIME_TICK:0] now_c,
-    output reg initialized,
+    input  wire [15 + REGISTERED_TIME_TICK:0] now_c,
+    output reg                                initialized,
 
     // desc_a/b_* 提供完整帧的信息，take 表示已取走这些信息。
     // resolve 为高时，commit 决定保留还是释放本帧缓存。
-    input wire [DESC_COPIES - 1:0] desc_a_valid, desc_b_valid,
-    input wire [RX_RING_AW + 208:0] desc_a, desc_b,
-    output reg take_a, take_b, resolve_a, resolve_b, commit_a, commit_b,
+    input  wire [DESC_COPIES - 1:0]           desc_a_valid, desc_b_valid,
+    input  wire [RX_RING_AW + 208:0]          desc_a, desc_b,
+    output reg                                take_a, take_b, resolve_a, resolve_b, commit_a, commit_b,
 
     // map_* 把线路上的虚拟链路编号换成配置索引。
     // cfg_* 读取接收限制，state_* 读写该链路的接收状态。
-    output wire [DESC_COPIES - 1:0] map_re,
-    output wire [DESC_COPIES * 16 - 1:0] map_ra,
-    input wire [12:0] map_q,
+    output wire [DESC_COPIES - 1:0]           map_re,
+    output wire [DESC_COPIES * 16 - 1:0]      map_ra,
+    input  wire [12:0]                        map_q,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg cfg_re,
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [11:0] cfg_ra,
     input wire [31:0] cfg_q,
@@ -35,29 +35,29 @@ module afdx_rx_engine #(
 
     // dq_we 为高时，dq_wd 是写入 dq_wa 的交付信息。
     // dq_pop 表示读走一项，dq_count 表示已写入的项数。
-    input wire dq_pop,
+    input wire        dq_pop,
     (* preserve = 1, dont_merge = 1 *)
-    output reg [(LOCAL_QUEUE_WRITE ? 32 * ((RX_RING_AW + 84) / 24) : 1) - 1:0] dq_we,
-    output reg [RX_DQ_AW - 1:0] dq_wa,
-    output reg [RX_RING_AW + 60:0] dq_wd,
-    input wire reassembly_result_valid, reassembly_ok, input wire [3:0] reassembly_slot,
-    output reg reassembly_query, reassembly_cancel, reassembly_reserve,
+    output reg  [(LOCAL_QUEUE_WRITE ? 32 * ((RX_RING_AW + 84) / 24) : 1) - 1:0] dq_we,
+    output reg  [RX_DQ_AW - 1:0]                                                dq_wa,
+    output reg  [RX_RING_AW + 60:0]                                             dq_wd,
+    input  wire                                                                 reassembly_result_valid, reassembly_ok, input wire [3:0] reassembly_slot,
+    output reg                                                                  reassembly_query, reassembly_cancel, reassembly_reserve,
     (* preserve = 1, dont_merge = 1 *) output reg [1:0] reassembly_query_bank, reassembly_cancel_bank, reassembly_reserve_bank,
-    output wire [125:0] reassembly_meta,
-    output wire [11:0] reassembly_vl, output wire [10:0] reassembly_length,
-    output wire [15:0] reassembly_sport, reassembly_dport, output wire reassembly_net,
-    output reg [RX_DQ_AW:0] dq_count,
+    output wire [125:0]             reassembly_meta,
+    output wire [11:0]              reassembly_vl, output wire [10:0] reassembly_length,
+    output wire [15:0]              reassembly_sport, reassembly_dport, output wire reassembly_net,
+    output reg  [RX_DQ_AW:0]        dq_count,
 
     // ev_a/b 报告各网的检查失败或队列满事件。
     // ev_rm_drop 表示重复帧被丢弃，ev_deliver 表示消息被接纳。
-    output reg [7:0] ev_a, ev_b,
-    output reg ev_rm_drop, ev_deliver,
+    output reg  [7:0]               ev_a, ev_b,
+    output reg                      ev_rm_drop, ev_deliver,
 
     // cfg_ok 为高时允许外部写配置，此时没有等待处理的帧。
     output wire [DESC_COPIES - 1:0] cfg_ok,
     // Core-only prediction of the post-edge init_done. It stays low through
     // this engine's INIT exit edge; default standalone enable stays immediate.
-    input wire core_enable_next);
+    input  wire                     core_enable_next);
 `ifdef MODEL_TECH
     (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
     reg dq_room;

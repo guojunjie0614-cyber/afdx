@@ -7,36 +7,36 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     CFG_WRITE_SELECT = 0, RX_STREAM_DELAY_CYCLES = 0, CFG_READY_TERMS = 0) (
 
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
-    input wire clk, reset, enable,
+    input  wire                                                             clk, reset, enable,
 
     // cfg_* 设置主从角色、请求周期和报文端口，也可装载时间。
     // 读取秒时同时保存纳秒值，sync_count 统计成功校时次数。
     // 预译码模式在原写使能端口上传六位独热选通，默认仍为单比特。
-    input wire [(CFG_WRITE_SELECT ? 6 : 1) - 1:0] cfg_we,
-    input wire cfg_re,
-    input wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
-    input wire [31:0] cfg_wdata,
-    output reg [31:0] cfg_rdata,
-    output reg [31:0] sync_count,
+    input  wire [(CFG_WRITE_SELECT ? 6 : 1) - 1:0]                          cfg_we,
+    input  wire                                                             cfg_re,
+    input  wire [(SPLIT_CFG_ADDR == 2 ? 11 : SPLIT_CFG_ADDR ? 8 : 4) - 1:0] cfg_addr,
+    input  wire [31:0]                                                      cfg_wdata,
+    output reg  [31:0]                                                      cfg_rdata,
+    output reg  [31:0]                                                      sync_count,
 
     // tx_valid 和 tx_ready 同为高时发送一个时间报文字节。
     // tx_last 标记第 48 个字节，tx_vl/port 选择发送通道。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg tx_valid,
-    input wire tx_ready,
-    output reg [7:0] tx_data,
-    output reg tx_last,
-    output wire [6:0] tx_vl,
+    input  wire        tx_ready,
+    output reg  [7:0]  tx_data,
+    output reg         tx_last,
+    output wire [6:0]  tx_vl,
     output wire [15:0] tx_port,
 
     // rx_valid 为高时接收一个字节，满 48 字节后才置 rx_done。
     // rx_claim 为高表示接收端口匹配本服务。
-    input wire rx_valid,
-    input wire [7:0] rx_data,
-    input wire rx_last,
-    input wire [15:0] rx_port,
-    output wire rx_claim,
-    input wire cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
-    input wire cfg_write_request);
+    input  wire        rx_valid,
+    input  wire [7:0]  rx_data,
+    input  wire        rx_last,
+    input  wire [15:0] rx_port,
+    output wire        rx_claim,
+    input  wire        cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
+    input  wire        cfg_write_request);
 `ifdef MODEL_TECH
     wire [31:0] receive_timestamp_seconds;
     wire [31:0] receive_timestamp_nanoseconds;
@@ -268,36 +268,36 @@ module afdx_rtc #(parameter LOCAL_RX_PORT = 0, BANKED_RX = 0, SPLIT_CFG_ADDR = 0
     reg [31:0] reference_nanoseconds_q;
     afdx_ntp_fraction #(.LOCAL_CAPTURE(1)) encode_tx (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk            (clk),
+        .reset          (reset),
         // 数据和握手
-        .start(encode_tx_start),
-        .to_nanoseconds(1'b0),
-        .value(encode_tx_value),
-        .done(encode_tx_done),
-        .result(encode_tx_result)
+        .start          (encode_tx_start),
+        .to_nanoseconds (1'b0),
+        .value          (encode_tx_value),
+        .done           (encode_tx_done),
+        .result         (encode_tx_result)
     );
     afdx_ntp_fraction #(.LOCAL_CAPTURE(1)) encode_rx (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk            (clk),
+        .reset          (reset),
         // 数据和握手
-        .start(encode_rx_start),
-        .to_nanoseconds(1'b0),
-        .value(encode_rx_value),
-        .done(encode_rx_done),
-        .result(encode_rx_result)
+        .start          (encode_rx_start),
+        .to_nanoseconds (1'b0),
+        .value          (encode_rx_value),
+        .done           (encode_rx_done),
+        .result         (encode_rx_result)
     );
     afdx_ntp_fraction #(.LOCAL_CAPTURE(1)) decode_rx (
         // 时钟和复位
-        .clk(clk),
-        .reset(reset),
+        .clk            (clk),
+        .reset          (reset),
         // 数据和握手
-        .start(decode_start),
-        .to_nanoseconds(1'b1),
-        .value(decode_value),
-        .done(decode_done),
-        .result(decode_result)
+        .start          (decode_start),
+        .to_nanoseconds (1'b1),
+        .value          (decode_value),
+        .done           (decode_done),
+        .result         (decode_result)
     );
 
     // The banked interface delays the byte and its index together.  The

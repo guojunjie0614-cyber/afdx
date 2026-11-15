@@ -3,24 +3,24 @@
 module afdx_rx_reassembly_bank #(
     parameter ROWS = 8, TIMEOUT_CYCLES = 250000000
 ) (
-    input wire clk, reset,
-    input wire query, cancel, commit,
-    input wire [11:0] r_vl, input wire [125:0] r_meta,
-    input wire [10:0] r_length, input wire [15:0] r_sport, r_dport,
-    input wire r_net,
-    output reg match_found, free_found, output reg [2:0] match_row, free_row,
-    input wire select_valid, input wire [2:0] select_row,
-    input wire select_match, select_free,
-    output reg admission_valid, admission_ok,
-    input wire copy_request, input wire [2:0] copy_request_row,
-    input wire copy_empty, copy_valid, copy_last, input wire [7:0] copy_data,
-    output reg copy_prepared, copy_done,
-    output reg complete_available, output reg [2:0] complete_row,
-    input wire output_request, input wire [2:0] output_request_row,
-    input wire output_release, output reg release_done,
-    output reg out_valid, out_last, output reg [7:0] out_data,
-    output reg [11:0] out_vl, output reg [15:0] out_sport, out_dport,
-    output reg out_net, output reg [1:0] events
+    input  wire        clk, reset,
+    input  wire        query, cancel, commit,
+    input  wire [11:0] r_vl, input wire [125:0] r_meta,
+    input  wire [10:0] r_length, input wire [15:0] r_sport, r_dport,
+    input  wire        r_net,
+    output reg         match_found, free_found, output reg [2:0] match_row, free_row,
+    input  wire        select_valid, input wire [2:0] select_row,
+    input  wire        select_match, select_free,
+    output reg         admission_valid, admission_ok,
+    input  wire        copy_request, input wire [2:0] copy_request_row,
+    input  wire        copy_empty, copy_valid, copy_last, input wire [7:0] copy_data,
+    output reg         copy_prepared, copy_done,
+    output reg         complete_available, output reg [2:0] complete_row,
+    input  wire        output_request, input wire [2:0] output_request_row,
+    input  wire        output_release, output reg release_done,
+    output reg         out_valid, out_last, output reg [7:0] out_data,
+    output reg  [11:0] out_vl, output reg [15:0] out_sport, out_dport,
+    output reg         out_net, output reg [1:0] events
 );
 `ifdef MODEL_TECH
     (* preserve = 1, dont_merge = 1 *) reg query_active, query_start;
@@ -339,48 +339,48 @@ module afdx_rx_reassembly_bank #(
     endgenerate
 
     afdx_rx_reassembly_ram #(.WIDTH(92), .AW(3), .REGISTER_WRITE_ADDRESS(1)) key_table(
-        .clk(clk),
-        .we(allocate && !reset),
-        .wa(locked_row),
-        .wd(query_key),
-        .re(key_re && !reset),
-        .ra(key_ra),
-        .q(key_q));
+        .clk (clk),
+        .we  (allocate && !reset),
+        .wa  (locked_row),
+        .wd  (query_key),
+        .re  (key_re && !reset),
+        .ra  (key_ra),
+        .q   (key_q));
     afdx_rx_reassembly_ram #(.WIDTH(92), .AW(3), .REGISTER_WRITE_ADDRESS(1)) header_table(
-        .clk(clk),
-        .we(allocate && !reset),
-        .wa(locked_row),
-        .wd(header_wd),
-        .re(header_re && !reset),
-        .ra(header_ra),
-        .q(header_q));
+        .clk (clk),
+        .we  (allocate && !reset),
+        .wa  (locked_row),
+        .wd  (header_wd),
+        .re  (header_re && !reset),
+        .ra  (header_ra),
+        .q   (header_q));
     afdx_rx_reassembly_ram #(.WIDTH(28), .AW(3)) admission_table(
-        .clk(clk),
-        .we(commit_cmd && !reset),
-        .wa(commit_row),
-        .wd(admission_wd),
-        .re(admission_read_enable && !reset),
-        .ra(admission_read_address),
-        .q(admission_q));
+        .clk (clk),
+        .we  (commit_cmd && !reset),
+        .wa  (commit_row),
+        .wd  (admission_wd),
+        .re  (admission_read_enable && !reset),
+        .ra  (admission_read_address),
+        .q   (admission_q));
     afdx_rx_reassembly_ram #(.WIDTH(46), .AW(3)) progress_table(
-        .clk(clk),
-        .we(retire && !reset),
-        .wa(active_copy_row),
-        .wd(progress_wd),
-        .re(copy_request && copy_initialized[copy_request_row] && !reset),
-        .ra(copy_request_row),
-        .q(progress_q));
+        .clk (clk),
+        .we  (retire && !reset),
+        .wa  (active_copy_row),
+        .wd  (progress_wd),
+        .re  (copy_request && copy_initialized[copy_request_row] && !reset),
+        .ra  (copy_request_row),
+        .q   (progress_q));
     afdx_rx_reassembly_payload payload(
-        .clk(clk),
-        .reset(reset),
-        .we(payload_we),
-        .wa({active_copy_row, write_address_ahead[12:0]}),
-        .wd(copy_data_q),
-        .re(payload_re),
-        .ra({active_output_row, output_position[12:0]}),
-        .write_slots(write_slots),
-        .read_slots(read_slots),
-        .q(payload_q));
+        .clk         (clk),
+        .reset       (reset),
+        .we          (payload_we),
+        .wa          ({active_copy_row, write_address_ahead[12:0]}),
+        .wd          (copy_data_q),
+        .re          (payload_re),
+        .ra          ({active_output_row, output_position[12:0]}),
+        .write_slots (write_slots),
+        .read_slots  (read_slots),
+        .q           (payload_q));
 
     integer i, k;
     reg complete_any;

@@ -4,43 +4,43 @@
 module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
 
     // tx_ready 为高表示收发核心都已初始化。
-    input wire clk, reset, tx_ready,
+    input wire                   clk, reset, tx_ready,
     input wire [RX_BUS_COPIES:0] rx_ready_by_bank,
 
     // cfg_wr 和 cfg_ready 同为高时接收写请求。
     // cfg_rd 发起读请求，两拍后 cfg_rvalid 指示 cfg_rdata 有效。
     // 此读口返回寄存器和统计值，不读回配置存储表。
-    input wire cfg_wr, cfg_rd,
-    input wire [17:0] cfg_addr, cfg_write_addr,
-    input wire [31:0] cfg_wdata,
-    input wire mib_user_wr,
-    input wire [15:0] mib_user_wdata,
-    input wire [17:0] mib_read_addr,
-    input wire [2:0] host_read_addr,
-    input wire host_read,
+    input wire                   cfg_wr, cfg_rd,
+    input wire [17:0]            cfg_addr, cfg_write_addr,
+    input wire [31:0]            cfg_wdata,
+    input wire                   mib_user_wr,
+    input wire [15:0]            mib_user_wdata,
+    input wire [17:0]            mib_read_addr,
+    input wire [2:0]             host_read_addr,
+    input wire                   host_read,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg cfg_ready, cfg_rvalid,
     // cfg_ready_m 与 cfg_ready 同值同拍，单独驱动下游模块写选通方向的负载。
     (* preserve = 1, dont_merge = 1 *) output reg cfg_ready_m,
     (* preserve = 1, dont_merge = 1 *) output reg [1:0] app_cfg_ready,
-    output wire service_ready_next,
-    output wire service_ready_base, service_ready_rx_term,
+    output wire                       service_ready_next,
+    output wire                       service_ready_base, service_ready_rx_term,
     // 网络管理写选通按寄存器独热译码，远端不再串接完整地址比较。
-    output wire [7:0] snmp_wr_sel,
-    output wire [6:0] loader_wr_sel,
-    output wire [5:0] rtc_wr_sel,
-    output reg [31:0] cfg_rdata,
+    output wire [7:0]                 snmp_wr_sel,
+    output wire [6:0]                 loader_wr_sel,
+    output wire [5:0]                 rtc_wr_sel,
+    output reg  [31:0]                cfg_rdata,
 
     // user_id 是源以太网地址中的端系统编号。
     // tx/rx_cfg_ok 为高时，对应核心允许写配置。
-    output reg [15:0] user_id,
-    input wire tx_cfg_ok,
-    input wire [RX_BUS_COPIES - 1:0] rx_cfg_ok,
+    output reg  [15:0]                user_id,
+    input  wire                       tx_cfg_ok,
+    input  wire [RX_BUS_COPIES - 1:0] rx_cfg_ok,
 
     // tx_cfg_* 写发送配置表。
     // rx_map_we 写编号到索引的映射，rx_cfg_we 写接收配置。
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg tx_cfg_we,
-    output reg [9:0] tx_cfg_addr,
-    output reg [31:0] tx_cfg_wdata,
+    output reg  [9:0]                 tx_cfg_addr,
+    output reg  [31:0]                tx_cfg_wdata,
     // rx_map_we 按总线副本各出一比特，远端 bank 只收本地副本的选通。
     output wire [RX_BUS_COPIES - 1:0] rx_map_we,
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) output reg rx_cfg_we,
@@ -54,7 +54,7 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // ev_tx[4] 表示没有空闲页。
     // ev_tx[5] 表示 A 网发送完成。
     // ev_tx[6] 表示 B 网发送完成。
-    input wire [6:0] ev_tx,
+    input  wire [6:0]                      ev_tx,
 
     // ev_a 和 ev_b 分别报告 A 网和 B 网的事件。
     // 位 0 表示帧校验通过。
@@ -65,15 +65,15 @@ module afdx_cfg #(parameter RX_BUS_COPIES = 1, BANKED_READY = 0) (
     // 位 5 表示接收配置不允许此帧。
     // 位 6 表示序号检查失败。
     // 位 7 表示接收缓存或交付队列已满。
-    input wire [7:0] ev_a, ev_b,
+    input  wire [7:0]                      ev_a, ev_b,
 
     // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
     // ev_gdrop 表示适配器丢帧，当前顶层将它固定为零。
     // 服务模块的读值由对应 rdata/count 输入提供。
-    input wire ev_rm_drop, ev_deliver,
-    input wire [1:0] ev_gdrop,
-    input wire [31:0] rtc_rdata, rtc_sync_count,
-    input wire [31:0] snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data);
+    input  wire                            ev_rm_drop, ev_deliver,
+    input  wire [1:0]                      ev_gdrop,
+    input  wire [31:0]                     rtc_rdata, rtc_sync_count,
+    input  wire [31:0]                     snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data);
 
     // 0x01000–0x013ff 对应发送配置表。
     // 0x10000–0x1ffff 对应接收编号映射表。

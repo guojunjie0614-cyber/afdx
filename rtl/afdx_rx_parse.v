@@ -5,38 +5,38 @@ module afdx_rx_parse #(
     parameter RX_RING_AW = 12, DESC_COPIES = 1) (
 
     // enable 为高时允许接收新帧，rx_valid 标记线路有数据。
-    input wire clk, reset, enable, rx_valid,
+    input  wire                    clk, reset, enable, rx_valid,
 
     // f_end 有效时记录 now_c，作为比较两网到达时间的依据。
-    input wire [15:0] now_c,
+    input  wire [15:0]             now_c,
 
     // m_valid 为高时，m_data 是已去掉帧校验值的内容。
     // m_first 标记首字节，f_end 有效时 f_err/f_len 给出检查结果。
-    input wire m_valid, m_first,
-    input wire [7:0] m_data,
-    input wire f_end,
-    input wire [1:0] f_err,
-    input wire [10:0] f_len,
+    input  wire                    m_valid, m_first,
+    input  wire [7:0]              m_data,
+    input  wire                    f_end,
+    input  wire [1:0]              f_err,
+    input  wire [10:0]             f_len,
 
     // read_ptr 指向已读完的位置，ring_* 暂存本帧用户数据。
-    input wire [RX_RING_AW:0] read_ptr,
-    output reg ring_we,
-    output reg [RX_RING_AW - 1:0] ring_wa,
-    output reg [7:0] ring_wd,
+    input  wire [RX_RING_AW:0]     read_ptr,
+    output reg                     ring_we,
+    output reg  [RX_RING_AW - 1:0] ring_wa,
+    output reg  [7:0]              ring_wd,
 
     // desc_valid 为高时提交完整帧信息，desc_take 表示引擎已取走。
     // resolve_valid 为高时，commit 决定保留还是释放本帧数据。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) output reg [DESC_COPIES - 1:0] desc_valid,
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) output reg [RX_RING_AW + 208:0] desc_data,
-    input wire desc_take,
-    input wire resolve_valid, resolve_commit,
+    input  wire       desc_take,
+    input  wire       resolve_valid, resolve_commit,
 
     // ev[0] 表示帧校验通过。
     // ev[1] 表示帧校验值错误。
     // ev[2] 表示长度或前导码错误。
     // ev[3] 表示协议头错误。
     // ev[7] 表示用户数据缓存已满。
-    output reg [7:0] ev);
+    output reg  [7:0] ev);
 `ifdef MODEL_TECH
     reg [15:0] vlid, sport, dport, ip_len, udp_len, udp_check, n, ip_expected, end_data, sn_position, expected_len;
 `endif
