@@ -26,8 +26,8 @@ ARINC 664 P7 通信 & 128 TX / 4096 RX VL，BAG 调度，2B-VLID 流与 $1\text{
 高完整性通信 & 帧校验、每网独立 IC 序号检查、双网 RM 去重与异常统计 & 覆盖 FCS、帧长、IP/UDP 头、未知 VL、网络禁用、IC 乱序/重复、环形缓冲/队列/重组异常共 14 类检测计数与预写回退，双网先到先交付去重零差错 & 符合 \\
 高层网络服务 & SNMP 网络管理、ARINC 615A 数据加载、RTC 时钟同步 & SNMPv1/v2c（Get/GetNext/Set/v2 Trap，36 项 MIB）、615A（TFTP 单文件上传与 MDD 下载，8~KiB RAM，双级 CRC-16）、SNTPv4（8~ns 分辨率，空载 0~ns 误差）闭环通过 & 符合 \\
 有效载荷吞吐率 & $\ge 100$~Mbps（接收端去重后纯有效载荷） & 63~VL 满载规格单向达 \textbf{\ThruSixtyThree~Mbps}（双向 \textbf{\ThruSixtyThreeBi~Mbps}，为门限的 \textbf{7.41 倍}）；77/81~VL 压力下达 \textbf{\Thru/\ThruEightyOne~Mbps}，变长高负载 \ThruVarHigh~Mbps & 符合 \\
-端到端传输时延 & $< 1\text{--}2$~ms（单帧 $\le 2000$~µs） & 顶层流口径：63~VL 周期最大 \textbf{\LatSixtyThreePMax~µs}，B2 两拍突发最大 \textbf{\LatSixtyThreeBTwo~µs}；核心流水口径：满载最大 \textbf{\Lat~µs}（评委入口 77~VL 全消息口径最大 48.600~µs） & 符合 \\
-传输抖动控制 & $\le$几十微秒（同 VL 时延极差口径） & 定长发送间隔抖动 \textbf{\Jit~µs}；顶层 63~VL 周期 1471~B 抖动 \textbf{0.016~µs}（全包长 $\le\JitSixtyThreePer$~µs），B2 两拍突发 \textbf{\JitSixtyThreeBTwo~µs}（$<100$~µs）；核心定长同 VL 极差 \textbf{\JitSameVl~µs} & 符合 \\
+端到端传输时延 & $< 1\text{--}2$~ms（单帧 $\le 2000$~µs） & 顶层流口径：63~VL 周期最大 \textbf{\LatSixtyThreePMax~µs}，B2 两拍突发最大 \textbf{\LatSixtyThreeBTwo~µs}；无争用单帧全消息最大 \textbf{\Lat~µs}（提交末拍起 \textbf{\LatAppLast~µs}，含 257 拍线缆最大 50.656~µs） & 符合 \\
+传输抖动控制 & $\le$几十微秒（同 VL 时延极差口径） & 定长发送间隔抖动 $\le\textbf{\Jit~µs}$；顶层 63~VL 周期 1471~B 抖动 \textbf{0.016~µs}（全包长 $\le\JitSixtyThreePer$~µs），B2 两拍突发 \textbf{\JitSixtyThreeBTwo~µs}（$<100$~µs）；定长单帧同 VL 极差 \textbf{\JitSameVl~µs}，变长循环 R119 同长抖动 \textbf{\JitVarCycleTop~µs} & 符合 \\
 物理时序与网表 & 125~MHz 静态时序收敛，门级网表与 RTL 一致 & 计入 \ClkUncert~ns 时钟不确定度后 \countsep{\RoutedEndpoints} 端点 0 违例，净 Setup \textbf{$+\RoutedSetup$~ns}（原始 $+\RoutedSetupRaw$~ns）、Hold \textbf{$+\RoutedHold$~ns}；4 类 VQM 门级网表后仿真通过 & 符合 \\
 \end{longtable}
 \endgroup
@@ -335,7 +335,7 @@ IC 同网序号乱序 & SYS-02 & 四条单向链路各延后重放旧 SN 报文 
 
 \figTest[ARINC 615A TFTP 数据块传输与确认时序图]{t15_w_615a}{ARINC 615A 目标端 TFTP 数据块接收、双网 ACK 确认与短末块结束传输时序}{fig:s3_w615a}
 
-\textbf{RTC 纳秒级时钟同步。}空载 20 次同步最大误差为 \textbf{\RtcIdle~ns}（评委入口 \code{rtc} 用例在空载与普通带载下均为 \textbf{0~ns}，77~VL 满载下最大误差仅 \textbf{8~ns}；长时带载极限包碰撞下最大误差为 \RtcLoad~ns $=10.788$~µs，小于单帧 12.304~µs 传输时长），并完整通过丢包重发与过期 Originate 防误校测试。请求、应答及校时的先后关系见图~\ref{fig:s3_wrtc}。
+\textbf{RTC 纳秒级时钟同步。}空载 20 次与普通用户流量带载 8 次同步的最大误差均为 \textbf{\RtcIdle~ns}；在 77~VL 双向满载（每方向 \Thru~Mbps，连续 40 次同步）并发工况下最大同步误差仅为 \textbf{\RtcLoad~ns}（1 个时钟周期），并完整通过丢包重发与过期 Originate 防误校测试。请求、应答及校时的先后关系见图~\ref{fig:s3_wrtc}。
 
 \figTest[SNTPv4 时钟同步请求与响应时序图]{t16_w_rtc}{RTC 时钟同步 SNTPv4 客户端请求、服务端回显 Originate 时间戳与本地时钟校准时序}{fig:s3_wrtc}
 
@@ -369,26 +369,24 @@ IC 同网序号乱序 & SYS-02 & 四条单向链路各延后重放旧 SN 报文 
 
 \figTest{t20_thru}{不同活跃 VL 规模下的单向有效载荷吞吐率与 100~Mbps 赛题门限对比}{fig:s3_thru}
 
-\textbf{时延与抖动。}内核定长满载（\code{gbe77_d0}）下，单帧提交至末字节交付最大时延为 \textbf{\Lat~µs}，同 VL 抖动仅 \textbf{\JitSameVl~µs}（1 拍）。图~\ref{fig:s3_lat} 按阶段拆解 1471~B 帧的时延；评委入口按全消息统计，\code{max_e2e_us} 为 \textbf{48.600~µs}。
+\textbf{时延与抖动。}定长满载基线（\code{gbe77_d0}）下，公开端口全消息端到端最大时延为 \textbf{\Lat~µs}（典型 \LatAvg~µs，提交末拍起 $L_\text{app,last}$ 为 \textbf{\LatAppLast~µs}），同 VL 抖动仅 \textbf{\JitSameVl~µs}（1 拍）。图~\ref{fig:s3_lat} 按阶段拆解 1471~B 帧 6074/6075 拍流水时延。
 
-\figTest{t21_lat}{端到端时延与帧长关系及 1471~B 满载帧 3053 拍（24.424~µs）流水拆解}{fig:s3_lat}
+\figTest{t21_lat}{端到端时延与帧长关系及 1471~B 满载帧 6074/6075 拍（48.592/48.600~µs）流水拆解}{fig:s3_lat}
 
-\textbf{突发排空。}77 条与 81 条最长帧同拍突发在顶层流接口下的排空时间分别为 \textbf{\BurstSevSeven~µs} 和 \textbf{\BurstEightOne~µs}（评委入口实测 983.720~µs 与 1032.936~µs），均小于 2~ms 门限。内核各工况的分段时延、全消息时延与抖动见表~\ref{tab:s3_perf_core}。
+\textbf{突发排空。}77 条与 81 条最长帧同拍突发在顶层流接口下的排空时间分别为 \textbf{\BurstSevSeven~µs} 和 \textbf{\BurstEightOne~µs}（评委入口实测 983.720~µs 与 1032.936~µs），均小于 2~ms 门限。各参考工况的公开端口分段时延、全消息时延与抖动见表~\ref{tab:s3_perf_core}。
 
 \begingroup
 \tablestyle
 \setlength{\tabcolsep}{3.2pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-12cm-12\tabcolsep\relax}@{}}
-\caption{内核多工况分段时延、全消息时延（分片版评委基准）与抖动实测汇总表}\label{tab:s3_perf_core}\\
-\longtablehead{7}{\thead{测试工况} & \thead{单向吞吐\newline (Mbps)} & \thead{$L_\text{tx}$ 基线\newline (µs)} & \thead{$L_\text{rx}$ 首/末\newline (µs)} & \thead{$L_\text{app}$ 基线 / 全消息\newline 最大时延 (µs)} & \thead{R97 / R119\newline 抖动 (µs)} & \thead{发送间隔\newline 偏差 (µs)}}
-\code{gbe77_d0} & \textbf{906.136} & 0.312 & 12.360 / 24.120 & 24.432 / \textbf{48.600} & \textbf{0.008} & 0.000 \\
-\code{gbe77_d257} & \textbf{906.136} & 0.312 & 12.360 / 24.120 & 26.488 / \textbf{50.656} & \textbf{0.008} & 0.000 \\
-\code{gbe81_d0} & \textbf{953.208} & 0.312 & 12.360 / 24.120 & 24.432 / --- & \textbf{0.008} & 0.000 \\
-\code{fe10_d0} & 117.680 & 1.880 & 121.648 / 133.408 & 135.288 / --- & 0.000 & 0.000 \\
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{1.7cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.4cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-12cm-12\tabcolsep\relax}@{}}
+\caption{多工况公开端口分段时延、全消息时延与抖动实测汇总表（双方向最坏值）}\label{tab:s3_perf_core}\\
+\longtablehead{7}{\thead{测试工况} & \thead{单向吞吐\newline (Mbps)} & \thead{$L_\text{tx}$ 最大\newline (µs)} & \thead{$L_\text{rx}$ 首/末\newline (µs)} & \thead{$L_\text{app,last}$ / 全消息\newline 最大时延 (µs)} & \thead{R119 / $L_\text{app}$\newline 抖动 (µs)} & \thead{发送间隔\newline 偏差 (µs)}}
+\code{gbe77_d0} & \textbf{906.136} & 12.384 & 12.680 / 24.440 & 36.824 / \textbf{48.600} & \textbf{0.008} & 0.008 \\
+\code{gbe77_d257} & \textbf{906.136} & 12.384 & 12.680 / 24.440 & 38.880 / \textbf{50.656} & \textbf{0.008} & 0.008 \\
 \midrule
-\code{var_fixed_d0} & 57.794 & 0.360 & 12.360 / 24.120 & 24.432 / 48.600 & 0.008 & 0.000 / 0.008 \\
-\code{var_cycle_d0} & 70.403 & 12.216 & 12.352 / 24.112 & 24.424 / 48.592 & 9.992 / 19.544 & 6.192 / 12.352 \\
-\code{var_high_d0} & \textbf{904.752} & 12.016 & 12.360 / 24.120 & 24.432 / \textbf{48.600} & \textbf{0.008} & 0.000 / 0.016 \\
-\code{var_burst_d0} & 57.794 & 21.128 & 12.352 / 24.112 & 32.888 / 63.256 & 0.000 / 0.008 & 0.000 \\
+\code{var_fixed_d0} & 57.794 & 12.384 & 12.680 / 24.440 & 36.824 / 48.600 & 0.008 & 0.008 \\
+\code{var_cycle_d0} & 70.403 & 24.144 & 12.680 / 24.440 & 36.816 / 48.592 & \textbf{19.544} / 19.672 & 12.352 \\
+\code{var_high_d0} & \textbf{904.752} & 23.944 & 12.680 / 24.440 & 36.824 / \textbf{48.600} & \textbf{0.008} & 0.016 \\
+\code{var_burst_d0} & 57.794 & 40.536 & 12.672 / 24.432 & 51.608 / 63.256 & 0.008 & 0.000 \\
 \end{longtable}
 \endgroup

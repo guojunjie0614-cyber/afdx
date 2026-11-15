@@ -2,7 +2,7 @@
 
 \section{赛题指标符合性总表}
 
-表~\ref{tab:compliance} 汇集了赛题 5 项核心功能、4 项技术指标、1026/1030 答疑扩展功能以及门级网表综合实现的实测符合性结论。数据源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/} 与 \code{docs/evidence/perf_r97.json}）。
+表~\ref{tab:compliance} 汇集了赛题 5 项核心功能、4 项技术指标、1026/1030 答疑扩展功能以及门级网表综合实现的实测符合性结论。数据源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/}、\code{docs/evidence/frag_load/} 与 \code{sim/reference/judge_result_frag1030.txt}）。
 
 \begin{table}[H]\centering
 \caption{赛题指标符合性总表}\label{tab:compliance}
@@ -11,11 +11,11 @@
 \thead{指标项目} & \thead{赛题与答疑规范要求} & \thead{设计实测数据与技术特征} & \thead{结论} \\
 \midrule
 传输速率 & $\ge 100\text{ Mbps}$（R95-1 规定去重有效载荷，千兆 GMII） & 顶层 \code{AFDX_top} 63 条 VL 声明满载单向有效吞吐达 \ThruSixtyThree~Mbps（双向合计 \ThruSixtyThreeBi~Mbps，GMII 线利用率 \LineUtilSixtyThree\%）；超规格压力工况 77/81 条 VL 达 \Thru/\ThruEightyOne~Mbps，多 VL 变长高负载（\code{var_high}）单向达 \ThruVarHigh~Mbps & 符合 \\
-传输时延 & 端到端 $<1\sim 2\text{ ms}$（R96 单帧时延 $\le 2\text{ ms}$） & 顶层 63 条 VL 稳态末字节最大时延 \LatSixtyThreePMax~µs，两拍突发（\code{B2}）最大时延 \LatSixtyThreeBTwo~µs；单帧内核基线最大 \Lat~µs（$L_\text{tx}$ 最大 \Ttx~µs，$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs，含 257 拍线缆最大 26.488~µs） & 符合 \\
-传输抖动 & 不超过几十微秒（R97-2 同 VL 时延极差口径） & 定长满载发送间隔抖动为 \Jit~µs；R97 同 VL 极差抖动在顶层 63 条 VL 稳态下为 \JitSixtyThreePer~µs（\code{B2} 两拍突发为 \JitSixtyThreeBTwo~µs），定长基线为 \JitSameVl~µs，变长循环核心 \code{afdx_es} R97 口径为 \JitVarCycle~µs、顶层 \code{AFDX_top} R119 口径为 \JitVarCycleTop~µs & 符合 \\
+传输时延 & 端到端 $<1\sim 2\text{ ms}$（R96 单帧时延 $\le 2\text{ ms}$） & 顶层 63 条 VL 稳态末字节最大时延 \LatSixtyThreePMax~µs，两拍突发（\code{B2}）最大时延 \LatSixtyThreeBTwo~µs；无争用单帧全消息最大 \Lat~µs（提交末拍起 \LatAppLast~µs，$L_\text{tx}$ \Ttx~µs，$L_\text{rx}$ 首字节 \Trx~µs / 末字节 \TrxLast~µs，含 257 拍线缆全消息最大 50.656~µs） & 符合 \\
+传输抖动 & 不超过几十微秒（R97-2 / R119-2 同 VL 极差口径） & 定长满载发送间隔抖动 $\le\Jit$~µs；同 VL 极差抖动在顶层 63 条 VL 稳态下为 \JitSixtyThreePer~µs（\code{B2} 两拍突发为 \JitSixtyThreeBTwo~µs），定长单帧基线为 \JitSameVl~µs，变长循环 \code{AFDX_top} R119 同长最大抖动为 \JitVarCycleTop~µs（跨长 $L_\text{app}$ 极差 \JitVarCycleApp~µs） & 符合 \\
 帧格式与分片 & 单帧载荷 $\le 1471\text{ B}$、帧长 $\le 1518\text{ B}$；R119/R139 支持 2B-VLID 流与 1--8192~B 分片 & 单帧 1--1471~B 载荷、64--1518~B 以太网封装正确；1472--\MaxMessageBytes~B 消息按 1472~B IPv4 分片并在双网去重后按序重组；VLID 映射及 1--255 序号独立回绕正确 & 符合 \\
 虚拟链路容量 & 128 条发送 VL / 4096 条接收 VL & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表独立配置并完成双网去重；接收侧具备 \ReasmContexts{} 路并发按序重组槽 & 符合 \\
-时钟同步 & 支持网络时间报文同步 & 空载最大误差 \RtcIdle~ns，77 条 VL 满载并发下最大误差 \RtcLoad~ns（10.788~µs），且具备重发恢复与防误校能力 & 符合 \\
+时钟同步 & 支持网络时间报文同步 & 空载与用户流量带载最大误差 \RtcIdle~ns，77 条 VL 双向满载并发下最大误差 \RtcLoad~ns（1 个时钟周期），且具备重发恢复与防误校能力 & 符合 \\
 布局布线时序 & 125~MHz 工作频率静态时序收敛 & 官方布局布线（\code{PRES 1.30 + tiles_1030.edc}，计入 \ClkUncert~ns 不确定度）签核：8~ns 净建立裕量 +\RoutedSetup~ns（等效 $F_\text{max}=\RoutedFmax\text{ MHz}$），保持裕量 +\RoutedHold~ns，\countsep{\RoutedEndpoints} 端点 0 违例 & 符合 \\
 综合后仿真 & 综合后网表功能与 RTL 一致 & eLinx 导出 VQM 网表通过 eLinx 双端烟雾、五功能 7 份端口逐字节比对、1030 分片 199,578 拍前缀窗口及 1026 收发流包装共 4 类后仿真验证 & 符合 \\
 \bottomrule

@@ -107,24 +107,22 @@
 
 \noindent \textbf{2.\quad 线速吞吐率与 63-VL 满载规划预算：}单帧载荷 $n$ 字节在线路上占用 $C(n)=8\text{（前导码）}+47+\max(n,17)+12\text{（IFG）}=67+\max(n,17)$ 拍（$n=1471$ 时 $C=1538$ 拍 $=12.304$~µs，物理极限有效载荷率 $R_\text{max}=1471\times 8/(1538\times 8\text{ ns})=956.44$~Mbps）。按团队声明的 \textbf{63 TX / 63 RX VL 满载规格}（$\text{BAG}=1$~ms $=125,000$ 拍，$L_\text{max}=1471$~B），每毫秒占用线路 $63\times 1538=96,894$ 拍（线路利用率 \LineUtilSixtyThree\%），单向去重有效载荷吞吐率为 $\ThruSixtyThree$~Mbps，双向全双工合计 $\ThruSixtyThreeBi$~Mbps；超规格 77/81~VL 压力基线分别对应 $\Thru$~Mbps（利用率 94.7\%）与 $\ThruEightyOne$~Mbps（利用率 99.66\%）。
 
-\noindent \textbf{3.\quad 端到端流水拍数账本（图~\ref{fig:s2_pipe}、表~\ref{tab:s2_latency}）：}在无排队争用、VL 已到期的基准条件下，1471~B 满载单帧从核心提交末字节（$m_\text{last}$）至首前导码输出（\code{tx_sof}）固定为 32 拍（\TtxSof~µs），计至 SFD 结束（$L_\text{tx}$）为 39 拍（\Ttx~µs）；物理线路传输 1525 拍（12.200~µs）；接收端从 FCS 末字节经 MAC 帧尾检测（3 拍）、解析分类（3 拍）、32-Bank 查表与引擎判定（14 拍基线 / 30 拍分片准入日程）、交付队列与环形缓冲预取（6 拍）至首字节交付为 26 拍（0.208~µs，计自 SFD 的 $L_\text{rx}=\Trx$~µs），再经 1470 拍逐字节交付（11.760~µs），核心端到端总时延为 3053 拍（\LatAvg~µs，遇后台 AGE 扫描让步 1 拍为 3054 拍即 \Lat~µs）。
+\noindent \textbf{3.\quad 端到端流水拍数账本（图~\ref{fig:s2_pipe}、表~\ref{tab:s2_latency}）：}在无排队争用、VL 已到期的基准条件下，1471~B 满载单帧从顶层公开端口 2B-VLID 首字节输入至末字节握手（$U$）耗时 1472 拍（11.776~µs），经发送包装层 \code{afdx_app_tx} 存储转发回放与 3 次跨页分配停顿（1504 拍，12.032~µs）到达内核提交末拍（$C$）；核心发送侧从 $C$ 至首前导码输出（\code{tx_sof}）为 37 拍（\TtxSof~µs），计至 SFD 结束为 44 拍（\TtxCore~µs，故公开端口 $L_\text{tx}=1504+44=1548$ 拍 $=\Ttx$~µs）；物理线路传输 1525 拍（12.200~µs，SFD 后帧体 1518 拍）；接收端从 FCS 末字节经 MAC 帧尾检测（3 拍）、解析分类（3 拍）、同步描述符与 32-Bank 查表及 \code{rx_engine} 30 拍日程（共 32 拍）、\code{rx_deliver} 预取与重组直通及服务复用寄存（14 拍）至核心交付首字节为 52 拍（0.416~µs），再经接收包装层 \code{afdx_app_rx} 读流水与 2B-VLID 前缀注入（14 拍，0.112~µs）共 66 拍输出公开有效载荷首字节（计自 SFD 的 $L_\text{rx}=12.672$~µs，遇 AGE 1 拍让步为 \Trx~µs），最后经 1470 拍逐字节交付（11.760~µs），全消息端到端总时延为 6074 拍（\LatAvg~µs，遇后台 AGE 扫描让步 1 拍为 6075 拍即 \Lat~µs；提交末拍 $U$ 起算 $L_\text{app,last}$ 为 \LatAppLastAvg/\LatAppLast~µs）。
 
-\figDesign[收发两侧无争用逐拍流水时序]{f20_pipe}{无其他消息争用、VL 已到期时的收发逐拍流水时序：(a) 发送侧 32 拍准备与准点起始；(b) 接收侧帧尾检查与 26 拍首字节交付}{fig:s2_pipe}
+\figDesign[收发两侧无争用逐拍流水时序]{f20_pipe}{无其他消息争用、VL 已到期时的核心与包装层逐拍流水时序：(a) 核心发送侧 37 拍准备至首前导码（44 拍至 SFD）；(b) 接收侧帧尾检查、52 拍核心交付与 66 拍公开载荷首字节输出}{fig:s2_pipe}
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-7.5cm-8\tabcolsep\relax}@{}}
-\caption{核心端到端时延流水账本（1471 字节满载单帧基线，1 拍 = 8 ns）}\label{tab:s2_latency}\\
+\caption{顶层 \code{AFDX_top} 端到端时延流水账本（1471 字节满载单帧基线，1 拍 = 8 ns）}\label{tab:s2_latency}\\
 \longtablehead{5}{\thead{流水阶段与区段} & \thead{典型拍数} & \thead{典型时间\newline (µs)} & \thead{上界时间\newline (µs)} & \thead{硬件流水构成与时序机理说明}}
-发送写缓存与入队请求 & 4 & 0.032 & 0.080 & 载荷写寄存 1 拍，写 47 位 \code{tx_desc} 并置 \code{enq_valid} 3 拍 \\
-调度引擎入队与授权 & 15 & 0.120 & 0.240 & \code{tx_engine} 的 ENQ 状态 6 拍，GRANT 状态 9 拍 \\
-组帧准备与流缓冲锁存 & 12 & 0.096 & 0.168 & \code{tx_builder} 12 拍 IPv4 校验和准备，输出双缓冲流寄存 1 拍 \\
-MAC 起始与前导码至 SFD & 8 & 0.064 & 0.072 & 第 32 拍输出首前导码 \code{tx_sof}（\TtxSof~µs），第 39 拍输出 SFD（$L_\text{tx}=\Ttx$~µs） \\
-以太网帧物理传输 & 1518 & 12.144 & 12.144 & 42B 协议头 $+$ 1471B 载荷 $+$ 1B SN $+$ 4B FCS（含前导码共 1525 拍） \\
-接收 MAC 帧尾与解析分类 & 6 & 0.048 & 0.064 & \code{mac_rx} 帧尾判定 3 拍，\code{rx_parse} FIN 两级分类 3 拍 \\
-32-Bank 查表与引擎判定 & 14 & 0.112 & 0.288 & 单帧基线 14 拍入队；含双 Bank 重组槽位查询预约时为 30 拍固定日程 \\
-交付队列读取与环形预取 & 6 & 0.048 & 0.080 & 块 RAM \code{rx_dq} 队头捕获 2 拍，\code{rx_deliver} 环形缓冲读取与直通 4--6 拍 \\
-接收应用口逐字节交付 & 1470 & 11.760 & 11.760 & 每拍连续交付 1 字节，首字节至末字节共 $n-1=1470$ 拍 \\
+公开流接口整包输入 & 1472 & 11.776 & 11.776 & 2B 大端 VLID 前缀 $+$ 1471B 载荷共 1473 字节握手间隔（首拍至末拍 $U$） \\
+发送包装层存储转发 & 1504 & 12.032 & 12.032 & \code{afdx_app_tx} 提交与反查仲裁 16 拍 $+$ 1470B 回放 $+$ $3\times 6=18$ 拍跨页分配停顿 \\
+核心发送入队至首前导码 & 37 & 0.296 & 0.296 & 入队 4 拍、\code{tx_engine} 调度授权 20 拍、\code{tx_builder} 12 拍校验和与流缓冲 1 拍（第 44 拍出 SFD，$L_\text{tx}=\Ttx$~µs） \\
+以太网帧物理传输 & 1525 & 12.200 & 12.200 & 8B 前导码/SFD $+$ 42B 协议头 $+$ 1471B 载荷 $+$ 1B SN $+$ 4B FCS（1526B 共 1525 个间隔） \\
+核心接收检测与判定交付 & 52 & 0.416 & 0.424 & \code{mac_rx} 3 拍、\code{rx_parse} 3 拍、32-Bank 查表与 30 拍日程共 32 拍、\code{rx_deliver}/重组直通/复用 14 拍（AGE 让步 $+1$ 拍） \\
+接收包装层读出与前缀 & 14 & 0.112 & 0.112 & 顶层寄存 1 拍、\code{afdx_app_rx} 命令/退休与 4 拍 RAM 读流水及 2B-VLID 前缀输出至公开载荷首字节 \\
+接收公开端口逐字节交付 & 1470 & 11.760 & 11.760 & 每拍连续输出 1 字节，载荷首字节至末字节共 $n-1=1470$ 拍 \\
 \midrule
-\textbf{无争用硬件流水合计} & \textbf{3053} & \textbf{\LatAvg} & \textbf{24.996} & 遇后台 AGE 老化扫描 1 拍让步时为 3054 拍（\textbf{\Lat~µs}） \\
+\textbf{无争用全消息流水合计} & \textbf{6074} & \textbf{\LatAvg} & \textbf{\Lat} & 遇后台 AGE 老化扫描 1 拍让步时为 6075 拍（\textbf{\Lat~µs}；$U$ 起算 \textbf{\LatAppLast~µs}） \\
 \end{longtable}
 
 \noindent \textbf{4.\quad 全芯片块 RAM 分配与双域时钟策略：}全系统 34 组逻辑存储表共封装为 250 个同步 RAM 实例（逻辑总容量 4,174,544~bit $\approx 509.6$~KiB），其中顶层收发包装层占 69 个实例（656,528~bit）、发送核心占 15 个实例（1,131,520~bit）、接收与分片重组核心占 158 个实例（2,279,744~bit）、三项网络服务占 8 个实例（106,752~bit），综合后映射为 \Mem{} 个 M4K/EBR（占器件 1,200 个存储块的 \MemPct\%）。全芯片采用单一 125~MHz 主时钟树，仅对 SNMP 与 615A 协议状态机内部 \countsep{\MulticycleRegs} 个触发器施加 2 分频局部时钟使能（\code{CE_DIV=2}，16~ns 多周期建立路径），数据面收发、RAM 读写、配置总线与 RTC 计时全部保持 8~ns 单周期全速运行。

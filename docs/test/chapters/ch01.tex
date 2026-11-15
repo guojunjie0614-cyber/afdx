@@ -13,12 +13,12 @@ ARINC 664 通信 & 支持 P7 规定的通信功能 & UDP/IP 封装、VL 配置�
 高完整性通信 & 必须支持 & 收发 14 类异常均准确识别、分类和计数；冗余窗口内双网副本严格单次交付，去重后按序重组（\ref{sec:f-ic}~节） & 符合 \\
 SNMP 网络管理 & 支持 & v1/v2c 的 Get、GetNext、Set 与 v2 Trap 编解码正确，MIB 读回值与硬件寄存器一致（\ref{sec:f-snmp}~节） & 符合 \\
 615A 软件数据加载 & 支持 & 单文件上传后片内 RAM 数据与介质定义下载（Media-Defined Download, MDD）回传文件均逐字节一致；差错与丢包按协议重传或终止（\ref{sec:f-615a}~节） & 符合 \\
-RTC 时钟同步 & 支持 & 空载/满载同步误差分别为 \RtcIdle{}/\RtcLoad{}~ns；应答丢失后自动重发恢复，非法或过期应答不误触发时钟校准（\ref{sec:f-rtc}~节） & 符合 \\
+RTC 时钟同步 & 支持 & 空载/普通带载/77-VL 满载同步误差分别为 \RtcIdle{}/\RtcUserLoad{}/\RtcLoad{}~ns；应答丢失后自动重发恢复，非法或过期应答不误触发时钟校准（\ref{sec:f-rtc}~节） & 符合 \\
 \midrule
 \multicolumn{4}{@{}l}{\heiti 技术指标} \\
 传输速率 & 100~Mbps & 125~MHz 八位 GMII 下，顶层 \code{AFDX_top} 声明满载规格 63 条 VL 单向有效吞吐达 \ThruSixtyThree{}~Mbps（双向 \ThruSixtyThreeBi{}~Mbps）；超规格压力工况 77/81 条 VL 单向达 \Thru{}/\ThruEightyOne{}~Mbps，变长高负载单向达 \ThruVarHigh{}~Mbps（\ref{sec:p-rate}~节） & 符合 \\
 帧格式 & 单帧载荷 $\le$1471~B、帧长 $\le$1518~B，支持 1--8192~B 分片及 1--255 序号 & 单帧 1--1471~B 载荷、64--1518~B 帧长逐字节核对正确；1472--\MaxMessageBytes{}~B 消息按 1472~B IPv4 分片并在去重后按序重组；VLID 映射、首帧 SN$=0$ 及 1--255 回绕正确（\ref{sec:p-frame}~节） & 符合 \\
-时延与抖动 & 端到端 $<$1--2~ms，抖动不超过几十微秒 & 顶层 63 条 VL 稳态末字节最大时延 \LatSixtyThreePMax{}~µs（逐周期抖动 \JitSixtyThreePer{}~µs，两拍突发最大 \LatSixtyThreeBTwo{}~µs / 抖动 \JitSixtyThreeBTwo{}~µs）；单帧基线最大 \Lat{}~µs、同 VL 抖动 \JitSameVl{}~µs；81 条最长帧突发排空 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
+时延与抖动 & 端到端 $<$1--2~ms，抖动不超过几十微秒 & 顶层 63 条 VL 稳态末字节最大时延 \LatSixtyThreePMax{}~µs（逐周期抖动 \JitSixtyThreePer{}~µs，两拍突发最大 \LatSixtyThreeBTwo{}~µs / 抖动 \JitSixtyThreeBTwo{}~µs）；无争用单帧全消息最大 \Lat{}~µs、定长同 VL 抖动 \JitSameVl{}~µs（变长循环 R119 同长抖动 \JitVarCycleTop{}~µs）；81 条最长帧突发排空 \BurstEightOne{}~µs（\ref{sec:p-lat}~节） & 符合 \\
 VL 支持能力 & 128 条发送、4096 条接收 & 128 条发送 VL 全量并发发送通过；4096 条接收 VL 全表配置并逐条完成双网去重交付（\ref{sec:p-vl}~节） & 符合 \\
 \midrule
 时序与网表 & 125~MHz 静态时序收敛 & 布局布线后（\code{PRES 1.30 + tiles_1030.edc}，\ClkUncert{}~ns 不确定度）净建立裕量 +\RoutedSetup~ns、保持裕量 +\RoutedHold~ns，\countsep{\RoutedEndpoints} 端点 0 违例；4 项 VQM 门级网表仿真与 RTL 一致（第~\ref{ch:netlist}~章） & 符合 \\

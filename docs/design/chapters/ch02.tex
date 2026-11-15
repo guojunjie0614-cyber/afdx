@@ -22,21 +22,21 @@
 顶层应用流与前缀封装\newline (R62, R110, R120-3, R124, R126) & 明确模板 8 端口中 \code{tx_data}/\code{rx_data} 作为顶层应用数据流接口，每条收发消息以 2 字节大端 VLID 作为前缀；双网 GMII 作为独立物理网络引脚引出 & 顶层 \code{AFDX_top}（\Pins{} 引脚）将 \code{tx_data}/\code{tx_valid}/\code{tx_ready} 与 \code{rx_data}/\code{rx_valid}/\code{rx_ready}（按 R62 口径保留 \code{rx_ready} 端口兼容，接收侧无反压连续输出）封装为带 2 字节大端 VLID 前缀的应用流接口，通过 \code{afdx_app_tx}/\code{afdx_app_rx} 桥接内部核心 \code{afdx_es}，并完整引出 \code{gmii_tx*_a/b} 与 \code{gmii_rx*_a/b} 物理端口 \\
 长消息分片与重组\newline (R120-1, R120-2, R138) & 超过单帧最大载荷（$1471$~B）的应用层长消息需支持硬件分片发送与接收重组，分片按所属 VL 的 BAG 调度，每片独立携带 AFDX 序列号 SN & 支持 $1\text{--}\MaxMessageBytes$~B 应用层消息：发送侧自动拆分为共享同一 IP 标识的 IPv4 分片（首片含 8 字节 UDP 头——UDP 校验和按 RFC 768 置 \code{0x0000}——与最多 $1464$~B 载荷，中间片最多 $1472$~B，逐片计算 IPv4 头校验和，最多 6 片），按 BAG 逐片调度并递增 SN；接收侧配备 2-Bank $\times$ 8 槽位共 \ReasmContexts{} 路并发顺序重组上下文与 128~KiB 缓存，支持非零全报文 UDP 校验和验证与 2~s 超时清理 \\
 满载规格与吞吐率\newline (R95-1, R119, R138-3, R139-3) & 接收端去重后的有效载荷吞吐率须达到指标要求；满载 VL 数由团队按网络规划自主声明并一致验证 & 硬件表保持 128 发送 / 4096 接收全容量；按团队声明的 63 发送 / 63 接收 VL 满载规格（$\text{BAG}=1$~ms，$L_\text{max}=1471$~B，双网冗余，线路占用率 \LineUtilSixtyThree\%），实测单向去重交付吞吐率 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps）；77~VL 与 81~VL 超规格极限压力实测达 \Thru~Mbps 与 \ThruEightyOne~Mbps \\
-端到端时延与抖动口径\newline (R96, R97, R119, R139) & 单帧端到端时延不超过 2~ms；抖动定义为同一 VL 多帧端到端时延的最大值减最小值（极差），并在顶层流式边界（\code{tx_data} 至 \code{rx_data}）与核心分段边界同时验证 & 核心单帧满载最大时延 \Lat~µs（同 VL 极差 \JitSameVl~µs）；顶层 \code{AFDX_top} 63~VL 满载周期激励下 $1471$~B 抖动仅 $0.016$~µs、全包长最大抖动 \JitSixtyThreePer~µs（最大时延 \LatSixtyThreePMax~µs），B2 旋转三元组背靠背突发最坏抢占下最大抖动 \JitSixtyThreeBTwo~µs（$<100$~µs）、最大时延 \LatSixtyThreeBTwo~µs（$<2$~ms） \\
+端到端时延与抖动口径\newline (R96, R97, R119, R139) & 单帧端到端时延不超过 2~ms；抖动定义为同一 VL 同帧长多帧端到端时延的最大值减最小值（极差），统一在顶层公开流式边界（\code{tx_data} 至 \code{rx_data}）验证 & 顶层 \code{AFDX_top} 77~VL 定长满载全消息最大时延 \Lat~µs（同 VL 极差 \JitSameVl~µs）；63~VL 满载周期激励下 $1471$~B 抖动仅 $0.016$~µs、全包长最大抖动 \JitSixtyThreePer~µs（最大时延 \LatSixtyThreePMax~µs），B2 旋转三元组背靠背突发最坏抢占下最大抖动 \JitSixtyThreeBTwo~µs（$<100$~µs）、最大时延 \LatSixtyThreeBTwo~µs（$<2$~ms） \\
 MAC 实现与时钟复位\newline (R3, R46, R57, R59, R111) & 允许调用厂商 IP 或自研 MAC；单一 125~MHz 全局时钟同步驱动，同步复位 & 采用纯 RTL 自研双网锁步 MAC（第~\ref{sec:mactx}~节），双网同拍起始、0 拍空闲启动延迟；全芯片由单一 125~MHz（8~ns）主时钟驱动，管理面复杂状态机采用 $\text{CE\_DIV}=2$ 多周期使能树解耦 \\
 目标器件与考核\newline (R30, R112) & 器件自主选择；以仿真结果、波形截图、门级网表与静态时序报告作为考核依据 & 目标器件选用中科亿海微 EQ6HL130（CSG484\_H）；建立包含 \RegCount{} 项自动化回归、\DesignUnitCount{} 单元代码覆盖率、VQM 门级网表后仿真及主动施加 $\ClkUncert$~ns 时钟不确定度的布局布线后 STA 签核闭环 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-端到端时延支持核心内部接口与顶层公开流式接口双重测量口径：
+端到端时延支持顶层公开流式全消息口径与分段诊断口径：
 \begin{enumerate}[leftmargin=2em,itemsep=1pt]
-  \item \textbf{核心分段口径（R96/R97）：}从核心应用接口成功提交消息末字节（$m_\text{last}$ 握手完成）开始，至接收端完成首字节/末字节交付（$d_\text{valid}/d_\text{last}$）结束：
+  \item \textbf{公开口分段诊断口径（R96/R97 兼容字段）：}在 \code{AFDX_top} 公开端口从发送消息末字节握手完成（$U$）起，至接收端交付载荷首字节/末字节（$D_\text{first}/D_\text{last}$）止：
 \begin{equation}
 L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx},\qquad L_\text{app,last} = L_\text{tx} + L_\text{gmii} + L_\text{rx,last}
 \end{equation}
-其中 $L_\text{tx}$ 为提交末字节至 GMII 输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的物理链路传输时延；$L_\text{rx}$ 与 $L_\text{rx,last}$ 分别为接收端收到 SFD 至输出首字节与末字节交付的时间。
-  \item \textbf{顶层公开流式口径（R119/R139）：}从顶层 \code{AFDX_top} 发送端接收消息首字节（2 字节 VLID 前缀第 1 字节，\texttt{tx\_valid \&\& tx\_ready}）或末字节（$t_\text{tx,last}$）起，至接收端输出该消息末字节（\code{rx_valid} 连续消息流的末尾拍，$t_\text{rx,last}$）止，分别记为全消息入口至末字节时延 $L_\text{entry,last} = t_\text{rx,last} - t_\text{tx,first}$ 与末字节至末字节时延 $L_\text{last,last} = t_\text{rx,last} - t_\text{tx,last}$。对于多帧分片长消息，端到端完成时延包含跨 $(F-1)$ 个 BAG 周期的确定性调度间隔。
+其中 $L_\text{tx}$ 为公开输入末字节握手至 GMII 输出以太网帧起始定界符（SFD，\code{8'hD5}）的时间（含 \code{afdx_app_tx} 整包存储重放与核心处理）；$L_\text{gmii}$ 为发送端 SFD 至接收端 SFD 的物理链路传输时延；$L_\text{rx}$ 与 $L_\text{rx,last}$ 分别为接收端收到 SFD 至公开口交付载荷首字节（跳过 2B VLID 前缀）与末字节的时间。
+  \item \textbf{顶层公开流式主口径（R119/R139）：}从顶层 \code{AFDX_top} 发送端输入消息首字节（2 字节 VLID 前缀第 1 字节，\texttt{tx\_valid \&\& tx\_ready}）起，至接收端输出该消息末字节（\code{rx_valid} 末尾拍，$t_\text{rx,last}$）止，记为全消息端到端时延 $L_\text{entry,last} = t_\text{rx,last} - t_\text{tx,first}$。对于多帧分片长消息，端到端完成时延包含跨 $(F-1)$ 个 BAG 周期的确定性调度间隔。
 \end{enumerate}
 
 \FloatBarrier
@@ -53,8 +53,8 @@ F3 & SNMP 网络管理 & SNMPv1/v2c 的 Get、GetNext、Set 和 SNMPv2-Trap；36
 F4 & 615A 软件数据加载 & 基于 TFTP 的单文件上传与介质定义下载（Media-Defined Download, MDD）；LUH 头文件与数据文件 CRC-16 硬件校验；超时重传机制 \\
 F5 & RTC 时钟同步 & SNTPv4 纳秒级时钟同步；32 位秒加 32 位纳秒时间戳；应答报文回显客户端 Transmit 时间戳 \\
 P1 & 吞吐 & 每方向有效载荷不低于 100~Mbps（63~VL 规划满载实测单向 \ThruSixtyThree~Mbps、双向 \ThruSixtyThreeBi~Mbps；77/81~VL 超规格压力实测 \Thru{} / \ThruEightyOne~Mbps，变长高负载实测 \ThruVarHigh~Mbps） \\
-P2 & 端到端时延 & 单帧不超过 2000~µs（核心满载最大实测 \Lat~µs；63~VL 顶层周期激励最大 \LatSixtyThreePMax~µs，B2 背靠背突发最大 \LatSixtyThreeBTwo~µs；分片长包按 $(F-1)\times\text{BAG}$ 确定性完成） \\
-P3 & 传输抖动 & 63~VL 满载周期激励下 $1471$~B 抖动 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 背靠背突发最大 \JitSixtyThreeBTwo~µs；定长满载同 VL 极差仅 \JitSameVl~µs，变长循环核心 \code{afdx_es} R97 为 \JitVarCycle~µs（顶层 \code{AFDX_top} R119 为 \JitVarCycleTop~µs） \\
+P2 & 端到端时延 & 单帧不超过 2000~µs（顶层公开口单帧满载最大实测 \Lat~µs；63~VL 顶层周期激励最大 \LatSixtyThreePMax~µs，B2 背靠背突发最大 \LatSixtyThreeBTwo~µs；分片长包按 $(F-1)\times\text{BAG}$ 确定性完成） \\
+P3 & 传输抖动 & 63~VL 满载周期激励下 $1471$~B 抖动 $0.016$~µs、全包长最大 \JitSixtyThreePer~µs，B2 背靠背突发最大 \JitSixtyThreeBTwo~µs；77~VL 定长满载同 VL 极差仅 \JitSameVl~µs，变长循环（\code{var_cycle}）顶层公开口 R119 同长最大极差为 \JitVarCycle~µs（$L_\text{app}$ 跨长极差 \JitVarCycleApp~µs） \\
 P4 & 帧格式 & 以太网帧长 64--1518 字节（含 FCS）；复位后首帧 SN 为 0，之后按 1--255 循环 \\
 P5 & 容量 & 128 条发送 VL、4096 条接收 VL 全部可配置并可同时启用；团队声明单端满载网络规划规格为 63 发送 / 63 接收 VL \\
 I1 & 官方顶层端口 & \code{AFDX_top} 的 8 个模板端口名称、方向和位宽保持完全兼容，承载带 2 字节大端 VLID 前缀的应用层流式收发报文 \\

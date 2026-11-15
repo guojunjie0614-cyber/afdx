@@ -154,22 +154,25 @@ R_\text{max} = \frac{1471 \times 8~\text{bit}}{1538 \times 8~\text{ns}} = 956.44
 
 端到端时延的起止点定义见第~\ref{ch:req}~章。下文按收发通路无其他消息争用、当前 VL 已满足 BAG 发送间隔的基准条件，给出核心分段口径下各区段的典型拍数和设计上界（表~\ref{tab:latbudget}），发送侧和接收侧的逐拍时序见图~\ref{fig:pipe}。若从顶层 \code{AFDX_top} 流式接口计时（R119/R139 全消息入口首字节至接收末字节），由于 \code{afdx_app_tx} 与 \code{afdx_app_rx} 均采用“整包收齐并完成 VLID 映射后转发”的存储转发边界，单条 $n$ 字节消息在无排队争用时额外叠加顶层发送写入（$n+2$ 拍加跨层预取）与顶层接收缓存转发（$n$ 拍加 2 字节 VLID 前缀输出）；例如在 63~VL 周期稳态激励下，$1471$~B 消息顶层全消息最大端到端时延实测为 \LatSixtyThreePMax~µs，旋转突发（B2）最大时延为 \LatSixtyThreeBTwo~µs；对于拆分为 $F$ 片的 $8192$~B 长消息（$F=6$，$\text{BAG}=1$~ms），端到端完成时延由 $(F-1)\times\text{BAG}$ 主导，实测为 $5212.304$~µs。
 
-图~\ref{fig:pipe}(a) 中，消息入队时直接成为候选。若末字节在 RECV 状态下正常接收，且无需在消息尾部申请新页，由于载荷写口增加了 1 拍流水寄存、核心输出端插入了 1 级流缓冲（双缓冲结构），从接收末字节到输出首个前导码字节固定为 32 拍（0.256~µs）；按 1022 答疑 R95 规则计至以太网帧 SFD 结束（8 字节前导码尾），发送处理时延 $L_\text{tx}$ 典型为 39 拍（0.312~µs）。单字节消息或末字节跨页时多约 6 拍。图~\ref{fig:pipe}(b) 给出单网单帧的接收过程，由于 \code{rx_map} 采用 32 子库多 Bank 分块存储增加 2 拍读回流水，从 GMII 最后一个 FCS 字节到首个交付字节由 24 拍更新为 26 拍（0.208~µs）。
+图~\ref{fig:pipe}(a) 给出核心发送侧在无排队争用、VL 已到期时的逐拍时序：核心末字节 $C$（\code{app_tx_last}）写入后，经分页缓存描述符发布与入队请求、\code{tx_engine} 的 ENQ/GRANT 判定（至第 20 拍）、\code{tx_builder} 14 拍捕获与 IPv4 校验和准备以及输出弹性流缓冲（3 拍），第 37 拍输出首个前导码字节（\TtxSof~µs），第 44 拍输出 SFD 结束字节（核心 $C\to\text{SFD}$ 实测 44--46 拍，即 \TtxCore--\TtxCoreMax~µs）；在顶层 \code{AFDX_top} 公开端口下，1471~B 消息先经 1472 拍应用输入（含 2B VLID 前缀）与 \code{afdx_app_tx} 1504 拍整包校验重放（含 3 次分页申请的 18 拍流控停顿），公开输入末拍 $U$ 至 SFD 的 $L_\text{tx}$ 固定为 1548 拍（\Ttx~µs）。图~\ref{fig:pipe}(b) 给出单帧接收过程：从 GMII 最后一个 FCS 字节起，经 MAC 帧尾检测 3 拍、解析器分类 3 拍、同步描述符与 32-Bank 查表及 30 拍固定准入日程共 32 拍（第 38 拍入队）、\code{rx_deliver} 与重组直通及服务寄存 14 拍（第 52 拍核心 \code{d_valid} 有效），再经顶层 \code{afdx_app_rx} 缓冲与 2B VLID 前缀输出 14 拍，第 66 拍送出公开口首个载荷字节（0.528~µs；恰遇后台 AGE 扫描让步 1 拍时为 67 拍，对应 $L_\text{rx}=\Trx$~µs）。
 
-\figN[收发两侧的逐拍时序（无其他消息争用、VL 已到期）]{f20_pipe}{无其他消息争用、VL 已到期时的流水时序：(a) 发送准备与起始；(b) 接收检查与交付}{fig:pipe}
+\figN[收发两侧的逐拍时序（无其他消息争用、VL 已到期）]{f20_pipe}{无其他消息争用、VL 已到期时的逐拍流水时序：(a) 核心发送侧 37 拍首前导码与 44 拍 SFD；(b) 接收侧 52 拍核心有效与 66 拍公开载荷首字节}{fig:pipe}
 
 \begin{table}\centering\small
-\caption{端到端时延预算（拍）}\label{tab:latbudget}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedleft\arraybackslash}p{1.2cm}>{\raggedleft\arraybackslash}p{1.2cm}L}
+\caption{顶层 \texttt{AFDX\_top} 公开端口单帧端到端时延预算（1471~B 载荷，单位：拍）}\label{tab:latbudget}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.7cm}>{\raggedleft\arraybackslash}p{1.2cm}>{\raggedleft\arraybackslash}p{1.2cm}L}
 \toprule
-区段 & 典型 & 上界 & 构成 \\
+区段 & 典型 & 满载上界 & 构成（125~MHz，1 拍 = 8~ns，直连 0 拍链路） \\
 \midrule
-发送侧至前导码 & 32 & 100 & 分页缓存写载荷寄存 1 拍、写描述符并请求入队 3 拍，引擎入队 6 拍，授权 9 拍，组帧准备 11 拍，输出流缓冲与 MAC 起始 2 拍；计至 SFD 结束（$L_\text{tx}$）为 39 拍 \\
-线路 & 1525 & 1525 & 前导码首字节至 FCS 末字节，共 $8+1518$ 字节（$n=1471$） \\
-接收至首字节 & 26 & 200 & MAC 检测帧尾 3 拍，解析器分类 3 拍，多 Bank 分块映射与引擎判定入队 14 拍，交付模块读块 RAM 队头并读取环形缓冲 6 拍；上界另计另一网描述与过期清理让出 \\
-逐字节交付 & $n-1$ & $n-1$ & 首字节到末字节，每拍一字节，$n=1471$ 时为 1470 拍 \\
+公开口消息输入 & 1472 & 1472 & 2B 大端 VLID 首字节至 1471B 载荷末字节 $U$（共 1473 字节间隔 1472 拍，11.776~µs） \\
+发送包装整包重放 & 1504 & 1504 & \code{afdx_app_tx} 整包提交 2 拍、描述符查询与仲裁 14 拍、1470B 传输及 $3\times 6=18$ 拍申请页停顿（12.032~µs） \\
+核心发送至前导码 & 37 & 37 & \code{tx_buf} 描述符 4 拍、ENQ/GRANT 16 拍、\code{tx_builder} 14 拍、流缓冲与 MAC 起始 3 拍；计至 SFD 为 44 拍（短帧跨相 44--46 拍；1471B 顶层 $L_\text{tx}=1548$ 拍 / \Ttx~µs） \\
+GMII 物理线路 & 1525 & 1525 & 前导码首字节至 FCS 末字节，共 $8+1518=1526$ 字节占 1525 拍间隔（12.200~µs） \\
+核心接收至首字节 & 52 & 53 & MAC 帧尾 3 拍、解析分类 3 拍、32-Bank 查表与 30 拍日程共 32 拍、\code{rx_deliver}/重组直通/\code{svc} 寄存 14 拍（AGE 让步 $+1$ 拍） \\
+接收包装至首载荷 & 14 & 14 & 顶层寄存 1 拍、\code{afdx_app_rx} 交付命令与 4 拍读流水及 2B VLID 前缀共 13 拍（计自 SFD 的 $L_\text{rx}$ 最大 1585 拍 / \Trx~µs） \\
+逐字节载荷交付 & 1470 & 1470 & 公开输出载荷首字节至末字节，每拍 1 字节，$n-1=1470$ 拍（11.760~µs） \\
 \midrule
-合计 & 3053 & 3295 & 24.424~µs（遇 AGE 扫描 1 拍为 3054 拍 / 24.432~µs） / 26.360~µs \\
+合计（R119 $L_\text{entry,last}$） & 6074 & 6075 & \LatAvg~µs（无争用典型） / \Lat~µs（含 AGE 扫描 1 拍让步，与 \code{gbe77_d0} 实测完全一致） \\
 \bottomrule
 \end{tabularx}
 \end{table}

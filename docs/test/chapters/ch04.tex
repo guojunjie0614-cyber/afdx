@@ -253,7 +253,7 @@ SVC-06 & 丢弃第一个响应；交换 Server/Client 启动顺序 & Client 在�
 SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响应 & 错误和过期响应不误校准；合法响应仅执行单次同步校准 & 34/0\newline 平台自检 & 通过 \\
 \end{items}
 
-每次时钟同步完成后，测试平台在同一拍读取主从两端的秒（\code{SEC}）与锁存纳秒（\code{NS}）寄存器，折算为纳秒后求差，三种负载工况下的同步误差汇总于表~\ref{tab:rtc-err}。空载工况下，往返路径无排队等待，5 拍固定写回流水延迟由硬件精确补偿 40~ns，实测同步误差为 0~ns；在叠加用户流量及 77 条 VL 双向满载（每方向吞吐保持 \Thru{}~Mbps）工况下，由于发送时间戳在报文首字节进入发送核心（入队前）采样，当请求或响应报文恰逢线上正在发送 1471 字节长帧（线路占用 1538 拍即 12.304~µs）时会产生单向排队等待，这种往返排队不对称带来的最大同步偏差实测为 \RtcLoad{}~ns（10.788~µs），严格小于单个最长帧的线路占用时间。
+每次时钟同步完成后，测试平台在同一拍读取主从两端的秒（\code{SEC}）与锁存纳秒（\code{NS}）寄存器，折算为纳秒后求差，三种负载工况下的同步误差汇总于表~\ref{tab:rtc-err}。空载与用户流量带载工况下，往返路径无排队不对称，5 拍固定写回流水延迟由硬件精确补偿 40~ns，实测同步误差均为 \RtcIdle{}~ns；在叠加 77 条 VL 双向满载（每方向吞吐保持 \Thru{}~Mbps，连续 40 次同步）工况下，得益于顶层流包装层存储转发整流及主从双向对称调度，请求与应答在服务复用接口首字节采样点上的往返排队偏差不超过 1 个时钟周期，实测最大同步误差仅为 \RtcLoad{}~ns（\code{docs/evidence/rtc.json} 单轮抽样为 0~ns，\code{sim/reference/judge_result_frag1030.txt} 全量回归为 8~ns）。
 
 \par\medskip\noindent\begin{minipage}{\linewidth}\tablestyle\centering
 \captionof{table}{RTC 同步误差（SVC-05）}\label{tab:rtc-err}
@@ -262,7 +262,7 @@ SVC-07 & 送入回送时间戳错误或过期的响应，之后送入合法响�
 \thead{工况} & \thead{同步次数} & \thead{最大误差（ns）} \\
 \midrule
 空载 & 20 & \RtcIdle \\
-用户流量带载 & 8 & \RtcLoad \\
+用户流量带载 & 8 & \RtcUserLoad \\
 77 条 VL 双向满载 & 40 & \RtcLoad \\
 \bottomrule
 \end{tabular*}

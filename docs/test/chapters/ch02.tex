@@ -34,29 +34,25 @@ FPGA 综合与实现工具 & eLinx 3.0.7（\code{tools/build_1030.py} 驱动逻�
 \end{tabularx}
 \end{table}
 
-\section{R95/R97 时间戳探针与时延抖动测量原理}\label{sec:probe_theory}
+\section{R95/R97/R119 时间戳探针与时延抖动测量原理}\label{sec:probe_theory}
 
-为严格落实官方问题汇总 1022 版中 R95--R97 关乎 GMII/应用时延分段与抖动统计的最新规范要求，测试平台在数据通路关键边界埋设了高精度无侵入时钟周期级时间戳探针（图~\ref{fig:criteria} 与图~\ref{fig:platform}）：
+为严格落实官方问题汇总 1022/1026/1030 版中 R95--R97、R119 与 R139 关乎顶层流接口、GMII/应用分段时延及抖动统计的规范要求，测试平台在 \code{AFDX_top} 公开端口与 GMII 物理边界埋设了高精度无侵入时钟周期级时间戳探针（图~\ref{fig:criteria} 与图~\ref{fig:platform}）：
 \begin{enumerate}
-  \item \textbf{发送端应用提交时刻 $M$：}发送端应用接口完成消息末字节握手（\code{app_tx_valid && app_tx_ready}）的时钟上升沿拍号。
-  \item \textbf{以太网首前导码时刻 $S_\text{sof}$ 与 SFD 边界时刻 $S_\text{sfd}$：}发送端 GMII TX 接口输出首个前导码字节（\code{0x55}）的时刻为 $S_\text{sof}$；输出帧起始定界符（SFD，\code{0xD5}，即前导码后第 8 拍）的时刻为 $S_\text{sfd}$。自研 MAC 在空闲态下启动发送延迟为 0 拍，前导码在允许时刻准点发出。
+  \item \textbf{发送端公开流首字节时刻 $M_\text{sop}$ 与提交完成时刻 $M$（即 $U$）：}顶层 \code{AFDX_top} 公开发送流完成 2 字节大端 VLID 首字节握手（\code{tx_valid && tx_ready && tx_sop}）的时钟拍号为 $M_\text{sop}$；完成整包末字节握手（\code{tx_valid && tx_ready && tx_eop}）的时钟拍号为 $M$（即公开流提交完成时刻 $U$）。
+  \item \textbf{以太网首前导码时刻 $S_\text{sof}$ 与 SFD 边界时刻 $S_\text{sfd}$：}发送端 GMII TX 接口输出首个前导码字节（\code{0x55}）的时刻为 $S_\text{sof}$；输出帧起始定界符（SFD，\code{0xD5}，即首前导码后第 7 拍、前导码序列第 8 字节）的时刻为 $S_\text{sfd}$。自研 MAC 在空闲态下启动发送延迟为 0 拍，前导码在允许时刻准点发出。
   \item \textbf{接收端 GMII RX 捕获时刻 $R_\text{sfd}$：}接收端 GMII 物理层检测到以太网帧 SFD 字节的时钟拍号。
-  \item \textbf{接收端应用交付时刻 $D_\text{first}$ 与 $D_\text{last}$：}接收端应用接口向主机交付有效载荷首字节的时刻为 $D_\text{first}$，交付末字节（\code{app_rx_last} 有效）的时刻为 $D_\text{last}$。
+  \item \textbf{接收端公开流交付时刻 $D_\text{first}$ 与 $D_\text{last}$：}顶层 \code{AFDX_top} 公开接收流（跳过前导 2 字节大端 VLID 后）输出有效载荷首字节的时刻为 $D_\text{first}$，输出末字节（\code{rx_valid && rx_eop}）的时刻为 $D_\text{last}$。
 \end{enumerate}
 
 基于上述精确探针，定义如下分段时延与抖动度量：
 \begin{itemize}
-  \item \textbf{发送时延 $L_\text{tx}$：}从应用提交完成到以太网 SFD 边界输出的时间，即 $L_\text{tx} = (S_\text{sfd} - M)\times 8\text{ ns}$（若以首前导码为基准，则记为 $T_\text{tx,sof} = (S_\text{sof} - M)\times 8\text{ ns}$）。
-  \item \textbf{物理链路延迟 $L_\text{gmii}$：}GMII 线路传播时延，即 $L_\text{gmii} = (R_\text{sfd} - S_\text{sfd})\times 8\text{ ns}$。直连仿真为 0~ns，线缆模型下为 100 拍（0.800~µs）或 257 拍（2.056~µs）。
-  \item \textbf{接收分段时延 $L_\text{rx}$ 与 $L_\text{rx,last}$：}首字节交付时延 $L_\text{rx} = (D_\text{first} - R_\text{sfd})\times 8\text{ ns}$，末字节交付时延 $L_\text{rx,last} = (D_\text{last} - R_\text{sfd})\times 8\text{ ns}$。
-  \item \textbf{端到端时延 $L_\text{app}$ 与 $L_\text{app,last}$：}首字节交付时延 $L_\text{app} = (D_\text{first} - M)\times 8\text{ ns}$，末字节交付时延 $L_\text{app,last} = (D_\text{last} - M)\times 8\text{ ns}$。逐帧严格满足代数关系：$L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx}$。
-  \item \textbf{R97 同 VL 端到端时延极差抖动（\code{same_vl_jitter}）：}依据 1022 答疑 R97-2，抖动严格在\textbf{同一条虚拟链路（VL）}内部计算，取该 VL 在统计窗口内多次传输的时延最大值与最小值之差：
-    \begin{equation}
-      J_{\text{same\_vl}, v} = \max_i L_{\text{app}, v, i} - \min_i L_{\text{app}, v, i}, \qquad J_\text{R97} = \max_{v} J_{\text{same\_vl}, v}.
-    \end{equation}
-    该指标反映同一通信信道由于调度状态机交错、短帧填充及接收流水阶段切换带来的确定性时延波动，严禁跨不同 VL 极值相减。
-  \item \textbf{发送间隔偏差（\code{tx_interval_jitter}）：}对定周期业务，统计相邻发送起点间隔偏离 BAG 的最大差值：$J_\text{tx} = \max_i |(S_{i} - S_{i-1}) - \text{BAG}|$。稳态下无争用时该偏差严格为 0。
-  \item \textbf{顶层 \code{AFDX_top} 2B-VLID 流公开测点与分片消息口径（R119 / R139）：}在顶层流式接口（63-VL 满载套件与 \code{tb_t76_load}）上，公开测点以发送消息输入 2 字节大端 VLID 首字节握手（\code{tx_valid && tx_ready} 首拍）为起点 $M_\text{sop}$，以接收端输出末字节有效（\code{rx_valid} 末拍）为终点 $D_\text{eop}$，端到端全消息时延为 $L_\text{e2e} = (D_\text{eop} - M_\text{sop})\times 8\text{ ns}$。该口径包含发送侧整包流化写入与接收侧流化输出耗时；对于超过 1471~B 的分片长消息，还包含跨多个 BAG 周期的按片调度传输及接收端按序重组耗时。
+  \item \textbf{发送分段时延 $L_\text{tx}$：}从公开流提交完成时刻 $M$ 到以太网 SFD 边界输出的时间，即 $L_\text{tx} = (S_\text{sfd} - M)\times 8\text{ ns}$（含 \code{afdx_app_tx} 存储转发回放与核心发送准备流水；核心入队末拍 $C$ 至 $S_\text{sof}$/$S_\text{sfd}$ 分别为 \TtxSof/\TtxCore~µs）。
+  \item \textbf{物理链路延迟 $L_\text{gmii}$：}GMII 线路传播时延，即 $L_\text{gmii} = (R_\text{sfd} - S_\text{sfd})\times 8\text{ ns}$。直连仿真（\code{d0}）为 0~ns，线缆模型（\code{d257}）下为 257 拍（2.056~µs）。
+  \item \textbf{接收分段时延 $L_\text{rx}$ 与 $L_\text{rx,last}$：}载荷首字节交付时延 $L_\text{rx} = (D_\text{first} - R_\text{sfd})\times 8\text{ ns}$，末字节交付时延 $L_\text{rx,last} = (D_\text{last} - R_\text{sfd})\times 8\text{ ns}$。
+  \item \textbf{提交起算端到端时延 $L_\text{app}$ 与 $L_\text{app,last}$：}首字节交付时延 $L_\text{app} = (D_\text{first} - M)\times 8\text{ ns}$，末字节交付时延 $L_\text{app,last} = (D_\text{last} - M)\times 8\text{ ns}$，逐帧严格满足代数关系 $L_\text{app} = L_\text{tx} + L_\text{gmii} + L_\text{rx}$。
+  \item \textbf{顶层全消息端到端时延 $L_\text{e2e}$（R119-1 / R139）：}按公开测点从输入 2 字节大端 VLID 首字节握手 $M_\text{sop}$ 统计至接收端输出末字节 $D_\text{last}$，即 $L_\text{e2e} = (D_\text{last} - M_\text{sop})\times 8\text{ ns}$。该口径完整覆盖发送侧整包流化输入、发送包装层存储转发、GMII 传输、接收重组/去重与接收侧流化输出；超过 1471~B 的分片长消息还包含跨多个 BAG 周期的按片调度传输及接收端按序重组耗时。
+  \item \textbf{同 VL 时延极差抖动（R97-2 / R119-2）：}抖动严格在\textbf{同一条虚拟链路（VL）}内部统计，严禁跨不同 VL 极值相减。对定长业务，同 VL 极差为 $J_{\text{same\_vl}, v} = \max_i L_{\text{e2e}, v, i} - \min_i L_{\text{e2e}, v, i}$；对同一 VL 循环发送多种帧长的变长工况，依据 R119-2 按\textbf{同 VL 同帧长}样本计算全消息时延极差 $J_{\text{R119}} = \max_{v, \ell}(\max_{i \in (v,\ell)} L_{\text{e2e}, i} - \min_{i \in (v,\ell)} L_{\text{e2e}, i})$ 以剥离不同帧长固有的输入流化时长差，同时辅以跨帧长 $L_\text{app}$ 极差（$J_\text{R97}$）开展排队机理诊断。
+  \item \textbf{发送间隔偏差（\code{tx_interval_jitter}）：}对定周期业务，统计相邻发送起点间隔偏离 BAG 的最大差值：$J_\text{tx} = \max_i |(S_{i} - S_{i-1}) - \text{BAG}|$。分片版发送引擎采用 $-8$ 拍提前量补偿组帧流水，定长稳态下该偏差 $\le 1$ 拍（0.008~µs）。
 \end{itemize}
 
 \section{独立参考模型（Golden Model）与双重校验机制}\label{sec:criteria}

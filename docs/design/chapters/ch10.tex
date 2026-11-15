@@ -31,24 +31,24 @@
 \par\vspace{2pt}{\footnotesize\raggedright 注：\textsuperscript{*}\code{B1} 按固定 VL 次序连续注入两帧，次帧等待剩余 BAG（$\le 1$~ms）验证 BAG 最小间隔约束；跨帧抢占下的 BAG 等待抖动由每三相邻 VL 轮换注入次序的 \code{B2} 测量。\par}
 \end{table}
 
-\textbf{核心 \code{afdx_es} 分段时延与超规格极限压力基线（1022 答疑 R97）：}针对 \code{afdx_es} 核心口按 $m_\text{last} \rightarrow \text{SFD} \rightarrow d_\text{valid}/d_\text{last}$ 分段测量定长 77~VL 高负载（\code{gbe77}）及四组变长并发场景（\code{var_fixed}、\code{var_cycle}、\code{var_high}、\code{var_burst}），结果见表~\ref{tab:perf-meas}。
+\textbf{顶层 \code{AFDX_top} 公开口多工况分段时延与超规格压力实测（评委入口 11-03）：}在 \code{tb_sys_perf} 与 \code{tb_sys_perf_var} 中，按公开输入首字节至输出末字节统计 R119 全消息时延 $L_\text{entry,last}$ 与同长抖动，并同步记录公开输入末拍至 SFD（$L_\text{tx}$）、SFD 至公开载荷首/末拍（$L_\text{rx}$）及末拍至首/末拍（$L_\text{app}$），两传输方向取最坏值的结果见表~\ref{tab:perf-meas}。
 
 \begin{table}[!htbp]\centering\small
-\caption{核心 \texttt{afdx\_es} 多工况分段时延与超规格压力基线（直连 0 拍链路）}\label{tab:perf-meas}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.7cm}>{\centering\arraybackslash}p{1.3cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{1.5cm}>{\centering\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}X}
+\caption{顶层 \texttt{AFDX\_top} 公开口多工况分段时延与超规格压力实测（直连 0 拍链路）}\label{tab:perf-meas}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.6cm}>{\centering\arraybackslash}p{1.1cm}>{\raggedleft\arraybackslash}p{1.5cm}>{\raggedleft\arraybackslash}p{1.4cm}>{\centering\arraybackslash}p{2.2cm}>{\centering\arraybackslash}p{2.5cm}>{\raggedleft\arraybackslash}X}
 \toprule
-测试工况 & 激活 VL 数 & 单向吞吐\newline (Mbps) & $L_\text{tx}$ 最大\newline (µs) & $L_\text{rx}$ 首/末\newline (µs) & $L_\text{app}$ 首/末\newline (µs) & R97 抖动\newline (µs) \\
+测试工况 & VL 数 & 单向吞吐\newline (Mbps) & $L_\text{tx}$ 最大\newline (µs) & $L_\text{rx}$ 首/末\newline (µs) & $L_\text{app}$ 末 / 全消息\newline (µs) & R119 抖动\newline (µs) \\
 \midrule
-\code{gbe77} & 77 & \Thru & \Ttx & \Trx{} / \TrxLast & 12.672 / \Lat & \JitSameVl \\
-\code{var_fixed} & 32 & 57.794 & 0.360 & 12.360 / 24.120 & 12.672 / 24.432 & 0.008 \\
-\code{var_cycle} & 32 & 70.403 & 12.216 & 12.352 / 24.112 & 12.936 / 24.424 & \JitVarCycle \\
-\code{var_high} & 80 & \ThruVarHigh & 12.016 & 12.360 / 24.120 & 23.872 / \Lat & 0.008 \\
-\code{var_burst} & 32 & 57.794 & 21.128 & 12.352 / 24.112 & 32.824 / 32.888 & 0.000 \\
+\code{gbe77} & 77 & \Thru & \Ttx & \Trx{} / \TrxLast & \LatAppLast{} / \Lat & \JitSameVl \\
+\code{var_fixed} & 32 & 57.794 & 12.384 & 12.680 / 24.440 & 36.824 / 48.600 & 0.008 \\
+\code{var_cycle} & 32 & 70.403 & 24.144 & 12.680 / 24.440 & 36.816 / 48.592 & \JitVarCycle \\
+\code{var_high} & 80 & \ThruVarHigh & 23.944 & 12.680 / 24.440 & 36.824 / \Lat & 0.008 \\
+\code{var_burst} & 32 & 57.794 & 40.536 & 12.672 / 24.432 & 51.608 / 63.256 & 0.008 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-实测表明：在声明 63~VL 满载规格下，单向净吞吐达 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps，超规格 77/81~VL 单向达 \Thru/\ThruEightyOne~Mbps），稳态周期最大时延 \LatSixtyThreePMax~µs、旋转突发最大时延 \LatSixtyThreeBTwo~µs、抖动 \JitSixtyThreeBTwo~µs（注：上表 \JitVarCycle~µs 为核心 \code{afdx_es} R97 口径，顶层 \code{AFDX_top} 变长循环 R119 实测为 \JitVarCycleTop~µs），全面满足 $\ge 100$~Mbps 吞吐、$<2$~ms 时延与 $<100$~µs 抖动指标。
+实测表明：在声明 63~VL 满载规格下，单向净吞吐达 \ThruSixtyThree~Mbps（双向 \ThruSixtyThreeBi~Mbps，超规格 77/81~VL 单向达 \Thru/\ThruEightyOne~Mbps），稳态周期最大时延 \LatSixtyThreePMax~µs、旋转突发最大时延 \LatSixtyThreeBTwo~µs、抖动 \JitSixtyThreeBTwo~µs；在 77/80~VL 及变长多工况评委入口下，全消息端到端最大时延为 48.592--63.256~µs（叠加 257 拍链路延迟最大 63.888~µs），R119 同 VL 同长最大抖动为 \JitVarCycle~µs（对应 $L_\text{app}$ 跨长极差 \JitVarCycleApp~µs），全面满足 $\ge 100$~Mbps 吞吐、$<2$~ms 时延与 $<100$~µs 抖动指标。
 
 \section{代码覆盖率签核}\label{sec:coverage}
 

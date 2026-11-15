@@ -213,7 +213,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Coverage
 \code{frag_load/long_message_coverage.json} & 63-VL 混合场景中 1472/3000/8192~B 分片长消息完整逐字节匹配计数（双向各 50/33/17 条）。 \\
 \code{route_sta/route_R1.json} & 综合阶段（+\Setup/+\Hold~ns，\countsep{\SynthEndpoints} 端点）与布线后关键路径、172 个 \code{P0} 管脚及簇锁定完整数据库快照。 \\
 \code{vqm_compat/performance_difference.md} & 1030 分片版本发送引擎提前量调整为 $-8$ 拍引起的边界帧 $\text{BAG}+1$ 拍（+8~ns）机理解释。 \\
-\code{perf_r97.json} & 内核分段探针时延抖动主表、R97 同 VL 极差定义及 \code{var_cycle} 最坏样本物理拆解记录。 \\
+\code{perf_r97.json} & 10-27 早期无流包装内核分段探针历史归档（当前交付版分段时延与抖动以 \code{sim/reference/judge_result_frag1030.txt} 及 \code{frag1030_delivery/long_references.json} 为准）。 \\
 \code{rtc.json} / \code{capacity.log} / \code{snmp.log} & \code{tb_sys_rtc} 同步误差、\code{tb_judge_capacity} 128/4096 容量与 \code{tb_judge_snmp} 核对日志。 \\
 \end{longtable}
 
@@ -226,8 +226,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/regress.ps1 -Coverage
 \RegCount{} 项、\countsep{\RegChecks} 次自检、\countsep{\RegIndep} 项独立核对 & \code{frag1030_delivery/regression.json}（65 项）与 \code{long_references.json}（\code{tb_sys_perf}、\code{tb_sys_perf_var}）的 \code{Checks} 及 \code{CheckItems} 精确求和。 \\
 63-VL 满载吞吐 \ThruSixtyThree/\ThruSixtyThreeBi~Mbps，时延 \LatSixtyThreePMax/\LatSixtyThreeBTwo~µs，抖动 \JitSixtyThreePer/\JitSixtyThreeBTwo~µs & \code{vl63_full_load/summary.md} 七场景主表及 \code{vl63_full_load/per_vl_metrics.tsv}（\code{P17}、\code{P1471}、\code{B2}）。 \\
 63-VL 混合分片 1472/3000/8192~B 完整交付 & \code{vl63_full_load/summary.md}“混合负载与超规格压力参考”与 \code{frag_load/long_message_coverage.json}（\code{mixed_profile}）。 \\
-吞吐 \Thru{}、\ThruEightyOne{}、\ThruVarHigh{}~Mbps；单帧分段时延 \Lat{}、\Ttx{}、\Trx{}~µs；抖动 \JitSameVl{}、\JitVarCycle{}（核心 R97）/ \JitVarCycleTop{}（顶层 R119）~µs & \code{perf_r97.json} 的 \code{main_table}、\code{long_references.json} 与 \code{sim/reference/judge_result_frag1030.txt}。 \\
-突发排空 \BurstSevSeven/\BurstEightOne~µs（内核 \BurstSevSevenBase/\BurstEightOneBase~µs）；RTC 误差 \RtcIdle/\RtcLoad~ns & \code{FACTS_DETAIL.md}、\code{sim/reference/judge_result_frag1030.txt} 与 \code{rtc.json}。 \\
+吞吐 \Thru{}、\ThruEightyOne{}、\ThruVarHigh{}~Mbps；单帧与分段时延 \Lat{}、\LatAppLast{}、\Ttx{}、\Trx{}~µs；抖动 \JitSameVl{}、\JitVarCycleTop{}（R119 同长）/ \JitVarCycleApp{}（跨长 $L_\text{app}$）~µs & \code{sim/reference/judge_result_frag1030.txt}、\code{frag1030_delivery/long_references.json} 与 \code{frag_load/performance_actual_check_summary.json}。 \\
+突发排空 \BurstSevSeven/\BurstEightOne~µs（内核 \BurstSevSevenBase/\BurstEightOneBase~µs）；RTC 误差 \RtcIdle/\RtcUserLoad/\RtcLoad~ns & \code{FACTS_DETAIL.md}、\code{sim/reference/judge_result_frag1030.txt} 与 \code{rtc.json}。 \\
 资源 \Lut{} LUT、\FF{} FF、\Clb{} CLB、\Mem{} M4K、\Pins{} Pins；布线裕量 +\RoutedSetup/+\RoutedHold~ns、0/\countsep{\RoutedEndpoints} 违例 & \code{frag1030_delivery/utilization_placed.rpt}、\code{timing.json}、\code{slack.rpt} 及 \code{route_sta/route_R1.json}。 \\
 门级网表 NET-01 至 NET-04（\ElinxChecks/0、\SvcChecks/0、199,578 拍前缀、161/0 双窗口） & \code{frag1030_delivery/vqm_official.json}、\code{fragment_prefix.json} 与 \code{vqm_windows.json}。 \\
 \DesignUnitCount{} 单元覆盖率：\CovStmt\% 语句、\CovBranch\% 分支、\CovCond\% 条件、\CovExpr\% 表达式、\CovFsmState\% 状态（\CovFsmStateCov/\CovFsmStateTot）、\CovFsmTrans\% 转移、\CovToggle\% 翻转 & \code{vl63_full_load/coverage_frag1030.json} 的 \code{totals} 与 \code{modules}（58 份 UCDB 合并）。 \\

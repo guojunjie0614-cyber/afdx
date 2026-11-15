@@ -12,4 +12,4 @@
 | [mac_results.json](mac_results.json)、[mac_official_resources.json](mac_official_resources.json)、[mac_self_resources.json](mac_self_resources.json)、[mac_official_stress.json](mac_official_stress.json)、[mac_self_rtl.json](mac_self_rtl.json)、[mac_self_net.json](mac_self_net.json)、[mac_bad_crc.json](mac_bad_crc.json) | 自研精简 MAC 与官方生成 MAC IP 的资源占用、端到端时延、千兆测速及错误帧专项对照 | 分片前基线 | 10-11 | 设计取舍依据（供 `FACTS.md` 附录引用） |
 | [vo_functional.json](vo_functional.json)、[vo_ram.json](vo_ram.json)、[vo_ram_bits.json](vo_ram_bits.json) | 厂商 `.vo` 网表与 RAM 仿真模型位序映射差异及最小复现 | 分片前基线 | 10-10 | 网表格式选型依据 |
 | [performance.json](performance.json) | 早期定长性能检查原始输出 | 分片前历史 | 10-26 | 历史基线存档，供测试报告附录核对 |
-| [perf_r97.json](perf_r97.json)、[rtc.json](rtc.json)、[capacity.log](capacity.log)、[snmp.log](snmp.log) | 早期性能（核心 `afdx_es` 变长循环 9.992 µs）、RTC、容量与 SNMP 原始日志 | 分片前历史 | 10-28 | 历史基线存档，供测试报告附录核对 |
+| [perf_r97.json](perf_r97.json)、[rtc.json](rtc.json)、[capacity.log](capacity.log)、[snmp.log](snmp.log) | 分片前 10-28 公开口性能、RTC、容量与 SNMP 原始日志 | 分片前历史 | 10-28 | 历史基线存档，供测试报告附录核对 |

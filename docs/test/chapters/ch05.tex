@@ -1,7 +1,7 @@
 \addtocontents{toc}{\protect\newpage}
 \chapter{系统性能、压力与时钟同步测试}\label{ch:perf}
 
-本章围绕有效载荷吞吐率、帧格式与 IPv4 分片边界、顶层 \code{AFDX_top} 63-VL 声明满载规格、内核定长与多 VL 变长分段时延与 R95/R97 传输抖动、最坏同拍突发排空以及 128 发送/4096 接收虚拟链路容量展开定量测试与物理机理解析。所有数据直接源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/}、\code{docs/evidence/perf_r97.json} 及 \code{docs/evidence/vqm_compat/performance_difference.md}）。
+本章围绕有效载荷吞吐率、帧格式与 IPv4 分片边界、顶层 \code{AFDX_top} 63-VL 声明满载规格、公开端口分段时延与 R97/R119 传输抖动、最坏同拍突发排空以及 128 发送/4096 接收虚拟链路容量展开定量测试与物理机理解析。所有数据直接源于实测基准归档（\code{docs/evidence/vl63_full_load/}、\code{docs/evidence/frag1030_delivery/}、\code{docs/evidence/frag_load/}、\code{sim/reference/judge_result_frag1030.txt} 及 \code{docs/evidence/vqm_compat/performance_difference.md}）。
 
 \section{测量定义与测试工况配置}\label{sec:p-def}
 
@@ -9,23 +9,21 @@
 \begin{equation}
   R = \frac{8 \times B_\text{payload}}{N_\text{cycles} \times 8\,\text{ns}} = \frac{1000 \times B_\text{payload}}{N_\text{cycles}}\ \text{Mbps}.
 \end{equation}
-统计时剔除各层协议报头（以太网头、IP 头、UDP 头）、前导码与短帧填充（Padding），A、B 两网的冗余副本只计一份，两传输方向分别独立统计。核心分段时延（$L_\text{tx}$、$L_\text{gmii}$、$L_\text{rx}$、$L_\text{app}$）、顶层流式全消息时延（$L_\text{e2e}$）、同 VL 端到端极差抖动（$J_\text{R97}$）及发送间隔偏差（$J_\text{tx}$）的定义遵循第~\ref{sec:probe_theory}~节公式。
+统计时剔除各层协议报头（以太网头、IP 头、UDP 头）、前导码与短帧填充（Padding），A、B 两网的冗余副本只计一份，两传输方向分别独立统计。公开端口分段时延（$L_\text{tx}$、$L_\text{gmii}$、$L_\text{rx}$、$L_\text{app}$）、顶层流式全消息时延（$L_\text{e2e}$）、同 VL 时延极差抖动（$J_\text{R119}$ / $J_\text{R97}$）及发送间隔偏差（$J_\text{tx}$）的定义遵循第~\ref{sec:probe_theory}~节公式。
 
-测试分为两个互补层面：首先在 \textbf{PERF-05（\code{tb_t76_load}）} 中，以顶层 \code{AFDX_top} 公开 2B-VLID 流接口（输入 VLID 首字节至输出末字节）测试系统声明的 \textbf{63 TX / 63 RX VL 满载规格}（7 组定长周期/背靠背突发工况 + 1472/3000/8192~B 混合分片工况，见~\ref{sec:p-63vl}~节）；其次在 \textbf{PERF-01（\code{tb_sys_perf}）} 与 \textbf{PERF-04（\code{tb_sys_perf_var}）} 中，通过内核分段时间戳探针测量单帧 4 段周期级时延及 77/80/81 条 VL 超规格压力基线（表~\ref{tab:perf_cfg}，覆盖链路延迟 0 拍与 257 拍即 2.056~µs、双向双网全使能）。
+测试分为两个互补层面：首先在 \textbf{PERF-05（\code{tb_t76_load}）} 中，以顶层 \code{AFDX_top} 公开 2B-VLID 流接口测试系统声明的 \textbf{63 TX / 63 RX VL 满载规格}（7 组定长周期/背靠背突发工况 + 1472/3000/8192~B 混合分片工况，并附 10~VL 轻载与 81~VL 极限吞吐参考，见~\ref{sec:p-63vl}~节）；其次在 \textbf{PERF-01（\code{tb_sys_perf}）} 与 \textbf{PERF-04（\code{tb_sys_perf_var}）} 中，通过公开端口与 GMII 边界分段时间戳探针测量单帧 4 段周期级时延及 77/80 条 VL 超规格压力基线（表~\ref{tab:perf_cfg}，覆盖链路延迟 0 拍与 257 拍即 2.056~µs、双向双网全使能）。
 
 \begingroup
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\centering\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{4.8cm}>{\raggedright\arraybackslash}p{\dimexpr\linewidth-9.10cm-6\tabcolsep\relax}@{}}
-\caption{系统性能测试工况配置}\label{tab:perf_cfg}\\
+\caption{系统分段性能测试工况配置（\code{tb_sys_perf} / \code{tb_sys_perf_var}）}\label{tab:perf_cfg}\\
 \longtablehead{4}{\thead{工况名称} & \thead{VL 规模与 BAG} & \thead{有效载荷与帧长特性} & \thead{提交方式与流量特征}}
-\code{gbe77_d0/d100} & 77 条，1~ms & 固定 1471 字节（以太网帧长 1518 字节） & 错峰提交，千兆满载持续流 \\
-\code{gbe81_d0} & 81 条，1~ms & 固定 1471 字节（极限理论承载上限） & 错峰提交，千兆满速极限流 \\
-\code{fe10_d0} & 10 条，1~ms & 固定 1471 字节 & 错峰提交，基线标称流量 \\
+\code{gbe77_d0/d257} & 77 条，1~ms & 固定 1471 字节（以太网帧长 1518 字节） & 错峰提交，千兆超规格持续流（0 拍直连 / 257 拍线缆） \\
 \midrule
 \code{var_fixed} & 32 条，1--8~ms & 每条 VL 载荷固定（按索引模 5 选取 1、17、256、1024、1471~B） & 错峰提交，多 VL 固定长混合流 \\
 \code{var_cycle} & 32 条，1--8~ms & 同一 VL 在 $\{1, 17, 256, 1024, 1471\}$~B 循环交替 & 帧长动态切换，激发队列长度重排 \\
 \code{var_high} & 80 条，1~ms & 前 4 条固定 1、17、256、1024~B，其余 76 条固定 1471~B & 长短帧混合超高负载，验证大容量交付 \\
-\code{var_burst} & 32 条，1--8~ms & 载荷同 \code{var_fixed}（32--1024~B），同拍设置计划释放时刻 & 32 条 VL 同拍计划释放，验证串行提交排空 \\
+\code{var_burst} & 32 条，1--8~ms & 载荷同 \code{var_fixed}（1--1471~B），同拍设置计划释放时刻 & 32 条 VL 同拍计划释放，验证串行提交排空 \\
 \end{longtable}
 \endgroup
 
@@ -61,69 +59,62 @@
   \item \textbf{在途分片并发容量与超规格压力边界：}发送核心配置 256 页（128~KiB）共享载荷池，接收侧配置双网各 4~KiB 环形缓冲与 \ReasmContexts{} 路（2-Bank $\times$ 8 槽位）重组上下文，满足 $\sum_v \text{qmax}_v \lceil M_v/512\rceil + 9 \le 256$ 的在途流量规划；在超出 63-VL 满载规格的 81-VL 极限压力下，周期注入最大抖动为 3.368~µs，验证了硬件调度的吞吐余量。
 \end{enumerate}
 
-\section{内核单帧分段时延、超规格压力基线与 R97 抖动机理}\label{sec:p-res}
+\section{公开端口单帧分段时延、超规格压力基线与 R97/R119 抖动机理}\label{sec:p-res}
 
-表~\ref{tab:perf_res} 给出了内核级性能参考测试（\code{tb_sys_perf} 与 \code{tb_sys_perf_var}）在链路 0 拍直连（\code{d0}）及 100/257 拍线缆延迟下的分段时延与抖动数据（注：1030 分片版本中发送引擎调度提前量由 $-9$ 调整为 $-8$ 拍以容纳分片计算流水，使极少数边界帧实测间隔出现 $\text{BAG}+1$ 拍即 $+8\text{ ns}$ 的良性量化台阶，详见 \code{docs/evidence/vqm_compat/performance_difference.md}）。
+表~\ref{tab:perf_res} 给出了性能参考测试（\code{tb_sys_perf} 与 \code{tb_sys_perf_var}）在链路 0 拍直连（\code{d0}）及 257 拍线缆延迟（\code{d257}）下的公开端口分段时延、全消息时延与抖动实测数据（取双向最坏值；注：1030 分片版本中发送引擎调度提前量由 $-9$ 调整为 $-8$ 拍以容纳分片计算流水，使极少数边界帧实测间隔出现 $\text{BAG}+1$ 拍即 $+8\text{ ns}$ 的良性量化台阶，详见 \code{docs/evidence/vqm_compat/performance_difference.md}）。
 
 \begingroup
-\setlength{\tabcolsep}{3.5pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{1.7cm}>{\raggedleft\arraybackslash}p{2.3cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{1.8cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-12.10cm-12\tabcolsep\relax}@{}}
-\caption{有效载荷吞吐率、分段时延与抖动实测结果汇总}\label{tab:perf_res}\\
-\longtablehead{7}{\thead{测试工况} & \thead{单向吞吐\newline (Mbps)} & \thead{$L_\text{tx}$ 最大\newline (µs)} & \thead{$L_\text{rx}$ 首/末\newline (µs)} & \thead{$L_\text{app}$ 首/末\newline (µs)} & \thead{R97 同 VL\newline 极差 (µs)} & \thead{发送间隔\newline 偏差 (µs)}}
-\code{gbe77_d0} & 906.136 & 0.312 & 12.360 / 24.120 & 12.672 / 24.432 & 0.008 & 0.000 \\
-\code{gbe77_d100} & 906.136 & 0.312 & 12.360 / 24.120 & 13.472 / 25.232 & 0.008 & 0.000 \\
-\code{gbe77_d257} & 906.136 & 0.312 & 12.360 / 24.120 & 14.728 / 26.488 & 0.008 & 0.000 \\
-\code{gbe81_d0} & 953.208 & 0.312 & 12.360 / 24.120 & 12.672 / 24.432 & 0.008 & 0.000 \\
-\code{fe10_d0} & 117.680 & 1.880 & 121.648 / 133.408 & 123.528 / 135.288 & 0.000 & 0.000 \\
+\setlength{\tabcolsep}{3.0pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedleft\arraybackslash}p{1.7cm}>{\raggedleft\arraybackslash}p{1.6cm}>{\raggedleft\arraybackslash}p{2.2cm}>{\raggedleft\arraybackslash}p{2.4cm}>{\raggedleft\arraybackslash}p{1.9cm}>{\raggedleft\arraybackslash}p{\dimexpr\linewidth-11.90cm-12\tabcolsep\relax}@{}}
+\caption{有效载荷吞吐率、公开端口分段时延与抖动实测结果汇总（双方向最坏值）}\label{tab:perf_res}\\
+\longtablehead{7}{\thead{测试工况} & \thead{单向吞吐\newline (Mbps)} & \thead{$L_\text{tx}$ 最大\newline (µs)} & \thead{$L_\text{rx}$ 首/末\newline (µs)} & \thead{$L_\text{app}$ 首/末\newline [全消息] (µs)} & \thead{R119 / $L_\text{app}$\newline 极差 (µs)} & \thead{发送间隔\newline 偏差 (µs)}}
+\code{gbe77_d0} & 906.136 & 12.384 & 12.680 / 24.440 & 25.064 / 36.824 [48.600] & 0.008 & 0.008 \\
+\code{gbe77_d257} & 906.136 & 12.384 & 12.680 / 24.440 & 27.120 / 38.880 [50.656] & 0.008 & 0.008 \\
 \midrule
-\code{var_fixed_d0} & 57.794 & 0.360 & 12.360 / 24.120 & 12.672 / 24.432 & 0.008 & 0.000 \\
-\code{var_cycle_d0} & 70.403 & 12.216 & 12.352 / 24.112 & 12.936 / 24.424 & 9.992 & 6.192 \\
-\code{var_high_d0} & 904.752 & 12.016 & 12.360 / 24.120 & 23.872 / 24.432 & 0.008 & 0.000 \\
-\code{var_burst_d0} & 57.794 & 21.128 & 12.352 / 24.112 & 32.824 / 32.888 & 0.000 & 0.000 \\
+\code{var_fixed_d0} & 57.794 & 12.384 & 12.680 / 24.440 & 25.064 / 36.824 [48.600] & 0.008 & 0.008 \\
+\code{var_cycle_d0} & 70.403 & 24.144 & 12.680 / 24.440 & 25.184 / 36.816 [48.592] & 19.544 / 19.672 & 12.352 \\
+\code{var_high_d0} & 904.752 & 23.944 & 12.680 / 24.440 & 36.176 / 36.824 [48.600] & 0.008 & 0.016 \\
+\code{var_burst_d0} & 57.794 & 40.536 & 12.672 / 24.432 & 51.544 / 51.608 [63.256] & 0.008 & 0.000 \\
 \end{longtable}
 \endgroup
 
 \subsection{吞吐率与传输时延达标分析}\label{sec:p-rate}
 
-\textbf{1. 吞吐率表现：}在顶层声明规格 63 条 VL 满载（\code{P1471}）下，每方向去重有效载荷吞吐达 \textbf{\ThruSixtyThree~Mbps}（双向合计 \ThruSixtyThreeBi~Mbps），达到赛题 100~Mbps 指标的 \textbf{7.41 倍}。进一步在内核超规格压力工况下，\code{gbe77_d0} 单向吞吐达 \Thru~Mbps（81 条极限满载达 \ThruEightyOne~Mbps，双向合计 1906.416~Mbps）；多 VL 混合变长高负载工况 \code{var_high}（前 4 条短帧、76 条 1471~B 长帧）两方向各自去重吞吐率均达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps，每方向连续传输 1,600 帧样本），其余标称工况（\code{var_fixed} 57.794~Mbps、\code{var_cycle} 70.403~Mbps、\code{var_burst} 57.794~Mbps）均按业务输入速率 100\% 无损交付。
+\textbf{1. 吞吐率表现：}在顶层声明规格 63 条 VL 满载（\code{P1471}）下，每方向去重有效载荷吞吐达 \textbf{\ThruSixtyThree~Mbps}（双向合计 \ThruSixtyThreeBi~Mbps），达到赛题 100~Mbps 指标的 \textbf{7.41 倍}。进一步在超规格压力工况下，\code{gbe77_d0} 单向吞吐达 \Thru~Mbps（81 条极限满载达 \ThruEightyOne~Mbps，双向合计 1906.416~Mbps，10 条轻载基线达 117.680~Mbps）；多 VL 混合变长高负载工况 \code{var_high}（前 4 条短帧、76 条 1471~B 长帧）两方向各自去重吞吐率均达 \ThruVarHigh~Mbps（双向合计 1809.504~Mbps，每方向连续传输 1,600 帧样本），其余标称工况（\code{var_fixed} 57.794~Mbps、\code{var_cycle} 70.403~Mbps、\code{var_burst} 57.794~Mbps）均按业务输入速率 100\% 无损交付。
 
 \begin{figure}[H]\centering
 \includegraphics[width=0.84\linewidth,keepaspectratio]{fig/pdf/t20_thru.pdf}
 \caption[各 VL 规模的有效载荷吞吐率与指标要求]{10、63（声明满规格）及 77/81（压力基线）条活跃 VL 的单向有效载荷吞吐率实测与 100~Mbps 指标门限对比}\label{fig:thru}
 \end{figure}
 
-\textbf{2. 稳态传输时延：}顶层 63 条 VL 满载（含输入流化与并发排队）最大端到端时延为 \LatSixtyThreePMax~µs，两拍连发突发（\code{B2}）含 1~ms BAG 等待后的最大时延为 \LatSixtyThreeBTwo~µs；内核无排队单帧稳态下，从提交完成拍 $M$ 至交付末拍 $D_\text{last}$ 的时延最大值为 \Lat~µs（3054 拍，平均值 \LatAvg~µs 即 3053 拍；叠加 100/257 拍线缆延迟后分别为 25.232~µs 与 26.488~µs），全面优于赛题 1--2~ms 的时延上限。
-
-
+\textbf{2. 稳态传输时延：}顶层 63 条 VL 满载（含输入流化与并发排队）最大端到端时延为 \LatSixtyThreePMax~µs，两拍连发突发（\code{B2}）含 1~ms BAG 等待后的最大时延为 \LatSixtyThreeBTwo~µs；无排队单帧稳态下，公开端口全消息端到端时延（$M_\text{sop}\to D_\text{last}$）典型值为 \LatAvg~µs（6074 拍），遇后台 AGE 扫描 1 拍让步时最大值为 \Lat~µs（6075 拍；提交末拍起算 $L_\text{app,last}$ 为 \LatAppLastAvg/\LatAppLast~µs，叠加 257 拍线缆延迟后全消息最大为 50.656~µs、$L_\text{app,last}$ 为 38.880~µs），全面优于赛题 1--2~ms 的时延上限。
 
 \begin{figure}[H]\centering
 \includegraphics[width=0.84\linewidth,keepaspectratio]{fig/pdf/t21_lat.pdf}
-\caption[端到端时延与流水线分段拍数拆解]{端到端时延与消息长度关系及 1471 字节满载流水线分段拍数拆解（TX 32 拍、Wire 1525 拍、RX 26 拍、Deliver 1470 拍，总计 3053 拍 = 24.424~µs，遇 AGE 扫描让步为 3054 拍 = 24.432~µs）}\label{fig:lat}
+\caption[端到端时延与流水线分段拍数拆解]{端到端时延与消息长度关系及 1471 字节满载单帧 6074 拍（48.592~µs，遇 AGE 扫描让步为 6075 拍 = 48.600~µs）公开端口流水拆解}\label{fig:lat}
 \end{figure}
 
-\subsection{R95/R97 传输抖动与物理机理拆解}\label{sec:p-lat}
+\subsection{R97/R119 传输抖动与物理机理拆解}\label{sec:p-lat}
 
-\textbf{1. 定长稳态抖动（\code{gbe77_d0}）：}由于发送端 BAG 整形器在无外部争用时准点释放，同一 VL 的发送间隔恒定为 1000.000~µs（发送间隔偏差 $J_\text{tx} = 0.000$~µs）；接收侧由于接收帧到达时刻与后台 4096 拍周期的 \code{AGE} 老化扫描产生偶尔 1 拍的交错退让，测得同 VL 端到端时延极差抖动 $J_\text{R97} = 0.008$~µs（对应 1 个时钟周期 8~ns）。
+\textbf{1. 定长稳态抖动（\code{gbe77_d0}）：}发送端 BAG 整形器配合 $-8$ 拍提前量补偿在定长持续流下相邻发送间隔偏差 $J_\text{tx} \le 0.008$~µs（1 拍）；接收侧由于接收帧到达时刻与后台 4096 拍周期的 \code{AGE} 老化扫描产生偶尔 1 拍的交错退让，测得同 VL 端到端时延极差抖动为 0.008~µs（对应 1 个时钟周期 8~ns）。
 
-\textbf{2. 变长循环抖动（\code{var_cycle}）与物理拆解：}在 \code{var_cycle} 工况中，32 条 VL 的帧长在 1、17、256、1024、1471 字节循环交替。测得全系统最大同 VL 首字节交付时延极差抖动为 \JitVarCycle~µs（出现在 VL 25，对应第 2666 帧至第 3026 帧）。
+\textbf{2. 变长循环抖动（\code{var_cycle}）与物理拆解：}在 \code{var_cycle} 工况中，32 条 VL 的帧长在 1、17、256、1024、1471 字节循环交替。按 R119-2 \textbf{同 VL 同帧长}全消息时延极差口径（剥离不同帧长固有的输入流化时长差），全系统最大抖动为 \textbf{\JitVarCycleTop~µs}（2443 拍，出现在 VL 25 的 256~B 载荷样本，第 2666 帧至第 3266 帧）；按跨帧长提交末拍至首字节交付（$L_\text{app}$）诊断口径，最大极差为 \textbf{\JitVarCycleApp~µs}（2459 拍，出现在 \code{es2_to_es1} 方向 VL 25 的第 2666 帧与第 3026 帧）。
 
-依据实测基准归档（\code{docs/evidence/perf_r97.json}），对 VL 25 抖动对偶样本（第 2666 帧与第 3026 帧）展开精确物理拆解：
+依据 \code{tb_sys_perf_var} 实测记录（\code{sim/reference/judge_result_frag1030.txt}），对 VL 25 跨帧长对偶样本（第 2666 帧与第 3026 帧）展开精确物理拆解：
 \begin{itemize}
-  \item \textbf{最短时延样本（第 2666 帧，256 字节载荷）：}该帧提交时发送队列无阻塞，测得发送时延 $L_\text{tx} = 39\text{ 拍} = 0.312$~µs，接收端从 SFD 至首字节交付耗时 $L_\text{rx} = 329\text{ 拍} = 2.632$~µs，提交至首字节交付总时延为 $L_\text{app} = 368\text{ 拍} = 2.944$~µs；
-  \item \textbf{最长时延样本（第 3026 帧，1 字节载荷）：}该帧提交时恰遇其他在途 VL 占用同一物理 GMII 接口排队发送，导致发送推迟，发送时延增至 $L_\text{tx} = 1527\text{ 拍} = 12.216$~µs；接收端因载荷极短，首字节交付耗时降至 $L_\text{rx} = 90\text{ 拍} = 0.720$~µs，总时延为 $L_\text{app} = 1617\text{ 拍} = 12.936$~µs；
-  \item \textbf{代数求和验证：}两者相减，发送侧时延差 $\Delta L_\text{tx} = 1527 - 39 = +1488\text{ 拍} = +11.904$~µs，接收侧交付时延差 $\Delta L_\text{rx} = 90 - 329 = -239\text{ 拍} = -1.912$~µs，两者代数和为：
+  \item \textbf{最短时延样本（第 2666 帧，256 字节载荷）：}该帧经顶层包装层回放后无排队阻塞，公开提交末拍至 SFD 耗时 $L_\text{tx} = 320\text{ 拍} = 2.560$~µs，接收端从 SFD 至公开载荷首字节交付耗时 $L_\text{rx} = 369\text{ 拍} = 2.952$~µs，总时延为 $L_\text{app} = 689\text{ 拍} = 5.512$~µs（另一方向为 $319 + 369 = 688\text{ 拍} = 5.504$~µs）；
+  \item \textbf{最长时延样本（第 3026 帧，1 字节载荷）：}由于前一周期该 VL 发送的是 1471~B 满载长帧（需在输入流与发送包装层完成整包接收回放后才触发内核发包，使该 VL 的硬件 BAG 时隙相位锁定在计划释放后约 3022 拍），而本周期 1~B 短帧仅需数拍即在公开端口完成提交（$M$），必须等待所属 VL 的 BAG 时隙到期并避让在途帧后方能发出，致使发送时延增至 $L_\text{tx} = 3018\text{ 拍} = 24.144$~µs；接收端因最小以太网帧极短，首字节交付耗时降至 $L_\text{rx} = 130\text{ 拍} = 1.040$~µs，总时延为 $L_\text{app} = 3148\text{ 拍} = 25.184$~µs；
+  \item \textbf{代数求和验证：}两者相减，发送侧时延差 $\Delta L_\text{tx} = 3018 - 320 = +2698\text{ 拍} = +21.584$~µs，接收侧交付时延差 $\Delta L_\text{rx} = 130 - 369 = -239\text{ 拍} = -1.912$~µs，两者代数和为：
     \begin{equation}
-      \Delta L_\text{app} = \Delta L_\text{tx} + \Delta L_\text{rx} = +11.904\,\text{µs} - 1.912\,\text{µs} = +9.992\,\text{µs}\ (1249\text{ 拍}),
+      \Delta L_\text{app} = \Delta L_\text{tx} + \Delta L_\text{rx} = +21.584\,\text{µs} - 1.912\,\text{µs} = +19.672\,\text{µs}\ (2459\text{ 拍}),
     \end{equation}
-    两项代数和与实测极差抖动 9.992~µs 严密吻合。这从物理层面揭示：变长循环下的抖动主要源于发送端在物理串行线路上排队深度的动态变化（+11.904~µs），该延迟差超过了短帧在接收交付端节省的排空时间（$-1.912$~µs）。注：上述 9.992~µs 为端系统核心 \code{afdx_es} 按 R97-2 口径测得的极差；若从顶层 \code{AFDX_top} 2B-VLID 应用流口按 R119 口径统计，\code{tb_sys_perf_var} 实测 \code{var_cycle} 最大同长抖动为 \JitVarCycleTop~µs（见 \code{judge_result_frag1030.txt}）。
+    与实测跨长极差 19.672~µs 严密吻合（同帧长 R119-2 口径下剔除收发端帧长固有差后最大极差为 \JitVarCycleTop~µs $= 2443$ 拍）。这从物理层面揭示：变长循环下的抖动源于顶层存储转发包装层中长短帧交替引起的 BAG 授权相位差与物理线路排队深度变化，且严格有界于二十微秒量级。
 \end{itemize}
 
-
-
-\textbf{3. 变长突发（\code{var_burst}）的双口径分析：}在 \code{var_burst} 工况中，32 条 VL 将各自的计划释放时刻设为同一时钟拍（初始相位均为 0），随后经由单个应用接口串行排队完成握手。需区分两种计时起点口径：
+\textbf{3. 变长突发（\code{var_burst}）的双口径分析：}在 \code{var_burst} 工况中，32 条 VL 将各自的计划释放时刻设为同一时钟拍（初始相位均为 0），随后经由单个公开流接口串行排队完成整包输入。需区分两种计时起点口径：
 \begin{itemize}
-  \item \textbf{应用提交起算口径（$M\to D$）：}以应用接口完成握手时刻 $M$ 为起点，涵盖发送调度出队、物理线路传输与接收交付全过程。在 0 拍直连（\code{d0}）工况下，提交至首字节交付时延 $L_\text{app}$ 最大为 32.824~µs，末字节交付时延 $L_\text{app,last}$ 最大为 32.888~µs；在 257 拍链路延迟（\code{d257}）下，末字节交付时延最大为 34.840~µs。同 VL 交付时延极差在 \code{d0} 下为 0.000~µs，在 \code{d257} 下因偶尔与接收端 AGE 老化扫描产生 1 拍交错而测得 0.008~µs（8~ns）。
-  \item \textbf{计划释放起算口径（$T_\text{sched}\to D$）：}以各 VL 预设的计划释放时刻 $T_\text{sched}$ 为起点，由于 32 条 VL 同拍到期而应用接口必须逐帧串行握手，该口径包含了应用接口接纳报文前的排队等待时间。在 \code{d257} 下，计划释放至首字节交付最大时延为 174.464~µs（平均 16.404~µs），至末字节交付最大时延为 174.592~µs，完全受控于微秒级，验证了突发集中到期时硬件队列的快速吸纳与整流放行能力。
+  \item \textbf{公开提交起算口径（$M\to D$）：}以公开流末字节完成握手时刻 $M$ 为起点，涵盖包装层存储转发、调度出队、物理线路传输与接收交付全过程。在 0 拍直连（\code{d0}）工况下，提交至首字节交付时延 $L_\text{app}$ 最大为 51.544~µs（6443 拍），末字节交付时延 $L_\text{app,last}$ 最大为 51.608~µs（6451 拍，对应全消息端到端时延 63.256~µs）；在 257 拍链路延迟（\code{d257}）下，$L_\text{app,last}$ 最大为 52.240~µs（6530 拍，全消息最大 63.888~µs）。同 VL 时延极差在 \code{d0} 下最大为 0.008~µs（1 拍，因接收端 AGE 老化扫描偶尔交错），在 \code{d257} 下为 0.000~µs。
+  \item \textbf{计划释放起算口径（$T_\text{sched}\to D$）：}以各 VL 预设的计划释放时刻 $T_\text{sched}$ 为起点，由于 32 条 VL 同拍到期而单个字节流接口必须逐包串行握手输入，该口径包含了外部激励源等待公开端口接纳报文的前置排队时间。在 \code{d0} 下，计划释放至首/末字节交付最大时延分别为 185.552~µs 与 185.680~µs；在 \code{d257} 下分别为 186.184~µs（23,273 拍）与 186.312~µs（23,289 拍），完全受控于两百微秒以内，验证了突发集中到期时硬件流接口与共享队列的快速吸纳放行能力。
 \end{itemize}
 
 \section{最坏情况时延与突发缓存排空（PERF-02/03）}\label{sec:p-worst}
