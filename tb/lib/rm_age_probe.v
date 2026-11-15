@@ -3,57 +3,163 @@
 // 本文件不是单独测试，外层必须把这里的错误计入最终结果。
 `timescale 1ns/1ps
 // 测试每 128 拍推进一次输入时间，让变化发生在帧处理期间。
-module rm_age_probe(input wire clk,output reg done=0,output reg [31:0] checks=0,errors=0);
-    reg reset=1;reg [15:0] now_c=0;reg [94:0] desc=0;reg valid=0;
-    wire init,take,resolve,commit,mre,cre,sre,swe,dwe,rm,deliver,ok;
-    wire [15:0] ma;wire [11:0] ca,sa,wa;wire [42:0] wd;
-    reg [12:0] mq=0;reg [31:0] cq=0;reg [42:0] sq=0,states[0:4095];
-    wire [4:0] dwa;wire [72:0] dwd;wire [5:0] count;wire [7:0] ea,eb;
-    integer cycle=0,origin=0,sent=0,delivered=0,limit,before_d;reg running=0;
-    // Low 95 descriptor bits retain the original unfragmented fixture.
-    // New metadata bits are zero; reassembly is inactive for these frames.
-    afdx_rx_engine dut(.clk(clk),.reset(reset),.enable(1'b1),.now_c(now_c),.initialized(init),
-        .desc_a_valid(valid),.desc_b_valid(1'b0),.desc_a({126'b0,desc}),.desc_b(221'b0),
-        .take_a(take),.take_b(),.resolve_a(resolve),.resolve_b(),.commit_a(commit),.commit_b(),
-        .map_re(mre),.map_ra(ma),.map_q(mq),.cfg_re(cre),.cfg_ra(ca),.cfg_q(cq),
-        .state_re(sre),.state_we(swe),.state_ra(sa),.state_wa(wa),.state_wd(wd),.state_q(sq),
-        .dq_pop(dwe),.dq_we(dwe),.dq_wa(dwa),.dq_wd(dwd),.dq_count(count),
-        .reassembly_result_valid(1'b0),.reassembly_ok(1'b0),.reassembly_slot(4'b0),
-        .reassembly_query(),.reassembly_cancel(),.reassembly_reserve(),
-        .reassembly_query_bank(),.reassembly_cancel_bank(),.reassembly_reserve_bank(),
-        .reassembly_meta(),.reassembly_vl(),.reassembly_length(),.reassembly_sport(),.reassembly_dport(),.reassembly_net(),
-        .ev_a(ea),.ev_b(eb),.ev_rm_drop(rm),.ev_deliver(deliver),.cfg_ok(ok),.core_enable_next(1'b0));
-    always @(posedge clk)begin
-        cycle=cycle+1;
-        if(mre)mq<={1'b1,ma[11:0]};
-        if(cre)cq<=(17<<17)|(31<<5)|7|(ca==0?16:0);
-        if(sre)sq<=states[sa];if(swe)states[wa]<=wd;
-        if(deliver)delivered=delivered+1;
+module rm_age_probe (
+    input  wire        clk,
+    output reg         done = 0,
+    output reg  [31:0] checks = 0, errors = 0
+);
+    reg         reset = 1;
+    reg  [15:0] now_c = 0;
+    reg  [94:0] desc = 0;
+    reg         valid = 0;
+    wire        init, take, resolve, commit, mre, cre, sre, swe, dwe, rm, deliver, ok;
+    wire [15:0] ma;
+    wire [11:0] ca, sa, wa;
+    wire [42:0] wd;
+    reg  [12:0] mq = 0;
+    reg  [31:0] cq = 0;
+    reg  [42:0] sq = 0, states [0:4095];
+    wire [4:0]  dwa;
+    wire [72:0] dwd;
+    wire [5:0]  count;
+    wire [7:0]  ea, eb;
+    integer     cycle = 0, origin = 0, sent = 0, delivered = 0, limit, before_d;
+    reg         running = 0;
+
+    // 描述符低 95 位沿用原未分片帧的固定格式。
+    // 新增元数据位全部置零，测试期间不激活分片重组功能。
+    afdx_rx_engine dut (
+        .clk                    (clk),
+        .reset                  (reset),
+        .enable                 (1'b1),
+        .now_c                  (now_c),
+        .initialized            (init),
+        .desc_a_valid           (valid),
+        .desc_b_valid           (1'b0),
+        .desc_a                 ({126'b0, desc}),
+        .desc_b                 (221'b0),
+        .take_a                 (take),
+        .take_b                 (),
+        .resolve_a              (resolve),
+        .resolve_b              (),
+        .commit_a               (commit),
+        .commit_b               (),
+        .map_re                 (mre),
+        .map_ra                 (ma),
+        .map_q                  (mq),
+        .cfg_re                 (cre),
+        .cfg_ra                 (ca),
+        .cfg_q                  (cq),
+        .state_re               (sre),
+        .state_we               (swe),
+        .state_ra               (sa),
+        .state_wa               (wa),
+        .state_wd               (wd),
+        .state_q                (sq),
+        .dq_pop                 (dwe),
+        .dq_we                  (dwe),
+        .dq_wa                  (dwa),
+        .dq_wd                  (dwd),
+        .dq_count               (count),
+        .reassembly_result_valid (1'b0),
+        .reassembly_ok          (1'b0),
+        .reassembly_slot        (4'b0),
+        .reassembly_query       (),
+        .reassembly_cancel      (),
+        .reassembly_reserve     (),
+        .reassembly_query_bank  (),
+        .reassembly_cancel_bank (),
+        .reassembly_reserve_bank (),
+        .reassembly_meta        (),
+        .reassembly_vl          (),
+        .reassembly_length      (),
+        .reassembly_sport       (),
+        .reassembly_dport       (),
+        .reassembly_net         (),
+        .ev_a                   (ea),
+        .ev_b                   (eb),
+        .ev_rm_drop             (rm),
+        .ev_deliver             (deliver),
+        .cfg_ok                 (ok),
+        .core_enable_next       (1'b0)
+    );
+
+    always @(posedge clk) begin
+        cycle = cycle + 1;
+        if (mre)
+            mq <= {1'b1, ma[11:0]};
+        if (cre)
+            cq <= (17 << 17) | (31 << 5) | 7 | (ca == 0 ? 16 : 0);
+        if (sre)
+            sq <= states[sa];
+        if (swe)
+            states[wa] <= wd;
+        if (deliver)
+            delivered = delivered + 1;
     end
-    task check;input condition;input [8*100-1:0] why;
-        begin checks=checks+1;if(condition!==1'b1)begin errors=errors+1;$display("[AGE_FAIL] %0s",why);end end
-    endtask
-    task send;input [15:0] idx;input [7:0] sn;
-        begin @(negedge clk);desc={idx,sn,16'd3001,16'd4001,11'd17,12'd0,now_c};valid=1;
-            while(!take)@(negedge clk);valid=0;while(!resolve)@(negedge clk);
+
+    task check;
+        input                  condition;
+        input [8 * 100 - 1:0]  why;
+        begin
+            checks = checks + 1;
+            if (condition !== 1'b1) begin
+                errors = errors + 1;
+                $display("[AGE_FAIL] %0s", why);
+            end
         end
     endtask
+
+    task send;
+        input [15:0] idx;
+        input [7:0]  sn;
+        begin
+            @(negedge clk);
+            desc = {idx, sn, 16'd3001, 16'd4001, 11'd17, 12'd0, now_c};
+            valid = 1;
+            while (!take)
+                @(negedge clk);
+            valid = 0;
+            while (!resolve)
+                @(negedge clk);
+        end
+    endtask
+
     initial begin
-        repeat(4)@(negedge clk);reset=0;wait(init);send(0,55);
-        repeat(20)@(negedge clk);check(states[0][24],"initial duplicate record valid");
-        origin=cycle;
-        while(now_c<16'h9000)begin
-            // 描述先开始；第8拍切粗时钟，原实现每次都会错过老化触发。
-            @(negedge clk);desc={16'd1,8'd1,16'd3001,16'd4001,11'd17,12'd0,now_c};valid=1;
-            while(!take)@(negedge clk);valid=0;
-            repeat(6)@(negedge clk);check(dut.op==dut.FRAME,"coarse change is under engine load");
-            now_c=now_c+1'b1;sent=sent+1;limit=origin+sent*128;
-            while(cycle<limit)@(negedge clk);
-            if(now_c==16'h5002)check(!states[0][24],"old record aged before signed half-wrap");
+        repeat (4)
+            @(negedge clk);
+        reset = 0;
+        wait(init);
+        send(0, 55);
+        repeat (20)
+            @(negedge clk);
+        check(states[0][24], "initial duplicate record valid");
+        origin = cycle;
+        while (now_c < 16'h9000) begin
+            // 描述先开始送入；第 8 拍切换粗时钟，原实现在此条件下每次都会漏掉老化触发。
+            @(negedge clk);
+            desc = {16'd1, 8'd1, 16'd3001, 16'd4001, 11'd17, 12'd0, now_c};
+            valid = 1;
+            while (!take)
+                @(negedge clk);
+            valid = 0;
+            repeat (6)
+                @(negedge clk);
+            check(dut.op == dut.FRAME, "coarse change is under engine load");
+            now_c = now_c + 1'b1;
+            sent = sent + 1;
+            limit = origin + sent * 128;
+            while (cycle < limit)
+                @(negedge clk);
+            if (now_c == 16'h5002)
+                check(!states[0][24], "old record aged before signed half-wrap");
         end
-        before_d=delivered;send(0,55);repeat(20)@(negedge clk);
-        check(delivered==before_d+1,"same SN after long inactivity is accepted");
-        $display("[AGE_COVERAGE] busy_ticks=%0d delivered=%0d cycles=%0d",sent,delivered,cycle);
-        done=1;
+        before_d = delivered;
+        send(0, 55);
+        repeat (20)
+            @(negedge clk);
+        check(delivered == before_d + 1, "same SN after long inactivity is accepted");
+        $display("[AGE_COVERAGE] busy_ticks=%0d delivered=%0d cycles=%0d", sent, delivered, cycle);
+        done = 1;
     end
 endmodule

@@ -4,5 +4,5 @@
 // 完整回归还用参考检查器核对输出，检查器也必须通过。
 `timescale 1ns/1ps
 module tb_mac_loop;
-    mac_tx_suite #(1,"tb_mac_loop") suite();
+    mac_tx_suite #(1, "tb_mac_loop") suite();
 endmodule
