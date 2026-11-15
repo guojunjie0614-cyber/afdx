@@ -31,6 +31,7 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     reg [AW:0] length_q;
     reg [6:0] vl_q;
     reg [15:0] sport_q, dport_q;
+
     always @(posedge clk) begin
         if (reset) begin
             request_p <= 0;
@@ -61,9 +62,9 @@ module afdx_mgmt_tx #(parameter AW = 10) (
         end
     end
 
-    // 共 8 个队列信用仍完整覆盖全部在途读与已缓冲字节；
-    // 每次消费延迟一拍在本地归还，减去已寄存欠账即可准确重建当前
-    // 信用与队头指针，使读发起和公开 valid 在反压下保持与原拍序完全一致。
+    // 共 8 个队列信用额度完整覆盖全部在途读与已缓冲字节；
+    // 每次下游取数（take）延迟一拍在本地归还，减去已寄存的待归还计数（take_q）即可准确
+    // 重建当前可用信用与队头指针，保证读发起与输出 valid 在反压下保持与原始设计完全一致的节拍。
     reg active, packet_request, return_valid;
     reg [AW:0] packet_length, issued;
     (* preserve = 1, dont_merge = 1 *) reg [AW:0] output_left;
@@ -80,19 +81,19 @@ module afdx_mgmt_tx #(parameter AW = 10) (
     wire take = take_armed && (!tx_valid || tx_ready);
     wire pop = tx_valid && tx_ready;
 
-    // 对外有效输出字节同一时刻仍只有一个，另一块物理候选缓冲槽空闲时
-    // 预先采样队头；消费只切换归属与指针，远端 ready 不进入字节 FF 使能。
-    // 双槽交替使当前占用字节在反压停顿时保持稳定，同时支持连续每拍
-    // 完成弹出与消费而不增加额外存储容量。
+    // 对外输出的有效字节同一时刻仅占有一个物理槽，另一空闲候选槽提前采样队头；
+    // 每次取数仅切换槽位归属与指针，远端 ready 不接入数据寄存器的使能端。
+    // 双槽交替可在反压停顿时保持当前输出稳定，同时在不增加缓冲容量的前提下支持连续每拍输出。
     reg output_read;
-    // 最多只有一个对外字节，valid 与读槽位 bit 即可完整编码归属，
-    // 有效时下一个空闲候选槽即相反编号；去掉冗余归属 FF 与远端 ready 锥。
+    // 最多仅有一个对外输出字节，tx_valid 与读槽位选择位即可完整编码槽位归属，
+    // 有效时下一个空闲候选槽即为相反编号；省去冗余归属触发器及远端 ready 驱动的组合逻辑扇入。
     wire output_write = output_read ^ tx_valid;
     wire [1:0] output_owned = tx_valid ? (2'b01 << output_read) : 2'b00;
     wire [7:0] output_data [0:1];
     wire [1:0] output_last;
     assign tx_data = output_data[output_read];
     assign tx_last = tx_valid && output_last[output_read];
+
     genvar output_bank;
     generate
         for (output_bank = 0; output_bank < 2; output_bank = output_bank + 1) begin : candidate

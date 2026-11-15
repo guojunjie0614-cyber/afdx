@@ -1,5 +1,6 @@
-// 本模块接纳交付队列的消息头，等待重组端准备后连续读取接收环形缓存。
-// ready 只授予消息头；prepared 只启动字节流，二者不进入同一条宽使能优先链。
+// 接收交付控制模块：从交付描述符队列读取报文头并完成重组端握手，随后连续读取接收环形缓存。
+// downstream_ready 仅授权报文头接收，downstream_prepared 仅启动字节流读取，
+// 两条路径相互独立，不进入同一宽使能优先链。
 module afdx_rx_deliver #(
     parameter RX_RING_AW = 12,
     RX_DQ_AW             = 5
@@ -28,24 +29,24 @@ module afdx_rx_deliver #(
     output reg                      d_start, d_empty
 );
 
-    (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW-1:0] rd_ptr;
+    (* preserve=1, dont_merge=1 *) reg [RX_DQ_AW-1:0] rd_ptr;
     assign dq_ra = rd_ptr;
-    // dq_req 表示本地数据包空闲所有权（非延迟就绪信用）：
-    // F0 授予 -> F1 读取/弹出 DQ 队头 -> F2 准备消息长度。
-    (* preserve = 1, dont_merge = 1 *) reg dq_req, dq_valid;
-    (* preserve = 1, dont_merge = 1 *) reg fetch_eligible, fetch_command, head_prepare;
-    (* preserve = 1, dont_merge = 1 *) reg [3:0] capture_header;
+    // dq_req 表示本地接收通道处于空闲可取帧状态（而非延迟型 downstream_ready 信用）：
+    // F0 授权 -> F1 读取并弹出 DQ 队头 -> F2 预计算报文长度分类。
+    (* preserve=1, dont_merge=1 *) reg dq_req, dq_valid;
+    (* preserve=1, dont_merge=1 *) reg fetch_eligible, fetch_command, head_prepare;
+    (* preserve=1, dont_merge=1 *) reg [3:0] capture_header;
     wire fetch_fire = fetch_eligible && !fetch_command && downstream_ready;
     wire header_accept = dq_valid && downstream_ready;
     reg head_empty, head_single, head_more;
     reg issuing, waiting_prepared;
-    (* preserve = 1, dont_merge = 1 *) reg read_token;
+    (* preserve=1, dont_merge=1 *) reg read_token;
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
     reg [7:0] data_a, data_b;
 
-    // 四个本地捕获令牌替代原本的宽 HEAD 状态使能；无中间 dq_data 拷贝，
-    // 所捕获字段直接构成当前持有的消息头。
+    // 用四个本地锁存令牌替代原本的宽位 HEAD 状态使能，省去中间缓存拷贝，
+    // 捕获字段直接构成当前持有的输出报文头。
     always @(posedge clk) begin
         if (reset) begin
             d_sport <= 0;
@@ -94,7 +95,8 @@ module afdx_rx_deliver #(
         else if (capture_header[3]) begin
             ring_a_ra <= dq_q[RX_RING_AW+54:55];
             ring_b_ra <= dq_q[RX_RING_AW+54:55];
-        end else if (issuing) begin
+        end
+        else if (issuing) begin
             ring_a_ra <= ring_a_ra + 1'b1;
             ring_b_ra <= ring_b_ra + 1'b1;
         end
@@ -129,9 +131,10 @@ module afdx_rx_deliver #(
             d_valid <= 0;
             d_last <= 0;
             d_data <= 0;
-        end else begin
-            // 仅本消费者会减少 dq_count；一旦置起 fetch_eligible，在捕获完成前
-            // 不会有其它消费者使非空队头失效。
+        end
+        else begin
+            // 仅本模块会消耗 dq_count；一旦置起 fetch_eligible，
+            // 在完成队头捕获前不会有其他读取方使非空队头失效。
             fetch_eligible <= dq_req && !fetch_command && !head_prepare && !dq_valid && dq_count != 0;
             fetch_command <= fetch_fire;
             capture_header <= {4{fetch_fire}};
@@ -144,12 +147,12 @@ module afdx_rx_deliver #(
             if (head_prepare) begin
                 head_empty <= left == 0;
                 head_single <= left == 1;
-                head_more <= left>1;
+                head_more <= left > 1;
                 dq_valid <= 1;
             end
 
-            // H0 消费当拍 ready 并立即拉高 d_start；H1 对应原 D_IDLE/D_QUIET 接收沿，
-            // 无额外信用延迟。
+            // H0 拍消耗当拍 downstream_ready 并立即拉高 d_start；
+            // H1 拍对齐原 D_IDLE/D_QUIET 接收沿，无额外信用延迟。
             d_start <= header_accept;
             d_empty <= header_accept && head_empty;
             if (header_accept) begin
@@ -162,9 +165,9 @@ module afdx_rx_deliver #(
                 read_token <= 1;
             end
 
-            // R0 就绪准备令牌 -> R1 发读命令 -> R2 读出物理环形缓存。
-            // 此时元数据已归属本帧，后续字节流水不受 ready/header 条件门控；
-            // 空消息不发起环形缓存读取，也不释放信用。
+            // R0 准备完成令牌 -> R1 发出读命令 -> R2 读出物理环形缓存数据。
+            // 此时报文头元数据已归属本帧，后续字节流水不受 downstream_ready 或报文头条件门控；
+            // 空报文不发起环形缓存读请求，也无需等待尾拍释放。
             ring_a_re <= 0;
             ring_b_re <= 0;
             valid_pipe <= {valid_pipe[1:0], 1'b0};
@@ -176,7 +179,8 @@ module afdx_rx_deliver #(
                 last_pipe[0] <= head_single;
                 issuing <= head_more;
                 if (head_empty) dq_req <= 1;
-            end else if (issuing) begin
+            end
+            else if (issuing) begin
                 ring_a_re <= !d_net;
                 ring_b_re <= d_net;
                 valid_pipe[0] <= 1;
@@ -193,6 +197,7 @@ module afdx_rx_deliver #(
             if (valid_pipe[2] && last_pipe[2]) dq_req <= 1;
         end
     end
+
 `ifndef SYNTHESIS
     always @(posedge clk)
         if (!reset) begin
@@ -210,4 +215,5 @@ module afdx_rx_deliver #(
             end
         end
 `endif
+
 endmodule

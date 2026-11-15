@@ -1,7 +1,7 @@
 // 本模块接收应用消息，把消息分成若干页存入发送缓存。
 // 页是发送缓存的分配单位，每页 2^TX_OFF_AW 字节，默认 512 字节。
 // afdx_svc 提供字节，整条消息存好后通知 afdx_tx_engine 排队。
-// 本模块用于赛题的发送缓存，接收失败时归还本条消息占用的页。
+// 本模块实现发送侧消息缓存管理，接收失败时归还本条消息占用的页。
 module afdx_tx_buf #(
     parameter TX_PAGE_AW = 8,
     TX_OFF_AW            = 9,
@@ -65,8 +65,8 @@ module afdx_tx_buf #(
     // 单条数据报最大载荷字节数上限；入队后由发送引擎执行分片。
     localparam MAX_PAYLOAD = 8192;
     localparam MAX_PAGES = (MAX_PAYLOAD + (1 << TX_OFF_AW) - 1) >> TX_OFF_AW;
-    localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4, ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8,
-        EVENT = 9;
+    localparam IDLE = 0, ALLOC = 1, WAIT_PAGE = 2, RECV = 3, DESC = 4,
+        ENQUEUE = 5, REPLY = 6, RETURN = 7, DRAIN = 8, EVENT = 9;
     reg [3:0] state;
     // 从前一拍预告等待页状态，页号写使能和地址选择不再直接扇出独热态位。
     (* preserve = 1, dont_merge = 1 *) reg wait_page_q;
@@ -107,13 +107,14 @@ module afdx_tx_buf #(
 
     // init_q 是 init_done 的本地副本；远端 init_done 只进一次寄存器。
     (* preserve = 1, dont_merge = 1 *) reg init_q;
-    // 入口两级真实缓冲槽用于本地端接服务仲裁 valid/data；预留槽占用后即收回
-    // 信用，保证此前对外宣告的 ready 即使在分配阻塞 RECV 时仍有真实容量兜底。
+    // 入口两级实存储缓冲槽用于本地隔离服务仲裁的 valid/data；预留槽填满后即撤回
+    // 上游信用，保证此前已输出的 ready 在页分配阻塞 RECV 时仍有实际容量承接。
     reg message_closed;
-    // 对 init_q && !message_closed 做同拍边沿预测，由单个本地 FF 驱动对外 ready，
+    // 对 init_q && !message_closed 做同拍边沿预测，由单个本地触发器驱动对外 ready，
     // 避免初始化与关闭标志的跨层组合逻辑链。
-    (* preserve = 1, dont_merge = 1 *) reg ingress_open;
+    (* preserve=1,dont_merge=1 *) reg ingress_open;
     wire input_valid, input_ready, ingress_ready;
+
     always @(posedge clk) begin
         if (reset) ingress_open <= 0;
         else ingress_open <= init_done && (state == EVENT ||
@@ -149,7 +150,7 @@ module afdx_tx_buf #(
     assign m_ready = ingress_open && ingress_ready;
 
     // 预先判断已受理 RECV 字节长度是否达到上限，使 14 位全等比较脱离偏移、
-    // 页分配、载荷写及拒绝路径的寄存器使能锥。
+    // 页分配、载荷写及拒绝路径的寄存器使能扇入逻辑。
     reg length_full;
     always @(posedge clk) begin
         if (reset || state == IDLE) length_full <= 0;
@@ -217,7 +218,8 @@ module afdx_tx_buf #(
             if (held_capture_q) held_data <= m_data_q;
             payload_wait_d <= wait_page_q;
             payload_wa_d <= wait_page_q
-                ? {pop_page[TX_PAGE_AW - 1:0], {TX_OFF_AW{1'b0}}} : {current_page[TX_PAGE_AW - 1:0], offset};
+                ? {pop_page[TX_PAGE_AW - 1:0], {TX_OFF_AW{1'b0}}}
+                : {current_page[TX_PAGE_AW - 1:0], offset};
             // 三个写口信号统一比原来晚一拍，末字节在 ENQUEUE 拍与描述符同时写入同步 RAM。
             // tx_core 的提前入队请求还须采样、读表后才可调度，故握手拍次不必改变。
             payload_we <= payload_we_d;
@@ -299,7 +301,7 @@ module afdx_tx_buf #(
                         else begin
                             payload_we_d <= 1;
                             offset <= offset + 1'b1;
-                            if (& offset) boundary <= 1;
+                            if (&offset) boundary <= 1;
                             if (input_last) state <= DESC;
                         end
                     end
@@ -368,7 +370,7 @@ module afdx_tx_buf #(
 endmodule
 
 // 双槽弹性缓冲：已寄存的上游信用直接指代预留槽空余（非延迟后级就绪信号），
-// 支持每拍全速同时写入读出；下游停顿时最后那个已授信字节稳妥保存在 skid_word 中。
+// 支持每拍全速同时写入读出；下游反压时，已接收但尚未下发的字节暂存于 skid_word 中。
 module afdx_tx_ingress_elastic (
     input  wire        clk, reset, s_valid,
     output reg         s_ready,
@@ -382,6 +384,7 @@ module afdx_tx_ingress_elastic (
     reg [48:0] skid_word;
     wire main_free = !m_valid || m_ready;
     wire take = s_valid && s_ready;
+
     always @(posedge clk) begin
         if (reset) begin
             s_ready <= 1;
@@ -395,7 +398,7 @@ module afdx_tx_ingress_elastic (
             s_ready <= main_free || (!skid_valid && !s_valid);
             // 数据寄存器仅依赖本地归属权：空预留槽可自由预采样未握手字节，仅在
             // 实际受理时切换归属；已占用槽即使在转入主槽当拍也锁存原值，使远端
-            // valid/使能条件只驱动两个状态令牌 FF，而不进入 49 位宽数据使能端。
+            // valid/使能条件只驱动两个状态令牌触发器，而不进入 49 位宽数据使能端。
             if (!skid_valid) skid_word <= s_word;
             if (main_free) begin
                 m_valid <= skid_valid || take;
@@ -422,10 +425,11 @@ module afdx_tx_rollback_ram #(
     output reg  [7:0]    q
 );
 
-    (* preserve = 1, dont_merge = 1 *) reg write_command;
-    (* preserve = 1, dont_merge = 1 *) reg [AW-1:0] write_address;
-    (* preserve = 1, dont_merge = 1 *) reg [7:0] write_data;
-    (* ramstyle = "M4K,no_rw_check" *) reg [7:0] memory[0:DEPTH-1];
+    (* preserve=1,dont_merge=1 *) reg write_command;
+    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address;
+    (* preserve=1,dont_merge=1 *) reg [7:0] write_data;
+    (* ramstyle="M4K,no_rw_check" *) reg [7:0] memory[0:DEPTH-1];
+
     always @(posedge clk) begin
         if (reset) write_command <= 0;
         else write_command <= we;

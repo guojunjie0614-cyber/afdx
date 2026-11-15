@@ -1,6 +1,6 @@
 // 本模块连接发送缓存、发送调度、组帧和以太网发送模块。
 // 它从 afdx_svc 接收消息，再输出到两路以太网。
-// 本模块对应赛题的发送、带宽控制和双网冗余发送功能。
+// 本模块实现端系统发送、带宽整形调度与双网冗余发送功能。
 module afdx_tx_core #(
     parameter TX_PAGE_AW = 8,
     TX_OFF_AW            = 9,
@@ -54,14 +54,14 @@ module afdx_tx_core #(
     reg [9:0] cfg_write_addr, init_addr;
     reg [31:0] cfg_write_data;
     wire free_initialized, engine_initialized;
-    wire cfg_read, state_write, state_read, mnext_write, mnext_read, desc_write, desc_read, pnext_write, pnext_read,
-        payload_write, payload_read;
+    wire cfg_read, state_write, state_read, mnext_write, mnext_read, desc_write, desc_read,
+        pnext_write, pnext_read, payload_write, payload_read;
     wire [9:0] cfg_read_addr;
     wire [31:0] cfg_data;
     wire [6:0] state_write_addr, state_read_addr;
     wire [62:0] state_write_data, state_data;
-    wire [TX_PAGE_AW - 1:0] mnext_write_addr, mnext_read_addr, desc_write_addr, desc_read_addr, pnext_write_addr,
-        pnext_read_addr;
+    wire [TX_PAGE_AW - 1:0] mnext_write_addr, mnext_read_addr, desc_write_addr, desc_read_addr,
+        pnext_write_addr, pnext_read_addr;
     wire [7:0] mnext_write_data, mnext_data, pnext_write_data, pnext_data, payload_write_data, payload_data;
     wire [46:0] desc_write_data, desc_data;
     wire [TX_PAGE_AW + TX_OFF_AW - 1:0] payload_write_addr, payload_read_addr;
@@ -134,6 +134,7 @@ module afdx_tx_core #(
         .read_address  (cfg_read_addr),
         .read_data     (cfg_data)
     );
+
     afdx_ram_sdp #(.WIDTH(63), .DEPTH(128)) tx_state (
         .clk           (clk),
         .write_enable  (state_write),
@@ -143,6 +144,7 @@ module afdx_tx_core #(
         .read_address  (state_read_addr),
         .read_data     (state_data)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_mnext (
         .clk           (clk),
         .write_enable  (mnext_write),
@@ -152,6 +154,7 @@ module afdx_tx_core #(
         .read_address  (mnext_read_addr),
         .read_data     (mnext_data)
     );
+
     afdx_ram_sdp #(.WIDTH(47), .DEPTH(PAGES)) tx_desc (
         .clk           (clk),
         .write_enable  (desc_write),
@@ -172,13 +175,14 @@ module afdx_tx_core #(
         .read_address  (pnext_read_addr),
         .read_data     (pnext_data)
     );
+
     afdx_tx_payload_store #(.AW(TX_PAGE_AW + TX_OFF_AW)) tx_payload (
         .clk           (clk),
         .reset         (reset),
         .write_enable  (payload_write),
         .write_address (payload_write_addr),
         .write_data    (payload_write_data),
-        // 仅用于仿真监测实际被消费读请求上的读写同址冲突；
+        // 仅用于仿真监测实际采纳读请求上的同址读写冲突；
         // 存储体本身的同步读始终自由执行。
         .read_request  (payload_read),
         .read_address  (payload_read_addr),
@@ -205,6 +209,7 @@ module afdx_tx_core #(
         .ret2_page  (ret2_page),
         .ret2_ready (ret2_ready)
     );
+
     afdx_tx_buf #(
         .TX_PAGE_AW    (TX_PAGE_AW),
         .TX_OFF_AW     (TX_OFF_AW),
@@ -254,6 +259,7 @@ module afdx_tx_core #(
         .ev_drop_long   (ev_drop_long),
         .ev_drop_nopage (ev_drop_nopage)
     );
+
     afdx_tx_engine #(
         .TX_PAGE_AW           (TX_PAGE_AW),
         .TX_OFF_AW            (TX_OFF_AW),
@@ -406,6 +412,7 @@ module afdx_tx_core #(
     wire up_take = s_valid && up_ready[0];
     wire main_free = !main_valid || mac_ready;
     assign s_ready = up_ready;
+
     always @(posedge clk) begin
         if (reset) begin
             up_ready <= {READY_COPIES{1'b1}};
@@ -457,8 +464,8 @@ module afdx_tx_core #(
 endmodule
 
 // 保留原单一逻辑载荷存储体及自由运行的同步读口：构帧器 E0 发请求、E1 读 RAM、
-// E2 本地返回 FF、E3 入载荷 FIFO；完整写请求先本地寄存一拍再物理写入。
-// 入队与描述符调度天然保证至早 36 拍后才读取新消息，回滚也不会在退休前释放该页。
+// E2 本地返回寄存器、E3 入载荷 FIFO；完整写请求先本地寄存一拍再物理写入。
+// 入队与描述符调度天然保证最早 36 拍后才读取新消息，回滚也不会在写请求提交前释放该页。
 module afdx_tx_payload_store #(parameter AW = 17) (
     input  wire          clk, reset, write_enable,
     input  wire [AW-1:0] write_address,
@@ -468,10 +475,11 @@ module afdx_tx_payload_store #(parameter AW = 17) (
     output reg  [7:0]    read_data
 );
 
-    (* preserve = 1, dont_merge = 1 *) reg write_command, write_qualifier;
-    (* preserve = 1, dont_merge = 1 *) reg [AW-1:0] write_address_command;
-    (* preserve = 1, dont_merge = 1 *) reg [7:0] write_data_command;
-    (* ramstyle = "no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
+    (* preserve=1,dont_merge=1 *) reg write_command, write_qualifier;
+    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address_command;
+    (* preserve=1,dont_merge=1 *) reg [7:0] write_data_command;
+    (* ramstyle="no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
+
     always @(posedge clk) begin
         if (reset) begin
             write_command <= 0;
@@ -487,13 +495,14 @@ module afdx_tx_payload_store #(parameter AW = 17) (
     end
 
     // 写命令脉冲与写数据使能限定逻辑等价，但保留独立本地触发器；复位仅清空有效标记，
-    // 上一拍已受理的写请求仍在首个复位沿退休（此时全部分配/描述符归属已被清空）。
+    // 上一拍已受理的写请求仍在首个复位沿写入数组（此时全部分配与描述符归属均已复位）。
     always @(posedge clk)
         if (write_command)
             memory[write_address_command] <= write_qualifier ? write_data_command : 8'b0;
     always @(posedge clk) read_data <= memory[read_address];
 `ifndef SYNTHESIS
-    // 仅在真实物理写与已被消费的读请求冲突时才报错。
+
+    // 仅当真实物理写与实际采纳的读请求同址冲突时才报错。
     always @(posedge clk)
         if (!reset && write_command && read_request && write_address_command == read_address)
             $display("** Error: [RAMCOLL] %m physical_read time=%0t address=%0d", $time, write_address_command);

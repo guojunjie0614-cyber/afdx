@@ -23,7 +23,7 @@ module afdx_app_tx (
     reg [15:0] vlids[0:127];
     reg [127:0] enabled;
 
-    // 入口单级寄存终结远端配置总线长线，随后经分块、四项分组三级流水写入本地 VLID 表；
+    // 入口单级寄存隔离远端配置总线长线，随后经分块、四项分组三级流水写入本地 VLID 表；
     // 支持背靠背逐拍连续配置写入（含同一表项的重复覆盖更新）。
     (* preserve = 1, dont_merge = 1 *) reg configuration_write;
     (* preserve = 1, dont_merge = 1 *) reg [6:0] configuration_index;
@@ -43,6 +43,7 @@ module afdx_app_tx (
         configuration_index <= cfg_index;
         configuration_vlid <= cfg_vlid;
     end
+
     genvar cb, cg, cv;
 
     generate
@@ -82,6 +83,7 @@ module afdx_app_tx (
             end
         end
     endgenerate
+
     reg vq, active, bad;
     reg [7:0] dq, hi;
     reg [15:0] message_id;
@@ -123,7 +125,7 @@ module afdx_app_tx (
     end
 
     // 队列非空时持续预采样队首描述符，空队列抑制读使能以避免同址读写冲突，
-    // 同时使配置忙状态无需接入描述符存储块的读使能锥。
+    // 同时使配置忙状态无需接入描述符存储块的读使能扇入逻辑。
     afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids (
         .clk           (clk),
         .write_enable  (descriptor_write),
@@ -133,10 +135,11 @@ module afdx_app_tx (
         .read_address  (descriptor_head[4:0]),
         .read_data     (descriptor_id)
     );
+
     wire store = vq && payload_phase && !too_long && !bad && space_available;
     wire rollback = vq && !valid && payload_phase && (bad || too_long || !space_available);
     wire [15:0] write_next = write_ptr + 16'd1;
-    wire rollback_full = start_ptr == (read_ptr^16'h8000);
+    wire rollback_full = start_ptr == (read_ptr ^ 16'h8000);
 
     // 32 KiB 环形缓存满状态前瞻判定（读写指针最高位翻转且低位相等即满）：
     // 综合计入在途读消耗与错包回退并提前寄存，避免减法比较直接扇出至 8 个分块写命令。
@@ -144,7 +147,7 @@ module afdx_app_tx (
         if (reset) space_available <= 1;
         // 读指针仅可见已提交消息，回退不会越过读指针，任意读出均可解除满状态。
         else if (rollback) space_available <= !rollback_full || read_en;
-        else if (store && !read_en) space_available <= write_next != (read_ptr^16'h8000);
+        else if (store && !read_en) space_available <= write_next != (read_ptr ^ 16'h8000);
         else if (read_en && !store) space_available <= 1;
     end
 
@@ -154,6 +157,7 @@ module afdx_app_tx (
         else if (rollback) write_ptr <= start_ptr;
         else if (store) write_ptr <= write_ptr + 1'b1;
     end
+
     wire [8:0] memory_q;
 `ifndef MODEL_TECH
     wire read_en;
@@ -169,6 +173,7 @@ module afdx_app_tx (
         .read_address  (read_addr),
         .read_data     (memory_q)
     );
+
     wire q_valid, q_ready;
     wire [8:0] q_data;
     wire [15:0] next_committed = descriptor_write ? commit_pointer : committed;
@@ -247,7 +252,7 @@ module afdx_app_tx (
                     too_long <= 0;
                     if (active && payload_phase) begin
                         if (rollback) drop[1] <= 1;
-                        // 合法消息的描述符写入在下一拍与末字节物理落盘同步完成。
+                        // 合法消息的描述符写入在下一拍与末字节物理写入同步完成。
                     end
                     else if (bad || (!active && (!initialized || descriptors == 32))) begin
                         drop[1] <= 1;
@@ -298,16 +303,26 @@ module afdx_app_tx (
         else begin
             for (compare_bank = 0; compare_bank < 8; compare_bank = compare_bank + 1)
                 for (compare_item = 0; compare_item < 16; compare_item = compare_item + 1) begin
-                    nibble0[compare_bank*16+compare_item] <= enabled[compare_bank*16+compare_item] && vlids[compare_bank*16+compare_item][3:0] == query_local[compare_bank*4+compare_item/4][3:0];
-                    nibble1[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][7:4] == query_local[compare_bank*4+compare_item/4][7:4];
-                    nibble2[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][11:8] == query_local[compare_bank*4+compare_item/4][11:8];
-                    nibble3[compare_bank*16+compare_item] <= vlids[compare_bank*16+compare_item][15:12] == query_local[compare_bank*4+compare_item/4][15:12];
+                    nibble0[compare_bank*16+compare_item] <=
+                        enabled[compare_bank*16+compare_item]
+                        && vlids[compare_bank*16+compare_item][3:0]
+                            == query_local[compare_bank*4+compare_item/4][3:0];
+                    nibble1[compare_bank*16+compare_item] <=
+                        vlids[compare_bank*16+compare_item][7:4]
+                        == query_local[compare_bank*4+compare_item/4][7:4];
+                    nibble2[compare_bank*16+compare_item] <=
+                        vlids[compare_bank*16+compare_item][11:8]
+                        == query_local[compare_bank*4+compare_item/4][11:8];
+                    nibble3[compare_bank*16+compare_item] <=
+                        vlids[compare_bank*16+compare_item][15:12]
+                        == query_local[compare_bank*4+compare_item/4][15:12];
                 end
             hit_low <= nibble0 & nibble1;
             hit_high <= nibble2 & nibble3;
             hit <= hit_low & hit_high;
         end
     end
+
     integer bank, item;
 
     // 优先级归约数据通路每拍自由流水，繁忙重试仅控制状态机握手而不门控比较寄存器使能。
@@ -399,7 +414,7 @@ module afdx_app_tx (
         end
     end
 
-    // 预取队列的两级输出寄存器直接对接下游 app_ready，末字节握手完成后退休当前描述符。
+    // 预取队列的两级输出寄存器直接对接下游 app_ready，末字节握手完成后释放当前描述符。
     assign app_valid = state == 5 && !descriptor_retire && !discard && q_valid;
     assign app_data = q_data[7:0];
     assign app_last = q_data[8] && app_valid;

@@ -1,9 +1,8 @@
-// 本模块决定收到的帧能否交给应用，并去掉双网送来的重复帧。
-// 两路解析器提交完整帧的信息，检查通过后通知 afdx_rx_deliver。
-// 本模块对应赛题的虚拟链路过滤、完整性检查和冗余管理。
-// 完整性检查（Integrity Checking）按序号判断同一路网络上的帧是否连续。
-// 冗余管理（Redundancy Management）在两路网络送来的同一帧中只保留先到的一份。
-// 虚拟链路（Virtual Link，VL）把一组消息归到同一个配置项。
+// AFDX 接收过滤与冗余管理引擎：判定接收帧是否允许交付应用，并在双网间执行重复帧去重。
+// 接收 A/B 两路解析器提交的完整帧描述符，校验通过后写入交付队列交由 afdx_rx_deliver 输出。
+//   完整性检查（IC）：按帧序号判断同一网络上的接收帧是否连续
+//   冗余管理（RM）  ：对双网到达的同一帧仅保留先到的一份
+//   虚拟链路（VL）  ：将一组报文映射至同一接收配置表项
 module afdx_rx_engine #(
     parameter RX_RING_AW = 12,
     RX_DQ_AW             = 5,
@@ -13,21 +12,18 @@ module afdx_rx_engine #(
     DESC_COPIES          = 1,
     CORE_ENABLE_PREDICT  = 0
 ) (
-    // enable 为高时允许处理帧，now_c 给出粗粒度时间。
-    // initialized 为高表示接收状态表已初始化。
+    // enable 为高时允许引擎处理帧，now_c 为粗粒度时间基准，initialized 为高表示状态表清零完成。
     input  wire                          clk, reset, enable,
-    // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
+    // REGISTERED_TIME_TICK 为 1 时，now_c 最高位（第 16 位）携带同拍跳变脉冲；默认端口位宽与位置不变。
     input  wire [15 + REGISTERED_TIME_TICK:0] now_c,
     output reg                           initialized,
 
-    // desc_a/b_* 提供完整帧的信息，take 表示已取走这些信息。
-    // resolve 为高时，commit 决定保留还是释放本帧缓存。
+    // desc_a/b_* 传入完整帧描述符，take_a/b 确认取走；resolve_a/b 有效时，commit_a/b 决定保留或释放缓存。
     input  wire [DESC_COPIES - 1:0]      desc_a_valid, desc_b_valid,
     input  wire [RX_RING_AW + 208:0]     desc_a, desc_b,
     output reg                           take_a, take_b, resolve_a, resolve_b, commit_a, commit_b,
 
-    // map_* 把线路上的虚拟链路编号换成配置索引。
-    // cfg_* 读取接收限制，state_* 读写该链路的接收状态。
+    // map_* 将线路 VL 编号映射为配置索引；cfg_* 读取接收配置，state_* 读写该 VL 的接收状态。
     output wire [DESC_COPIES - 1:0]      map_re,
     output wire [DESC_COPIES * 16 - 1:0] map_ra,
     input  wire [12:0]                   map_q,
@@ -44,8 +40,7 @@ module afdx_rx_engine #(
     output reg  [42:0]                   state_wd,
     input  wire [42:0]                   state_q,
 
-    // dq_we 为高时，dq_wd 是写入 dq_wa 的交付信息。
-    // dq_pop 表示读走一项，dq_count 表示已写入的项数。
+    // dq_we 为高时将 dq_wd 写入交付队列 dq_wa；dq_pop 表示下游读走一项，dq_count 为当前队列项数。
     input  wire                          dq_pop,
     (* preserve = 1, dont_merge = 1 *)
     output reg  [(LOCAL_QUEUE_WRITE ? 32 * ((RX_RING_AW + 84) / 24) : 1) - 1:0] dq_we,
@@ -63,21 +58,20 @@ module afdx_rx_engine #(
     output wire                          reassembly_net,
     output reg  [RX_DQ_AW:0]             dq_count,
 
-    // ev_a/b 报告各网的检查失败或队列满事件。
-    // ev_rm_drop 表示重复帧被丢弃，ev_deliver 表示消息被接纳。
+    // ev_a/b 上报各网的校验失败或队列满事件；ev_rm_drop 表示冗余丢帧，ev_deliver 表示报文被接纳交付。
     output reg  [7:0]                    ev_a, ev_b,
     output reg                           ev_rm_drop, ev_deliver,
 
-    // cfg_ok 为高时允许外部写配置，此时没有等待处理的帧。
+    // cfg_ok 为高时表示当前无在途处理帧，允许外部写入接收配置。
     output wire [DESC_COPIES - 1:0]      cfg_ok,
-    // 仅在接收核心内部使用的 init_done 拍后预测值：在引擎 INIT 退出沿前始终
-    // 保持为低；默认独立调用时仍直接使用当拍 enable。
+    // 仅限 afdx_rx_core 内部使用的时钟沿后 init_done 预测信号：在引擎退出 INIT 状态的时钟沿前
+    // 始终保持为低；单独例化本模块时默认直接使用当拍 enable。
     input  wire                          core_enable_next
 );
 
     // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
-    (* preserve = 1, dont_merge = 1 *) reg frame_start_q, age_start_q;
+    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
     reg dq_room;
     wire fragmented;
     wire age_tick;
@@ -100,55 +94,58 @@ module afdx_rx_engine #(
     localparam DQ_DEPTH = (1 << RX_DQ_AW), DQ_WIDTH = RX_RING_AW + 61;
     localparam [3:0] INIT = 4'b0001, IDLE = 4'b0010, FRAME = 4'b0100, AGE = 4'b1000;
 
-    // 接收虚拟链路共 4096 条，LAST_VL 是最后一条的序号。
+    // 接收虚拟链路共 4096 条，LAST_VL 为末条配置索引。
     localparam LAST_VL = 4095;
 
-    // 帧序号在 1–255 之间循环：255 之后回到 1，一圈共 255 个。
-    // 新序号领先上一个序号不超过半圈（127）才算新帧。
+    // 帧序号在 1～255 间循环（255 之后回到 1，周期为 255）；
+    // 新序号领先上一序号不超过半圈（127）时判定为有效新帧。
     localparam SN_MAX = 255, SN_FIRST = 8'd1, SN_RANGE = 9'd255, SN_HALF_RANGE = 127;
 
-    // 上次接纳后超过这么多个粗时间单位（每单位 4096 拍）没有新帧，就清除重复帧记录。
+    // 距上次接纳超过该粗粒度时间阈值（每单位 4096 拍）未见新帧时，清除冗余去重记录。
     localparam AGE_LOW_BITS = 14;
     localparam [1:0] AGE_LIMIT_HIGH = 1;
     reg age_low_borrow, age_low_equal;
     reg [1:0] age_high_difference;
-    // 原阈值为 0x4000。低位借位/相等与高两位差并行寄存，仍在原 phase=3 写回。
+    // 等效 0x4000 老化阈值：将低位借位/相等标志与高两位差值并行寄存后比较。
     wire age_expired = age_low_borrow ? age_high_difference != AGE_LIMIT_HIGH
         : (age_high_difference > AGE_LIMIT_HIGH || (age_high_difference == AGE_LIMIT_HIGH && !age_low_equal));
 
-    // 处理一帧时 phase 的后三步：登记交付、写回状态、报告结果。
+    // 帧处理流程最后四步相位：准入预备、登记交付、状态写回、结果收尾。
     localparam [4:0] STEP_PREPARE = 5'd27, STEP_DELIVER = 5'd28, STEP_WRITE = 5'd29, STEP_FINISH = 5'd30;
-    // 显式独热操作编码避免二进制状态反馈扇出到所有消费端；宽操作改由
-    // 本地预译码命令控制。
-    (* preserve = 1, dont_merge = 1, syn_encoding = "user", fsm_encoding = "none" *) reg [3:0] op;
+    // 采用显式独热码状态编码，避免二进制状态反馈跨区扇出至全部下游逻辑；
+    // 宽位操作改为由本地预译码命令驱动。
+    (* preserve=1, dont_merge=1, syn_encoding="user", fsm_encoding="none" *) reg [3:0] op;
 
-    // 分 bank 的映射表在本拍各自保存请求，替代一组跨整个存储区的地址寄存器。
-    // 独立使用本模块时仍保持原来的一拍请求接口。
+    // 分块映射表在本拍各自寄存请求，替代跨整个存储区的共享地址寄存器；
+    // 独立例化本模块时仍保留原来的一拍请求接口。
     genvar map_copy;
+
     generate
         if (LOCAL_MAP_READ) begin : local_map
-            // 只读取已经提交的帧，避免空闲读与配置写同址相撞；每个目标使用自己的有效位副本。
+            // 仅读取已提交的帧描述符，避免空闲投机读与配置写同址相撞；各目标使用独立的有效位副本。
             for (map_copy = 0; map_copy < DESC_COPIES; map_copy = map_copy + 1) begin : target
-                (* preserve = 1, dont_merge = 1 *) reg source_request;
+                (* preserve=1, dont_merge=1 *) reg source_request;
+
                 always @(posedge clk) begin
                     if (reset) source_request <= 0;
-                    // 协议引擎忙时，挂起中的描述符仍可按映射表地址重读，并在 FRAME5 拍锁存
-                    // 初次返回；受 QUIET 门控的配置写总会在下次首次读之前完成，若无有效
-                    // 描述符则配置期间不发起投机读。
+                    // 协议引擎忙时，挂起中的描述符仍可按映射表地址重读，并在 FRAME5 拍锁存初次返回结果；
+                    // 受空闲门控的配置写总会在下次首次读之前完成，若无有效描述符则配置期间不发起投机读。
                     else source_request <= initialized && (desc_a_valid[map_copy] || desc_b_valid[map_copy]);
                 end
                 assign map_re[map_copy] = source_request;
-                // 用本地源地址触发器替代映射表内部首级地址寄存器，各 RAM 端口级
-                // 触发器在下一拍直接使用该地址。
-                (* preserve = 1, dont_merge = 1 *) reg [15:0] source_address;
+
+                // 用本地源端地址寄存器替代各映射分块内部的首级地址寄存器，
+                // 各 RAM 端口级寄存器在下一拍直接采样该地址。
+                (* preserve=1, dont_merge=1 *) reg [15:0] source_address;
                 always @(posedge clk) source_address <= desc_a_valid[map_copy]
                     ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67] : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
                 assign map_ra[map_copy * 16+:16] = source_address;
             end
         end
         else begin : registered_map
-            // 独立接口保留原 enable 条件。
-            wire map_start = !reset && op[1] && !frame_start_q && !age_start_q && enable && (desc_a_valid[0] || desc_b_valid[0]);
+            // 独立例化接口保留原 enable 条件。
+            wire map_start = !reset && op[1] && !frame_start_q && !age_start_q
+                && enable && (desc_a_valid[0] || desc_b_valid[0]);
             wire [15:0] map_address = desc_a_valid[0] ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67]
                 : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
             reg request;
@@ -168,9 +165,9 @@ module afdx_rx_engine #(
         end
     endgenerate
 
-    // 每个配置目标使用自己的描述符有效位副本，避免同一组合 ready 横跨全部 RAM bank。
-    // cfg_ok 同拍预测 idle/AGE + quiet；core 连同初始化许可一起预测，独立接口保留组合 enable。
-    // 不延后真实受理拍；desc_valid 变高当拍仍可能接受原协议允许的写入。
+    // 每个配置副本使用独立的描述符有效位，避免同一组合逻辑 cfg_ok 信号横跨全部 RAM 分块。
+    // cfg_ok 在同拍预测 IDLE/AGE 空闲态（核心内同步预测初始化许可，独立例化时仍保留组合 enable 门控）；
+    // 不推迟真实配置受理沿，desc_valid 拉高当拍仍可按原协议完成写入。
     (* preserve = 1, dont_merge = 1 *) reg [DESC_COPIES - 1:0] desc_quiet_copy;
     genvar ready_copy;
     generate
@@ -180,25 +177,25 @@ module afdx_rx_engine #(
         end
     endgenerate
 
-    // phase 把一次检查分成多拍，op_idx 保存本次检查的配置索引。
-    // saved_cfg 是这条虚拟链路的接收配置：
-    // saved_cfg[0] 是使能位，[1] 和 [2] 分别允许接收 A 网和 B 网的帧。
-    // saved_cfg[3] 打开完整性检查，[4] 打开冗余管理。
-    // saved_cfg[16:5] 是两网允许的最大到达时间差 SkewMax，单位是 4096 拍（32.768 µs）。
-    // saved_cfg[27:17] 是允许的最大帧长（字节）。
+    // phase 将单帧检查拆分为多拍执行，op_idx 保存当前检查的配置索引。
+    // saved_cfg 为当前 VL 的接收配置：
+    //   [0]     ：VL 使能位；[1]/[2] 分别允许接收 A/B 网报文
+    //   [3]/[4] ：分别使能完整性检查（IC）与冗余管理（RM）
+    //   [16:5]  ：双网允许的最大到达时间差 SkewMax，单位 4096 拍（32.768 µs）
+    //   [27:17] ：允许的最大帧长（字节）
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [4:0] phase;
     reg [11:0] init_ptr, age_ptr;
     (* preserve = 1, dont_merge = 1 *) reg [11:0] op_idx, dq_idx;
     reg init_flush, op_net, state_changed, deliver_allowed, age_pending;
-    // desc_quiet 保存上一拍“无待处理帧”，AGE 入口与状态装载使能不再直接串接 desc_valid 远端连线。
+    // desc_quiet 寄存上一拍“无待处理帧”状态，使 AGE 入口与状态装载使能不再直接串接远端 desc_valid 连线。
     (* preserve = 1, dont_merge = 1 *) reg desc_quiet;
-    // phase 13 先行寄存 phase 14 的比较结论，交付判断不再串接宽比较器。
+    // 第 13 拍先行寄存第 14 拍所需的比较结论，交付判定逻辑不再串接宽位比较器。
     reg skew_expired, sn_match, zero_shortcut, forward_ok;
     reg map_missing, config_reject, sequence_reject;
     reg [RX_RING_AW + 208:0] current_desc;
-    (* preserve = 1, dont_merge = 1 *) reg [RX_RING_AW + 208:0] descriptor_snapshot_a, descriptor_snapshot_b;
+    (* preserve=1, dont_merge=1 *) reg [RX_RING_AW + 208:0] descriptor_snapshot_a, descriptor_snapshot_b;
 `ifndef MODEL_TECH
-    (* preserve = 1, dont_merge = 1 *) reg frame_start_q, age_start_q;
+    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
 `endif
     reg [15:0] age_time_snapshot;
     reg [11:0] age_pointer_snapshot;
@@ -206,13 +203,12 @@ module afdx_rx_engine #(
         && (age_pending || age_tick) && !desc_a_valid[0] && !desc_b_valid[0];
     reg frame_fragmented, frame_later;
     wire start_frame = op[1] && !frame_start_q && !age_start_q && enable && (desc_a_valid[0] || desc_b_valid[0]);
-    localparam DESC_WIDTH = RX_RING_AW + 209, DESC_GROUPS = (DESC_WIDTH + 23)/24;
-    (* preserve = 1, dont_merge = 1 *) reg [1:0] fragment_snapshot_a, fragment_snapshot_b;
+    localparam DESC_WIDTH = RX_RING_AW + 209, DESC_GROUPS = (DESC_WIDTH + 23) / 24;
+    (* preserve=1, dont_merge=1 *) reg [1:0] fragment_snapshot_a, fragment_snapshot_b;
     always @(posedge clk) begin
         descriptor_snapshot_a <= desc_a;
         descriptor_snapshot_b <= desc_b;
-        // 在描述符快照捕获沿同步先完成单网字段归约，下一拍只需选择两个
-        // 本地寄存好的标志位。
+        // 在描述符快照捕获沿同步完成单网分片标志归约，下一拍只需二选一本地寄存标志。
         fragment_snapshot_a <= {|desc_a[RX_RING_AW+128:RX_RING_AW+116],
             |desc_a[RX_RING_AW+128:RX_RING_AW+115]};
         fragment_snapshot_b <= {|desc_b[RX_RING_AW+128:RX_RING_AW+116],
@@ -236,9 +232,11 @@ module afdx_rx_engine #(
     end
     genvar descriptor_group;
     generate
-        for (descriptor_group = 0; descriptor_group < DESC_GROUPS; descriptor_group = descriptor_group + 1) begin : frame_capture
-            localparam GROUP_WIDTH = (DESC_WIDTH - descriptor_group*24 >= 24) ? 24 : DESC_WIDTH - descriptor_group*24;
-            (* preserve = 1, dont_merge = 1 *) reg load, selected_net;
+        for (descriptor_group = 0; descriptor_group < DESC_GROUPS;
+                descriptor_group = descriptor_group + 1) begin : frame_capture
+            localparam GROUP_WIDTH = (DESC_WIDTH - descriptor_group * 24 >= 24)
+                ? 24 : DESC_WIDTH - descriptor_group * 24;
+            (* preserve=1, dont_merge=1 *) reg load, selected_net;
             always @(posedge clk) begin
                 selected_net <= !desc_a_valid[0];
                 if (reset) begin
@@ -255,25 +253,21 @@ module afdx_rx_engine #(
         end
     endgenerate
 
-    // 仅在相位 5 捕获一次映射表读回数据；后续请求统一使用该本地帧快照，
+    // 仅在第 5 拍（phase == 5）锁存一次映射表读回数据；后续请求统一使用该本地帧快照，
     // 不再直接引用远端 RAM 输出。
     (* preserve = 1, dont_merge = 1 *) reg [12:0] saved_map;
     wire [12:0] selected_map = saved_map;
-    (* preserve = 1, dont_merge = 1 *) reg [11:0] query_vl;
+    (* preserve=1, dont_merge=1 *) reg [11:0] query_vl;
     always @(posedge clk) query_vl <= selected_map[11:0];
     reg [31:0] saved_cfg;
 
-    // saved_state[42] 表示 A 网的上一序号有效。
-    // saved_state[41:34] 保存 A 网的上一序号。
-    // saved_state[33] 表示 B 网的上一序号有效。
-    // saved_state[32:25] 保存 B 网的上一序号。
-    // saved_state[24] 表示重复帧检查记录有效。
-    // saved_state[23:16] 保存最近交付的序号。
-    // saved_state[15:0] 保存该帧的到达时间。
+    // saved_state 位域定义：
+    //   [42]    ：A 网上一序号有效标志，[41:34] 为 A 网上一序号
+    //   [33]    ：B 网上一序号有效标志，[32:25] 为 B 网上一序号
+    //   [24]    ：冗余去重历史有效标志，[23:16] 为最近交付序号，[15:0] 为该帧到达时刻
     reg [42:0] saved_state;
 
-    // age_ptr 逐项检查旧记录，age_pending 保存尚未处理的检查请求。
-    // elapsed 保存两份帧的到达时间差。
+    // age_ptr 轮询扫描历史记录，age_pending 锁存待处理的老化检查请求；elapsed 为双网同帧到达时间差。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] now_previous;
     reg [15:0] age_time, elapsed;
     reg [7:0] next_sn, second_sn;
@@ -286,15 +280,15 @@ module afdx_rx_engine #(
     reg psn_valid;
     reg [RX_DQ_AW - 1:0] wr_ptr;
 
-    // 检查通过且交付队列有空位时，才写入消息信息。
-    // 队列满时不更新最近交付的序号。
+    // 检查通过且交付队列未满时写入交付信息；队列满时不更新最近交付序号。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg delivery_phase;
-    // 提前一拍登记结果写入相位，拒绝标志仍在原判定拍取值。
-    // 结果寄存器的使能和数据选择均不再直接译码远端 op/phase。
+    // 提前一拍寄存结果写入相位，拒绝标志仍在原判定拍取值；
+    // 结果寄存器使能与数据选择均不再直接译码远端 op/phase。
     (* preserve = 1, dont_merge = 1 *) reg result_map_phase, result_config_phase, result_sequence_phase;
-    (* preserve = 1, dont_merge = 1 *) reg map_capture_command, frame_ram_command, state_write_command, age_write_command;
-    (* preserve = 1, dont_merge = 1 *) reg queue_command, write_saved_rm, admission_room;
-    (* preserve = 1, dont_merge = 1 *) reg [4:0] frame_work_commands;
+    (* preserve=1, dont_merge=1 *)
+    reg map_capture_command, frame_ram_command, state_write_command, age_write_command;
+    (* preserve=1, dont_merge=1 *) reg queue_command, write_saved_rm, admission_room;
+    (* preserve=1, dont_merge=1 *) reg [4:0] frame_work_commands;
     always @(posedge clk) begin
         if (reset) frame_work_commands <= 0;
         else begin
@@ -306,12 +300,13 @@ module afdx_rx_engine #(
         end
     end
 
-    // 在 FRAME26 拍精确预测 FRAME27 可见的队列余量（含 FRAME26 当拍弹出的情况，
-    // 而 FRAME27 当拍弹出仍按原逻辑不影响该旧值判据）。
-    wire dq_room_next = dq_commit && !dq_pop ? dq_count<DQ_DEPTH - 1 :
+    // 在 FRAME26 拍精确预测 FRAME27 拍可见的队列余量（计入 FRAME26 当拍弹出，
+    // 而 FRAME27 当拍弹出按原时序不参与该旧值判据）。
+    wire dq_room_next = dq_commit && !dq_pop ? dq_count < DQ_DEPTH - 1 :
         dq_pop && !dq_commit ? 1'b1 : dq_room;
-    (* preserve = 1, dont_merge = 1 *) reg legacy_permission, fragment_permission;
-    wire prepare_permission = op[2] && phase == STEP_PREPARE - 1 && !sequence_reject && deliver_allowed && dq_room_next;
+    (* preserve=1, dont_merge=1 *) reg legacy_permission, fragment_permission;
+    wire prepare_permission = op[2] && phase == STEP_PREPARE - 1
+        && !sequence_reject && deliver_allowed && dq_room_next;
     always @(posedge clk) begin
         if (reset) begin
             legacy_permission <= 0;
@@ -339,7 +334,8 @@ module afdx_rx_engine #(
             queue_command <= 0;
             write_saved_rm <= 0;
             admission_room <= 0;
-        end else begin
+        end
+        else begin
             map_capture_command <= op[2] && phase == 4;
             frame_ram_command <= op[2] && phase == 5;
             state_write_command <= op[2] && (phase == STEP_WRITE - 1 || (phase == 14 && sequence_reject));
@@ -378,7 +374,7 @@ module afdx_rx_engine #(
         end
     end
 
-    // dq_room 随计数同步寄存，队列满的常数比较不再进入交付写使能锥。
+    // dq_room 随队列计数同步寄存，使队列满比较逻辑脱离交付写使能路径。
 `ifndef MODEL_TECH
     reg dq_room;
 `endif
@@ -388,8 +384,8 @@ module afdx_rx_engine #(
 `else
     assign fragmented = frame_fragmented;
 `endif
-    // FRAME6 寄存发出查询，外部 Q0 为 FRAME7；经 19 拍到 Query19（FRAME26）返回，
-    // FRAME27 寄存判决，28 原子接纳、29 物理存储与 DQ 写入、30 收尾结束。
+    // FRAME6 拍寄存发出重组查询，对应外部 Q0（FRAME7）；经 19 拍于 Query19（FRAME26）返回，
+    // FRAME27 拍寄存准入判决，FRAME28 原子接纳，FRAME29 写入重组分块与 DQ，FRAME30 收尾结束。
     assign reassembly_meta = frag_meta;
     assign reassembly_vl = query_vl;
     assign reassembly_length = length;
@@ -397,10 +393,12 @@ module afdx_rx_engine #(
     assign reassembly_dport = current_desc[RX_RING_AW + 42:RX_RING_AW + 27];
     assign reassembly_net = op_net;
     wire dq_put = queue_command;
-    wire [DQ_WIDTH - 1:0] dq_input = {fragmented, reassembly_slot, op_net, current_desc[RX_RING_AW + 15:16], length, dq_idx,
-        current_desc[RX_RING_AW + 58:RX_RING_AW + 43], current_desc[RX_RING_AW + 42:RX_RING_AW + 27]};
+    wire [DQ_WIDTH - 1:0] dq_input = {fragmented, reassembly_slot, op_net,
+        current_desc[RX_RING_AW + 15:16], length, dq_idx,
+        current_desc[RX_RING_AW + 58:RX_RING_AW + 43],
+        current_desc[RX_RING_AW + 42:RX_RING_AW + 27]};
 
-    // 相位标志互斥；结果分别在 phase=7/12/14/28 登记。
+    // 各相位标志互斥；检查结果分别于 phase == 7/12/14/28 登记。
     always @(posedge clk) begin
         if (reset) result <= RX_ACCEPTED;
         else if (result_map_phase && map_missing) result <= RX_UNMAPPED;
@@ -430,8 +428,8 @@ module afdx_rx_engine #(
         else desc_quiet <= !desc_a_valid[0] && !desc_b_valid[0];
     end
 
-    // 在本拍预测同一时钟沿更新后的模式与 QUIET 空闲态（独立调用时 CE 仍为组合逻辑）；
-    // 核心 init_done 本身在引擎 INIT 退出沿仍为低，确保该分支不会误授权核心配置写。
+    // 在本拍预测同一时钟沿更新后的工作模式与空闲态（独立例化时 cfg_ok 仍保留组合 enable 门控）；
+    // 核心 init_done 本身在引擎退出 INIT 的时钟沿仍保持为低，确保该分支不会误授权核心配置写。
     wire cfg_mode_next = (op[1] && !frame_start_q) || op[3] ||
         (op[2] && phase == STEP_FINISH) || (!CORE_ENABLE_PREDICT && op[0] && init_flush);
     always @(posedge clk) begin
@@ -463,9 +461,9 @@ module afdx_rx_engine #(
         end
     endgenerate
 
-    // RAM 捕获与三种修改互斥；分字段直接选择，避免 RAM 输出穿过多层整字优先级。
-    // FRAME/10、AGE/3 装载：吸收局部读命令、RAM、局部返回三级。
-    // FRAME 拒绝后不装载；AGE/2 若被新帧中断则不产生下一拍装载。
+    // RAM 捕获与三种字段更新互斥，按字段直接选通，避免 RAM 输出穿过多层整字优先级：
+    // FRAME 第 10 拍、AGE 第 3 拍装载（吸收局部读命令、RAM、局部返回三级）；
+    // FRAME 拒绝后不装载；AGE 第 2 拍若被新帧抢占则取消下一拍装载。
     (* preserve = 1, dont_merge = 1 *) reg load_saved_q, write_saved_a, write_saved_b;
     always @(posedge clk) begin
         if (reset) begin
@@ -524,7 +522,7 @@ module afdx_rx_engine #(
             dq_wa <= wr_ptr;
             dq_wd <= dq_input;
             if (dq_put) wr_ptr <= wr_ptr + 1'b1;
-            // dq_count 在消息信息实际写入的那一拍增加，dq_room 同步记录是否还有空位。
+            // dq_count 在描述符实际写入交付队列的当拍更新，dq_room 同步指示是否仍有空位。
             case ({dq_commit, dq_pop})
                 2'b10 : begin
                     dq_count <= dq_count + 1'b1;
@@ -546,8 +544,9 @@ module afdx_rx_engine #(
         else begin
             cfg_re <= frame_ram_command && selected_map[12];
             state_re <= (frame_ram_command && selected_map[12]) || start_age;
-            state_we <= (op[0] && !init_flush) || (state_write_command && state_changed) ||
-                (age_write_command && op[3] && saved_state[24] && age_expired && !desc_a_valid[0] && !desc_b_valid[0]);
+            state_we <= (op[0] && !init_flush) || (state_write_command && state_changed)
+                || (age_write_command && op[3] && saved_state[24]
+                    && age_expired && !desc_a_valid[0] && !desc_b_valid[0]);
         end
     end
 
@@ -600,13 +599,13 @@ module afdx_rx_engine #(
         end
         else begin
             now_previous <= now_c_value;
-            // 地址与写数据自由推进，仅靠 state_we 脉冲控制真正写入；老化抢占不再
-            // 跨区门控这些宽位数据寄存器的使能。
+            // 地址与写数据随拍自由推进，仅靠 state_we 脉冲控制实际写入；
+            // 老化抢占不再跨区门控这些宽位数据寄存器的使能端。
             cfg_ra <= selected_map[11:0];
             state_ra <= frame_ram_command ? selected_map[11:0] : age_ptr;
             state_wa <= op[0] ? init_ptr : op_idx;
             state_wd <= op[0] ? 43'b0 : op[3] ? {saved_state[42:25], 1'b0, saved_state[23:0]} : saved_state;
-            // 时间基准直接给出同拍变化脉冲；独立模块保持外部 now_c_value 比较语义。
+            // 时间基准直接提供同拍跳变脉冲；独立例化时保持对外部 now_c_value 的变化沿检测语义。
             if (age_tick) age_pending <= 1;
             take_a <= 0;
             take_b <= 0;
@@ -618,8 +617,8 @@ module afdx_rx_engine #(
             ev_b <= EV_NONE;
             ev_rm_drop <= 0;
             ev_deliver <= 0;
-            // 本地工作命令同时携带操作码与相位信息，宽位数据字段不再让二进制或
-            // 全局模式译码进入其保持路径。
+            // 本地工作命令同时携带操作码与相位译码信息，
+            // 宽位数据字段的保持路径不再引入二进制相位或全局模式译码。
             if (frame_ram_command) begin
                 map_missing <= !selected_map[12];
                 op_idx <= selected_map[11:0];
@@ -635,8 +634,10 @@ module afdx_rx_engine #(
                 psn_valid <= op_net ? state_q[33] : state_q[42];
             end
             if (frame_work_commands[1]) begin
-                config_reject <= !saved_cfg[0] || !(op_net ? saved_cfg[2] : saved_cfg[1]) ||
-                    (frame_later ? {1'b0, length}>({1'b0, saved_cfg[27:17]} + 12'd8) : length>saved_cfg[27:17]);
+                config_reject <= !saved_cfg[0] || !(op_net ? saved_cfg[2] : saved_cfg[1])
+                    || (frame_later
+                        ? {1'b0, length} > ({1'b0, saved_cfg[27:17]} + 12'd8)
+                        : length > saved_cfg[27:17]);
                 next_sn <= psn == SN_MAX ? SN_FIRST : psn + 1'b1;
                 elapsed <= arrival - saved_state[15:0];
                 raw_distance <= {1'b0, sn} - {1'b0, saved_state[23:16]};
@@ -649,7 +650,7 @@ module afdx_rx_engine #(
             if (frame_work_commands[3]) begin
                 sequence_reject <= saved_cfg[3] && psn_valid && sn != 0 && sn != next_sn && sn != second_sn;
                 if (saved_cfg[3]) state_changed <= 1;
-                skew_expired <= elapsed>saved_cfg[16:5];
+                skew_expired <= elapsed > saved_cfg[16:5];
                 sn_match <= sn == saved_state[23:16];
                 zero_shortcut <= sn == 0 || saved_state[23:16] == 0;
                 forward_ok <= forward_distance >= 1 && forward_distance <= SN_HALF_RANGE;
@@ -662,7 +663,7 @@ module afdx_rx_engine #(
             end
             case (1'b1)
 
-                // INIT：把 4096 项接收状态置零，写完后转 IDLE。
+                // INIT：将 4096 项 VL 接收状态清零，写完后转入 IDLE。
                 op[0] : if (!init_flush) begin
                     init_ptr <= init_ptr + 1'b1;
                     if (init_ptr == LAST_VL) init_flush <= 1;
@@ -672,18 +673,20 @@ module afdx_rx_engine #(
                     op <= IDLE;
                 end
 
-                // IDLE：有帧时转 FRAME；无帧且需检查旧记录时转 AGE。
+                // IDLE：有待处理帧时转入 FRAME；无待处理帧且需老化扫描时转入 AGE。
                 op[1] : if (frame_start_q) begin
                     op <= FRAME;
                     phase <= 1;
-                end else if (age_start_q) begin
+                end
+                else if (age_start_q) begin
                     if (desc_a_valid[0] || desc_b_valid[0]) op <= IDLE;
                     else begin
                         op <= AGE;
                         phase <= 1;
                     end
-                end else if (start_frame) begin
-                    // 两网同时提交时先处理 A 网。
+                end
+                else if (start_frame) begin
+                    // 双网同拍提交描述符时优先处理 A 网。
                     op_net <= !desc_a_valid[0];
                     take_a <= desc_a_valid[0];
                     take_b <= !desc_a_valid[0];
@@ -693,11 +696,11 @@ module afdx_rx_engine #(
                     phase <= 0;
                 end
 
-                // FRAME 主处理分支每拍逐相推进，不依赖空闲使能门控：
-                // 第 5 拍锁存映射表快照；第 6 拍配置/状态读取并发起寄存查询；
-                // 外部 Q0 对应第 7 拍；10 拍本地 RAM 返回；11/12 拍完成算术判断；
-                // 13 拍一致性检查，14 拍冗余管理；26 拍收查询结果，27 拍写判决；
-                // 28 拍原子接纳，29 拍写物理分块与 DQ，30 拍完成帧处理。
+                // FRAME 主处理流程每拍逐相推进，不依赖空闲使能门控：
+                //   第 5 拍锁存映射表快照；第 6 拍发起配置/状态读取与寄存重组查询；
+                //   第 7 拍对应外部 Q0；第 10 拍接收本地 RAM 返回；第 11～12 拍完成长度与差值计算；
+                //   第 13 拍完成完整性检查；第 14 拍完成冗余管理判决；第 26 拍收回重组查询结果；
+                //   第 27 拍寄存准入判决；第 28 拍原子接纳；第 29 拍写入物理分块与 DQ；第 30 拍收尾结束。
                 op[2] : begin
                     phase <= phase + 1'b1;
                     case (phase)
@@ -710,7 +713,7 @@ module afdx_rx_engine #(
                             if (deliver_allowed && admission_room && saved_cfg[4]) state_changed <= 1;
                         end
 
-                        STEP_WRITE :; // 由本地命令脉冲直接控制 state_we 写入
+                        STEP_WRITE :; // 由本地命令脉冲直接控制 state_we 写入。
 
                         STEP_FINISH : begin
                             resolve_a <= !op_net;
@@ -719,15 +722,19 @@ module afdx_rx_engine #(
                             commit_b <= op_net && result == RX_ACCEPTED;
                             case (result)
                                 RX_ACCEPTED : ev_deliver <= 1;
-                                RX_UNMAPPED : if (op_net) ev_b <= EV_UNMAPPED;
-                                else ev_a <= EV_UNMAPPED;
-                                RX_CONFIG_REJECT : if (op_net) ev_b <= EV_CONFIG_REJECT;
-                                else ev_a <= EV_CONFIG_REJECT;
-                                RX_BAD_SEQUENCE : if (op_net) ev_b <= EV_BAD_SEQUENCE;
-                                else ev_a <= EV_BAD_SEQUENCE;
+                                RX_UNMAPPED :
+                                    if (op_net) ev_b <= EV_UNMAPPED;
+                                    else ev_a <= EV_UNMAPPED;
+                                RX_CONFIG_REJECT :
+                                    if (op_net) ev_b <= EV_CONFIG_REJECT;
+                                    else ev_a <= EV_CONFIG_REJECT;
+                                RX_BAD_SEQUENCE :
+                                    if (op_net) ev_b <= EV_BAD_SEQUENCE;
+                                    else ev_a <= EV_BAD_SEQUENCE;
                                 RX_DUPLICATE : ev_rm_drop <= 1;
-                                RX_QUEUE_FULL : if (op_net) ev_b <= EV_QUEUE_FULL;
-                                else ev_a <= EV_QUEUE_FULL;
+                                RX_QUEUE_FULL :
+                                    if (op_net) ev_b <= EV_QUEUE_FULL;
+                                    else ev_a <= EV_QUEUE_FULL;
                                 default :;
                             endcase
                             op <= IDLE;
@@ -737,18 +744,18 @@ module afdx_rx_engine #(
                     endcase
                 end
 
-                // AGE：使过期记录失效后转 IDLE；新帧到来时立即转 IDLE。
-                // phase=3：保存局部 RAM 返回；phase=4：分段时间差。
-                // phase=5：使过期记录失效，主状态转 IDLE。
+                // AGE：使过期去重记录失效后回到 IDLE；新帧到来时立即抢占并回到 IDLE。
+                //   phase == 3：锁存局部 RAM 返回；phase == 4：分段计算时间差；
+                //   phase == 5：写回清除过期记录，主状态机返回 IDLE。
                 op[3] : begin
-                    // 有新帧到来时，模块放下这次检查先去处理帧，之后再重新检查这一项。
-                    // 记录保存超过 0x4000 个计时单位（约 0.54 秒）就失效。
+                    // 若检查期间有新帧到达，先中止本次老化并让出通道处理新帧，稍后重新检查该项；
+                    // 去重记录超过 0x4000 个粗计时单位（约 0.54 秒）即判定过期。
                     if (desc_a_valid[0] || desc_b_valid[0]) op <= IDLE;
                     else begin
                         phase <= phase + 1'b1;
                         case (phase)
                             1 :;
-                            2 :; // 分段时间差在独立寄存器中完成。
+                            2 :; // 分段老化时间差比较已在独立寄存器中完成。
                             5 : begin
                                 age_ptr <= age_ptr + 1'b1;
                                 age_pending <= age_tick;

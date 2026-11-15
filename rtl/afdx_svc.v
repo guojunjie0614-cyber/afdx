@@ -1,7 +1,7 @@
 // 本模块让应用和三个服务共用端系统的收发通道。
 // 发送时每次选中一条完整消息，再交给发送核心。
 // 接收时按端口交给对应服务，其余消息交给应用。
-// 它连接赛题的用户收发、时钟同步、网络管理和加卸载功能。
+// 对接应用收发通道以及时钟同步（RTC）、网络管理（SNMP）和加卸载（ARINC 615A）三类服务。
 module afdx_svc (
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire        clk, reset,
@@ -76,13 +76,14 @@ module afdx_svc (
     reg reselect, select_pending;
     reg completed_message;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] request_local;
-    // 将管理服务与应用接收的输入捕获级拆开，使字节与控制扇出完全本地化
-    // （元数据与字节流同步各自后移一拍）。
+    // 拆分服务接收与应用接收的输入捕获级，将字节与控制信号扇出限制在本地
+    // （元数据与字节流同步各后移一拍）。
     (* preserve = 1, dont_merge = 1 *) reg service_valid, application_valid, snmp_valid_q, load_valid_q;
     (* preserve = 1, dont_merge = 1 *) reg service_last, application_last, snmp_last_q, load_last_q;
     (* preserve = 1, dont_merge = 1 *) reg [7:0] service_data, application_data, snmp_data_q, load_data_q;
     (* preserve = 1, dont_merge = 1 *) reg [11:0] service_vl, application_vl;
-    (* preserve = 1, dont_merge = 1 *) reg [15:0] service_sport, service_dport, application_sport, application_dport;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] service_sport, service_dport,
+        application_sport, application_dport;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] snmp_sport_q, snmp_dport_q, load_sport_q, load_dport_q;
     (* preserve = 1, dont_merge = 1 *) reg service_net, application_net;
     reg [1:0] turn, selected;
@@ -107,7 +108,8 @@ module afdx_svc (
                 next_granted[3] = eff_request[3] && !eff_request[0] && !eff_request[1] && !eff_request[2];
             end
             2'd1 : begin
-                next_granted[0] = (eff_request[0] && !eff_request[1] && !eff_request[2] && !eff_request[3]) || !(|eff_request);
+                next_granted[0] = (eff_request[0] && !eff_request[1] && !eff_request[2] && !eff_request[3])
+                    || !(|eff_request);
                 next_granted[1] = eff_request[1];
                 next_granted[2] = eff_request[2] && !eff_request[1];
                 next_granted[3] = eff_request[3] && !eff_request[1] && !eff_request[2];
@@ -127,8 +129,8 @@ module afdx_svc (
         endcase
     end
 
-    // 整条消息传输（含反压停顿）期间保持选中源锁定不变：远端 valid 只喂入请求捕获
-    // 与小空闲检测器，优先级裁决和授权切换均只消费本地已寄存输入。
+    // 整条消息传输（含反压停顿）期间保持选中发送源锁定不变：远端 valid 仅送入请求捕获
+    // 寄存器与空闲检测逻辑，优先级裁决和授权切换均只使用本地已寄存信号。
     always @(posedge clk) begin
         if (reset) begin
             served <= 4'b0001;
@@ -192,9 +194,9 @@ module afdx_svc (
     assign load_rx_last = load_last_q;
     assign load_rx_sport = load_sport_q;
     assign load_rx_dport = load_dport_q;
-    assign app_rx_valid = application_valid && !(rx_active ? rx_claimed : | svc_rx_claim);
-    // 与 data 相同，last 仅在 valid 为高时才被采样；认领/配置判定仅约束在令牌上，
-    // 不再反馈到 last 数据触发器的 D 端或使能端。
+    assign app_rx_valid = application_valid && !(rx_active ? rx_claimed : |svc_rx_claim);
+    // 与 data 相同，last 仅在 valid 为高时才被采样；认领与配置使能仅约束在 valid 令牌上，
+    // 不再反馈至 last 寄存器的 D 端或使能端。
     assign app_rx_last = application_last;
     assign app_rx_data = application_data;
     assign app_rx_vl = application_vl;
@@ -267,7 +269,7 @@ module afdx_svc (
             rx_claimed <= 0;
         end
         else begin
-            // 在首个现存静默仲裁拍期间完成轮次退休；到次拍静默期才清除 served，
+            // 在首个静默仲裁拍期间推进轮询指针 turn；到次拍静默期才更新授权独热位 served，
             // 因此下一次真实授权生效的时钟沿完全不变。
             completed_message <= finishing;
             if (completed_message) turn <= selected + 2'd1;
@@ -280,7 +282,7 @@ module afdx_svc (
                 end
             end
             if (application_valid) begin
-                if (!rx_active) rx_claimed <= | svc_rx_claim;
+                if (!rx_active) rx_claimed <= |svc_rx_claim;
                 rx_active <= !application_last;
             end
         end

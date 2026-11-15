@@ -1,9 +1,9 @@
 // 本模块把外部配置读写请求送到对应模块，并统计收发事件。
 // 输入来自顶层配置口和各模块的事件脉冲，读结果返回顶层。
-// 本模块为赛题的收发配置和网络管理提供寄存器接口。
+// 为端系统的收发配置、统计计数及管理服务提供统一寄存器接口。
 module afdx_cfg #(
     parameter RX_BUS_COPIES = 1,
-    BANKED_READY            = 0
+              BANKED_READY  = 0
 ) (
     // tx_ready 为高表示收发核心都已初始化。
     input  wire                            clk, reset, tx_ready,
@@ -80,7 +80,8 @@ module afdx_cfg #(
     input  wire                            ev_rm_drop, ev_deliver,
     input  wire [1:0]                      ev_gdrop,
     input  wire [31:0]                     rtc_rdata, rtc_sync_count,
-    input  wire [31:0]                     snmp_control_data, snmp_status_data, snmp_descr_data, load_rdata, load_extra_data
+    input  wire [31:0]                     snmp_control_data, snmp_status_data, snmp_descr_data,
+        load_rdata, load_extra_data
 );
 
     // 0x01000–0x013ff 对应发送配置表。
@@ -92,7 +93,7 @@ module afdx_cfg #(
 
     // 初始化电平就地寄存，与各接收 bank 的本地初始化级同拍，远端就绪不直驱宽写总线。
     (* preserve = 1, dont_merge = 1 *) reg tx_ready_q;
-    // 发送核心允许写入的组合锥只进本地寄存器，再用于写通道重新武装。
+    // 发送核心写允许信号先在本地寄存，再用于写通道恢复就绪。
     (* preserve = 1, dont_merge = 1 *) reg tx_cfg_ok_q;
     always @(posedge clk) begin
         if (reset) begin
@@ -117,18 +118,18 @@ module afdx_cfg #(
             (* preserve = 1, dont_merge = 1 *) reg [15:0] address;
             (* preserve = 1, dont_merge = 1 *) reg [DATA_WIDTH - 1:0] data;
             (* preserve = 1, dont_merge = 1 *) reg ready, transmit_pending, receive_pending;
-            // 本副本的映射写选通：本地握手位会合，长距离状态机锥不进使能端。
+            // 本副本的映射写选通：本地握手位就近会合，避免长距离状态机组合逻辑接入使能端。
             (* preserve = 1, dont_merge = 1 *) reg map_we_q;
             wire bank_ready = BANKED_READY ? rx_ready_by_bank[bus_copy] : tx_ready;
             wire data_ready = BANKED_READY && bus_copy == 0 ? rx_ready_by_bank[RX_BUS_COPIES] : bank_ready;
             // 就绪电平本地寄存一拍：该电平一旦置位保持到复位，晚一拍只影响初始化边界。
             (* preserve = 1, dont_merge = 1 *) reg bank_ready_q;
             // 任意挂起事务期间 ready 恒为低；本地预先计算其与下一拍
-            // 采样到的块就绪信号之逻辑与。
+            // 所采样存储块就绪信号的逻辑与。
             (* preserve = 1, dont_merge = 1 *) reg address_available;
             (* preserve = 1, dont_merge = 1 *) reg transmit_ack_q;
             wire local_tx_rearm = !tx_cfg_we && transmit_ack_q;
-            // 挂起周期内 ready 全程为 0；直接以并行的受理/重臂条件表达次态，
+            // 挂起周期内 ready 全程为 0；直接以并行的受理与恢复就绪条件表达次态，
             // 而不使用多层嵌套的保持复用器。
             wire local_idle = !transmit_pending && !receive_pending;
             wire next_local_ready = bank_ready_q &&
@@ -221,12 +222,13 @@ module afdx_cfg #(
     localparam ADDR_A_GDROP = 18'h0005a, ADDR_B_GDROP = 18'h0005b, ADDR_RTC_SYNC_COUNT = 18'h00088;
     localparam ADDR_SNMP_ENABLE = 18'h00090, ADDR_SNMP_TX_VL = 18'h00091, ADDR_SNMP_COMMUNITY_LENGTH = 18'h00092;
     localparam ADDR_SNMP_COMMUNITY0 = 18'h00093, ADDR_SNMP_COMMUNITY1 = 18'h00094;
-    localparam ADDR_SNMP_COMMUNITY2 = 18'h00095, ADDR_SNMP_COMMUNITY3 = 18'h00096, ADDR_SNMP_TRAP_ENABLE = 18'h0009b;
+    localparam ADDR_SNMP_COMMUNITY2 = 18'h00095, ADDR_SNMP_COMMUNITY3 = 18'h00096,
+        ADDR_SNMP_TRAP_ENABLE = 18'h0009b;
     localparam VERSION_VALUE = 32'hc3110000;
 
     // 位 0..7 依次对应使能、发送虚拟链路、团体名长度、团体名四字和通知使能。
     // 每个可写服务字段各拥有同拍的 ready 副本，其递推关系与 cfg_ready_m
-    // 完全一致，写请求与应答均不增减延迟，同时避免单个远端 FF 驱动全部字段使能。
+    // 完全一致，写请求与应答均不增减延迟，同时避免单个远端触发器驱动全部字段使能。
     (* preserve = 1, dont_merge = 1 *) reg [20:0] service_ready;
     (* keep = 1 *) wire [7:0] snmp_write_hit = {
         cfg_wr && cfg_write_addr == ADDR_SNMP_TRAP_ENABLE,
@@ -237,7 +239,7 @@ module afdx_cfg #(
         cfg_wr && cfg_write_addr == ADDR_SNMP_COMMUNITY_LENGTH,
         cfg_wr && cfg_write_addr == ADDR_SNMP_TX_VL,
         cfg_wr && cfg_write_addr == ADDR_SNMP_ENABLE
-        };
+    };
     assign snmp_wr_sel = service_ready[7:0] & snmp_write_hit;
     // 加卸载同样先译码完整主机地址，ready 只参与末级选通，不增加写入拍数。
     // 位 0..6 对应 b0、b1、b4、b8、b9、ba、bb。
@@ -249,7 +251,7 @@ module afdx_cfg #(
         cfg_wr && cfg_write_addr == 18'h000b4,
         cfg_wr && cfg_write_addr == 18'h000b1,
         cfg_wr && cfg_write_addr == 18'h000b0
-        };
+    };
     assign loader_wr_sel = service_ready[14:8] & loader_write_hit;
     // RTC 的六个可写寄存器同样先译码，ready 只驱动末级选通。
     (* keep = 1 *) wire [5:0] rtc_write_hit = {
@@ -259,7 +261,7 @@ module afdx_cfg #(
         cfg_wr && cfg_write_addr == 18'h00082,
         cfg_wr && cfg_write_addr == 18'h00081,
         cfg_wr && cfg_write_addr == 18'h00080
-        };
+    };
     assign rtc_wr_sel = service_ready[20:15] & rtc_write_hit;
 
     // 每 8 个地址为一组，下面是各组地址的高 15 位。
@@ -359,7 +361,7 @@ module afdx_cfg #(
                 ADDR_A_GDROP : register_select[5] = 1;
                 ADDR_B_GDROP : register_select[6] = 1;
                 ADDR_RTC_SYNC_COUNT : register_select[7] = 1;
-                default :;
+                default : ;
             endcase
         end
     endfunction
@@ -570,9 +572,9 @@ module afdx_cfg #(
         end
     end
 
-    // 挂起期间 ready 恒为 0；并行重臂与空闲判定项可直接预测原就绪沿，
+    // 挂起期间 ready 恒为 0；并行的恢复就绪与空闲判定项可直接预测原就绪沿，
     // 无需优先级复用器链。各字节本地采样初始化与应答，不再让单一共享
-    // ready 寄存器同时驱动完整判定锥与全部字节使能。
+    // ready 寄存器同时驱动完整条件判定逻辑与全部字节使能。
     genvar user_byte;
     generate
         for (user_byte = 0; user_byte < 2; user_byte = user_byte + 1) begin : user_write_lane
@@ -593,7 +595,9 @@ module afdx_cfg #(
                     allowed <= tx_ready && initial_ready && (idle_ready || rearm_ready);
                     if ((allowed && cfg_wr && cfg_write_addr == ADDR_USER_ID) ||
                             (allowed && !cfg_wr && mib_user_wr))
-                        user_id[user_byte*8+:8] <= cfg_wr ? cfg_wdata[user_byte*8+:8] : mib_user_wdata[user_byte*8+:8];
+                        user_id[user_byte*8+:8] <= cfg_wr
+                            ? cfg_wdata[user_byte*8+:8]
+                            : mib_user_wdata[user_byte*8+:8];
                 end
             end
         end
@@ -627,7 +631,7 @@ module afdx_cfg #(
             rx_cfg_we <= 0;
         end
         else if (tx_pending) begin
-            // 本地应答确认真实写请求已经完成，三处就绪状态同拍重新武装。
+            // 本地应答确认真实写请求已完成，三处就绪状态同拍恢复就绪。
             if (tx_cfg_rearm) begin
                 tx_pending <= 0;
                 cfg_ready <= 1;
@@ -744,7 +748,7 @@ module afdx_cfg #(
         end
     end
 
-    // 每四位使用 10 路独立寄存源选择替代原先先二级分组再共享复用的结构；
+    // 每四位使用 10 路独立寄存源选择，替代原先先两级分组再共享复用的结构；
     // 主机与 MIB 两条读地址路径仍保持原有的捕获沿与对外两拍读延迟。
     wire [9:0] read_result_next = host_read ? result_select(cfg_write_addr) : mib_result_select;
     genvar result_slice;
@@ -752,10 +756,14 @@ module afdx_cfg #(
         for (result_slice = 0; result_slice < 8; result_slice = result_slice + 1) begin : result_bank
             (* preserve = 1, dont_merge = 1 *) reg [3:0] select_cnt_q;
             (* preserve = 1, dont_merge = 1 *) reg [5:0] select_svc_q;
-            (* keep = 1 *) wire [3:0] c0 = {4{select_cnt_q[0]}} & (read_regs[result_slice*4+:4] | read_regs_upper[result_slice*4+:4]);
-            (* keep = 1 *) wire [3:0] c1 = {4{select_cnt_q[1]}} & (read_tx[result_slice*4+:4] | read_tx_upper[result_slice*4+:4]);
-            (* keep = 1 *) wire [3:0] c2 = {4{select_cnt_q[2]}} & (read_a[result_slice*4+:4] | read_a_upper[result_slice*4+:4]);
-            (* keep = 1 *) wire [3:0] c3 = {4{select_cnt_q[3]}} & (read_b[result_slice*4+:4] | read_b_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c0 = {4{select_cnt_q[0]}}
+                & (read_regs[result_slice*4+:4] | read_regs_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c1 = {4{select_cnt_q[1]}}
+                & (read_tx[result_slice*4+:4] | read_tx_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c2 = {4{select_cnt_q[2]}}
+                & (read_a[result_slice*4+:4] | read_a_upper[result_slice*4+:4]);
+            (* keep = 1 *) wire [3:0] c3 = {4{select_cnt_q[3]}}
+                & (read_b[result_slice*4+:4] | read_b_upper[result_slice*4+:4]);
             (* keep = 1 *) wire [3:0] s_rtc_snmp =
                 ({4{select_svc_q[0]}} & rtc_rdata[result_slice*4+:4]) |
                 ({4{select_svc_q[1]}} & snmp_control_data[result_slice*4+:4]);

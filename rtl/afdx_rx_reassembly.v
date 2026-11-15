@@ -39,7 +39,7 @@ module afdx_rx_reassembly #(
     (* preserve = 1, dont_merge = 1 *) reg [1:0] query_active_bank, reject_credit_bank;
     wire transaction_cancel = cancel || (reserve && reject_credit);
 
-    // 仅在查询空闲且无取消时触发新查询，避免将 reserve 信号串入查询扇出路径。
+    // 仅在查询空闲且无取消请求时触发新查询，避免将 reserve 信号串入查询扇出路径。
     wire query_fire = query && !query_active && !cancel && !reset;
     (* preserve = 1, dont_merge = 1 *) reg [1:0] commit_credit;
     wire [1:0] bank_match, bank_free, bank_admit_valid, bank_admit_ok;
@@ -60,11 +60,12 @@ module afdx_rx_reassembly #(
     wire [31:0] bank_sport, bank_dport;
     wire [3:0] bank_events;
 
-    localparam D_IDLE = 0, D_QUIET = 1, D_PREP = 2, D_COPY = 3, D_LEGACY_PREP = 4, D_LEGACY = 5, D_OUTPUT = 6, D_RELEASE = 7;
+    localparam D_IDLE = 0, D_QUIET = 1, D_PREP = 2, D_COPY = 3,
+        D_LEGACY_PREP = 4, D_LEGACY = 5, D_OUTPUT = 6, D_RELEASE = 7;
     reg [2:0] stream_state;
     reg stream_bank, output_bank, legacy_empty;
 
-    // 进入重组报文输出前先插入一拍静默窗口 D_QUIET，吸收上游可能已在途发出的首部脉冲。
+    // 进入重组报文输出前插入一拍静默窗口 D_QUIET，吸收上游可能已在途发出的首部脉冲。
     wire accept_header = (stream_state == D_IDLE || stream_state == D_QUIET) && in_start;
     wire output_valid = output_bank ? bank_valid[1] : bank_valid[0];
     wire output_last = output_bank ? bank_last[1] : bank_last[0];
@@ -73,8 +74,9 @@ module afdx_rx_reassembly #(
 
     generate
         for (b = 0; b < 2; b = b + 1) begin : banks
-            localparam BANK_ROWS = (CONTEXTS > b*8 + 8) ? 8 : ((CONTEXTS > b*8) ? CONTEXTS - b*8 : 0);
+            localparam BANK_ROWS = (CONTEXTS > b * 8 + 8) ? 8 : ((CONTEXTS > b * 8) ? CONTEXTS - b * 8 : 0);
             wire bank_query_in, bank_reserve_in, bank_cancel_in;
+
             if (BANK_CTRL_COPIES) begin : local_ctrl
                 assign bank_query_in = query_bank[b];
                 assign bank_reserve_in = reserve_bank[b];
@@ -88,6 +90,7 @@ module afdx_rx_reassembly #(
             wire bank_query_fire = bank_query_in && !query_active_bank[b] && !bank_cancel_in && !reset;
             wire bank_cancel = bank_cancel_in || (bank_reserve_in && reject_credit_bank[b]);
             wire bank_commit = bank_reserve_in && commit_credit[b] && !bank_cancel_in && !reset;
+
             afdx_rx_reassembly_bank #(.ROWS(BANK_ROWS), .TIMEOUT_CYCLES(TIMEOUT_CYCLES)) u_bank (
                 .clk                (clk),
                 .reset              (reset),
@@ -197,10 +200,17 @@ module afdx_rx_reassembly #(
                 end
                 if (query_age == 18) begin
                     result_valid <= 1;
-                    reserve_ok <= reserve_slot[3] ? (bank_admit_valid[1] && bank_admit_ok[1]) : (bank_admit_valid[0] && bank_admit_ok[0]);
-                    reject_credit <= reserve_slot[3] ? !(bank_admit_valid[1] && bank_admit_ok[1]) : !(bank_admit_valid[0] && bank_admit_ok[0]);
-                    reject_credit_bank <= {2{reserve_slot[3] ? !(bank_admit_valid[1] && bank_admit_ok[1]) : !(bank_admit_valid[0] && bank_admit_ok[0])}};
-                    commit_credit <= reserve_slot[3] ? {bank_admit_valid[1] && bank_admit_ok[1], 1'b0}
+                    reserve_ok <= reserve_slot[3]
+                        ? (bank_admit_valid[1] && bank_admit_ok[1])
+                        : (bank_admit_valid[0] && bank_admit_ok[0]);
+                    reject_credit <= reserve_slot[3]
+                        ? !(bank_admit_valid[1] && bank_admit_ok[1])
+                        : !(bank_admit_valid[0] && bank_admit_ok[0]);
+                    reject_credit_bank <= {2{reserve_slot[3]
+                        ? !(bank_admit_valid[1] && bank_admit_ok[1])
+                        : !(bank_admit_valid[0] && bank_admit_ok[0])}};
+                    commit_credit <= reserve_slot[3]
+                        ? {bank_admit_valid[1] && bank_admit_ok[1], 1'b0}
                         : {1'b0, bank_admit_valid[0] && bank_admit_ok[0]};
                 end
             end
@@ -219,7 +229,7 @@ module afdx_rx_reassembly #(
                 query_active_bank <= 2'b11;
                 query_first <= r_meta[45:33] == 0;
                 query_age <= 0;
-                // 匹配汇总寄存器在后续选择前会被重新覆盖，起始拍无需复位清零以精简使能逻辑锥。
+                // 匹配汇总寄存器在后续选择前会被重新覆盖，起始拍无需复位清零，以精简使能逻辑。
                 result_valid <= 0;
                 reserve_ok <= 0;
                 commit_credit <= 0;
@@ -336,6 +346,7 @@ module afdx_rx_reassembly #(
             end
         end
     end
+
 `ifndef SYNTHESIS
     always @(posedge clk)
         if (!reset) begin

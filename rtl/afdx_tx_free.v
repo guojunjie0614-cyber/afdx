@@ -1,6 +1,6 @@
 // 本模块记录哪些发送缓存页还空着，并分配或收回这些页。
 // afdx_tx_buf 申请页，发送完成或接收失败后由相应模块归还页。
-// 本模块为赛题的发送缓存管理空间，避免两条消息使用同一页。
+// 本模块统一管理发送缓存空闲页池，避免不同消息复用同一物理页。
 module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire       clk, reset,
@@ -53,6 +53,7 @@ module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
     assign pop_ready = init_done && phase == POP_IDLE;
     assign ret1_ready = init_done && !ret1_pending;
     assign ret2_ready = init_done && !ret2_pending;
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(PAGES)) tx_free (
         .clk           (clk),
         .write_enable  (we),
@@ -90,8 +91,8 @@ module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
             we <= 0;
             re <= 0;
             pop_ack <= 0;
-            // 空槽允许自由采样输入，已占用槽位在仲裁与反压期间稳妥保持
-            // 原页号直至待退休写完成为止。
+            // 空槽允许自由采样输入，已占用槽位在仲裁与反压期间保持原页号，
+            // 直至待写回队列的操作完成。
             if (!ret1_pending) ret1_saved <= ret1_page;
             if (!ret2_pending) ret2_saved <= ret2_page;
             // 初始化时逐拍写入所有页号，再等最后一次写入完成。

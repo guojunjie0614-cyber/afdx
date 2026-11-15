@@ -1,16 +1,16 @@
 // 本模块响应网络管理请求，也会主动报告指定事件。
 // 管理报文从 afdx_svc 进入，查询结果来自共享配置总线。
-// 本模块对应赛题的 SNMP（Simple Network Management Protocol，
-// 简单网络管理协议）功能，一次处理一个变量。
+// 本模块实现 SNMP（Simple Network Management Protocol，简单网络管理协议）代理功能，
+// 每次处理一个变量绑定。
 // 它支持 v1/v2c 的 Get、GetNext 和 Set 请求，也能主动发送 v2c 的 Trap 通知。
 module afdx_snmp #(
-    parameter LOCAL_RX_PORT = 0,
-    SPLIT_CFG_ADDR          = 0,
-    CE_DIV                  = 2,
-    CE_BANKS                = 59,
-    PREDECODED_CFG_WR       = 0,
-    SPLIT_MIB_READY         = 0,
-    LOCAL_TIMEBASE          = 0
+    parameter LOCAL_RX_PORT     = 0,
+              SPLIT_CFG_ADDR    = 0,
+              CE_DIV            = 2,
+              CE_BANKS          = 59,
+              PREDECODED_CFG_WR = 0,
+              SPLIT_MIB_READY   = 0,
+              LOCAL_TIMEBASE    = 0
 ) (
     // enable 为高表示核心就绪，now 给寄存器读取结果标记时间。
     input  wire                  clk, reset, enable,
@@ -55,14 +55,14 @@ module afdx_snmp #(
     output wire                  rx_claim
 );
 
-    // enable 的本地副本：粘滞电平晚一拍只在初始化边界生效。
+    // enable 的本地寄存副本：初始化完成信号锁存后保持有效，晚一拍仅影响初始化边界。
     (* preserve = 1, dont_merge = 1 *) reg en_q;
     always @(posedge clk) begin
         if (reset) en_q <= 0;
         else en_q <= enable;
     end
 
-    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7:SPLIT_CFG_ADDR ? 3:0)+:8];
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0)+:8];
     localparam [127:0] DESCRIPTION = "C3 AFDX endpoint";
     localparam SNMP_PORT = 161, TRAP_PORT = 162;
     localparam MAX_COMMUNITY_LENGTH = 16, MAX_OID_LENGTH = 16;
@@ -83,7 +83,7 @@ module afdx_snmp #(
         cfg_we[0] && cfg_write_addr == REG_COMMUNITY_LENGTH,
         cfg_we[0] && cfg_write_addr == REG_TX_VL,
         cfg_we[0] && cfg_write_addr == REG_ENABLE
-        };
+    };
     localparam PACKET_BUFFER_BYTES = 256, REQUEST_LAST_POS = 255;
     reg configured, trap_enabled;
     reg [6:0] response_vl;
@@ -144,7 +144,7 @@ module afdx_snmp #(
     end
 
     assign rx_claim = configured && (LOCAL_RX_PORT ? local_port_match : incoming_port == SNMP_PORT);
-    // 捕获启动的本地前提一次会合，远端字节有效位只进末级与门。
+    // 启动接收捕获的本地条件提前会合，远端字节有效位仅接入末级与门。
     wire accept_armed = rx_claim && idle_q && !capture_pending && !consumed_q && !trap_grant;
 
     always @(posedge clk) begin
@@ -243,7 +243,7 @@ module afdx_snmp #(
                         uptime[uptime_byte*8+:8] <= uptime[uptime_byte*8+:8] + carry;
                 end
             end
-            if (uptime_byte<3) begin : carry_flag
+            if (uptime_byte < 3) begin : carry_flag
                 always @(posedge clk) begin
                     if (reset) uptime_byte_full[uptime_byte] <= 0;
                     else if (uptime_tick[uptime_byte])
@@ -287,12 +287,12 @@ module afdx_snmp #(
             offer_q <= trap_offer;
             cold_ack_q <= cold_ack;
             req_we <= 0;
-            // 仅靠写令牌门控物理 RAM 写入，候选地址与数据每拍更新以免远端有效/空闲信号
-            // 控制字节 FF 使能；首字节前接收字节数为 0，其余已受理字节均使用原计数。
+            // 仅由写令牌门控物理 RAM 写入，候选地址与数据每拍更新，避免远端有效/空闲信号
+            // 控制字节触发器使能；首字节前 receiving 为 0，其余已受理字节均使用原计数。
             req_wdata <= rx_data;
             req_wa <= receiving ? rx_count[7:0] : 8'd0;
-            // 计数与长度仅在接收/挂起期间有意义：空闲态预先准备首字节初值，
-            // 已发布的长度则保持至协议引擎消费为止，接收准入锥不驱动该组寄存器。
+            // 计数与长度仅在接收/挂起期间有效：空闲态预先准备首字节初值，
+            // 已发布的长度保持至协议引擎消费为止，接收准入判定逻辑不驱动该组寄存器。
             if (!receiving) begin
                 rx_count <= 1;
                 overflow <= 0;
@@ -315,7 +315,7 @@ module afdx_snmp #(
                 capture_pending <= 0;
             end
             else if (!receiving) begin
-                // accept_armed 是全本地项，远端 rx_valid 只进末级与门。
+                // accept_armed 为纯本地条件，远端 rx_valid 仅接入末级与门。
                 if (accept_armed && rx_valid) begin
                     req_we <= 1;
                     if (rx_last) begin
@@ -337,7 +337,7 @@ module afdx_snmp #(
         end
     end
 
-    // RAM 端口由全速寄存器直接驱动，只提交一次每个 CE 命令。
+    // RAM 端口由全速寄存器直接驱动，每个 CE 拍发出的命令只提交一次。
     // 四个纯数据寄存器不带同步复位：写使能仍受复位清零，只有写使能为 1 时
     // 数据才会写入 RAM，因此复位后的数据初值不进入功能路径。
     always @(posedge clk) begin
@@ -371,6 +371,7 @@ module afdx_snmp #(
         .read_address  (ram_req_ra),
         .read_data     (req_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(256)) response_ram (
         .clk           (clk),
         .write_enable  (ram_out_we),
@@ -380,6 +381,7 @@ module afdx_snmp #(
         .read_address  (out_ra),
         .read_data     (out_q)
     );
+
     afdx_mgmt_tx #(.AW(8)) sender (
         .clk          (clk),
         .reset        (reset),

@@ -1,17 +1,17 @@
 // 本模块按 ARINC 615A 接收加载文件，也能把已加载的数据发回。
 // 报文从 afdx_svc 进入，回应经同一模块交给发送核心。
 // ARINC 615A 用 TFTP（Trivial File Transfer Protocol，简单文件传输协议）传文件。
-// 本模块对应赛题的加卸载功能，一次处理一个头文件和一个数据文件。
+// 本模块实现 ARINC 615A 目标端加卸载功能，一次处理一个头文件和一个数据文件。
 // 加载区最多保存 8 KiB 数据，校验成功后才允许卸载。
 module afdx_615a #(
-    parameter LOCAL_RX_PORT = 0,
-    SPLIT_CFG_ADDR          = 0,
-    CE_DIV                  = 2,
-    CE_BANKS                = 72,
-    CFG_WRITE_SELECT        = 0,
-    READY_PREDICT           = 0,
-    CFG_READY_PREDICT       = 0,
-    CFG_READY_TERMS         = 0
+    parameter LOCAL_RX_PORT     = 0,
+              SPLIT_CFG_ADDR    = 0,
+              CE_DIV            = 2,
+              CE_BANKS          = 72,
+              CFG_WRITE_SELECT  = 0,
+              READY_PREDICT     = 0,
+              CFG_READY_PREDICT = 0,
+              CFG_READY_TERMS   = 0
 ) (
     // enable 为高且配置已启用时，模块才接受加卸载请求。
     input  wire                  clk, reset, enable,
@@ -21,7 +21,7 @@ module afdx_615a #(
     // cfg_* 设置服务参数，并读取状态、加载字节数和加载区内容。
     // cfg_extra_data 返回端口与重试设置。
     input  wire                  cfg_we,
-    // 原始写请求已由完整的加载器地址组条件约束。
+    // 原始写请求信号已由完整加载器地址组译码条件限定。
     input  wire                  cfg_ready_next, cfg_write_request,
     input  wire                  cfg_ready_base, cfg_ready_rx_term, cfg_ready_rx_ack,
     input  wire [6:0]            cfg_wr_sel,
@@ -57,7 +57,7 @@ module afdx_615a #(
 
     // 分离模式把主机写地址放在高 8 位，低 3 位保持共享读地址。
     // 默认位宽兼容独立使用；主机写译码不再经过网络管理读地址的选择器。
-    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7:SPLIT_CFG_ADDR ? 3:0)+:8];
+    wire [7:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 3 : 0)+:8];
 
     // 全速配置、捕获和加载区读回使用的常量。
     localparam ST_IDLE = 0, ST_BUSY = 1, ST_SUCCESS = 2, ST_FAILED = 3;
@@ -100,7 +100,7 @@ module afdx_615a #(
         cfg_we && cfg_write_addr == REG_MEMORY_ADDRESS,
         cfg_we && cfg_write_addr == REG_TX_VL,
         cfg_we && cfg_write_addr == REG_ENABLE
-        };
+    };
 
     reg configured, protocol_a4;
     reg [6:0] configured_vl;
@@ -115,7 +115,7 @@ module afdx_615a #(
     reg [31:0] retry_total;
     reg consume_q, consume_previous;
     reg rx_we, packet_pending, receiving;
-    // 集成输入的次态即原 enable 寄存器的 D 端，
+    // 集成输入 enable_next 即原 enable 寄存器的 D 端次态值，
     // 因此各本地副本每拍都与 enable 完全同值，不会延后一拍。
     wire [2:0] local_ready;
     generate
@@ -137,7 +137,7 @@ module afdx_615a #(
     (* preserve = 1, dont_merge = 1 *) reg [7:0] rx_wd;
     reg [15:0] rx_op, rx_block, peer_sp, peer_dp;
     (* preserve = 1, dont_merge = 1 *) reg [15:0] rx_port_stage, rx_port_local;
-    // 四个端口分别寄存比较结果，避免跨端口的或逻辑串在输入比较后。
+    // 四个端口分别寄存比较结果，避免跨端口或逻辑串联在输入比较路径之后。
     // 合并后的匹配仍与 rx_port_local 同拍有效，不增加接收延迟。
     (* preserve = 1, dont_merge = 1 *) reg svc_request_match, svc_main_match, svc_status_match, svc_deny_match;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] request_byte_match;
@@ -160,7 +160,7 @@ module afdx_615a #(
     generate
         for (permit_byte = 0; permit_byte < 4; permit_byte = permit_byte + 1) begin : field_permit
             if (CFG_READY_PREDICT || CFG_READY_TERMS) begin : prediction
-                (* preserve = 1, dont_merge = 1 *) reg request_allowed, timeout_allowed;
+                (* preserve=1,dont_merge=1 *) reg request_allowed, timeout_allowed;
                 always @(posedge clk) begin
                     if (reset) begin
                         request_allowed <= 0;
@@ -342,7 +342,7 @@ module afdx_615a #(
             rx_wa <= rx_index;
             rx_wd <= rx_data;
             if (rx_valid && capture_op_q) rx_op[7:0] <= rx_data;
-            // 前瞻位等价于本拍 receiving && rx_index==2/3，逐字节选通和数据不加流水。
+            // 前瞻选通等价于本拍 receiving && (rx_index == 2 || rx_index == 3)，逐字节捕获不增加流水级。
             if (rx_valid && capture_hi_q) rx_block[15:8] <= rx_data;
             if (rx_valid && capture_lo_q) rx_block[7:0] <= rx_data;
             if (consume_q && !consume_previous) packet_pending <= 0;
@@ -481,7 +481,7 @@ module afdx_615a #(
                 17 : denial_octet = format[1] ? "A" : 8'd0;
                 18 : denial_octet = format[1] ? "T" : 8'd0;
                 19 : denial_octet = format[1] ? "A" : 8'd0;
-                default :;
+                default : ;
             endcase
         end
     endfunction
@@ -615,6 +615,7 @@ module afdx_615a #(
         .read_address  (ram_rx_ra),
         .read_data     (rx_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1024)) packet_tx (
         .clk           (clk),
         .write_enable  (ram_tx_we),
@@ -624,6 +625,7 @@ module afdx_615a #(
         .read_address  (tx_ra),
         .read_data     (tx_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(512)) lur_ram (
         .clk           (clk),
         .write_enable  (ram_lur_we),
@@ -633,6 +635,7 @@ module afdx_615a #(
         .read_address  (ram_lur_ra),
         .read_data     (lur_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(2048)) header_ram (
         .clk           (clk),
         .write_enable  (ram_hdr_we),
@@ -642,6 +645,7 @@ module afdx_615a #(
         .read_address  (ram_hdr_ra),
         .read_data     (hdr_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(8192)) load_ram (
         .clk           (clk),
         .write_enable  (ram_load_we),
@@ -663,6 +667,7 @@ module afdx_615a #(
         .read_address  (tx_ra[4:0]),
         .read_data     (deny_q)
     );
+
     afdx_mgmt_tx #(.AW(10)) sender (
         .clk          (clk),
         .reset        (reset),

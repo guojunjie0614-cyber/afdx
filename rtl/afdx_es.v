@@ -14,10 +14,10 @@ module afdx_es #(
     parameter RX_CONFIG_BANKS = 16
 ) (
     // 时钟复位与 A 网千兆 GMII 收发信号（A 网与 B 网互为冗余备份，同一帧双路并发）。
-    input  wire        clk, // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
-    input  wire        reset, // reset 为高时，在时钟上升沿复位。
-    output wire [7:0]  tx_data, // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
-    input  wire [7:0]  rx_data, // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
+    input  wire        clk,      // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
+    input  wire        reset,    // reset 为高时，在时钟上升沿复位。
+    output wire [7:0]  tx_data,  // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
+    input  wire [7:0]  rx_data,  // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
     output wire        tx_valid, // tx_valid 为高表示本拍有发送字节，帧内每拍都有效。
     input  wire        rx_valid, // rx_valid 为高表示本拍有接收字节，拉低表示帧已结束。
     output wire        tx_ready, // tx_ready 为高表示收发核心初始化完成，可以配置和使用。
@@ -74,8 +74,8 @@ module afdx_es #(
     // tx_ready_q 保存收发核心都已初始化的结果；加载服务使用同拍的专用副本。
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg tx_ready_q;
     (* preserve = 1, dont_merge = 1 *) reg loader_ready_q;
-    // 配置副本数取 32 的正因数；每份服务相邻的一组物理 bank。
-    // 与 tx_ready_q 同拍更新；末项独供首配置副本的 32 位数据。
+    // 配置副本数取 32 的正因数；每份副本服务相邻的一组物理配置 bank。
+    // 与 tx_ready_q 同拍更新；最高位专供首份配置副本的 32 位数据通路。
     (* preserve = 1, dont_merge = 1 *) reg [RX_CONFIG_BANKS:0] receive_ready_q;
 
     // 同一 125 MHz 主时钟下的二分频时钟使能（CE_DIV=2）扇出复制树，不产生派生时钟；
@@ -126,10 +126,10 @@ module afdx_es #(
     wire [11:0] d_vl;
     wire [2:0] svc_tx_ready;
     wire [31:0] rtc_rdata, rtc_sync_count;
-    // cfg_ready_m 与 cfg_ready 同值同拍，只供下游模块写选通，给布线独立的驱动副本。
+    // cfg_ready_m 与 cfg_ready 同值同拍，专供下游模块写选通，提供独立的布线驱动副本。
     wire cfg_ready_m, service_ready_next;
     wire service_ready_base, service_ready_rx_term;
-    // 所有 RX 允许副本同 D/同复位；目的端用末项减轻 0 号副本负载。
+    // 所有 RX 写允许副本同 D 端、同复位；服务模块使用末项以减轻 0 号副本负载。
     wire service_ready_rx_ack = rx_cfg_ok[RX_CONFIG_BANKS - 1];
     wire [7:0] snmp_wr_sel;
     wire [6:0] loader_wr_sel;
@@ -243,6 +243,7 @@ module afdx_es #(
         .rx_dport          (load_rx_port),
         .rx_claim          (load_claim)
     );
+
     afdx_snmp #(
         .LOCAL_RX_PORT     (1),
         .SPLIT_CFG_ADDR    (2),
@@ -284,6 +285,7 @@ module afdx_es #(
         .rx_dport         (snmp_rx_port),
         .rx_claim         (snmp_claim)
     );
+
     afdx_rtc #(
         .LOCAL_RX_PORT          (1),
         .BANKED_RX              (1),
@@ -410,6 +412,7 @@ module afdx_es #(
         .byte_en (byte_en),
         .now_c   (now_c)
     );
+
     afdx_timebase transmit_timebase (
         .clk     (clk),
         .reset   (reset),
@@ -417,6 +420,7 @@ module afdx_es #(
         .byte_en (),
         .now_c   ()
     );
+
     afdx_timebase receive_timebase (
         .clk     (clk),
         .reset   (reset),
@@ -424,6 +428,7 @@ module afdx_es #(
         .byte_en (),
         .now_c   (receive_clock_coarse)
     );
+
     afdx_tx_core #(
         .TX_PAGE_AW (TX_PAGE_AW),
         .TX_OFF_AW  (TX_OFF_AW),
@@ -459,6 +464,7 @@ module afdx_es #(
         .ev_tx_b        (ev_tx[6]),
         .cfg_ok         (tx_cfg_ok)
     );
+
     afdx_rx_core #(
         .REGISTERED_TIME_TICK (1),
         .RX_RING_AW           (RX_RING_AW),
@@ -490,6 +496,7 @@ module afdx_es #(
         .ev_deliver (ev_deliver),
         .cfg_ok     (rx_cfg_ok)
     );
+
     afdx_cfg #(.RX_BUS_COPIES(RX_CONFIG_BANKS), .BANKED_READY(1)) cfg_regs (
         .rx_ready_by_bank      (receive_ready_q),
         .clk                   (clk),

@@ -1,6 +1,6 @@
 // 本模块读取用户数据，在前面加上以太网头、IPv4 头和 UDP 头，组成一帧。
 // afdx_tx_engine 给出要发送的消息，组好的字节交给 afdx_mac_tx。
-// 本模块用于赛题的发送组帧，也把实际发送时间返回调度器。
+// 本模块实现发送组帧功能，并将实际发送时刻返回调度器。
 module afdx_tx_builder #(
     parameter TX_PAGE_AW = 8,
     TX_OFF_AW            = 9,
@@ -75,7 +75,7 @@ module afdx_tx_builder #(
     // stream_active 为高表示当前帧正在发送，两者可以同时推进。
     (* preserve = 1, dont_merge = 1, maxfan = 16 *) reg pending, prepared, stream_active, p_a, p_b, p_timed;
 
-    // 预处理序列逐拍依次计算长度、IP 标识、分片偏移/标志以及源/目的地址字段。
+    // 预处理计数：按拍串行完成长度计算与 IPv4 头校验和分段累加（含标识、分片字段及源/目的地址）。
     reg [3:0] prep;
 
     // part 的取值：一帧依次发送协议头、用户数据、补零和序号。
@@ -299,6 +299,7 @@ module afdx_tx_builder #(
             p_user <= snap_user;
         end
     end
+
     genvar header_group;
     generate
         for (header_group = 0; header_group < 14; header_group = header_group + 1) begin : header_word
@@ -318,7 +319,7 @@ module afdx_tx_builder #(
                     if (s_valid && s_ready[0] && s_last) header_idle <= 1;
                 end
             end
-            // 离开 PART_HEADER 后不再读取 header 移位内容， payload 阶段在 ready 沿继续
+            // 离开 PART_HEADER 后不再读取 header 移位内容，payload 阶段在 ready 沿继续
             // 移位而不增加分片阶段保持使能（空闲/装载分支优先级更高）。
             always @(posedge clk) begin
                 if (reset) header[header_group * 24+:24] <= 0;
@@ -416,8 +417,8 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
         end
         else begin
-            // 无流活跃时首字节（前导码 0x55）为恒定值；提前预装以避免把读头返回
-            // 与调度到期判定锥带到输出端（s_valid 为低时输出数据不被读取）。
+            // 无发送流活跃时预装首字节（目的 MAC 首字节 0x03），避免把尾页归还与调度到期
+            // 启动逻辑路径引入输出数据端（s_valid 为低时下游忽略数据引脚）。
             if (!stream_active) begin
                 s_data_a <= DMAC_BYTE0;
                 s_data_b <= DMAC_BYTE0;
@@ -427,7 +428,7 @@ module afdx_tx_builder #(
             now_q <= now_input;
             time_difference <= now_q - p_time;
             // 对差值 d < 0x7fffffff 与 d >= -8 进行精确分段局部归约，由本地四位寄存结论
-            // 驱动所有后续头段组，限制宽减法结果的扇出。
+            // 驱动所有后续帧头分片寄存器组，限制宽减法结果的扇出。
             due_nonnegative <= !time_difference[31];
             due_upper_max <= &time_difference[30:16];
             due_lower_max <= &time_difference[15:0];
@@ -441,7 +442,7 @@ module afdx_tx_builder #(
             ev_tx_b <= 0;
             payload_pipe <= {payload_pipe[0], payload_re};
             pnext_pipe <= {pnext_pipe[0], pnext_re};
-            // E0 拍发出读请求 -> E1 拍读同步 RAM -> E2 拍本地返还锁存 -> E3 拍送入 FIFO，
+            // E0 拍发出读请求 -> E1 拍读同步 RAM -> E2 拍本地返回寄存 -> E3 拍送入 FIFO，
             // valid、页归还标记与读出时序的节拍关系均保持不变。
             payload_qr <= payload_q;
             pnext_qr <= pnext_q;
@@ -536,7 +537,7 @@ module afdx_tx_builder #(
                     default :;
                 endcase
             end
-            // 提前四拍判断发送时刻，以补偿计时和输出寄存器的延迟。
+            // 提前判断发送时刻，以补偿流水、计时和输出寄存器的延迟。
             if (pending && prepared && !stream_active && !head_pending && time_due) begin
                 stream_active <= 1;
                 s_valid <= 1;
@@ -545,7 +546,6 @@ module afdx_tx_builder #(
                 s_en_b <= p_b;
                 // 目的 MAC 地址是 03:00:00:00 加 16 位虚拟链路编号。
                 // 源 MAC 地址是 02:00:00 加 16 位端系统编号，最后一字节是网络标识，A 网为 0x20。
-
                 header_index <= 0;
                 fifo_pop_eligible <= 0;
                 part <= PART_HEADER;
@@ -650,10 +650,11 @@ module afdx_tx_builder #(
 `ifdef AFDX_CE_DIV
     // 所有 RTL 回归都定义此宏；综合不定义，不产生硬件。
     always @(negedge clk) begin
-        if (!reset && (fifo_pop_eligible !== (s_valid && !s_last &&
-                ((part == PART_HEADER && header_index == active_header_last) ||
-                (part == PART_PAYLOAD && payload_more))))) begin
-            $display("[FAIL] fifo_pop_eligible invariant part=%0d header=%0d payload=%0d", part, header_index, payload_index);
+        if (!reset && (fifo_pop_eligible !== (s_valid && !s_last
+                && ((part == PART_HEADER && header_index == active_header_last)
+                || (part == PART_PAYLOAD && payload_more))))) begin
+            $display("[FAIL] fifo_pop_eligible invariant part=%0d header=%0d payload=%0d",
+                part, header_index, payload_index);
             // synthesis translate_off
             $fatal(1, "fifo_pop_eligible invariant");
             // synthesis translate_on

@@ -18,9 +18,9 @@ module afdx_app_read #(
     input  wire [AW:0]   next_limit
 );
 
-    // 共 8 个信用额度统一覆盖在途读流水、缓存字节、两级输出槽及 1 个待回收消费脉冲：
+    // 共 8 个信用额度统一覆盖在途读流水、缓存字节、两级输出槽及 1 个待回收取数脉冲：
     // 每拍满足 reserved = popcount(pending) + queued + output_count + take_q；
-    // 外部握手消费先寄存一拍再归还信用，内部级间搬移不额外消耗或归还信用。
+    // 外部握手取走字节后先寄存一拍再归还信用，内部级间搬移不额外消耗或归还信用。
     reg [READ_LATENCY-1:0] pending;
     integer stage;
     wire response = pending[READ_LATENCY-1];
@@ -47,6 +47,7 @@ module afdx_app_read #(
             assign available = pointer != limit;
         end
     endgenerate
+
     assign read_enable = issue;
     assign read_address = pointer[AW-1:0];
 
@@ -90,7 +91,7 @@ module afdx_app_read #(
                 2'b10 : queued <= queued + 1'b1;
                 2'b01 : queued <= queued - 1'b1;
             endcase
-            // 保留推断队列存储器的写数据输入门控隔离。
+            // 保留推断队列 RAM 的写数据输入门控隔离。
             if (response) begin
                 bytes[wr] <= response ? read_data : 9'b0;
                 wr <= wr + 1'b1;

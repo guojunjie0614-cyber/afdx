@@ -27,7 +27,8 @@ module afdx_rx_reassembly_ram #(
             assign write_address = wa;
         end
     endgenerate
-    (* ramstyle = "M4K,no_rw_check" *) reg [WIDTH-1:0] memory[0:(1<<AW)-1];
+
+    (* ramstyle = "M4K,no_rw_check" *) reg [WIDTH-1:0] memory[0:(1 << AW)-1];
 
     // 保持与通用双端口 RAM 封装一致的写数据输入 LUT 隔离结构。
     always @(posedge clk)
@@ -35,6 +36,7 @@ module afdx_rx_reassembly_ram #(
 
     always @(posedge clk)
         if (re) q <= memory[ra];
+
 `ifndef SYNTHESIS
     always @(posedge clk)
         if (we && re && write_address == ra) begin

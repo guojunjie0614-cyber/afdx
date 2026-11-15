@@ -1,6 +1,6 @@
 // 封装专用反查 RAM：读口持续工作，同拍同址的读值允许未定义。
-// afdx_app_rx 在对应 map_pending 拍通过 map_bypass 使用写入值，绝不消费冲突读值。
-// 与核心通用 RAM 分开，保留核心 afdx_ram_sdp 的禁止碰撞检查语义。
+// afdx_app_rx 在对应 map_pending 拍通过 map_bypass 使用新写入值，不采纳冲突读出结果。
+// 与通用 RAM 分开封装，保留核心 afdx_ram_sdp 的同址读写冲突检查语义。
 module afdx_app_map #(
     parameter WIDTH = 16,
     parameter AW    = 12

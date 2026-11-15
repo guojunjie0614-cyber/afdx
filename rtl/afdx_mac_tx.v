@@ -1,6 +1,6 @@
 // 本模块给帧内容添加前导码和校验值，再发到两路以太网。
 // afdx_tx_builder 提供帧内容，本模块逐字节输出到线路。
-// 本模块用于赛题的以太网发送，并保证两帧之间的空闲时间。
+// 本模块实现 AFDX 端系统以太网发送，并保证两帧之间的帧间空闲时间。
 // FCS（Frame Check Sequence，帧校验序列）用于让接收方检查帧内容。
 module afdx_mac_tx #(parameter READY_COPIES = 1) (
     // byte_en 为高时推进一个字节，当前顶层每拍都为高。
@@ -34,7 +34,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
     // 两帧之间至少空闲的拍数。
     localparam [6:0] IFG_CYCLES = 7'd12;
 
-    // pre_index/fcs_index 记录前导码和校验值发到哪个字节。
+    // pre_index 记录前导码发到第几个字节；
     // gap_left 保证两帧之间至少空闲 12 拍。
     reg [2:0] state, pre_index;
     // 进入 FCS 状态发出首字节后还剩 3 个字节，使用移位令牌直接
@@ -107,7 +107,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
             tx_underrun <= 0;
             if (gap_left != 0) gap_left <= gap_left - 1'b1;
             // 下方进入 FCS 时的装载分支会覆盖此处的自由移位；
-            // 终止标记与状态机状态均不再门控寄存中的 CRC 比特使能。
+            // 终止标记与状态机状态均不再门控已寄存 FCS 字节的移位使能。
             if (byte_en) begin
                 fcs_a <= {8'b0, fcs_a[31:8]};
                 fcs_b <= {8'b0, fcs_b[31:8]};

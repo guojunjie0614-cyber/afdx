@@ -1,26 +1,22 @@
-// 本模块根据一个新字节更新以太网校验值。
-// 收发模块提供上一校验值和当前字节，本模块返回新的校验值。
-// 本模块用于赛题要求的帧错误检测。
-// CRC（Cyclic Redundancy Check，循环冗余校验）用于发现数据错误。
+// 8 位并行以太网 CRC-32 组合计算模块。
+// 根据上一拍余数与当前输入字节单拍更新下一个 32 位 CRC 余数，供 MAC 收发模块完成整帧 FCS 校验。
 module afdx_crc32_d8 (
-    // crc 是处理上一字节后的余数，data 是本次要处理的字节。
+    // crc 为处理上一字节后的余数，data 为当前待处理字节。
     input  wire [31:0] crc,
     input  wire [7:0]  data,
 
-    // next_crc 是处理完这八个数据位后的余数。
+    // next_crc 为处理完当前 8 位数据后的新余数。
     output reg  [31:0] next_crc
 );
 
-    // 按 IEEE 802.3 使用反射多项式 0xedb88320。
-    // 收发模块负责设置初值和最终取反。
+    // 采用 IEEE 802.3 标准反射多项式 0xedb88320；初值装载与最终按位取反由上层收发模块完成。
     integer bit_index;
 
     always @* begin
         next_crc = crc ^ {24'b0, data};
         for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1)
-            if (next_crc[0]) next_crc = (next_crc >> 1) ^
-                32'hedb88320;
-        else next_crc = next_crc >> 1;
+            if (next_crc[0]) next_crc = (next_crc >> 1) ^ 32'hedb88320;
+            else next_crc = next_crc >> 1;
     end
 
 endmodule

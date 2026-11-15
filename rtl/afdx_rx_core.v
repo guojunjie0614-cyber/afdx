@@ -1,6 +1,5 @@
-// 本模块连接两路以太网接收、报文检查和应用交付模块。
-// 两路线路分别接收，检查通过后由一个输出口交付消息。
-// 本模块对应赛题的接收、错误检测和双网重复帧去除功能。
+// AFDX 接收核心顶层：集成双网 MAC 接收、协议解析、接收校验引擎、交付控制及 IPv4 分片重组。
+// A/B 两路物理网独立接收并校验，经 VL 过滤、完整性检查与冗余去重后由统一接口交付应用。
 module afdx_rx_core #(
     parameter RX_RING_AW          = 12,
     RX_DQ_AW                      = 5,
@@ -12,24 +11,23 @@ module afdx_rx_core #(
     // clk 为工作时钟，reset 为同步高有效复位。
     input  wire                         clk, reset,
 
-    // now_c 提供粗粒度时间，rx_data_a/b 在对应 valid 为高时有效。
-    // 参数为 1 时，bit 16 携带同拍变化脉冲；默认端口宽度和位置不变。
+    // now_c 为粗粒度时间基准；rx_data_a/b 在对应 rx_valid_a/b 为高时有效。
+    // REGISTERED_TIME_TICK 为 1 时，now_c 最高位（第 16 位）携带同拍跳变脉冲；默认端口位宽与位置不变。
     input  wire [15 + REGISTERED_TIME_TICK:0] now_c,
     input  wire [7:0]                   rx_data_a,
     input  wire                         rx_valid_a,
     input  wire [7:0]                   rx_data_b,
     input  wire                         rx_valid_b,
 
-    // cfg_map_we 按配置副本写入线路编号到配置索引的映射。
-    // cfg_cfg_we 写入接收参数，cfg_ok 为高时允许这些写操作。
+    // cfg_map_we 按配置副本写入线路 VL 编号到配置索引的映射表；
+    // cfg_cfg_we 写入虚拟链路接收配置，仅在 cfg_ok 为高时允许写操作。
     input  wire [CFG_COPIES - 1:0]      cfg_map_we,
     input  wire                         cfg_cfg_we,
     input  wire [CFG_COPIES * 16 - 1:0] cfg_addr,
     input  wire [CFG_COPIES * 32 - 1:0] cfg_wdata,
 
-    // d_valid 为高时交付一个用户字节，d_last 标记消息末字节。
-    // d_vl 是接收配置索引，d_sport/d_dport 是源端口和目的端口。
-    // d_net 为 0 表示来自 A 网，为 1 表示来自 B 网。
+    // d_valid 为高时交付一个用户载荷字节，d_last 标记报文末字节；
+    // d_vl 为接收配置索引，d_sport/d_dport 为 UDP 源/目的端口，d_net 为 0 表示来自 A 网、1 表示来自 B 网。
     output wire                         d_valid,
     output wire [7:0]                   d_data,
     output wire                         d_last,
@@ -37,9 +35,8 @@ module afdx_rx_core #(
     output wire [15:0]                  d_sport, d_dport,
     output wire                         d_net,
 
-    // 所有接收表初始化完成后，init_done 才变高。
-    // ev_a/b 分别报告两网检查结果。
-    // ev_rm_drop 表示丢弃重复帧，ev_deliver 表示接纳消息。
+    // 所有接收表完成清零初始化后 init_done 才拉高；ev_a/b 分别上报两网帧检查事件，
+    // ev_rm_drop 表示冗余管理丢弃重复帧，ev_deliver 表示报文被接纳并写入交付队列。
     (* preserve = 1, dont_merge = 1 *)
     output reg                          init_done,
     output reg  [7:0]                   ev_a, ev_b,
@@ -47,8 +44,7 @@ module afdx_rx_core #(
     output wire [CFG_COPIES - 1:0]      cfg_ok
 );
 
-    // clear_addr 初始化 65536 项映射及前 4096 项接收配置。
-    // flush_init 等待最后一次写入完成。
+    // clear_addr 用于初始化 65536 项 VL 映射表及前 4096 项接收配置表；flush_init 等待末次写入完成。
     (* preserve = 1, dont_merge = 1 *) reg cfg_we;
     (* preserve = 1, dont_merge = 1, maxfan = 8 *) reg flush_init;
     reg [15:0] clear_addr;
@@ -75,7 +71,9 @@ module afdx_rx_core #(
     wire [7:0] parse_ev_a, parse_ev_b, engine_ev_a, engine_ev_b;
 
     localparam DQ_WIDTH = RX_RING_AW + 61;
-    wire query, cancel, result_valid, reserve, reserve_ok, reservation_net, frag_ready, frag_prepared, frag_start, frag_valid, frag_last, frag_net, frag_kind, frag_empty;
+    wire query, cancel, result_valid, reserve, reserve_ok, reservation_net,
+        frag_ready, frag_prepared, frag_start, frag_valid, frag_last,
+        frag_net, frag_kind, frag_empty;
     wire [1:0] query_bank, cancel_bank, reserve_bank;
     wire [3:0] reserve_slot, frag_slot;
     wire [125:0] reserve_meta;
@@ -90,11 +88,11 @@ module afdx_rx_core #(
     wire [RX_DQ_AW:0] dq_count;
     wire [DQ_WIDTH - 1:0] dq_wd, dq_q;
 
-    // rx_dq 最多保存 2^RX_DQ_AW 条待交付消息的信息，按先进先出使用。
-    // 接收引擎按写指针写入，交付模块每拍读出读指针所指的一项。
-    // 队列为空时写入项可能正是读指针所指项，这一拍跳过读出；
-    // 交付模块最早在下一拍看到计数非零，那时读出的已是新写入的值。
+    // 交付描述符队列 rx_dq（FIFO，深度 2^RX_DQ_AW）：接收引擎按写指针入队，交付模块逐拍预读队头。
+    // 队列为空且同拍写入项恰位于读指针时，本拍跳过读出以规避同址读写冲突；
+    // 交付模块最早在下一拍看到 dq_count 非零，此时读口已稳定输出新写入的描述符。
     assign dq_re = !(dq_we && dq_wa == dq_ra);
+
     afdx_ram_sdp #(.WIDTH(DQ_WIDTH), .DEPTH(1 << RX_DQ_AW)) rx_dq (
         .clk           (clk),
         .write_enable  (dq_we),
@@ -105,7 +103,7 @@ module afdx_rx_core #(
         .read_data     (dq_q)
     );
 
-    // 初始化完成且 cfg_ok 为高时，外部配置才能写入接收表。
+    // 初始化完成且 cfg_ok 为高时，外部配置才能写入接收配置表。
     always @(posedge clk) begin
         if (reset) begin
             init_done <= 0;
@@ -130,7 +128,7 @@ module afdx_rx_core #(
                 else if (engine_initialized) init_done <= 1;
             end
             else cfg_we <= cfg_cfg_we && cfg_ok[0];
-            // 地址与数据自由运行，写脉冲独立决定提交；清除比较不再出现在写数据锥内。
+            // 地址与写数据随拍自由更新，仅由写脉冲决定提交，避免清零比较逻辑串入写数据路径。
             cfg_wa <= init_done ? cfg_addr[11:0] : clear_addr[11:0];
             cfg_wd <= init_done ? cfg_wdata[31:0] : 32'b0;
             ev_a <= parse_ev_a | engine_ev_a | (reassembly_reject[0] ? 8'h80 : 8'h00);
@@ -140,22 +138,21 @@ module afdx_rx_core #(
         end
     end
 
-    // map 保存有效位和 12 位配置索引。
-    // cfg 保存接收开关、长度限制和两网允许的最大时间差。
-    // state 保存各虚拟链路的接收序号和交付记录。
-    // 32 个 bank 各保存 2048 项；每个局部地址只驱动本 bank 的存储块。
-    // 引擎源端同时登记请求/地址，bank 次级驱动 RAM。
-    // 回读按2-bank、4-group、最终4-group三级归并，FRAME5保存最终响应。
+    // map 表存放有效位与 12 位配置索引；cfg 表存放接收开关、长度上限及双网最大时差；
+    // state 表存放各 VL 的接收序号与冗余去重历史。
+    // 映射表拆分为 32 个子块（每块 2048 项），局部地址仅驱动本子块存储单元；
+    // 引擎源端同步寄存请求与地址，子块次级直接驱动物理 RAM，读回经 2 块并、4 组合并、4 路汇总三级归并，
+    // 并于第 5 拍（FRAME5）锁存最终查询响应。
     localparam MAP_BANKS = 32, MAP_BANK_AW = 11, MAP_GROUPS = 16;
     wire [MAP_BANKS * 13 - 1:0] map_bank_data;
-    // 首级地址寄存在 engine 的分发副本，bank 次级同时译码高位并登记低位。
-    // 请求仍为两级流水，低地址与返回数据的固定相位均不改变。
-    // 写选通使用本 bank 所在总线副本的 map_we 位。
+
+    // 首级读地址寄存在引擎分发副本，各映射子块次级同时译码高位片选并寄存低位地址；
+    // 请求仍保持两级流水，低位地址与读回数据的固定相位关系不变，写选通取自对应总线副本的写使能。
     wire [MAP_BANKS - 1:0] map_rd_sel, map_wr_sel;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
-    (* preserve = 1, dont_merge = 1 *) reg [51:0] map_upper_data;
-    assign map_q = map_upper_data[12:0] | map_upper_data[25:13] |
-        map_upper_data[38:26] | map_upper_data[51:39];
+    (* preserve=1, dont_merge=1 *) reg [51:0] map_upper_data;
+    assign map_q = map_upper_data[12:0] | map_upper_data[25:13]
+        | map_upper_data[38:26] | map_upper_data[51:39];
     (* preserve = 1, dont_merge = 1 *) reg [12:0] map_q_r;
     always @(posedge clk) begin
         if (reset) map_q_r <= 0;
@@ -163,13 +160,14 @@ module afdx_rx_core #(
     end
 
     genvar bank, map_group, map_slice, upper_group, cfg_slice, state_slice;
+
     generate
         for (bank = 0; bank < MAP_BANKS; bank = bank + 1) begin : map_bank
-            // 相邻 bank 共享一份配置/描述符分发；CFG_COPIES 为 MAP_BANKS 的正因数。
+            // 相邻映射子块共享一份配置/描述符分发总线（CFG_COPIES 为 MAP_BANKS 的正因数）。
             localparam BUS_COPY = bank / (MAP_BANKS / CFG_COPIES);
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
             (* preserve = 1, dont_merge = 1 *) reg cleared;
-            (* preserve = 1, dont_merge = 1 *) reg clear_low_last, clear_high_last;
+            (* preserve=1, dont_merge=1 *) reg clear_low_last, clear_high_last;
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16+:16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16+:16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32+:13];
@@ -192,30 +190,31 @@ module afdx_rx_core #(
                 end
                 else begin
                     selected <= ram_request_q;
-                    // 地址首级已在源端登记；本级译码与低地址同步送到 RAM 口。
+                    // 首级读地址已在引擎源端寄存；本级片选译码与低位地址同拍送达 RAM 端口。
                     ram_request_q <= map_re[BUS_COPY] && map_rd_sel[bank];
-                    // 各 bank 同时清自己的 2048 项；对外仍等待原初始化完成信号。
+                    // 各映射子块并行清零各自 2048 项；对上层仍统一等待初始化完成信号。
                     if (!cleared) begin
                         clear_local <= clear_local + 1'b1;
-                        // 仅当当前计数值为 2047 时联合预测才成立：低位预测 62->63 且高位保持 31。
+                        // 仅当计数值到达 2047 时联合预测才成立：低位由 62 预判 63，且高位保持 31。
                         clear_low_last <= clear_local[5:0] == 6'd62;
                         clear_high_last <= clear_local[10:6] == 5'd31;
                         if (clear_low_last && clear_high_last) cleared <= 1;
                     end
-                    // 地址副本每拍更新，读写脉冲在本 bank 内控制存储器。
-                    // 返回选择由 RAM 口读脉冲延后一拍，避免全局接纳使能驱动所有 bank 的保持端。
+                    // 本地地址副本每拍更新，读写脉冲在子块内独立控制存储器；
+                    // 返回选通由 RAM 读脉冲延后一拍生成，避免全局接纳使能扇出到全部子块保持端。
                     ram_address_q <= bank_read_addr[MAP_BANK_AW - 1:0];
                 end
             end
-            // 拆分 7/6 比特组各自独立的写命令，在保持原受理沿的同时使每组物理
-            // RAM 输入扇出负载减半。
+
+            // 将写命令拆分为独立的 7 比特 / 6 比特两组，在保持原有写入时序沿的同时使每组物理 RAM 输入扇出减半。
             for (map_slice = 0; map_slice < 2; map_slice = map_slice + 1) begin : write_slice
                 localparam SLICE_WIDTH = map_slice == 0 ? 7 : 6;
-                (* preserve = 1, dont_merge = 1 *) reg write_request, config_mode, write_is_config;
-                (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW-1:0] write_address, configuration_address;
-                (* preserve = 1, dont_merge = 1 *) reg [SLICE_WIDTH-1:0] write_data;
+                (* preserve=1, dont_merge=1 *) reg write_request, config_mode, write_is_config;
+                (* preserve=1, dont_merge=1 *) reg [MAP_BANK_AW-1:0] write_address, configuration_address;
+                (* preserve=1, dont_merge=1 *) reg [SLICE_WIDTH-1:0] write_data;
+
                 always @(posedge clk) begin
-                    // 远端配置地址先经过一级无条件触发器，清零/配置地址复用置于物理 RAM 端口本地。
+                    // 远端配置地址先经一级无条件寄存器打拍，清零与配置地址复用下沉至物理 RAM 端口本地。
                     configuration_address <= bank_cfg_addr[MAP_BANK_AW-1:0];
                     write_data <= config_mode ? bank_cfg_data[map_slice*7+:SLICE_WIDTH] : {SLICE_WIDTH{1'b0}};
                     if (reset) begin
@@ -223,15 +222,17 @@ module afdx_rx_core #(
                         config_mode <= 0;
                         write_is_config <= 0;
                         write_address <= {MAP_BANK_AW{1'b1}};
-                    end else begin
-                        // 首个有效清零沿由全 1 计数回绕到 0，末拍记录 2047，与原共享计数器完全等效。
+                    end
+                    else begin
+                        // 首个有效清零周期由全 1 回绕至 0，末拍写入地址 2047，与原共享计数器完全等效。
                         if (!config_mode) write_address <= write_address + 1'b1;
                         write_is_config <= config_mode;
                         if (clear_low_last && clear_high_last) config_mode <= 1;
                         write_request <= !config_mode || map_wr_sel[bank];
                     end
                 end
-                afdx_ram_sdp #(.WIDTH(SLICE_WIDTH), .DEPTH(1<<MAP_BANK_AW)) memory (
+
+                afdx_ram_sdp #(.WIDTH(SLICE_WIDTH), .DEPTH(1 << MAP_BANK_AW)) memory (
                     .clk           (clk),
                     .write_enable  (write_request),
                     .write_address (write_is_config ? configuration_address : write_address),
@@ -242,7 +243,8 @@ module afdx_rx_core #(
                 );
             end
         end
-        // 每两个 bank 在附近合并并寄存，避免存储器输出跨八个 bank 后才遇到寄存器。
+
+        // 相邻两个映射子块就近合并并打拍寄存，避免存储器输出长距离跨区汇聚后再遇寄存器。
         for (map_group = 0; map_group < MAP_GROUPS; map_group = map_group + 1) begin : map_read_group
             always @(posedge clk) begin
                 if (reset) map_group_data[map_group * 13+:13] <= 0;
@@ -251,15 +253,19 @@ module afdx_rx_core #(
                     | map_bank_data[(map_group * 2 + 1) * 13+:13];
             end
         end
+
         for (upper_group = 0; upper_group < 4; upper_group = upper_group + 1) begin : map_upper_group
             always @(posedge clk) begin
                 if (reset) map_upper_data[upper_group*13+:13] <= 0;
                 else map_upper_data[upper_group*13+:13] <=
-                    map_group_data[upper_group*52+:13] | map_group_data[upper_group*52+13+:13] |
-                    map_group_data[upper_group*52+26+:13] | map_group_data[upper_group*52+39+:13];
+                    map_group_data[upper_group*52+:13]
+                    | map_group_data[upper_group*52+13+:13]
+                    | map_group_data[upper_group*52+26+:13]
+                    | map_group_data[upper_group*52+39+:13];
             end
         end
-        // 按 4 比特分片读将每路本地读地址扇出限制为四块片内原生 RAM，
+
+        // 按 4 比特分片读出，将每路本地读地址扇出限制在 4 块片内原生 RAM 以内，
         // 读延迟与单拍物理写沿均保持不变。
         for (cfg_slice = 0; cfg_slice < 8; cfg_slice = cfg_slice + 1) begin : rx_cfg
             afdx_rx_table_slice #(.WIDTH(4)) storage (
@@ -273,6 +279,7 @@ module afdx_rx_core #(
                 .q     (cfg_q[cfg_slice*4+:4])
             );
         end
+
         for (state_slice = 0; state_slice < 11; state_slice = state_slice + 1) begin : rx_state
             localparam WIDTH = state_slice == 10 ? 3 : 4;
             afdx_rx_table_slice #(.WIDTH(WIDTH)) storage (
@@ -288,7 +295,7 @@ module afdx_rx_core #(
         end
     endgenerate
 
-    // 两网分别暂存用户数据，引擎接纳后交付模块才会读出。
+    // A/B 两网环形载荷缓存：解析模块暂存用户数据，引擎接纳后交付模块才会读出。
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_a (
         .clk           (clk),
         .write_enable  (ra_we),
@@ -298,6 +305,7 @@ module afdx_rx_core #(
         .read_address  (ra_ra),
         .read_data     (ra_q)
     );
+
     afdx_ram_sdp #(.WIDTH(8), .DEPTH(1 << RX_RING_AW)) rx_ring_b (
         .clk           (clk),
         .write_enable  (rb_we),
@@ -308,7 +316,7 @@ module afdx_rx_core #(
         .read_data     (rb_q)
     );
 
-    // 每网先检查并解析帧，再共用一个引擎检查序号和重复帧。
+    // 双网先各自完成 MAC 接收与协议解析，再共用接收引擎完成 VL 过滤、完整性检查与冗余管理。
     afdx_mac_rx mac_a (
         // 时钟和复位
         .clk      (clk),
@@ -323,6 +331,7 @@ module afdx_rx_core #(
         .f_err    (fa_err),
         .f_len    (fa_len)
     );
+
     afdx_mac_rx mac_b (
         // 时钟和复位
         .clk      (clk),
@@ -337,6 +346,7 @@ module afdx_rx_core #(
         .f_err    (fb_err),
         .f_len    (fb_len)
     );
+
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_a (
         // 时钟和复位
         .clk            (clk),
@@ -363,6 +373,7 @@ module afdx_rx_core #(
         .resolve_commit (commit_a),
         .ev             (parse_ev_a)
     );
+
     afdx_rx_parse #(.RX_RING_AW(RX_RING_AW), .DESC_COPIES(CFG_COPIES)) parse_b (
         // 时钟和复位
         .clk            (clk),
@@ -389,6 +400,7 @@ module afdx_rx_core #(
         .resolve_commit (commit_b),
         .ev             (parse_ev_b)
     );
+
     afdx_rx_engine #(
         .RX_RING_AW           (RX_RING_AW),
         .RX_DQ_AW             (RX_DQ_AW),
@@ -456,6 +468,7 @@ module afdx_rx_core #(
         .ev_rm_drop              (engine_rm),
         .ev_deliver              (engine_deliver)
     );
+
     afdx_rx_deliver #(.RX_RING_AW(RX_RING_AW), .RX_DQ_AW(RX_DQ_AW)) deliver (
         // 时钟和复位
         .clk                 (clk),
@@ -487,6 +500,7 @@ module afdx_rx_core #(
         .d_start             (frag_start),
         .d_empty             (frag_empty)
     );
+
     afdx_rx_reassembly #(
         .CONTEXTS         (REASSEMBLY_CONTEXTS),
         .TIMEOUT_CYCLES   (REASSEMBLY_TIMEOUT_CYCLES),
@@ -534,27 +548,29 @@ module afdx_rx_core #(
 
 endmodule
 
-// 接收侧本地窄返回通道：E0 拍发出读命令，E1 拍访问 RAM，E2 拍本地锁存返回；
-// 保留 SDP 写隔离与同拍不冲突约束，不增加额外写流水级。
+// 接收侧本地窄位宽读返回通道：E0 拍发出读命令，E1 拍访问 RAM，E2 拍本地锁存返回数据；
+// 保留简单双端口 RAM 写隔离与同拍读写互斥约束，不增加额外写流水级。
 module afdx_rx_table_slice #(parameter WIDTH = 8) (
     input  wire             clk, reset, we,
     input  wire [11:0]      wa,
     input  wire [WIDTH-1:0] wd,
     input  wire             re,
     input  wire [11:0]      ra,
-    (* preserve = 1, dont_merge = 1 *)
+    (* preserve=1, dont_merge=1 *)
     output reg  [WIDTH-1:0] q
 );
 
-    (* preserve = 1, dont_merge = 1 *) reg read_command;
-    (* preserve = 1, dont_merge = 1 *) reg [11:0] read_address;
+    (* preserve=1, dont_merge=1 *) reg read_command;
+    (* preserve=1, dont_merge=1 *) reg [11:0] read_address;
     wire [WIDTH-1:0] ram_q;
+
     always @(posedge clk) begin
         read_address <= ra;
         if (reset) read_command <= 0;
         else read_command <= re;
         q <= ram_q;
     end
+
     afdx_rx_reassembly_ram #(.WIDTH(WIDTH), .AW(12)) memory (
         .clk (clk),
         .we  (we),
@@ -564,4 +580,5 @@ module afdx_rx_table_slice #(parameter WIDTH = 8) (
         .ra  (read_address),
         .q   (ram_q)
     );
+
 endmodule

@@ -1,15 +1,15 @@
 // 本模块维护本地时钟，并通过网络请求和回应校准时间。
 // 它通过 afdx_svc 收发报文，通过配置口设置主从角色和读取时间。
-// 本模块对应赛题的 RTC（Real-Time Clock，实时时钟）同步功能。
+// 本模块实现端系统 RTC（Real-Time Clock，实时时钟）及 SNTP 时钟同步功能。
 // SNTP（Simple Network Time Protocol，简单网络时间协议）
 // 用四个收发时间戳估算本地时钟的偏差。
 module afdx_rtc #(
-    parameter LOCAL_RX_PORT = 0,
-    BANKED_RX               = 0,
-    SPLIT_CFG_ADDR          = 0,
-    CFG_WRITE_SELECT        = 0,
-    RX_STREAM_DELAY_CYCLES  = 0,
-    CFG_READY_TERMS         = 0
+    parameter LOCAL_RX_PORT          = 0,
+              BANKED_RX              = 0,
+              SPLIT_CFG_ADDR         = 0,
+              CFG_WRITE_SELECT       = 0,
+              RX_STREAM_DELAY_CYCLES = 0,
+              CFG_READY_TERMS        = 0
 ) (
     // enable 为高表示收发核心就绪，本地时钟每拍增加 8 ns。
     input  wire        clk, reset, enable,
@@ -49,13 +49,13 @@ module afdx_rtc #(
 `ifdef MODEL_TECH
     wire [31:0] receive_timestamp_seconds;
     wire [31:0] receive_timestamp_nanoseconds;
-    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
     wire rtc_client_launch;
     wire rtc_server_launch;
 `endif
 
     // 高 4 位专供主机写译码，低 4 位保持共享读地址。
-    wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7:SPLIT_CFG_ADDR ? 4:0)+:4];
+    wire [3:0] cfg_write_addr = cfg_addr[(SPLIT_CFG_ADDR == 2 ? 7 : SPLIT_CFG_ADDR ? 4 : 0)+:4];
 
     localparam CALC_OFFSET_CANDIDATES = 15, CALC_TIME_CANDIDATES = 16;
     localparam CALC_IDLE = 0;
@@ -107,7 +107,7 @@ module afdx_rtc #(
         if (CFG_READY_TERMS) begin : configuration_terms
             // 四个窄字段及时间装载字的四个字节各自拥有同拍本地就绪状态，
             // 避免单个远端 ready 门控全部 64 位寄存器。
-            (* preserve = 1, dont_merge = 1 *) reg [11:0] field_ctl;
+            (* preserve=1,dont_merge=1 *) reg [11:0] field_ctl;
             always @(posedge clk) begin
                 if (reset) field_ctl <= 0;
                 else field_ctl <= {12{cfg_ready_base || (cfg_ready_rx_term && cfg_ready_rx_ack)}};
@@ -133,7 +133,7 @@ module afdx_rtc #(
         cfg_we && cfg_write_addr == REG_CONTROL
         };
 
-    // 配置秒从2000-01-01 UTC起算，线上从1900年起算。
+    // 配置秒数自 2000-01-01 UTC 起算，报文线上时间戳自 1900-01-01 起算。
     // active 表示服务已启用，master 为高表示本机是服务端。
     // 客户端用 period/countdown 控制请求间隔。
     reg active, master;
@@ -150,7 +150,7 @@ module afdx_rtc #(
     // offset_sec/ns 保存最近一次校正量。
     // snapshot_ns 保存读秒时的纳秒值，便于分两次读出完整时间。
     reg [31:0] seconds, nanoseconds, snapshot_ns;
-    // 读秒使能在 rtc 内分成 4 份缓冲，各驱动 8 位切片，缩短顶层使能锥到使能端的连线。
+    // 读秒使能在 rtc 内部复制为 4 份缓冲并各自驱动 8 位切片，缩短顶层使能路径到各寄存器的连线。
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b0 = cfg_re;
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b1 = cfg_re;
     (* keep = 1, dont_merge = 1 *) wire cfg_re_b2 = cfg_re;
@@ -168,7 +168,7 @@ module afdx_rtc #(
     reg signed [31:0] offset_sec;
     reg [31:0] offset_ns;
     wire load_time = cfg_write_sel[REG_CONTROL] && cfg_wdata[2];
-    // 远端配置信号只进这一个寄存器，装载生效推迟一拍，各使能锥不再含译码。
+    // 远端配置写信号仅进入该单比特寄存器，装载生效推迟一拍，使各数据使能路径不再包含地址译码。
     reg load_pending;
 
     assign tx_vl = vl;
@@ -244,7 +244,7 @@ module afdx_rtc #(
     // CALC_LATENCY：补偿计算经过的 40 ns，下一拍转 CALC_APPLY。
     // CALC_APPLY：应用校正并计数，下一拍转 CALC_IDLE。
     reg [4:0] calc_state;
-    // calc_busy 与 calc_state 同拍影子：进入计算置位、回到空闲清除，
+    // calc_busy 为 calc_state 的同拍镜像：进入计算时置位、回到空闲时清除，
     // 供发送状态机就近判断，独热位不再跨模块连线。
     (* preserve = 1, dont_merge = 1 *) reg calc_busy;
     // 线性转移的前瞻位与当前状态同拍，宽数据通路不再直接由远处独热状态位驱动。
@@ -288,6 +288,7 @@ module afdx_rtc #(
         .done           (encode_tx_done),
         .result         (encode_tx_result)
     );
+
     afdx_ntp_fraction #(.LOCAL_CAPTURE(1)) encode_rx (
         // 时钟和复位
         .clk            (clk),
@@ -299,6 +300,7 @@ module afdx_rtc #(
         .done           (encode_rx_done),
         .result         (encode_rx_result)
     );
+
     afdx_ntp_fraction #(.LOCAL_CAPTURE(1)) decode_rx (
         // 时钟和复位
         .clk            (clk),
@@ -385,8 +387,10 @@ module afdx_rtc #(
                     reply_nibble_match[origin_byte+8] <= 0;
                     reply_byte_match[origin_byte] <= 0;
                 end else begin
-                    reply_nibble_match[origin_byte] <= rx_origin_sec[origin_byte*4+:4] == stamp_tx_sec[origin_byte*4+:4];
-                    reply_nibble_match[origin_byte+8] <= rx_origin_frac[origin_byte*4+:4] == stamp_tx_frac[origin_byte*4+:4];
+                    reply_nibble_match[origin_byte] <= rx_origin_sec[origin_byte*4+:4]
+                        == stamp_tx_sec[origin_byte*4+:4];
+                    reply_nibble_match[origin_byte+8] <= rx_origin_frac[origin_byte*4+:4]
+                        == stamp_tx_frac[origin_byte*4+:4];
                     reply_byte_match[origin_byte] <= &reply_nibble_match[origin_byte*2+:2];
                 end
             end
@@ -711,8 +715,9 @@ module afdx_rtc #(
 `endif
     genvar history_stage;
     generate
-        for (history_stage = 0; history_stage < RX_STREAM_DELAY_CYCLES; history_stage = history_stage + 1) begin : receive_time_history
-            (* preserve = 1, dont_merge = 1 *) reg [31:0] seconds_q, nanoseconds_q;
+        for (history_stage = 0; history_stage < RX_STREAM_DELAY_CYCLES;
+                history_stage = history_stage + 1) begin : receive_time_history
+            (* preserve=1,dont_merge=1 *) reg [31:0] seconds_q, nanoseconds_q;
             assign receive_seconds_history[(history_stage+1)*32+:32] = seconds_q;
             assign receive_ns_history[(history_stage+1)*32+:32] = nanoseconds_q;
             always @(posedge clk) begin
@@ -842,7 +847,7 @@ module afdx_rtc #(
                     apply_local <= calc_state == CALC_LATENCY && !abort_local;
                 end
             end
-            if (offset_byte<4) begin : sec
+            if (offset_byte < 4) begin : sec
                 always @(posedge clk) begin
                     if (reset) offset_sec[offset_byte*8+:8] <= 0;
                     else if (apply_local && !abort_local)
@@ -869,12 +874,12 @@ module afdx_rtc #(
         end
     end
 
-    // HALF 状态本身就有一拍准备周期，提前在该拍预测 +0x1dcd6500 的两个
-    // 非平凡字节进位，使 HALF_SECOND 状态只需做逐字节加法。
-    (* preserve = 1, dont_merge = 1 *) reg [1:0] rtc_half_carry;
+    // HALF 状态本身就有一拍准备周期，提前在该拍预测 +0x1dcd6500 的
+    // 两个有效字节进位，使 HALF_SECOND 状态只需做逐字节加法。
+    (* preserve=1,dont_merge=1 *) reg [1:0] rtc_half_carry;
     wire [31:0] rtc_half_value = sum_ns >>> 1;
     wire rtc_half_c16 = rtc_half_value[15:8] >= 8'h9b;
-    wire rtc_half_c24 = rtc_half_value[23:16]>8'h32 ||
+    wire rtc_half_c24 = rtc_half_value[23:16] > 8'h32 ||
         (rtc_half_value[23:16] == 8'h32 && rtc_half_c16);
     always @(posedge clk) begin
         if (reset) rtc_half_carry <= 0;
@@ -897,7 +902,7 @@ module afdx_rtc #(
     // 同拍运行与首次请求判定采用原信号次态表达式；独立调用模式下
     // enable 仍作为当拍组合输入生效。
 `ifndef MODEL_TECH
-    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
 `endif
     wire rtc_tx_running = rtc_run_ctl && enable;
     wire rtc_tx_idle = tx_state == TX_IDLE;
@@ -905,7 +910,7 @@ module afdx_rtc #(
     wire rtc_tx_word = tx_state == TX_WORD;
     wire rtc_tx_byte = tx_state == TX_BYTE;
     wire rtc_tx_handshake = tx_state == TX_HANDSHAKE;
-    wire rtc_tx_invalid = tx_state>TX_HANDSHAKE;
+    wire rtc_tx_invalid = tx_state > TX_HANDSHAKE;
     wire rtc_tx_launch = rtc_server_launch || rtc_client_launch;
     wire rtc_control_hold = !rtc_tx_idle && !rtc_tx_byte && (!rtc_tx_handshake || !tx_ready);
     wire rtc_first_armed_next = rtc_tx_running &&
@@ -938,7 +943,7 @@ module afdx_rtc #(
 
     // 由已寄存输入的精确 D 端方程预测完整回应接收许可：每个字节拥有同拍
     // 许可信号，既不引入额外时间戳流水也无延后拍；等待回应期间新秒值可覆写
-    // 已有暂存，而超时/终止仅清除协议控制位，绝不取消旧沿上的秒字节捕获，
+    // 已有暂存，而超时/终止仅清除协议控制位，绝不取消原时钟沿上的秒字节捕获，
     // 两条原优先级规则完全保留。
 `ifndef MODEL_TECH
     wire rtc_client_launch = !master_tx && countdown_zero_q && !calc_busy && !rx_done && !packet_done;
@@ -963,7 +968,7 @@ module afdx_rtc #(
         : (!abort_protocol && rx_byte && rx_last && rx_index == PACKET_LAST);
     wire rtc_accept_next = rtc_packet_done_next && !rtc_master_next && rtc_waiting_next
         && rtc_tx_idle_next && rtc_server_header_next && (&reply_nibble_match);
-    (* preserve = 1, dont_merge = 1 *) reg [8:0] rtc_capture_ctl;
+    (* preserve=1,dont_merge=1 *) reg [8:0] rtc_capture_ctl;
     wire [31:0] rtc_receive_seconds = rx_receive_sec - NTP_EPOCH;
     wire [31:0] rtc_transmit_seconds = rx_transmit_sec - NTP_EPOCH;
     genvar capture_byte;
@@ -973,13 +978,13 @@ module afdx_rtc #(
                 if (reset) rtc_capture_ctl[capture_byte] <= 0;
                 else rtc_capture_ctl[capture_byte] <= rtc_accept_next;
             end
-            if (capture_byte<4) begin : receive_word
+            if (capture_byte < 4) begin : receive_word
                 always @(posedge clk) begin
                     if (reset) server_receive_sec[capture_byte*8+:8] <= 0;
                     else if (rtc_capture_ctl[capture_byte])
                         server_receive_sec[capture_byte*8+:8] <= rtc_receive_seconds[capture_byte*8+:8];
                 end
-            end else if (capture_byte<8) begin : transmit_word
+            end else if (capture_byte < 8) begin : transmit_word
                 always @(posedge clk) begin
                     if (reset) server_transmit_sec[(capture_byte-4)*8+:8] <= 0;
                     else if (rtc_capture_ctl[capture_byte])
@@ -1053,7 +1058,7 @@ module afdx_rtc #(
                 if (rx_last && rx_index == PACKET_LAST) rx_done <= 1;
             end
             // 客户端只接受版本、模式及请求时间都匹配的回应。
-            // Originate 是回应中回送的请求时间，必须等于当前请求的 Transmit 字段。
+            // Originate 为回应中回送的请求时间字段，必须与当前请求的 Transmit 字段一致。
             if (packet_done) begin
                 if (master_rx && rx_client_header) begin
                     // 服务端逐位复制请求的发送时间，避免换算改变匹配字段。
@@ -1062,8 +1067,8 @@ module afdx_rtc #(
                     reply_pending <= 1;
                 end
             end
-            // 同拍本地接收使能仅在 packet_done 与 TX_IDLE 同时不重传旧响应的
-            // 条件下有效，发送重传期间始终排除旧回应干扰。
+            // 同拍本地接收使能仅在 packet_done 与 TX_IDLE 成立且未重传旧响应时有效，
+            // 重传发送期间始终屏蔽旧回应干扰。
             if (rtc_capture_ctl[8]) begin
                 calc_state <= CALC_START_T2;
                 calc_busy <= 1;

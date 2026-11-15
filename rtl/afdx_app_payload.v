@@ -1,5 +1,5 @@
 // 32 KiB x 9 位载荷缓存：划分为 8 个 4 KiB 逻辑分块，每分块含 4 片 1 KiB 本地 RAM 切片。
-// 写入经本地命令打拍后次拍落盘；读取按命令、存储阵列、切片寄存与分块汇聚固定 4 拍返回。
+// 写入经本地命令打拍后次拍完成物理写入；读取按命令、存储阵列、切片寄存与分块汇聚固定 4 拍返回。
 module afdx_app_payload #(
     parameter EARLY_DATA   = 0,
     parameter SPLIT_RETURN = 0
@@ -49,10 +49,11 @@ module afdx_app_payload #(
     endgenerate
 
     always @(posedge clk) begin
-        read_bank_command <= 8'b00000001<<read_address[14:12];
+        read_bank_command <= 8'b00000001 << read_address[14:12];
         read_bank_ram <= read_bank_command;
         read_bank_result <= read_bank_ram;
     end
+
     wire [8:0] read_first = ({9{read_bank_result[0]}} & bank_data[0]) |
         ({9{read_bank_result[1]}} & bank_data[1]) |
         ({9{read_bank_result[2]}} & bank_data[2]) |
@@ -111,9 +112,10 @@ module afdx_app_payload_bank (
         address_q <= write_address;
         data_q <= write_data;
         read_address_q <= read_address;
-        read_slice_ram <= 4'b0001<<read_address_q[11:10];
+        read_slice_ram <= 4'b0001 << read_address_q[11:10];
         read_slice_result <= read_slice_ram;
     end
+
     wire [8:0] slice_data[0:3];
     genvar s;
 
@@ -130,6 +132,7 @@ module afdx_app_payload_bank (
             );
         end
     endgenerate
+
     assign read_data = ({9{read_slice_result[0]}} & slice_data[0]) |
         ({9{read_slice_result[1]}} & slice_data[1]) |
         ({9{read_slice_result[2]}} & slice_data[2]) |
@@ -156,8 +159,8 @@ module afdx_app_payload_slice (
 
     always @(posedge clk)
         if (read_enable) ram_q <= memory[read_address];
-    (* preserve = 1, dont_merge = 1 *) reg [8:0] result_q;
 
+    (* preserve = 1, dont_merge = 1 *) reg [8:0] result_q;
     always @(posedge clk) result_q <= ram_q;
     assign read_data = result_q;
 

@@ -59,6 +59,7 @@ module afdx_rx_reassembly_payload_slot (
     (* preserve = 1, dont_merge = 1 *) reg [12:0] write_address;
 
     always @(posedge clk) write_address <= wa;
+
     genvar lane;
 
     generate
@@ -95,6 +96,7 @@ module afdx_rx_reassembly_payload_lane (
     (* preserve = 1, dont_merge = 1 *) reg [1:0] read_result;
     reg [1:0] ram_q;
     (* ramstyle = "M4K,no_rw_check" *) reg [1:0] memory[0:8191];
+
     assign q = read_result;
 
     always @(posedge clk) begin

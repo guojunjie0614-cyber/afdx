@@ -1,6 +1,6 @@
 // 本模块是发送调度器，它轮流检查每条虚拟链路的消息队列。
 // 虚拟链路（Virtual Link，VL）用于给一组消息分配带宽。
-// 模块通知 afdx_tx_builder 组帧，实现赛题的发送整形功能。
+// 模块通知 afdx_tx_builder 组帧，实现 AFDX 发送带宽整形功能。
 // BAG（Bandwidth Allocation Gap）是带宽分配间隔。
 // 同一条 VL 相邻两帧的发送起点至少相隔一个 BAG。
 // 队列有消息且满足时间条件时，模块才允许这条消息开始发送。
@@ -224,7 +224,7 @@ module afdx_tx_engine #(
 
     // 本次指针提交完成前调度器绝不会进入下一次 GRANT phase=0，
     // busy 标志仍严格在原分片完成时钟沿清零。
-    (* preserve = 1, dont_merge = 1 *) reg pointer_commit;
+    (* preserve=1, dont_merge=1 *) reg pointer_commit;
     reg [6:0] pointer_address;
     reg [TX_OFF_AW+7:0] pointer_data;
     always @(posedge clk) begin
@@ -249,10 +249,10 @@ module afdx_tx_engine #(
 `ifndef MODEL_TECH
     reg [31:0] words[0:5];
 `endif
-    // 配置和状态在 ENQ 的 phase=1 保存，phase=3 预计算，phase=4 只消费本地标志。
+    // 配置与状态在 ENQ 的 phase=1 锁存，phase=3 预计算判决条件，phase=4 仅依据本地已寄存标志提交。
     // 长度比较也提前寄存，避免配置字 [19:9] 经拒绝优先级链驱动写使能。
     (* preserve = 1, dont_merge = 1 *) reg enq_disabled_q, enq_too_long_q, q_full_q, mnext_wr_q;
-    // 16 组本地 8 路归约分别端接复制的三位索引信号；由于 busy 仅在 ENQ/SCAN
+    // 16 组本地 8 选 1 读出各自承接复制后的 3 位索引信号；由于 busy 仅在 ENQ/SCAN
     // 运行期间清除，使用早一拍的副本位属于安全的保守判定。
     (* preserve = 1, dont_merge = 1 *) reg [15:0] enq_busy_banks, scan_busy_banks, active_banks;
     (* preserve = 1, dont_merge = 1 *) reg [3:0] enq_busy_bank, scan_busy_bank, active_bank;
@@ -283,7 +283,7 @@ module afdx_tx_engine #(
     reg [62:0] scan_s0, scan_s1, scan_s2;
     reg [31:0] scan_d;
     // enable_q 是 init_done 的本地副本，第四拍寄存准入与清除结论，
-    // 远端使能只进一次寄存器，不再穿过扫描判断的组合锥。
+    // 远端使能仅打拍一次进入本地域，不再穿过扫描判断的组合逻辑路径。
     (* preserve = 1, dont_merge = 1 *) reg enable_q;
     reg scan_eligible_r, scan_cleanup_r;
     (* preserve = 1, dont_merge = 1 *) reg scan_blocked_q;
@@ -351,7 +351,8 @@ module afdx_tx_engine #(
 
     genvar busy_bank_index, bitmap_row, meta_group;
     generate
-        for (busy_bank_index = 0; busy_bank_index < 16; busy_bank_index = busy_bank_index + 1) begin : busy_bank_lookup
+        for (busy_bank_index = 0; busy_bank_index < 16;
+                busy_bank_index = busy_bank_index + 1) begin : busy_bank_lookup
             wire [7:0] local_busy = fragment_busy[busy_bank_index * 8+:8];
             wire [7:0] local_active = fragment_active[busy_bank_index * 8+:8];
             (* preserve = 1, dont_merge = 1 *) reg [2:0] op_index, scan_index;
@@ -359,8 +360,8 @@ module afdx_tx_engine #(
             wire complete_bank;
             wire [2:0] complete_index;
             if (COMPLETION_LOOKAHEAD) begin : completion_local
-                (* preserve = 1, dont_merge = 1 *) reg command;
-                (* preserve = 1, dont_merge = 1 *) reg [2:0] index;
+                (* preserve=1,dont_merge=1 *) reg command;
+                (* preserve=1,dont_merge=1 *) reg [2:0] index;
                 always @(posedge clk) begin
                     if (reset) command <= 0;
                     else command <= completion_now && completion_vl[6:3] == busy_bank_index;
@@ -372,9 +373,9 @@ module afdx_tx_engine #(
                 // 本地 F0 拍捕获值与构帧器原 F0 发布值必须完全一致，
                 // 二者必须在同一拍请求完全相同的 F1 busy 清零。
                 always @(negedge clk)
-                    if (!reset &&
-                            ((command !== (fragment_done && fragment_done_vl[6:3] == busy_bank_index)) ||
-                            (command && index !== fragment_done_vl[2:0])))
+                    if (!reset
+                            && ((command !== (fragment_done && fragment_done_vl[6:3] == busy_bank_index))
+                            || (command && index !== fragment_done_vl[2:0])))
                         $fatal(1, "completion bank command differs from registered completion");
 `endif
             end else begin : completion_compatible
@@ -467,8 +468,8 @@ module afdx_tx_engine #(
         end
     end
 
-    // 各存储表的读写地址与写选通决策同宽数据寄存器解耦准备，
-    // 每个操作仍在原本指定的相位边沿提交退休。
+    // 各存储表的读写地址与写使能判决独立于宽数据寄存器提前准备，
+    // 各操作仍在原有指定相位沿提交生效。
     always @(posedge clk) begin
         if (reset) begin
             state_wa <= 0;
@@ -580,7 +581,6 @@ module afdx_tx_engine #(
             cfg_ra <= 0;
             state_re <= 0;
             state_ra <= 0;
-
             mnext_we <= 0;
             mnext_re <= 0;
             mnext_wa <= 0;
@@ -786,10 +786,10 @@ module afdx_tx_engine #(
 
                         3 : begin
                             soon_difference <= difference + LOOKAHEAD;
-                            enq_disabled_q <= !words[0] [0] || words[0] [2:1] == 0;
+                            enq_disabled_q <= !words[0][0] || words[0][2:1] == 0;
                             enq_too_long_q <= (op_len <= 14'd1471 && op_len > {3'b000, words[0][19:9]})
                                 || (op_len > 14'd1471 && words[0][19:9] < 11'd8);
-                            q_full_q <= saved_state[21:16] >= words[0] [8:3];
+                            q_full_q <= saved_state[21:16] >= words[0][8:3];
                             mnext_wr_q <= saved_state[21:16] != 0;
                         end
 
@@ -806,8 +806,8 @@ module afdx_tx_engine #(
                                     mnext_wa <= saved_state[7:0];
                                     mnext_wd <= op_head;
                                 end
-                                if (!candidate && !enq_pending_q && !enq_busy_q && (!saved_state[62]
-                                        || !soon_difference[31])) begin
+                                if (!candidate && !enq_pending_q && !enq_busy_q
+                                        && (!saved_state[62] || !soon_difference[31])) begin
                                     candidate <= 1;
                                     candidate_vl <= op_vl;
                                 end
@@ -825,7 +825,7 @@ module afdx_tx_engine #(
                 // phase=3：保存配置字 2，下一拍转 4。
                 // phase=4：保存配置字 3 和消息信息，下一拍转 5。
                 // phase=0 同步启动读取所选虚拟链路的上下文存储表；
-                // phase=5 从快照选出本次发送长度与令牌余额；
+                // phase=5 从读出快照中选定本次工作长度与分片字节配额；
                 // phase=6 计算当前分片的字节尺寸与剩余信息；
                 // phase=7 锁存完整分片报文元数据及下一次进度；
                 // phase=8 正式提交本次发送授权并写回预计算的状态表。

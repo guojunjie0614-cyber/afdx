@@ -36,6 +36,7 @@ module afdx_app_rx (
         configuration_index <= cfg_index;
         configuration_vlid <= cfg_vlid;
     end
+
     reg active, discard;
     reg [15:0] write_ptr, committed;
 
@@ -44,6 +45,7 @@ module afdx_app_rx (
         if (reset) committed <= 0;
         else committed <= write_ptr;
     end
+
     wire [15:0] read_ptr;
     wire [15:0] used = write_ptr - read_ptr;
     reg [5:0] dw, dr;
@@ -56,6 +58,7 @@ module afdx_app_rx (
         // 计入寄存准入延迟并按 8192 字节最大消息长度预留缓存余量。
         else reject <= used > 16'd24575 || descriptors >= 30;
     end
+
     wire store = delivery_valid && (active ? !discard : !reject);
     wire [15:0] map_q;
 
@@ -64,6 +67,7 @@ module afdx_app_rx (
     wire map_collision = configuration_write && configuration_index == delivery_index;
     reg map_bypass;
     reg [15:0] map_write_value;
+
     afdx_app_map reverse_map (
         .clk           (clk),
         .write_enable  (configuration_write),
@@ -73,10 +77,12 @@ module afdx_app_rx (
         .read_address  (delivery_index),
         .read_data     (map_q)
     );
+
     reg map_pending;
     reg [2:0] state;
     wire q_valid, q_ready;
     wire [15:0] descriptor_id;
+
     afdx_ram_sdp #(.WIDTH(16), .DEPTH(32)) descriptor_ids (
         .clk           (clk),
         .write_enable  (map_pending),
@@ -86,6 +92,7 @@ module afdx_app_rx (
         .read_address  (dr[4:0]),
         .read_data     (descriptor_id)
     );
+
     wire read_en;
     wire [14:0] read_addr;
     wire [8:0] memory_q;
@@ -102,6 +109,7 @@ module afdx_app_rx (
         .read_data      (memory_q),
         .raw_write_data ({app_last, app_data})
     );
+
     wire [8:0] q_data;
     afdx_app_read #(.AW(15), .READ_LATENCY(4)) reader (
         .clk          (clk),
@@ -140,6 +148,7 @@ module afdx_app_rx (
             if (store) write_ptr <= write_ptr + 1'b1;
         end
     end
+
     reg [15:0] id;
     assign q_ready = state == 3;
 
