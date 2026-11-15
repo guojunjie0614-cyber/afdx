@@ -101,26 +101,26 @@ module afdx_svc (
     always @* begin
         next_granted = 4'b0001;
         case (base_turn)
-            2'd0 : begin
+            2'd0: begin
                 next_granted[0] = (eff_request[0]) || !(|eff_request);
                 next_granted[1] = eff_request[1] && !eff_request[0];
                 next_granted[2] = eff_request[2] && !eff_request[0] && !eff_request[1];
                 next_granted[3] = eff_request[3] && !eff_request[0] && !eff_request[1] && !eff_request[2];
             end
-            2'd1 : begin
+            2'd1: begin
                 next_granted[0] = (eff_request[0] && !eff_request[1] && !eff_request[2] && !eff_request[3])
                     || !(|eff_request);
                 next_granted[1] = eff_request[1];
                 next_granted[2] = eff_request[2] && !eff_request[1];
                 next_granted[3] = eff_request[3] && !eff_request[1] && !eff_request[2];
             end
-            2'd2 : begin
+            2'd2: begin
                 next_granted[0] = (eff_request[0] && !eff_request[2] && !eff_request[3]) || !(|eff_request);
                 next_granted[1] = eff_request[1] && !eff_request[2] && !eff_request[3] && !eff_request[0];
                 next_granted[2] = eff_request[2];
                 next_granted[3] = eff_request[3] && !eff_request[2];
             end
-            2'd3 : begin
+            2'd3: begin
                 next_granted[0] = (eff_request[0] && !eff_request[3]) || !(|eff_request);
                 next_granted[1] = eff_request[1] && !eff_request[3] && !eff_request[0];
                 next_granted[2] = eff_request[2] && !eff_request[3] && !eff_request[0] && !eff_request[1];

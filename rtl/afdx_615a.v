@@ -160,7 +160,7 @@ module afdx_615a #(
     generate
         for (permit_byte = 0; permit_byte < 4; permit_byte = permit_byte + 1) begin : field_permit
             if (CFG_READY_PREDICT || CFG_READY_TERMS) begin : prediction
-                (* preserve=1,dont_merge=1 *) reg request_allowed, timeout_allowed;
+                (* preserve = 1, dont_merge = 1 *) reg request_allowed, timeout_allowed;
                 always @(posedge clk) begin
                     if (reset) begin
                         request_allowed <= 0;
@@ -435,23 +435,23 @@ module afdx_615a #(
                     || cfg_wdata[15:0] == VERSION_A4)) protocol_a4 <= cfg_wdata[15:0] == VERSION_A4;
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    0 : cfg_rdata <= {31'b0, configured};
-                    1 : cfg_rdata <= {25'b0, configured_vl};
-                    2 : cfg_rdata <= {16'b0, reason, 6'b0, status};
-                    3 : cfg_rdata <= {18'b0, loaded};
-                    4 : cfg_rdata <= {19'b0, memory_addr};
-                    5 : cfg_rdata <= {24'b0, load_sample};
-                    6 : cfg_rdata <= {16'b0, lus_counter};
-                    7 : cfg_rdata <= retry_total;
+                    0: cfg_rdata <= {31'b0, configured};
+                    1: cfg_rdata <= {25'b0, configured_vl};
+                    2: cfg_rdata <= {16'b0, reason, 6'b0, status};
+                    3: cfg_rdata <= {18'b0, loaded};
+                    4: cfg_rdata <= {19'b0, memory_addr};
+                    5: cfg_rdata <= {24'b0, load_sample};
+                    6: cfg_rdata <= {16'b0, lus_counter};
+                    7: cfg_rdata <= retry_total;
                 endcase
             end
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    0 : cfg_extra_data <= {16'b0, request_port};
-                    1 : cfg_extra_data <= timeout_cycles;
-                    2 : cfg_extra_data <= {24'b0, retry_limit};
-                    3 : cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
-                    default : cfg_extra_data <= 0;
+                    0: cfg_extra_data <= {16'b0, request_port};
+                    1: cfg_extra_data <= timeout_cycles;
+                    2: cfg_extra_data <= {24'b0, retry_limit};
+                    3: cfg_extra_data <= protocol_a4 ? VERSION_A4_WORD : VERSION_A3_WORD;
+                    default: cfg_extra_data <= 0;
                 endcase
             end
         end
@@ -466,22 +466,22 @@ module afdx_615a #(
         begin
             denial_octet = 0;
             case (position)
-                1 : denial_octet = 3;
-                3 : denial_octet = 1;
-                7 : denial_octet = format[0] ? 8'd9 : 8'd17;
-                8 : denial_octet = "A";
-                9 : denial_octet = format[2] ? "4" : "3";
-                10 : denial_octet = 8'h10;
-                11 : denial_octet = format[0] ? 8'd2 : 8'd0;
-                12 : denial_octet = format[0] ? 8'd0 : 8'd8;
-                13 : denial_octet = format[1] ? "N" : "B";
-                14 : denial_octet = format[1] ? "O" : "U";
-                15 : denial_octet = format[1] ? " " : "S";
-                16 : denial_octet = format[1] ? "D" : "Y";
-                17 : denial_octet = format[1] ? "A" : 8'd0;
-                18 : denial_octet = format[1] ? "T" : 8'd0;
-                19 : denial_octet = format[1] ? "A" : 8'd0;
-                default : ;
+                1: denial_octet = 3;
+                3: denial_octet = 1;
+                7: denial_octet = format[0] ? 8'd9 : 8'd17;
+                8: denial_octet = "A";
+                9: denial_octet = format[2] ? "4" : "3";
+                10: denial_octet = 8'h10;
+                11: denial_octet = format[0] ? 8'd2 : 8'd0;
+                12: denial_octet = format[0] ? 8'd0 : 8'd8;
+                13: denial_octet = format[1] ? "N" : "B";
+                14: denial_octet = format[1] ? "O" : "U";
+                15: denial_octet = format[1] ? " " : "S";
+                16: denial_octet = format[1] ? "D" : "Y";
+                17: denial_octet = format[1] ? "A" : 8'd0;
+                18: denial_octet = format[1] ? "T" : 8'd0;
+                19: denial_octet = format[1] ? "A" : 8'd0;
+                default: ;
             endcase
         end
     endfunction

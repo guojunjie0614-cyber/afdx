@@ -29,8 +29,8 @@ module afdx_ntp_fraction #(parameter LOCAL_CAPTURE = 0) (
             for (lane = 0; lane < 8; lane = lane + 1) begin : byte_control
                 localparam BYTE_INDEX = lane % 4;
                 localparam WIDTH = (lane == 7) ? 7 : 8;
-                (* preserve=1,dont_merge=1 *) reg start_local, shift_local, mode_local;
-                (* preserve=1,dont_merge=1 *) reg [WIDTH-1:0] value_local;
+                (* preserve = 1, dont_merge = 1 *) reg start_local, shift_local, mode_local;
+                (* preserve = 1, dont_merge = 1 *) reg [WIDTH-1:0] value_local;
                 always @(posedge clk) begin
                     if (reset) begin
                         start_local <= 0;
@@ -78,14 +78,14 @@ module afdx_ntp_fraction #(parameter LOCAL_CAPTURE = 0) (
                 else begin
                     done <= 0;
                     case (state)
-                        STEP_IDLE : ;
-                        STEP_PREP : state <= STEP_ADD;
-                        STEP_ADD : begin
+                        STEP_IDLE: ;
+                        STEP_PREP: state <= STEP_ADD;
+                        STEP_ADD: begin
                             if (inverse) trial <= {1'b0, remainder} + (work[0] ? NS_PER_SECOND : 32'd0);
                             else trial <= {remainder, 1'b0} - NS_PER_SECOND;
                             state <= STEP_SHIFT;
                         end
-                        STEP_SHIFT : begin
+                        STEP_SHIFT: begin
                             if (bit_count == 31) begin
                                 result <= inverse
                                     ? {1'b0, trial[31:1]} + {31'b0, trial[0]}
@@ -98,7 +98,7 @@ module afdx_ntp_fraction #(parameter LOCAL_CAPTURE = 0) (
                                 state     <= STEP_ADD;
                             end
                         end
-                        default : state <= STEP_IDLE;
+                        default: state <= STEP_IDLE;
                     endcase
                     if (accept) begin
                         inverse   <= to_nanoseconds;
@@ -124,19 +124,19 @@ module afdx_ntp_fraction #(parameter LOCAL_CAPTURE = 0) (
                 else begin
                     done <= 0;
                     case (state)
-                        STEP_IDLE : if (start) begin
+                        STEP_IDLE: if (start) begin
                             inverse   <= to_nanoseconds;
                             bit_count <= 0;
                             remainder <= to_nanoseconds ? 31'd0 : value[30:0];
                             work      <= to_nanoseconds ? value : 0;
                             state     <= STEP_ADD;
                         end
-                        STEP_ADD : begin
+                        STEP_ADD: begin
                             if (inverse) trial <= {1'b0, remainder} + (work[0] ? NS_PER_SECOND : 32'd0);
                             else trial <= {remainder, 1'b0} - NS_PER_SECOND;
                             state <= STEP_SHIFT;
                         end
-                        STEP_SHIFT : begin
+                        STEP_SHIFT: begin
                             if (inverse) begin
                                 remainder <= trial[31:1];
                                 work      <= {1'b0, work[31:1]};
@@ -157,7 +157,7 @@ module afdx_ntp_fraction #(parameter LOCAL_CAPTURE = 0) (
                                 state     <= STEP_ADD;
                             end
                         end
-                        default : state <= STEP_IDLE;
+                        default: state <= STEP_IDLE;
                     endcase
                 end
             end

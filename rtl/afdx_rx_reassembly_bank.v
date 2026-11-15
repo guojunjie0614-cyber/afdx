@@ -679,9 +679,9 @@ module afdx_rx_reassembly_bank #(
                     context_event[i] <= context_net[i] ? 2'b10 : 2'b01;
                 end
                 case ({commit_rows[i], retire_rows[i]})
-                    2'b10 : pending[i] <= pending[i] + 1'b1;
-                    2'b01 : pending[i] <= pending[i] - 1'b1;
-                    default :;
+                    2'b10: pending[i] <= pending[i] + 1'b1;
+                    2'b01: pending[i] <= pending[i] - 1'b1;
+                    default: ;
                 endcase
                 if (commit_rows[i]) begin
                     if (q_first) begin
@@ -707,14 +707,14 @@ module afdx_rx_reassembly_bank #(
                 end
             end
             case (copy_state)
-                C_IDLE : if (copy_request) begin
+                C_IDLE: if (copy_request) begin
                     active_copy_row <= copy_request_row;
                     was_initialized <= copy_initialized[copy_request_row];
                     empty_copy <= copy_empty;
                     write_slots <= 8'b1 << copy_request_row;
                     copy_state <= C_LOAD;
                 end
-                C_LOAD : begin
+                C_LOAD: begin
                     written_seed <= was_initialized ? progress_q[45:32] : 14'd0;
                     checksum_seed <= was_initialized ? progress_q[28:0] : header_q[30:2];
                     copy_check_disabled <= header_q[1];
@@ -722,7 +722,7 @@ module afdx_rx_reassembly_bank #(
                     high_byte <= 0;
                     copy_state <= C_INIT;
                 end
-                C_INIT : begin
+                C_INIT: begin
                     copy_written <= written_seed;
                     copy_carry <= &written_seed[6:0];
                     word_half <= written_seed[0];
@@ -734,7 +734,7 @@ module afdx_rx_reassembly_bank #(
                     end
                     else copy_state <= C_RUN;
                 end
-                C_RUN : if (copy_valid_q) begin
+                C_RUN: if (copy_valid_q) begin
                     if (!word_half) high_byte <= copy_data_q;
                     word_half <= !word_half;
                     copy_written <= {written_high_next, written_low_next};
@@ -745,27 +745,27 @@ module afdx_rx_reassembly_bank #(
                     end
                 end
                 // 末字节写入后依次等待拼字累加与进位级排空，再将累计长度与校验和写回进度表。
-                C_DRAIN : copy_state <= C_FLUSH;
-                C_FLUSH : begin
+                C_DRAIN: copy_state <= C_FLUSH;
+                C_FLUSH: begin
                     retire_sum <= {3'b0, checksum_high_next, checksum_low};
                     copy_state <= C_RETIRE;
                 end
-                C_RETIRE : begin
+                C_RETIRE: begin
                     if (|final_rows) copy_state <= C_FOLD;
                     else begin
                         copy_state <= C_IDLE;
                         copy_done <= 1;
                     end
                 end
-                C_FOLD : begin
+                C_FOLD: begin
                     folded_sum <= {1'b0, retire_sum[15:0]} + {1'b0, retire_sum[31:16]};
                     copy_state <= C_CHECK;
                 end
-                C_CHECK : begin
+                C_CHECK: begin
                     copy_done <= 1;
                     copy_state <= C_IDLE;
                 end
-                default : copy_state <= C_IDLE;
+                default: copy_state <= C_IDLE;
             endcase
 
             output_pipe_valid <= {output_pipe_valid[PAYLOAD_READ_LATENCY-2:0], payload_re};
@@ -777,12 +777,12 @@ module afdx_rx_reassembly_bank #(
                 if (output_pipe_last[PAYLOAD_READ_LATENCY-1]) output_state <= O_RELEASE;
             end
             case (output_state)
-                O_IDLE : if (output_request) begin
+                O_IDLE: if (output_request) begin
                     active_output_row <= output_request_row;
                     read_slots <= 8'b1 << output_request_row;
                     output_state <= O_LOAD;
                 end
-                O_LOAD : begin
+                O_LOAD: begin
                     out_vl <= header_q[91:80];
                     out_sport <= header_q[79:64];
                     out_dport <= header_q[63:48];
@@ -792,7 +792,7 @@ module afdx_rx_reassembly_bank #(
                     output_carry <= 0;
                     output_state <= O_ARM;
                 end
-                O_ARM : begin
+                O_ARM: begin
                     // 预计算总长 N-3 比较目标并按高低 7 位分段寄存比对，对 1 字节和 2 字节短报文直接置位初始末拍标志。
                     output_compare_target <= output_total - 14'd3;
                     output_nonempty <= output_total != 0;
@@ -800,22 +800,22 @@ module afdx_rx_reassembly_bank #(
                     output_second_last <= output_total == 2;
                     output_state <= O_SEED;
                 end
-                O_SEED : begin
+                O_SEED: begin
                     output_read_active <= output_nonempty;
                     output_last_request <= output_first_last;
                     output_state <= O_READ;
                 end
-                O_READ : if (payload_re) begin
+                O_READ: if (payload_re) begin
                     output_position <= output_next;
                     output_carry <= output_position[6:0] == 7'd126;
                     output_read_active <= !output_last_request;
                     output_last_request <= &output_equal;
                 end
-                O_RELEASE : if (output_release) begin
+                O_RELEASE: if (output_release) begin
                     output_state <= O_IDLE;
                     release_done <= 1;
                 end
-                default : output_state <= O_IDLE;
+                default: output_state <= O_IDLE;
             endcase
         end
     end

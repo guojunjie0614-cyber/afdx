@@ -1,45 +1,45 @@
 // 所有协议寄存器只在 ce 拍更新；RAM 和外部接口位于全速外壳。
 module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     input  wire                  clk, reset,
-    input  wire [CE_BANKS - 1:0] ce_phase,
-    input  wire                  enable_in,
-    input  wire [31:0]           now_in,
-    input  wire                  configured_in,
-    input  wire                  trap_enabled_in,
-    input  wire [4:0]            configured_length_in,
-    input  wire [31:0]           community0_in,
-    input  wire [31:0]           community1_in,
-    input  wire [31:0]           community2_in,
-    input  wire [31:0]           community3_in,
-    input  wire [31:0]           uptime_in,
-    input  wire                  capture_pending_in,
-    input  wire [8:0]            capture_length_in,
-    input  wire [15:0]           capture_port_in,
-    input  wire                  trap_grant_in,
-    input  wire                  cold_request_in,
-    input  wire [7:0]            req_q_in,
-    input  wire                  send_complete_in,
-    input  wire                  mib_complete_in,
-    input  wire [31:0]           mib_rdata_in,
-    output reg                   req_re,
-    output reg  [7:0]            req_ra,
-    output reg                   out_we,
-    output reg  [7:0]            out_wa,
-    output reg  [7:0]            out_wdata,
-    output reg  [15:0]           response_port,
-    output reg  [8:0]            response_length,
-    output reg  [31:0]           bad_community,
-    output reg  [31:0]           traps_sent,
-    output reg  [31:0]           sample_cycle,
-    output reg  [17:0]           mib_addr,
-    output reg  [31:0]           mib_wdata,
-    output reg                   capture_consumed,
-    output reg                   capture_idle,
-    output reg                   trap_offer,
-    output reg                   cold_ack,
-    output reg                   send_request,
-    output reg                   mib_request,
-    output reg                   mib_write
+        input  wire [CE_BANKS - 1:0] ce_phase,
+        input  wire                  enable_in,
+        input  wire [31:0]           now_in,
+        input  wire                  configured_in,
+        input  wire                  trap_enabled_in,
+        input  wire [4:0]            configured_length_in,
+        input  wire [31:0]           community0_in,
+        input  wire [31:0]           community1_in,
+        input  wire [31:0]           community2_in,
+        input  wire [31:0]           community3_in,
+        input  wire [31:0]           uptime_in,
+        input  wire                  capture_pending_in,
+        input  wire [8:0]            capture_length_in,
+        input  wire [15:0]           capture_port_in,
+        input  wire                  trap_grant_in,
+        input  wire                  cold_request_in,
+        input  wire [7:0]            req_q_in,
+        input  wire                  send_complete_in,
+        input  wire                  mib_complete_in,
+        input  wire [31:0]           mib_rdata_in,
+        output reg                   req_re,
+        output reg  [7:0]            req_ra,
+        output reg                   out_we,
+        output reg  [7:0]            out_wa,
+        output reg  [7:0]            out_wdata,
+        output reg  [15:0]           response_port,
+        output reg  [8:0]            response_length,
+        output reg  [31:0]           bad_community,
+        output reg  [31:0]           traps_sent,
+        output reg  [31:0]           sample_cycle,
+        output reg  [17:0]           mib_addr,
+        output reg  [31:0]           mib_wdata,
+        output reg                   capture_consumed,
+        output reg                   capture_idle,
+        output reg                   trap_offer,
+        output reg                   cold_ack,
+        output reg                   send_request,
+        output reg                   mib_request,
+        output reg                   mib_write
 );
     // 同步复位优先；显式使能保留硬件 CE 引脚，避免移入数据反馈选择器。
     // 含复位的使能保证复位拍也更新；各局部 CE 只驱动至多 32 位。
@@ -174,10 +174,14 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     localparam FIELD_OID = 9, FIELD_VALUE = 10;
 
     // part 的取值：正在写回应的第几个字段，每个字段依次是类型、长度、内容。
-    localparam [4:0] B_MESSAGE_TAG = 5'd0, B_MESSAGE_LENGTH = 5'd1, B_VERSION_TAG = 5'd2, B_VERSION_LENGTH = 5'd3, B_VERSION = 5'd4;
-    localparam [4:0] B_COMMUNITY_TAG = 5'd5, B_COMMUNITY_LENGTH = 5'd6, B_COMMUNITY = 5'd7, B_PDU_TAG = 5'd8, B_PDU_LENGTH = 5'd9;
-    localparam [4:0] B_ID_TAG = 5'd10, B_ID_LENGTH = 5'd11, B_ID = 5'd12, B_STATUS_TAG = 5'd13, B_STATUS_LENGTH = 5'd14, B_STATUS = 5'd15;
-    localparam [4:0] B_INDEX_TAG = 5'd16, B_INDEX_LENGTH = 5'd17, B_INDEX = 5'd18, B_LIST_TAG = 5'd19, B_LIST_LENGTH = 5'd20;
+    localparam [4:0] B_MESSAGE_TAG = 5'd0, B_MESSAGE_LENGTH = 5'd1, B_VERSION_TAG = 5'd2,
+        B_VERSION_LENGTH = 5'd3, B_VERSION = 5'd4;
+    localparam [4:0] B_COMMUNITY_TAG = 5'd5, B_COMMUNITY_LENGTH = 5'd6, B_COMMUNITY = 5'd7,
+        B_PDU_TAG = 5'd8, B_PDU_LENGTH = 5'd9;
+    localparam [4:0] B_ID_TAG = 5'd10, B_ID_LENGTH = 5'd11, B_ID = 5'd12,
+        B_STATUS_TAG = 5'd13, B_STATUS_LENGTH = 5'd14, B_STATUS = 5'd15;
+    localparam [4:0] B_INDEX_TAG = 5'd16, B_INDEX_LENGTH = 5'd17, B_INDEX = 5'd18,
+        B_LIST_TAG = 5'd19, B_LIST_LENGTH = 5'd20;
     localparam B_OID = 25;
     localparam [4:0] B_BINDING_TAG = 5'd21, B_BINDING_LENGTH = 5'd22, B_OID_TAG = 5'd23, B_OID_LENGTH = 5'd24;
     localparam [4:0] B_VALUE_TAG = 5'd26, B_VALUE_LENGTH = 5'd27, B_VALUE = 5'd28;
@@ -230,20 +234,13 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     reg [7:0] set_value_start, set_value_tag, set_value_length;
     reg [31:0] set_number;
 
-
-
     // community 保存最多 16 字节的团体名，按高字节在前发送。
 
-
     reg [6:0] state, return_state;
-
 
     // cursor 记录当前读取位置，各层结束位置用来检查字段是否越界。
     // 本实现只接受一个完整的变量绑定。
     reg [8:0] request_length, cursor, outer_end, pdu_end, list_end, binding_end;
-
-
-
 
     reg [7:0] byte_value, tag_value;
     reg [15:0] field_length;
@@ -397,6 +394,7 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
     reg  next_field_bounds_ok;
     reg [15:0] next_field_end;
     reg  next_value_chain_ok;
+
     always @* begin
         next_enable = enable;
         next_now = now;
@@ -418,163 +416,175 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         next_mib_complete = mib_complete;
         next_mib_rdata = mib_rdata;
 
-            next_enable = enable_in;
-            next_now = now_in;
-            next_configured = configured_in;
-            next_trap_enabled = trap_enabled_in;
-            next_configured_length = configured_length_in;
-            next_community0 = community0_in;
-            next_community1 = community1_in;
-            next_community2 = community2_in;
-            next_community3 = community3_in;
-            next_uptime = uptime_in;
-            next_capture_pending = capture_pending_in;
-            next_capture_length = capture_length_in;
-            next_capture_port = capture_port_in;
-            next_trap_grant = trap_grant_in;
-            next_cold_request = cold_request_in;
-            next_req_q = req_q_in;
-            next_send_complete = send_complete_in;
-            next_mib_complete = mib_complete_in;
-            next_mib_rdata = mib_rdata_in;
+        next_enable = enable_in;
+        next_now = now_in;
+        next_configured = configured_in;
+        next_trap_enabled = trap_enabled_in;
+        next_configured_length = configured_length_in;
+        next_community0 = community0_in;
+        next_community1 = community1_in;
+        next_community2 = community2_in;
+        next_community3 = community3_in;
+        next_uptime = uptime_in;
+        next_capture_pending = capture_pending_in;
+        next_capture_length = capture_length_in;
+        next_capture_port = capture_port_in;
+        next_trap_grant = trap_grant_in;
+        next_cold_request = cold_request_in;
+        next_req_q = req_q_in;
+        next_send_complete = send_complete_in;
+        next_mib_complete = mib_complete_in;
+        next_mib_rdata = mib_rdata_in;
     end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_1) begin
-        if (reset) begin
-            enable <= 0;
-        end
-        else begin
-            enable <= next_enable;
+            if (reset) begin
+                enable <= 0;
+            end
+            else begin
+                enable <= next_enable;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_2) begin
-        if (reset) begin
-            now <= 0;
-        end
-        else begin
-            now <= next_now;
+            if (reset) begin
+                now <= 0;
+            end
+            else begin
+                now <= next_now;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_3) begin
-        if (reset) begin
-            configured <= 0;
-            trap_enabled <= 0;
-            configured_length <= 0;
-        end
-        else begin
-            configured <= next_configured;
-            trap_enabled <= next_trap_enabled;
-            configured_length <= next_configured_length;
+            if (reset) begin
+                configured <= 0;
+                trap_enabled <= 0;
+                configured_length <= 0;
+            end
+            else begin
+                configured <= next_configured;
+                trap_enabled <= next_trap_enabled;
+                configured_length <= next_configured_length;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_4) begin
-        if (reset) begin
-            community0 <= 0;
-        end
-        else begin
-            community0 <= next_community0;
+            if (reset) begin
+                community0 <= 0;
+            end
+            else begin
+                community0 <= next_community0;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_5) begin
-        if (reset) begin
-            community1 <= 0;
-        end
-        else begin
-            community1 <= next_community1;
+            if (reset) begin
+                community1 <= 0;
+            end
+            else begin
+                community1 <= next_community1;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_6) begin
-        if (reset) begin
-            community2 <= 0;
-        end
-        else begin
-            community2 <= next_community2;
+            if (reset) begin
+                community2 <= 0;
+            end
+            else begin
+                community2 <= next_community2;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_7) begin
-        if (reset) begin
-            community3 <= 0;
-        end
-        else begin
-            community3 <= next_community3;
+            if (reset) begin
+                community3 <= 0;
+            end
+            else begin
+                community3 <= next_community3;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_8) begin
-        if (reset) begin
-            uptime <= 0;
-        end
-        else begin
-            uptime <= next_uptime;
+            if (reset) begin
+                uptime <= 0;
+            end
+            else begin
+                uptime <= next_uptime;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_9) begin
-        if (reset) begin
-            capture_pending <= 0;
-            capture_length <= 0;
-            capture_port <= 0;
-            trap_grant <= 0;
-            cold_request <= 0;
-        end
-        else begin
-            capture_pending <= next_capture_pending;
-            capture_length <= next_capture_length;
-            capture_port <= next_capture_port;
-            trap_grant <= next_trap_grant;
-            cold_request <= next_cold_request;
+            if (reset) begin
+                capture_pending <= 0;
+                capture_length <= 0;
+                capture_port <= 0;
+                trap_grant <= 0;
+                cold_request <= 0;
+            end
+            else begin
+                capture_pending <= next_capture_pending;
+                capture_length <= next_capture_length;
+                capture_port <= next_capture_port;
+                trap_grant <= next_trap_grant;
+                cold_request <= next_cold_request;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_10) begin
-        if (reset) begin
-            req_q <= 0;
-            send_complete <= 0;
-            mib_complete <= 0;
-        end
-        else begin
-            req_q <= next_req_q;
-            send_complete <= next_send_complete;
-            mib_complete <= next_mib_complete;
+            if (reset) begin
+                req_q <= 0;
+                send_complete <= 0;
+                mib_complete <= 0;
+            end
+            else begin
+                req_q <= next_req_q;
+                send_complete <= next_send_complete;
+                mib_complete <= next_mib_complete;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_11) begin
-        if (reset) begin
-            mib_rdata <= 0;
-        end
-        else begin
-            mib_rdata <= next_mib_rdata;
+            if (reset) begin
+                mib_rdata <= 0;
+            end
+            else begin
+                mib_rdata <= next_mib_rdata;
+            end
         end
     end
-    end
+
     // 对象按编号的数字顺序排列，先是两个系统对象，再是 34 个私有对象。
     // 系统对象的标识符是 1.3.6.1.2.1.1.x.0，私有对象是 1.3.6.1.4.1.424242.3.x.0。
     // 开头的 1.3 按编码规则合并成一个数 43（即一个字节 0x2b）。
@@ -585,15 +595,15 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         begin
             mib_arc = 0;
             case (position)
-                0 : mib_arc = OID_FIRST_ARC;
-                1 : mib_arc = 6;
-                2 : mib_arc = 1;
-                3 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 2 : 4;
-                4 : mib_arc = 1;
-                5 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 1 : OID_ENTERPRISE_ARC;
-                6 : mib_arc = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 1 : 3) : 3;
-                7 : mib_arc = item < SYSTEM_OBJECT_COUNT ? 0 : { 26'b0, item } - 32'd1;
-                default : mib_arc = 0;
+                0: mib_arc = OID_FIRST_ARC;
+                1: mib_arc = 6;
+                2: mib_arc = 1;
+                3: mib_arc = item < SYSTEM_OBJECT_COUNT ? 2 : 4;
+                4: mib_arc = 1;
+                5: mib_arc = item < SYSTEM_OBJECT_COUNT ? 1 : OID_ENTERPRISE_ARC;
+                6: mib_arc = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 1 : 3) : 3;
+                7: mib_arc = item < SYSTEM_OBJECT_COUNT ? 0 : { 26'b0, item } - 32'd1;
+                default: mib_arc = 0;
             endcase
         end
     endfunction
@@ -604,17 +614,17 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         begin
             mib_oid_byte = 0;
             case (position)
-                0 : mib_oid_byte = OID_FIRST_BYTE;
-                1 : mib_oid_byte = 6;
-                2 : mib_oid_byte = 1;
-                3 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd2 : 8'd4;
-                4 : mib_oid_byte = 1;
-                5 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd1 : OID_ENTERPRISE_BYTE0;
-                6 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 8'd1 : 8'd3) : OID_ENTERPRISE_BYTE1;
-                7 : mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd0 : OID_ENTERPRISE_BYTE2;
-                8 : mib_oid_byte = 3;
-                9 : mib_oid_byte = { 2'b0, item } - 8'd1;
-                default : mib_oid_byte = 0;
+                0: mib_oid_byte = OID_FIRST_BYTE;
+                1: mib_oid_byte = 6;
+                2: mib_oid_byte = 1;
+                3: mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd2 : 8'd4;
+                4: mib_oid_byte = 1;
+                5: mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd1 : OID_ENTERPRISE_BYTE0;
+                6: mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? (item == 0 ? 8'd1 : 8'd3) : OID_ENTERPRISE_BYTE1;
+                7: mib_oid_byte = item < SYSTEM_OBJECT_COUNT ? 8'd0 : OID_ENTERPRISE_BYTE2;
+                8: mib_oid_byte = 3;
+                9: mib_oid_byte = { 2'b0, item } - 8'd1;
+                default: mib_oid_byte = 0;
             endcase
         end
     endfunction
@@ -627,16 +637,16 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
             (* direct_enable = 1, keep = 1 *) wire local_ce = ce_phase[12 + oid_byte] | reset;
             wire [7:0] next_byte = oid_shift[79 - oid_byte * 8 -: 8];
             always @(posedge clk) begin
-        // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
-        if (local_ce) begin
-        if (reset) oid_shift[87 - oid_byte * 8 -: 8] <= 0;
-        else if (state == LEN4)
-                    oid_shift[87 - oid_byte * 8 -: 8] <= mib_oid_byte(object_index, oid_byte);
-                else if (state == BUILD && part == B_OID && !missing) begin
-                    oid_shift[87 - oid_byte * 8 -: 8] <= next_byte;
+                // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
+                if (local_ce) begin
+                    if (reset) oid_shift[87 - oid_byte * 8 -: 8] <= 0;
+                    else if (state == LEN4)
+                        oid_shift[87 - oid_byte * 8 -: 8] <= mib_oid_byte(object_index, oid_byte);
+                    else if (state == BUILD && part == B_OID && !missing) begin
+                        oid_shift[87 - oid_byte * 8 -: 8] <= next_byte;
+                    end
                 end
-    end
-    end
+            end
         end
     endgenerate
 
@@ -656,16 +666,16 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         input [5:0] item;
         begin
             case (item)
-                0 : mib_address = ADDR_DESCR;
-                1 : mib_address = ADDR_UPTIME;
-                2 : mib_address = 0;
-                3 : mib_address = ADDR_USER_ID;
-                4 : mib_address = ADDR_RTC_SECONDS;
-                5 : mib_address = ADDR_RTC_SYNC;
-                33 : mib_address = ADDR_REQUESTS;
-                34 : mib_address = ADDR_BAD_COMMUNITY;
-                35 : mib_address = ADDR_TRAPS_SENT;
-                default : begin
+                0: mib_address = ADDR_DESCR;
+                1: mib_address = ADDR_UPTIME;
+                2: mib_address = 0;
+                3: mib_address = ADDR_USER_ID;
+                4: mib_address = ADDR_RTC_SECONDS;
+                5: mib_address = ADDR_RTC_SYNC;
+                33: mib_address = ADDR_REQUESTS;
+                34: mib_address = ADDR_BAD_COMMUNITY;
+                35: mib_address = ADDR_TRAPS_SENT;
+                default: begin
                     if (item <= 12) mib_address = ADDR_TX_COUNT + item - 18'd6;
                     else if (item <= 20) mib_address = ADDR_A_COUNT + item - 18'd13;
                     else if (item <= 28) mib_address = ADDR_B_COUNT + item - 18'd21;
@@ -786,1310 +796,1347 @@ module afdx_snmp_engine #(parameter CE_BANKS = 59) (
         next_field_end = field_end;
         next_value_chain_ok = value_chain_ok;
 
-            next_capture_idle = state == IDLE;
-            next_trap_offer = state == IDLE && trap_enabled && (cold_pending || auth_pending);
-            if (!capture_pending) next_capture_consumed = 0;
+        next_capture_idle = state == IDLE;
+        next_trap_offer = state == IDLE && trap_enabled && (cold_pending || auth_pending);
+        if (!capture_pending) next_capture_consumed = 0;
 
-            next_req_re = 0;
-            next_out_we = 0;
+        next_req_re = 0;
+        next_out_we = 0;
 
-            if ( !configured || !enable) begin
-                next_state = 7'd0;
+        if ( !configured || !enable) begin
+            next_state = 7'd0;
 
+        end
+        // 模块依次解析请求、访问寄存器、构造回应，再逐字节发送。
+        // SNMP 报文的每个字段都按类型（TAG）、长度（LENGTH）、值的顺序编码。
+        else case (state)
+
+            // ======== 第一部分：接收请求，并按位置读出请求字节 ========
+            // 完整请求和通知授权均由全速捕获段保持到接收确认。
+            IDLE: if (capture_pending) begin
+                next_capture_consumed = 1;
+                next_sending_trap = 0;
+                next_request_length = capture_length;
+                next_response_port = capture_port;
+                next_state = START;
             end
-            // 模块依次解析请求、访问寄存器、构造回应，再逐字节发送。
-            // SNMP 报文的每个字段都按类型（TAG）、长度（LENGTH）、值的顺序编码。
-            else case (state)
+            else if (trap_grant && trap_enabled && (cold_pending || auth_pending)) begin
+                next_sending_trap = 1;
+                next_trap_event = cold_pending ? TRAP_COLD_START : TRAP_AUTH_FAILURE;
+                if (cold_pending) next_cold_pending = 0;
+                else next_auth_pending = 0;
+                next_state = TRAP_INIT;
+            end
 
-                // ======== 第一部分：接收请求，并按位置读出请求字节 ========
-                // 完整请求和通知授权均由全速捕获段保持到接收确认。
-                IDLE : if (capture_pending) begin
-                    next_capture_consumed = 1;
-                    next_sending_trap = 0;
-                    next_request_length = capture_length;
-                    next_response_port = capture_port;
-                    next_state = START;
-                end
-                else if (trap_grant && trap_enabled && (cold_pending || auth_pending)) begin
-                    next_sending_trap = 1;
-                    next_trap_event = cold_pending ? TRAP_COLD_START : TRAP_AUTH_FAILURE;
-                    if (cold_pending) next_cold_pending = 0;
-                    else next_auth_pending = 0;
-                    next_state = TRAP_INIT;
-                end
+            // START：复位本次解析位置，然后读取 TAG。
+            START: begin
+                next_cursor = 0;
+                next_field = 4'd0;
+                next_community_bad = 0;
+                next_request_id = 0;
+                next_missing = 0;
+                next_echo_value = 0;
+                next_error_status = 8'd0;
+                fetch(TAG);
+            end
 
-                // START：复位本次解析位置，然后读取 TAG。
-                START : begin
-                    next_cursor = 0;
-                    next_field = 4'd0;
-                    next_community_bad = 0;
-                    next_request_id = 0;
-                    next_missing = 0;
-                    next_echo_value = 0;
-                    next_error_status = 8'd0;
-                    fetch (TAG);
-                end
-
-                // FETCH0：检查读取范围并发出读请求，然后转 FETCH1。
-                FETCH0 : begin
-                    if (cursor >= request_length) next_state = 7'd0;
-                    else begin
-                        next_req_re = 1;
-                        next_req_ra = cursor[7:0];
-                        next_expected_arc = mib_arc (candidate, arc_index);
-                        case (value_pos[3:2])
-                            0 : next_community_word = community0;
-                            1 : next_community_word = community1;
-                            2 : next_community_word = community2;
-                            3 : next_community_word = community3;
-                        endcase
-                        next_state = FETCH1;
-                    end
-                end
-
-                // FETCH1：等待同步读取并选择口令字节，然后转 FETCH2。
-                FETCH1 : begin
-                    case (value_pos[1:0])
-                        0 : next_community_expected = community_word[31:24];
-                        1 : next_community_expected = community_word[23:16];
-                        2 : next_community_expected = community_word[15:8];
-                        3 : next_community_expected = community_word[7:0];
-                    endcase
-                    next_state = FETCH_WAIT_A;
-                end
-
-                // 利用原有读取等待拍，先比较四个字节，再合并比较结果。
-                FETCH_WAIT_A : next_state = FETCH_WAIT_B;
-                FETCH_WAIT_B : next_state = FETCH_WAIT_C;
-                FETCH_WAIT_C : next_state = FETCH2;
-
-                FETCH2 : begin
-                    next_byte_value = req_q;
-                    next_arc_less_byte[3] = fetched_arc[31:24] < expected_arc[31:24];
-                    next_arc_less_byte[2] = fetched_arc[23:16] < expected_arc[23:16];
-                    next_arc_less_byte[1] = fetched_arc[15:8] < expected_arc[15:8];
-                    next_arc_less_byte[0] = fetched_arc[7:0] < expected_arc[7:0];
-                    next_arc_equal_byte[3] = fetched_arc[31:24] == expected_arc[31:24];
-                    next_arc_equal_byte[2] = fetched_arc[23:16] == expected_arc[23:16];
-                    next_arc_equal_byte[1] = fetched_arc[15:8] == expected_arc[15:8];
-                    next_arc_equal_byte[0] = fetched_arc[7:0] == expected_arc[7:0];
-                    next_state = FETCH3;
-                end
-
-                // FETCH3：返回调用读取操作时保存的状态。
-                FETCH3 : begin
-                    next_arc_less = arc_less_byte[3] || (arc_equal_byte[3] && arc_less_byte[2])
-                        || (&arc_equal_byte[3:2] && arc_less_byte[1])
-                        || (&arc_equal_byte[3:1] && arc_less_byte[0]);
-                    next_arc_greater = (!arc_less_byte[3] && !arc_equal_byte[3])
-                        || (arc_equal_byte[3] && !arc_less_byte[2] && !arc_equal_byte[2])
-                        || (&arc_equal_byte[3:2] && !arc_less_byte[1] && !arc_equal_byte[1])
-                        || (&arc_equal_byte[3:1] && !arc_less_byte[0] && !arc_equal_byte[0]);
-                    next_oid_last_byte = {1'b0, oid_pos} + 6'd1 == {1'b0, oid_length};
-                    next_oid_last_arc = arc_index == (candidate < SYSTEM_OBJECT_COUNT
-                        ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC);
-                    next_state = return_state;
-                end
-
-                // ======== 第二部分：逐个字段解析请求 ========
-                // TAG：保存字段类型，然后读取 LENGTH。
-                TAG : begin
-                    next_tag_value = byte_value;
-                    next_cursor = cursor + 9'd1;
-                    fetch (LENGTH);
-                end
-
-                // LENGTH：短长度转 DISPATCH，长长度转 LONG_LENGTH，非法长度转 IDLE。
-                LENGTH : begin
-                    next_cursor = cursor + 9'd1;
-                    if ( !byte_value[7]) begin
-                        next_field_length = { 9'b0, byte_value[6:0] };
-                        next_state = DISPATCH_SUM;
-                    end
-                    else if (byte_value == LENGTH_1_BYTE || byte_value == LENGTH_2_BYTES) begin
-                        next_length_left = byte_value[1:0];
-                        next_field_length = 0;
-                        fetch (LONG_LENGTH);
-                    end
-                    else next_state = 7'd0;
-                end
-
-                // LONG_LENGTH：逐字节拼出长度，读够后转 DISPATCH。
-                LONG_LENGTH : begin
-                    next_field_length = { field_length[7:0], byte_value };
-                    next_cursor = cursor + 9'd1;
-                    next_length_left = length_left - 2'd1;
-                    if (length_left == 1) next_state = DISPATCH_SUM;
-                    else fetch (LONG_LENGTH);
-                end
-
-                // 字段结束位置、格式条件和边界分拍准备，解析拍只消费局部标记。
-                DISPATCH_SUM : begin
-                    next_field_end = cursor + field_length;
-                    next_field_accept[FIELD_MESSAGE] = tag_value == TAG_SEQUENCE;
-                    next_field_accept[FIELD_VERSION] = tag_value == TAG_INTEGER && field_length == 1;
-                    next_field_accept[FIELD_COMMUNITY] = tag_value == TAG_OCTET_STRING
-                        && (|field_length) && !(|field_length[15:5])
-                        && (!field_length[4] || !(|field_length[3:0]));
-                    next_field_accept[FIELD_PDU] = tag_value == PDU_GET || tag_value == PDU_GET_NEXT
-                        || tag_value == PDU_SET;
-                    next_field_accept[FIELD_REQUEST_ID] = tag_value == TAG_INTEGER
-                        && (|field_length) && !(|field_length[15:3])
-                        && (!field_length[2] || !(|field_length[1:0]));
-                    next_field_accept[FIELD_ERROR_STATUS] = 0;
-                    next_field_accept[FIELD_ERROR_INDEX] = 0;
-                    next_field_accept[FIELD_BINDING_LIST] = 0;
-                    next_field_accept[FIELD_BINDING] = 0;
-                    next_field_accept[FIELD_OID] = tag_value == TAG_OID
-                        && (|field_length) && !(|field_length[15:5])
-                        && (!field_length[4] || !(|field_length[3:0]));
-                    next_field_accept[FIELD_VALUE] = (get_set && !(|field_length[15:5])
-                        && (!field_length[4] || !(|field_length[3:0])))
-                        || (tag_value == TAG_NULL && field_length == 0);
-                    next_state = DISPATCH_CHECK;
-                end
-
-                DISPATCH_CHECK : begin
-                    next_field_bounds_ok = field_length <= PACKET_BUFFER_BYTES && field_end <= request_length;
-                    next_value_chain_ok = field_end == binding_end && binding_end == list_end
-                        && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length;
-                    next_state = DISPATCH;
-                end
-
-                // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
-                DISPATCH : begin
-                    next_value_pos = 0;
-                    if (!field_bounds_ok) next_state = 7'd0;
-                    else case (field) // synthesis parallel_case
-
-                        FIELD_MESSAGE : if (field_accept[FIELD_MESSAGE]) begin
-                            next_outer_end = field_end[8:0];
-                            next_field = 4'd1;
-                            fetch (TAG);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_VERSION : if (field_accept[FIELD_VERSION]) fetch (VERSION);
-                        else next_state = 7'd0;
-
-                        FIELD_COMMUNITY : if (field_accept[FIELD_COMMUNITY]) begin
-                            next_community_length = field_length[4:0];
-                            next_community_start = cursor[7:0];
-                            next_community_bad = (field_length != configured_length);
-                            fetch (COMMUNITY);
-                        end
-                        else begin
-                            next_bad_community = bad_community + 32'd1;
-                            if (trap_enabled) next_auth_pending = 1;
-                            next_state = 7'd0;
-                        end
-
-                        FIELD_PDU : if (field_accept[FIELD_PDU]) begin
-                            next_get_next = (tag_value == PDU_GET_NEXT);
-                            next_get_set = (tag_value == PDU_SET);
-                            next_pdu_end = field_end[8:0];
-                            next_field = 4'd4;
-                            fetch (TAG);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX :
-                            if (field_accept[FIELD_REQUEST_ID]) begin
-                            if (field == FIELD_REQUEST_ID) next_request_id_length = field_length[2:0];
-                            fetch (INTEGER_VALUE);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_BINDING_LIST : if (field_accept[FIELD_MESSAGE]) begin
-                            next_list_end = field_end[8:0];
-                            next_field = 4'd8;
-                            fetch (TAG);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_BINDING : if (field_accept[FIELD_MESSAGE]) begin
-                            next_binding_end = field_end[8:0];
-                            next_field = 4'd9;
-                            fetch (TAG);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_OID : if (field_accept[FIELD_OID]) begin
-                            next_oid_start = cursor[7:0];
-                            next_oid_length = field_length[4:0];
-                            next_cursor = field_end[8:0];
-                            next_field = 4'd10;
-                            fetch (TAG);
-                        end
-                        else next_state = 7'd0;
-
-                        FIELD_VALUE : if (field_accept[FIELD_VALUE] && value_chain_ok) begin
-                            next_set_value_start = cursor[7:0];
-                            next_set_value_tag = tag_value;
-                            next_set_value_length = field_length[7:0];
-                            next_candidate = 0;
-                            next_state = LOOK_START;
-                        end
-                        else next_state = 7'd0;
-
-                        default : next_state = 7'd0;
-                    endcase
-                end
-
-                // VERSION：检查协议版本，通过后读口令，否则转 IDLE。
-                VERSION : begin
-                    if (byte_value <= 1) begin
-                        next_version = byte_value[0];
-                        next_cursor = cursor + 9'd1;
-                        next_field = 4'd2;
-                        fetch (TAG);
-                    end
-                    else next_state = 7'd0;
-                end
-
-                // COMMUNITY：逐字节核对口令，通过后读下一字段，否则转 IDLE。
-                COMMUNITY : begin
-                    next_community_bad = community_bad || byte_value != community_expected;
-                    next_cursor = cursor + 9'd1;
-                    next_value_pos = value_pos + 5'd1;
-                    if (value_pos + 1 == community_length) begin
-                        if (community_bad || byte_value != community_expected) begin
-                            next_bad_community = bad_community + 32'd1;
-                            if (trap_enabled) next_auth_pending = 1;
-                            next_state = 7'd0;
-                        end
-                        else begin
-                            next_field = 4'd3;
-                            fetch (TAG);
-                        end
-                    end
-                    else fetch (COMMUNITY);
-                end
-
-                // INTEGER_VALUE：读完请求中的整数字段后，继续读取 TAG。
-                INTEGER_VALUE : begin
-                    if (field == FIELD_REQUEST_ID) next_request_id = { request_id[23:0], byte_value };
-                    next_cursor = cursor + 9'd1;
-                    next_value_pos = value_pos + 5'd1;
-                    if (value_pos + 1 == field_length) begin
-                        next_field = field + 4'd1;
-                        fetch (TAG);
-                    end
-                    else fetch (INTEGER_VALUE);
-                end
-
-                // ======== 第三部分：查找对象，读取或设置它的值 ========
-                // LOOK_START：从对象编号的第一个数字开始，然后转 LOOK_COMPARE。
-                LOOK_START : begin
-                    next_cursor = { 1'b0, oid_start };
-                    next_oid_pos = 0;
-                    next_arc_index = 0;
-                    next_oid_acc = 0;
-                    fetch (LOOK_COMPARE);
-                end
-
-                // LOOK_COMPARE：逐个数字比较对象编号，匹配转 FOUND，否则转 LOOK_NEXT。
-                LOOK_COMPARE : begin
-                    if (byte_value[7]) begin
-                        if (oid_last_byte) next_state = 7'd0;
-                        else begin
-                            next_oid_acc = decoded_arc;
-                            next_cursor = cursor + 9'd1;
-                            next_oid_pos = oid_pos + 5'd1;
-                            fetch (LOOK_COMPARE);
-                        end
-                    end
-                    else if (arc_less) next_state = get_next ? FOUND : LOOK_NEXT;
-                    else if (arc_greater) next_state = 7'd16;
-                    else if (oid_last_byte) begin
-                        if (oid_last_arc)
-                            next_state = get_next ? LOOK_NEXT : FOUND;
-                        else next_state = get_next ? FOUND : LOOK_NEXT;
-                    end
-                    else if (oid_last_arc)
-                        next_state = 7'd16;
-                    else begin
-                        next_oid_acc = 0;
-                        next_arc_index = arc_index + 4'd1;
-                        next_oid_pos = oid_pos + 5'd1;
-                        next_cursor = cursor + 9'd1;
-                        fetch (LOOK_COMPARE);
-                    end
-                end
-
-                // LOOK_NEXT：换下一个对象重试，全部试完后转 MISSING。
-                LOOK_NEXT : if (candidate == LAST_OBJECT_INDEX) next_state = MISSING;
+            // FETCH0：检查读取范围并发出读请求，然后转 FETCH1。
+            FETCH0: begin
+                if (cursor >= request_length) next_state = 7'd0;
                 else begin
-                    next_candidate = candidate + 6'd1;
-                    next_state = LOOK_START;
+                    next_req_re = 1;
+                    next_req_ra = cursor[7:0];
+                    next_expected_arc = mib_arc(candidate, arc_index);
+                    case (value_pos[3:2])
+                        0: next_community_word = community0;
+                        1: next_community_word = community1;
+                        2: next_community_word = community2;
+                        3: next_community_word = community3;
+                    endcase
+                    next_state = FETCH1;
                 end
+            end
 
-                // FOUND：查询转 MIB_REQUEST；设置先读入待写值，非法写转 SET_ERROR。
-                FOUND : begin
-                    next_object_index = candidate;
-                    next_mib_addr = mib_address (candidate);
-                    next_missing = 0;
-                    if ( !get_set) begin
+            // FETCH1：等待同步读取并选择口令字节，然后转 FETCH2。
+            FETCH1: begin
+                case (value_pos[1:0])
+                    0: next_community_expected = community_word[31:24];
+                    1: next_community_expected = community_word[23:16];
+                    2: next_community_expected = community_word[15:8];
+                    3: next_community_expected = community_word[7:0];
+                endcase
+                next_state = FETCH_WAIT_A;
+            end
 
-                        next_state = MIB_ADDRESS;
+            // 利用原有读取等待拍，先比较四个字节，再合并比较结果。
+            FETCH_WAIT_A: next_state = FETCH_WAIT_B;
+            FETCH_WAIT_B: next_state = FETCH_WAIT_C;
+            FETCH_WAIT_C: next_state = FETCH2;
+
+            FETCH2: begin
+                next_byte_value = req_q;
+                next_arc_less_byte[3] = fetched_arc[31:24] < expected_arc[31:24];
+                next_arc_less_byte[2] = fetched_arc[23:16] < expected_arc[23:16];
+                next_arc_less_byte[1] = fetched_arc[15:8] < expected_arc[15:8];
+                next_arc_less_byte[0] = fetched_arc[7:0] < expected_arc[7:0];
+                next_arc_equal_byte[3] = fetched_arc[31:24] == expected_arc[31:24];
+                next_arc_equal_byte[2] = fetched_arc[23:16] == expected_arc[23:16];
+                next_arc_equal_byte[1] = fetched_arc[15:8] == expected_arc[15:8];
+                next_arc_equal_byte[0] = fetched_arc[7:0] == expected_arc[7:0];
+                next_state = FETCH3;
+            end
+
+            // FETCH3：返回调用读取操作时保存的状态。
+            FETCH3: begin
+                next_arc_less = arc_less_byte[3] || (arc_equal_byte[3] && arc_less_byte[2])
+                    || (&arc_equal_byte[3:2] && arc_less_byte[1])
+                    || (&arc_equal_byte[3:1] && arc_less_byte[0]);
+                next_arc_greater = (!arc_less_byte[3] && !arc_equal_byte[3])
+                    || (arc_equal_byte[3] && !arc_less_byte[2] && !arc_equal_byte[2])
+                    || (&arc_equal_byte[3:2] && !arc_less_byte[1] && !arc_equal_byte[1])
+                    || (&arc_equal_byte[3:1] && !arc_less_byte[0] && !arc_equal_byte[0]);
+                next_oid_last_byte = {1'b0, oid_pos} + 6'd1 == {1'b0, oid_length};
+                next_oid_last_arc = arc_index == (candidate < SYSTEM_OBJECT_COUNT
+                    ? SYSTEM_OID_LAST_ARC : PRIVATE_OID_LAST_ARC);
+                next_state = return_state;
+            end
+
+            // ======== 第二部分：逐个字段解析请求 ========
+            // TAG：保存字段类型，然后读取 LENGTH。
+            TAG: begin
+                next_tag_value = byte_value;
+                next_cursor = cursor + 9'd1;
+                fetch(LENGTH);
+            end
+
+            // LENGTH：短长度转 DISPATCH，长长度转 LONG_LENGTH，非法长度转 IDLE。
+            LENGTH: begin
+                next_cursor = cursor + 9'd1;
+                if ( !byte_value[7]) begin
+                    next_field_length = { 9'b0, byte_value[6:0] };
+                    next_state = DISPATCH_SUM;
+                end
+                else if (byte_value == LENGTH_1_BYTE || byte_value == LENGTH_2_BYTES) begin
+                    next_length_left = byte_value[1:0];
+                    next_field_length = 0;
+                    fetch(LONG_LENGTH);
+                end
+                else next_state = 7'd0;
+            end
+
+            // LONG_LENGTH：逐字节拼出长度，读够后转 DISPATCH。
+            LONG_LENGTH: begin
+                next_field_length = { field_length[7:0], byte_value };
+                next_cursor = cursor + 9'd1;
+                next_length_left = length_left - 2'd1;
+                if (length_left == 1) next_state = DISPATCH_SUM;
+                else fetch(LONG_LENGTH);
+            end
+
+            // 字段结束位置、格式条件和边界分拍准备，解析拍只消费局部标记。
+            DISPATCH_SUM: begin
+                next_field_end = cursor + field_length;
+                next_field_accept[FIELD_MESSAGE] = tag_value == TAG_SEQUENCE;
+                next_field_accept[FIELD_VERSION] = tag_value == TAG_INTEGER && field_length == 1;
+                next_field_accept[FIELD_COMMUNITY] = tag_value == TAG_OCTET_STRING
+                    && (|field_length) && !(|field_length[15:5])
+                    && (!field_length[4] || !(|field_length[3:0]));
+                next_field_accept[FIELD_PDU] = tag_value == PDU_GET || tag_value == PDU_GET_NEXT
+                    || tag_value == PDU_SET;
+                next_field_accept[FIELD_REQUEST_ID] = tag_value == TAG_INTEGER
+                    && (|field_length) && !(|field_length[15:3])
+                    && (!field_length[2] || !(|field_length[1:0]));
+                next_field_accept[FIELD_ERROR_STATUS] = 0;
+                next_field_accept[FIELD_ERROR_INDEX] = 0;
+                next_field_accept[FIELD_BINDING_LIST] = 0;
+                next_field_accept[FIELD_BINDING] = 0;
+                next_field_accept[FIELD_OID] = tag_value == TAG_OID
+                    && (|field_length) && !(|field_length[15:5])
+                    && (!field_length[4] || !(|field_length[3:0]));
+                next_field_accept[FIELD_VALUE] = (get_set && !(|field_length[15:5])
+                    && (!field_length[4] || !(|field_length[3:0])))
+                    || (tag_value == TAG_NULL && field_length == 0);
+                next_state = DISPATCH_CHECK;
+            end
+
+            DISPATCH_CHECK: begin
+                next_field_bounds_ok = field_length <= PACKET_BUFFER_BYTES && field_end <= request_length;
+                next_value_chain_ok = field_end == binding_end && binding_end == list_end
+                    && list_end == pdu_end && pdu_end == outer_end && outer_end == request_length;
+                next_state = DISPATCH;
+            end
+
+            // DISPATCH：检查字段边界并转到对应解析状态，格式错误时转 IDLE。
+            DISPATCH: begin
+                next_value_pos = 0;
+                if (!field_bounds_ok) next_state = 7'd0;
+                else case (field) // synthesis parallel_case
+
+                    FIELD_MESSAGE: if (field_accept[FIELD_MESSAGE]) begin
+                        next_outer_end = field_end[8:0];
+                        next_field = 4'd1;
+                        fetch(TAG);
                     end
-                    else if (candidate != 3) begin
-                        next_error_status = version ? ERR_NOT_WRITABLE : ERR_NO_SUCH_NAME;
-                        next_state = SET_ERROR;
-                    end
-                    else if (set_value_tag != TYPE_GAUGE32) begin
-                        next_error_status = version ? ERR_WRONG_TYPE : ERR_BAD_VALUE;
-                        next_state = SET_ERROR;
-                    end
-                    else if (set_value_length < 1 || set_value_length > 5) begin
-                        next_error_status = version ? ERR_WRONG_LENGTH : ERR_BAD_VALUE;
-                        next_state = SET_ERROR;
+                    else next_state = 7'd0;
+
+                    FIELD_VERSION: if (field_accept[FIELD_VERSION]) fetch(VERSION);
+                    else next_state = 7'd0;
+
+                    FIELD_COMMUNITY: if (field_accept[FIELD_COMMUNITY]) begin
+                        next_community_length = field_length[4:0];
+                        next_community_start = cursor[7:0];
+                        next_community_bad = (field_length != configured_length);
+                        fetch(COMMUNITY);
                     end
                     else begin
-                        next_cursor = { 1'b0, set_value_start };
-                        next_value_pos = 0;
-                        next_set_number = 0;
-                        next_set_negative = 0;
-                        fetch (SET_VALUE);
+                        next_bad_community = bad_community + 32'd1;
+                        if (trap_enabled) next_auth_pending = 1;
+                        next_state = 7'd0;
                     end
-                end
 
-                // MISSING：生成对象不存在或不可写的结果，然后准备回应长度。
-                MISSING : begin
-                    if (get_set) begin
-                        next_error_status = version ? ERR_NOT_WRITABLE : ERR_NO_SUCH_NAME;
-                        next_state = SET_ERROR;
+                    FIELD_PDU: if (field_accept[FIELD_PDU]) begin
+                        next_get_next = (tag_value == PDU_GET_NEXT);
+                        next_get_set = (tag_value == PDU_SET);
+                        next_pdu_end = field_end[8:0];
+                        next_field = 4'd4;
+                        fetch(TAG);
                     end
-                    else begin
-                        next_missing = 1;
-                        next_error_status = version ? ERR_NONE : ERR_NO_SUCH_NAME;
-                        next_value_tag = version ? (get_next ? EXC_END_OF_MIB : EXC_NO_SUCH_OBJECT) : TAG_NULL;
-                        next_value_length = 0;
-                        next_response_oid_length = { 3'b0, oid_length };
-                        next_state = LEN1;
-                    end
-                end
+                    else next_state = 7'd0;
 
-                // SET_VALUE：拼出待写整数，读完后转 SET_CHECK。
-                SET_VALUE : begin
-                    next_set_number = { set_number[23:0], byte_value };
-                    if (value_pos == 0) next_set_negative = byte_value[7];
-                    next_value_pos = value_pos + 5'd1;
+                    FIELD_REQUEST_ID, FIELD_ERROR_STATUS, FIELD_ERROR_INDEX:
+                    if (field_accept[FIELD_REQUEST_ID]) begin
+                        if (field == FIELD_REQUEST_ID) next_request_id_length = field_length[2:0];
+                        fetch(INTEGER_VALUE);
+                    end
+                    else next_state = 7'd0;
+
+                    FIELD_BINDING_LIST: if (field_accept[FIELD_MESSAGE]) begin
+                        next_list_end = field_end[8:0];
+                        next_field = 4'd8;
+                        fetch(TAG);
+                    end
+                    else next_state = 7'd0;
+
+                    FIELD_BINDING: if (field_accept[FIELD_MESSAGE]) begin
+                        next_binding_end = field_end[8:0];
+                        next_field = 4'd9;
+                        fetch(TAG);
+                    end
+                    else next_state = 7'd0;
+
+                    FIELD_OID: if (field_accept[FIELD_OID]) begin
+                        next_oid_start = cursor[7:0];
+                        next_oid_length = field_length[4:0];
+                        next_cursor = field_end[8:0];
+                        next_field = 4'd10;
+                        fetch(TAG);
+                    end
+                    else next_state = 7'd0;
+
+                    FIELD_VALUE: if (field_accept[FIELD_VALUE] && value_chain_ok) begin
+                        next_set_value_start = cursor[7:0];
+                        next_set_value_tag = tag_value;
+                        next_set_value_length = field_length[7:0];
+                        next_candidate = 0;
+                        next_state = LOOK_START;
+                    end
+                    else next_state = 7'd0;
+
+                    default: next_state = 7'd0;
+                endcase
+            end
+
+            // VERSION：检查协议版本，通过后读口令，否则转 IDLE。
+            VERSION: begin
+                if (byte_value <= 1) begin
+                    next_version = byte_value[0];
                     next_cursor = cursor + 9'd1;
-                    if (value_pos + 1 == set_value_length) next_state = SET_CHECK;
-                    else fetch (SET_VALUE);
+                    next_field = 4'd2;
+                    fetch(TAG);
                 end
+                else next_state = 7'd0;
+            end
 
-                // SET_CHECK：检查数值范围，通过则写总线，否则转 SET_ERROR。
-                SET_CHECK : begin
-                    if (set_negative || | set_number[31:16]) begin
-                        next_error_status = version ? ERR_WRONG_VALUE : ERR_BAD_VALUE;
-                        next_state = SET_ERROR;
+            // COMMUNITY：逐字节核对口令，通过后读下一字段，否则转 IDLE。
+            COMMUNITY: begin
+                next_community_bad = community_bad || byte_value != community_expected;
+                next_cursor = cursor + 9'd1;
+                next_value_pos = value_pos + 5'd1;
+                if (value_pos + 1 == community_length) begin
+                    if (community_bad || byte_value != community_expected) begin
+                        next_bad_community = bad_community + 32'd1;
+                        if (trap_enabled) next_auth_pending = 1;
+                        next_state = 7'd0;
                     end
                     else begin
-                        next_mib_wdata = set_number;
-                        next_mib_write = 1;
-                        next_mib_request = ~mib_request;
-                        next_state = SET_WRITE;
+                        next_field = 4'd3;
+                        fetch(TAG);
                     end
                 end
+                else fetch(COMMUNITY);
+            end
 
-                // SET_WRITE：等写握手完成，再读回实际值。
-                SET_WRITE : if (mib_complete == mib_request) begin
+            // INTEGER_VALUE：读完请求中的整数字段后，继续读取 TAG。
+            INTEGER_VALUE: begin
+                if (field == FIELD_REQUEST_ID) next_request_id = { request_id[23:0], byte_value };
+                next_cursor = cursor + 9'd1;
+                next_value_pos = value_pos + 5'd1;
+                if (value_pos + 1 == field_length) begin
+                    next_field = field + 4'd1;
+                    fetch(TAG);
+                end
+                else fetch(INTEGER_VALUE);
+            end
+
+            // ======== 第三部分：查找对象，读取或设置它的值 ========
+            // LOOK_START：从对象编号的第一个数字开始，然后转 LOOK_COMPARE。
+            LOOK_START: begin
+                next_cursor = { 1'b0, oid_start };
+                next_oid_pos = 0;
+                next_arc_index = 0;
+                next_oid_acc = 0;
+                fetch(LOOK_COMPARE);
+            end
+
+            // LOOK_COMPARE：逐个数字比较对象编号，匹配转 FOUND，否则转 LOOK_NEXT。
+            LOOK_COMPARE: begin
+                if (byte_value[7]) begin
+                    if (oid_last_byte) next_state = 7'd0;
+                    else begin
+                        next_oid_acc = decoded_arc;
+                        next_cursor = cursor + 9'd1;
+                        next_oid_pos = oid_pos + 5'd1;
+                        fetch(LOOK_COMPARE);
+                    end
+                end
+                else if (arc_less) next_state = get_next ? FOUND : LOOK_NEXT;
+                else if (arc_greater) next_state = 7'd16;
+                else if (oid_last_byte) begin
+                    if (oid_last_arc)
+                        next_state = get_next ? LOOK_NEXT : FOUND;
+                    else next_state = get_next ? FOUND : LOOK_NEXT;
+                end
+                else if (oid_last_arc)
+                    next_state = 7'd16;
+                else begin
+                    next_oid_acc = 0;
+                    next_arc_index = arc_index + 4'd1;
+                    next_oid_pos = oid_pos + 5'd1;
+                    next_cursor = cursor + 9'd1;
+                    fetch(LOOK_COMPARE);
+                end
+            end
+
+            // LOOK_NEXT：换下一个对象重试，全部试完后转 MISSING。
+            LOOK_NEXT: if (candidate == LAST_OBJECT_INDEX) next_state = MISSING;
+            else begin
+                next_candidate = candidate + 6'd1;
+                next_state = LOOK_START;
+            end
+
+            // FOUND：查询转 MIB_REQUEST；设置先读入待写值，非法写转 SET_ERROR。
+            FOUND: begin
+                next_object_index = candidate;
+                next_mib_addr = mib_address(candidate);
+                next_missing = 0;
+                if ( !get_set) begin
+
                     next_state = MIB_ADDRESS;
                 end
+                else if (candidate != 3) begin
+                    next_error_status = version ? ERR_NOT_WRITABLE : ERR_NO_SUCH_NAME;
+                    next_state = SET_ERROR;
+                end
+                else if (set_value_tag != TYPE_GAUGE32) begin
+                    next_error_status = version ? ERR_WRONG_TYPE : ERR_BAD_VALUE;
+                    next_state = SET_ERROR;
+                end
+                else if (set_value_length < 1 || set_value_length > 5) begin
+                    next_error_status = version ? ERR_WRONG_LENGTH : ERR_BAD_VALUE;
+                    next_state = SET_ERROR;
+                end
+                else begin
+                    next_cursor = { 1'b0, set_value_start };
+                    next_value_pos = 0;
+                    next_set_number = 0;
+                    next_set_negative = 0;
+                    fetch(SET_VALUE);
+                end
+            end
 
-                // SET_ERROR：保留请求中的编号和值用于错误回应，然后转 LEN1。
-                SET_ERROR : begin
+            // MISSING：生成对象不存在或不可写的结果，然后准备回应长度。
+            MISSING: begin
+                if (get_set) begin
+                    next_error_status = version ? ERR_NOT_WRITABLE : ERR_NO_SUCH_NAME;
+                    next_state = SET_ERROR;
+                end
+                else begin
                     next_missing = 1;
-                    next_echo_value = 1;
-                    next_value_tag = set_value_tag;
-                    next_value_length = set_value_length;
+                    next_error_status = version ? ERR_NONE : ERR_NO_SUCH_NAME;
+                    next_value_tag = version ? (get_next ? EXC_END_OF_MIB : EXC_NO_SUCH_OBJECT) : TAG_NULL;
+                    next_value_length = 0;
                     next_response_oid_length = { 3'b0, oid_length };
                     next_state = LEN1;
                 end
+            end
 
-                // 先稳定地址一拍，让各个计数器分组在本地保存预译码结果。
-                MIB_ADDRESS : begin
-                    next_mib_write = 0;
+            // SET_VALUE：拼出待写整数，读完后转 SET_CHECK。
+            SET_VALUE: begin
+                next_set_number = { set_number[23:0], byte_value };
+                if (value_pos == 0) next_set_negative = byte_value[7];
+                next_value_pos = value_pos + 5'd1;
+                next_cursor = cursor + 9'd1;
+                if (value_pos + 1 == set_value_length) next_state = SET_CHECK;
+                else fetch(SET_VALUE);
+            end
+
+            // SET_CHECK：检查数值范围，通过则写总线，否则转 SET_ERROR。
+            SET_CHECK: begin
+                if (set_negative || | set_number[31:16]) begin
+                    next_error_status = version ? ERR_WRONG_VALUE : ERR_BAD_VALUE;
+                    next_state = SET_ERROR;
+                end
+                else begin
+                    next_mib_wdata = set_number;
+                    next_mib_write = 1;
                     next_mib_request = ~mib_request;
-                    next_sample_cycle = now;
-                    next_state = MIB_WAIT;
+                    next_state = SET_WRITE;
                 end
-                MIB_WAIT : if (mib_complete == mib_request) begin
-                    next_value_number = mib_rdata;
-                    next_state = VALUE_PREP;
-                end
+            end
 
-                // ======== 第四部分：计算各层长度，构造回应或事件通知 ========
-                // VALUE_PREP：确定回应值的类型和长度，然后转 LEN1。
-                VALUE_PREP : begin
-                    next_response_oid_length = object_index < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_BYTES : PRIVATE_OID_BYTES;
-                    if (object_index == 0) begin
-                        next_value_tag = 4;
-                        next_value_length = 16;
-                        next_value_shift = 0;
+            // SET_WRITE：等写握手完成，再读回实际值。
+            SET_WRITE: if (mib_complete == mib_request) begin
+                next_state = MIB_ADDRESS;
+            end
+
+            // SET_ERROR：保留请求中的编号和值用于错误回应，然后转 LEN1。
+            SET_ERROR: begin
+                next_missing = 1;
+                next_echo_value = 1;
+                next_value_tag = set_value_tag;
+                next_value_length = set_value_length;
+                next_response_oid_length = { 3'b0, oid_length };
+                next_state = LEN1;
+            end
+
+            // 先稳定地址一拍，让各个计数器分组在本地保存预译码结果。
+            MIB_ADDRESS: begin
+                next_mib_write = 0;
+                next_mib_request = ~mib_request;
+                next_sample_cycle = now;
+                next_state = MIB_WAIT;
+            end
+            MIB_WAIT: if (mib_complete == mib_request) begin
+                next_value_number = mib_rdata;
+                next_state = VALUE_PREP;
+            end
+
+            // ======== 第四部分：计算各层长度，构造回应或事件通知 ========
+            // VALUE_PREP：确定回应值的类型和长度，然后转 LEN1。
+            VALUE_PREP: begin
+                next_response_oid_length =
+                    object_index < SYSTEM_OBJECT_COUNT ? SYSTEM_OID_BYTES : PRIVATE_OID_BYTES;
+                if (object_index == 0) begin
+                    next_value_tag = 4;
+                    next_value_length = 16;
+                    next_value_shift = 0;
+                end
+                else begin
+                    next_value_tag = object_index == 1 ? TYPE_TIMETICKS : (object_index >= SYSTEM_OBJECT_COUNT
+                        && object_index <= 4 ? TYPE_GAUGE32 : TYPE_COUNTER32);
+                    if (value_number[31]) begin
+                        next_value_length = 5;
+                        next_value_shift = value_number;
+                    end
+                    else if (|value_number[30:23]) begin
+                        next_value_length = 4;
+                        next_value_shift = value_number;
+                    end
+                    else if (|value_number[22:15]) begin
+                        next_value_length = 3;
+                        next_value_shift = { value_number[23:0], 8'b0 };
+                    end
+                    else if (|value_number[14:7]) begin
+                        next_value_length = 2;
+                        next_value_shift = { value_number[15:0], 16'b0 };
                     end
                     else begin
-                        next_value_tag = object_index == 1 ? TYPE_TIMETICKS : (object_index >= SYSTEM_OBJECT_COUNT
-                            && object_index <= 4 ? TYPE_GAUGE32 : TYPE_COUNTER32);
-                        if (value_number[31]) begin
-                            next_value_length = 5;
-                            next_value_shift = value_number;
-                        end
-                        else if ( | value_number[30:23]) begin
-                            next_value_length = 4;
-                            next_value_shift = value_number;
-                        end
-                        else if ( | value_number[22:15]) begin
-                            next_value_length = 3;
-                            next_value_shift = { value_number[23:0], 8'b0 };
-                        end
-                        else if ( | value_number[14:7]) begin
-                            next_value_length = 2;
-                            next_value_shift = { value_number[15:0], 16'b0 };
-                        end
-                        else begin
-                            next_value_length = 1;
-                            next_value_shift = { value_number[7:0], 24'b0 };
-                        end
+                        next_value_length = 1;
+                        next_value_shift = { value_number[7:0], 24'b0 };
                     end
-                    next_state = LEN1;
+                end
+                next_state = LEN1;
+            end
+
+            // LEN1：计算一个变量的编码长度，然后转 LEN2。
+            LEN1: begin
+                next_binding_length = response_oid_length + value_length + 8'd4;
+                next_state = LEN2;
+            end
+
+            // LEN2：计算变量列表的编码长度，然后转 LEN3。
+            LEN2: begin
+                next_list_length = binding_length + (sending_trap ? 8'd27 : 8'd2);
+                next_state = LEN3;
+            end
+
+            // LEN3：计算协议数据单元的长度，然后转 LEN4。
+            LEN3: begin
+                next_pdu_length = list_length + { 5'b0, request_id_length } + 8'd10;
+                next_state = 7'd25;
+            end
+
+            // LEN4：计算整条消息的长度，然后转 BUILD。
+            LEN4: begin
+                next_description_value = object_index == 0 && !missing;
+                next_message_length = pdu_length + { 3'b0, community_length } + 8'd7;
+                next_response_length = pdu_length + { 4'b0, community_length } + 9'd9;
+                next_id_shift = request_id << ((4 - request_id_length) * 8);
+                next_descr_shift = DESCRIPTION;
+                next_part = B_MESSAGE_TAG;
+                next_part_pos = 0;
+                next_output_count = 0;
+                next_state = 7'd26;
+            end
+
+            // BUILD：依次写入回应的各字段，全部完成后进入发送过程。
+            BUILD: case (part)
+
+                B_MESSAGE_TAG: begin
+                    emit(TAG_SEQUENCE);
+                    next_part = B_MESSAGE_LENGTH;
                 end
 
-                // LEN1：计算一个变量的编码长度，然后转 LEN2。
-                LEN1 : begin
-                    next_binding_length = response_oid_length + value_length + 8'd4;
-                    next_state = LEN2;
+                B_MESSAGE_LENGTH: begin
+                    emit(message_length);
+                    next_part = B_VERSION_TAG;
                 end
 
-                // LEN2：计算变量列表的编码长度，然后转 LEN3。
-                LEN2 : begin
-                    next_list_length = binding_length + (sending_trap ? 8'd27 : 8'd2);
-                    next_state = LEN3;
+                B_VERSION_TAG: begin
+                    emit(TAG_INTEGER);
+                    next_part = B_VERSION_LENGTH;
                 end
 
-                // LEN3：计算协议数据单元的长度，然后转 LEN4。
-                LEN3 : begin
-                    next_pdu_length = list_length + { 5'b0, request_id_length } + 8'd10;
-                    next_state = 7'd25;
+                B_VERSION_LENGTH: begin
+                    emit(1);
+                    next_part = B_VERSION;
                 end
 
-                // LEN4：计算整条消息的长度，然后转 BUILD。
-                LEN4 : begin
-                    next_description_value = object_index == 0 && !missing;
-                    next_message_length = pdu_length + { 3'b0, community_length } + 8'd7;
-                    next_response_length = pdu_length + { 4'b0, community_length } + 9'd9;
-                    next_id_shift = request_id << ((4 - request_id_length) * 8);
-                    next_descr_shift = DESCRIPTION;
-                    next_part = B_MESSAGE_TAG;
+                B_VERSION: begin
+                    emit({ 7'b0, version });
+                    next_part = B_COMMUNITY_TAG;
+                end
+
+                B_COMMUNITY_TAG: begin
+                    emit(TAG_OCTET_STRING);
+                    next_part = B_COMMUNITY_LENGTH;
+                end
+
+                B_COMMUNITY_LENGTH: begin
+                    emit({ 3'b0, community_length });
+                    next_part = B_COMMUNITY;
                     next_part_pos = 0;
-                    next_output_count = 0;
-                    next_state = 7'd26;
                 end
 
-                // BUILD：依次写入回应的各字段，全部完成后进入发送过程。
-                BUILD : case (part)
+                B_COMMUNITY: if (sending_trap) next_state = TRAP_COMM0;
+                else begin
+                    next_cursor = { 1'b0, community_start } + part_pos;
+                    fetch(COPY_COMM);
+                end
 
-                    B_MESSAGE_TAG : begin
-                        emit (TAG_SEQUENCE);
-                        next_part = B_MESSAGE_LENGTH;
-                    end
+                B_PDU_TAG: begin
+                    emit(sending_trap ? PDU_TRAP : PDU_RESPONSE);
+                    next_part = B_PDU_LENGTH;
+                end
 
-                    B_MESSAGE_LENGTH : begin
-                        emit (message_length);
-                        next_part = B_VERSION_TAG;
-                    end
+                B_PDU_LENGTH: begin
+                    emit(pdu_length);
+                    next_part = B_ID_TAG;
+                end
 
-                    B_VERSION_TAG : begin
-                        emit (TAG_INTEGER);
-                        next_part = B_VERSION_LENGTH;
-                    end
+                B_ID_TAG: begin
+                    emit(TAG_INTEGER);
+                    next_part = B_ID_LENGTH;
+                end
 
-                    B_VERSION_LENGTH : begin
-                        emit (1);
-                        next_part = B_VERSION;
-                    end
+                B_ID_LENGTH: begin
+                    emit({ 5'b0, request_id_length });
+                    next_part = B_ID;
+                    next_part_pos = 0;
+                end
 
-                    B_VERSION : begin
-                        emit ({ 7'b0, version });
-                        next_part = B_COMMUNITY_TAG;
-                    end
+                B_ID: begin
+                    emit(id_shift[31:24]);
+                    next_id_shift = { id_shift[23:0], 8'b0 };
+                    next_part_pos = part_pos + 5'd1;
+                    if (({1'b0,part_pos} + 6'd1) == request_id_length) next_part = B_STATUS_TAG;
+                end
 
-                    B_COMMUNITY_TAG : begin
-                        emit (TAG_OCTET_STRING);
-                        next_part = B_COMMUNITY_LENGTH;
-                    end
+                B_STATUS_TAG: begin
+                    emit(TAG_INTEGER);
+                    next_part = B_STATUS_LENGTH;
+                end
 
-                    B_COMMUNITY_LENGTH : begin
-                        emit ({ 3'b0, community_length });
-                        next_part = B_COMMUNITY;
-                        next_part_pos = 0;
-                    end
+                B_STATUS_LENGTH: begin
+                    emit(1);
+                    next_part = B_STATUS;
+                end
 
-                    B_COMMUNITY : if (sending_trap) next_state = TRAP_COMM0;
-                    else begin
-                        next_cursor = { 1'b0, community_start } + part_pos;
-                        fetch (COPY_COMM);
-                    end
+                B_STATUS: begin
+                    emit(error_status);
+                    next_part = B_INDEX_TAG;
+                end
 
-                    B_PDU_TAG : begin
-                        emit (sending_trap ? PDU_TRAP : PDU_RESPONSE);
-                        next_part = B_PDU_LENGTH;
-                    end
+                B_INDEX_TAG: begin
+                    emit(TAG_INTEGER);
+                    next_part = B_INDEX_LENGTH;
+                end
 
-                    B_PDU_LENGTH : begin
-                        emit (pdu_length);
-                        next_part = B_ID_TAG;
-                    end
+                B_INDEX_LENGTH: begin
+                    emit(1);
+                    next_part = B_INDEX;
+                end
 
-                    B_ID_TAG : begin
-                        emit (TAG_INTEGER);
-                        next_part = B_ID_LENGTH;
-                    end
+                B_INDEX: begin
+                    emit(error_status == ERR_NONE ? 8'd0 : 8'd1);
+                    next_part = B_LIST_TAG;
+                end
 
-                    B_ID_LENGTH : begin
-                        emit ({ 5'b0, request_id_length });
-                        next_part = B_ID;
-                        next_part_pos = 0;
-                    end
+                B_LIST_TAG: begin
+                    emit(TAG_SEQUENCE);
+                    next_part = B_LIST_LENGTH;
+                end
 
-                    B_ID : begin
-                        emit (id_shift[31:24]);
-                        next_id_shift = { id_shift[23:0], 8'b0 };
-                        next_part_pos = part_pos + 5'd1;
-                        if (({1'b0,part_pos} + 6'd1) == request_id_length) next_part = B_STATUS_TAG;
-                    end
+                B_LIST_LENGTH: begin
+                    emit(list_length);
+                    next_part = B_BINDING_TAG;
+                end
 
-                    B_STATUS_TAG : begin
-                        emit (TAG_INTEGER);
-                        next_part = B_STATUS_LENGTH;
-                    end
+                B_BINDING_TAG: begin
+                    emit(TAG_SEQUENCE);
+                    next_part = B_BINDING_LENGTH;
+                end
 
-                    B_STATUS_LENGTH : begin
-                        emit (1);
-                        next_part = B_STATUS;
-                    end
+                B_BINDING_LENGTH: begin
+                    emit(binding_length);
+                    next_part = B_OID_TAG;
+                end
 
-                    B_STATUS : begin
-                        emit (error_status);
-                        next_part = B_INDEX_TAG;
-                    end
+                B_OID_TAG: begin
+                    emit(TAG_OID);
+                    next_part = B_OID_LENGTH;
+                end
 
-                    B_INDEX_TAG : begin
-                        emit (TAG_INTEGER);
-                        next_part = B_INDEX_LENGTH;
-                    end
+                B_OID_LENGTH: begin
+                    emit(response_oid_length);
+                    next_part = 5'd25;
+                    next_part_pos = 0;
+                end
 
-                    B_INDEX_LENGTH : begin
-                        emit (1);
-                        next_part = B_INDEX;
-                    end
-
-                    B_INDEX : begin
-                        emit (error_status == ERR_NONE ? 8'd0 : 8'd1);
-                        next_part = B_LIST_TAG;
-                    end
-
-                    B_LIST_TAG : begin
-                        emit (TAG_SEQUENCE);
-                        next_part = B_LIST_LENGTH;
-                    end
-
-                    B_LIST_LENGTH : begin
-                        emit (list_length);
-                        next_part = B_BINDING_TAG;
-                    end
-
-                    B_BINDING_TAG : begin
-                        emit (TAG_SEQUENCE);
-                        next_part = B_BINDING_LENGTH;
-                    end
-
-                    B_BINDING_LENGTH : begin
-                        emit (binding_length);
-                        next_part = B_OID_TAG;
-                    end
-
-                    B_OID_TAG : begin
-                        emit (TAG_OID);
-                        next_part = B_OID_LENGTH;
-                    end
-
-                    B_OID_LENGTH : begin
-                        emit (response_oid_length);
-                        next_part = 5'd25;
-                        next_part_pos = 0;
-                    end
-
-                    B_OID : begin
-                        if (missing) begin
-                            next_cursor = { 1'b0, oid_start } + part_pos;
-                            fetch (COPY_OID);
-                        end
-                        else begin
-                            emit (oid_shift[87:80]);
-                            next_part_pos = part_pos + 5'd1;
-                            if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
-                        end
-                    end
-
-                    B_VALUE_TAG : begin
-                        emit (value_tag);
-                        next_part = B_VALUE_LENGTH;
-                    end
-
-                    B_VALUE_LENGTH : begin
-                        emit (value_length);
-                        next_part = B_VALUE;
-                        next_part_pos = 0;
-                        if (value_length == 0) next_state = 7'd29;
-                    end
-
-                    B_VALUE : if (echo_value) begin
-                        next_cursor = { 1'b0, set_value_start } + part_pos;
-                        fetch (COPY_VALUE);
+                B_OID: begin
+                    if (missing) begin
+                        next_cursor = { 1'b0, oid_start } + part_pos;
+                        fetch(COPY_OID);
                     end
                     else begin
-                        if (description_value) begin
-                            emit (descr_shift[127:120]);
-                            next_descr_shift = { descr_shift[119:0], 8'b0 };
-                        end
-                        else if (value_length == 5 && part_pos == 0) emit (0);
-                        else begin
-                            emit (value_shift[31:24]);
-                            next_value_shift = { value_shift[23:0], 8'b0 };
-                        end
+                        emit(oid_shift[87:80]);
                         next_part_pos = part_pos + 5'd1;
-                        if (({1'b0,part_pos} + 6'd1) == value_length) begin
-                            next_part_pos = 0;
-                            next_state = sending_trap ? TRAP_WORD : TX_FLUSH;
-                        end
+                        if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
                     end
+                end
 
-                    default : next_state = 7'd0;
-                endcase
+                B_VALUE_TAG: begin
+                    emit(value_tag);
+                    next_part = B_VALUE_LENGTH;
+                end
 
-                // COPY_COMM：写入口令字节，写完后继续构造协议头。
-                COPY_COMM : begin
-                    emit (byte_value);
+                B_VALUE_LENGTH: begin
+                    emit(value_length);
+                    next_part = B_VALUE;
+                    next_part_pos = 0;
+                    if (value_length == 0) next_state = 7'd29;
+                end
+
+                B_VALUE: if (echo_value) begin
+                    next_cursor = { 1'b0, set_value_start } + part_pos;
+                    fetch(COPY_VALUE);
+                end
+                else begin
+                    if (description_value) begin
+                        emit(descr_shift[127:120]);
+                        next_descr_shift = { descr_shift[119:0], 8'b0 };
+                    end
+                    else if (value_length == 5 && part_pos == 0) emit(0);
+                    else begin
+                        emit(value_shift[31:24]);
+                        next_value_shift = { value_shift[23:0], 8'b0 };
+                    end
                     next_part_pos = part_pos + 5'd1;
-                    if (({1'b0,part_pos} + 6'd1) == community_length) next_part = B_PDU_TAG;
-                    next_state = 7'd26;
+                    if (({1'b0,part_pos} + 6'd1) == value_length) begin
+                        next_part_pos = 0;
+                        next_state = sending_trap ? TRAP_WORD : TX_FLUSH;
+                    end
                 end
 
-                // COPY_OID：写入请求中的对象编号，写完后继续值字段。
-                COPY_OID : begin
-                    emit (byte_value);
-                    next_part_pos = part_pos + 5'd1;
-                    if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
-                    next_state = 7'd26;
-                end
-
-                // COPY_VALUE：复制错误请求中的值，写完后转 TX_FLUSH。
-                COPY_VALUE : begin
-                    emit (byte_value);
-                    next_part_pos = part_pos + 5'd1;
-                    next_state = ({1'b0,part_pos} + 6'd1) == value_length ? TX_FLUSH : BUILD;
-                end
-
-                // TRAP_INIT：准备事件通知及运行时间字段，然后计算回应长度。
-                TRAP_INIT : begin
-                    next_response_port = TRAP_PORT;
-                    next_version = 1;
-                    next_get_set = 0;
-                    next_missing = 0;
-                    next_echo_value = 0;
-                    next_error_status = 8'd0;
-                    next_request_id = 0;
-                    next_request_id_length = 1;
-                    next_community_length = configured_length;
-                    next_object_index = 1;
-                    next_value_number = uptime;
-                    next_state = VALUE_PREP;
-                end
-
-                // TRAP_COMM0：选择口令所在的字，然后转 TRAP_COMM1。
-                TRAP_COMM0 : begin
-                    case (part_pos[3:2])
-                        0 : next_community_word = community0;
-                        1 : next_community_word = community1;
-                        2 : next_community_word = community2;
-                        3 : next_community_word = community3;
-                    endcase
-                    next_state = TRAP_COMM1;
-                end
-
-                // TRAP_COMM1：选择字内的字节，然后转 COPY_COMM。
-                TRAP_COMM1 : begin
-                    case (part_pos[1:0])
-                        0 : next_byte_value = community_word[31:24];
-                        1 : next_byte_value = community_word[23:16];
-                        2 : next_byte_value = community_word[15:8];
-                        3 : next_byte_value = community_word[7:0];
-                    endcase
-                    next_state = 7'd27;
-                end
-
-                // TRAP_WORD：选择事件编号所在的字，然后转 TRAP_BYTE。
-                TRAP_WORD : begin
-                    case (part_pos[4:3])
-                        0 : next_trap_word = TRAP_OID_WORD0;
-                        1 : next_trap_word = TRAP_OID_WORD1;
-                        2 : next_trap_word = TRAP_OID_WORD2;
-                        3 : next_trap_word = { trap_event, 56'b0 };
-                    endcase
-                    next_state = TRAP_BYTE;
-                end
-
-                // TRAP_BYTE：写一个事件编号字节，写完转 TX_FLUSH，否则转 TRAP_WORD。
-                TRAP_BYTE : begin
-                    case (part_pos[2:0])
-                        0 : emit (trap_word[63:56]);
-                        1 : emit (trap_word[55:48]);
-                        2 : emit (trap_word[47:40]);
-                        3 : emit (trap_word[39:32]);
-                        4 : emit (trap_word[31:24]);
-                        5 : emit (trap_word[23:16]);
-                        6 : emit (trap_word[15:8]);
-                        7 : emit (trap_word[7:0]);
-                    endcase
-                    next_part_pos = part_pos + 5'd1;
-                    next_state = part_pos == TRAP_OID_LAST_POS ? TX_FLUSH : TRAP_WORD;
-                end
-
-                // 最后一个 RAM 写完成后，交给全速发送段；等待整帧确认。
-                TX_FLUSH : begin
-                    next_send_request = ~send_request;
-                    next_state = TX_SEND;
-                end
-                TX_SEND : if (send_complete == send_request) begin
-                    next_state = 7'd0;
-                    if (sending_trap) next_traps_sent = traps_sent + 32'd1;
-                end
-
-                default : next_state = 7'd0;
+                default: next_state = 7'd0;
             endcase
-            // 关闭事件通知后，模块丢弃尚未发送的通知请求。
-            if ( !configured || !trap_enabled) begin
-                next_cold_pending = 0;
-                next_auth_pending = 0;
+
+            // COPY_COMM：写入口令字节，写完后继续构造协议头。
+            COPY_COMM: begin
+                emit(byte_value);
+                next_part_pos = part_pos + 5'd1;
+                if (({1'b0,part_pos} + 6'd1) == community_length) next_part = B_PDU_TAG;
+                next_state = 7'd26;
             end
-            if (!cold_request) next_cold_ack = 0;
-            if (cold_request && !cold_ack) begin
-                next_cold_pending = 1;
-                next_cold_ack = 1;
+
+            // COPY_OID：写入请求中的对象编号，写完后继续值字段。
+            COPY_OID: begin
+                emit(byte_value);
+                next_part_pos = part_pos + 5'd1;
+                if (({1'b0,part_pos} + 6'd1) == response_oid_length) next_part = B_VALUE_TAG;
+                next_state = 7'd26;
             end
+
+            // COPY_VALUE：复制错误请求中的值，写完后转 TX_FLUSH。
+            COPY_VALUE: begin
+                emit(byte_value);
+                next_part_pos = part_pos + 5'd1;
+                next_state = ({1'b0,part_pos} + 6'd1) == value_length ? TX_FLUSH : BUILD;
+            end
+
+            // TRAP_INIT：准备事件通知及运行时间字段，然后计算回应长度。
+            TRAP_INIT: begin
+                next_response_port = TRAP_PORT;
+                next_version = 1;
+                next_get_set = 0;
+                next_missing = 0;
+                next_echo_value = 0;
+                next_error_status = 8'd0;
+                next_request_id = 0;
+                next_request_id_length = 1;
+                next_community_length = configured_length;
+                next_object_index = 1;
+                next_value_number = uptime;
+                next_state = VALUE_PREP;
+            end
+
+            // TRAP_COMM0：选择口令所在的字，然后转 TRAP_COMM1。
+            TRAP_COMM0: begin
+                case (part_pos[3:2])
+                    0: next_community_word = community0;
+                    1: next_community_word = community1;
+                    2: next_community_word = community2;
+                    3: next_community_word = community3;
+                endcase
+                next_state = TRAP_COMM1;
+            end
+
+            // TRAP_COMM1：选择字内的字节，然后转 COPY_COMM。
+            TRAP_COMM1: begin
+                case (part_pos[1:0])
+                    0: next_byte_value = community_word[31:24];
+                    1: next_byte_value = community_word[23:16];
+                    2: next_byte_value = community_word[15:8];
+                    3: next_byte_value = community_word[7:0];
+                endcase
+                next_state = 7'd27;
+            end
+
+            // TRAP_WORD：选择事件编号所在的字，然后转 TRAP_BYTE。
+            TRAP_WORD: begin
+                case (part_pos[4:3])
+                    0: next_trap_word = TRAP_OID_WORD0;
+                    1: next_trap_word = TRAP_OID_WORD1;
+                    2: next_trap_word = TRAP_OID_WORD2;
+                    3: next_trap_word = { trap_event, 56'b0 };
+                endcase
+                next_state = TRAP_BYTE;
+            end
+
+            // TRAP_BYTE：写一个事件编号字节，写完转 TX_FLUSH，否则转 TRAP_WORD。
+            TRAP_BYTE: begin
+                case (part_pos[2:0])
+                    0: emit(trap_word[63:56]);
+                    1: emit(trap_word[55:48]);
+                    2: emit(trap_word[47:40]);
+                    3: emit(trap_word[39:32]);
+                    4: emit(trap_word[31:24]);
+                    5: emit(trap_word[23:16]);
+                    6: emit(trap_word[15:8]);
+                    7: emit(trap_word[7:0]);
+                endcase
+                next_part_pos = part_pos + 5'd1;
+                next_state = part_pos == TRAP_OID_LAST_POS ? TX_FLUSH : TRAP_WORD;
+            end
+
+            // 最后一个 RAM 写完成后，交给全速发送段；等待整帧确认。
+            TX_FLUSH: begin
+                next_send_request = ~send_request;
+                next_state = TX_SEND;
+            end
+            TX_SEND: if (send_complete == send_request) begin
+                next_state = 7'd0;
+                if (sending_trap) next_traps_sent = traps_sent + 32'd1;
+            end
+
+            default: next_state = 7'd0;
+        endcase
+        // 关闭事件通知后，模块丢弃尚未发送的通知请求。
+        if ( !configured || !trap_enabled) begin
+            next_cold_pending = 0;
+            next_auth_pending = 0;
+        end
+        if (!cold_request) next_cold_ack = 0;
+        if (cold_request && !cold_ack) begin
+            next_cold_pending = 1;
+            next_cold_ack = 1;
+        end
     end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_23) begin
-        if (reset) begin
-            capture_consumed <= 0;
-            capture_idle <= 0;
-            trap_offer <= 0;
-            cold_ack <= 0;
-            send_request <= 0;
-            mib_request <= 0;
-            mib_write <= 0;
-            state <= 7'd0;
-            return_state <= 7'd0;
-            arc_less_byte <= 0;
-            arc_equal_byte <= 0;
-            arc_less <= 0;
-            arc_greater <= 0;
-            oid_last_byte <= 0;
-        end
-        else begin
-            capture_consumed <= next_capture_consumed;
-            capture_idle <= next_capture_idle;
-            trap_offer <= next_trap_offer;
-            cold_ack <= next_cold_ack;
-            send_request <= next_send_request;
-            mib_request <= next_mib_request;
-            mib_write <= next_mib_write;
-            state <= next_state;
-            return_state <= next_return_state;
-            arc_less_byte <= next_arc_less_byte;
-            arc_equal_byte <= next_arc_equal_byte;
-            arc_less <= next_arc_less;
-            arc_greater <= next_arc_greater;
-            oid_last_byte <= next_oid_last_byte;
+            if (reset) begin
+                capture_consumed <= 0;
+                capture_idle <= 0;
+                trap_offer <= 0;
+                cold_ack <= 0;
+                send_request <= 0;
+                mib_request <= 0;
+                mib_write <= 0;
+                state <= 7'd0;
+                return_state <= 7'd0;
+                arc_less_byte <= 0;
+                arc_equal_byte <= 0;
+                arc_less <= 0;
+                arc_greater <= 0;
+                oid_last_byte <= 0;
+            end
+            else begin
+                capture_consumed <= next_capture_consumed;
+                capture_idle <= next_capture_idle;
+                trap_offer <= next_trap_offer;
+                cold_ack <= next_cold_ack;
+                send_request <= next_send_request;
+                mib_request <= next_mib_request;
+                mib_write <= next_mib_write;
+                state <= next_state;
+                return_state <= next_return_state;
+                arc_less_byte <= next_arc_less_byte;
+                arc_equal_byte <= next_arc_equal_byte;
+                arc_less <= next_arc_less;
+                arc_greater <= next_arc_greater;
+                oid_last_byte <= next_oid_last_byte;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_24) begin
-        if (reset) begin
-            oid_last_arc <= 0;
-            description_value <= 0;
-            req_re <= 0;
-            out_we <= 0;
-            req_ra <= 0;
-            out_wa <= 0;
-            out_wdata <= 0;
-        end
-        else begin
-            oid_last_arc <= next_oid_last_arc;
-            description_value <= next_description_value;
-            req_re <= next_req_re;
-            out_we <= next_out_we;
-            req_ra <= next_req_ra;
-            out_wa <= next_out_wa;
-            out_wdata <= next_out_wdata;
+            if (reset) begin
+                oid_last_arc <= 0;
+                description_value <= 0;
+                req_re <= 0;
+                out_we <= 0;
+                req_ra <= 0;
+                out_wa <= 0;
+                out_wdata <= 0;
+            end
+            else begin
+                oid_last_arc <= next_oid_last_arc;
+                description_value <= next_description_value;
+                req_re <= next_req_re;
+                out_we <= next_out_we;
+                req_ra <= next_req_ra;
+                out_wa <= next_out_wa;
+                out_wdata <= next_out_wdata;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_25) begin
-        if (reset) begin
-            mib_addr <= 0;
-        end
-        else begin
-            mib_addr <= next_mib_addr;
+            if (reset) begin
+                mib_addr <= 0;
+            end
+            else begin
+                mib_addr <= next_mib_addr;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_26) begin
-        if (reset) begin
-            mib_wdata <= 0;
-        end
-        else begin
-            mib_wdata <= next_mib_wdata;
+            if (reset) begin
+                mib_wdata <= 0;
+            end
+            else begin
+                mib_wdata <= next_mib_wdata;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_27) begin
-        if (reset) begin
-            bad_community <= 0;
-        end
-        else begin
-            bad_community <= next_bad_community;
+            if (reset) begin
+                bad_community <= 0;
+            end
+            else begin
+                bad_community <= next_bad_community;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_28) begin
-        if (reset) begin
-            sample_cycle <= 0;
-        end
-        else begin
-            sample_cycle <= next_sample_cycle;
+            if (reset) begin
+                sample_cycle <= 0;
+            end
+            else begin
+                sample_cycle <= next_sample_cycle;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_29) begin
-        if (reset) begin
-            response_port <= 0;
-            cold_pending <= 0;
-            auth_pending <= 0;
-            sending_trap <= 0;
-        end
-        else begin
-            response_port <= next_response_port;
-            cold_pending <= next_cold_pending;
-            auth_pending <= next_auth_pending;
-            sending_trap <= next_sending_trap;
+            if (reset) begin
+                response_port <= 0;
+                cold_pending <= 0;
+                auth_pending <= 0;
+                sending_trap <= 0;
+            end
+            else begin
+                response_port <= next_response_port;
+                cold_pending <= next_cold_pending;
+                auth_pending <= next_auth_pending;
+                sending_trap <= next_sending_trap;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_30) begin
-        if (reset) begin
-            traps_sent <= 0;
-        end
-        else begin
-            traps_sent <= next_traps_sent;
+            if (reset) begin
+                traps_sent <= 0;
+            end
+            else begin
+                traps_sent <= next_traps_sent;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_31) begin
-        if (reset) begin
-            trap_event <= 0;
-        end
-        else begin
-            trap_event <= next_trap_event;
+            if (reset) begin
+                trap_event <= 0;
+            end
+            else begin
+                trap_event <= next_trap_event;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_32) begin
-        if (reset) begin
-            trap_word[31:0] <= 0;
-        end
-        else begin
-            trap_word[31:0] <= next_trap_word[31:0];
+            if (reset) begin
+                trap_word[31:0] <= 0;
+            end
+            else begin
+                trap_word[31:0] <= next_trap_word[31:0];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_33) begin
-        if (reset) begin
-            trap_word[63:32] <= 0;
-        end
-        else begin
-            trap_word[63:32] <= next_trap_word[63:32];
+            if (reset) begin
+                trap_word[63:32] <= 0;
+            end
+            else begin
+                trap_word[63:32] <= next_trap_word[63:32];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_34) begin
-        if (reset) begin
-            get_set <= 0;
-            echo_value <= 0;
-            set_negative <= 0;
-            set_value_start <= 0;
-            set_value_tag <= 0;
-            set_value_length <= 0;
-        end
-        else begin
-            get_set <= next_get_set;
-            echo_value <= next_echo_value;
-            set_negative <= next_set_negative;
-            set_value_start <= next_set_value_start;
-            set_value_tag <= next_set_value_tag;
-            set_value_length <= next_set_value_length;
+            if (reset) begin
+                get_set <= 0;
+                echo_value <= 0;
+                set_negative <= 0;
+                set_value_start <= 0;
+                set_value_tag <= 0;
+                set_value_length <= 0;
+            end
+            else begin
+                get_set <= next_get_set;
+                echo_value <= next_echo_value;
+                set_negative <= next_set_negative;
+                set_value_start <= next_set_value_start;
+                set_value_tag <= next_set_value_tag;
+                set_value_length <= next_set_value_length;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_35) begin
-        if (reset) begin
-            set_number <= 0;
-        end
-        else begin
-            set_number <= next_set_number;
+            if (reset) begin
+                set_number <= 0;
+            end
+            else begin
+                set_number <= next_set_number;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_36) begin
-        if (reset) begin
-            request_length <= 0;
-            cursor <= 0;
-            field <= 4'd0;
-            byte_value <= 0;
-        end
-        else begin
-            request_length <= next_request_length;
-            cursor <= next_cursor;
-            field <= next_field;
-            byte_value <= next_byte_value;
+            if (reset) begin
+                request_length <= 0;
+                cursor <= 0;
+                field <= 4'd0;
+                byte_value <= 0;
+            end
+            else begin
+                request_length <= next_request_length;
+                cursor <= next_cursor;
+                field <= next_field;
+                byte_value <= next_byte_value;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_37) begin
-        if (reset) begin
-            tag_value <= 0;
-            field_length <= 0;
-            length_left <= 0;
-            value_pos <= 0;
-        end
-        else begin
-            tag_value <= next_tag_value;
-            field_length <= next_field_length;
-            length_left <= next_length_left;
-            value_pos <= next_value_pos;
+            if (reset) begin
+                tag_value <= 0;
+                field_length <= 0;
+                length_left <= 0;
+                value_pos <= 0;
+            end
+            else begin
+                tag_value <= next_tag_value;
+                field_length <= next_field_length;
+                length_left <= next_length_left;
+                value_pos <= next_value_pos;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_38) begin
-        if (reset) begin
-            outer_end <= 0;
-            pdu_end <= 0;
-            list_end <= 0;
-        end
-        else begin
-            outer_end <= next_outer_end;
-            pdu_end <= next_pdu_end;
-            list_end <= next_list_end;
+            if (reset) begin
+                outer_end <= 0;
+                pdu_end <= 0;
+                list_end <= 0;
+            end
+            else begin
+                outer_end <= next_outer_end;
+                pdu_end <= next_pdu_end;
+                list_end <= next_list_end;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_39) begin
-        if (reset) begin
-            binding_end <= 0;
-            community_length <= 0;
-            community_start <= 0;
-        end
-        else begin
-            binding_end <= next_binding_end;
-            community_length <= next_community_length;
-            community_start <= next_community_start;
+            if (reset) begin
+                binding_end <= 0;
+                community_length <= 0;
+                community_start <= 0;
+            end
+            else begin
+                binding_end <= next_binding_end;
+                community_length <= next_community_length;
+                community_start <= next_community_start;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_40) begin
-        if (reset) begin
-            community_word <= 0;
-        end
-        else begin
-            community_word <= next_community_word;
+            if (reset) begin
+                community_word <= 0;
+            end
+            else begin
+                community_word <= next_community_word;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_41) begin
-        if (reset) begin
-            community_expected <= 0;
-            community_bad <= 0;
-            version <= 0;
-            get_next <= 0;
-        end
-        else begin
-            community_expected <= next_community_expected;
-            community_bad <= next_community_bad;
-            version <= next_version;
-            get_next <= next_get_next;
+            if (reset) begin
+                community_expected <= 0;
+                community_bad <= 0;
+                version <= 0;
+                get_next <= 0;
+            end
+            else begin
+                community_expected <= next_community_expected;
+                community_bad <= next_community_bad;
+                version <= next_version;
+                get_next <= next_get_next;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_42) begin
-        if (reset) begin
-            request_id <= 0;
-        end
-        else begin
-            request_id <= next_request_id;
+            if (reset) begin
+                request_id <= 0;
+            end
+            else begin
+                request_id <= next_request_id;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_43) begin
-        if (reset) begin
-            request_id_length <= 0;
-        end
-        else begin
-            request_id_length <= next_request_id_length;
+            if (reset) begin
+                request_id_length <= 0;
+            end
+            else begin
+                request_id_length <= next_request_id_length;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_44) begin
-        if (reset) begin
-            id_shift <= 0;
-        end
-        else begin
-            id_shift <= next_id_shift;
+            if (reset) begin
+                id_shift <= 0;
+            end
+            else begin
+                id_shift <= next_id_shift;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_45) begin
-        if (reset) begin
-            oid_start <= 0;
-            oid_length <= 0;
-            oid_pos <= 0;
-            arc_index <= 0;
-        end
-        else begin
-            oid_start <= next_oid_start;
-            oid_length <= next_oid_length;
-            oid_pos <= next_oid_pos;
-            arc_index <= next_arc_index;
+            if (reset) begin
+                oid_start <= 0;
+                oid_length <= 0;
+                oid_pos <= 0;
+                arc_index <= 0;
+            end
+            else begin
+                oid_start <= next_oid_start;
+                oid_length <= next_oid_length;
+                oid_pos <= next_oid_pos;
+                arc_index <= next_arc_index;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_46) begin
-        if (reset) begin
-            oid_acc <= 0;
-        end
-        else begin
-            oid_acc <= next_oid_acc;
+            if (reset) begin
+                oid_acc <= 0;
+            end
+            else begin
+                oid_acc <= next_oid_acc;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_47) begin
-        if (reset) begin
-            expected_arc <= 0;
-        end
-        else begin
-            expected_arc <= next_expected_arc;
+            if (reset) begin
+                expected_arc <= 0;
+            end
+            else begin
+                expected_arc <= next_expected_arc;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_48) begin
-        if (reset) begin
-            candidate <= 0;
-            object_index <= 0;
-            missing <= 0;
-            error_status <= 8'd0;
-            value_tag <= 0;
-        end
-        else begin
-            candidate <= next_candidate;
-            object_index <= next_object_index;
-            missing <= next_missing;
-            error_status <= next_error_status;
-            value_tag <= next_value_tag;
+            if (reset) begin
+                candidate <= 0;
+                object_index <= 0;
+                missing <= 0;
+                error_status <= 8'd0;
+                value_tag <= 0;
+            end
+            else begin
+                candidate <= next_candidate;
+                object_index <= next_object_index;
+                missing <= next_missing;
+                error_status <= next_error_status;
+                value_tag <= next_value_tag;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_49) begin
-        if (reset) begin
-            value_length <= 0;
-            response_oid_length <= 0;
-        end
-        else begin
-            value_length <= next_value_length;
-            response_oid_length <= next_response_oid_length;
+            if (reset) begin
+                value_length <= 0;
+                response_oid_length <= 0;
+            end
+            else begin
+                value_length <= next_value_length;
+                response_oid_length <= next_response_oid_length;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_50) begin
-        if (reset) begin
-            value_number <= 0;
-        end
-        else begin
-            value_number <= next_value_number;
+            if (reset) begin
+                value_number <= 0;
+            end
+            else begin
+                value_number <= next_value_number;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_51) begin
-        if (reset) begin
-            value_shift <= 0;
-        end
-        else begin
-            value_shift <= next_value_shift;
+            if (reset) begin
+                value_shift <= 0;
+            end
+            else begin
+                value_shift <= next_value_shift;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_52) begin
-        if (reset) begin
-            descr_shift[31:0] <= 0;
-        end
-        else begin
-            descr_shift[31:0] <= next_descr_shift[31:0];
+            if (reset) begin
+                descr_shift[31:0] <= 0;
+            end
+            else begin
+                descr_shift[31:0] <= next_descr_shift[31:0];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_53) begin
-        if (reset) begin
-            descr_shift[63:32] <= 0;
-        end
-        else begin
-            descr_shift[63:32] <= next_descr_shift[63:32];
+            if (reset) begin
+                descr_shift[63:32] <= 0;
+            end
+            else begin
+                descr_shift[63:32] <= next_descr_shift[63:32];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_54) begin
-        if (reset) begin
-            descr_shift[95:64] <= 0;
-        end
-        else begin
-            descr_shift[95:64] <= next_descr_shift[95:64];
+            if (reset) begin
+                descr_shift[95:64] <= 0;
+            end
+            else begin
+                descr_shift[95:64] <= next_descr_shift[95:64];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_55) begin
-        if (reset) begin
-            descr_shift[127:96] <= 0;
-        end
-        else begin
-            descr_shift[127:96] <= next_descr_shift[127:96];
+            if (reset) begin
+                descr_shift[127:96] <= 0;
+            end
+            else begin
+                descr_shift[127:96] <= next_descr_shift[127:96];
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_56) begin
-        if (reset) begin
-            binding_length <= 0;
-            list_length <= 0;
-            pdu_length <= 0;
-            message_length <= 0;
-        end
-        else begin
-            binding_length <= next_binding_length;
-            list_length <= next_list_length;
-            pdu_length <= next_pdu_length;
-            message_length <= next_message_length;
+            if (reset) begin
+                binding_length <= 0;
+                list_length <= 0;
+                pdu_length <= 0;
+                message_length <= 0;
+            end
+            else begin
+                binding_length <= next_binding_length;
+                list_length <= next_list_length;
+                pdu_length <= next_pdu_length;
+                message_length <= next_message_length;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_57) begin
-        if (reset) begin
-            output_count <= 0;
-            response_length <= 0;
-            part <= B_MESSAGE_TAG;
-            part_pos <= 0;
-        end
-        else begin
-            output_count <= next_output_count;
-            response_length <= next_response_length;
-            part <= next_part;
-            part_pos <= next_part_pos;
+            if (reset) begin
+                output_count <= 0;
+                response_length <= 0;
+                part <= B_MESSAGE_TAG;
+                part_pos <= 0;
+            end
+            else begin
+                output_count <= next_output_count;
+                response_length <= next_response_length;
+                part <= next_part;
+                part_pos <= next_part_pos;
+            end
         end
     end
-    end
+
     always @(posedge clk) begin
         // 外层 CE 包含 reset；同步复位优先级不变，并强制保留原生使能引脚。
         if (ce_58) begin
-        if (reset) begin
-            field_accept <= field_accept;
-            field_bounds_ok <= field_bounds_ok;
-            field_end <= field_end;
-            value_chain_ok <= value_chain_ok;
+            if (reset) begin
+                field_accept <= field_accept;
+                field_bounds_ok <= field_bounds_ok;
+                field_end <= field_end;
+                value_chain_ok <= value_chain_ok;
+            end
+            else begin
+                field_accept <= next_field_accept;
+                field_bounds_ok <= next_field_bounds_ok;
+                field_end <= next_field_end;
+                value_chain_ok <= next_value_chain_ok;
+            end
         end
-        else begin
-            field_accept <= next_field_accept;
-            field_bounds_ok <= next_field_bounds_ok;
-            field_end <= next_field_end;
-            value_chain_ok <= next_value_chain_ok;
-        end
-    end
     end
 
 endmodule

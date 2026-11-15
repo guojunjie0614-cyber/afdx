@@ -353,15 +353,15 @@ module afdx_cfg #(
         begin
             register_select = 0;
             case (address)
-                ADDR_VERSION : register_select[0] = 1;
-                ADDR_STATUS : register_select[1] = 1;
-                ADDR_USER_ID : register_select[2] = 1;
-                ADDR_RM_DROP : register_select[3] = 1;
-                ADDR_DELIVER : register_select[4] = 1;
-                ADDR_A_GDROP : register_select[5] = 1;
-                ADDR_B_GDROP : register_select[6] = 1;
-                ADDR_RTC_SYNC_COUNT : register_select[7] = 1;
-                default : ;
+                ADDR_VERSION: register_select[0] = 1;
+                ADDR_STATUS: register_select[1] = 1;
+                ADDR_USER_ID: register_select[2] = 1;
+                ADDR_RM_DROP: register_select[3] = 1;
+                ADDR_DELIVER: register_select[4] = 1;
+                ADDR_A_GDROP: register_select[5] = 1;
+                ADDR_B_GDROP: register_select[6] = 1;
+                ADDR_RTC_SYNC_COUNT: register_select[7] = 1;
+                default: ;
             endcase
         end
     endfunction
@@ -370,16 +370,16 @@ module afdx_cfg #(
         input [17:0] address;
         begin
             case (address[17:3])
-                GROUP_TX_COUNT : group_select = SEL_TX;
-                GROUP_A_COUNT : group_select = SEL_A;
-                GROUP_B_COUNT : group_select = SEL_B;
-                GROUP_RTC : group_select = SEL_RTC;
-                GROUP_SNMP_CONTROL : group_select = SEL_SNMP_CONTROL;
-                GROUP_SNMP_STATUS : group_select = SEL_SNMP_STATUS;
-                GROUP_SNMP_DESCR : group_select = SEL_SHARED;
-                GROUP_LOAD : group_select = SEL_SHARED;
-                GROUP_LOAD_EXTRA : group_select = SEL_SHARED;
-                default : group_select = SEL_REGS;
+                GROUP_TX_COUNT: group_select = SEL_TX;
+                GROUP_A_COUNT: group_select = SEL_A;
+                GROUP_B_COUNT: group_select = SEL_B;
+                GROUP_RTC: group_select = SEL_RTC;
+                GROUP_SNMP_CONTROL: group_select = SEL_SNMP_CONTROL;
+                GROUP_SNMP_STATUS: group_select = SEL_SNMP_STATUS;
+                GROUP_SNMP_DESCR: group_select = SEL_SHARED;
+                GROUP_LOAD: group_select = SEL_SHARED;
+                GROUP_LOAD_EXTRA: group_select = SEL_SHARED;
+                default: group_select = SEL_REGS;
             endcase
         end
     endfunction
@@ -397,16 +397,16 @@ module afdx_cfg #(
         begin
             result_select = 0;
             case (address[17:3])
-                GROUP_TX_COUNT : result_select[1] = 1;
-                GROUP_A_COUNT : result_select[2] = 1;
-                GROUP_B_COUNT : result_select[3] = 1;
-                GROUP_RTC : result_select[4] = 1;
-                GROUP_SNMP_CONTROL : result_select[5] = 1;
-                GROUP_SNMP_STATUS : result_select[6] = 1;
-                GROUP_SNMP_DESCR : result_select[7] = 1;
-                GROUP_LOAD : result_select[8] = 1;
-                GROUP_LOAD_EXTRA : result_select[9] = 1;
-                default : result_select[0] = 1;
+                GROUP_TX_COUNT: result_select[1] = 1;
+                GROUP_A_COUNT: result_select[2] = 1;
+                GROUP_B_COUNT: result_select[3] = 1;
+                GROUP_RTC: result_select[4] = 1;
+                GROUP_SNMP_CONTROL: result_select[5] = 1;
+                GROUP_SNMP_STATUS: result_select[6] = 1;
+                GROUP_SNMP_DESCR: result_select[7] = 1;
+                GROUP_LOAD: result_select[8] = 1;
+                GROUP_LOAD_EXTRA: result_select[9] = 1;
+                default: result_select[0] = 1;
             endcase
         end
     endfunction

@@ -143,7 +143,7 @@ module afdx_rx_parse #(
     reg [15:0] ip_data_length_q;
     reg [16:0] fragment_end_q;
     reg fragment_geometry_bad, ip_length_matches;
-    (* preserve=1, dont_merge=1 *) reg [15:0] arrival_snapshot;
+    (* preserve = 1, dont_merge = 1 *) reg [15:0] arrival_snapshot;
     // 帧长与分片边界参数在末段序号及 FCS 到达前早已稳定，将加减与比较拆至前拍寄存，避免挤入帧尾使能路径。
     always @(posedge clk) begin
         arrival_snapshot <= now_c;
@@ -163,7 +163,7 @@ module afdx_rx_parse #(
     genvar publish_copy, data_group;
     generate
         for (publish_copy = 0; publish_copy < DESC_COPIES; publish_copy = publish_copy + 1) begin : valid_publish
-            (* preserve=1, dont_merge=1 *) reg command;
+            (* preserve = 1, dont_merge = 1 *) reg command;
             always @(posedge clk) begin
                 if (reset) begin
                     command <= 0;
@@ -178,7 +178,7 @@ module afdx_rx_parse #(
         end
         for (data_group = 0; data_group < DATA_GROUPS; data_group = data_group + 1) begin : data_publish
             localparam GROUP_WIDTH = DESC_WIDTH - data_group * 24 >= 24 ? 24 : DESC_WIDTH - data_group * 24;
-            (* preserve=1, dont_merge=1 *) reg command;
+            (* preserve = 1, dont_merge = 1 *) reg command;
             always @(posedge clk) begin
                 if (reset) begin
                     command <= 0;
@@ -200,12 +200,12 @@ module afdx_rx_parse #(
         if (reset) header_byte_bad <= 0;
         else if (m_valid && allowed && !m_first) begin
             case (position)
-                1, 2, 3, POS_ETHERTYPE_LOW : header_byte_bad <= m_data != 0;
-                POS_ETHERTYPE_HIGH : header_byte_bad <= m_data != ETHERTYPE_HIGH;
-                POS_IP_HEADER : header_byte_bad <= m_data != IP_VERSION_IHL;
-                POS_IP_FLAGS : header_byte_bad <= m_data[7];
-                POS_IP_PROTOCOL : header_byte_bad <= m_data != IP_PROTOCOL_UDP;
-                default : header_byte_bad <= 0;
+                1, 2, 3, POS_ETHERTYPE_LOW: header_byte_bad <= m_data != 0;
+                POS_ETHERTYPE_HIGH: header_byte_bad <= m_data != ETHERTYPE_HIGH;
+                POS_IP_HEADER: header_byte_bad <= m_data != IP_VERSION_IHL;
+                POS_IP_FLAGS: header_byte_bad <= m_data[7];
+                POS_IP_PROTOCOL: header_byte_bad <= m_data != IP_PROTOCOL_UDP;
+                default: header_byte_bad <= 0;
             endcase
         end
         else header_byte_bad <= 0;
@@ -312,7 +312,7 @@ module afdx_rx_parse #(
                 else trial <= committed;
             end
             case (length_phase)
-                LEN_SIZES : begin
+                LEN_SIZES: begin
                     n <= fragmented ? ip_data_len - (later_fragment ? 16'd0 : 16'd8) : udp_len - UDP_HEADER_LENGTH;
                     n_ok <= fragmented ? (ip_data_len <= 1479 && ip_data_len >= (later_fragment ? 1 : 8)) :
                         (udp_len >= MIN_UDP_LENGTH && udp_len <= MAX_UDP_LENGTH);
@@ -330,7 +330,7 @@ module afdx_rx_parse #(
                     end
                     length_phase <= LEN_LIMITS;
                 end
-                LEN_LIMITS : begin
+                LEN_LIMITS: begin
                     end_data <= data_end_q;
                     last_data <= data_end_q - 16'd1;
                     sn_position <= pad_sn_q ? MIN_SN_POSITION : data_end_q;
@@ -339,7 +339,7 @@ module afdx_rx_parse #(
                     fits_q <= n <= CAPACITY;
                     length_phase <= LEN_WAIT;
                 end
-                default :;
+                default: ;
             endcase
             // 本模块仅支持不带选项的 20 字节 IPv4 首部；非分片报文与首分片含完整 UDP 首部，后续分片仅含分片载荷；
             // 1 字节帧序号位于净荷或补零之后（FCS 之前），不计入 UDP 长度。
@@ -401,24 +401,24 @@ module afdx_rx_parse #(
                     if (position == ((fragmented && later_fragment) ? 33 : 41) && n_ok) frame_begin <= committed;
                     case (position)
                         // 按字节偏移提取 VL 编号、IPv4 长度/分片/地址及 UDP 端口与长度字段。
-                        POS_VLID_LOW : vlid <= {high_byte, m_data};
-                        POS_IP_LENGTH_LOW : ip_len <= {high_byte, m_data};
-                        19 : ip_id <= {high_byte, m_data};
-                        21 : begin
+                        POS_VLID_LOW: vlid <= {high_byte, m_data};
+                        POS_IP_LENGTH_LOW: ip_len <= {high_byte, m_data};
+                        19: ip_id <= {high_byte, m_data};
+                        21: begin
                             frag_word <= {high_byte, m_data};
                             frame_fragmented <= high_byte[5] || |high_byte[4:0] || m_data != 0;
                             frame_later <= |high_byte[4:0] || m_data != 0;
                         end
-                        27 : ip_src[31:16] <= {high_byte, m_data};
-                        29 : ip_src[15:0] <= {high_byte, m_data};
-                        31 : ip_dst[31:16] <= {high_byte, m_data};
-                        33 : ip_dst[15:0] <= {high_byte, m_data};
-                        POS_SPORT_LOW : sport <= {high_byte, m_data};
-                        POS_DPORT_LOW : dport <= {high_byte, m_data};
-                        POS_UDP_LENGTH_LOW : begin
+                        27: ip_src[31:16] <= {high_byte, m_data};
+                        29: ip_src[15:0] <= {high_byte, m_data};
+                        31: ip_dst[31:16] <= {high_byte, m_data};
+                        33: ip_dst[15:0] <= {high_byte, m_data};
+                        POS_SPORT_LOW: sport <= {high_byte, m_data};
+                        POS_DPORT_LOW: dport <= {high_byte, m_data};
+                        POS_UDP_LENGTH_LOW: begin
                             udp_len <= {high_byte, m_data};
                         end
-                        default :;
+                        default: ;
                     endcase
                     if (position >= POS_IP_HEADER && position <= POS_IP_HEADER_END && position[0]) begin
                         ip_add_valid <= 1;

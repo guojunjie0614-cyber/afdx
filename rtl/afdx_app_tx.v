@@ -389,27 +389,27 @@ module afdx_app_tx (
             // 若配置表正在流水更新则重新发起查找，队首消息保持不变。
             if (configuration_busy && state != 0 && state != 5) state <= 6;
             else case (state)
-                0 : if (descriptors_waiting && !configuration_busy) state <= 6;
-                6 : state <= 1;
-                1 : state <= 11;
-                11 : state <= 9;
-                9 : state <= 10;
-                10 : state <= 2;
-                2 : state <= 3;
-                3 : state <= 7;
-                7 : state <= 8;
-                8 : state <= 4;
-                4 : begin
+                0: if (descriptors_waiting && !configuration_busy) state <= 6;
+                6: state <= 1;
+                1: state <= 11;
+                11: state <= 9;
+                9: state <= 10;
+                10: state <= 2;
+                2: state <= 3;
+                3: state <= 7;
+                7: state <= 8;
+                8: state <= 4;
+                4: begin
                     discard <= !found;
                     drop[0] <= !found || empty_message;
                     state <= 5;
                 end
                 // 末字节发出后由 descriptor_retire 屏蔽输出一拍作为帧间间隔，随后无缝启动下一条查找。
-                5 : if (descriptor_retire) begin
+                5: if (descriptor_retire) begin
                     if (descriptors_waiting && !configuration_busy) state <= 6;
                     else state <= 0;
                 end
-                default : state <= 0;
+                default: state <= 0;
             endcase
         end
     end

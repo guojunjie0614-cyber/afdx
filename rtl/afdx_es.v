@@ -14,10 +14,10 @@ module afdx_es #(
     parameter RX_CONFIG_BANKS = 16
 ) (
     // 时钟复位与 A 网千兆 GMII 收发信号（A 网与 B 网互为冗余备份，同一帧双路并发）。
-    input  wire        clk,      // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
-    input  wire        reset,    // reset 为高时，在时钟上升沿复位。
-    output wire [7:0]  tx_data,  // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
-    input  wire [7:0]  rx_data,  // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
+    input  wire        clk, // 所有模块在 clk 的上升沿工作，时钟频率为 125 MHz。
+    input  wire        reset, // reset 为高时，在时钟上升沿复位。
+    output wire [7:0]  tx_data, // tx_valid 为高时，tx_data 是 A 网本拍发送的字节（含前导码和帧校验值）。
+    input  wire [7:0]  rx_data, // rx_valid 为高时，rx_data 是 A 网本拍接收的字节。
     output wire        tx_valid, // tx_valid 为高表示本拍有发送字节，帧内每拍都有效。
     input  wire        rx_valid, // rx_valid 为高表示本拍有接收字节，拉低表示帧已结束。
     output wire        tx_ready, // tx_ready 为高表示收发核心初始化完成，可以配置和使用。

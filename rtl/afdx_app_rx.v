@@ -164,22 +164,22 @@ module afdx_app_rx (
             valid <= 0;
             data <= 0;
             case (state)
-                0 : if (descriptors != 0 && q_valid) state <= 5;
-                5 : begin
+                0: if (descriptors != 0 && q_valid) state <= 5;
+                5: begin
                     id <= descriptor_id;
                     state <= 1;
                 end
-                1 : begin
+                1: begin
                     valid <= 1;
                     data <= id[15:8];
                     state <= 2;
                 end
-                2 : begin
+                2: begin
                     valid <= 1;
                     data <= id[7:0];
                     state <= 3;
                 end
-                3 : if (q_valid) begin
+                3: if (q_valid) begin
                     valid <= 1;
                     data <= q_data[7:0];
                     if (q_data[8]) begin
@@ -187,8 +187,8 @@ module afdx_app_rx (
                         state <= 4;
                     end
                 end
-                4 : state <= 0;
-                default : state <= 0;
+                4: state <= 0;
+                default: state <= 0;
             endcase
         end
     end

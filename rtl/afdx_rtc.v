@@ -49,7 +49,7 @@ module afdx_rtc #(
 `ifdef MODEL_TECH
     wire [31:0] receive_timestamp_seconds;
     wire [31:0] receive_timestamp_nanoseconds;
-    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
     wire rtc_client_launch;
     wire rtc_server_launch;
 `endif
@@ -107,7 +107,7 @@ module afdx_rtc #(
         if (CFG_READY_TERMS) begin : configuration_terms
             // 四个窄字段及时间装载字的四个字节各自拥有同拍本地就绪状态，
             // 避免单个远端 ready 门控全部 64 位寄存器。
-            (* preserve=1,dont_merge=1 *) reg [11:0] field_ctl;
+            (* preserve = 1, dont_merge = 1 *) reg [11:0] field_ctl;
             always @(posedge clk) begin
                 if (reset) field_ctl <= 0;
                 else field_ctl <= {12{cfg_ready_base || (cfg_ready_rx_term && cfg_ready_rx_ack)}};
@@ -511,21 +511,21 @@ module afdx_rtc #(
             // 读秒时同时保存纳秒值，由配置模块再选择最终读结果。
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    REG_CONTROL : cfg_rdata <= {30'b0, master, active};
-                    REG_PERIOD : cfg_rdata <= period;
-                    REG_VL : cfg_rdata <= {25'b0, vl};
-                    REG_PORT : cfg_rdata <= {16'b0, port_number};
-                    REG_SECONDS : begin
+                    REG_CONTROL: cfg_rdata <= {30'b0, master, active};
+                    REG_PERIOD: cfg_rdata <= period;
+                    REG_VL: cfg_rdata <= {25'b0, vl};
+                    REG_PORT: cfg_rdata <= {16'b0, port_number};
+                    REG_SECONDS: begin
                         cfg_rdata <= seconds;
                         if (cfg_re_b0) snapshot_ns[7:0] <= nanoseconds[7:0];
                         if (cfg_re_b1) snapshot_ns[15:8] <= nanoseconds[15:8];
                         if (cfg_re_b2) snapshot_ns[23:16] <= nanoseconds[23:16];
                         if (cfg_re_b3) snapshot_ns[31:24] <= nanoseconds[31:24];
                     end
-                    REG_NS : cfg_rdata <= snapshot_ns;
-                    REG_OFFSET_SEC : cfg_rdata <= offset_sec;
-                    REG_OFFSET_NS : cfg_rdata <= offset_ns;
-                    default : cfg_rdata <= 0;
+                    REG_NS: cfg_rdata <= snapshot_ns;
+                    REG_OFFSET_SEC: cfg_rdata <= offset_sec;
+                    REG_OFFSET_NS: cfg_rdata <= offset_ns;
+                    default: cfg_rdata <= 0;
                 endcase
             end
         end
@@ -717,7 +717,7 @@ module afdx_rtc #(
     generate
         for (history_stage = 0; history_stage < RX_STREAM_DELAY_CYCLES;
                 history_stage = history_stage + 1) begin : receive_time_history
-            (* preserve=1,dont_merge=1 *) reg [31:0] seconds_q, nanoseconds_q;
+            (* preserve = 1, dont_merge = 1 *) reg [31:0] seconds_q, nanoseconds_q;
             assign receive_seconds_history[(history_stage+1)*32+:32] = seconds_q;
             assign receive_ns_history[(history_stage+1)*32+:32] = nanoseconds_q;
             always @(posedge clk) begin
@@ -876,7 +876,7 @@ module afdx_rtc #(
 
     // HALF 状态本身就有一拍准备周期，提前在该拍预测 +0x1dcd6500 的
     // 两个有效字节进位，使 HALF_SECOND 状态只需做逐字节加法。
-    (* preserve=1,dont_merge=1 *) reg [1:0] rtc_half_carry;
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] rtc_half_carry;
     wire [31:0] rtc_half_value = sum_ns >>> 1;
     wire rtc_half_c16 = rtc_half_value[15:8] >= 8'h9b;
     wire rtc_half_c24 = rtc_half_value[23:16] > 8'h32 ||
@@ -902,7 +902,7 @@ module afdx_rtc #(
     // 同拍运行与首次请求判定采用原信号次态表达式；独立调用模式下
     // enable 仍作为当拍组合输入生效。
 `ifndef MODEL_TECH
-    (* preserve=1,dont_merge=1 *) reg rtc_run_ctl, rtc_request_armed;
+    (* preserve = 1, dont_merge = 1 *) reg rtc_run_ctl, rtc_request_armed;
 `endif
     wire rtc_tx_running = rtc_run_ctl && enable;
     wire rtc_tx_idle = tx_state == TX_IDLE;
@@ -968,7 +968,7 @@ module afdx_rtc #(
         : (!abort_protocol && rx_byte && rx_last && rx_index == PACKET_LAST);
     wire rtc_accept_next = rtc_packet_done_next && !rtc_master_next && rtc_waiting_next
         && rtc_tx_idle_next && rtc_server_header_next && (&reply_nibble_match);
-    (* preserve=1,dont_merge=1 *) reg [8:0] rtc_capture_ctl;
+    (* preserve = 1, dont_merge = 1 *) reg [8:0] rtc_capture_ctl;
     wire [31:0] rtc_receive_seconds = rx_receive_sec - NTP_EPOCH;
     wire [31:0] rtc_transmit_seconds = rx_transmit_sec - NTP_EPOCH;
     genvar capture_byte;
@@ -1077,29 +1077,29 @@ module afdx_rtc #(
             // 秒和纳秒分开计算，再处理借位和进位。
             case (calc_state)
 
-                CALC_START_T2 : begin
+                CALC_START_T2: begin
                     decode_value <= rx_receive_frac;
                     decode_start <= 1;
                     calc_state <= CALC_WAIT_T2;
                 end
 
-                CALC_WAIT_T2 : if (decode_done) begin
+                CALC_WAIT_T2: if (decode_done) begin
                     server_receive_ns <= decode_result;
                     calc_state <= CALC_START_T3;
                 end
 
-                CALC_START_T3 : begin
+                CALC_START_T3: begin
                     decode_value <= rx_transmit_frac;
                     decode_start <= 1;
                     calc_state <= CALC_WAIT_T3;
                 end
 
-                CALC_WAIT_T3 : if (decode_done) begin
+                CALC_WAIT_T3: if (decode_done) begin
                     server_transmit_ns <= decode_result;
                     calc_state <= CALC_DIFFERENCES;
                 end
 
-                CALC_DIFFERENCES : begin
+                CALC_DIFFERENCES: begin
                     diff_sec1 <= $signed (server_receive_sec) - $signed (req_sec);
                     diff_ns1 <= $signed (server_receive_ns) - $signed (req_ns);
                     diff_sec2 <= $signed (server_transmit_sec) - $signed (received_sec);
@@ -1107,13 +1107,13 @@ module afdx_rtc #(
                     calc_state <= CALC_SUM;
                 end
 
-                CALC_SUM : begin
+                CALC_SUM: begin
                     sum_sec <= diff_sec1 + diff_sec2;
                     sum_ns <= diff_ns1 + diff_ns2;
                     calc_state <= CALC_HALF;
                 end
 
-                CALC_HALF : begin
+                CALC_HALF: begin
                     correction_sec <= sum_sec >>> 1;
                     correction_ns <= sum_ns >>> 1;
                     correction_sec_calc <= sum_sec >>> 1;
@@ -1122,13 +1122,13 @@ module afdx_rtc #(
                     calc_state <= CALC_HALF_SECOND;
                 end
 
-                CALC_HALF_SECOND : begin
+                CALC_HALF_SECOND: begin
                     correction_ns <= rtc_add_half(correction_ns, second_odd, rtc_half_carry);
                     correction_ns_calc <= rtc_add_half(correction_ns_calc, second_odd, rtc_half_carry);
                     calc_state <= CALC_OFFSET_CANDIDATES;
                 end
 
-                CALC_OFFSET_CANDIDATES : begin
+                CALC_OFFSET_CANDIDATES: begin
                     offset_negative <= correction_ns < 0;
                     offset_overflow <= correction_ns >= NS_PER_SECOND_S;
                     offset_ns_plus <= correction_ns + NS_PER_SECOND_S;
@@ -1138,7 +1138,7 @@ module afdx_rtc #(
                     calc_state <= CALC_NORMALIZE_OFFSET;
                 end
 
-                CALC_NORMALIZE_OFFSET : begin
+                CALC_NORMALIZE_OFFSET: begin
                     if (offset_negative) begin
                         correction_ns <= offset_ns_plus;
                         correction_sec <= offset_sec_minus;
@@ -1154,22 +1154,22 @@ module afdx_rtc #(
                     calc_state <= CALC_ADD_OFFSET;
                 end
 
-                CALC_ADD_OFFSET : begin
+                CALC_ADD_OFFSET: begin
                     calc_state <= CALC_TIME_CANDIDATES;
                 end
 
-                CALC_TIME_CANDIDATES : begin
+                CALC_TIME_CANDIDATES: begin
                     time_overflow <= ge32(adjusted_ns, NS_PER_SECOND);
                     time_ns_minus <= adjusted_ns - NS_PER_SECOND;
                     time_sec_plus <= adjusted_sec + 32'd1;
                     calc_state <= CALC_NORMALIZE_TIME;
                 end
 
-                CALC_NORMALIZE_TIME : begin
+                CALC_NORMALIZE_TIME: begin
                     calc_state <= CALC_LATENCY;
                 end
 
-                CALC_LATENCY : begin
+                CALC_LATENCY: begin
                     // 预先并行计算最终进位及两种结果；应用拍只选择，不串接比较和加法。
                     final_overflow <= ge32(adjusted_ns, NS_PER_SECOND - PIPELINE_NS)
                         && !ge32(adjusted_ns, MAX_BEFORE_PIPELINE + 1);
@@ -1183,7 +1183,7 @@ module afdx_rtc #(
                     calc_state <= CALC_APPLY;
                 end
 
-                CALC_APPLY : begin
+                CALC_APPLY: begin
                     waiting <= 0;
                     calc_state <= CALC_IDLE;
                     calc_busy <= 0;
@@ -1192,7 +1192,7 @@ module afdx_rtc #(
             // 服务端发送待答复的报文，客户端在请求周期到期时重发。
             case (tx_state)
 
-                TX_IDLE : begin
+                TX_IDLE: begin
                     if (master_tx && reply_pending) begin
                         tx_reply <= 1;
                         reply_pending <= 0;
@@ -1206,44 +1206,44 @@ module afdx_rtc #(
                     end
                 end
 
-                TX_GROUPS : begin
+                TX_GROUPS: begin
                     // 字段分两组选择，以减少一拍内的数据选择层数。
                     case (rtc_effective_index[4:2])
                         // 报文首字：回应为版本 4、模式 4（服务端）、层级 1；
                         // 请求为版本 4、模式 3（客户端）。
                         // 后两个字节是轮询间隔 2^4 秒和时钟精度 2^-26 秒。
-                        0 : tx_word_low <= tx_reply ? REPLY_HEADER : REQUEST_HEADER;
-                        1 : tx_word_low <= 0;
-                        2 : tx_word_low <= 0;
+                        0: tx_word_low <= tx_reply ? REPLY_HEADER : REQUEST_HEADER;
+                        1: tx_word_low <= 0;
+                        2: tx_word_low <= 0;
                         // 回应的参考标识是 ASCII 字符 LOCL，表示时间来自本地时钟。
-                        3 : tx_word_low <= tx_reply ? REFERENCE_ID : 32'd0;
-                        4 : tx_word_low <= tx_reply ? reference_sec : 32'd0;
-                        5 : tx_word_low <= tx_reply ? reference_frac : 32'd0;
-                        6 : tx_word_low <= tx_reply ? echo_sec : 32'd0;
-                        7 : tx_word_low <= tx_reply ? echo_frac : 32'd0;
+                        3: tx_word_low <= tx_reply ? REFERENCE_ID : 32'd0;
+                        4: tx_word_low <= tx_reply ? reference_sec : 32'd0;
+                        5: tx_word_low <= tx_reply ? reference_frac : 32'd0;
+                        6: tx_word_low <= tx_reply ? echo_sec : 32'd0;
+                        7: tx_word_low <= tx_reply ? echo_frac : 32'd0;
                     endcase
                     case (rtc_effective_index[3:2])
-                        0 : tx_word_high <= tx_reply ? stamp_rx_sec : 32'd0;
-                        1 : tx_word_high <= tx_reply ? stamp_rx_frac : 32'd0;
-                        2 : tx_word_high <= stamp_tx_sec;
-                        3 : tx_word_high <= stamp_tx_frac;
+                        0: tx_word_high <= tx_reply ? stamp_rx_sec : 32'd0;
+                        1: tx_word_high <= tx_reply ? stamp_rx_frac : 32'd0;
+                        2: tx_word_high <= stamp_tx_sec;
+                        3: tx_word_high <= stamp_tx_frac;
                     endcase
                 end
 
-                TX_WORD : begin
+                TX_WORD: begin
                     tx_word <= tx_index[5] ? tx_word_high : tx_word_low;
                 end
 
-                TX_BYTE : begin
+                TX_BYTE: begin
                     case (tx_index[1:0])
-                        0 : tx_data <= tx_word[31:24];
-                        1 : tx_data <= tx_word[23:16];
-                        2 : tx_data <= tx_word[15:8];
-                        3 : tx_data <= tx_word[7:0];
+                        0: tx_data <= tx_word[31:24];
+                        1: tx_data <= tx_word[23:16];
+                        2: tx_data <= tx_word[15:8];
+                        3: tx_data <= tx_word[7:0];
                     endcase
                 end
 
-                TX_HANDSHAKE : begin
+                TX_HANDSHAKE: begin
                 end
             endcase
             // 中止只覆盖控制位；宽中间结果会在下一事务使用前重新计算。

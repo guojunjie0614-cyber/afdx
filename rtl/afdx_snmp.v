@@ -190,33 +190,33 @@ module afdx_snmp #(
             if (cfg_write_sel[7]) trap_enabled <= cfg_wdata[0];
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    0 : cfg_control_data <= {31'b0, configured};
-                    1 : cfg_control_data <= {25'b0, response_vl};
-                    2 : cfg_control_data <= {27'b0, configured_length};
-                    3 : cfg_control_data <= community0;
-                    4 : cfg_control_data <= community1;
-                    5 : cfg_control_data <= community2;
-                    6 : cfg_control_data <= community3;
-                    7 : cfg_control_data <= sample_cycle;
+                    0: cfg_control_data <= {31'b0, configured};
+                    1: cfg_control_data <= {25'b0, response_vl};
+                    2: cfg_control_data <= {27'b0, configured_length};
+                    3: cfg_control_data <= community0;
+                    4: cfg_control_data <= community1;
+                    5: cfg_control_data <= community2;
+                    6: cfg_control_data <= community3;
+                    7: cfg_control_data <= sample_cycle;
                 endcase
             end
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    0 : cfg_status_data <= uptime;
-                    1 : cfg_status_data <= requests;
-                    2 : cfg_status_data <= bad_community;
-                    3 : cfg_status_data <= {31'b0, trap_enabled};
-                    4 : cfg_status_data <= traps_sent;
-                    default : cfg_status_data <= 0;
+                    0: cfg_status_data <= uptime;
+                    1: cfg_status_data <= requests;
+                    2: cfg_status_data <= bad_community;
+                    3: cfg_status_data <= {31'b0, trap_enabled};
+                    4: cfg_status_data <= traps_sent;
+                    default: cfg_status_data <= 0;
                 endcase
             end
             if (SPLIT_CFG_ADDR != 2) begin
                 case (cfg_addr[2:0])
-                    0 : cfg_descr_data <= DESCRIPTION[127:96];
-                    1 : cfg_descr_data <= DESCRIPTION[95:64];
-                    2 : cfg_descr_data <= DESCRIPTION[63:32];
-                    3 : cfg_descr_data <= DESCRIPTION[31:0];
-                    default : cfg_descr_data <= 0;
+                    0: cfg_descr_data <= DESCRIPTION[127:96];
+                    1: cfg_descr_data <= DESCRIPTION[95:64];
+                    2: cfg_descr_data <= DESCRIPTION[63:32];
+                    3: cfg_descr_data <= DESCRIPTION[31:0];
+                    default: cfg_descr_data <= 0;
                 endcase
             end
         end
@@ -428,7 +428,7 @@ module afdx_snmp #(
             mib_addr_q <= engine_mib_addr;
             mib_wdata_q <= engine_mib_wdata;
             case (mib_state)
-                0 : if (mib_request_q != mib_complete) begin
+                0: if (mib_request_q != mib_complete) begin
                     mib_transaction <= mib_request_q;
                     mib_addr <= mib_addr_q;
                     // 与 mib_addr 同条件同拍更新，两者始终相等；只服务于顶层同址比较。
@@ -437,12 +437,12 @@ module afdx_snmp #(
                     // 地址先稳定一拍，供全速配置读口预译码。
                     mib_state <= 3;
                 end
-                3 : begin
+                3: begin
                     mib_rd <= !mib_write_q;
                     mib_wr <= mib_write_q;
                     mib_state <= 1;
                 end
-                1 : begin
+                1: begin
                     // 读共享需要地址比较，写握手只需主机空闲和配置就绪。
                     // 两种请求互斥，分别释放各自选通，避免读比较驱动 mib_wr。
                     if (mib_wr) begin
@@ -457,7 +457,7 @@ module afdx_snmp #(
                         mib_state <= 2;
                     end
                 end
-                2 : if (mib_rvalid) begin
+                2: if (mib_rvalid) begin
                     mib_result <= mib_rdata;
                     mib_complete <= mib_transaction;
                     mib_state <= 0;

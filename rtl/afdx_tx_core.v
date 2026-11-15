@@ -475,10 +475,10 @@ module afdx_tx_payload_store #(parameter AW = 17) (
     output reg  [7:0]    read_data
 );
 
-    (* preserve=1,dont_merge=1 *) reg write_command, write_qualifier;
-    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address_command;
-    (* preserve=1,dont_merge=1 *) reg [7:0] write_data_command;
-    (* ramstyle="no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
+    (* preserve = 1, dont_merge = 1 *) reg write_command, write_qualifier;
+    (* preserve = 1, dont_merge = 1 *) reg [AW-1:0] write_address_command;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] write_data_command;
+    (* ramstyle = "no_rw_check" *) reg [7:0] memory[0:(1<<AW)-1];
 
     always @(posedge clk) begin
         if (reset) begin

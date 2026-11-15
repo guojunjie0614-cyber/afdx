@@ -69,12 +69,12 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
         if (reset) ready_window <= 0;
         else if (byte_en) begin
             case (state)
-                PREAMBLE : ready_window <= {READY_COPIES{
+                PREAMBLE: ready_window <= {READY_COPIES{
                     pre_index < 7 ? pre_index == 6 : s_valid && !s_last}};
-                DATA : ready_window <= {READY_COPIES{!last_byte && s_valid && !s_last}};
-                FCS : ready_window <= {READY_COPIES{!fcs_remaining[2] && discard_tail}};
-                DRAIN : ready_window <= {READY_COPIES{!(s_valid && s_last)}};
-                default : ready_window <= 0;
+                DATA: ready_window <= {READY_COPIES{!last_byte && s_valid && !s_last}};
+                FCS: ready_window <= {READY_COPIES{!fcs_remaining[2] && discard_tail}};
+                DRAIN: ready_window <= {READY_COPIES{!(s_valid && s_last)}};
+                default: ready_window <= 0;
             endcase
         end
     end
@@ -124,7 +124,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                 case (state)
 
                     // GAP：空闲间隔已满且首字节就绪时，保存网络选择并转 PREAMBLE。
-                    GAP : if (gap_left == 0 && s_valid) begin
+                    GAP: if (gap_left == 0 && s_valid) begin
                         en_a <= s_en_a;
                         en_b <= s_en_b;
                         tx_valid_a <= s_en_a;
@@ -141,7 +141,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                     end
 
                     // PREAMBLE：发完前导码后转 DATA；上游缺字节时转 FCS。
-                    PREAMBLE : begin
+                    PREAMBLE: begin
                         if (pre_index < 7) begin
                             pre_index <= pre_index + 1'b1;
                             tx_data_a <= en_a ? (pre_index == 6 ? SFD_BYTE : PREAMBLE_BYTE) : 8'd0;
@@ -168,7 +168,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                     end
 
                     // DATA：逐字节发送内容，末字节或上游缺字节时转 FCS。
-                    DATA : begin
+                    DATA: begin
                         if (last_byte || !s_valid) begin
                             state <= FCS;
                             fcs_remaining <= 3'b111;
@@ -197,7 +197,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                     end
 
                     // FCS：发完四字节校验值，正常转 GAP，缺字节时转 DRAIN。
-                    FCS : begin
+                    FCS: begin
                         if (!fcs_remaining[2]) begin
                             tx_data_a <= 0;
                             tx_data_b <= 0;
@@ -215,7 +215,7 @@ module afdx_mac_tx #(parameter READY_COPIES = 1) (
                         end
                     end
 
-                    default : state <= GAP;
+                    default: state <= GAP;
                 endcase
             end
         end

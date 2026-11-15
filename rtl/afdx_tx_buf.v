@@ -112,7 +112,7 @@ module afdx_tx_buf #(
     reg message_closed;
     // 对 init_q && !message_closed 做同拍边沿预测，由单个本地触发器驱动对外 ready，
     // 避免初始化与关闭标志的跨层组合逻辑链。
-    (* preserve=1,dont_merge=1 *) reg ingress_open;
+    (* preserve = 1, dont_merge = 1 *) reg ingress_open;
     wire input_valid, input_ready, ingress_ready;
 
     always @(posedge clk) begin
@@ -241,7 +241,7 @@ module afdx_tx_buf #(
 
                 // IDLE：接收首字节，握手后转 ALLOC；数据经输入寄存器在下一拍存入缓存。
                 // 空闲时预存首字节标志和端口；只有握手改变状态。
-                IDLE : begin
+                IDLE: begin
                     enq_vl <= input_vl;
                     port_en <= input_port_en;
                     sport <= input_sport;
@@ -256,13 +256,13 @@ module afdx_tx_buf #(
                 end
 
                 // ALLOC：发出页申请，下一拍转 WAIT_PAGE。
-                ALLOC : begin
+                ALLOC: begin
                     pop_req <= 1;
                     state <= WAIT_PAGE;
                 end
 
                 // WAIT_PAGE：取得页后写首字节，再转 RECV 或 DESC；无页转 RETURN。
-                WAIT_PAGE : begin
+                WAIT_PAGE: begin
                     if (pop_req && pop_ready) pop_req <= 0;
                     if (pop_ack) begin
                         if (!pop_ok) begin
@@ -287,7 +287,7 @@ module afdx_tx_buf #(
                 end
 
                 // RECV：存入字节，跨页转 ALLOC，末字节转 DESC，过长转 RETURN。
-                RECV : if (m_accept) begin
+                RECV: if (m_accept) begin
                     ended <= input_last;
                     if (length_full) begin
                         reason <= ENQ_TOO_LONG;
@@ -308,7 +308,7 @@ module afdx_tx_buf #(
                 end
 
                 // DESC：保存消息长度和端口，下一拍转 ENQUEUE。
-                DESC : begin
+                DESC: begin
                     if (EARLY_ENQUEUE) enq_valid <= 1;
                     desc_we <= 1;
                     desc_wa <= enq_head;
@@ -317,13 +317,13 @@ module afdx_tx_buf #(
                 end
 
                 // ENQUEUE：提交入队请求，下一拍转 REPLY。
-                ENQUEUE : begin
+                ENQUEUE: begin
                     enq_valid <= 1;
                     state <= REPLY;
                 end
 
                 // REPLY：等待调度结果，接纳转 EVENT，拒绝转 RETURN。
-                REPLY : if (enq_ack) begin
+                REPLY: if (enq_ack) begin
                     enq_valid <= 0;
                     reason <= enq_result;
                     if (enq_result == ENQ_ACCEPTED) state <= EVENT;
@@ -333,7 +333,7 @@ module afdx_tx_buf #(
                 end
 
                 // RETURN：逐页归还空间，完成后按消息是否结束转 EVENT 或 DRAIN。
-                RETURN : begin
+                RETURN: begin
                     // 先归还已经占用的页，再丢弃尚未接收完的字节。
                     // reason 保持第一次出现的错误原因。
                     if (return_read_pending) begin
@@ -347,22 +347,22 @@ module afdx_tx_buf #(
                 end
 
                 // DRAIN：继续接收但不保存字节，收到末字节后转 EVENT。
-                DRAIN : if (m_accept && input_last) state <= EVENT;
+                DRAIN: if (m_accept && input_last) state <= EVENT;
 
                 // EVENT：输出一拍结果脉冲，下一拍转 IDLE。
-                EVENT : begin
+                EVENT: begin
                     case (reason)
-                        ENQ_ACCEPTED : ev_accept <= 1;
-                        ENQ_DISABLED : ev_drop_dis <= 1;
-                        ENQ_FULL : ev_drop_full <= 1;
-                        ENQ_TOO_LONG : ev_drop_long <= 1;
-                        ENQ_NO_PAGE : ev_drop_nopage <= 1;
-                        default :;
+                        ENQ_ACCEPTED: ev_accept <= 1;
+                        ENQ_DISABLED: ev_drop_dis <= 1;
+                        ENQ_FULL: ev_drop_full <= 1;
+                        ENQ_TOO_LONG: ev_drop_long <= 1;
+                        ENQ_NO_PAGE: ev_drop_nopage <= 1;
+                        default: ;
                     endcase
                     state <= IDLE;
                 end
 
-                default : state <= IDLE;
+                default: state <= IDLE;
             endcase
         end
     end
@@ -425,10 +425,10 @@ module afdx_tx_rollback_ram #(
     output reg  [7:0]    q
 );
 
-    (* preserve=1,dont_merge=1 *) reg write_command;
-    (* preserve=1,dont_merge=1 *) reg [AW-1:0] write_address;
-    (* preserve=1,dont_merge=1 *) reg [7:0] write_data;
-    (* ramstyle="M4K,no_rw_check" *) reg [7:0] memory[0:DEPTH-1];
+    (* preserve = 1, dont_merge = 1 *) reg write_command;
+    (* preserve = 1, dont_merge = 1 *) reg [AW-1:0] write_address;
+    (* preserve = 1, dont_merge = 1 *) reg [7:0] write_data;
+    (* ramstyle = "M4K,no_rw_check" *) reg [7:0] memory[0:DEPTH-1];
 
     always @(posedge clk) begin
         if (reset) write_command <= 0;

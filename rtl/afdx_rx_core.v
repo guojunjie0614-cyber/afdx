@@ -150,7 +150,7 @@ module afdx_rx_core #(
     // 请求仍保持两级流水，低位地址与读回数据的固定相位关系不变，写选通取自对应总线副本的写使能。
     wire [MAP_BANKS - 1:0] map_rd_sel, map_wr_sel;
     (* preserve = 1, dont_merge = 1, maxfan = 32 *) reg [MAP_GROUPS * 13 - 1:0] map_group_data;
-    (* preserve=1, dont_merge=1 *) reg [51:0] map_upper_data;
+    (* preserve = 1, dont_merge = 1 *) reg [51:0] map_upper_data;
     assign map_q = map_upper_data[12:0] | map_upper_data[25:13]
         | map_upper_data[38:26] | map_upper_data[51:39];
     (* preserve = 1, dont_merge = 1 *) reg [12:0] map_q_r;
@@ -167,7 +167,7 @@ module afdx_rx_core #(
             localparam BUS_COPY = bank / (MAP_BANKS / CFG_COPIES);
             (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW - 1:0] clear_local;
             (* preserve = 1, dont_merge = 1 *) reg cleared;
-            (* preserve=1, dont_merge=1 *) reg clear_low_last, clear_high_last;
+            (* preserve = 1, dont_merge = 1 *) reg clear_low_last, clear_high_last;
             wire [15:0] bank_read_addr = map_ra[BUS_COPY * 16+:16];
             wire [15:0] bank_cfg_addr = cfg_addr[BUS_COPY * 16+:16];
             wire [12:0] bank_cfg_data = cfg_wdata[BUS_COPY * 32+:13];
@@ -209,9 +209,9 @@ module afdx_rx_core #(
             // 将写命令拆分为独立的 7 比特 / 6 比特两组，在保持原有写入时序沿的同时使每组物理 RAM 输入扇出减半。
             for (map_slice = 0; map_slice < 2; map_slice = map_slice + 1) begin : write_slice
                 localparam SLICE_WIDTH = map_slice == 0 ? 7 : 6;
-                (* preserve=1, dont_merge=1 *) reg write_request, config_mode, write_is_config;
-                (* preserve=1, dont_merge=1 *) reg [MAP_BANK_AW-1:0] write_address, configuration_address;
-                (* preserve=1, dont_merge=1 *) reg [SLICE_WIDTH-1:0] write_data;
+                (* preserve = 1, dont_merge = 1 *) reg write_request, config_mode, write_is_config;
+                (* preserve = 1, dont_merge = 1 *) reg [MAP_BANK_AW-1:0] write_address, configuration_address;
+                (* preserve = 1, dont_merge = 1 *) reg [SLICE_WIDTH-1:0] write_data;
 
                 always @(posedge clk) begin
                     // 远端配置地址先经一级无条件寄存器打拍，清零与配置地址复用下沉至物理 RAM 端口本地。
@@ -556,12 +556,12 @@ module afdx_rx_table_slice #(parameter WIDTH = 8) (
     input  wire [WIDTH-1:0] wd,
     input  wire             re,
     input  wire [11:0]      ra,
-    (* preserve=1, dont_merge=1 *)
+    (* preserve = 1, dont_merge = 1 *)
     output reg  [WIDTH-1:0] q
 );
 
-    (* preserve=1, dont_merge=1 *) reg read_command;
-    (* preserve=1, dont_merge=1 *) reg [11:0] read_address;
+    (* preserve = 1, dont_merge = 1 *) reg read_command;
+    (* preserve = 1, dont_merge = 1 *) reg [11:0] read_address;
     wire [WIDTH-1:0] ram_q;
 
     always @(posedge clk) begin

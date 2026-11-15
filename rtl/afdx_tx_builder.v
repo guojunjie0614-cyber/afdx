@@ -456,9 +456,9 @@ module afdx_tx_builder #(
             end
             if (fifo_pop) fifo_rd <= fifo_rd + 1'b1;
             case ({fifo_push, fifo_pop})
-                2'b10 : fifo_count <= fifo_count + 1'b1;
-                2'b01 : fifo_count <= fifo_count - 1'b1;
-                default :;
+                2'b10: fifo_count <= fifo_count + 1'b1;
+                2'b01: fifo_count <= fifo_count - 1'b1;
+                default: ;
             endcase
             // 连续到达的页号先排队，再逐项保持到归还握手完成。
             if (return_push) begin
@@ -475,9 +475,9 @@ module afdx_tx_builder #(
                 head_pending <= 0;
             end else if (ret_valid && ret_ready) ret_valid <= 0;
             case ({return_push, return_pop})
-                2'b10 : return_count <= return_count + 1'b1;
-                2'b01 : return_count <= return_count - 1'b1;
-                default :;
+                2'b10: return_count <= return_count + 1'b1;
+                2'b01: return_count <= return_count - 1'b1;
+                default: ;
             endcase
             // 最多同时等待三个读结果，队列剩五项时就暂停发出新读请求。
             if (stream_active && fetch_delay != 0) fetch_delay <= fetch_delay - 1'b1;
@@ -506,35 +506,35 @@ module afdx_tx_builder #(
             else if (pending && !prepared && !capture_grant[0]) begin
                 prep <= prep + 1'b1;
                 case (prep)
-                    0 : sum_operand <= p_len;
-                    1 : sum_operand <= p_ident;
-                    2 : sum_operand <= {2'b00, p_more, p_ip_offset};
-                    3 : sum_operand <= p_src[31:16];
-                    4 : sum_operand <= p_src[15:0];
-                    5 : sum_operand <= p_dst[31:16];
-                    6 : sum_operand <= p_dst[15:0];
-                    default :;
+                    0: sum_operand <= p_len;
+                    1: sum_operand <= p_ident;
+                    2: sum_operand <= {2'b00, p_more, p_ip_offset};
+                    3: sum_operand <= p_src[31:16];
+                    4: sum_operand <= p_src[15:0];
+                    5: sum_operand <= p_dst[31:16];
+                    6: sum_operand <= p_dst[15:0];
+                    default: ;
                 endcase
                 case (prep)
-                    0 : begin
+                    0: begin
                         ip_length <= {5'b0, p_len} + (p_first ? 16'd28 : 16'd20);
                         udp_length <= {2'b0, p_message_len} + 16'd8;
                         sum_low <= p_first ? 16'h462d : 16'h4625;
                         sum_high <= 0;
                     end
-                    1, 2, 3, 4, 5, 6, 7 : begin
+                    1, 2, 3, 4, 5, 6, 7: begin
                         sum_low <= sum_step[15:0];
                         sum_high <= sum_high + sum_step[16];
                     end
-                    8 : first_fold <= {1'b0, sum_low} + {13'b0, sum_high};
-                    9 : begin
+                    8: first_fold <= {1'b0, sum_low} + {13'b0, sum_high};
+                    9: begin
                         fold_low <= {1'b0, first_fold[7:0]} + first_fold[16];
                         fold_high <= first_fold[15:8];
                     end
-                    10 : checksum <= ~{(fold_high + {7'b0, fold_low[8]}), fold_low[7:0]};
+                    10: checksum <= ~{(fold_high + {7'b0, fold_low[8]}), fold_low[7:0]};
                     // 此时本地帧头模板已完成 IP 校验和装载，置起准备完成标志。
-                    11 : prepared <= 1;
-                    default :;
+                    11: prepared <= 1;
+                    default: ;
                 endcase
             end
             // 提前判断发送时刻，以补偿流水、计时和输出寄存器的延迟。

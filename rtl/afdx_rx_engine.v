@@ -71,7 +71,7 @@ module afdx_rx_engine #(
 
     // ModelSim 要求信号先声明后引用；综合分支保持原声明位置以固定网表与布局锚点。
 `ifdef MODEL_TECH
-    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
+    (* preserve = 1, dont_merge = 1 *) reg frame_start_q, age_start_q;
     reg dq_room;
     wire fragmented;
     wire age_tick;
@@ -114,7 +114,7 @@ module afdx_rx_engine #(
     localparam [4:0] STEP_PREPARE = 5'd27, STEP_DELIVER = 5'd28, STEP_WRITE = 5'd29, STEP_FINISH = 5'd30;
     // 采用显式独热码状态编码，避免二进制状态反馈跨区扇出至全部下游逻辑；
     // 宽位操作改为由本地预译码命令驱动。
-    (* preserve=1, dont_merge=1, syn_encoding="user", fsm_encoding="none" *) reg [3:0] op;
+    (* preserve = 1, dont_merge = 1, syn_encoding = "user", fsm_encoding = "none" *) reg [3:0] op;
 
     // 分块映射表在本拍各自寄存请求，替代跨整个存储区的共享地址寄存器；
     // 独立例化本模块时仍保留原来的一拍请求接口。
@@ -124,7 +124,7 @@ module afdx_rx_engine #(
         if (LOCAL_MAP_READ) begin : local_map
             // 仅读取已提交的帧描述符，避免空闲投机读与配置写同址相撞；各目标使用独立的有效位副本。
             for (map_copy = 0; map_copy < DESC_COPIES; map_copy = map_copy + 1) begin : target
-                (* preserve=1, dont_merge=1 *) reg source_request;
+                (* preserve = 1, dont_merge = 1 *) reg source_request;
 
                 always @(posedge clk) begin
                     if (reset) source_request <= 0;
@@ -136,7 +136,7 @@ module afdx_rx_engine #(
 
                 // 用本地源端地址寄存器替代各映射分块内部的首级地址寄存器，
                 // 各 RAM 端口级寄存器在下一拍直接采样该地址。
-                (* preserve=1, dont_merge=1 *) reg [15:0] source_address;
+                (* preserve = 1, dont_merge = 1 *) reg [15:0] source_address;
                 always @(posedge clk) source_address <= desc_a_valid[map_copy]
                     ? desc_a[RX_RING_AW + 82:RX_RING_AW + 67] : desc_b[RX_RING_AW + 82:RX_RING_AW + 67];
                 assign map_ra[map_copy * 16+:16] = source_address;
@@ -193,9 +193,9 @@ module afdx_rx_engine #(
     reg skew_expired, sn_match, zero_shortcut, forward_ok;
     reg map_missing, config_reject, sequence_reject;
     reg [RX_RING_AW + 208:0] current_desc;
-    (* preserve=1, dont_merge=1 *) reg [RX_RING_AW + 208:0] descriptor_snapshot_a, descriptor_snapshot_b;
+    (* preserve = 1, dont_merge = 1 *) reg [RX_RING_AW + 208:0] descriptor_snapshot_a, descriptor_snapshot_b;
 `ifndef MODEL_TECH
-    (* preserve=1, dont_merge=1 *) reg frame_start_q, age_start_q;
+    (* preserve = 1, dont_merge = 1 *) reg frame_start_q, age_start_q;
 `endif
     reg [15:0] age_time_snapshot;
     reg [11:0] age_pointer_snapshot;
@@ -204,7 +204,7 @@ module afdx_rx_engine #(
     reg frame_fragmented, frame_later;
     wire start_frame = op[1] && !frame_start_q && !age_start_q && enable && (desc_a_valid[0] || desc_b_valid[0]);
     localparam DESC_WIDTH = RX_RING_AW + 209, DESC_GROUPS = (DESC_WIDTH + 23) / 24;
-    (* preserve=1, dont_merge=1 *) reg [1:0] fragment_snapshot_a, fragment_snapshot_b;
+    (* preserve = 1, dont_merge = 1 *) reg [1:0] fragment_snapshot_a, fragment_snapshot_b;
     always @(posedge clk) begin
         descriptor_snapshot_a <= desc_a;
         descriptor_snapshot_b <= desc_b;
@@ -236,7 +236,7 @@ module afdx_rx_engine #(
                 descriptor_group = descriptor_group + 1) begin : frame_capture
             localparam GROUP_WIDTH = (DESC_WIDTH - descriptor_group * 24 >= 24)
                 ? 24 : DESC_WIDTH - descriptor_group * 24;
-            (* preserve=1, dont_merge=1 *) reg load, selected_net;
+            (* preserve = 1, dont_merge = 1 *) reg load, selected_net;
             always @(posedge clk) begin
                 selected_net <= !desc_a_valid[0];
                 if (reset) begin
@@ -257,7 +257,7 @@ module afdx_rx_engine #(
     // 不再直接引用远端 RAM 输出。
     (* preserve = 1, dont_merge = 1 *) reg [12:0] saved_map;
     wire [12:0] selected_map = saved_map;
-    (* preserve=1, dont_merge=1 *) reg [11:0] query_vl;
+    (* preserve = 1, dont_merge = 1 *) reg [11:0] query_vl;
     always @(posedge clk) query_vl <= selected_map[11:0];
     reg [31:0] saved_cfg;
 
@@ -285,10 +285,10 @@ module afdx_rx_engine #(
     // 提前一拍寄存结果写入相位，拒绝标志仍在原判定拍取值；
     // 结果寄存器使能与数据选择均不再直接译码远端 op/phase。
     (* preserve = 1, dont_merge = 1 *) reg result_map_phase, result_config_phase, result_sequence_phase;
-    (* preserve=1, dont_merge=1 *)
+    (* preserve = 1, dont_merge = 1 *)
     reg map_capture_command, frame_ram_command, state_write_command, age_write_command;
-    (* preserve=1, dont_merge=1 *) reg queue_command, write_saved_rm, admission_room;
-    (* preserve=1, dont_merge=1 *) reg [4:0] frame_work_commands;
+    (* preserve = 1, dont_merge = 1 *) reg queue_command, write_saved_rm, admission_room;
+    (* preserve = 1, dont_merge = 1 *) reg [4:0] frame_work_commands;
     always @(posedge clk) begin
         if (reset) frame_work_commands <= 0;
         else begin
@@ -304,7 +304,7 @@ module afdx_rx_engine #(
     // 而 FRAME27 当拍弹出按原时序不参与该旧值判据）。
     wire dq_room_next = dq_commit && !dq_pop ? dq_count < DQ_DEPTH - 1 :
         dq_pop && !dq_commit ? 1'b1 : dq_room;
-    (* preserve=1, dont_merge=1 *) reg legacy_permission, fragment_permission;
+    (* preserve = 1, dont_merge = 1 *) reg legacy_permission, fragment_permission;
     wire prepare_permission = op[2] && phase == STEP_PREPARE - 1
         && !sequence_reject && deliver_allowed && dq_room_next;
     always @(posedge clk) begin
@@ -524,13 +524,13 @@ module afdx_rx_engine #(
             if (dq_put) wr_ptr <= wr_ptr + 1'b1;
             // dq_count 在描述符实际写入交付队列的当拍更新，dq_room 同步指示是否仍有空位。
             case ({dq_commit, dq_pop})
-                2'b10 : begin
+                2'b10: begin
                     dq_count <= dq_count + 1'b1;
                 end
-                2'b01 : begin
+                2'b01: begin
                     dq_count <= dq_count - 1'b1;
                 end
-                default :;
+                default: ;
             endcase
         end
     end
@@ -664,7 +664,7 @@ module afdx_rx_engine #(
             case (1'b1)
 
                 // INIT：将 4096 项 VL 接收状态清零，写完后转入 IDLE。
-                op[0] : if (!init_flush) begin
+                op[0]: if (!init_flush) begin
                     init_ptr <= init_ptr + 1'b1;
                     if (init_ptr == LAST_VL) init_flush <= 1;
                 end
@@ -674,7 +674,7 @@ module afdx_rx_engine #(
                 end
 
                 // IDLE：有待处理帧时转入 FRAME；无待处理帧且需老化扫描时转入 AGE。
-                op[1] : if (frame_start_q) begin
+                op[1]: if (frame_start_q) begin
                     op <= FRAME;
                     phase <= 1;
                 end
@@ -701,72 +701,72 @@ module afdx_rx_engine #(
                 //   第 7 拍对应外部 Q0；第 10 拍接收本地 RAM 返回；第 11～12 拍完成长度与差值计算；
                 //   第 13 拍完成完整性检查；第 14 拍完成冗余管理判决；第 26 拍收回重组查询结果；
                 //   第 27 拍寄存准入判决；第 28 拍原子接纳；第 29 拍写入物理分块与 DQ；第 30 拍收尾结束。
-                op[2] : begin
+                op[2]: begin
                     phase <= phase + 1'b1;
                     case (phase)
 
-                        7 : if (map_missing) phase <= STEP_FINISH;
-                        12 : if (config_reject) phase <= STEP_FINISH;
-                        14 : if (sequence_reject) phase <= STEP_WRITE;
+                        7: if (map_missing) phase <= STEP_FINISH;
+                        12: if (config_reject) phase <= STEP_FINISH;
+                        14: if (sequence_reject) phase <= STEP_WRITE;
 
-                        STEP_DELIVER : begin
+                        STEP_DELIVER: begin
                             if (deliver_allowed && admission_room && saved_cfg[4]) state_changed <= 1;
                         end
 
-                        STEP_WRITE :; // 由本地命令脉冲直接控制 state_we 写入。
+                        STEP_WRITE: ; // 由本地命令脉冲直接控制 state_we 写入。
 
-                        STEP_FINISH : begin
+                        STEP_FINISH: begin
                             resolve_a <= !op_net;
                             resolve_b <= op_net;
                             commit_a <= !op_net && result == RX_ACCEPTED;
                             commit_b <= op_net && result == RX_ACCEPTED;
                             case (result)
-                                RX_ACCEPTED : ev_deliver <= 1;
-                                RX_UNMAPPED :
+                                RX_ACCEPTED: ev_deliver <= 1;
+                                RX_UNMAPPED:
                                     if (op_net) ev_b <= EV_UNMAPPED;
                                     else ev_a <= EV_UNMAPPED;
-                                RX_CONFIG_REJECT :
+                                RX_CONFIG_REJECT:
                                     if (op_net) ev_b <= EV_CONFIG_REJECT;
                                     else ev_a <= EV_CONFIG_REJECT;
-                                RX_BAD_SEQUENCE :
+                                RX_BAD_SEQUENCE:
                                     if (op_net) ev_b <= EV_BAD_SEQUENCE;
                                     else ev_a <= EV_BAD_SEQUENCE;
-                                RX_DUPLICATE : ev_rm_drop <= 1;
-                                RX_QUEUE_FULL :
+                                RX_DUPLICATE: ev_rm_drop <= 1;
+                                RX_QUEUE_FULL:
                                     if (op_net) ev_b <= EV_QUEUE_FULL;
                                     else ev_a <= EV_QUEUE_FULL;
-                                default :;
+                                default: ;
                             endcase
                             op <= IDLE;
                         end
 
-                        default :;
+                        default: ;
                     endcase
                 end
 
                 // AGE：使过期去重记录失效后回到 IDLE；新帧到来时立即抢占并回到 IDLE。
                 //   phase == 3：锁存局部 RAM 返回；phase == 4：分段计算时间差；
                 //   phase == 5：写回清除过期记录，主状态机返回 IDLE。
-                op[3] : begin
+                op[3]: begin
                     // 若检查期间有新帧到达，先中止本次老化并让出通道处理新帧，稍后重新检查该项；
                     // 去重记录超过 0x4000 个粗计时单位（约 0.54 秒）即判定过期。
                     if (desc_a_valid[0] || desc_b_valid[0]) op <= IDLE;
                     else begin
                         phase <= phase + 1'b1;
                         case (phase)
-                            1 :;
-                            2 :; // 分段老化时间差比较已在独立寄存器中完成。
-                            5 : begin
+                            1: ;
+                            2: ; // 分段老化时间差比较已在独立寄存器中完成。
+                            5: begin
                                 age_ptr <= age_ptr + 1'b1;
                                 age_pending <= age_tick;
                                 op <= IDLE;
                             end
-                            default :;
+                            default: ;
                         endcase
                     end
                 end
 
-                default : op <= INIT;
+                default: op <= INIT;
             endcase
         end
     end

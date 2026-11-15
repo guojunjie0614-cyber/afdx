@@ -272,11 +272,11 @@ module afdx_rx_reassembly #(
             ready <= 0;
             reject_events <= bank_events[1:0] | bank_events[3:2];
             case (stream_state)
-                D_IDLE : begin
+                D_IDLE: begin
                     ready <= !bank_complete[0] && !bank_complete[1];
                     if (|bank_complete) stream_state <= D_QUIET;
                 end
-                D_QUIET : if (!in_start) begin
+                D_QUIET: if (!in_start) begin
                     if (bank_complete[0]) begin
                         output_bank <= 0;
                         output_row <= bank_complete_row[2:0];
@@ -291,22 +291,22 @@ module afdx_rx_reassembly #(
                     end
                     else stream_state <= D_IDLE;
                 end
-                D_PREP : if (stream_bank ? bank_prepared[1] : bank_prepared[0]) begin
+                D_PREP: if (stream_bank ? bank_prepared[1] : bank_prepared[0]) begin
                     prepared <= 1;
                     stream_state <= D_COPY;
                 end
-                D_COPY : if (stream_bank ? bank_copy_done[1] : bank_copy_done[0]) stream_state <= D_IDLE;
-                D_LEGACY_PREP : begin
+                D_COPY: if (stream_bank ? bank_copy_done[1] : bank_copy_done[0]) stream_state <= D_IDLE;
+                D_LEGACY_PREP: begin
                     prepared <= 1;
                     stream_state <= legacy_empty ? D_IDLE : D_LEGACY;
                 end
-                D_LEGACY : if (in_valid) begin
+                D_LEGACY: if (in_valid) begin
                     d_valid <= 1;
                     d_last <= in_last;
                     d_data <= in_data;
                     if (in_last) stream_state <= D_IDLE;
                 end
-                D_OUTPUT : begin
+                D_OUTPUT: begin
                     // 分块装载报文头并完成末字节比较预置后，经 5 拍存储读流水连续输出重组后的完整载荷。
                     d_vl <= output_bank ? bank_vl[23:12] : bank_vl[11:0];
                     d_sport <= output_bank ? bank_sport[31:16] : bank_sport[15:0];
@@ -322,8 +322,8 @@ module afdx_rx_reassembly #(
                         end
                     end
                 end
-                D_RELEASE : if (output_bank ? bank_release_done[1] : bank_release_done[0]) stream_state <= D_IDLE;
-                default : stream_state <= D_IDLE;
+                D_RELEASE: if (output_bank ? bank_release_done[1] : bank_release_done[0]) stream_state <= D_IDLE;
+                default: stream_state <= D_IDLE;
             endcase
             if (accept_header) begin
                 ready <= 0;

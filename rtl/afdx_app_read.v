@@ -84,12 +84,12 @@ module afdx_app_read #(
                 pending[stage] <= pending[stage-1];
             if (issue) pointer <= pointer_step;
             case ({issue, take_q})
-                2'b10 : reserved <= reserved + 1'b1;
-                2'b01 : reserved <= reserved - 1'b1;
+                2'b10: reserved <= reserved + 1'b1;
+                2'b01: reserved <= reserved - 1'b1;
             endcase
             case ({response, refill})
-                2'b10 : queued <= queued + 1'b1;
-                2'b01 : queued <= queued - 1'b1;
+                2'b10: queued <= queued + 1'b1;
+                2'b01: queued <= queued - 1'b1;
             endcase
             // 保留推断队列 RAM 的写数据输入门控隔离。
             if (response) begin
@@ -97,8 +97,8 @@ module afdx_app_read #(
                 wr <= wr + 1'b1;
             end
             case ({refill, take})
-                2'b10 : output_count <= output_count + 1'b1;
-                2'b01 : output_count <= output_count - 1'b1;
+                2'b10: output_count <= output_count + 1'b1;
+                2'b01: output_count <= output_count - 1'b1;
             endcase
             if (refill) begin
                 if (output_wr) output1 <= bytes[rd];

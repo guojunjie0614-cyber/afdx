@@ -119,9 +119,9 @@ module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
                 // 分配和归还同时完成时，空闲页数不变。
                 // 两个归还口先各自保存页号，再依次写入空闲队列。
                 case ({put, take && count != 0})
-                    2'b10 : count <= count + 1'b1;
-                    2'b01 : count <= count - 1'b1;
-                    default :;
+                    2'b10: count <= count + 1'b1;
+                    2'b01: count <= count - 1'b1;
+                    default: ;
                 endcase
                 if (put) begin
                     we <= 1;
@@ -133,7 +133,7 @@ module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
                 end
                 case (phase)
 
-                    POP_IDLE : if (take) begin
+                    POP_IDLE: if (take) begin
                         pop_ok <= count != 0;
                         if (count != 0) begin
                             re <= 1;
@@ -147,20 +147,20 @@ module afdx_tx_free #(parameter TX_PAGE_AW = 8) (
                         end
                     end
 
-                    POP_READ : phase <= POP_CAPTURE;
+                    POP_READ: phase <= POP_CAPTURE;
 
-                    POP_CAPTURE : begin
+                    POP_CAPTURE: begin
                         captured <= q;
                         phase <= POP_REPLY;
                     end
 
-                    POP_REPLY : begin
+                    POP_REPLY: begin
                         pop_page <= captured;
                         pop_ack <= 1;
                         phase <= POP_IDLE;
                     end
 
-                    default : phase <= POP_IDLE;
+                    default: phase <= POP_IDLE;
                 endcase
             end
         end

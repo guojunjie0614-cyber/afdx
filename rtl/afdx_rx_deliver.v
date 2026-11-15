@@ -29,18 +29,18 @@ module afdx_rx_deliver #(
     output reg                      d_start, d_empty
 );
 
-    (* preserve=1, dont_merge=1 *) reg [RX_DQ_AW-1:0] rd_ptr;
+    (* preserve = 1, dont_merge = 1 *) reg [RX_DQ_AW-1:0] rd_ptr;
     assign dq_ra = rd_ptr;
     // dq_req 表示本地接收通道处于空闲可取帧状态（而非延迟型 downstream_ready 信用）：
     // F0 授权 -> F1 读取并弹出 DQ 队头 -> F2 预计算报文长度分类。
-    (* preserve=1, dont_merge=1 *) reg dq_req, dq_valid;
-    (* preserve=1, dont_merge=1 *) reg fetch_eligible, fetch_command, head_prepare;
-    (* preserve=1, dont_merge=1 *) reg [3:0] capture_header;
+    (* preserve = 1, dont_merge = 1 *) reg dq_req, dq_valid;
+    (* preserve = 1, dont_merge = 1 *) reg fetch_eligible, fetch_command, head_prepare;
+    (* preserve = 1, dont_merge = 1 *) reg [3:0] capture_header;
     wire fetch_fire = fetch_eligible && !fetch_command && downstream_ready;
     wire header_accept = dq_valid && downstream_ready;
     reg head_empty, head_single, head_more;
     reg issuing, waiting_prepared;
-    (* preserve=1, dont_merge=1 *) reg read_token;
+    (* preserve = 1, dont_merge = 1 *) reg read_token;
     reg [10:0] left;
     reg [2:0] valid_pipe, last_pipe;
     reg [7:0] data_a, data_b;

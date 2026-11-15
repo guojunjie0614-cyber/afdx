@@ -149,12 +149,12 @@ module afdx_mgmt_tx #(parameter AW = 10) (
                 issued <= issued + 1'b1;
             end
             case ({issue, take_q})
-                2'b10 : reserved <= reserved + 1'b1;
-                2'b01 : reserved <= reserved - 1'b1;
+                2'b10: reserved <= reserved + 1'b1;
+                2'b01: reserved <= reserved - 1'b1;
             endcase
             case ({return_valid, take_q})
-                2'b10 : queued <= queued + 1'b1;
-                2'b01 : queued <= queued - 1'b1;
+                2'b10: queued <= queued + 1'b1;
+                2'b01: queued <= queued - 1'b1;
             endcase
             if (return_valid) begin
                 bytes[write_pos] <= read_data;

@@ -224,7 +224,7 @@ module afdx_tx_engine #(
 
     // 本次指针提交完成前调度器绝不会进入下一次 GRANT phase=0，
     // busy 标志仍严格在原分片完成时钟沿清零。
-    (* preserve=1, dont_merge=1 *) reg pointer_commit;
+    (* preserve = 1, dont_merge = 1 *) reg pointer_commit;
     reg [6:0] pointer_address;
     reg [TX_OFF_AW+7:0] pointer_data;
     always @(posedge clk) begin
@@ -323,12 +323,12 @@ module afdx_tx_engine #(
     always @(posedge clk) begin
         if (reset) state_wd <= 0;
         else case (op)
-            INIT : state_wd <= 0;
-            IDLE : state_wd <= {1'b0, scan_s2[61:0]};
-            ENQ : state_wd <= state_after_enqueue;
-            GRANT : state_wd <= state_after_send;
-            START : state_wd <= {1'b1, new_time, saved_state[29:0]};
-            default : state_wd <= 0;
+            INIT: state_wd <= 0;
+            IDLE: state_wd <= {1'b0, scan_s2[61:0]};
+            ENQ: state_wd <= state_after_enqueue;
+            GRANT: state_wd <= state_after_send;
+            START: state_wd <= {1'b1, new_time, saved_state[29:0]};
+            default: state_wd <= 0;
         endcase
     end
 
@@ -360,8 +360,8 @@ module afdx_tx_engine #(
             wire complete_bank;
             wire [2:0] complete_index;
             if (COMPLETION_LOOKAHEAD) begin : completion_local
-                (* preserve=1,dont_merge=1 *) reg command;
-                (* preserve=1,dont_merge=1 *) reg [2:0] index;
+                (* preserve = 1, dont_merge = 1 *) reg command;
+                (* preserve = 1, dont_merge = 1 *) reg [2:0] index;
                 always @(posedge clk) begin
                     if (reset) command <= 0;
                     else command <= completion_now && completion_vl[6:3] == busy_bank_index;
@@ -477,9 +477,9 @@ module afdx_tx_engine #(
         end
         else begin
             case (op)
-                INIT : state_wa <= init_ptr;
-                IDLE : state_wa <= scan_vl4;
-                default : state_wa <= op_vl;
+                INIT: state_wa <= init_ptr;
+                IDLE: state_wa <= scan_vl4;
+                default: state_wa <= op_vl;
             endcase
             state_we <= (op == INIT && !init_flush)
                 || (scanning && scan_valid[4] && scan_cleanup_r)
@@ -704,7 +704,7 @@ module afdx_tx_engine #(
             case (op)
 
                 // INIT：初始化全部状态，最后一次写入完成后转 IDLE。
-                INIT : begin
+                INIT: begin
                     if (!init_flush) begin
                         init_ptr <= init_ptr + 1'b1;
                         if (init_ptr == LAST_VL) init_flush <= 1;
@@ -716,7 +716,7 @@ module afdx_tx_engine #(
                 end
 
                 // IDLE：按请求转 START、ENQ 或 GRANT；无请求时轮询队列。
-                IDLE : if (enable_q) begin
+                IDLE: if (enable_q) begin
                     if (ack_pending) begin
                         invalidate_scan;
                         op <= START;
@@ -769,22 +769,22 @@ module afdx_tx_engine #(
                 // phase=3：检查提前准备范围，并寄存入队条件，下一拍转 4。
                 // phase=4：接纳或拒绝消息，随后主状态转 IDLE。
                 // enq_result 为 1 表示虚拟链路未启用，为 2 表示队列已满，为 3 表示消息过长。
-                ENQ : begin
+                ENQ: begin
                     phase <= phase + 1'b1;
                     case (phase)
 
-                        1 : begin
+                        1: begin
                             saved_state <= state_q;
                             enq_busy_bank <= op_vl[6:3];
                             enq_pending_q <= pend_valid && op_vl == pend_vl;
                         end
 
-                        2 : begin
+                        2: begin
                             difference <= now_q - saved_state[61:30];
                             enq_busy_q <= enq_busy_banks[enq_busy_bank];
                         end
 
-                        3 : begin
+                        3: begin
                             soon_difference <= difference + LOOKAHEAD;
                             enq_disabled_q <= !words[0][0] || words[0][2:1] == 0;
                             enq_too_long_q <= (op_len <= 14'd1471 && op_len > {3'b000, words[0][19:9]})
@@ -793,7 +793,7 @@ module afdx_tx_engine #(
                             mnext_wr_q <= saved_state[21:16] != 0;
                         end
 
-                        4 : begin
+                        4: begin
                             enq_ack <= 1;
                             op <= IDLE;
                             if (enq_disabled_q) enq_result <= ENQ_DISABLED;
@@ -814,7 +814,7 @@ module afdx_tx_engine #(
                             end
                         end
 
-                        default :;
+                        default: ;
                     endcase
                 end
 
@@ -829,7 +829,7 @@ module afdx_tx_engine #(
                 // phase=6 计算当前分片的字节尺寸与剩余信息；
                 // phase=7 锁存完整分片报文元数据及下一次进度；
                 // phase=8 正式提交本次发送授权并写回预计算的状态表。
-                GRANT : begin
+                GRANT: begin
                     phase <= phase + 1'b1;
                     if (phase < 5) begin
                         cfg_re <= 1;
@@ -837,41 +837,41 @@ module afdx_tx_engine #(
                     end
                     case (phase)
 
-                        1 : begin
+                        1: begin
                             saved_state <= state_q;
                         end
 
-                        2 : begin
+                        2: begin
                             desc_re <= 1;
                             desc_ra <= saved_state[15:8];
                             mnext_re <= 1;
                             mnext_ra <= saved_state[15:8];
                         end
 
-                        4 : begin
+                        4: begin
                             saved_desc <= desc_q;
                             saved_next <= mnext_q;
                         end
 
-                        5 : begin
+                        5: begin
                             work_first <= !context_active;
                             work_remaining <= context_active ? context_progress[26:13] : saved_desc[46:33];
                             work_total <= context_active ? context_progress[26:13] : saved_desc[46:33] + 14'd8;
                             work_budget <= context_active ? context_budget : capped_budget;
                             work_offset <= context_active ? context_progress[12:0] : 13'd0;
                         end
-                        6 : begin
+                        6: begin
                             work_last <= work_total <= work_budget;
                             work_ip_data <= selected_ip_data[10:0];
                             work_app_len <= selected_ip_data[10:0] - (work_first ? 11'd8 : 11'd0);
                         end
-                        7 : begin
+                        7: begin
                             work_pointer <= work_first ? {saved_state[15:8], {TX_OFF_AW{1'b0}}} : context_pointer;
                             work_next_progress <= {
                                 work_remaining - {3'b000, work_app_len},
                                 work_offset + {5'b00000, work_ip_data[10:3]}};
                         end
-                        8 : begin
+                        8: begin
                             grant_valid <= 1;
 
                             // 当前消息开始发送前，同一虚拟链路不能再次被选中。
@@ -882,26 +882,26 @@ module afdx_tx_engine #(
                             op <= IDLE;
                         end
 
-                        default :;
+                        default: ;
                     endcase
                 end
 
                 // START：按实际发送时间更新下一次到期时间，然后转 IDLE。
                 // phase=1：保存当前状态，下一拍转 2。
                 // phase=2：写入下一次允许发送时间，主状态转 IDLE。
-                START : begin
+                START: begin
                     phase <= phase + 1'b1;
                     case (phase)
-                        1 : saved_state <= state_q;
-                        2 : begin
+                        1: saved_state <= state_q;
+                        2: begin
                             pend_valid <= 0;
                             op <= IDLE;
                         end
-                        default :;
+                        default: ;
                     endcase
                 end
 
-                default : op <= INIT;
+                default: op <= INIT;
             endcase
         end
     end
