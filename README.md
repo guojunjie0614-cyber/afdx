@@ -32,9 +32,15 @@
 
 ## 2. 顶层接口与集成契约
 
-综合顶层 [`AFDX_top`](rtl/AFDX_top.v#L6-L30) 共引出 172 个用户引脚，采用 125 MHz 单一上升沿同步逻辑（高有效同步复位 `reset`）。
+综合顶层 [`AFDX_top`](rtl/AFDX_top.v#L9-L58) 共引出 172 个用户引脚，采用 125 MHz 单一上升沿同步逻辑（高有效同步复位 `reset`）。
 
 - **应用流握手协议**：`tx_data` 与 `rx_data` 均以 `[2 字节大端 VLID] + [1～8192 字节原始载荷]` 的连续字节流交互。**发送方在启动一条新消息前需确认 `tx_ready == 1`，消息内部保持 `tx_valid` 连续有效（无内部暂停，无 `last` 引脚），两条消息之间至少间隔 1 个 `tx_valid == 0` 的空闲拍。** 接收口按系统约束不使用 `rx_ready` 反压，下游须在 `rx_valid == 1` 期间连续接收整条消息。
+
+<img src="docs/fig/top_pinout.png" width="100%" alt="AFDX_top 顶层引脚与接口框图：赛题模板端口 1~8（22 引脚）与自主扩展双网 GMII / 配置 / 事件端口（150 引脚）"/>
+<p><sub>图 2：<code>AFDX_top</code> 顶层引脚与接口划分——虚线上方为赛题模板核心端口（序号 1～8，共 22 引脚），下方为自主扩展的 A/B 双网 GMII、主机配置总线与统计事件脉冲（共 150 引脚）。</sub></p>
+
+<details>
+<summary>AFDX_top 顶层信号协议说明表（29 端口 / 172 引脚）</summary>
 
 | 接口分组 | 信号名称 | 方向 | 协议说明 |
 | :--- | :--- | :---: | :--- |
@@ -45,6 +51,8 @@
 | A/B 双网 GMII | `gmii_txd_{a,b}[7:0]`、`gmii_tx_en_{a,b}`<br>`gmii_rxd_{a,b}[7:0]`、`gmii_rx_dv_{a,b}` | 出<br>入 | 千兆 8 位接口（每拍 1 字节，含前导码、SFD 与 FCS），双网独立并行收发 |
 | 主机配置总线 | `cfg_wr`、`cfg_rd`、`cfg_addr[17:0]`、`cfg_wdata[31:0]`<br>`cfg_rdata[31:0]`、`cfg_rvalid`、`cfg_ready` | 入<br>出 | 字寻址配置口，用于加载 128 TX / 4096 RX VL 配置表及读写 MIB/统计计数器 |
 | 事件监视脉冲 | `ev_tx[6:0]`、`ev_a[7:0]`、`ev_b[7:0]`、`ev_rm_drop`、`ev_deliver`<br>`ev_app[2:0]` | 出 | 核心状态与异常单拍脉冲；`ev_app` 位[2]/[1]/[0] 依次指示接收溢出 / 发送缓冲不足 / 无效 VLID 丢弃 |
+
+</details>
 
 <details>
 <summary>AFDX_top 顶层可配置参数（7 项默认值，与官方综合一致）</summary>
@@ -153,20 +161,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 ### 4.1 端到端数据通路与分片帧映射
 
 <img src="docs/design/fig/v2/f02_path.png" width="100%" alt="端到端确定性通信数据通路"/>
-<p><sub>图 2：收发两端字节流贯穿路径与双网冗余帧结构（A/B 网仅源 MAC 接口标识不同）。</sub></p>
+<p><sub>图 3：收发两端字节流贯穿路径与双网冗余帧结构（A/B 网仅源 MAC 接口标识不同）。</sub></p>
 
 <details>
 <summary>展开查看：AFDX 单帧与 IPv4 分片帧字节布局（f06_frame）</summary>
 
 <img src="docs/design/fig/v2/f06_frame.png" width="100%" alt="AFDX 单帧与 IPv4 分片帧字节布局"/>
-<p><sub>图 3：Ethernet / IPv4 / UDP 首部、片偏移、短帧补零、AFDX 序号（SN）与 FCS 字节布局。</sub></p>
+<p><sub>图 4：Ethernet / IPv4 / UDP 首部、片偏移、短帧补零、AFDX 序号（SN）与 FCS 字节布局。</sub></p>
 
 </details>
 
 ### 4.2 发送核心：链式页池、Lookahead 调度与分片 (`afdx_tx_core`)
 
 <img src="docs/design/fig/v2/f07_tx.png" width="100%" alt="发送核心跨页链式存储与组帧回收闭环"/>
-<p><sub>图 4：发送核心跨页链式存储（<code>tx_pnext</code> / <code>tx_mnext</code>）与页面即时回收闭环。</sub></p>
+<p><sub>图 5：发送核心跨页链式存储（<code>tx_pnext</code> / <code>tx_mnext</code>）与页面即时回收闭环。</sub></p>
 
 - **应用预缓存与跨页池化**：`afdx_app_tx` 配有 32 KiB 弹性切片缓存（8 Bank × 4×1 KiB）吸收高达 8192 B 的连续突发写入；核心缓冲通过 256×512 B 页链表动态串联长消息，组帧器每读完一页立即由 4 项回收 FIFO 归还空闲页池，消除定长分区碎片。
 - **Lookahead BAG 整形与分片控制**：调度器围绕单一状态表写口执行 `START > ENQ > GRANT > SCAN` 仲裁，提前 512 拍预取下一页载荷并在 GMII 帧起始时刻按 `t_start + BAG` 刷新期限；128 条 TX VL 的分片元信息与偏移拆分为三张同步 SDP 表，每片独立遵守 BAG 并递增 SN。
@@ -175,14 +183,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <summary>展开查看：发送调度四级优先仲裁状态机（f08_txfsm）</summary>
 
 <img src="docs/design/fig/v2/f08_txfsm.png" width="100%" alt="发送调度引擎优先仲裁与共享写口"/>
-<p><sub>图 5：<code>START > ENQ > GRANT > SCAN</code> 四级优先仲裁与单写口冲突消除。</sub></p>
+<p><sub>图 6：<code>START > ENQ > GRANT > SCAN</code> 四级优先仲裁与单写口冲突消除。</sub></p>
 
 </details>
 
 ### 4.3 接收核心：试写回退环、IC/RM 裁决与 16 上下文重组 (`afdx_rx_core`)
 
 <img src="docs/design/fig/v2/f11_rx.png" width="100%" alt="接收 VLID 分组映射与载荷环寻址"/>
-<p><sub>图 6：4096 项 RX VL 分组映射（32 Bank 同步 RAM）与接收描述符结构。</sub></p>
+<p><sub>图 7：4096 项 RX VL 分组映射（32 Bank 同步 RAM）与接收描述符结构。</sub></p>
 
 - **边收边写与坏帧零残留回退**：A/B 两网独立配备 `afdx_mac_rx`、`afdx_rx_parse` 与 4 KiB 接收环；帧字节按试写指针 `trial_ptr` 实时写入，一旦检出 FCS 错误、长度或首部异常则将指针无损回退至 `commit_ptr`，确保环内不留脏数据。
 - **共享 IC/RM 与 16 槽位并发重组**：`afdx_rx_engine` 对双网描述符执行序号完整性检查（IC，支持复位同步、连续号及丢 1 帧容忍）与冗余管理（RM，按 Skew 时间窗去重）；分片帧接纳后立刻搬入双 8 行（共 16 上下文、128 KiB）重组槽位，防止慢速长包阻塞短帧接收环，集齐并通过整包非零 UDP 校验和核验后经 `afdx_rx_deliver` 连续交付。
@@ -191,7 +199,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <summary>展开查看：双网并发预写、IC/RM 裁决与试写指针回退机制（f13_decide）</summary>
 
 <img src="docs/design/fig/v2/f13_decide.png" width="100%" alt="双网接收 IC/RM 裁决与坏帧回退"/>
-<p><sub>图 7：双路 4 KiB 试写环并行预写、共享 IC/RM 裁决与坏帧回退。</sub></p>
+<p><sub>图 8：双路 4 KiB 试写环并行预写、共享 IC/RM 裁决与坏帧回退。</sub></p>
 
 </details>
 
@@ -204,13 +212,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <summary>展开查看：RTC 对时、SNMP 代理与 ARINC 615A 协议交互图（f14 ~ f16）</summary>
 
 <img src="docs/design/fig/v2/f14_rtc.png" width="100%" alt="RTC SNTPv4 时钟同步机制"/>
-<p><sub>图 8：RTC 四时间戳双向对时与流水线补偿。</sub></p>
+<p><sub>图 9：RTC 四时间戳双向对时与流水线补偿。</sub></p>
 
 <img src="docs/design/fig/v2/f15_snmp.png" width="100%" alt="SNMP BER 编解码与配置桥接"/>
-<p><sub>图 9：SNMP v1/v2c BER 解析与 MIB 读写回显。</sub></p>
+<p><sub>图 10：SNMP v1/v2c BER 解析与 MIB 读写回显。</sub></p>
 
 <img src="docs/design/fig/v2/f16_615a.png" width="100%" alt="ARINC 615A 上传与下载协议交互"/>
-<p><sub>图 10：ARINC 615A（TFTP）镜像加载与卸载流程。</sub></p>
+<p><sub>图 11：ARINC 615A（TFTP）镜像加载与卸载流程。</sub></p>
 
 </details>
 
@@ -282,7 +290,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 通过 `tools/build_1030.py --route --pres 1.30` 加载 `elinx/tiles_1030.edc`（11,044 个固定簇位置与 172 个 P0 管脚）完成实现；完整报告与按网表 SHA256 绑定的摘要见 [`1030_IMPLEMENTATION.md`](docs/1030_IMPLEMENTATION.md) 与 [`timing.json`](docs/evidence/frag1030_delivery/timing.json)。
 
 <img src="docs/fig/resource.png" width="100%" alt="EQ6HL130-CSG484_H 布线后资源占用：LUT 45.74%、FF 26.14%、CLB 75.13%、M4K 67.83%、I/O 50.74%"/>
-<p><sub>图 11：布线后资源实测占用（按标准器件容量 136,160 LUT/FF、13,616 CLB 统计）。</sub></p>
+<p><sub>图 12：布线后资源实测占用（按标准器件容量 136,160 LUT/FF、13,616 CLB 统计）。</sub></p>
 
 | 时序阶段与路径类型 | 最差裕量 (Setup / Hold) | 约束与覆盖路径 | 失败端点 |
 | :--- | :---: | :--- | :---: |
@@ -296,10 +304,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 <summary>展开查看：eLinx 3.0.7 实现面板摘要与 GUI 行为仿真通过截图</summary>
 
 <img src="docs/fig/elinx_summary.png" width="100%" alt="eLinx 3.0.7 实现总览与时序统计面板"/>
-<p><sub>图 12：eLinx 3.0.7 实现总览与 Timing Statistics（注：GUI 摘要表内按 136,000 LUT/FF 与 13,600 CLB 整数分母显示，与命令行报告按真实容量计算的百分比差约 0.05%）。</sub></p>
+<p><sub>图 13：eLinx 3.0.7 实现总览与 Timing Statistics（注：GUI 摘要表内按 136,000 LUT/FF 与 13,600 CLB 整数分母显示，与命令行报告按真实容量计算的百分比差约 0.05%）。</sub></p>
 
 <img src="docs/fig/tb_elinx.png" width="100%" alt="eLinx GUI 启动 ModelSim tb_elinx 通过日志"/>
-<p><sub>图 13：从 eLinx 一键启动行为仿真 <code>tb_elinx</code>，双端互发 1/64/1471 B 全部通过（<code>checks=9238 errors=0</code>）。</sub></p>
+<p><sub>图 14：从 eLinx 一键启动行为仿真 <code>tb_elinx</code>，双端互发 1/64/1471 B 全部通过（<code>checks=9238 errors=0</code>）。</sub></p>
 
 </details>
 
@@ -312,7 +320,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | 超规格补充口径 | 81 TX / 81 RX | `953.208 Mbps` | 81 VL 定长补充压测，见 [总吞吐表](docs/evidence/frag_load/total_throughput.tsv)（case 0） |
 
 <img src="docs/fig/latency.png" width="100%" alt="端到端传输时延柱状图（1 B 至 1471 B）"/>
-<p><sub>图 14：分片版轻载单帧端到端时延（1 B 至 1471 B，数据见 [`performance_actual_check_summary.json`](docs/evidence/frag_load/performance_actual_check_summary.json) 的 `light_d0` / `light_d257`）。</sub></p>
+<p><sub>图 15：分片版轻载单帧端到端时延（1 B 至 1471 B，数据见 [`performance_actual_check_summary.json`](docs/evidence/frag_load/performance_actual_check_summary.json) 的 `light_d0` / `light_d257`）。</sub></p>
 
 - **63 VL 双向 100 ms 七工况全过**（详表见 [`vl63_full_load/summary.md`](docs/evidence/vl63_full_load/summary.md)）：
   - **5 种典型载荷（1 / 17 / 256 / 1024 / 1471 B）周期注入**：连续 100 ms 零丢失，最大抖动 `3.360 µs`。
@@ -325,7 +333,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 构建双端系统（`ES1 ↔ ES2`）+ 四通道损伤网络（延迟、偏斜、FCS 误码、丢包、乱序重放）+ 独立 Python 参考模型（[`afdx_ref.py`](tools/afdx_ref.py) / [`fragment_ref.py`](tools/fragment_ref.py)）与 VQM 门级网表比对闭环，8 项系统级/性能用例累计运行 **2.3 h**，完成 **1,949,513,089** 次逐拍/逐字节在线断言检查（0 错误、0 RAM 冲突），63 项并行回归 **63/63 PASS**（证据见 [`judge_result_frag1030.txt`](sim/reference/judge_result_frag1030.txt) 与 [`regression.json`](docs/evidence/frag1030_delivery/regression.json)）。
 
 <img src="docs/design/fig/v2/f18_tb.png" width="100%" alt="双端闭环验证平台架构图"/>
-<p><sub>图 15：双端系统、四通道可编程损伤网络与参考模型协同验证平台。</sub></p>
+<p><sub>图 16：双端系统、四通道可编程损伤网络与参考模型协同验证平台。</sub></p>
 
 | 验收用例 | 检查点数 (Checks) | 耗时 (s) | 核心验证内容 | 状态 |
 | :--- | ---: | ---: | :--- | :---: |
@@ -345,28 +353,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File sim/run_gui_netlist.ps1 -Tes
 | FSM 状态 / 表达式 / 条件 / 翻转 / 跳转 | `115/137` 等 | `83.9%` / `81.3%` / `74.0%` / `71.9%` / `37.6%` | 同上 |
 
 <img src="docs/fig/wave/frag_1.png" width="100%" alt="8192 B 消息 6 分片发送与重组一次交付波形"/>
-<p><sub>图 16：8192 B 长消息 6 分片发送与重组一次交付实测波形（末片到达后输出 <code>rx_bytes = 8194</code>）。</sub></p>
+<p><sub>图 17：8192 B 长消息 6 分片发送与重组一次交付实测波形（末片到达后输出 <code>rx_bytes = 8194</code>）。</sub></p>
 
 <details>
 <summary>展开查看：三级签核流程图、其余 5 组核心波形与 16 张（7 组）完整波形窗口索引表</summary>
 
 <img src="docs/test/fig/v2/t02_criteria.png" width="100%" alt="三级签核流程"/>
-<p><sub>图 17：三级签核流程（硬件在线自检、Python 参考模型核对、VQM 门级网表逐字节比对）。</sub></p>
+<p><sub>图 18：三级签核流程（硬件在线自检、Python 参考模型核对、VQM 门级网表逐字节比对）。</sub></p>
 
 <img src="docs/fig/wave/services.png" width="100%" alt="五功能联测全程波形"/>
-<p><sub>图 18：五功能联测全程波形（用户收发、IC 拒收、SNMP、RTC 对时与 615A）。</sub></p>
+<p><sub>图 19：五功能联测全程波形（用户收发、IC 拒收、SNMP、RTC 对时与 615A）。</sub></p>
 
 <img src="docs/fig/wave/rx_redundancy_1.png" width="100%" alt="双网冗余先到交付"/>
-<p><sub>图 19：先到的 A 网副本交付应用（<code>3016.844 µs</code>，<code>app_rx_net = 0</code>）。</sub></p>
+<p><sub>图 20：先到的 A 网副本交付应用（<code>3016.844 µs</code>，<code>app_rx_net = 0</code>）。</sub></p>
 
 <img src="docs/fig/wave/rx_redundancy_2.png" width="100%" alt="双网冗余晚到丢弃"/>
-<p><sub>图 20：晚到 `15.784 µs` 的 B 网副本被 RM 滤除（<code>3032.628 µs</code>，触发 <code>ev_rm_drop</code>）。</sub></p>
+<p><sub>图 21：晚到 `15.784 µs` 的 B 网副本被 RM 滤除（<code>3032.628 µs</code>，触发 <code>ev_rm_drop</code>）。</sub></p>
 
 <img src="docs/fig/wave/tx_bag.png" width="100%" alt="BAG 带宽分配间隔调度波形"/>
-<p><sub>图 21：同一 VL 严格按 `800 µs`（100,000 拍）BAG 间隔发送并递增 SN。</sub></p>
+<p><sub>图 22：同一 VL 严格按 `800 µs`（100,000 拍）BAG 间隔发送并递增 SN。</sub></p>
 
 <img src="docs/fig/wave/snmp_get_2.png" width="100%" alt="SNMP Get 请求与响应波形"/>
-<p><sub>图 22：SNMP `Get` 请求到达后 `12.664 µs` 内双网发出 `GetResponse`。</sub></p>
+<p><sub>图 23：SNMP `Get` 请求到达后 `12.664 µs` 内双网发出 `GetResponse`。</sub></p>
 
 全部 16 张（7 组）原始波形截图与 SHA256 校验记录位于 `sim/wave/png/` 与 [`wave_provenance.json`](docs/evidence/vl63_full_load/wave_provenance.json)，可通过 `do sim/wave/<场景>.do` 复现：
 
