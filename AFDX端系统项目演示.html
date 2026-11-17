@@ -3252,6 +3252,7 @@
         }, true);
         function selectKpi(i) {
           const k = KPIS[i]; if (!k || !k.ready) return;
+          const keepDetail = curKpi !== null && (dlgKpi.open ? kpiModal : kpiInline).isDetail();
           if (curKpi !== null) {
             if (dlgKpi.open) kpiInline.syncFrom(kpiModal.getState());
             kpiStates.set(curKpi, kpiInline.getState());
@@ -3263,7 +3264,7 @@
           bindEvidence(kpiInline, 'kv'); bindEvidence(kpiModal, 'kd');
           const saved = kpiStates.get(i);
           if (saved) kpiInline.syncFrom(saved); else kpiInline.setScene(k.scene);
-          setDetail(kpiInline, kpiInline.isDetail());
+          setDetail(kpiInline, keepDetail);
           if (dlgKpi.open) {
             $('kd-hdr-title').textContent = k.badge + ' — ' + k.title;
             kpiModal.syncFrom(kpiInline.getState()); setDetail(kpiModal, kpiInline.isDetail());
