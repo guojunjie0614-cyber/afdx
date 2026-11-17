@@ -2445,7 +2445,7 @@
           t0: R0, t1: R1, detail: DETAIL_LAT,
           signals: [SIG_TX, SIG_RX],
           views: [
-            { name: '全程', t0: R0, t1: R1, c1: LT0, c2: LT1, m: '最坏时延 ' + LUS + ' us' },
+            { name: '全程', t0: R0, t1: R1, c1: DETAIL_LAT.v0, c2: DETAIL_LAT.v1, m: '时延局部放大范围' },
           ],
         };
         // 抖动：同一条 VL 每 1 ms 发一帧，各帧时延（tx 首字节 → 对端 rx 末字节）的最大 − 最小
@@ -2471,7 +2471,7 @@
           t0: R0, t1: R1, detail: DETAIL_JIT,
           signals: [SIG_TX, SIG_RX],
           views: [
-            { name: '全程', t0: R0, t1: R1, c1: JF[0].tx0, c2: JF[0].rx1, m: 'VL ' + JVL + ' 第 1 帧时延 ' + us3(JF[0].ns) + ' us' },
+            { name: '全程', t0: R0, t1: R1, c1: null, c2: null, m: 'VL ' + JVL + ' 第 1 帧时延 ' + us3(JF[0].ns) + ' us' },
           ],
         };
 
@@ -2524,7 +2524,7 @@
           t0: VL_V0, t1: VL_V1, detail: DETAIL_VL,
           signals: VL_SIG,
           views: [
-            { name: '全程', t0: VL_V0, t1: VL_V1, c1: VEND[0], c2: VL_D.cfg0, m: '收到 ' + VEND[1] + ' / ' + VN + ' · 末条 VL ' + VLAST[1] },
+            { name: '全程', t0: VL_V0, t1: VL_V1, c1: VC1.v0, c2: VC2.v1, m: '收到 ' + VEND[1] + ' / ' + VN + ' · 末条 VL ' + VLAST[1] },
           ],
         };
         // 帧格式：同一次仿真 A 网线上 gmii_txd_a（tb 里的 a0/av0），取 1 ms 窗口第一条消息（VL 0x0100）发出的那一帧
@@ -3168,7 +3168,7 @@
           wrap.addEventListener('contextmenu', function (e) { e.preventDefault(); });
           o.zoomInBtn.addEventListener('click', function () { zoomAt(0.55, 0.5); });
           o.zoomOutBtn.addEventListener('click', function () { zoomAt(1.8, 0.5); });
-          o.fitBtn.addEventListener('click', function () { setView(st.sc.t0, st.sc.t1); draw(); });
+          o.fitBtn.addEventListener('click', function () { applyPreset(0); });
           const RADIX = ['auto', 'hex', 'dec'], RNAME = { auto: '进制: 自动', hex: '进制: HEX', dec: '进制: DEC' };
           function setRadix(r) { st.radix = r; o.radixBtn.textContent = RNAME[r]; }
           o.radixBtn.addEventListener('click', function () { setRadix(RADIX[(RADIX.indexOf(st.radix) + 1) % RADIX.length]); draw(); });
