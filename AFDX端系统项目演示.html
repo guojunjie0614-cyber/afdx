@@ -71,14 +71,16 @@
 .kpi-calc-label{color:#707780;font-weight:400}
 .kpi-calc-step p{margin:0;min-width:0;overflow-wrap:anywhere}
 .kpi-calc-result{color:inherit;font-size:inherit;font-weight:600}
-#dlg-kpi{height:min(760px,95vh);max-width:1680px;top:50%;bottom:auto;transform:translateY(-50%);margin:0 auto}
+#dlg-kpi{height:95vh;max-width:1680px;top:50%;bottom:auto;transform:translateY(-50%);margin:0 auto}
 #dlg-kpi .dlg-hdr{padding:10px 16px;font-size:16px}
 #dlg-kpi .dlg-stage{padding:10px;gap:8px}
 @media(max-width:900px){#dlg-kpi .kpi-calculation{padding:10px 14px}#dlg-kpi .kpi-calc-step{gap:10px}}
 
 
 #slide-5 .wave-deck-box.kpi-detail-active{flex:1 1 0}
-#dlg-kpi .dlg-stage{overflow-y:auto}
+#dlg-kpi .dlg-stage{overflow:hidden;min-height:0}
+.kpi-evidence>.kpi-back{margin-left:auto;flex-shrink:0}
+#dlg-kpi .kpi-calculation{padding:8px 16px;gap:4px}
 </style>
 <meta content="AFDX 千兆端系统竞赛汇报，五页横向翻页，内嵌交互架构和赛题五项功能仿真验证。" name="description"/></head>
 <body>
@@ -2733,15 +2735,15 @@
             const box = wrap.closest('.wave-deck-box');
             const open = zoomed();
             if (box) box.classList.toggle('kpi-detail-active', open);
-            // The canvas receives all remaining space. Only short dialogs scroll.
-            const minimum = open ? detailBodyHeight() + HDR + 2 + 2 * MSIM_UI.ROW + 8 : 180;
+            // Fit the plot to the remaining space; keep the calculation panel visible.
+            const minimum = 0;
             if (area.style.flex !== '1 1 0px') area.style.flex = '1 1 0px';
             if (area.style.minHeight !== minimum + 'px') area.style.minHeight = minimum + 'px';
           }
 
           const botH = function () { return zoomed() ? 0 : BOT_ROWS * BRH + 3; };
           function layoutH() {
-            const h = wrap.clientHeight;
+            const h = H;
             return zoomed() ? Math.max(HDR + 2 * MSIM_UI.ROW + 10, h - detailBodyHeight()) : h;
           }
 
@@ -2828,14 +2830,11 @@
             d.wins.forEach(function (w, k) {
               let a = Xm(w.v0), b = Xm(w.v1); if (b - a < 5) { const c = (a + b) / 2; a = c - 2.5; b = c + 2.5; }
               if (b < WX || a > W) return;
+              a=Math.max(WX,a);b=Math.min(W,b);
               ctx.strokeRect(a + 0.5, HDR + 0.5, b - a - 1, LH - HDR - 1);
-              ctx.beginPath(); ctx.moveTo(a, LH); ctx.lineTo(colX(k), dTop); ctx.moveTo(b, LH); ctx.lineTo(colX(k) + cw, dTop); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(a + 0.5, LH - 0.5); ctx.lineTo(colX(k) + 0.5, dTop + 0.5); ctx.moveTo(b - 0.5, LH - 0.5); ctx.lineTo(colX(k) + cw - 0.5, dTop + 0.5); ctx.stroke();
             });
-            ctx.strokeStyle = edge; ctx.lineWidth = 1; ctx.strokeRect(0.5, dTop + 0.5, W - 1, H - dTop - 1);
-            ctx.fillStyle = st.dark ? '#111111' : '#eeeeee'; ctx.fillRect(1, dTop + 1, W - 2, 30);
-            ctx.font = '600 15px ' + YH; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillStyle = gold; ctx.fillText(d.title, 14, dTop + 16);
-            const sg = st.sc.signals[d.row], top = dTop + 42, by0 = top + 48, by1 = by0 + 32, ya = by1 + 20, colH = ya + 70 - top;
+            const sg = st.sc.signals[d.row], top = dTop, by0 = top + 48, by1 = by0 + 32, ya = by1 + 20, colH = ya + 70 - top;
             d.wins.forEach(function (w, k) {
               const x0 = colX(k), x1 = x0 + cw, m = { x0: x0 + 10, w: cw - 20, v0: w.v0, v1: w.v1 };
               const Xw = function (t) { return m.x0 + (t - w.v0) / (w.v1 - w.v0) * m.w; };
@@ -2864,6 +2863,8 @@
               if (k) { ctx.font = '16px ' + UI; ctx.fillStyle = dim; ctx.textAlign = 'center'; ctx.fillText('//', x0 - GAP / 2, (by0 + by1) / 2); }
             });
 
+            ctx.font = '600 14px ' + YH; ctx.fillStyle = gold; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(d.title, W / 2, top + colH + 18);
           }
 
           // 分栏放大（VL 能力）：每栏一个时间窗，几行信号上下对齐；黄线 = 关键事件
@@ -3008,11 +3009,12 @@
           function paint() {
             detailHits.length = 0;
             syncCalculation(); syncPlotSize();
-            W = wrap.clientWidth; H = wrap.clientHeight; if (!W || !H) return;
+            W = wrap.clientWidth; const actualH = wrap.clientHeight; if (!W || !actualH) return;
+            H = zoomed() ? Math.max(actualH, detailBodyHeight() + HDR + msimContentHeight(rows()) + 12) : actualH;
             const rect = wrap.getBoundingClientRect(), dpr = (window.devicePixelRatio || 1) * (rect.width ? rect.width / W : 1);
-            const bw = Math.round(W * dpr), bh = Math.round(H * dpr);
+            const bw = Math.round(W * dpr), bh = Math.round(actualH * dpr);
             if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.setTransform(dpr, 0, 0, dpr * actualH / H, 0, 0);
             const P = PAL[st.dark ? 'dark' : 'light'], PW = PWf(), LH = layoutH(), MAIN = { x0: WX, w: PW, v0: st.v0, v1: st.v1 };
             const Z = zoomed(), botY = LH - botH();            // 底部 Now / Cursor 区起点（局部放大时没有）
             ctx.fillStyle=P.wave;ctx.fillRect(0,0,W,H);chrome.drawHeader(W,H,st.dark);
@@ -3053,7 +3055,7 @@
           }
 
           // 交互：滚轮缩放、拖动平移、单击放 Cursor 1、Shift/右键放 Cursor 2
-          const pos = function (e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.clientWidth / r.width, (e.clientY - r.top) * cv.clientHeight / r.height]; };
+          const pos = function (e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.clientWidth / r.width, (e.clientY - r.top) * H / r.height]; };
           wrap.addEventListener('wheel', function (e) {
             const p = pos(e);
             if (p[1] > layoutH()) return; // Let detail-area wheel input scroll a short dialog.
