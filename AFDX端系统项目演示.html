@@ -1966,12 +1966,9 @@
             const cx = tToX(tVal);
             if (cx < traceX0 || cx > W) return;
             ctx.save();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 1.8;
-            ctx.setLineDash([5, 5]);
-            if (state.c1 === state.c2 && name === 'C2') ctx.lineDashOffset = 5;
-            ctx.beginPath(); ctx.moveTo(cx, RULER_H); ctx.lineTo(cx, bodyBottom); ctx.stroke();
-            ctx.setLineDash([]);
+            // Match the KPI cursor and footer: a solid, pixel-aligned 2 px line.
+            ctx.fillStyle = color;
+            ctx.fillRect(Math.round(cx) - 1, RULER_H, 2, bodyBottom - RULER_H);
             const close = state.c1 !== null && state.c2 !== null && Math.abs(tToX(state.c1)-tToX(state.c2)) < 32;
             const leftTag = state.c1 <= state.c2 ? 'C1' : 'C2';
             const pairCenter = Math.max(traceX0+30,Math.min(W-30,(tToX(state.c1)+tToX(state.c2))/2));
