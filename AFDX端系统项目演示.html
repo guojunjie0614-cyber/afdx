@@ -599,7 +599,6 @@
 <div class="zoom-tools">
 <button class="tool-btn" id="wv-zoom-in" title="放大时间轴" type="button">放大 +</button>
 <button class="tool-btn" id="wv-zoom-out" title="缩小时间轴" type="button">缩小 -</button>
-<button class="tool-btn" id="wv-fit" title="显示完整时间范围" type="button">全景</button>
 <button class="tool-btn" id="wv-radix" title="切换数值显示进制" type="button">进制: 自动</button>
 </div>
 </div>
@@ -635,7 +634,6 @@
 <div class="zoom-tools">
 <button class="tool-btn" id="kv-zoom-in" title="放大时间轴" type="button">放大 +</button>
 <button class="tool-btn" id="kv-zoom-out" title="缩小时间轴" type="button">缩小 -</button>
-<button class="tool-btn" id="kv-fit" title="显示完整时间范围" type="button">全景</button>
 <button class="tool-btn" id="kv-radix" title="切换数值显示进制" type="button">进制: 自动</button>
 </div>
 </div>
@@ -710,7 +708,6 @@
 <div class="zoom-tools">
 <button class="tool-btn" id="dw-zoom-in" title="波形显示设置" type="button">放大 +</button>
 <button class="tool-btn" id="dw-zoom-out" title="波形显示设置" type="button">缩小 -</button>
-<button class="tool-btn" id="dw-fit" title="波形显示设置" type="button">全景</button>
 <button class="tool-btn" id="dw-radix" title="波形显示设置" type="button">进制: 自动</button>
 </div>
 </div>
@@ -732,7 +729,6 @@
 <div class="zoom-tools">
 <button class="tool-btn" id="kd-zoom-in" title="放大时间轴" type="button">放大 +</button>
 <button class="tool-btn" id="kd-zoom-out" title="缩小时间轴" type="button">缩小 -</button>
-<button class="tool-btn" id="kd-fit" title="显示完整时间范围" type="button">全景</button>
 <button class="tool-btn" id="kd-radix" title="切换数值显示进制" type="button">进制: 自动</button>
 </div>
 </div>
@@ -2114,7 +2110,7 @@
 
         opts.zoomInBtn.addEventListener('click', function () { zoomAt(0.55, 0.5); });
         opts.zoomOutBtn.addEventListener('click', function () { zoomAt(1.8, 0.5); });
-        opts.fitBtn.addEventListener('click', function () {
+        opts.fitBtn?.addEventListener('click', function () {
           const vcd = curMeta().id === 'rtc_ref' ? curMeta().views[0] : curVcd();
           state.viewT0 = vcd.t0; state.viewT1 = vcd.t1;
           draw();
@@ -3168,7 +3164,7 @@
           wrap.addEventListener('contextmenu', function (e) { e.preventDefault(); });
           o.zoomInBtn.addEventListener('click', function () { zoomAt(0.55, 0.5); });
           o.zoomOutBtn.addEventListener('click', function () { zoomAt(1.8, 0.5); });
-          o.fitBtn.addEventListener('click', function () { applyPreset(0); });
+          o.fitBtn?.addEventListener('click', function () { applyPreset(0); });
           const RADIX = ['auto', 'hex', 'dec'], RNAME = { auto: '进制: 自动', hex: '进制: HEX', dec: '进制: DEC' };
           function setRadix(r) { st.radix = r; o.radixBtn.textContent = RNAME[r]; }
           o.radixBtn.addEventListener('click', function () { setRadix(RADIX[(RADIX.indexOf(st.radix) + 1) % RADIX.length]); draw(); });
