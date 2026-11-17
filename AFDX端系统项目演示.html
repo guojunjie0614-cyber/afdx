@@ -1620,11 +1620,10 @@
         }
 
         function setScene(sIdx, keepPreset) {
-          const keepDetail = !!state.eventId;
           state.sceneIdx = (sIdx + WAVE_META.length) % WAVE_META.length;
           state.hoverT = null;
           state.selectedSignal = null;state.exp={};state.scroll=0;state.lock={1:false,2:false};state.act=1;
-          state.eventId = keepDetail ? (WAVE_EVENTS[curMeta().id][0]?.id || null) : null;
+          state.eventId = null;
           details.sceneChanged();
           buildPresets();
           applyPreset(keepPreset || 0);
@@ -2182,7 +2181,7 @@
       function selectWaveScene(idx, eventId) {
         const modalOpen=document.getElementById('dlg-wave').open;
         if(modalOpen)inlineWave.syncFrom(modalWave.getState());
-        const previous=inlineWave.getState(),keepDetail=!!previous.eventId;
+        const previous=inlineWave.getState();
         waveSceneStates.set(previous.sceneIdx,{...previous});
         curWaveIdx=idx;
         if(waveGroupForScene(curWaveIdx)<0)curWaveIdx=WAVE_GROUPS[0].default;
@@ -2194,7 +2193,7 @@
         document.getElementById('wv-title').textContent=m.title;
         const saved=waveSceneStates.get(curWaveIdx);
         if(saved)inlineWave.syncFrom({...saved,dark:previous.dark,radix:previous.radix,
-          eventId:eventId!==undefined?eventId:(keepDetail?(saved.eventId||WAVE_EVENTS[m.id][0]?.id):null)});
+          eventId:eventId!==undefined?eventId:saved.eventId});
         else inlineWave.setScene(curWaveIdx,0);
         if(eventId!==undefined)inlineWave.openEvent(eventId);
         if(modalOpen){
@@ -3242,7 +3241,6 @@
         }, true);
         function selectKpi(i) {
           const k = KPIS[i]; if (!k || !k.ready) return;
-          const keepDetail = curKpi !== null && (dlgKpi.open ? kpiModal : kpiInline).isDetail();
           if (curKpi !== null) {
             if (dlgKpi.open) kpiInline.syncFrom(kpiModal.getState());
             kpiStates.set(curKpi, kpiInline.getState());
@@ -3254,7 +3252,7 @@
           bindEvidence(kpiInline, 'kv'); bindEvidence(kpiModal, 'kd');
           const saved = kpiStates.get(i);
           if (saved) kpiInline.syncFrom(saved); else kpiInline.setScene(k.scene);
-          setDetail(kpiInline, keepDetail);
+          setDetail(kpiInline, kpiInline.isDetail());
           if (dlgKpi.open) {
             $('kd-hdr-title').textContent = k.badge + ' — ' + k.title;
             kpiModal.syncFrom(kpiInline.getState()); setDetail(kpiModal, kpiInline.isDetail());
