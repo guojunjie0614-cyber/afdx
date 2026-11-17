@@ -46,10 +46,6 @@
 .wave-workspace.arinc-lecture.has-event-detail{grid-template-rows:minmax(0,45%) 12px minmax(0,1fr);overflow:hidden;transition:none}
 .wave-workspace.arinc-lecture.has-event-detail>.wave-event-detail{min-height:0;min-width:0;overflow:hidden}
 .wave-workspace.arinc-lecture.has-event-detail .wave-detail-drawing{min-height:0;min-width:0;width:100%;height:100%;flex:1 1 0}
-#slide-4:has(.arinc-lecture) .wave-tools-bar,#dlg-wave:has(.arinc-lecture) .wave-tools-bar{display:flex;flex-direction:row;align-items:center;gap:8px;padding:4px 12px;flex-wrap:wrap}
-#slide-4:has(.arinc-lecture) .preset-strip,#dlg-wave:has(.arinc-lecture) .preset-strip{padding:0;border:0;flex:0 0 auto;width:auto}
-#slide-4:has(.arinc-lecture) .zoom-tools,#dlg-wave:has(.arinc-lecture) .zoom-tools{padding:0;flex:1;min-width:0}
-#slide-4:has(.arinc-lecture) .wave-event-strip,#dlg-wave:has(.arinc-lecture) .wave-event-strip{min-height:34px;padding:3px 12px}
 #dlg-wave:has(.arinc-lecture) .dlg-hdr{padding:6px 14px;font-size:16px}
 #dlg-wave:has(.arinc-lecture) .dlg-stage{padding:8px;gap:6px}
 .arinc-lecture .wave-event-heading{height:24px;padding:2px 12px}
@@ -84,6 +80,7 @@
 /* Larger presentation section controls. */
 .wave-tab,.kpi-tab{font-size:18px;padding:6px 16px}
 .arch-controls .btn-eng{font-size:18px;padding:6px 12px}
+.preset-strip[hidden]{display:none}
 </style>
 <meta content="AFDX 千兆端系统竞赛汇报，五页横向翻页，内嵌交互架构和赛题五项功能仿真验证。" name="description"/></head>
 <body>
@@ -1599,6 +1596,8 @@
 
         function buildPresets() {
           const m = curMeta();
+          presetHost.hidden = m.id === 'frag';
+          if (presetHost.hidden) { presetHost.replaceChildren(); return; }
           presetHost.innerHTML = m.views.map(function (v, vi) {
             return '<button type="button" class="preset-btn' + (vi === state.activePreset ? ' active' : '') +
               '" data-pv="' + vi + '">' + v.name + '</button>';
