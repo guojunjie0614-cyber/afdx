@@ -667,7 +667,7 @@ Python 参考模型按报文格式和协议规则生成输入及期望值，CRC 
 
 ### 8.3 当前实现与固定布局
 
-分片交付版采用 PRES 1.30 加固定簇布局，布线后 setup +0.029 ns / hold +0.604 ns，setup/hold 均为 0/96,142 失败端点；setup 已含 0.30 ns 时钟不确定度。流程与约束文件见 [1030 实现记录](1030_IMPLEMENTATION.md)，原始报告见 [交付证据](evidence/frag1030_delivery/summary.md)。**改 RTL 会使固定布局失效**，必须重新生成并验证位置约束。
+分片交付版采用 PRES 1.30 加固定簇布局，布线后 setup +0.329 ns（eLinx 报告 +0.029 ns，已扣 0.30 ns 过约束）/ hold +0.604 ns，setup/hold 均为 0/96,142 失败端点。流程与约束文件见 [1030 实现记录](1030_IMPLEMENTATION.md)，原始报告见 [交付证据](evidence/frag1030_delivery/summary.md)。**改 RTL 会使固定布局失效**，必须重新生成并验证位置约束。
 
 ## 9. 功能范围与使用条件
 

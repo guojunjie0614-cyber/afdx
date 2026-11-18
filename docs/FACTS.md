@@ -2,7 +2,7 @@
 
 ## 当前交付状态
 
-分片交付版最终源码快速回归 `63/63 PASS`（52 项基础 + 11 项分支），配置隔离 `2/2 PASS`。四项系统级长用例中，`tb_sys_perf` 采用按公开应用口时戳统计的检查结果，其余引用分片版 RTL 与官方 VQM 网表验证，ModelSim `MODEL_TECH` 兼容分支与综合入口逐 token 保序等价并经 5 项直接 RTL 复核。官方 VQM TX/RX 负载窗口各 `161` 检查通过，与同激励 RTL 的 11 份记录逐字节一致。锁定布线后 setup `+29 ps` / hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点；基准 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与端到端兼容布线 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 各自独立绑定。
+分片交付版最终源码快速回归 `63/63 PASS`（52 项基础 + 11 项分支），配置隔离 `2/2 PASS`。四项系统级长用例中，`tb_sys_perf` 采用按公开应用口时戳统计的检查结果，其余引用分片版 RTL 与官方 VQM 网表验证，ModelSim `MODEL_TECH` 兼容分支与综合入口逐 token 保序等价并经 5 项直接 RTL 复核。官方 VQM TX/RX 负载窗口各 `161` 检查通过，与同激励 RTL 的 11 份记录逐字节一致。锁定布线后 setup `+329 ps`（eLinx 报告 `+29 ps`，已扣 0.30 ns 过约束）/ hold `+604 ps`，setup/hold 各 `0/96,142` 失败端点；基准 VQM `3cd8f5f8456c9881d083fe67dd7a60ed9c6779909ee1cb10dbf9367dc9729b6e` 与端到端兼容布线 VQM `96d14e2f8ae99c72f3145f14a17f8606c16d98f7e039befe6359eb25c471e3b4` 各自独立绑定。
 
 满负载规格为每端 63 TX / 63 RX VL（BAG=1 ms、Lmax=1471，线路占用约 77.5%）；可配置 TX 128 / RX 4096 条 VL。63 VL 七场景各连续 100 ms 通过：五项周期场景最大抖动 3.360 µs；BAG 等待场景 B2 最大 96.752 µs（0x0114、1471 B），全部分组 <100 µs；固定输入顺序的 B1 场景 HDL、完整性和双统计通过，BAG 等待抖动以轮换顺序的 B2 为判据。长短消息混合配置（3 条 VL 分别发送 1472、3000、8192 B，其余 60 条发送 1471 B）连续 100 ms 零丢失、逐字节一致。规格与网络规划要求见 [ARCH](ARCH.md#系统规格与网络规划)，原始记录见 [63 VL 满负载规格验证](evidence/vl63_full_load/summary.md)，汇总证据、检查数、耗时与覆盖边界见 [交付证据](evidence/frag1030_delivery/summary.md)。
 
