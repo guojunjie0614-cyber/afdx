@@ -2416,6 +2416,17 @@
           box: [W0, W1],   // 总览黄框与 C1/C2 光标重合，连线落到放大面板里的 C1/C2
           title: '1 ms 统计窗口 · ' + SH.frames_in_window + ' 帧 × ' + SH.glen + ' B × 8 bit ÷ ' + MS_W.toFixed(3) + ' ms = ' + SH.mbps.toFixed(3) + ' Mbps',
           rows: [0, 2, 3],
+          // 重点段：63 帧本身、两个计数器的窗口末值；其余（窗口外、空闲、累加过程）画灰
+          focus: { 0: [[F1.t0, FN.t1]], 2: [[FN.t1, W1]], 3: [[FN.t1, W1]] },
+          seps: { row: 0, t: WIN.slice(1).map(function (f) { return f.t0; }) },
+          notes: [
+            { row: 0, a: F1.t0, b: FN.t1, key: true, label: WIN.length + ' 帧连发', sub: '每帧 ' + SH.glen + ' B 载荷' },
+            { row: 0, a: FN.t1, b: W1, label: '窗口内其余时间空闲' },
+            { row: 2, a: F1.t0, b: FN.t1, label: '每发完一帧 +1' },
+            { row: 2, a: FN.t1, b: W1, key: true, label: '末值 ' + SH.frames_in_window + ' 帧' },
+            { row: 3, a: F1.t0, b: FN.t1, label: '每发完一帧 +' + SH.glen.toLocaleString('en-US') + ' B' },
+            { row: 3, a: FN.t1, b: W1, key: true, label: '末值 ' + PAYLOAD.toLocaleString('en-US') + ' B', sub: '= ' + SH.frames_in_window + ' 帧 × ' + SH.glen + ' B' },
+          ],
           marks: [{ t: W0, text: '窗口起点 ' + (W0 / 1000).toFixed(3) + ' us', main: true }, { t: FN.t1, text: '第 ' + WIN.length + ' 帧发完 ' + (FN.t1 / 1000).toFixed(3) + ' us' },
             { t: W1, text: '窗口终点 ' + (W1 / 1000).toFixed(3) + ' us', main: true }],
           calc: [
@@ -2440,11 +2451,18 @@
         // 时延：最坏一帧 = 发送口 tx_data 首字节 → 对端 rx_data 末字节（取自 tb 记录的同一帧）
         const LF_TX = TX[SH.lat.ti], LF_RX = RX[SH.lat.ri], LT0 = LF_TX.t0, LT1 = LF_RX.t1, LNS = LT1 - LT0;
         const LUS = (LNS / 1000).toFixed(3), us3 = function (t) { return (t / 1000).toFixed(3); };
+        const LPREV = TX[SH.lat.ti - 1];
         const DETAIL_LAT = {
           label: LUS + ' µs 计算',
           v0: LT0 - 0.1 * LNS, v1: LT1 + 0.1 * LNS,
           title: '最坏一帧（VL ' + LF_TX.vl + '，63 帧连发的末帧）· 发送口首字节 → 对端末字节 = ' + LUS + ' µs ＜ 1 ms',
           rows: [0, 1],
+          focus: { 0: [[LT0, LF_TX.t1]], 1: [[LF_RX.t0, LT1]] },
+          notes: [
+            { row: 0, a: LPREV.t0, b: LT0, label: 'VL ' + LPREV.vl + '（上一帧）' },
+            { row: 0, a: LT0, b: LF_TX.t1, key: true, label: 'VL ' + LF_TX.vl + ' 写入发送口' },
+            { row: 1, a: LF_RX.t0, b: LT1, key: true, label: 'VL ' + LF_RX.vl + ' 收完' },
+          ],
           marks: [{ t: LT0, text: 'tx 首字节 ' + us3(LT0) + ' us', main: true }, { t: LT1, text: 'rx 末字节 ' + us3(LT1) + ' us', main: true }],
           calc: [
             { label: '发送起点', text: 'tx_data 首字节进入：' + us3(LT0) + ' µs（第 ' + (SH.lat.ti + 1) + ' 帧 · VL ' + LF_TX.vl + '）' },
@@ -2471,7 +2489,7 @@
           // 每帧一个窗口：都从「该帧发送首字节 + 同一偏移」开始，所以三窗口在时间上正好相隔 1 ms
           wins: JF.map(function (f, k) {
             return { v0: f.tx0 + JMN - 5 * T, v1: f.tx0 + JMX + 3 * T, ref: f.tx0 + JMN, end: f.rx1, ns: f.ns, tx0: f.tx0,
-              head: '第 ' + (k + 1) + ' 帧', sub: '发送首字节 ' + us3(f.tx0) + ' us' };
+              head: '第 ' + (k + 1) + ' 帧', sub: '' };
           }),
           calc: [
             { label: '帧时延', text: JF.map(function (f) { return us3(f.ns); }).join(' / ') + ' µs' },
@@ -2521,6 +2539,12 @@
         // 黄线只穿 received 行（rows 里第 2 行）：计数 +1 的时刻
         VC1.marks = [{ t: VL_D.rcv[0][0], row: 2, text: 'received = ' + VL_D.rcv[0][1] + '（首条 VL ' + VL_D.vl[0][1] + '）' }];
         VC2.marks = [{ t: VEND[0], row: 2, text: 'received = ' + VEND[1] + '（末条 VL ' + VLAST[1] + '）' }];
+        // 重点：首帧 / 末帧这一条链（发出 → 对端锁存 VL 号 → 计数 +1），其余两帧画灰。
+        // app_rx_vl 复位值也是 0，锁存 VL 0 时没有跳变，所以从锁存时刻起才画亮。
+        VC1.focus = { 1: [[VL_D.tx[0], VL_D.tx[0] + VL_D.txw]], 2: [[VL_D.vl[0][0], VL_D.vl[1][0]]], 3: [[VL_D.rcv[0][0], VL_D.rcv[1][0]]] };
+        VC2.focus = { 1: [[VL_D.tx[VN - 1], VL_D.tx[VN - 1] + VL_D.txw]], 2: [[VLAST[0], VC2.v1]], 3: [[VEND[0], VC2.v1]] };
+        // 复位值 0 和 VL 0 看起来一样，在亮起的那段里写明“锁存 VL 0”（row = rows 里的序号，1 = app_rx_vl）
+        VC1.tags = [{ row: 1, t0: VL_D.vl[0][0], t1: VL_D.vl[1][0], text: '锁存 VL ' + VL_D.vl[0][1] }];
         const DETAIL_VL = {
           label: '128 发 / 4096 收 计算',
           title: '配置 4096 条接收 VL + 128 条发送 VL · 128 帧从 VL ' + VL_D.vl[0][1] + ' 到 VL ' + VLAST[1] + ' 逐条收到 = ' + VEND[1] + ' / ' + VN,
@@ -2553,7 +2577,7 @@
         }
         const DETAIL_FRM = {
           label: NPAY + ' B 帧结构',
-          v0: FS.t0, v1: FS.t1, frame: FS, head: 4, tail: 3,
+          v0: FS.t0, v1: FS.t1, frame: FS, head: 4, tail: 3, vlid: [12, 14],
           title: 'A 网线上一帧（VL 0x' + FVL + '）逐字节展开 · 8 B 前导码 + ' + NETH + ' B 以太网帧 = ' + FB.length + ' B（' + FB.length + ' 拍）',
           sub: { '前导码': '55×7 + D5，不计帧长', 'MAC 头': '目的 MAC 含 VL 0x' + FVL, 'IP 头': '总长 ' + FRM_D.ip_len + ' B', 'UDP 头': '长度 ' + FRM_D.udp_len + ' B',
             'SN': '序号', 'FCS': 'CRC-32 正确' },
@@ -2673,9 +2697,9 @@
           }
           const chrome = createMsimChrome(ctx,st);
           // 1-bit 画法与第 05 页「仿真验证」WaveformViewer 相同
-          function drawBit(sig, hiY, loY, m) {
+          function drawBit(sig, hiY, loY, m, palX) {
             const WX = m.x0, PW = m.w, W = m.x0 + m.w, X = function (t) { return m.x0 + (t - m.v0) / (m.v1 - m.v0) * m.w; };
-            const pal = WAVE_PALETTES[st.dark ? 'dark' : 'light'];
+            const pal = palX || WAVE_PALETTES[st.dark ? 'dark' : 'light'];
             const a = sig.absT, vals = sig.v, nsPerPx = (m.v1 - m.v0) / PW;
             const i0 = Math.max(0, idxAfter(a, m.v0) - 1), i1 = Math.min(a.length - 1, idxAfter(a, m.v1));
             ctx.save(); ctx.beginPath(); ctx.rect(WX, hiY - 3, PW, loY - hiY + 6); ctx.clip();
@@ -2701,9 +2725,9 @@
           }
           const ICON_X = chrome.ICON_X;
           // 总线画法与第 05 页「仿真验证」WaveformViewer 相同（配色取 WAVE_PALETTES）
-          function drawBus(sig, hiY, loY, m) {
+          function drawBus(sig, hiY, loY, m, palX) {
             const WX = m.x0, X = function (t) { return m.x0 + (t - m.v0) / (m.v1 - m.v0) * m.w; };
-            const pal = WAVE_PALETTES[st.dark ? 'dark' : 'light'];
+            const pal = palX || WAVE_PALETTES[st.dark ? 'dark' : 'light'];
             const a = sig.absT, vals = sig.v, PW = m.w, midY = (hiY + loY) / 2, nsPerPx = (m.v1 - m.v0) / PW;
             const i0 = Math.max(0, idxAfter(a, m.v0) - 1), i1 = Math.min(a.length - 1, idxAfter(a, m.v1));
             ctx.save(); ctx.beginPath(); ctx.rect(WX, hiY - 3, PW, loY - hiY + 6); ctx.clip();
@@ -2733,14 +2757,45 @@
             ctx.restore();
           }
 
+          // 放大面板的重点画法（同仿真验证页 focus）：先整行画灰，再在重点时间段内裁剪重画原色
+          const GREY = { bus: '#5c5c5c', busFill: '#000000', busText: '#8c8c8c', transition: '#505050', signal: '#5c5c5c', low: '#5c5c5c' };
+          const GREY_L = { bus: '#b4b4b4', busFill: '#ffffff', busText: '#9a9a9a', transition: '#c8c8c8', signal: '#b4b4b4', low: '#b4b4b4' };
+          function drawFocus(sig, hiY, loY, m, focus) {
+            const one = sig.width === 1 ? drawBit : drawBus;
+            if (!focus) { one(sig, hiY, loY, m); return; }
+            one(sig, hiY, loY, m, st.dark ? GREY : GREY_L);
+            const Xf = function (t) { return m.x0 + (t - m.v0) / (m.v1 - m.v0) * m.w; };
+            focus.forEach(function (f) {
+              if (f[1] <= m.v0 || f[0] >= m.v1) return;
+              const xa = Math.max(m.x0, Xf(f[0])), xb = Math.min(m.x0 + m.w, Xf(f[1]));
+              ctx.save(); ctx.beginPath(); ctx.rect(xa, hiY - 4, xb - xa, loY - hiY + 8); ctx.clip(); one(sig, hiY, loY, m); ctx.restore();
+            });
+          }
+          // 行下方的括号标注：key = 重点（绿括号、白字），否则灰；文字靠边时整体收进 [lo, hi]
+          function noteBracket(xa, xb, by, label, sub, key, lo, hi) {
+            const YH = '"Microsoft YaHei", "PingFang SC", sans-serif', bg = st.dark ? '#000000' : '#ffffff';
+            const col = key ? (st.dark ? '#00ff00' : '#166534') : (st.dark ? '#707070' : '#888888');
+            const tc = key ? (st.dark ? '#ffffff' : '#111111') : (st.dark ? '#9a9a9a' : '#555555'), sc = st.dark ? '#a8a8a8' : '#555555';
+            const mid = (xa + xb) / 2;
+            ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = key ? 1.5 : 1;
+            ctx.beginPath(); ctx.moveTo(xa + 1, by); ctx.lineTo(xa + 1, by + 5); ctx.lineTo(xb - 1, by + 5); ctx.lineTo(xb - 1, by); ctx.stroke();
+            ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.lineJoin = 'round';
+            [[label, (key ? '600 14px ' : '13px ') + YH, tc, 17], [sub, '12px ' + YH, sc, 32]].forEach(function (p) {
+              if (!p[0]) return;
+              ctx.font = p[1]; const w = ctx.measureText(p[0]).width, tx = Math.max(lo, Math.min(hi - w, mid - w / 2));
+              ctx.strokeStyle = bg; ctx.lineWidth = 4; ctx.strokeText(p[0], tx, by + p[3]); ctx.fillStyle = p[2]; ctx.fillText(p[0], tx, by + p[3]);
+            });
+            ctx.restore();
+          }
+
           // 局部放大打开时（同第 05 页）：上部只留信号行，不画底部 Now / Cursor 区和时间刻度，其余高度给放大面板
           const zoomed = function () { return !!(st.detail && st.sc.detail); };
           function detailBodyHeight() {
             const d = st.sc.detail;
-            if (d.wins) return 248;
+            if (d.wins) return 292;
             if (d.cols) return 126 + d.rows.length * 38;
             if (d.frame) return 268;
-            return 22 + 40 + d.rows.length * 42 + 62 + 14;
+            return 22 + 40 + d.rows.length * 42 + 62 + 14 + (d.notes ? new Set(d.notes.map(function (n) { return n.row; })).size * 38 : 0);
           }
           function syncPlotSize() {
             const area = wrap.closest('.kpi-canvas-area') || wrap;
@@ -2774,7 +2829,7 @@
             ctx.restore();
           }
 
-          // 放大面板（同第 05 页局部放大：选区黄框 + 梯形连线 + 黄边面板），分三步算出速率
+          // 放大面板（同第 05 页局部放大：选区黄框 + 梯形连线 + 黄边面板）；重点段保持原色、其余变灰，括号标注写在该行下方
           function drawDetail(d, LH) {
             const gold = st.dark ? '#ffd700' : '#000000', edge = st.dark ? '#9d8500' : '#777777', bg = st.dark ? '#000000' : '#ffffff';
             const txt = st.dark ? '#e8e8e8' : '#111111', dim = st.dark ? '#9a9a9a' : '#555555', PW = PWf();
@@ -2797,17 +2852,27 @@
             // 放大后的波形
             const x0 = 190, x1 = W - 24, m = { x0: x0, w: x1 - x0, v0: d.v0, v1: d.v1 };
             const Xd = function (t) { return x0 + (t - d.v0) / (d.v1 - d.v0) * (x1 - x0); };
-            const rh = Math.max(30, Math.min(42, (H - dTop - 108) / d.rows.length));
-            const evidenceH = d.rows.length * rh + 62;
+            // 有括号标注的行，下方多留 NOTE_H 给标注
+            const NOTE_H = 38, notes = d.notes || [];
+            const noted = d.rows.map(function (ri) { return notes.some(function (n) { return n.row === ri; }); });
+            const nExtra = noted.filter(Boolean).length * NOTE_H;
+            const rh = Math.max(30, Math.min(42, (H - dTop - 108 - nExtra) / d.rows.length));
+            const evidenceH = d.rows.length * rh + nExtra + 62;
             const rowsTop = dTop + 40 + Math.max(0, (H - dTop - 48 - evidenceH) / 2);
-            let y = rowsTop;
-            d.rows.forEach(function (ri) {
-              const sg = st.sc.signals[ri], pad = Math.max(4, rh * 0.18);
+            let y = rowsTop; const rowLo = {};
+            d.rows.forEach(function (ri, j) {
+              const sg = st.sc.signals[ri], pad = Math.max(4, rh * 0.18), focus = d.focus ? d.focus[ri] || [] : null;
               ctx.font = '500 13px "SFMono-Regular", Menlo, monospace'; ctx.fillStyle = txt; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
               ctx.fillText(sg.name, 14, y + rh / 2);
-              drawBus(sg, y + pad, y + rh - pad, m);
-              ctx.strokeStyle = st.dark ? '#262626' : '#dddddd'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(1, y + rh + 0.5); ctx.lineTo(W - 1, y + rh + 0.5); ctx.stroke();
-              y += rh;
+              drawFocus(sg, y + pad, y + rh - pad, m, focus);
+              // 逐帧分隔：帧与帧之间本有 1 拍空闲，放大后看不出来，在每帧起点画 1 px 背景色竖线，方便数帧
+              if (d.seps && d.seps.row === ri) {
+                ctx.fillStyle = bg;
+                d.seps.t.forEach(function (t) { const x = Math.round(Xd(t)); if (x > x0 && x < x1) ctx.fillRect(x, y + pad - 1, 1, rh - 2 * pad + 2); });
+              }
+              rowLo[ri] = y + rh - pad;
+              y += rh + (noted[j] ? NOTE_H : 0);
+              ctx.strokeStyle = st.dark ? '#262626' : '#dddddd'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(1, y + 0.5); ctx.lineTo(W - 1, y + 0.5); ctx.stroke();
             });
             const rowsBot = y;
             detailRegion(m,rowsTop,rowsBot);
@@ -2828,6 +2893,11 @@
             const dl = d.dt, dw = ctx.measureText(dl).width;
             ctx.fillStyle = bg; ctx.fillRect((xa + xb) / 2 - dw / 2 - 8, yA - 10, dw + 16, 20);
             ctx.fillStyle = gold; ctx.textAlign = 'center'; ctx.fillText(dl, (xa + xb) / 2, yA);
+            // 括号标注最后画，压在黄虚线上面
+            notes.forEach(function (n) {
+              const ta = Math.max(d.v0, n.a), tb = Math.min(d.v1, n.b); if (tb <= ta) return;
+              noteBracket(Xd(ta), Xd(tb), rowLo[n.row] + 5, n.label, n.sub, n.key, x0, x1);
+            });
 
           }
 
@@ -2836,6 +2906,7 @@
             const gold = st.dark ? '#ffd700' : '#000000', edge = st.dark ? '#9d8500' : '#777777', bg = st.dark ? '#000000' : '#ffffff';
             const txt = st.dark ? '#e8e8e8' : '#111111', dim = st.dark ? '#9a9a9a' : '#555555', PW = PWf();
             const YH = '"Microsoft YaHei", "PingFang SC", sans-serif', MONO = '"SFMono-Regular", Menlo, Consolas, monospace';
+            const refc = st.dark ? '#d8d8d8' : '#444444', shade = st.dark ? 'rgba(255,215,0,0.28)' : 'rgba(0,0,0,0.13)';
             const Xm = function (t) { return WX + (t - st.v0) / (st.v1 - st.v0) * PW; };
             const dTop = LH + 22, n = d.wins.length, MG = 14, GAP = 34, cw = (W - 2 * MG - (n - 1) * GAP) / n;
             const colX = function (k) { return MG + k * (cw + GAP); };
@@ -2853,33 +2924,46 @@
             d.wins.forEach(function (w, k) {
               const x0 = colX(k), x1 = x0 + cw, m = { x0: x0 + 10, w: cw - 20, v0: w.v0, v1: w.v1 };
               const Xw = function (t) { return m.x0 + (t - w.v0) / (w.v1 - w.v0) * m.w; };
-              ctx.strokeStyle = edge; ctx.setLineDash([4, 4]); ctx.strokeRect(x0 + 0.5, top + 0.5, cw - 1, colH - 1); ctx.setLineDash([]);
+              ctx.strokeStyle = edge; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.strokeRect(x0 + 0.5, top + 0.5, cw - 1, colH - 1); ctx.setLineDash([]);
               ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
               ctx.font = '600 15px ' + YH; ctx.fillStyle = txt; ctx.fillText(w.head, x0 + 10, top + 18);
               const hw = ctx.measureText(w.head).width;
               ctx.font = '12px ' + YH; ctx.fillStyle = dim; ctx.fillText(w.sub, x0 + 20 + hw, top + 18);
               ctx.font = '500 12px ' + MONO; ctx.fillStyle = dim; ctx.fillText(sg.name, x0 + 10, top + 38);
-              drawBus(sg, by0, by1, m);
+              drawFocus(sg, by0, by1, m, [[w.end - T, w.end]]);
+              ctx.font = '600 12px ' + YH; ctx.fillStyle = st.dark ? '#00ff00' : '#166534'; ctx.textAlign = 'center';
+              ctx.fillText('末字节', Xw(w.end - T / 2), by0 - 10); ctx.textAlign = 'left';
               detailRegion(m,by0-8,ya);
               // 参考线 = 本帧发送首字节 + 最小时延；黄线 = 本帧对端收完
-              const xr = Xw(w.ref), xe = Xw(w.end);
-              ctx.strokeStyle = dim; ctx.lineWidth = 1; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(xr, by0 - 8); ctx.lineTo(xr, ya); ctx.stroke(); ctx.setLineDash([]);
+              const xr = Xw(w.ref), xe = Xw(w.end), dc = Math.round((w.end - w.ref) / T);
+              // 阴影 = 本帧比参考线（最快一帧）晚的时间
+              if (dc > 0) {
+                ctx.fillStyle = shade; ctx.fillRect(xr, by0 - 3, xe - xr, by1 - by0 + 6);
+              }
+              // 参考线 = 本帧发送首字节 + 最小时延：三窗横轴相同，所以三条参考线在各窗同一位置
+              ctx.strokeStyle = refc; ctx.lineWidth = 1.5; ctx.setLineDash([5, 3]);
+              ctx.beginPath(); ctx.moveTo(Math.round(xr) + 0.5, by0 - 8); ctx.lineTo(Math.round(xr) + 0.5, ya); ctx.stroke(); ctx.setLineDash([]);
+              if (dc > 0) {  // +N ns 压在参考线上面，带背景色描边
+                const tl = '+' + (dc * T) + ' ns'; ctx.font = '600 12px ' + YH; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+                ctx.strokeStyle = bg; ctx.lineWidth = 4; ctx.strokeText(tl, (xr + xe) / 2, by1 + 11);
+                ctx.fillStyle = gold; ctx.fillText(tl, (xr + xe) / 2, by1 + 11); ctx.textAlign = 'left';
+              }
               ctx.fillStyle = gold; ctx.fillRect(Math.round(xe) - 1, by0 - 8, 2, ya - by0 + 8);
-              // 时间轴：每拍一刻度，两端标绝对时刻
-              ctx.strokeStyle = st.dark ? '#2fbf2f' : '#000000'; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 1;
-              ctx.beginPath(); ctx.moveTo(m.x0, ya); ctx.lineTo(m.x0 + m.w, ya); ctx.stroke();
-              for (let t = w.v0; t <= w.v1 + 1e-6; t += T) { const x = Math.round(Xw(t)) + 0.5; ctx.beginPath(); ctx.moveTo(x, ya); ctx.lineTo(x, ya + 4); ctx.stroke(); }
-              ctx.font = '11px ' + UI; ctx.textAlign = 'left'; ctx.fillText(us3(w.v0) + ' us', m.x0, ya + 14);
-              ctx.textAlign = 'right'; ctx.fillText(us3(w.v1) + ' us', m.x0 + m.w, ya + 14);
-              const dc = Math.round((w.end - w.ref) / T), lab = '收完：参考线 +' + dc + ' 拍';
+              ctx.font = '600 12px ' + YH; ctx.fillStyle = refc; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+              ctx.fillText('参考线', xr, ya + 10);
+              const lab = dc ? '晚 ' + dc + ' 拍（+' + (dc * T) + ' ns）' : '最快（末字节正好在参考线）';
               ctx.font = '600 14px ' + YH; const lw = ctx.measureText(lab).width;
               ctx.fillStyle = gold; ctx.textAlign = 'left'; ctx.fillText(lab, Math.max(x0 + 8, Math.min(x1 - lw - 8, xe - lw / 2)), ya + 36);
-              ctx.font = '13px ' + YH; ctx.fillStyle = dim; ctx.fillText('时延 ' + us3(w.ns) + ' µs', x0 + 10, ya + 58);
+              ctx.font = '600 14px ' + YH; ctx.fillStyle = txt; ctx.textAlign = 'left'; ctx.fillText('时延 ' + us3(w.ns) + ' µs', x0 + 10, ya + 58);
               if (k) { ctx.font = '16px ' + UI; ctx.fillStyle = dim; ctx.textAlign = 'center'; ctx.fillText('//', x0 - GAP / 2, (by0 + by1) / 2); }
             });
 
             ctx.font = '600 14px ' + YH; ctx.fillStyle = gold; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(d.title, W / 2, top + colH + 18);
+            ctx.font = '13px ' + YH; ctx.fillStyle = txt;
+            ctx.fillText('抖动：同一条 VL、同样帧长，每 1 ms 发一帧，看各帧时延相差多少。三个窗口都按参考线对齐', W / 2, top + colH + 42);
+            ctx.font = '12px ' + YH; ctx.fillStyle = dim;
+            ctx.fillText('虚线 = 参考线（本帧发送首字节 + 最小时延）· 绿框 = 本帧末字节 · 黄线 = 对端收完末字节 · 阴影 = 比最快一帧晚的时间', W / 2, top + colH + 62);
           }
 
           // 分栏放大（VL 能力）：每栏一个时间窗，几行信号上下对齐；黄线 = 关键事件
@@ -2913,7 +2997,12 @@
               d.rows.forEach(function (ri, j) {
                 const sg = st.sc.signals[ri], y = ry0 + j * rh, pad = Math.max(4, rh * 0.18);
                 ctx.font = '500 12px ' + MONO; ctx.fillStyle = dim; ctx.textAlign = 'left'; ctx.fillText(sg.name.replace(/（.*$/, ''), x0 + 10, y + rh / 2);
-                if (sg.width === 1) drawBit(sg, y + pad, y + rh - pad, m); else drawBus(sg, y + pad, y + rh - pad, m);
+                drawFocus(sg, y + pad, y + rh - pad, m, c.focus ? c.focus[ri] || [] : null);
+                (c.tags || []).forEach(function (g) {
+                  if (g.row !== j) return;
+                  ctx.font = '600 12px ' + YH; ctx.fillStyle = st.dark ? '#b3ffb3' : '#166534'; ctx.textAlign = 'center';
+                  ctx.fillText(g.text, (Xc(g.t0) + Xc(g.t1)) / 2, y + rh / 2); ctx.textAlign = 'left';
+                });
               });
               // 时间轴：两端标绝对时刻
               ctx.strokeStyle = st.dark ? '#2fbf2f' : '#000000'; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 1;
@@ -2940,6 +3029,10 @@
             const YH = '"Microsoft YaHei", "PingFang SC", sans-serif', MONO = '"SFMono-Regular", Menlo, Consolas, monospace';
             const Xm = function (t) { return WX + (t - st.v0) / (st.v1 - st.v0) * PW; };
             const B = d.frame.b, P0 = FL['载荷'].a, P1 = FL['载荷'].b, dTop = LH + 22;
+            // 每个字段一种颜色：前导码灰（不计帧长），载荷保持绿色
+            const FCOL = st.dark ? { '前导码': '#7a7a7a', 'MAC 头': '#74bcff', 'IP 头': '#c5a0ff', 'UDP 头': '#ffbf66', '载荷': '#00ff00', 'SN': '#6de0ce', 'FCS': '#ff8bb7' }
+              : { '前导码': '#777777', 'MAC 头': '#005a9c', 'IP 头': '#7039a3', 'UDP 头': '#8a4b00', '载荷': '#166534', 'SN': '#006b60', 'FCS': '#9b2353' };
+            const fcol = function (i) { for (const k in FL) if (i >= FL[k].a && i < FL[k].b) return FCOL[k] || pal.bus; return pal.bus; };
             ctx.fillStyle = bg; ctx.fillRect(0, LH, W, H - LH);
             // 选区黄框（太窄时放宽到 5 px）+ 梯形连线
             let bx0 = Math.max(WX, Xm(d.v0)), bx1 = Math.min(W, Xm(d.v1));
@@ -2981,19 +3074,20 @@
                 xs.set(i, xa);
                 detailRegion({x0:xa,w:bw,v0:d.frame.t0+i*T,v1:d.frame.t0+(i+1)*T},yc-hh,yc+hh);
                 const xb = x, bev = Math.min(3, bw * 0.15);
-                ctx.fillStyle = pal.busFill; ctx.strokeStyle = pal.bus; ctx.lineWidth = 1.2;
+                const fc = fcol(i);
+                ctx.fillStyle = pal.busFill; ctx.strokeStyle = fc; ctx.lineWidth = 1.2;
                 ctx.beginPath(); ctx.moveTo(xa, yc); ctx.lineTo(xa + bev, yc - hh);
                 ctx.lineTo(xb - bev, yc - hh); ctx.lineTo(xb, yc);
                 ctx.lineTo(xb - bev, yc + hh); ctx.lineTo(xa + bev, yc + hh);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
                 ctx.font = '500 ' + Math.min(12, Math.max(10, bw * .52)) + 'px ' + MONO;
-                ctx.fillStyle = pal.busText; ctx.textAlign = 'center';
+                ctx.fillStyle = fc; ctx.textAlign = 'center';
                 ctx.fillText(hx(B[i]), (xa + xb) / 2, yc + .5);
               });
               const yb = yc + hh + 6;
               fields.forEach(function (name) {
                 const field = FL[name], xa = xs.get(field.a), xb = xs.get(field.b - 1) + bw;
-                const key = name === '载荷', color = key ? gold : txt;
+                const key = name === '载荷', color = FCOL[name] || txt;
                 ctx.strokeStyle = color; ctx.lineWidth = key ? 1.4 : 1;
                 ctx.beginPath(); ctx.moveTo(xa + 1, yb); ctx.lineTo(xa + 1, yb + 5);
                 ctx.lineTo(xb - 1, yb + 5); ctx.lineTo(xb - 1, yb); ctx.stroke();
@@ -3010,8 +3104,17 @@
                   ctx.fillText(sub, labelX(ctx.measureText(sub).width), yb + 33);
                 }
               });
+              return xs;
             }
-            byteRow(header, ['前导码', 'MAC 头', 'IP 头', 'UDP 头'], dTop + 76, 'gmii_txd_a · 帧头（按线上字节顺序）', false);
+            const hxs = byteRow(header, ['前导码', 'MAC 头', 'IP 头', 'UDP 头'], dTop + 76, 'gmii_txd_a · 帧头（按线上字节顺序）', false);
+            // 目的 MAC 末 2 字节 = VL ID（ARINC 664 P7），在字节上方用括号标出
+            if (d.vlid && hxs.has(d.vlid[0])) {
+              const va = hxs.get(d.vlid[0]), vb = hxs.get(d.vlid[1] - 1) + bw, vy = dTop + 76 - hh - 4, vc = FCOL['MAC 头'];
+              ctx.strokeStyle = vc; ctx.lineWidth = 1.4;
+              ctx.beginPath(); ctx.moveTo(va + 1, vy); ctx.lineTo(va + 1, vy - 5); ctx.lineTo(vb - 1, vy - 5); ctx.lineTo(vb - 1, vy); ctx.stroke();
+              ctx.font = '600 13px ' + YH; ctx.fillStyle = vc; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+              ctx.fillText('VL ID = 0x' + FVL, (va + vb) / 2, vy - 14);
+            }
             byteRow(payload, ['载荷', 'SN', 'FCS'], dTop + 180, '续：载荷与帧尾', true);
 
           }
