@@ -2343,7 +2343,7 @@
           routes.forEach(function(route){route.steps.filter(s=>s[0]==='e').forEach(function(step){
             const edge=svg.querySelector('[data-flow-edge="'+step[1]+'"]');if(!edge)return;
             const trace=edge.cloneNode(false);trace.removeAttribute('data-flow-edge');trace.setAttribute('stroke',route.color);trace.setAttribute('stroke-width','2.6');trace.setAttribute('opacity','0');trace.classList.add('live-flow-trace');layer.appendChild(trace);
-            const dot=document.createElementNS(NS,'circle');dot.setAttribute('r','4.7');dot.setAttribute('fill',route.color);dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','1.4');dot.setAttribute('opacity','0');dot.classList.add('live-flow-dot');layer.appendChild(dot);
+            const dot=document.createElementNS(NS,'circle');dot.setAttribute('r','6');dot.setAttribute('fill',route.color);dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','1.4');dot.setAttribute('opacity','0');dot.classList.add('live-flow-dot');layer.appendChild(dot);
             tracks.push({route:route,step:step,edge:edge,length:edge.getTotalLength(),trace:trace,dot:dot});
           });});
           return {svg:svg,tracks:tracks,nodes:[...svg.querySelectorAll('[data-flow-node]')]};
