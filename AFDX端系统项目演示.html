@@ -2415,6 +2415,7 @@
         const DETAIL_RATE = {
           label: SH.mbps.toFixed(3) + ' Mbps 计算',
           v0: W0 - 0.03 * (W1 - W0), v1: W1 + 0.03 * (W1 - W0),
+          box: [W0, W1],   // 总览黄框与 C1/C2 光标重合，连线落到放大面板里的 C1/C2
           title: '1 ms 统计窗口 · ' + SH.frames_in_window + ' 帧 × ' + SH.glen + ' B × 8 bit ÷ ' + MS_W.toFixed(3) + ' ms = ' + SH.mbps.toFixed(3) + ' Mbps',
           rows: [0, 2, 3],
           marks: [{ t: W0, text: '窗口起点 ' + (W0 / 1000).toFixed(3) + ' us', main: true }, { t: FN.t1, text: '第 ' + WIN.length + ' 帧发完 ' + (FN.t1 / 1000).toFixed(3) + ' us' },
@@ -2781,12 +2782,15 @@
             const txt = st.dark ? '#e8e8e8' : '#111111', dim = st.dark ? '#9a9a9a' : '#555555', PW = PWf();
             const YH = '"Microsoft YaHei", "PingFang SC", sans-serif';
             const Xm = function (t) { return WX + (t - st.v0) / (st.v1 - st.v0) * PW; };
-            const bx0 = Math.max(WX, Xm(d.v0)), bx1 = Math.min(W, Xm(d.v1)), dTop = LH + 22;
+            const ba = d.box ? d.box[0] : d.v0, bb = d.box ? d.box[1] : d.v1;
+            const bx0 = Math.max(WX, Math.round(Xm(ba)) - 1), bx1 = Math.min(W, Math.round(Xm(bb)) + 1), dTop = LH + 22;
+            const Xp = function (t) { return 190 + (t - d.v0) / (d.v1 - d.v0) * (W - 24 - 190); };
+            const ex0 = d.box ? Xp(ba) : 1, ex1 = d.box ? Xp(bb) : W - 1;
             ctx.fillStyle = bg; ctx.fillRect(0, LH, W, H - LH);
             ctx.strokeStyle = gold; ctx.lineWidth = 1.1;
             if (bx1 > bx0) {
               ctx.strokeRect(bx0 + 0.5, HDR + 0.5, bx1 - bx0 - 1, LH - HDR - 1);
-              ctx.beginPath(); ctx.moveTo(bx0, LH); ctx.lineTo(1, dTop); ctx.moveTo(bx1, LH); ctx.lineTo(W - 1, dTop); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(bx0, LH); ctx.lineTo(ex0, dTop); ctx.moveTo(bx1, LH); ctx.lineTo(ex1, dTop); ctx.stroke();
             }
             ctx.strokeStyle = edge; ctx.lineWidth = 1; ctx.strokeRect(0.5, dTop + 0.5, W - 1, H - dTop - 1);
             ctx.fillStyle = st.dark ? '#111111' : '#eeeeee'; ctx.fillRect(1, dTop + 1, W - 2, 30);
