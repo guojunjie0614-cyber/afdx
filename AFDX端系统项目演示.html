@@ -108,12 +108,14 @@
 <text fill="#FFFFFF" font-family="'SFMono-Regular', 'Menlo', 'Consolas', monospace" font-size="17.0" font-weight="800" text-anchor="start" x="252" y="39">AFDX_top · 单一 125 MHz</text>
 <text fill="#3F3F46" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="15.5" font-weight="700" text-anchor="end" x="1430" y="39">AFDX_top.v</text>
 <!-- External Ports (Clean large labels only) -->
-<g class="arch-part" data-zones="1">
+<g class="arch-part" data-zones="1 2">
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="19.0" font-weight="800" text-anchor="start" x="28" y="134">应用发送流</text>
 <polyline fill="none" points="28.0,152.0 248.5,152.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.6"></polyline>
 <polygon fill="#18181B" points="258.0,152.0 247.0,156.1 247.0,147.9"></polygon>
 <polyline fill="none" points="456.0,152.0 476.5,152.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.5"></polyline>
 <polygon fill="#18181B" points="486.0,152.0 475.0,156.1 475.0,147.9"></polygon>
+</g>
+<g class="arch-part" data-zones="1 3">
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="19.0" font-weight="800" text-anchor="start" x="28" y="468">应用接收流</text>
 <polyline fill="none" points="258.0,486.0 37.5,486.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.6"></polyline>
 <polygon fill="#18181B" points="28.0,486.0 39.0,481.9 39.0,490.1"></polygon>
@@ -195,13 +197,13 @@
 
 
 <!-- LAYER 3 (FRONT): INDIVIDUALLY CLICKABLE OPAQUE WHITE MODULE CARDS -->
-<g aria-label="应用发送封装 afdx_app_tx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_tx" data-mod="app_tx" data-zones="1">
+<g aria-label="应用发送封装 afdx_app_tx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_tx" data-mod="app_tx" data-zones="1 2">
 <rect class="mod-card" fill="#FFFFFF" height="96" rx="4" stroke="#18181B" stroke-width="2.2" width="198" x="258" y="104"></rect>
 <rect class="mod-strip" fill="#1D4ED8" height="7" rx="1" width="196" x="259" y="105"></rect>
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="21.5" font-weight="800" text-anchor="middle" x="357.0" y="150.07999999999998">应用发送封装</text>
 <text fill="#1D4ED8" font-family="'SFMono-Regular', 'Menlo', 'Consolas', monospace" font-size="15.0" font-weight="700" text-anchor="middle" x="357.0" y="178.88">afdx_app_tx</text>
 </g>
-<g aria-label="应用接收封装 afdx_app_rx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_rx" data-mod="app_rx" data-zones="1">
+<g aria-label="应用接收封装 afdx_app_rx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_rx" data-mod="app_rx" data-zones="1 3">
 <rect class="mod-card" fill="#FFFFFF" height="96" rx="4" stroke="#18181B" stroke-width="2.2" width="198" x="258" y="438"></rect>
 <rect class="mod-strip" fill="#1D4ED8" height="7" rx="1" width="196" x="259" y="439"></rect>
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="21.5" font-weight="800" text-anchor="middle" x="357.0" y="484.08">应用接收封装</text>
@@ -368,12 +370,14 @@
 <text fill="#FFFFFF" font-family="'SFMono-Regular', 'Menlo', 'Consolas', monospace" font-size="17.0" font-weight="800" text-anchor="start" x="252" y="39">AFDX_top · 单一 125 MHz</text>
 <text fill="#3F3F46" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="15.5" font-weight="700" text-anchor="end" x="1430" y="39">AFDX_top.v</text>
 <!-- External Ports (Clean large labels only) -->
-<g class="arch-part" data-zones="1">
+<g class="arch-part" data-zones="1 2">
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="19.0" font-weight="800" text-anchor="start" x="28" y="134">应用发送流</text>
 <polyline data-flow-edge="tx-in" fill="none" points="28.0,152.0 248.5,152.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.6"></polyline>
 <polygon fill="#18181B" points="258.0,152.0 247.0,156.1 247.0,147.9"></polygon>
 <polyline data-flow-edge="tx-app" fill="none" points="456.0,152.0 476.5,152.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.5"></polyline>
 <polygon fill="#18181B" points="486.0,152.0 475.0,156.1 475.0,147.9"></polygon>
+</g>
+<g class="arch-part" data-zones="1 3">
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="19.0" font-weight="800" text-anchor="start" x="28" y="468">应用接收流</text>
 <polyline data-flow-edge="rx-out" fill="none" points="258.0,486.0 37.5,486.0" stroke="#18181B" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="2.6"></polyline>
 <polygon fill="#18181B" points="28.0,486.0 39.0,481.9 39.0,490.1"></polygon>
@@ -455,13 +459,13 @@
 
 
 <!-- LAYER 3 (FRONT): INDIVIDUALLY CLICKABLE OPAQUE WHITE MODULE CARDS -->
-<g aria-label="应用发送封装 afdx_app_tx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_tx" data-mod="app_tx" data-zones="1" role="button" tabindex="0">
+<g aria-label="应用发送封装 afdx_app_tx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_tx" data-mod="app_tx" data-zones="1 2" role="button" tabindex="0">
 <rect class="mod-card" fill="#FFFFFF" height="96" rx="4" stroke="#18181B" stroke-width="2.2" width="198" x="258" y="104"></rect>
 <rect class="mod-strip" fill="#1D4ED8" height="7" rx="1" width="196" x="259" y="105"></rect>
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="21.5" font-weight="800" text-anchor="middle" x="357.0" y="150.07999999999998">应用发送封装</text>
 <text fill="#1D4ED8" font-family="'SFMono-Regular', 'Menlo', 'Consolas', monospace" font-size="15.0" font-weight="700" text-anchor="middle" x="357.0" y="178.88">afdx_app_tx</text>
 </g>
-<g aria-label="应用接收封装 afdx_app_rx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_rx" data-mod="app_rx" data-zones="1" role="button" tabindex="0">
+<g aria-label="应用接收封装 afdx_app_rx" class="arch-part arch-clickable mod-node" data-click-zone="1" data-flow-node="app_rx" data-mod="app_rx" data-zones="1 3" role="button" tabindex="0">
 <rect class="mod-card" fill="#FFFFFF" height="96" rx="4" stroke="#18181B" stroke-width="2.2" width="198" x="258" y="438"></rect>
 <rect class="mod-strip" fill="#1D4ED8" height="7" rx="1" width="196" x="259" y="439"></rect>
 <text fill="#111111" font-family="-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-size="21.5" font-weight="800" text-anchor="middle" x="357.0" y="484.08">应用接收封装</text>
@@ -2353,7 +2357,7 @@
             surface.nodes.forEach(n=>n.classList.remove('is-flow-active'));
             surface.tracks.forEach(function(track){
               track.dot.setAttribute('opacity','0');track.trace.setAttribute('opacity','0');
-              if(surface.svg!==current||!relevant(track.route))return;
+              if(surface.svg!==current||!relevant(track.route)||track.edge.closest('.arch-part').classList.contains('is-muted'))return;
               const time=(elapsed+(archZone===0?track.route.offset:0))%track.route.period;
               const p=(time-track.step[2])/track.step[3];if(p<0||p>1)return;
               const at=track.edge.getPointAtLength(track.length*p);
@@ -2362,7 +2366,7 @@
             if(surface.svg!==current)return;
             routes.filter(relevant).forEach(function(route){const time=(elapsed+(archZone===0?route.offset:0))%route.period;
               route.steps.filter(s=>s[0]==='n'&&time>=s[2]&&time<s[2]+s[3]).forEach(function(step){
-                surface.nodes.filter(n=>n.dataset.flowNode===step[1]).forEach(function(n){n.style.setProperty('--flow-color',route.color);n.classList.add('is-flow-active');});
+                surface.nodes.filter(n=>n.dataset.flowNode===step[1]&&!n.classList.contains('is-muted')).forEach(function(n){n.style.setProperty('--flow-color',route.color);n.classList.add('is-flow-active');});
               });
             });
           });
