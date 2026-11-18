@@ -1,3 +1,12 @@
+<p align="center">
+  <img src="docs/assets/logo/fpga_10th.png" height="64" alt="2017–2026 FPGA 创新设计竞赛 国赛十周年"/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo/ehiway_white.png"/>
+    <img src="docs/assets/logo/ehiway.png" height="64" alt="中科亿海微 eHiWAY"/>
+  </picture>
+</p>
+
 # AFDX_top — ARINC 664 Part 7 千兆端系统 FPGA 控制器
 
 单时钟域（125 MHz）、全自研可综合 Verilog-2001 机载确定性网络端系统 IP，不依赖外部软核 CPU 或第三方商业以太网 MAC 核，在单颗 FPGA 上实现 A/B 双网千兆收发、1～8192 B IPv4 分片重组与 SNTPv4 / SNMP / ARINC 615A 三项片上网络服务。
