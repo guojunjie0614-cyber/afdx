@@ -1790,12 +1790,9 @@
                 }
                 ctx.stroke();
               } else {
-                ctx.fillStyle = palette.busFill;
+                // 一个像素内跳变多次：同 ModelSim，高低电平之间涂满时钟色（实心带）
+                ctx.fillStyle = clkC;
                 ctx.fillRect(traceX0, hiY, traceW, loY - hiY);
-                ctx.fillStyle = mutedC;
-                ctx.font = '600 11.5px "SFMono-Regular", Menlo, monospace';
-                ctx.textAlign = 'center';
-                
               }
               ctx.restore();
               continue;
