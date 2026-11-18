@@ -14,6 +14,12 @@
 
 [技术文档报告（PDF）](docs/report/AFDX端系统FPGA技术文档报告.pdf) · [详细设计报告（PDF）](docs/design/AFDX端系统FPGA设计文档.pdf) · [验证与测试报告（PDF）](docs/test/AFDX端系统FPGA测试报告.pdf) · [顶层接口](#2-顶层接口与集成契约) · [快速复现](#3-快速上手与验证复现) · [架构规划](docs/ARCH.md) · [数据事实清单](docs/FACTS.md)
 
+**演示视频**（1 分 51 秒，含配音）：
+
+https://github.com/user-attachments/assets/ee6ae073-6a35-4d7d-adaf-efcc148e8858
+
+<sub>无法在线播放时，可下载仓库根目录的 <a href="AFDX端系统演示视频.mp4"><code>AFDX端系统演示视频.mp4</code></a> 观看。</sub>
+
 ---
 
 ## 1. 核心特性与适用边界
