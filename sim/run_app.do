@@ -148,7 +148,7 @@ proc app_entry::compile {folder} {
     file delete -force work
     catch {vlib work}
     if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
-    source [file join $root sim modelsim_compat.tcl]
+    source [file join $root sim lib modelsim_compat.tcl]
     set sources [concat [afdx_modelsim_rtl $root $folder] \
         [lsort [glob [file join $root tb lib *.v]]] [list [file join $root tb tb_app_entry.v]]]
     if {![file isfile [file join $root tb lib afdx_sys_config.v]]} {
@@ -256,7 +256,7 @@ proc app_entry::analyse {folder msgs cfg window} {
         dict set cursor $id [expr {$n+1}]
     }
     close $rx
-    source [file join $root sim r97_measure.tcl]
+    source [file join $root sim lib r97_measure.tcl]
     set results [r97::measure $folder app]
     set p app/es1_to_es2/accepted/all
     set inject [dict get $results $p/inject/mbps]
@@ -320,7 +320,7 @@ proc app_entry::run_fragmented {folder cfg msgs} {
     cd $frag
     catch {vlib work}
     if {[info exists ::env(MODELSIM)]} {unset ::env(MODELSIM)}
-    source [file join $root sim modelsim_compat.tcl]
+    source [file join $root sim lib modelsim_compat.tcl]
     set sources [concat [afdx_modelsim_rtl $root $frag] [list [file join $root tb tb_fragmentation.v]]]
     set ce_div 2
     if {[info exists ::env(AFDX_CE_DIV)]} {set ce_div $::env(AFDX_CE_DIV)}

@@ -125,7 +125,7 @@ proc judge_main {root} {
     if {[regexp {[[:space:]]|[^\x20-\x7e]} $root]} {
         error "ModelSim requires a repository path without spaces or non-ASCII characters"
     }
-    source [file join $root sim judge_perf.tcl]
+    source [file join $root sim lib judge_perf.tcl]
     set stamp [clock format [clock seconds] -format %Y%m%d_%H%M%S]
     set base [file join $root out modelsim judge_${stamp}_[pid]]
     set output $base
@@ -138,7 +138,7 @@ proc judge_main {root} {
     if {[catch {vmap -c}] || ![file isfile $ini]} {set ini ""}
     vlib work
     if {$ini ne ""} {catch {vmap -modelsimini $ini work [file join $output work]}}
-    source [file join $root sim modelsim_compat.tcl]
+    source [file join $root sim lib modelsim_compat.tcl]
     set sources [concat [afdx_modelsim_rtl $root $output] [lsort [glob [file join $root tb lib *.v]]]]
     foreach test {tb_net_services tb_gbe_burst tb_sys_rtc tb_sys_perf tb_sys_perf_var tb_judge_capacity tb_judge_snmp} {lappend sources [file join $root tb ${test}.v]}
     set ce_div 2
