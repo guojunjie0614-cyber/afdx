@@ -100,6 +100,7 @@ set sources [concat [lsort [glob [file join $root rtl *.v]]] \
 vlog -modelsimini $local_ini -work work -vlog01compat +incdir+[file join $root tb lib] {*}$sources
 vsim -modelsimini $local_ini -t 1ps -voptargs=+acc -onfinish stop \
      -wlf [file join $result_dir simulation.wlf] work.tb_net_services
+if {![batch_mode]} {update}
 log /tb_net_services/clk /tb_net_services/reset /tb_net_services/phase \
     /tb_net_services/va12 /tb_net_services/vb12 /tb_net_services/va21 /tb_net_services/vb21 \
     /tb_net_services/a12 /tb_net_services/b12 /tb_net_services/a21 /tb_net_services/b21 \
@@ -110,21 +111,77 @@ log /tb_net_services/clk /tb_net_services/reset /tb_net_services/phase \
     /tb_net_services/es1/wr /tb_net_services/es1/rd /tb_net_services/es1/address \
     /tb_net_services/es1/wdata /tb_net_services/es1/rdata /tb_net_services/es1/rvalid
 if {![batch_mode]} {
-    view wave
-    add wave -group Clock /tb_net_services/clk /tb_net_services/reset
-    add wave -group GMII -radix hexadecimal /tb_net_services/va12 /tb_net_services/a12 \
+    catch {view wave}
+    update
+    catch {delete wave *}
+    catch {wave cursor delete 1}
+    add wave -group "1_Phase_Services" -radix unsigned -label "phase (1..6)" /tb_net_services/phase
+    add wave -group "1_Phase_Services" -radix decimal -label "rtc_diff_ns" /tb_net_services/difference
+    add wave -group "1_Phase_Services" -radix unsigned -label "615A_status (2=OK)" /tb_net_services/status_value
+    add wave -group "2_Clock_Reset" /tb_net_services/clk /tb_net_services/reset
+    add wave -group "3_GMII_AB" -radix hexadecimal /tb_net_services/va12 /tb_net_services/a12 \
              /tb_net_services/vb12 /tb_net_services/b12 /tb_net_services/va21 /tb_net_services/a21
-    add wave -group Application -radix hexadecimal /tb_net_services/es1/d_valid \
+    add wave -group "4_Application" -radix hexadecimal /tb_net_services/es1/d_valid \
              /tb_net_services/es1/d_data /tb_net_services/es1/d_last \
              /tb_net_services/es2/d_valid /tb_net_services/es2/d_data /tb_net_services/es2/d_last
-    add wave -group Integrity -radix unsigned /tb_net_services/rm1 /tb_net_services/rm2 /tb_net_services/ic2
-    add wave -group Services -radix decimal /tb_net_services/phase /tb_net_services/difference /tb_net_services/status_value
-    add wave -group Configuration -radix hexadecimal /tb_net_services/es1/wr /tb_net_services/es1/rd \
+    add wave -group "5_Integrity_RM_IC" -radix unsigned /tb_net_services/rm1 /tb_net_services/rm2 /tb_net_services/ic2
+    add wave -group "6_Host_Config_Bus" -radix hexadecimal /tb_net_services/es1/wr /tb_net_services/es1/rd \
              /tb_net_services/es1/address /tb_net_services/es1/wdata /tb_net_services/es1/rdata /tb_net_services/es1/rvalid
-    configure wave -namecolwidth 190 -valuecolwidth 90 -timelineunits us
+    update
+    catch {configure wave -namecolwidth 210 -valuecolwidth 90 -timelineunits us}
 }
 run -all
 transcript file ""
 services_summary $result_dir $log_file
-if {![batch_mode]} {wave zoom full}
+if {![batch_mode]} {
+    set ::svc_phase_ranges [dict create]
+    set net_file [file join $result_dir net_services.txt]
+    if {[file exists $net_file]} {
+        set fh [open $net_file r]; set net_text [read $fh]; close $fh
+        foreach {key cname} {users P1_User_TX_RX integrity P2_BadSN_Drop snmp P3_SNMP rtc P4_RTC_SNTP upload P5_615A_Upload download P6_615A_Download} {
+            if {[regexp -line "^F $key (\[0-9\]+) (\[0-9\]+)$" $net_text -> s_c e_c]} {
+                set t0_ns [expr {$s_c * 8}]
+                set t1_ns [expr {$e_c * 8}]
+                dict set ::svc_phase_ranges $key [list $t0_ns $t1_ns]
+                catch {wave cursor add -time ${t0_ns}ns -name $cname}
+            }
+        }
+    }
+    proc ::svc_zoom {key {pad_ns 1000} {cap_span_ns 0}} {
+        if {![dict exists $::svc_phase_ranges $key]} {puts "No range for $key"; return}
+        lassign [dict get $::svc_phase_ranges $key] t0 t1
+        set z0 [expr {max(0, $t0 - $pad_ns)}]
+        set z1 [expr {$cap_span_ns > 0 ? min($t1 + $pad_ns, $t0 + $cap_span_ns) : ($t1 + $pad_ns)}]
+        wave zoom range ${z0}ns ${z1}ns
+        return [format "%s: %.3f us .. %.3f us" $key [expr {$z0 / 1000.0}] [expr {$z1 / 1000.0}]]
+    }
+    proc ::p1 {} {::svc_zoom users 800}
+    proc ::p2 {} {::svc_zoom integrity 600}
+    proc ::p3 {} {::svc_zoom snmp 1000}
+    proc ::p4 {} {::svc_zoom rtc 1000}
+    proc ::p5 {} {::svc_zoom upload 2000}
+    proc ::p6 {} {::svc_zoom download 2000 120000}
+    proc ::pall {} {
+        set z0 524000
+        if {[dict exists $::svc_phase_ranges users]} {
+            set z0 [expr {max(0, [lindex [dict get $::svc_phase_ranges users] 0] - 1500)}]
+        }
+        wave zoom range ${z0}ns 815000ns
+        return [format "Active window: %.3f us .. 815.000 us (skipped idle 0..%.1f us)" [expr {$z0 / 1000.0}] [expr {$z0 / 1000.0}]]
+    }
+    proc ::pfull {} {wave zoom full}
+    update
+    ::pall
+    puts "---------------------------------------------------------------------------------------"
+    puts "  Wave Quick Zoom (type command below & press Enter):"
+    puts "    p1   -> Phase 1: User Dual-Net TX/RX & Redundancy"
+    puts "    p2   -> Phase 2: Bad-SN Fault Injection & IC Reject"
+    puts "    p3   -> Phase 3: SNMP Request / GetResponse"
+    puts "    p4   -> Phase 4: RTC / SNTP Sync (diff=0 ns)"
+    puts "    p5   -> Phase 5: ARINC 615A Upload"
+    puts "    p6   -> Phase 6: ARINC 615A Download (active window)"
+    puts "    pall -> All 5 Functions Overview (524 .. 815 us)"
+    puts "    pfull-> Full timeline (0 .. 1095 us)"
+    puts "---------------------------------------------------------------------------------------"
+}
 if {[batch_mode]} {quit -f -code 0}
