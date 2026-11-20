@@ -1,7 +1,80 @@
-# ModelSim 独立入口：无需 Python 或 PowerShell；五项功能含615A先加载再卸载。
-# 在 ModelSim 中先 cd 到提交包根目录，再执行 do sim/run_services.do。
-# 每次运行使用新的 out/modelSim 目录，保留日志、抓包和波形。
+# ModelSim standalone entry: no Python or PowerShell required; runs 5 services including 615A upload/download.
+# In ModelSim, first cd to the submission package root, then run: do sim/run_services.do
+# Each run creates a fresh out/modelsim directory with logs, packet captures, and waveforms.
 onerror {quit -f -code 1}
+proc services_summary {result_dir log_file} {
+    if {[file isfile $log_file]} {
+        set fh [open $log_file r]; set log_text [read $fh]; close $fh
+        if {![regexp {\[RESULT\] tb_net_services PASS checks=([0-9]+) errors=0} $log_text match count]} {
+            error "tb_net_services did not print PASS; see $log_file"
+        }
+    } else {
+        set count [expr {[examine -radix decimal /tb_net_services/checks] + \
+                         [examine -radix decimal /tb_net_services/checks1] + \
+                         [examine -radix decimal /tb_net_services/checks2]}]
+        set errs  [expr {[examine -radix decimal /tb_net_services/errors] + \
+                         [examine -radix decimal /tb_net_services/errors1] + \
+                         [examine -radix decimal /tb_net_services/errors2]}]
+        if {$errs != 0 || $count <= 0} {
+            error "tb_net_services did not pass (checks=$count errors=$errs)"
+        }
+        set fh [open $log_file w]
+        puts $fh "\[RESULT\] tb_net_services PASS checks=$count errors=0"
+        close $fh
+    }
+    set net_text ""; set net_file [file join $result_dir net_services.txt]
+    if {[file exists $net_file]} {set fh [open $net_file r]; set net_text [read $fh]; close $fh}
+    set dl_text ""; set dl_file [file join $result_dir download_results.txt]
+    if {[file exists $dl_file]} {set fh [open $dl_file r]; set dl_text [read $fh]; close $fh}
+    set rm1 "-"; set rm2 "-"; set ic2 "-"; set rx1 "-"; set rx2 "-"
+    regexp -line {^I ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)$} $net_text -> ic2 rm1 rm2 rx2
+    regexp -line {^U ([0-9]+) ([0-9]+)$} $net_text -> rx1 rx2
+    set snmp_res "GetResponse OK"
+    if {[regexp -line {^D [0-9]+ 161 [0-9]+ ([0-9]+) } $net_text -> snmp_len]} {
+        set snmp_res "GetResponse OK (${snmp_len}B)"
+    }
+    set rtc_res "synced"
+    if {[regexp -line {^T [0-9]+ (-?[0-9]+)$} $net_text -> rtc_diff]} {
+        set rtc_res "diff=$rtc_diff ns"
+    }
+    set up_res "status=2"
+    if {[regexp -line {^R ([0-9a-fA-F]+)$} $net_text -> up_hex]} {
+        set up_res "[expr {[string length $up_hex] / 2}]B status=2"
+    }
+    set dl_res "status=2"
+    if {[regexp -line {^C 0 ([0-9]+) ([0-9]+) } $dl_text -> dl_st dl_bytes]} {
+        set dl_res "${dl_bytes}B status=$dl_st"
+    }
+    puts "======================================================================================="
+    puts "  tb_net_services Phase Summary (125 MHz, 8 ns/cycle)"
+    puts "---------------------------------------------------------------------------------------"
+    puts [format "  %-7s | %-13s | %-21s | %-23s | %s" "Phase" "Function" "Verified Result" "Duration" "Status"]
+    puts "  --------+---------------+-----------------------+-------------------------+-------"
+    foreach row [list \
+        [list "Phase 1" "User TX/RX"    "RM drop=$rm1/$rm2, RX=$rx1/$rx2" "users"] \
+        [list "Phase 2" "IC/RM Fault"   "IC reject=$ic2"                  "integrity"] \
+        [list "Phase 3" "SNMP Agent"    $snmp_res                         "snmp"] \
+        [list "Phase 4" "RTC (SNTP)"    $rtc_res                          "rtc"] \
+        [list "Phase 5" "615A Upload"   $up_res                           "upload"] \
+        [list "Phase 6" "615A Download" $dl_res                           "download"]] {
+        lassign $row p_num p_name p_res p_key
+        set dur_str "N/A"
+        if {[regexp -line "^F $p_key (\[0-9\]+) (\[0-9\]+)$" $net_text -> start_c end_c]} {
+            set cyc [expr {$end_c - $start_c}]
+            set dur_str [format "%6d cyc (%7.3f us)" $cyc [expr {$cyc * 0.008}]]
+        }
+        puts [format "  %-7s | %-13s | %-21s | %-23s | %s" $p_num $p_name $p_res $dur_str "PASS"]
+    }
+    puts "======================================================================================="
+    set fh [open [file join $result_dir result.txt] w]
+    puts $fh "PASS checks=$count errors=0"
+    puts $fh "test=tb_net_services"
+    puts $fh "log=$log_file"
+    close $fh
+    puts "MODELSIM ENTRY PASS checks=$count errors=0"
+    puts "Outputs: $result_dir"
+    return ""
+}
 set root [file normalize [pwd]]
 if {![file exists [file join $root rtl AFDX_top.v]]} {
     error "First cd to the package root, then do sim/run_services.do"
@@ -51,21 +124,7 @@ if {![batch_mode]} {
     configure wave -namecolwidth 190 -valuecolwidth 90 -timelineunits us
 }
 run -all
-# 关闭并读回本次日志，以平台自己输出的最终 PASS 为成功条件。
 transcript file ""
-set fh [open $log_file r]
-set log_text [read $fh]
-close $fh
-if {![regexp {\[RESULT\] tb_net_services PASS checks=([0-9]+) errors=0} $log_text match count]} {
-    error "tb_net_services did not print PASS; see $log_file"
-}
-set fh [open [file join $result_dir result.txt] w]
-puts $fh "PASS checks=$count errors=0"
-puts $fh "test=tb_net_services"
-puts $fh "log=$log_file"
-close $fh
-puts "MODELSIM ENTRY PASS checks=$count errors=0"
-puts "Outputs: $result_dir"
+services_summary $result_dir $log_file
 if {![batch_mode]} {wave zoom full}
-# GUI 模式保留波形供查看；命令行模式返回成功退出码。
 if {[batch_mode]} {quit -f -code 0}

@@ -28,3 +28,6 @@ __pycache__/
 .backup/
 .preview/
 !docs/evidence/*.log
+
+# ModelSim root session transcript
+/transcript
