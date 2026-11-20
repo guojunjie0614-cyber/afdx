@@ -4,9 +4,10 @@
 
 | 类别 | 路径 | 用途说明 |
 | :--- | :--- | :--- |
-| **ModelSim 直接入口** | `run_judge.do` | 评委批处理总入口（无需 Python，8 项系统级/性能用例） |
+| **ModelSim 直接入口** | `view_services_wave.bat` | **双击一键打开 ModelSim GUI 查看五功能联合波形**（调用 `run_services.do`） |
+| | `run_judge.do` | 评委批处理总入口（无需 Python，8 项系统级/性能用例） |
 | | `run_app.do` | 顶层 VLID + 应用载荷流仿真入口（含长报文分片自动分支） |
-| | `run_services.do` | 五项网络服务独立演示入口（Phase 1~6 汇总） |
+| | `run_services.do` | 五项网络服务独立演示入口（Phase 1~6 汇总，GUI 自动加载全波形） |
 | | `run_load_post_synth.do` | 门级网表（VQM）综合后 1 ms 负载对照复现入口 |
 | **PowerShell 入口** | `run.ps1` | 单项 RTL/网表测试运行入口 |
 | | `regress.ps1` | 批量 RTL / 网表回归脚本 |
