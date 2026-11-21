@@ -114,7 +114,6 @@ if {![batch_mode]} {
     catch {view wave}
     update
     catch {delete wave *}
-    catch {wave cursor delete 1}
     add wave -group "1_Phase_Services" -radix unsigned -label "phase (1..6)" /tb_net_services/phase
     add wave -group "1_Phase_Services" -radix decimal -label "rtc_diff_ns" /tb_net_services/difference
     add wave -group "1_Phase_Services" -radix unsigned -label "615A_status (2=OK)" /tb_net_services/status_value
@@ -134,6 +133,8 @@ run -all
 transcript file ""
 services_summary $result_dir $log_file
 if {![batch_mode]} {
+    update
+    catch {wave cursor delete 1}
     set ::svc_phase_ranges [dict create]
     set net_file [file join $result_dir net_services.txt]
     if {[file exists $net_file]} {
@@ -143,7 +144,7 @@ if {![batch_mode]} {
                 set t0_ns [expr {$s_c * 8}]
                 set t1_ns [expr {$e_c * 8}]
                 dict set ::svc_phase_ranges $key [list $t0_ns $t1_ns]
-                catch {wave cursor add -time ${t0_ns}ns -name $cname}
+                catch {wave cursor add -time ${t0_ns}ns -name $cname -lock 1}
             }
         }
     }
@@ -182,6 +183,7 @@ if {![batch_mode]} {
     puts "    p6   -> Phase 6: ARINC 615A Download (active window)"
     puts "    pall -> All 5 Functions Overview (524 .. 815 us)"
     puts "    pfull-> Full timeline (0 .. 1095 us)"
+    puts "  Note: All phase cursors (P1..P6) are locked by default (-lock 1)."
     puts "---------------------------------------------------------------------------------------"
 }
 if {[batch_mode]} {quit -f -code 0}
