@@ -1183,6 +1183,15 @@
       }
       // END ARINC DETAIL LECTURE
 
+      function eventKeyNumber(e) {
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return 0;
+        const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return 0;
+        if (/^[1-9]$/.test(e.key)) return Number(e.key);
+        const m = /^(?:Digit|Numpad)([1-9])$/.exec(e.code || '');
+        return m ? Number(m[1]) : 0;
+      }
+
       function createWaveDetails(api) {
         const {wrap,state}=api, NS='http://www.w3.org/2000/svg';
         const id=wrap.id.replace('-canvas-wrap','');
@@ -1211,7 +1220,7 @@
         function sceneChanged(){
           const scene=waveGroupForScene(state.sceneIdx);
           if(buttonScene!==scene){buttons.replaceChildren();buttonScene=scene;
-            items().forEach(item=>{const b=document.createElement('button');b.type='button';b.className='wave-event-btn';b.dataset.event=item.id;b.dataset.scene=item.sceneIndex;b.textContent=item.label;b.title=item.title;b.setAttribute('aria-controls',panel.id);
+            items().forEach((item,idx)=>{const b=document.createElement('button');b.type='button';b.className='wave-event-btn';b.dataset.event=item.id;b.dataset.scene=item.sceneIndex;b.textContent=item.label;b.title=idx<9?item.title+'（快捷键 '+(idx+1)+'）':item.title;if(idx<9)b.setAttribute('aria-keyshortcuts',String(idx+1));b.setAttribute('aria-controls',panel.id);
               b.addEventListener('click',e=>{e.stopPropagation();if(state.sceneIdx!==item.sceneIndex){selectWaveEvent(item.sceneIndex,item.id);return;}if(state.eventId===item.id){closeDetails();return;}state.eventId=item.id;cached='';setOpen();
                 // Reveal an off-screen event without touching either measurement cursor.
                 if(!['frag','rtc_ref'].includes(api.meta().id)&&(item.range[1]<state.viewT0||item.range[0]>state.viewT1)){const d=api.data();state.viewT0=d.t0;state.viewT1=d.t1;}
@@ -1223,9 +1232,18 @@
         function closeDetails(){const active=buttons.querySelector('.active');state.eventId=null;cached='';setOpen();buttons.querySelectorAll('button').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-expanded','false');});api.refresh();requestAnimationFrame(api.refresh);if(active)active.focus({preventScroll:true});}
         close.addEventListener('click',e=>{e.stopPropagation();setWaveDetailFocus(false,true,4);closeDetails();});
         document.addEventListener('keydown',e=>{
-          if(e.key!=='Escape'||!selected()||!panel.getClientRects().length)return;
-          const modal=document.querySelector('dialog[open]');if(modal&&!modal.contains(panel))return;
-          e.preventDefault();e.stopImmediatePropagation();closeDetails();
+          if(e.key==='Escape'){
+            if(!selected()||!panel.getClientRects().length)return;
+            const modal=document.querySelector('dialog[open]');if(modal&&!modal.contains(panel))return;
+            e.preventDefault();e.stopImmediatePropagation();closeDetails();
+            return;
+          }
+          const num=eventKeyNumber(e);
+          if(!num||!strip.getClientRects().length)return;
+          const modal=document.querySelector('dialog[open]');if(modal&&!modal.contains(strip))return;
+          const btn=buttons.querySelectorAll('button.wave-event-btn')[num-1];
+          if(!btn)return;
+          e.preventDefault();e.stopImmediatePropagation();btn.click();
         },true);
         // This strip is a sibling of the measurement canvas, never a hit target on it.
         for(const name of ['mousedown','pointerdown','dblclick'])strip.addEventListener(name,e=>e.stopPropagation());
@@ -3668,11 +3686,12 @@
           if (k.scenarios) {
             return '<span class="kpi-lbl">场景</span>' +
               k.scenarios.map(function (sc, j) {
-                return '<button type="button" class="wave-event-btn" data-sub="' + j + '" aria-expanded="false">' + esc(sc.btn) + '</button>';
+                const keyAttr = j < 9 ? ' title="快捷键 ' + (j + 1) + '" aria-keyshortcuts="' + (j + 1) + '"' : '';
+                return '<button type="button" class="wave-event-btn" data-sub="' + j + '" aria-expanded="false"' + keyAttr + '>' + esc(sc.btn) + '</button>';
               }).join('') +
               '<button type="button" class="kpi-back" id="' + p + '-back" hidden>← 返回总览</button>';
           }
-          return '<span class="kpi-lbl">' + esc(k.scene.detail.lbl || '事件') + '</span><button type="button" class="wave-event-btn" data-sub="0" id="' + p + '-ev-btn" aria-expanded="false">' + esc(k.scene.detail.label) + '</button>' +
+          return '<span class="kpi-lbl">' + esc(k.scene.detail.lbl || '事件') + '</span><button type="button" class="wave-event-btn" data-sub="0" id="' + p + '-ev-btn" aria-expanded="false" title="快捷键 1" aria-keyshortcuts="1">' + esc(k.scene.detail.label) + '</button>' +
             '<button type="button" class="kpi-back" id="' + p + '-back" hidden>← 返回总览</button>';
         }
         function syncEvidenceUi(p, isOpen) {
@@ -3733,8 +3752,20 @@
           $(p + '-back').addEventListener('click', function () { setWaveDetailFocus(false,true,5);setDetail(v, false); });
         }
         document.addEventListener('keydown', function (e) {
-          if (e.key !== 'Escape' || curSlide !== 5 || dlgKpi.open || !kpiInline.isDetail()) return;
-          e.preventDefault(); e.stopImmediatePropagation(); setDetail(kpiInline, false);
+          if (e.key === 'Escape') {
+            if (curSlide !== 5 || dlgKpi.open || !kpiInline.isDetail()) return;
+            e.preventDefault(); e.stopImmediatePropagation(); setDetail(kpiInline, false);
+            return;
+          }
+          const num = eventKeyNumber(e);
+          if (!num) return;
+          const modal = document.querySelector('dialog[open]');
+          if (modal && modal !== dlgKpi) return;
+          if (!dlgKpi.open && curSlide !== 5) return;
+          const host = $(dlgKpi.open ? 'kd-evidence' : 'kv-evidence');
+          const btn = host ? host.querySelectorAll('button.wave-event-btn')[num - 1] : null;
+          if (!btn) return;
+          e.preventDefault(); e.stopImmediatePropagation(); btn.click();
         }, true);
         function selectKpi(i) {
           const k = KPIS[i]; if (!k || !k.ready) return;
